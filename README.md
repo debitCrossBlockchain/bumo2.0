@@ -1,6 +1,6 @@
 ![](docs/image/logo.png)
 
-[![Build Status](https://travis-ci.org/bubiproject/bumo.svg?branch=develop)](https://travis-ci.org/bubiproject/bumo)[![Build status](https://ci.appveyor.com/api/projects/status/120hwj7689qr3duh?svg=true)](https://ci.appveyor.com/project/bubiproject/bumo)
+[![Build Status](https://travis-ci.org/bumoproject/bumo.svg?branch=develop)](https://travis-ci.org/bumoproject/bumo)[![Build status](https://ci.appveyor.com/api/projects/status/120hwj7689qr3duh?svg=true)](https://ci.appveyor.com/project/bumoproject/bumo)
  
 ## __简介__
 - __去中心化__ 
