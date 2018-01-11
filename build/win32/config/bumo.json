@@ -1,0 +1,58 @@
+{
+	"db": {
+		"account_path": "data/account.db",
+		"ledger_path": "data/ledger.db",
+		"keyvalue_path": "data/keyvalue.db"
+	},
+	"monitor": {
+		"id": "123123123123123",
+		"center": "127.0.0.1:19336",
+		"disk_path": "/,/mnt/",
+		"enabled" : true
+	},
+	"p2p": {
+		"network_id": 12332,
+		"address": "buQii4mkZ4tdfg3VK16v1EgcejNJUFV5H3Lx",
+		"node_private_key": "4f17013b9f686149232ea6bd77569412bf3d66baf2b0edf2f29645707cf32624703d83bef7942c77b4095a59bec9ccdd3f3c1243cc65e3f94093e25e08f79d93",
+		"consensus_network": {
+			"heartbeat_interval": 60,
+			"listen_port": 6333,
+			"target_peer_connection": 50,
+			"known_peers": ["127.0.0.1:6334"]
+		}
+	},
+	"webserver": {
+		"listen_addresses": "0.0.0.0:39333",
+		"remote_authorized": false
+	},
+	"wsserver": {
+		"listen_address": "0.0.0.0:7053"
+	},
+	"ledger": {
+       	"genesis_account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",//privatekey:privbvYfqQyG3kZyHE4RX4TYVa32htw8xG4WdpCTrymPUJQ923XkKVbM
+		"election_account": "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY", //privatekey:privbzzsiyAFTC5FUr3UsAJPyfoHV1cJPhWk194d4g8ct4LA9XoK2yXJ
+		"fee_voting_account":"buQXmVZcwLprxtPkBSX934byL5uwsMq2tknX", //privatekey:privbz9Yg1Z24iVDcVntDa8mfEB3dF76jXbNPAf3MMrP7BQ6ceoCJ5xY
+		"hash_type": 0, //0: SHA256 1: SM3
+		"max_trans_per_ledger": 1000,
+		"max_trans_per_ledger": 1000,
+		"max_ledger_per_message": 5,
+		"max_trans_in_memory": 2000,
+		"max_apply_ledger_per_round": 3,
+		"hardfork_points": []
+	},
+	"logger": {
+		"path": "log/bubi.log",
+		"dest": "FILE|STDOUT|STDERR",
+		"level": "TRACE|INFO|WARNING|ERROR|FATAL",
+		"time_capacity": 1,
+		"size_capacity": 10,
+		"expire_days": 10
+	},
+	"validation": {
+		"address": "buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g",
+		"node_private_key": "01ab35a14935d51faf48f51c3bfd1e0478e83d21d378f3bc92332dbbee5b180b9e122475517da2651227ce4a8bb37e2621c4611a889a8d7e45679efe881d56f2",
+		"validators": [
+			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
+		]
+	}
+}
