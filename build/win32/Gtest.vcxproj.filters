@@ -35,9 +35,6 @@
     <ClCompile Include="..\..\test\gtest\common\web_socket_server.cpp">
       <Filter>monitor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\common\cfca.cpp">
-      <Filter>common</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test\gtest\common\http_client.h">
@@ -45,9 +42,6 @@
     </ClInclude>
     <ClInclude Include="..\..\test\gtest\common\web_socket_server.h">
       <Filter>monitor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\common\cfca.h">
-      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
