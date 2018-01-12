@@ -136,7 +136,11 @@ namespace bumo {
 			//create a tempory source address
 			protocol::Account account;
 			account.set_address(parameter_.source_address_);
+			account.set_nonce(0);
+			account.set_balance(100000000000000000);
 			std::shared_ptr<AccountFrm> dest_account = std::make_shared<AccountFrm>(account);
+			dest_account->SetProtoMasterWeight(1);
+			dest_account->SetProtoTxThreshold(1);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
 				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
 				exe_result_ = false;
@@ -294,9 +298,6 @@ namespace bumo {
 		consensus_value_.set_close_time(lcl.close_time() + 1);
 		tx_timeout_ = utils::MICRO_UNITS_PER_SEC;
 		
-		closing_ledger_->value_ = std::make_shared<protocol::ConsensusValue>(consensus_value_);
-		closing_ledger_->lpledger_context_ = this;
-
 		exe_result_ = closing_ledger_->Apply(consensus_value_, this, tx_timeout_, timeout_tx_index_);
 		return exe_result_;
 	}
@@ -389,19 +390,23 @@ namespace bumo {
 		Json::Value &rets,
 		Json::Value &fee) {
 		LedgerContext *ledger_context = nullptr;
-		if (type == LedgerContext::AT_TEST_V8)
+		std::string thread_name = "test";
+		if (type == LedgerContext::AT_TEST_V8){
+			thread_name = "test-contract";
 			ledger_context = new LedgerContext(type, *((ContractTestParameter*)parameter));
-		else if (type == LedgerContext::AT_TEST_TRANSACTION)
+		}
+		else if (type == LedgerContext::AT_TEST_TRANSACTION){
+			thread_name = "test-transaction";
 			ledger_context = new LedgerContext(type, ((TransactionTestParameter*)parameter)->consensus_value_);
+		}
 		else {
 			LOG_ERROR("Test type(%d) error",type);
 			delete ledger_context;
 			return false;
 		}
 
-
-		if (!ledger_context->Start("test-contract")) {
-			LOG_ERROR_ERRNO("Start test contract thread failed",
+		if (!ledger_context->Start(thread_name)) {
+			LOG_ERROR_ERRNO("Start test thread failed",
 				STD_ERR_CODE, STD_ERR_DESC);
 			result.set_code(protocol::ERRCODE_INTERNAL_ERROR);
 			result.set_desc("Start thread failed");
@@ -441,8 +446,9 @@ namespace bumo {
 			env_store.set_close_time(ledger->GetProtoHeader().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
-
-			//txs[txs.size()] = Proto2Json(env_store);
+			
+			if (type == LedgerContext::AT_TEST_TRANSACTION)
+				txs[txs.size()] = Proto2Json(env_store);
 			//batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 
 			for (size_t j = 0; j < ptr->instructions_.size(); j++) {

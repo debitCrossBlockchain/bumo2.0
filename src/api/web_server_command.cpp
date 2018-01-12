@@ -236,6 +236,7 @@ namespace bumo {
 		test_parameter.exe_or_query_ = body["exe_or_query"].asBool();
 		test_parameter.contract_address_ = body["contract_address"].asString();
 		test_parameter.source_address_ = body["source_address"].asString();
+		test_parameter.fee_ = body["fee"].asInt64();
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc;
@@ -440,7 +441,6 @@ namespace bumo {
 
 			if (result.code() == protocol::ERRCODE_SUCCESS) {
 				TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-				GlueManager::Instance().OnTransaction(ptr, result);
 				//...TODO
 				*tx_set->add_txs() = tran_env;
 				Result exe_result;
