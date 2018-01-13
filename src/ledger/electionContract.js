@@ -5,13 +5,13 @@ var effectiveVotingInterval = 24 * 60 * 60 * 1000 * 1000;
 var applicantsVar    = 'validator_applicants';
 var proposalVar      = 'voting_proposal';
 var abolishReasonVar = 'abolish_reason';
-var ballotVar      = 'ballot';
-var abolishVar     = 'abolish_validator';
-var startTimeVar   = 'voting_start_time';
-var expiredTimeVar = 'voting_expired_time';
-var initiatorVar   = 'voting_initiator';
-var equitiesVar    = 'equity_structure';
-var auditAddress   = 'a00141213640ec3b86a61baecba33326acfc6e21db5b59';
+var ballotVar        = 'ballot';
+var abolishVar       = 'abolish_validator';
+var startTimeVar     = 'voting_start_time';
+var expiredTimeVar   = 'voting_expired_time';
+var initiatorVar     = 'voting_initiator';
+var equitiesVar      = 'equity_structure';
+var auditAddress     = 'buQnwLLuFTNeNJoZLM2WpJg3W99rBxuU4J9g'; //privbzqXhdxx5RdAkFVs2dKe3FGipKJgEZ4oaKSg3d8kdmUEzUwz1SwA
 
 function main(input_str)
 {
