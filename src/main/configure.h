@@ -99,7 +99,7 @@ namespace bumo {
 		bool test_model_;
 		std::string genesis_account_;
 		std::string fees_vote_account_;
-		std::string election_account_;
+		std::string validators_vote_account_;
 		utils::StringList hardfork_points_;
 		bool Load(const Json::Value &value);
 	};
