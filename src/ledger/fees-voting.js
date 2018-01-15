@@ -9,7 +9,8 @@ var victors_records = [];
 var validators = [];
 
 
-function Storage(key, value) {
+function Storage(key, value,del) {
+  if(!del) del =false;
   var transaction =
     {
       'operations':
@@ -19,7 +20,8 @@ function Storage(key, value) {
             'set_metadata':
               {
                 'key': key,
-                'value': JSON.stringify(value)
+                'value': JSON.stringify(value),
+                'delete_flag':del
               }
           }
         ]
@@ -70,7 +72,6 @@ function enroll_exist(enroll_id) {
 
 function account_voted(para) {
   var voted = false;
-  if(vote_records[para.vote_id]) throw 'Vote id('+para.vote_id + ') is exist';
   for (var key in vote_records) {
     if(vote_records[key].account == para.account && vote_records[key].enroll_id == para.enroll_id){
       voted = true;
@@ -79,6 +80,25 @@ function account_voted(para) {
   }
   return voted;
 }
+
+function account_voted(para) {
+  var voted = false;
+  for (var key in vote_records) {
+    if(vote_records[key].enroll_id == para.enroll_id){
+      var key="vote-records-"+para.enroll_id;
+      var vote_records_enroll = callBackGetAccountMetaData(thisAddress, key);
+      if(vote_records_enroll ==false) return false;
+      else{
+        if(vote_records_enroll[para.account]){
+          voted = true;
+          break;
+        }
+      }
+    }
+  }
+  return voted;
+}
+
 
 function account_enrolled(enroll_fee) {
   var enrolled = false;
@@ -91,23 +111,19 @@ function account_enrolled(enroll_fee) {
   return enrolled;
 }
 
-function add_vote(vote) {
-  v = { 'account': vote.account, 'vote_id': vote.vote_id, 'enroll_id': vote.enroll_id, 'fee_type': enroll_records[vote.enroll_id].fee_type, 'price': enroll_records[vote.enroll_id].price }
-  vote_records[vote.vote_id] = v;
-}
 
-function del_vote(account_id, vote_id) {
-  var be_del = false;
-  if (vote_records[vote_id]) {
-    if (vote_records[vote_id].account == account_id) {
-      be_del = true;
-      delete vote_records[vote_id];
+
+function del_expire_enroll(){
+  var cur_seq =consensusValue.sequence;
+  for(var enroll_id in enroll_records){
+    if(cur_seq -enroll_records[enroll_id].sequence>100){
+      del_enroll(enroll_records[enroll_id].account,enroll_id)
     }
   }
-  return be_del;
 }
 
 function add_enroll(enroll) {
+  enroll["start_time"] =consensusValue.sequence;
   enroll_records[enroll.enroll_id] = enroll;
 }
 
@@ -118,9 +134,12 @@ function del_enroll(account_id, enroll_id) {
     if (enroll_records[enroll_id].account == account_id) {
       be_del = true;
       delete enroll_records[enroll_id];
-      for (var k in vote_records) {
-        if (vote_records[k].enroll_id == enroll_id) delete vote_records[k];
-      }
+      delete vote_records[enroll_id];
+      var key="vote-records-"+enroll_id;
+      var value="";
+      Storage(key,value,true);
+      Storage(vote_records_key, vote_records);
+      Storage(enroll_records_key, enroll_records);
     }
   }
   return be_del;
@@ -133,94 +152,98 @@ function do_voting(para) {
   }
 
   load_vote_records();
-  if (account_voted(para.account, para.enroll_id)) {
-    throw 'Account(' + para.account + ') have voted the enroll(' + para.enroll_id + ')';
+  var key="vote-records-"+para.enroll_id;
+  if(vote_records[para.enroll_id]){    
+    var vote_records_v = callBackGetAccountMetaData(thisAddress, key);
+    if(vote_records_v ==false) 
+      throw 'vote_records exist key(' + para.enroll_id + ') ,but not exist body';
+    else
+    {
+      if(vote_records_v[para.account]){
+        throw 'Account(' + para.account + ') have voted the enroll(' + para.enroll_id + ')';
+      }
+      else{
+        vote_records[para.enroll_id]=vote_records[para.enroll_id]+1;
+        vote_records_v[para.account] =para;
+        Storage(key,vote_records_v);
+      }
+    }
   }
-  add_vote(para);
+  else{
+    vote_records[para.enroll_id]=1;
+    var vote_records_v ={};
+    vote_records_v[para.account] =para;
+    Storage(key,vote_records_v);
+  }
+
   Storage(vote_records_key, vote_records);
   return true;
 }
 
-function undo_voting(para) {
-  load_vote_records();
-  if (!del_vote(para.account, para.vote_id)) {
-    throw 'Account(' + para.account + ') vote(' + para.vote_id + ') not exist';
-  }
-  load_enroll_records();
-  Storage(vote_records_key, vote_records);
-  return true;
-}
 
 function enroll_fee(para) {
   load_enroll_records();
   if (account_enrolled(para)) {
     throw 'Account' + para.account + ') has enroll the fee type(' + para.fee_type + ')';
   }
+  load_vote_records();
   add_enroll(para);
   Storage(enroll_records_key, enroll_records);
   return true;
 }
 
-function cancel_enroll_fee(para) {
-  load_vote_records();
-  load_enroll_records();
-  if (!del_enroll(para.account, para.enroll_id)) {
-    throw 'Account(' + para.account + ') enroll(' + para.enroll_id + ') not exist';
-  }
-
-  Storage(vote_records_key, vote_records);
-  Storage(enroll_records_key, enroll_records);
-  return true;
-}
 
 function vote_statistic() {
   get_validators();
   var thredhold = Math.floor((validators.length * 2 / 3) + 1);
   var victors_records_tmp = [];
   var statistic_records_tmp = [];
-  for (var vote_id in vote_records) {
-    var vote = vote_records[vote_id];
-    if(!enroll_records[vote.enroll_id]) continue;    
-    if(!validators.includes(enroll_records[vote.enroll_id].account)) continue;
+  for (var enroll_id in vote_records) {
 
-    if (statistic_records_tmp[vote.fee_type]) {
-      var s = statistic_records_tmp[vote.fee_type].statistic;
-      if (s[vote.enroll_id]) {
-        s[vote.enroll_id].count += 1;
-        callBackLog('thredhold:'+thredhold+" count:"+s[vote.enroll_id].count);
-        if (s[vote.enroll_id].count >= thredhold) {
-          victors_records_tmp[vote.fee_type] = { 'fee_type': vote.fee_type, 'enroll_id': vote.enroll_id, 'count': s[vote.enroll_id].count, 'price': vote.price };
+    var enroll =enroll_records[enroll_id];
+
+    if (!validators.includes(enroll_records[enroll_id].account)) continue;
+
+    if (statistic_records_tmp[enroll.fee_type]) {
+      var s = statistic_records_tmp[enroll.fee_type].statistic;
+      if (s[enroll_id]) {
+        s[enroll_id].count = vote_records[enroll_id];
+        callBackLog('thredhold:' + thredhold + " count:" + s[enroll_id].count);
+
+        if (s[enroll_id].count >= thredhold) {
+          victors_records_tmp[enroll.fee_type] = { 'fee_type': enroll.fee_type, 'enroll_id': enroll_id, 'count': s[enroll_id].count, 'price': enroll.price };
         }
-      }
-      else {
-        s[vote.enroll_id] = { 'enroll_id': vote.enroll_id, 'price': vote.price, 'count': 1 };
       }
     }
     else {
       var statistic = {};
-      statistic[vote.enroll_id] = { 'enroll_id': vote.enroll_id, 'price': vote.price, 'count': 1 };
-      statistic_records_tmp[vote.fee_type] = { 'fee_type': vote.fee_type, 'statistic': statistic };
+      statistic[enroll_id] = { 'enroll_id': enroll_id, 'price': enroll_records[enroll_id].price, 'count': vote_records[enroll_id] };
+      statistic_records_tmp[enroll.fee_type] = { 'fee_type': enroll.fee_type, 'statistic': statistic };
+
+      if (statistic[enroll_id].count >= thredhold) {
+        victors_records_tmp[enroll.fee_type] = { 'fee_type': enroll.fee_type, 'enroll_id': enroll_id, 'count': statistic[enroll_id].count, 'price': enroll.price };
+      }
     }
-  }
 
-  victors_records = victors_records_tmp;
-  statistic_records = statistic_records_tmp;
+    victors_records = victors_records_tmp;
+    statistic_records = statistic_records_tmp;
 
-  var ve_change = false;
-  for (var i in victors_records) {    
-    var k =victors_records[i].enroll_id;
-    callBackLog('delete victors enroll_id:'+victors_records[i].enroll_id);
-    if(k !=enroll_records[k].enroll_id) throw 'enroll_records key('+k+') != enroll_id('+enroll_records[k].enroll_id+')';
-    var ve_change =del_enroll(enroll_records[k].account ,enroll_records[k].enroll_id);
-  }
-  if (ve_change) {
-    Storage(vote_records_key, vote_records);
-    Storage(enroll_records_key, enroll_records);
-  }  
-  Storage(statistic_records_key, statistic_records);
-  if(victors_records.length>0){
-    Storage(victors_records_key, victors_records);
-    callBackOutputLedger(victors_records);
+    var ve_change = false;
+    for (var i in victors_records) {
+      var k = victors_records[i].enroll_id;
+      callBackLog('delete victors enroll_id:' + victors_records[i].enroll_id);
+      if (k != enroll_records[k].enroll_id) throw 'enroll_records key(' + k + ') != enroll_id(' + enroll_records[k].enroll_id + ')';
+      var ve_change = del_enroll(enroll_records[k].account, enroll_records[k].enroll_id);
+    }
+    if (ve_change) {
+      Storage(vote_records_key, vote_records);
+      Storage(enroll_records_key, enroll_records);
+    }
+    Storage(statistic_records_key, statistic_records);
+    if (victors_records.length > 0) {
+      Storage(victors_records_key, victors_records);
+      callBackOutputLedger(victors_records);
+    }
   }
 }
 
@@ -254,17 +277,11 @@ function main(input) {
   if (para.do_voting) {
     do_voting(para.do_voting);
     vote_statistic();
-  }
-  else if (para.undo_voting) {
-    undo_voting(para.undo_voting);
-    vote_statistic();
+    del_expire_enroll();
   }
   else if (para.enroll_fee) {
     enroll_fee(para.enroll_fee);
-  }
-  else if (para.cancel_enroll_fee) {
-    cancel_enroll_fee(para.cancel_enroll_fee);
-    vote_statistic();
+    del_expire_enroll();
   }
   else {
     throw 'main input para error';
