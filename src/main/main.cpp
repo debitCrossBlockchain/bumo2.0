@@ -29,6 +29,7 @@
 #include <monitor/monitor_manager.h>
 #include "configure.h"
 
+void SaveWSPort();
 void RunLoop();
 int main(int argc, char *argv[]){
 	utils::Thread::SetCurrentThreadName("bubi-thread");
@@ -198,6 +199,8 @@ int main(int argc, char *argv[]){
 		}
 		object_exit.Push(std::bind(&bumo::WebServer::Exit, &web_server));
 		LOG_INFO("Initialize web server successful");
+
+        SaveWSPort();
 		
 		bumo::MonitorManager &monitor_manager = bumo::MonitorManager::Instance();
 		if (!bumo::g_enable_ || !monitor_manager.Initialize()) {
@@ -263,4 +266,18 @@ void RunLoop(){
 
 		utils::Sleep(1);
 	}
+}
+
+void SaveWSPort(){    
+    std::string tmp_file = bumo::Configure::Instance().db_configure_.tmp_file_;
+    utils::File file;
+    if (file.Open(bumo::Configure::Instance().db_configure_.tmp_file_, utils::File::FILE_M_WRITE | utils::File::FILE_M_TEXT))
+    {
+        std::string line = utils::String::Format("webserver port:%d\n", bumo::WebServer::Instance().GetServerPort());
+        file.Write(line.c_str(), 1, line.length());
+        line = utils::String::Format("wsserver port:%d", bumo::WebSocketServer::Instance().GetServerPort(bumo::Configure::Instance().wsserver_configure_.listen_address_));
+        file.Write(line.c_str(), 1, line.length());
+        file.Flush();
+        file.Close();
+    }
 }

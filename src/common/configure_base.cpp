@@ -26,6 +26,7 @@ namespace bumo {
 		tmp_path_ = "tmp";
 		async_write_sql_ = false; //default sync write sql
 		async_write_kv_ = false; //default sync write kv
+        tmp_file_ = "";
 	}
 
 	DbConfigure::~DbConfigure() {}
@@ -40,7 +41,7 @@ namespace bumo {
 		ConfigureBase::GetValue(value, "tmp_path", tmp_path_);
 		ConfigureBase::GetValue(value, "async_write_sql", async_write_sql_);
 		ConfigureBase::GetValue(value, "async_write_kv", async_write_kv_);
-
+        ConfigureBase::GetValue(value, "tmp_file", tmp_file_);
 
 		std::string rational_decode;
 		std::vector<std::string> nparas = utils::String::split(rational_string_, " ");

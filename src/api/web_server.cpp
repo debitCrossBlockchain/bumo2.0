@@ -29,7 +29,8 @@ namespace bumo {
 		server_ptr_(NULL),
 		context_(NULL),
 		running(NULL),
-		thread_count_(0)
+		thread_count_(0),
+        port_(0)
 	{
 	}
 
@@ -66,6 +67,8 @@ namespace bumo {
 
 		utils::InetAddress address = webserver_config.listen_addresses_.front();
 		server_ptr_ = new http::server::server(address.ToIp(), address.GetPort(), context_, thread_count_);
+        port_ =server_ptr_->GetServerPort();
+
 
 		server_ptr_->SetHome(utils::File::GetBinHome() + "/" + webserver_config.directory_);
 
@@ -215,4 +218,8 @@ namespace bumo {
 		data["expire_request_count"] = server_ptr_->expire_count_;
 		data["thread_count"] = thread_count_;
 	}
+
+    unsigned short WebServer::GetServerPort(){
+        return port_;
+    }
 }

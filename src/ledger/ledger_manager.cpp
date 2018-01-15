@@ -933,6 +933,9 @@ namespace bumo {
 		do {
 			if (ledger_context->transaction_stack_.size() > General::CONTRACT_MAX_RECURSIVE_DEPTH) {
 				txfrm->result_.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_RECURSION);
+				//add byte fee
+				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
+				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
 				break;
 			}
 
@@ -965,15 +968,6 @@ namespace bumo {
 				LOG_ERROR("%s", txfrm->GetResult().desc().c_str());
 				return result;
 			}
-	
-			//throw the contract
-			bottom_tx->AddRealFee(txfrm->GetRealFee());
-			if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
-				result.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-				result.set_desc("Fee not enough");
-				LOG_ERROR_ERRNO("Transaction(%s) Fee not enough", utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str());
-				return result;
-			}
 
 			protocol::TransactionEnvStore tx_store;
 			tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
@@ -995,8 +989,6 @@ namespace bumo {
 			return result;
 		} while (false);
 
-		//caculate byte fee
-		back->AddRealFee(txfrm->GetRealFee());
 		//
 		protocol::TransactionEnvStore tx_store;
 		tx_store.set_error_code(txfrm->GetResult().code());

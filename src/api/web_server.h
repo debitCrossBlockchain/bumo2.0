@@ -37,6 +37,7 @@ namespace bumo {
 		asio::ssl::context *context_;
 		bool running;
 		size_t thread_count_;
+        unsigned short port_;
 
 		void FileNotFound(const http::server::request &request, std::string &reply);
 		void Hello(const http::server::request &request, std::string &reply);
@@ -82,6 +83,7 @@ namespace bumo {
 		bool Initialize(WebServerConfigure &webserver_configure);
 		bool Exit();
 		void GetModuleStatus(Json::Value &data);
+        unsigned short GetServerPort();
 	};
 }
 

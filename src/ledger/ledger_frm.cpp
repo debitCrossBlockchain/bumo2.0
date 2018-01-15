@@ -32,6 +32,7 @@ namespace bumo {
 		apply_time_ = -1;
 		total_fee_ = 0;
 		total_real_fee_ = 0;
+		is_test_mode_ = false;
 	}
 
 	
@@ -237,7 +238,7 @@ namespace bumo {
 			return true;
 		}
 		protocol::ValidatorSet set;
-		int64_t seq = ledger_.header().seq() - 1;
+		int64_t seq = LedgerManager::Instance().GetLastClosedLedger().seq() - 1;
 		if (!LedgerManager::Instance().GetValidators(seq, set))	{
 			LOG_ERROR("Get validator failed of ledger seq(" FMT_I64 ")", seq);
 			return false;
@@ -250,7 +251,7 @@ namespace bumo {
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = seq % set.validators_size();
 		int64_t fee = tfee / set.validators_size();
-		for (int32_t i = 0; i < set.validators_size(); i++) {
+		for (size_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
 			if (!environment_->GetEntry(set.validators(i), account)) {
 				account =CreatBookKeeperAccount(set.validators(i));
@@ -377,5 +378,13 @@ namespace bumo {
 			}
 		}		
 		return change;
+	}
+
+	void LedgerFrm::SetTestMode(bool test_mode){
+		is_test_mode_ = test_mode;
+	}
+
+	bool LedgerFrm::IsTestMode(){
+		return is_test_mode_;
 	}
 }

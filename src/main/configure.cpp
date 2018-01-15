@@ -19,7 +19,8 @@
 #include <utils/logger.h>
 #include <common/general.h>
 #include "configure.h"
-
+#include <common/private_key.h>
+#include <utils/net.h>
 namespace bumo {
 
 	P2pNetwork::P2pNetwork() :
@@ -38,8 +39,12 @@ namespace bumo {
 
 	bool P2pConfigure::Load(const Json::Value &value) {
 		Configure::GetValue(value, "node_private_key", node_private_key_);
-		Configure::GetValue(value, "network_id", network_id_);
-		
+		if (utils::String::Trim(node_private_key_).empty()){
+			PrivateKey priv_key(SIGNTYPE_ED25519);
+			std::string private_key =priv_key.GetEncPrivateKey();
+			node_private_key_ = utils::Aes::CryptoHex(private_key, bumo::GetDataSecuretKey()); 
+		}
+		Configure::GetValue(value, "network_id", network_id_);		
 		consensus_network_configure_.Load(value["consensus_network"]);
 		node_private_key_ = utils::Aes::HexDecrypto(node_private_key_, GetDataSecuretKey());
 		return true;
@@ -64,6 +69,9 @@ namespace bumo {
 	bool WsServerConfigure::Load(const Json::Value &value) {
 		std::string address;
 		Configure::GetValue(value, "listen_address", address);
+        if (utils::String::Trim(address).empty())
+            address = "0.0.0.0";
+
 		listen_address_ = utils::InetAddress(address);
 		Configure::GetValue(value, "listen_tx_status", listen_tx_status_);
 
@@ -89,6 +97,8 @@ namespace bumo {
 		ConfigureBase::GetValue(value, "listen_addresses", listen_address_value);
 		utils::StringVector address_array = utils::String::Strtok(listen_address_value, ',');
 		for (size_t i = 0; i < address_array.size(); i++) {
+            if (utils::String::Trim(address_array[i]).empty())
+                address_array[i] = "0.0.0.0";
 			listen_addresses_.push_back(utils::InetAddress(address_array[i]));
 		}
 		ConfigureBase::GetValue(value, "index_name", index_name_);

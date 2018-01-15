@@ -333,6 +333,34 @@ public:
         return *m_io_service;
     }
 
+    /// Get local TCP endpoint
+    /**
+    * Extracts the local endpoint from the acceptor. This represents the
+    * address that WebSocket++ is listening on.
+    *
+    * Sets a bad_descriptor error if the acceptor is not currently listening
+    * or otherwise unavailable.
+    *
+    * @since 0.7.0
+    *
+    * @param ec Set to indicate what error occurred, if any.
+    * @return The local endpoint
+    */
+    lib::asio::ip::tcp::endpoint get_local_endpoint(lib::asio::error_code & ec) {
+        if (m_acceptor) {
+            return m_acceptor->local_endpoint(ec);
+        }
+        else {
+            ec = lib::asio::error::make_error_code(lib::asio::error::bad_descriptor);
+            return lib::asio::ip::tcp::endpoint();
+        }
+    }
+
+    lib::asio::ip::tcp::endpoint get_local_endpoint() {
+        lib::error_code ec;
+        return get_local_endpoint(ec);
+    }
+
     /// Set up endpoint for listening manually (exception free)
     /**
      * Bind the internal acceptor using the specified settings. The endpoint

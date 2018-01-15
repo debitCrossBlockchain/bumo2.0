@@ -208,7 +208,7 @@ namespace bumo {
 			if (bytes_fee > 0 && tran_fee > 0 ) {				
 				if (tran_fee < bytes_fee) {
 					std::string error_desc = utils::String::Format(
-						"Transaction(%s) fee(%u<%d) not enought",
+                        "Transaction(%s) fee(" FMT_I64 ")< bytes_fee(" FMT_I64 ") not enought",
 						utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 					result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
@@ -598,7 +598,7 @@ namespace bumo {
 				break;
 			}
 
-			if (!bool_contract){
+			if (!bool_contract && !ledger_->IsTestMode()){
 				if (!opt->CheckSignature(environment_)) {
 					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::Bin4ToHexString(GetContentHash()).c_str());
 					result_ = opt->GetResult();

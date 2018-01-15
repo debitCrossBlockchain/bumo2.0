@@ -298,6 +298,7 @@ namespace bumo {
 		consensus_value_.set_close_time(lcl.close_time() + 1);
 		tx_timeout_ = utils::MICRO_UNITS_PER_SEC;
 		
+		closing_ledger_->SetTestMode(true);
 		exe_result_ = closing_ledger_->Apply(consensus_value_, this, tx_timeout_, timeout_tx_index_);
 		return exe_result_;
 	}

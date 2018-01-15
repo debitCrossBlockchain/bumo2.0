@@ -74,8 +74,11 @@ namespace bumo {
 		bool AllocateFee();
 		AccountFrm::pointer CreatBookKeeperAccount(const std::string& account_address);
 		bool GetVotedFee(protocol::FeeConfig& fee_config);
+		void SetTestMode(bool test_mode);
+		bool IsTestMode();
 	private:
 		protocol::Ledger ledger_;
+		bool is_test_mode_;
 	public:
 		std::shared_ptr<protocol::ConsensusValue> value_;
 		std::vector<TransactionFrm::pointer> apply_tx_frms_;
