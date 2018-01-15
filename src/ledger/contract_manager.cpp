@@ -1339,7 +1339,7 @@ namespace bumo{
 			v8::String::Utf8Value token(args.GetIsolate()->GetCurrentContext()->GetSecurityToken()->ToString());
 			std::string contractor(ToCString(token));
 
-			std::string election_account = Configure::Instance().ledger_configure_.election_account_;
+			std::string election_account = Configure::Instance().ledger_configure_.validators_vote_account_;
 			if (contractor != election_account)
 			{
 				LOG_ERROR("contract(%s) has no permission to call CallBackSetValidators interface.", contractor.c_str());
