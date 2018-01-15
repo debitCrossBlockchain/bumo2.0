@@ -24,6 +24,7 @@ namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
 		check_interval_ = 500 * utils::MICRO_UNITS_PER_MILLI;
 		timer_name_ = "Ledger Mananger";
+		chain_max_ledger_probaly_ = 0;
 	}
 
 	LedgerManager::~LedgerManager() {
@@ -485,6 +486,9 @@ namespace bumo {
 		data["hash_type"] = HashWrapper::GetLedgerHashType() == HashWrapper::HASH_TYPE_SM3 ? "sm3" : "sha256";
 		data["sync"] = sync_.ToJson();
 		context_manager_.GetModuleStatus(data["ledger_context"]);
+
+		data["chain_max_ledger_seq"] = chain_max_ledger_probaly_ > data["ledger_sequence"].asInt64() ?
+		chain_max_ledger_probaly_ : data["ledger_sequence"].asInt64();
 	}
 
 
@@ -771,6 +775,10 @@ namespace bumo {
 				gl.set_end(MIN(ledgers.max_seq(), next + 4));
 				gl.set_timestamp(current_time);
 				RequestConsensusValues(peer_id, gl, current_time);
+			}
+
+			if (ledgers.max_seq() > chain_max_ledger_probaly_) {
+				chain_max_ledger_probaly_ = ledgers.max_seq();
 			}
 		}
 	}

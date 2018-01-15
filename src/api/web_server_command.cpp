@@ -99,21 +99,10 @@ namespace bumo {
 						}
 
 						signpro->set_sign_data(decodesig);
-                        signpro->set_public_key(pubkey.GetEncPublicKey());
+						signpro->set_public_key(pubkey.GetEncPublicKey());
 					}
 
-					// add node signature
 					std::string content = tran->SerializeAsString();
-					PrivateKey privateKey(bumo::Configure::Instance().p2p_configure_.node_private_key_);
-					if (!privateKey.IsValid()) {
-						result.set_code(protocol::ERRCODE_INVALID_PRIKEY);
-						result.set_desc("signature failed");
-						break;
-					}
-					std::string sign = privateKey.Sign(content);
-					protocol::Signature *signpro = tran_env.add_signatures();
-					signpro->set_sign_data(sign);
-                    signpro->set_public_key(privateKey.GetEncPublicKey());
 					result_item["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 				else {

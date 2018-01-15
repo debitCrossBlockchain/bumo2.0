@@ -109,6 +109,7 @@ namespace bumo {
 
 		utils::ReadWriteLock lcl_header_mutex_;
 		protocol::LedgerHeader lcl_header_;
+		int64_t chain_max_ledger_probaly_;
 
 		struct SyncStat{
 			int64_t send_time_;

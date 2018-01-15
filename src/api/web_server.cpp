@@ -20,6 +20,7 @@
 #include <glue/glue_manager.h>
 #include <ledger/transaction_frm.h>
 #include <ledger/ledger_manager.h>
+#include "websocket_server.h"
 #include "web_server.h"
 
 namespace bumo {
@@ -77,6 +78,7 @@ namespace bumo {
 		server_ptr_->addRoute("hello", std::bind(&WebServer::Hello, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("createAccount", std::bind(&WebServer::CreateAccount, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getAccount", std::bind(&WebServer::GetAccount, this, std::placeholders::_1, std::placeholders::_2));
+		server_ptr_->addRoute("getAccountBase", std::bind(&WebServer::GetAccountBase, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getGenesisAccount", std::bind(&WebServer::GetGenesisAccount, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getAccountMetaData", std::bind(&WebServer::GetAccountMetaData, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getAccountAssets", std::bind(&WebServer::GetAccountAssets, this, std::placeholders::_1, std::placeholders::_2));
@@ -145,7 +147,7 @@ namespace bumo {
 		reply_json["ledger_version"] = utils::String::ToString(General::LEDGER_VERSION);
 		reply_json["overlay_version"] = utils::String::ToString(General::OVERLAY_VERSION);
 		reply_json["current_time"] = utils::Timestamp::Now().ToFormatString(true);
-		reply_json["websocket_address"] =  Configure::Instance().wsserver_configure_.listen_address_.ToIpPort();
+		reply_json["websocket_address"] =  WebSocketServer::Instance().GetListenPort();
 		reply_json["hash_type"] = Configure::Instance().ledger_configure_.hash_type_;
 		reply = reply_json.toFastString();
 	}
@@ -219,7 +221,7 @@ namespace bumo {
 		data["thread_count"] = thread_count_;
 	}
 
-    unsigned short WebServer::GetServerPort(){
+	uint16_t WebServer::GetListenPort(){
         return port_;
     }
 }

@@ -42,6 +42,7 @@ namespace bumo {
 		void FileNotFound(const http::server::request &request, std::string &reply);
 		void Hello(const http::server::request &request, std::string &reply);
 		void CreateAccount(const http::server::request &request, std::string &reply);
+		void GetAccountBase(const http::server::request &request, std::string &reply);
 		void GetAccount(const http::server::request &request, std::string &reply);
 		void GetGenesisAccount(const http::server::request &request, std::string &reply);
 		void GetAccountMetaData(const http::server::request &request, std::string &reply);
@@ -83,7 +84,7 @@ namespace bumo {
 		bool Initialize(WebServerConfigure &webserver_configure);
 		bool Exit();
 		void GetModuleStatus(Json::Value &data);
-        unsigned short GetServerPort();
+		uint16_t GetListenPort();
 	};
 }
 

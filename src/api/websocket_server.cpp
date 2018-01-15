@@ -146,19 +146,6 @@ namespace bumo {
 			printf("%s",real_json.toStyledString().c_str());
 			std::string content = tran_env.transaction().SerializeAsString();
 
-			// add node signature
-			PrivateKey privateKey(bumo::Configure::Instance().p2p_configure_.node_private_key_);
-			if (!privateKey.IsValid()) {
-				result.set_code(protocol::ERRCODE_INVALID_PRIKEY);
-				result.set_desc("Node signature failed");
-				LOG_ERROR("Node private key is invalid");
-				break;
-			}
-			std::string sign = privateKey.Sign(content);
-			protocol::Signature *signpro = tran_env.add_signatures();
-			signpro->set_sign_data(sign);
-            signpro->set_public_key(privateKey.GetEncPublicKey());
-
 			TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
 			GlueManager::Instance().OnTransaction(ptr, result);
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
@@ -183,6 +170,7 @@ namespace bumo {
 
 	void WebSocketServer::GetModuleStatus(Json::Value &data) {
 		data["name"] = "websocket_server";
+		data["listen_port"] = GetListenPort();
 		Json::Value &peers = data["clients"];
 		int32_t active_size = 0;
 		utils::MutexGuard guard(conns_list_lock_);

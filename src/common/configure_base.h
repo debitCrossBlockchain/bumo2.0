@@ -51,7 +51,6 @@ namespace bumo {
 		std::string rational_string_;
 		std::string rational_db_type_;
 		std::string tmp_path_;
-        std::string tmp_file_;
 		bool async_write_sql_;
 		bool async_write_kv_;
 		bool Load(const Json::Value &value);

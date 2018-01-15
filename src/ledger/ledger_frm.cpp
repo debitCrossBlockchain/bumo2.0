@@ -251,7 +251,7 @@ namespace bumo {
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = seq % set.validators_size();
 		int64_t fee = tfee / set.validators_size();
-		for (size_t i = 0; i < set.validators_size(); i++) {
+		for (int32_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
 			if (!environment_->GetEntry(set.validators(i), account)) {
 				account =CreatBookKeeperAccount(set.validators(i));

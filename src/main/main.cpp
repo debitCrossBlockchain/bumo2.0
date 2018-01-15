@@ -243,7 +243,7 @@ int main(int argc, char *argv[]){
 }
 
 void RunLoop(){
-	int64_t check_module_interval = utils::MICRO_UNITS_PER_SEC;
+	int64_t check_module_interval = 2 * utils::MICRO_UNITS_PER_SEC;
 	int64_t last_check_module = 0;
 	while (bumo::g_enable_){
 		int64_t current_time = utils::Timestamp::HighResolution();
@@ -269,15 +269,15 @@ void RunLoop(){
 }
 
 void SaveWSPort(){    
-    std::string tmp_file = bumo::Configure::Instance().db_configure_.tmp_file_;
-    utils::File file;
-    if (file.Open(bumo::Configure::Instance().db_configure_.tmp_file_, utils::File::FILE_M_WRITE | utils::File::FILE_M_TEXT))
-    {
-        std::string line = utils::String::Format("webserver port:%d\n", bumo::WebServer::Instance().GetServerPort());
-        file.Write(line.c_str(), 1, line.length());
-        line = utils::String::Format("wsserver port:%d", bumo::WebSocketServer::Instance().GetServerPort(bumo::Configure::Instance().wsserver_configure_.listen_address_));
-        file.Write(line.c_str(), 1, line.length());
-        file.Flush();
-        file.Close();
-    }
+    std::string tmp_file = utils::File::GetTempDirectory() +"/bumo_listen_port";
+	Json::Value json_port = Json::Value(Json::objectValue);
+	json_port["webserver_port"] = bumo::WebServer::Instance().GetListenPort();
+	json_port["wsserver_port"] = bumo::WebSocketServer::Instance().GetListenPort();
+	utils::File file;
+	if (file.Open(tmp_file, utils::File::FILE_M_WRITE | utils::File::FILE_M_TEXT))
+	{
+		std::string line = json_port.toFastString();
+		file.Write(line.c_str(), 1, line.length());
+		file.Close();
+	}
 }
