@@ -32,6 +32,7 @@
        	"genesis_account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",//privatekey:privbvYfqQyG3kZyHE4RX4TYVa32htw8xG4WdpCTrymPUJQ923XkKVbM
 		"validators_vote_account": "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY", //privatekey:privbzzsiyAFTC5FUr3UsAJPyfoHV1cJPhWk194d4g8ct4LA9XoK2yXJ
 		"fee_voting_account":"buQXmVZcwLprxtPkBSX934byL5uwsMq2tknX", //privatekey:privbz9Yg1Z24iVDcVntDa8mfEB3dF76jXbNPAf3MMrP7BQ6ceoCJ5xY
+		"fees" : {"base_reserve":100000000, "byte_fee" :100},
 		"hash_type": 0, //0: SHA256 1: SM3
 		"max_trans_per_ledger": 1000,
 		"max_trans_per_ledger": 1000,
