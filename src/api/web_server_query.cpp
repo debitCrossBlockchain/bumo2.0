@@ -25,6 +25,27 @@
 #include <ledger/kv_trie.h>
 
 namespace bumo {
+	void WebServer::GetAccountBase(const http::server::request &request, std::string &reply) {
+		std::string address = request.GetParamValue("address");
+
+		int32_t error_code = protocol::ERRCODE_SUCCESS;
+		AccountFrm::pointer acc = NULL;
+		int64_t balance = 0;
+		Json::Value reply_json = Json::Value(Json::objectValue);
+		Json::Value record = Json::Value(Json::arrayValue);
+		Json::Value &result = reply_json["result"];
+
+		if (!Environment::AccountFromDB(address, acc)) {
+			error_code = protocol::ERRCODE_NOT_EXIST;
+			LOG_TRACE("GetAccount fail, account(%s) not exist", address.c_str());
+		}
+		else {
+			acc->ToJson(result);
+		}
+
+		reply_json["error_code"] = error_code;
+		reply = reply_json.toStyledString();
+	}
 
 	void WebServer::GetAccount(const http::server::request &request, std::string &reply) {
 		std::string address = request.GetParamValue("address");

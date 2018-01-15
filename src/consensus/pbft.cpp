@@ -1136,7 +1136,6 @@ namespace bumo {
 			return ret;
 		}
 
-		SaveViewChange(saver);
 		return true;
 	}
 
@@ -1460,6 +1459,31 @@ namespace bumo {
 			}
 		}
 
+		//new instance
+		bool need_notify = true;
+		for (std::map<int64_t, protocol::PbftEnv>::iterator iter_pre = pre_prepares.begin();
+			iter_pre != pre_prepares.end();
+			iter_pre++) {
+
+			const protocol::PbftEnv &pre_prepare_env = iter_pre->second;
+			const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
+			PbftInstanceIndex index(pre_prepare.view_number(), pre_prepare.sequence());
+
+			if (pre_prepare.sequence() <= last_exe_seq_) {
+				continue;
+			}
+
+			//add new
+			PbftInstance pinstance;
+			pinstance.pre_prepare_msg_ = pre_prepare_env;
+			pinstance.phase_ = PBFT_PHASE_PREPREPARED;
+			pinstance.pre_prepare_ = pre_prepare;
+			pinstance.msg_buf_[pre_prepare_env.pbft().type()].push_back(pre_prepare_env);
+			pinstance.check_value_result_ = CheckValue(pinstance.pre_prepare_.value());
+			instances_.insert(std::make_pair(index, pinstance));
+			need_notify = false;
+		}
+
 		ValueSaver saver;
 		//SaveInstance(saver);
 
@@ -1507,7 +1531,8 @@ namespace bumo {
 		SaveViewChange(saver);
 		saver.Commit();
 
-		OnViewChanged();
+		notify_->OnResetCloseTimer();
+		if (need_notify) OnViewChanged();
 
 		return true;
 	}

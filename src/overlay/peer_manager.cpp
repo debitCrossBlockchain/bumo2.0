@@ -55,11 +55,12 @@ namespace bumo {
 		if (serial_num != NULL) {
 			serial_num_ = serial_num;
 		}
+
 		if (!priv_key_.From(Configure::Instance().p2p_configure_.node_private_key_)) {
 			LOG_ERROR("Initialize node private key failed");
 			return false;
 		}
-        peer_node_address_ = priv_key_.GetEncAddress();
+		peer_node_address_ = priv_key_.GetEncAddress();
 
 		SslParameter ssl_parameter;
 		ssl_parameter.enable_ = false;

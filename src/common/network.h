@@ -142,7 +142,7 @@ namespace bumo {
 
 		std::error_code ec_;
 		utils::Mutex conns_list_lock_;
-        unsigned short server_port_;
+        uint16_t listen_port_;
 	public:
 		Network(const SslParameter &ssl_parameter);
 		virtual ~Network();
@@ -151,7 +151,7 @@ namespace bumo {
 		void Stop();
 		//for client
 		bool Connect(std::string const & uri);
-        unsigned short GetServerPort(const utils::InetAddress &ip);
+		uint16_t GetListenPort() const;
 	protected:
 		//for server
 		void OnOpen(connection_hdl hdl);
