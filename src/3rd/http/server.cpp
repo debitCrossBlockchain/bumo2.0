@@ -158,6 +158,11 @@ void server::Stop(){
 	io_server_pool_.stop();
 }
 
+unsigned short server::GetServerPort() const {
+    asio::ip::tcp::endpoint local_ep =acceptor_.local_endpoint();
+    return local_ep.port();
+}
+
 std::string Replace(std::string &str, const std::string &from, const std::string &to)
 {
 	std::string::size_type pos = 0;

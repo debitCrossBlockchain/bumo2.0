@@ -326,16 +326,8 @@ namespace bumo {
 			protocol::TransactionEnv tran_env;
 			do {
 				if (json_item.isMember("transaction_blob")) {
-					if (!json_item.isMember("signatures")) {
-						result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-						result.set_desc("'signatures' value not exist");
-						break;
-					}
-
 					std::string decodeblob;
-					std::string decodesig;
-					//utils::decode_b16(json_item["transaction_blob"].asString(), decodeblob);
-					decodeblob;// = utils::String::HexStringToBin(json_item["transaction_blob"].asString());
+
 					if (!utils::String::HexStringToBin(json_item["transaction_blob"].asString(), decodeblob)) {
 						result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 						result.set_desc("'transaction_blob' value must be Hex");
@@ -349,44 +341,8 @@ namespace bumo {
 						LOG_ERROR("ParseFromString from decodeblob invalid");
 						break;
 					}
-
-					const Json::Value &signatures = json_item["signatures"];
-					for (uint32_t i = 0; i < signatures.size(); i++) {
-						const Json::Value &signa = signatures[i];
-						protocol::Signature *signpro = tran_env.add_signatures();
-
-						//utils::decode_b16(signa["sign_data"].asString(), decodesig);
-						decodesig = "";
-						if (!utils::String::HexStringToBin(signa["sign_data"].asString(), decodesig)) {
-							result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-							result.set_desc("'sign_data' value must be Hex");
-							break;
-						}
-
-						PublicKey pubkey(signa["public_key"].asString());
-						if (!pubkey.IsValid()) {
-							result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-							result.set_desc("'public_key' value not exist or parameter error");
-							LOG_ERROR("Invalid publickey (%s)", signa["public_key"].asString().c_str());
-							break;
-						}
-
-						signpro->set_sign_data(decodesig);
-                        signpro->set_public_key(pubkey.GetEncPublicKey());
-					}
-
-					// add node signature
+					
 					std::string content = tran->SerializeAsString();
-					PrivateKey privateKey(bumo::Configure::Instance().p2p_configure_.node_private_key_);
-					if (!privateKey.IsValid()) {
-						result.set_code(protocol::ERRCODE_INVALID_PRIKEY);
-						result.set_desc("signature failed");
-						break;
-					}
-					std::string sign = privateKey.Sign(content);
-					protocol::Signature *signpro = tran_env.add_signatures();
-					signpro->set_sign_data(sign);
-                    signpro->set_public_key(privateKey.GetEncPublicKey());
 					result_json["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 				else {
@@ -398,36 +354,8 @@ namespace bumo {
 						break;
 					}
 
-
 					std::string content = tran->SerializeAsString();
-					const Json::Value &private_keys = json_item["private_keys"];
-					for (uint32_t i = 0; i < private_keys.size(); i++) {
-						const std::string &private_key = private_keys[i].asString();
-
-						PrivateKey privateKey(private_key);
-						if (!privateKey.IsValid()) {
-							result.set_code(protocol::ERRCODE_INVALID_PRIKEY);
-							result.set_desc("signature failed");
-							break;
-						}
-
-						std::string sign = privateKey.Sign(content);
-						protocol::Signature *signpro = tran_env.add_signatures();
-						signpro->set_sign_data(sign);
-                        signpro->set_public_key(privateKey.GetEncPublicKey());
-					}
-
-					// add node signature
-					PrivateKey privateKey(bumo::Configure::Instance().p2p_configure_.node_private_key_);
-					if (!privateKey.IsValid()) {
-						result.set_code(protocol::ERRCODE_INVALID_PRIKEY);
-						result.set_desc("signature failed");
-						break;
-					}
-					std::string sign = privateKey.Sign(content);
-					protocol::Signature *signpro = tran_env.add_signatures();
-					signpro->set_sign_data(sign);
-                    signpro->set_public_key(privateKey.GetEncPublicKey());
+					const Json::Value &private_keys = json_item["private_keys"];					
 					result_json["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 

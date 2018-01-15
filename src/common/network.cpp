@@ -268,7 +268,7 @@ namespace bumo {
 	SslParameter::SslParameter() :enable_(false) {}
 	SslParameter::~SslParameter() {}
 
-	Network::Network(const SslParameter &ssl_parameter) : next_id_(0), enabled_(false), ssl_parameter_(ssl_parameter) {
+    Network::Network(const SslParameter &ssl_parameter) : next_id_(0), enabled_(false), ssl_parameter_(ssl_parameter), server_port_(0) {
 		last_check_time_ = 0;
 		connect_time_out_ = 60 * utils::MICRO_UNITS_PER_SEC;
 		std::error_code err;
@@ -437,12 +437,14 @@ namespace bumo {
 				if (ssl_parameter_.enable_) {
 					// listen on specified port
 					tls_server_.listen(ip.tcp_endpoint());
+                    server_port_ = tls_server_.get_local_endpoint().port();
 					// Start the server accept loop
 					tls_server_.start_accept();
 				}
 				else {
 					// listen on specified port
 					server_.listen(ip.tcp_endpoint());
+                    server_port_ = server_.get_local_endpoint().port();
 					// Start the server accept loop
 					server_.start_accept();
 				}
@@ -736,4 +738,10 @@ namespace bumo {
 		return new Connection(server_h, client_h, tls_server_h, tls_client_h, con, uri, id);
 	}
 
+    unsigned short Network::GetServerPort(const utils::InetAddress &ip){
+        if (!ip.IsNone() && ip.GetPort() != 0){
+            server_port_ = ip.GetPort();
+        }
+        return server_port_;
+    }
 }

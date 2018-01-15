@@ -74,6 +74,8 @@ public:
 	void Run();
 	void Stop();
 
+    unsigned short GetServerPort() const;
+
 	int64_t start_count_;
 	int64_t end_count_;
 	int64_t expire_count_;
