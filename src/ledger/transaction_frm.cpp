@@ -193,7 +193,7 @@ namespace bumo {
 
 			utils::StringVector vec;
 			vec.push_back(transaction_env_.transaction().source_address());
-			if (!SignerHashPriv(vec, NULL, -1)) {
+			if (!SignerHashPriv(vec, NULL, -1) && !ledger_->IsTestMode()) {
 				result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
 				result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
 				LOG_ERROR(result_.desc().c_str());

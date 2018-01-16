@@ -995,7 +995,7 @@ namespace bumo {
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
-			result.set_code(-1);
+			result.set_code(txfrm->GetResult().code() == protocol::ERRCODE_SUCCESS? 0:-1);
 			return result;
 		} while (false);
 
