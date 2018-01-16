@@ -136,6 +136,7 @@ namespace bumo {
 		Configure::GetValue(value, "validators_vote_account", validators_vote_account_);
 		//Configure::GetValue(value, "audit_account", audit_account_);
 		Configure::GetValue(value, "hardfork_points", hardfork_points_);
+		Configure::GetValue(value, "use_atom_map", use_atom_map_);
 		Configure::GetValue(value, "fees_vote_account", fees_vote_account_);
 
 		//for fee

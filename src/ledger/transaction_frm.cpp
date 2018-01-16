@@ -565,8 +565,11 @@ namespace bumo {
 
 	bool TransactionFrm::Apply(LedgerFrm* ledger_frm, std::shared_ptr<Environment> parent, bool bool_contract) {
 		ledger_ = ledger_frm;
-	
-		environment_ = std::make_shared<Environment>(parent.get());
+
+		if (parent->useAtomMap_)
+			environment_ = parent;
+		else
+			environment_ = std::make_shared<Environment>(parent.get());
 
 		bool bSucess = true;
 		const protocol::Transaction &tran = transaction_env_.transaction();
