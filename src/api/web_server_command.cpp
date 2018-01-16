@@ -412,7 +412,7 @@ namespace bumo {
 		int64_t fee = balance - LedgerManager::Instance().GetCurFeeConfig().base_reserve() - pay_amount;
 		if (fee <= 0) {
 			result.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-			result.set_desc(utils::String::Format("Source account(%s) not enough", tx_source_address.c_str()));
+			result.set_desc(utils::String::Format("Source account(%s) not enough balance for fee", tx_source_address.c_str()));
 			LOG_ERROR("%s", result.desc().c_str());
 			return false;
 		}
