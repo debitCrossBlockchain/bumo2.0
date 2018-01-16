@@ -540,11 +540,7 @@ namespace bumo {
 			} 
 		}
 
-		std::string validators_hash = HashWrapper::Crypto(new_set.SerializeAsString());
-		header->set_validators_hash(validators_hash);//TODO
-		header->set_tx_count(last_closed_ledger_->GetProtoHeader().tx_count() + closing_ledger->ProtoLedger().transaction_envs_size());
 		header->set_hash("");
-		header->set_hash(HashWrapper::Crypto(closing_ledger->ProtoLedger().SerializeAsString()));
 
 		int64_t ledger_seq = closing_ledger->GetProtoHeader().seq();
 		std::shared_ptr<WRITE_BATCH> account_db_batch = tree_->batch_;
@@ -555,6 +551,7 @@ namespace bumo {
 			ValidatorsSet(account_db_batch, new_set);
 			validators_ = new_set;
 		}
+		header->set_validators_hash(HashWrapper::Crypto(new_set.SerializeAsString()));//TODO
 
 		//for fee
 		protocol::FeeConfig new_fees;
@@ -563,6 +560,9 @@ namespace bumo {
 			fees_ = new_fees;
 		}
 		header->set_fees_hash(HashWrapper::Crypto(fees_.SerializeAsString()));
+		
+		//must be last
+		header->set_hash(HashWrapper::Crypto(closing_ledger->ProtoLedger().SerializeAsString()));
 
 		//proof
 		account_db_batch->Put(bumo::General::LAST_PROOF, proof);
