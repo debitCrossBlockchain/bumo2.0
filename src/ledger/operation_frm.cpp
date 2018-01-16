@@ -426,7 +426,7 @@ namespace bumo {
 				break;
 			}
 
-			int64_t base_reserve = LedgerManager::Instance().fees_.base_reserve();
+			int64_t base_reserve = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
 			if (createaccount.init_balance() < base_reserve) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
 				result_.set_desc("Dest address balance is low");
@@ -673,7 +673,7 @@ namespace bumo {
 		auto ope = operation_.pay_coin();
 		std::string address = ope.dest_address();
 		std::shared_ptr<AccountFrm> dest_account_ptr = nullptr;
-		int64_t reserve_coin = LedgerManager::Instance().fees_.base_reserve();
+		int64_t reserve_coin = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
 		do {
 			protocol::Account& proto_source_account = source_account_->GetProtoAccount();
 			if (proto_source_account.balance() < ope.amount() + reserve_coin) {
@@ -733,29 +733,30 @@ namespace bumo {
 	}
 	
 	void OperationFrm::OptFee(const protocol::Operation_Type type) {
+		protocol::FeeConfig fee_config = LedgerManager::Instance().GetCurFeeConfig();
 		switch (type) {
 		case protocol::Operation_Type_UNKNOWN:
 			break;
 		case protocol::Operation_Type_CREATE_ACCOUNT:
-			ope_fee_ = LedgerManager::Instance().fees_.create_account_fee();
+			ope_fee_ = fee_config.create_account_fee();
 			break;
 		case protocol::Operation_Type_PAYMENT:
-			ope_fee_ = LedgerManager::Instance().fees_.pay_fee();
+			ope_fee_ = fee_config.pay_fee();
 			break;
 		case protocol::Operation_Type_ISSUE_ASSET:
-			ope_fee_ = LedgerManager::Instance().fees_.issue_asset_fee();
+			ope_fee_ = fee_config.issue_asset_fee();
 			break;
 		case protocol::Operation_Type_SET_METADATA:
-			ope_fee_ = LedgerManager::Instance().fees_.set_metadata_fee();
+			ope_fee_ = fee_config.set_metadata_fee();
 			break;
 		case protocol::Operation_Type_SET_SIGNER_WEIGHT:
-			ope_fee_ = LedgerManager::Instance().fees_.set_sigure_weight_fee();
+			ope_fee_ = fee_config.set_sigure_weight_fee();
 			break;
 		case protocol::Operation_Type_SET_THRESHOLD:
-			ope_fee_ = LedgerManager::Instance().fees_.set_threshold_fee();
+			ope_fee_ = fee_config.set_threshold_fee();
 			break;
 		case protocol::Operation_Type_PAY_COIN:
-			ope_fee_ = LedgerManager::Instance().fees_.pay_coin_fee();
+			ope_fee_ = fee_config.pay_coin_fee();
 			break;
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
