@@ -331,6 +331,10 @@ namespace bumo {
 						break;
 					}
 					
+					if (!EvaluateFee(tran, result))
+						break;
+
+
 					std::string content = tran->SerializeAsString();
 					result_json["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
@@ -342,6 +346,9 @@ namespace bumo {
 						result.set_desc(error_msg);
 						break;
 					}
+
+					if (!EvaluateFee(tran, result))
+						break;
 
 					std::string content = tran->SerializeAsString();
 					const Json::Value &private_keys = json_item["private_keys"];					
@@ -379,5 +386,37 @@ namespace bumo {
 		LOG_TRACE("Create %u transaction use " FMT_I64 "(ms)", json_items.size(),
 			(utils::Timestamp::HighResolution() - begin_time) / utils::MICRO_UNITS_PER_MILLI);
 		reply = reply_json.toStyledString();
+	}
+
+	bool WebServer::EvaluateFee(protocol::Transaction *tran, Result& result){
+		int64_t pay_amount = 0;
+		std::string tx_source_address = tran->source_address();
+		AccountFrm::pointer source_account;
+		if (!Environment::AccountFromDB(tx_source_address, source_account)) {
+			result.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
+			result.set_desc(utils::String::Format("Source account(%s) not exist", tx_source_address.c_str()));
+			LOG_ERROR("%s", result.desc().c_str());
+			return false;
+		}
+		for (int i = 0; tran->operations_size(); i++) {
+			const protocol::Operation &ope = tran->operations(i);
+			std::string ope_source_address = ope.source_address();
+			if (tx_source_address == ope_source_address){
+				auto type = ope.type();
+				if (type == protocol::Operation_Type_PAY_COIN){
+					pay_amount += ope.pay_coin().amount();
+				}
+			}
+		}
+		int64_t balance = source_account->GetAccountBalance();
+		int64_t fee = balance - LedgerManager::Instance().GetCurFeeConfig().base_reserve() - pay_amount;
+		if (fee <= 0) {
+			result.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
+			result.set_desc(utils::String::Format("Source account(%s) not enough balance for fee", tx_source_address.c_str()));
+			LOG_ERROR("%s", result.desc().c_str());
+			return false;
+		}
+		tran->set_fee(fee);
+		return true;
 	}
 }

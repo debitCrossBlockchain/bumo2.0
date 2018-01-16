@@ -32,7 +32,7 @@
 void SaveWSPort();
 void RunLoop();
 int main(int argc, char *argv[]){
-	utils::Thread::SetCurrentThreadName("bubi-thread");
+	utils::Thread::SetCurrentThreadName("bumo-thread");
 
 	utils::Daemon::InitInstance();
 	utils::net::Initialize();
@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::WebServer::Exit, &web_server));
 		LOG_INFO("Initialize web server successful");
 
-        SaveWSPort();
+		SaveWSPort();
 		
 		bumo::MonitorManager &monitor_manager = bumo::MonitorManager::Instance();
 		if (!bumo::g_enable_ || !monitor_manager.Initialize()) {
@@ -225,7 +225,7 @@ int main(int argc, char *argv[]){
 
 	} while (false);
 
-	//bubi::ContractManager::ExitInstance();
+	bumo::ContractManager::ExitInstance();
 	bumo::SlowTimer::ExitInstance();
 	bumo::GlueManager::ExitInstance();
 	bumo::LedgerManager::ExitInstance();
