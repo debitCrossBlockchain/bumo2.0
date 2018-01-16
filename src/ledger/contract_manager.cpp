@@ -623,6 +623,8 @@ namespace bumo{
 				json_result["stack"] = stack_trace_string;
 			}
 		}
+
+		LOG_ERROR("Run script error: %s", json_result.toFastString().c_str());
 		return json_result;
 	}
 
