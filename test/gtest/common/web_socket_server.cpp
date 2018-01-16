@@ -15,7 +15,7 @@
 #include <unistd.h>
 #endif
 
-namespace bubi{
+namespace bumo{
 
 
 	MsgProcessor::MsgProcessor(){
@@ -1079,7 +1079,7 @@ namespace bubi{
 	 void WebSocketServer::LedgerLayout(Json::Value& param)
 	 {
 		 //get the latest seq
-		 bubi::HttpClient::RecvMessage rcv = msg_processor_.http_.http_request(bubi::HttpClient::HTTP_GET, "/getLedger", "");;
+		 bumo::HttpClient::RecvMessage rcv = msg_processor_.http_.http_request(bumo::HttpClient::HTTP_GET, "/getLedger", "");;
 		
 		 msg_processor_.latest_ledger[0].fromString(rcv.context);
 		 Json::Value result = msg_processor_.latest_ledger[0]["result"];
@@ -1113,7 +1113,7 @@ namespace bubi{
 				sprintf(t, "%d", current_height - i);
 				std::string seq = t;
 				param = param + seq;
-				rcv = msg_processor_.http_.http_request(bubi::HttpClient::HTTP_GET, param, "");;
+				rcv = msg_processor_.http_.http_request(bumo::HttpClient::HTTP_GET, param, "");;
 				msg_processor_.latest_ledger[i].fromString(rcv.context);
 				printf("send item is %s,receive %d \n", seq.c_str(), msg_processor_.latest_ledger[i]["result"]["ledger_seq"].asInt());
 
@@ -1288,10 +1288,12 @@ namespace bubi{
 
 		getcwd(buf, sizeof(buf));
 
-		printf("current path is %s\n", buf);
+		printf("current path is %s\n", buf);
+
 		std::string logpath2 = buf;
 		int loc = logpath2.size();
-		logpath2.replace(loc-5,5,"env/1peer-with-slave/log");
+		logpath2.replace(loc-5,5,"env/1peer-with-slave/log");
+
 
 
 		struct dirent * filename;    // return value for readdir()  

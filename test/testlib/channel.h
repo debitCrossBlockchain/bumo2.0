@@ -3,7 +3,6 @@
 
 #include <utils/net.h>
 #include <utils/strings.h>
-#include <common/ca.h>
 #include <utils/net.h>
 #include <json/value.h>
 #include <proto/cpp/overlay.pb.h>

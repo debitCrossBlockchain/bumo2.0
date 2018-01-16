@@ -161,7 +161,7 @@ namespace bumo {
 				LOG_INFO("Get valid upgrade value(%s)", Proto2Json(up).toFastString().c_str());
 				*propose_value.mutable_ledger_upgrade() = up;
 
-				if (CheckValueHelper(propose_value) != Consensus::CHECK_VALUE_VALID) {
+				if (CheckValueHelper(propose_value, next_close_time) != Consensus::CHECK_VALUE_VALID) {
 					//not propose the upgrade value
 					LOG_ERROR("Not propose the invalid upgrade value");
 					propose_value.clear_ledger_upgrade();
@@ -416,7 +416,7 @@ namespace bumo {
 		//if it exist in hardfork point, we ignore the proof
 		std::string consensus_value_hash = HashWrapper::Crypto(consensus_value);
 		std::set<std::string>::const_iterator iter = hardfork_points_.find(consensus_value_hash);
-		return CheckValueHelper(proto_value) == Consensus::CHECK_VALUE_VALID &&
+		return CheckValueHelper(proto_value, utils::MAX_INT64) == Consensus::CHECK_VALUE_VALID &&
 			(consensus_->CheckProof(set, HashWrapper::Crypto(consensus_value), proof)
 			|| iter != hardfork_points_.end());
 	}
@@ -436,7 +436,7 @@ namespace bumo {
 			}
 		}
 
-		int32_t check_helper_ret = CheckValueHelper(consensus_value);
+		int32_t check_helper_ret = CheckValueHelper(consensus_value, utils::Timestamp::Now().timestamp());
 		if (check_helper_ret > 0) {
 			return check_helper_ret;
 		}
@@ -452,7 +452,7 @@ namespace bumo {
 		return Consensus::CHECK_VALUE_VALID;
 	}
 
-	int32_t GlueManager::CheckValueHelper(const protocol::ConsensusValue &consensus_value) {
+	int32_t GlueManager::CheckValueHelper(const protocol::ConsensusValue &consensus_value, int64_t now) {
 		if (consensus_value.ByteSize() >= General::TXSET_LIMIT_SIZE + (int32_t)(2 * utils::BYTES_PER_MEGA)) {
 			LOG_ERROR("Consensus value byte size(%d) will be exceed than limit(%d)",
 				consensus_value.ByteSize(),
@@ -480,14 +480,13 @@ namespace bumo {
 		}
 
 		//not too closed
-		int64_t now = utils::Timestamp::Now().timestamp();
 		if (!(
 			now > consensus_value.close_time() && 
 			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().validation_configure_.close_interval_)
 			) {
-			LOG_ERROR("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > lcl time (" FMT_I64 ") + (" FMT_I64")  Not valid", 
+			LOG_ERROR("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid", 
 				now / utils::MICRO_UNITS_PER_SEC, consensus_value.close_time() / utils::MICRO_UNITS_PER_SEC,
-				(lcl.close_time() + Configure::Instance().validation_configure_.close_interval_) / utils::MICRO_UNITS_PER_SEC);
+				lcl.close_time(), Configure::Instance().validation_configure_.close_interval_ / utils::MICRO_UNITS_PER_SEC);
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 

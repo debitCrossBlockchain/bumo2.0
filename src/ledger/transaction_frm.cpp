@@ -11,7 +11,7 @@
 
 	You should have received a copy of the GNU General Public License
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
-*/
+	*/
 
 #include <utils/crypto.h>
 #include <common/storage.h>
@@ -38,8 +38,7 @@ namespace bumo {
 		processing_operation_(0),
 		real_fee_(0),
 		max_end_time_(0),
-		incoming_time_(utils::Timestamp::HighResolution())
-		{
+		incoming_time_(utils::Timestamp::HighResolution()) {
 		utils::AtomicInc(&bumo::General::tx_new_count);
 	}
 
@@ -54,7 +53,7 @@ namespace bumo {
 		processing_operation_(0),
 		real_fee_(0),
 		max_end_time_(0),
-		incoming_time_(utils::Timestamp::HighResolution()){
+		incoming_time_(utils::Timestamp::HighResolution()) {
 		Initialize();
 		utils::AtomicInc(&bumo::General::tx_new_count);
 	}
@@ -91,7 +90,7 @@ namespace bumo {
 				LOG_ERROR("Invalid signature data(%s)", utils::String::BinToHexString(signature.SerializeAsString()).c_str());
 				continue;
 			}
-            valid_signature_.insert(pubkey.GetEncAddress());
+			valid_signature_.insert(pubkey.GetEncAddress());
 		}
 	}
 
@@ -120,8 +119,8 @@ namespace bumo {
 		return transaction_env_.transaction().fee();
 	}
 
-	int64_t TransactionFrm::GetSelfByteFee(){
-		return LedgerManager::Instance().fees_.byte_fee()*transaction_env_.ByteSize();
+	int64_t TransactionFrm::GetSelfByteFee() {
+		return LedgerManager::Instance().GetCurFeeConfig().byte_fee()*transaction_env_.ByteSize();
 	}
 
 	int64_t TransactionFrm::GetRealFee() const {
@@ -140,7 +139,7 @@ namespace bumo {
 		return max_end_time_;
 	}
 
-	bool TransactionFrm::PayFee(std::shared_ptr<Environment> environment,int64_t &total_fee){
+	bool TransactionFrm::PayFee(std::shared_ptr<Environment> environment, int64_t &total_fee) {
 		int64_t fee = GetFee();
 		std::string str_address = transaction_env_.transaction().source_address();
 		AccountFrm::pointer source_account;
@@ -168,8 +167,7 @@ namespace bumo {
 	}
 
 	bool TransactionFrm::ValidForApply(std::shared_ptr<Environment> environment) {
-		do
-		{
+		do {
 			if (!ValidForParameter())
 				break;
 
@@ -195,7 +193,7 @@ namespace bumo {
 
 			utils::StringVector vec;
 			vec.push_back(transaction_env_.transaction().source_address());
-			if (!SignerHashPriv(vec, NULL, -1)) {
+			if (!SignerHashPriv(vec, NULL, -1) && !ledger_->IsTestMode()) {
 				result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
 				result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
 				LOG_ERROR(result_.desc().c_str());
@@ -205,27 +203,27 @@ namespace bumo {
 			//first check fee for this transaction,but not include transaction triggered by contract
 			int64_t bytes_fee = GetSelfByteFee();
 			int64_t tran_fee = GetFee();
-			if (bytes_fee > 0 && tran_fee > 0 ) {				
+			if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 				if (tran_fee < bytes_fee) {
 					std::string error_desc = utils::String::Format(
-                        "Transaction(%s) fee(" FMT_I64 ")< bytes_fee(" FMT_I64 ") not enought",
+						"Transaction(%s) fee(" FMT_I64 ")< bytes_fee(" FMT_I64 ") not enought",
 						utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 					result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 					result_.set_desc(error_desc);
 					LOG_ERROR("%s", error_desc.c_str());
 					return false;
-				}			
+				}
 
-				if (source_account->GetAccountBalance() - tran_fee < (int64_t)LedgerManager::Instance().fees_.base_reserve()) {
+				if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 					std::string error_desc = utils::String::Format(
-						"Account(%s) reserve balance not enough for transaction fee and base reserve:" FMT_I64 " - " FMT_I64 " < %u",
-						str_address.c_str(), source_account->GetAccountBalance(), tran_fee, (int64_t)LedgerManager::Instance().fees_.base_reserve());
+						"Account(%s) reserve balance not enough for transaction fee and base reserve:" FMT_I64 " - " FMT_I64 " < " FMT_I64,
+						str_address.c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().GetCurFeeConfig().base_reserve());
 					result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
 					result_.set_desc(error_desc);
 					LOG_ERROR("%s", error_desc.c_str());
 					return false;
-				}	
+				}
 			}
 			return true;
 		} while (false);
@@ -247,10 +245,10 @@ namespace bumo {
 
 		int64_t bytes_fee = GetSelfByteFee();
 		int64_t tran_fee = GetFee();
-		if (bytes_fee > 0 && tran_fee > 0) {
+		if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 			if (tran_fee < bytes_fee) {
 				std::string error_desc = utils::String::Format(
-					"Transaction(%s) fee(%u<%d) not enought",
+					"Transaction(%s) fee(" FMT_I64 " < " FMT_I64 ") not enought",
 					utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
@@ -259,17 +257,15 @@ namespace bumo {
 				return false;
 			}
 
-			if (LedgerManager::Instance().fees_.base_reserve() > 0) {
-				if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().fees_.base_reserve()) {
-					result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-					result_.set_desc("source account balance is not enough");
-					LOG_ERROR("Account(%s) reserve ballance not enough for transaction fee and base reserve:" FMT_I64 "- " FMT_I64 " < %d,last transaction hash(%s)",
-						GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().fees_.base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
-					return false;
-				}
+			if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
+				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
+				result_.set_desc("source account balance is not enough");
+				LOG_ERROR("Account(%s) reserve ballance not enough for transaction fee and base reserve:" FMT_I64 "- " FMT_I64 " < " FMT_I64 ",last transaction hash(%s)",
+					GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
+				return false;
 			}
 		}
-		
+
 
 		if (GetNonce() <= source_account->GetAccountNonce()) {
 			result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
@@ -283,7 +279,7 @@ namespace bumo {
 			return false;
 
 		if (last_seq == 0 && GetNonce() != source_account->GetAccountNonce() + 1) {
-			
+
 			result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
 			result_.set_desc(utils::String::Format("Account(%s) tx sequence(" FMT_I64 ")  not match  reserve sequence (" FMT_I64 " + 1), txhash(%s)",
 				GetSourceAddress().c_str(),
@@ -369,8 +365,8 @@ namespace bumo {
 				}
 			}
 
-			if (ope.expr_condition().size() > 0 && 
-				!CheckExpr(ope.expr_condition(), utils::String::Format("Transaction(%s)'s Operation(id:%d) ", 
+			if (ope.expr_condition().size() > 0 &&
+				!CheckExpr(ope.expr_condition(), utils::String::Format("Transaction(%s)'s Operation(id:%d) ",
 				utils::String::Bin4ToHexString(hash_).c_str(), i))) {
 				check_valid = false;
 				break;
@@ -420,7 +416,7 @@ namespace bumo {
 		return false;
 	}
 
-	bool TransactionFrm::ValidForSourceSignature(){
+	bool TransactionFrm::ValidForSourceSignature() {
 		utils::StringVector vec;
 		vec.push_back(transaction_env_.transaction().source_address());
 		if (!SignerHashPriv(vec, NULL, -1)) {
@@ -439,7 +435,7 @@ namespace bumo {
 		if (env) {
 			env->GetEntry(addresses.back(), account);
 		}
-		else{
+		else {
 			Environment::AccountFromDB(addresses.back(), account);
 		}
 
@@ -552,13 +548,13 @@ namespace bumo {
 		return false;
 	}
 
-	void TransactionFrm::NonceIncrease(LedgerFrm* ledger_frm, std::shared_ptr<Environment> parent){
+	void TransactionFrm::NonceIncrease(LedgerFrm* ledger_frm, std::shared_ptr<Environment> parent) {
 		AccountFrm::pointer source_account;
 		std::string str_address = GetSourceAddress();
 		if (!parent->GetEntry(str_address, source_account)) {
 			LOG_ERROR("Source account(%s) does not exists", str_address.c_str());
 			result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
-			return ;
+			return;
 		}
 		source_account->NonceIncrease();
 	}
@@ -585,7 +581,7 @@ namespace bumo {
 		bottom_tx->AddRealFee(GetSelfByteFee());
 		if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
 			result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-			LOG_ERROR_ERRNO("Transaction(%s) Fee not enough",
+			LOG_ERROR("Transaction(%s) Fee not enough",
 				utils::String::BinToHexString(hash_).c_str());
 			bSucess = false;
 			return bSucess;
@@ -601,7 +597,7 @@ namespace bumo {
 				break;
 			}
 
-			if (!bool_contract && !ledger_->IsTestMode()){
+			if (!bool_contract && !ledger_->IsTestMode()) {
 				if (!opt->CheckSignature(environment_)) {
 					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::Bin4ToHexString(GetContentHash()).c_str());
 					result_ = opt->GetResult();
@@ -632,7 +628,7 @@ namespace bumo {
 			bottom_tx->AddRealFee(opt->GetOpeFee());
 			if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-				LOG_ERROR_ERRNO("Transaction(%s) operation(%d) Fee not enough",
+				LOG_ERROR("Transaction(%s) operation(%d) Fee not enough",
 					utils::String::BinToHexString(hash_).c_str(), processing_operation_);
 				bSucess = false;
 				break;
