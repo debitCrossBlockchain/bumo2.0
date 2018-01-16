@@ -101,6 +101,7 @@ namespace bumo {
 		std::string fees_vote_account_;
 		std::string validators_vote_account_;
 		utils::StringList hardfork_points_;
+		bool use_atom_map_;
 		bool Load(const Json::Value &value);
 	};
 

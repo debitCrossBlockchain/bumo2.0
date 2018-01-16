@@ -192,6 +192,7 @@ namespace bumo {
 				}
 			}
 
+			tx_frm->environment_->ClearChangeBuf();
 			total_real_fee_ += tx_frm->GetRealFee();
 			apply_tx_frms_.push_back(tx_frm);			
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
@@ -216,6 +217,31 @@ namespace bumo {
 
 	bool LedgerFrm::Commit(KVTrie* trie, int64_t& new_count, int64_t& change_count) {
 		auto batch = trie->batch_;
+
+		if (environment_->useAtomMap_)
+		{
+			auto entries = environment_->GetData();
+
+			for (auto it = entries.begin(); it != entries.end(); it++){
+
+				if (it->second.type_ == AtomMap<std::string, AccountFrm>::DEL)
+					continue; //there is no delete account function now, not yet
+
+				std::shared_ptr<AccountFrm> account = it->second.value_;
+				account->UpdateHash(batch);
+				std::string ss = account->Serializer();
+				std::string index = utils::String::HexStringToBin(it->first);
+				bool is_new = trie->Set(index, ss);
+				if (is_new){
+					new_count++;
+				}
+				else{
+					change_count++;
+				}
+			}
+			return true;
+		}
+
 		for (auto it = environment_->entries_.begin(); it != environment_->entries_.end(); it++){
 			std::shared_ptr<AccountFrm> account = it->second;
 			account->UpdateHash(batch);

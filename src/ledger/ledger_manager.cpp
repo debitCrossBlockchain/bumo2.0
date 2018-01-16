@@ -965,7 +965,14 @@ namespace bumo {
 			txfrm->SetMaxEndTime(back->GetMaxEndTime());
 			txfrm->NonceIncrease(ledger_context->closing_ledger_.get(), back->environment_);
 			if (txfrm->ValidForParameter()) {
-				txfrm->Apply(ledger_context->closing_ledger_.get(), back->environment_, true);
+				if (back->environment_->useAtomMap_)
+				{
+					Environment::mapKV& data = back->environment_->GetActionBuf();
+					std::shared_ptr<Environment> cacheEnv = std::make_shared<Environment>(&data, true);
+					txfrm->Apply(ledger_context->closing_ledger_.get(), cacheEnv, true);
+				}
+				else
+					txfrm->Apply(ledger_context->closing_ledger_.get(), back->environment_, true);
 			}
 
 			TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
@@ -988,6 +995,8 @@ namespace bumo {
 				back->instructions_.insert(back->instructions_.end(), txfrm->instructions_.begin(), txfrm->instructions_.end());
 				txfrm->environment_->Commit();
 			}
+
+			txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
 			back->instructions_.push_back(tx_store);

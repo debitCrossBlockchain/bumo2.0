@@ -34,6 +34,7 @@
 		"fee_voting_account":"buQXmVZcwLprxtPkBSX934byL5uwsMq2tknX", //privatekey:privbz9Yg1Z24iVDcVntDa8mfEB3dF76jXbNPAf3MMrP7BQ6ceoCJ5xY
 		"fees" : {"base_reserve":100000000, "byte_fee" :100},
 		"hash_type": 0, //0: SHA256 1: SM3
+		"use_atom_map" : true,
 		"max_trans_per_ledger": 1000,
 		"max_trans_per_ledger": 1000,
 		"max_ledger_per_message": 5,
