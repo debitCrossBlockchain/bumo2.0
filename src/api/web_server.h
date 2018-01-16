@@ -80,6 +80,8 @@ namespace bumo {
 		void TestTransaction(const http::server::request &request, std::string &reply);
 		bool MakeTransactionHelper(const Json::Value &object, protocol::Transaction *tran, Result& result);
 
+        bool EvaluateFee(protocol::Transaction *tran, Result& result);
+
 	public:
 		bool Initialize(WebServerConfigure &webserver_configure);
 		bool Exit();
