@@ -404,6 +404,7 @@ namespace bumo {
 			return true;
 		} 
 
+		new_validator = old_validator;
 		return false;
 	}
 }
