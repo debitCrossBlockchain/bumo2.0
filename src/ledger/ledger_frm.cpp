@@ -233,31 +233,28 @@ namespace bumo {
 	}
 
 	bool LedgerFrm::AllocateFee() {
-		LOG_INFO("Ledger total_fee(" FMT_I64 ")", total_fee_);
-		if (total_fee_==0){
+		if (total_fee_ == 0){
 			return true;
 		}
+
 		protocol::ValidatorSet set;
-		int64_t seq = LedgerManager::Instance().GetLastClosedLedger().seq() - 1;
-		if (!LedgerManager::Instance().GetValidators(seq, set))	{
-			LOG_ERROR("Get validator failed of ledger seq(" FMT_I64 ")", seq);
+		if (!LedgerManager::Instance().GetValidators(ledger_.header().seq() - 1, set))	{
+			LOG_ERROR("Get validator failed of ledger seq(" FMT_I64 ")", ledger_.header().seq() - 1);
 			return false;
 		}
-		if (set.validators_size() == 0) {
-			LOG_ERROR("Get validator failed of ledger seq(" FMT_I64 "),validator number is 0", seq);
-			return false;
-		}
+
 		int64_t tfee = total_fee_;
 		std::shared_ptr<AccountFrm> random_account;
-		int64_t random_index = seq % set.validators_size();
+		int64_t random_index = ledger_.header().seq() % set.validators_size();
 		int64_t fee = tfee / set.validators_size();
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
 			if (!environment_->GetEntry(set.validators(i), account)) {
-				account =CreatBookKeeperAccount(set.validators(i));
+				account = CreatBookKeeperAccount(set.validators(i));
 			}
-			if (random_index == i)
+			if (random_index == i) {
 				random_account = account;
+			}
 			tfee -= fee;
 			protocol::Account &proto_account = account->GetProtoAccount();
 			proto_account.set_balance(proto_account.balance() + fee);
@@ -270,7 +267,7 @@ namespace bumo {
 		protocol::Account acc;
 		acc.set_address(account_address);
 		acc.set_nonce(0);
-		acc.set_balance(0); //100000000000000000
+		acc.set_balance(0);
 		AccountFrm::pointer acc_frm = std::make_shared<AccountFrm>(acc);
 		acc_frm->SetProtoMasterWeight(1);
 		acc_frm->SetProtoTxThreshold(1);
@@ -279,7 +276,7 @@ namespace bumo {
 		return acc_frm;
 	}
 	
-	bool LedgerFrm::GetVotedFee(protocol::FeeConfig& fee_config) {
+	bool LedgerFrm::GetVotedFee(const protocol::FeeConfig &old_fee, protocol::FeeConfig& new_fee) {
 		
 		/*//for test format
 		for (auto it = contracts_output_.begin(); it != contracts_output_.end();it++)
@@ -299,84 +296,79 @@ namespace bumo {
 		}
 		]
 		*/
-		std::string dest_address = Configure::Instance().ledger_configure_.fees_vote_account_;
-		if (dest_address.empty()){
-			LOG_ERROR("Ledger config fees_vote_account not set");
-			return false;
-		}
-		auto iter =contracts_output_.find(dest_address);
-		if (iter == contracts_output_.end()){
-			return false;
-		}
+
 		bool change = false;
-		Json::Value victor_fees =contracts_output_[dest_address];
-		for (uint32_t i = 0; i < victor_fees.size();i++) {
-			const Json::Value &item = victor_fees[i];
-			int fee_type =item["fee_type"].asInt();
-			switch ((protocol::FeeConfig_Type)fee_type)
-			{
+		new_fee = old_fee;
+		for (Json::Value::iterator iter = fee_config_.begin();
+			iter != fee_config_.end();
+			iter++) {
+			int32_t fee_type = utils::String::Stoi(iter.memberName());
+			int64_t price = fee_config_[iter.memberName()].asInt64();
+			switch ((protocol::FeeConfig_Type)fee_type) {
 			case protocol::FeeConfig_Type_UNKNOWN:
 				LOG_ERROR("FeeConfig type error");
 				break;
 			case protocol::FeeConfig_Type_BYTE_FEE:
-				if (fee_config.byte_fee() != item["price"].asInt64()){
-					fee_config.set_byte_fee(item["price"].asInt64());
+				if (new_fee.byte_fee() != price) {
+					new_fee.set_byte_fee(price);
 					change = true;
 				}
 				break;
 			case protocol::FeeConfig_Type_BASE_RESERVE_FEE:
-				if (fee_config.base_reserve() != item["price"].asInt64()){
-					fee_config.set_base_reserve(item["price"].asInt64());
+				if (new_fee.base_reserve() != price) {
+					new_fee.set_base_reserve(price);
 					change = true;
 				}
 				break;
 			case protocol::FeeConfig_Type_CREATE_ACCOUNT_FEE:
-				if (fee_config.create_account_fee() != item["price"].asInt64()){
-					fee_config.set_create_account_fee(item["price"].asInt64());
+				if (new_fee.create_account_fee() != price) {
+					new_fee.set_create_account_fee(price);
 					change = true;
 				}
 				break;
 			case protocol::FeeConfig_Type_ISSUE_ASSET_FEE:
-				if (fee_config.issue_asset_fee() != item["price"].asInt64()){
-					fee_config.set_issue_asset_fee(item["price"].asInt64());
+				if (new_fee.issue_asset_fee() != price) {
+					new_fee.set_issue_asset_fee(price);
 					change = true;
 				}
 				break;
 			case protocol::FeeConfig_Type_PAYMENT_FEE:
-				if (fee_config.pay_fee() != item["price"].asInt64()){
-					fee_config.set_pay_fee(item["price"].asInt64());
+				if (new_fee.pay_fee() != price) {
+					new_fee.set_pay_fee(price);
 					change = true;
 				}
 				break;
 			case protocol::FeeConfig_Type_SET_METADATA_FEE:
-				if (fee_config.set_metadata_fee() != item["price"].asInt64()){
-					fee_config.set_set_metadata_fee(item["price"].asInt64());
+				if (new_fee.set_metadata_fee() != price) {
+					new_fee.set_set_metadata_fee(price);
 					change = true;
 				}
 				break;
 			case protocol::FeeConfig_Type_SET_SIGNER_WEIGHT_FEE:
-				if (fee_config.set_sigure_weight_fee() != item["price"].asInt64()){
-					fee_config.set_set_sigure_weight_fee(item["price"].asInt64());
+				if (new_fee.set_sigure_weight_fee() != price) {
+					new_fee.set_set_sigure_weight_fee(price);
 					change = true;
 				}
 				break;
 			case protocol::FeeConfig_Type_SET_THRESHOLD_FEE:
-				if (fee_config.set_threshold_fee() != item["price"].asInt64()){
-					fee_config.set_set_threshold_fee(item["price"].asInt64());
+				if (new_fee.set_threshold_fee() != price) {
+					new_fee.set_set_threshold_fee(price);
 					change = true;
 				}
 				break;
 			case protocol::FeeConfig_Type_PAY_COIN_FEE:
-				if (fee_config.pay_coin_fee() != item["price"].asInt64()){
-					fee_config.set_pay_fee(item["price"].asInt64());
+				if (new_fee.pay_coin_fee() != price) {
+					new_fee.set_pay_fee(price);
 					change = true;
 				}
 				break;
 			default:
-				LOG_ERROR("FeeConfig type error");
+				LOG_ERROR("Fee config type(%d) error", fee_type);
 				break;
 			}
-		}		
+
+		}
+
 		return change;
 	}
 
@@ -386,5 +378,32 @@ namespace bumo {
 
 	bool LedgerFrm::IsTestMode(){
 		return is_test_mode_;
+	}
+
+	bool LedgerFrm::UpdateFeeConfig(const Json::Value &fee_config) {
+		for (Json::Value::iterator iter = fee_config_.begin();
+			iter != fee_config_.end();
+			iter++) {
+			fee_config_[iter.memberName()] = fee_config[iter.memberName()];
+		}
+
+		return true;
+	}
+
+	bool LedgerFrm::UpdateNewValidators(const Json::Value &validators) {
+		new_validators_ = validators;
+		return true;
+	}
+
+	bool LedgerFrm::GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator) {
+		if (new_validators_.size() > 0){
+			for (uint32_t i = 0; i < new_validators_.size(); i++) {
+				new_validator.add_validators(new_validators_[i].asString());
+			}
+
+			return true;
+		} 
+
+		return false;
 	}
 }

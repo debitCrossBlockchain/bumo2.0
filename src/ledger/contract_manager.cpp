@@ -187,9 +187,6 @@ namespace bumo{
 
 		v8::Context::Scope context_scope(context);
 
-		v8::Local<v8::Value> vtoken = v8::String::NewFromUtf8(isolate_, parameter_.this_address_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-		context->SetSecurityToken(vtoken);
-
 		auto string_sender = v8::String::NewFromUtf8(isolate_, parameter_.sender_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, sender_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
@@ -374,9 +371,6 @@ namespace bumo{
 		v8::Local<v8::Context>       context = CreateContext(isolate_, true);
 		v8::Context::Scope            context_scope(context);
 
-		v8::Local<v8::Value> vtoken = v8::String::NewFromUtf8(isolate_, parameter_.this_address_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-		context->SetSecurityToken(vtoken);
-
 		auto string_sender = v8::String::NewFromUtf8(isolate_, parameter_.sender_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, sender_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
@@ -547,9 +541,16 @@ namespace bumo{
 				v8::FunctionTemplate::New(isolate, V8Contract::CallBackDoOperation));
 
 			global->Set(
-				v8::String::NewFromUtf8(isolate, "callBackOutputLedger", v8::NewStringType::kNormal)
+				v8::String::NewFromUtf8(isolate, "callBackConfigFee", v8::NewStringType::kNormal)
 				.ToLocalChecked(),
-				v8::FunctionTemplate::New(isolate, V8Contract::CallBackOutputLedger));
+				v8::FunctionTemplate::New(isolate, V8Contract::CallBackConfigFee));
+			global->Set(
+				v8::String::NewFromUtf8(isolate, "callBackSetValidators", v8::NewStringType::kNormal).ToLocalChecked(),
+				v8::FunctionTemplate::New(isolate, V8Contract::CallBackSetValidators));
+
+			global->Set(
+				v8::String::NewFromUtf8(isolate, "callBackPayCoin", v8::NewStringType::kNormal).ToLocalChecked(),
+				v8::FunctionTemplate::New(isolate, V8Contract::CallBackPayCoin));
 		} 
 		
 		global->Set(
@@ -560,14 +561,7 @@ namespace bumo{
 		global->Set(
 			v8::String::NewFromUtf8(isolate, "callBackGetValidators", v8::NewStringType::kNormal).ToLocalChecked(),
 			v8::FunctionTemplate::New(isolate, V8Contract::CallBackGetValidators));
-
-		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackSetValidators", v8::NewStringType::kNormal).ToLocalChecked(),
-			v8::FunctionTemplate::New(isolate, V8Contract::CallBackSetValidators));
 		
-		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackPayCoin", v8::NewStringType::kNormal).ToLocalChecked(),
-			v8::FunctionTemplate::New(isolate, V8Contract::CallBackPayCoin));
 
 		/*		global->Set(
 		v8::String::NewFromUtf8(isolate_, "callBackGetTransactionInfo", v8::NewStringType::kNormal)
@@ -685,35 +679,39 @@ namespace bumo{
 		return true;
 	}
 
-	void V8Contract::CallBackOutputLedger(const v8::FunctionCallbackInfo<v8::Value>& args){
-		LOG_INFO("CallBackOutputLedger");
+	void V8Contract::CallBackConfigFee(const v8::FunctionCallbackInfo<v8::Value>& args){
 		do{
 			if (args.Length() < 1) {
 				LOG_ERROR("parameter error");
 				break;
 			}
+			
 			v8::HandleScope scope(args.GetIsolate());
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
 
-			v8::String::Utf8Value token(args.GetIsolate()->GetCurrentContext()->GetSecurityToken()->ToString());
-
+			if (v8_contract->parameter_.this_address_ != Configure::Instance().ledger_configure_.fees_vote_account_) {
+				LOG_ERROR("This address has no priority");
+				break;
+			} 
 
 			v8::Local<v8::String> str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), args[0]->ToObject()).ToLocalChecked();
 			v8::String::Utf8Value  utf8(str);
-
 			Json::Value json;
 			if (!json.fromCString(ToCString(utf8))) {
 				LOG_ERROR("fromCString fail, fatal error");
 				break;
 			}
 
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
-				break;
-			}
-			v8_contract->parameter_.ledger_context_->closing_ledger_->contracts_output_[v8_contract->parameter_.this_address_] = json;
+			LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
+			ledger_frm->UpdateFeeConfig(json);
 			args.GetReturnValue().Set(true);
+			return;
 		} while (false);
+
 		args.GetReturnValue().Set(false);
 	}
 
@@ -795,9 +793,6 @@ namespace bumo{
 			return;
 		}
 		v8::HandleScope scope(args.GetIsolate());
-
-		v8::String::Utf8Value token(args.GetIsolate()->GetCurrentContext()->GetSecurityToken()->ToString());
-
 		v8::Local<v8::String> str;
 		if (args[0]->IsObject()) {
 			v8::Local<v8::Object> obj = args[0]->ToObject(args.GetIsolate());
@@ -806,6 +801,13 @@ namespace bumo{
 		else {
 			str = args[0]->ToString();
 		}
+
+		V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+		if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+			LOG_ERROR("Can't find contract object by isolate id");
+			return;
+		}
+		std::string this_contract = v8_contract->parameter_.this_address_;
 		
 		auto type = args[0]->TypeOf(args.GetIsolate());
 		LOG_INFO("type is %s", ToCString(v8::String::Utf8Value(type)));
@@ -821,12 +823,9 @@ namespace bumo{
 		v8::String::Utf8Value utf8_sender(sender->ToString());
 		//
 		v8::String::Utf8Value utf8value(str);
-		LOG_INFO("LogCallBack[%s:%s]\n%s", ToCString(token), ToCString(utf8_sender), ToCString(utf8value));
+		LOG_INFO("LogCallBack[%s:%s]\n%s", this_contract.c_str(), ToCString(utf8_sender), ToCString(utf8value));
 
-		V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-		if (v8_contract) {
-			v8_contract->AddLog(ToCString(utf8value));
-		} 
+		v8_contract->AddLog(ToCString(utf8value));
 	}
 
 	void V8Contract::CallBackGetAccountAsset(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -978,13 +977,18 @@ namespace bumo{
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
-			v8::String::Utf8Value token(args.GetIsolate()->GetCurrentContext()->GetSecurityToken()->ToString());
-			std::string contractor(ToCString(token));
-
 			if (!args[0]->IsObject()) {
 				LOG_ERROR("contract execute error,CallBackSetAccountStorage, parameter 0 should be a object");
 				break;
 			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
+			std::string contractor = v8_contract->parameter_.this_address_;
+
 			v8::Local<v8::String> str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), args[0]->ToObject()).ToLocalChecked();
 			v8::String::Utf8Value  utf8(str);
 
@@ -1006,12 +1010,6 @@ namespace bumo{
 				break;
 			}
 			ope->mutable_set_metadata()->CopyFrom(proto_setmetadata);
-
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
-				break;
-			}
 
 			if (v8_contract->IsReadonly()) {
 				LOG_ERROR("The contract is readonly");
@@ -1230,9 +1228,6 @@ namespace bumo{
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
-			v8::String::Utf8Value token(args.GetIsolate()->GetCurrentContext()->GetSecurityToken()->ToString());
-			std::string contractor(ToCString(token));
-
 			v8::Local<v8::Object> obj = args[0]->ToObject();
 			if (obj->IsNull()) {
 				LOG_ERROR("CallBackDoOperation, parameter 0 should not be null");
@@ -1258,6 +1253,12 @@ namespace bumo{
 				break;
 			}
 
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
+			std::string contractor = v8_contract->parameter_.this_address_;
 			transaction.set_source_address(contractor);
 
 			for (int i = 0; i < transaction.operations_size(); i++) {
@@ -1265,15 +1266,8 @@ namespace bumo{
 				ope->set_source_address(contractor);
 			}
 
-			//transaction.set_nonce(contract_account->GetAccountNonce());			
 			protocol::TransactionEnv env;
 			env.mutable_transaction()->CopyFrom(transaction);
-
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
-				break;
-			}
 
 			if (v8_contract->IsReadonly()) {
 				LOG_ERROR("The contract is readonly");
@@ -1337,53 +1331,29 @@ namespace bumo{
 			}
 
 			v8::HandleScope handle_scope(args.GetIsolate());
-
-			v8::String::Utf8Value token(args.GetIsolate()->GetCurrentContext()->GetSecurityToken()->ToString());
-			std::string contractor(ToCString(token));
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
 
 			std::string election_account = Configure::Instance().ledger_configure_.validators_vote_account_;
-			if (contractor != election_account)
+			if (v8_contract->parameter_.this_address_ != election_account)
 			{
-				LOG_ERROR("contract(%s) has no permission to call CallBackSetValidators interface.", contractor.c_str());
+				LOG_ERROR("contract(%s) has no permission to call callBackSetValidators interface", v8_contract->parameter_.this_address_.c_str());
 				break;
 			}
 
-			if (!args[0]->IsString()) 
-			{
-				LOG_ERROR("contract execute error, CallBackSetValidators, parameter 0 should be a String.");
-				break;
-			}
-
-			//v8::Local<v8::String> str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), args[0]->ToObject()).ToLocalChecked();
-			//v8::String::Utf8Value  utf8(str);
-
-			v8::String::Utf8Value str(args[0]);
-
+			v8::Local<v8::String> str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), args[0]->ToObject()).ToLocalChecked();
+			v8::String::Utf8Value  utf8(str);
 			Json::Value json;
-			if (!json.fromCString(ToCString(str)))
-			{
+			if (!json.fromCString(ToCString(utf8))) {
 				LOG_ERROR("fromCString fail, fatal error");
 				break;
 			}
 
-			int len = json.size();
-			std::set<std::string> validatorSet;
-			for (int i = 0; i < len; i++)
-			{
-				if (json[i].isString())
-				{
-					auto validatorAddr = json[i].asString();
-					validatorSet.insert(validatorAddr);
-				}
-				else
-				{
-					LOG_ERROR("parse candidates form JSON failed, candidate should be a string!");
-					args.GetReturnValue().Set(false);
-					return;
-				}
-			}
-
-			LedgerManager::Instance().UpdateValidatorset(validatorSet);
+			LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
+			ledger_frm->UpdateNewValidators(json);
 			args.GetReturnValue().Set(true);
 			return;
 
@@ -1398,10 +1368,8 @@ namespace bumo{
 				args.GetReturnValue().Set(false);
 				break;
 			}
-			v8::HandleScope handle_scope(args.GetIsolate());
 
-			v8::String::Utf8Value token(args.GetIsolate()->GetCurrentContext()->GetSecurityToken()->ToString());
-			std::string contractor(ToCString(token));
+			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString()) {
 				LOG_ERROR("contract execute error,CallBackPayCoin, parameter 0 should be a string");
@@ -1413,6 +1381,13 @@ namespace bumo{
 				break;
 			}
 
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
+			std::string contractor = v8_contract->parameter_.this_address_;
+
 			std::string dest_address = std::string(ToCString(v8::String::Utf8Value(args[0])));
 			unsigned pay_amount = args[1]->Uint32Value();
 
@@ -1423,12 +1398,6 @@ namespace bumo{
 			ope->set_type(protocol::Operation_Type_PAY_COIN);
 			ope->mutable_pay_coin()->set_dest_address(dest_address);
 			ope->mutable_pay_coin()->set_amount(pay_amount);
-
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
-				break;
-			}
 
 			if (v8_contract->IsReadonly()) {
 				LOG_ERROR("The contract is readonly");

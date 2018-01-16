@@ -230,13 +230,6 @@ namespace bumo {
 		}
 		return vlidators_set.ParseFromString(str);
 	}
-	void LedgerManager::UpdateValidatorset(const std::set<std::string>& newSet)
-	{
-		validators_.clear_validators();
-
-		for (auto validator : newSet)
-			validators_.add_validators(validator);
-	}
 	
 	void LedgerManager::FeesConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::FeeConfig &fee) {
 		std::string hash = HashWrapper::Crypto(fee.SerializeAsString());
@@ -491,9 +484,7 @@ namespace bumo {
 		chain_max_ledger_probaly_ : data["ledger_sequence"].asInt64();
 	}
 
-
 	bool LedgerManager::CloseLedger(const protocol::ConsensusValue& consensus_value, const std::string& proof) {
-	//	LOG_TRACE("Closing ledger, check value");
 		if (!GlueManager::Instance().CheckValueAndProof(consensus_value.SerializeAsString(), proof)) {
 
 			protocol::PbftProof proof_proto;
@@ -506,7 +497,6 @@ namespace bumo {
 			return false;
 		}
 
-//		LOG_TRACE("Closing ledger, check complete");
 		std::string con_str = consensus_value.SerializeAsString();
 		std::string chash = HashWrapper::Crypto(con_str);
 		LedgerFrm::pointer closing_ledger = context_manager_.SyncProcess(consensus_value);
@@ -533,7 +523,7 @@ namespace bumo {
 		header->set_account_tree_hash(tree_->GetRootHash());
 		header->set_tx_count(last_closed_ledger_->GetProtoHeader().tx_count() + closing_ledger->ProtoLedger().transaction_envs_size());
 
-		protocol::ValidatorSet new_set = validators_;
+		protocol::ValidatorSet new_set;
 		bool has_upgrade = consensus_value.has_ledger_upgrade();
 		if (has_upgrade) {
 			const protocol::LedgerUpgrade &ledger_upgrade = consensus_value.ledger_upgrade();
@@ -549,25 +539,26 @@ namespace bumo {
 				new_set.add_validators(ledger_upgrade.new_validator());
 			} 
 		}
+
 		std::string validators_hash = HashWrapper::Crypto(new_set.SerializeAsString());
 		header->set_validators_hash(validators_hash);//TODO
 		header->set_tx_count(last_closed_ledger_->GetProtoHeader().tx_count() + closing_ledger->ProtoLedger().transaction_envs_size());
 		header->set_hash("");
 		header->set_hash(HashWrapper::Crypto(closing_ledger->ProtoLedger().SerializeAsString()));
 
-		//LOG_INFO("%s", Proto2Json(context->closing_ledger_->GetProtoHeader()).toStyledString().c_str());
-
-		///////////////////////////////////////////////////////////////////////////////////////////////
-
 		int64_t ledger_seq = closing_ledger->GetProtoHeader().seq();
 		std::shared_ptr<WRITE_BATCH> account_db_batch = tree_->batch_;
 		account_db_batch->Put(bumo::General::KEY_LEDGER_SEQ, utils::String::Format(FMT_I64, ledger_seq));
-		ValidatorsSet(account_db_batch, new_set);
-		validators_ = new_set;
+		
+		//for validator upgrade
+		if (new_set.validators_size() > 0 || closing_ledger->GetVotedValidators(validators_, new_set)) {
+			ValidatorsSet(account_db_batch, new_set);
+			validators_ = new_set;
+		}
 
-		//fee
+		//for fee
 		protocol::FeeConfig new_fees;
-		if (closing_ledger->GetVotedFee(new_fees)) {
+		if (closing_ledger->GetVotedFee(fees_, new_fees)) {
 			FeesConfigSet(account_db_batch, new_fees);
 			fees_ = new_fees;
 		}
@@ -589,25 +580,9 @@ namespace bumo {
 		if (!Storage::Instance().account_db()->WriteBatch(*account_db_batch)) {
 			PROCESS_EXIT("Write batch failed: %s", Storage::Instance().account_db()->error_desc().c_str());
 		}
-		///////////////////////////////////////////////////////////////////////////////////////////////
 
+		//write successful, then update the variable
 		last_closed_ledger_ = closing_ledger;
-
-		//avoid dead lock
-		protocol::LedgerHeader tmp_lcl_header;
-		do {
-			utils::WriteLockGuard guard(lcl_header_mutex_);
-			tmp_lcl_header = lcl_header_ = last_closed_ledger_->GetProtoHeader();
-		} while (false);
-
-		Global::Instance().GetIoService().post([new_set, proof, consensus_value, has_upgrade]() { //avoid deadlock
-			GlueManager::Instance().UpdateValidators(new_set, proof);
-			if (has_upgrade) GlueManager::Instance().LedgerHasUpgrade();
-		});
-
-		context_manager_.RemoveCompleted(tmp_lcl_header.seq());
-
-		////////////////////////////
 
 		int64_t time3 = utils::Timestamp().HighResolution();
 		tree_->batch_ = std::make_shared<WRITE_BATCH>();
@@ -623,6 +598,28 @@ namespace bumo {
 			time3 - time0 + closing_ledger->apply_time_,
 			tree_->time_,
 			closing_ledger->GetTxCount());
+
+		NotifyLedgerClose(closing_ledger, has_upgrade);
+	
+		return true;
+	}
+
+	void LedgerManager::NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade) {
+		//avoid dead lock
+		protocol::LedgerHeader tmp_lcl_header;
+		do {
+			utils::WriteLockGuard guard(lcl_header_mutex_);
+			tmp_lcl_header = lcl_header_ = last_closed_ledger_->GetProtoHeader();
+		} while (false);
+
+		protocol::ValidatorSet tmp_v = validators_;
+		std::string tmp_proof = proof_;
+		Global::Instance().GetIoService().post([tmp_v, tmp_proof, has_upgrade]() { //avoid deadlock
+			GlueManager::Instance().UpdateValidators(tmp_v, tmp_proof);
+			if (has_upgrade) GlueManager::Instance().LedgerHasUpgrade();
+		});
+
+		context_manager_.RemoveCompleted(tmp_lcl_header.seq());
 
 		//notice ledger closed
 		WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_LEDGER_HEADER, tmp_lcl_header.SerializeAsString());
@@ -647,7 +644,6 @@ namespace bumo {
 		ledger_status.set_account_count(GetAccountNum());
 		ledger_status.set_timestamp(utils::Timestamp::HighResolution());
 		MonitorManager::Instance().SendMonitor(monitor::MONITOR_MSGTYPE_LEDGER, ledger_status.SerializeAsString());
-		return true;
 	}
 
 

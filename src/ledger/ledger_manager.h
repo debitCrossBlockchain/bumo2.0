@@ -71,8 +71,7 @@ namespace bumo {
 		bool ConsensusValueFromDB(int64_t seq, protocol::ConsensusValue& request);
 
 		Result DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context); // -1: false, 0 : successs, > 0 exception
-
-		void UpdateValidatorset(const std::set<std::string>& newSet);
+		void NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade);
 
 		virtual void OnTimer(int64_t current_time) override;
 		virtual void OnSlowTimer(int64_t current_time) override;

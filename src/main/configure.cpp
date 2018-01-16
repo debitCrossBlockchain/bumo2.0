@@ -176,7 +176,13 @@ namespace bumo {
 			|| validators_.empty()) {
 			return false;
 		}
-		node_privatekey_ = utils::Aes::HexDecrypto(node_privatekey_, GetDataSecuretKey());
+		if (node_privatekey_.empty()) {
+			PrivateKey tmp_priv(SIGNTYPE_ED25519);
+			node_privatekey_ = tmp_priv.GetEncPrivateKey();
+		}
+		else {
+			node_privatekey_ = utils::Aes::HexDecrypto(node_privatekey_, GetDataSecuretKey());
+		}
 		close_interval_ = close_interval_ * utils::MICRO_UNITS_PER_SEC; //micro second
 		return true;
 	}
