@@ -8,7 +8,7 @@
 #include <utils/strings.h>
 #include <utils/utils.h>
 
-namespace bubi
+namespace bumo
 {
 	class HttpClient
 	{

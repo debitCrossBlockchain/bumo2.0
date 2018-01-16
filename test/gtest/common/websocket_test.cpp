@@ -20,10 +20,10 @@ protected:
 		
 	}
 	// Some expensive resource shared by all tests.
-	static bubi::WebSocketServer *websocket_server;	
+	static bumo::WebSocketServer *websocket_server;	
 };
 
-bubi::WebSocketServer* WebsocketTest::websocket_server = new bubi::WebSocketServer();
+bumo::WebSocketServer* WebsocketTest::websocket_server = new bumo::WebSocketServer();
 
 //to test the monitoragent with normal response from websocket_server
 TEST_F(WebsocketTest, NormalResponse)
