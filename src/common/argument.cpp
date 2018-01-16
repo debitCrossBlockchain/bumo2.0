@@ -172,7 +172,7 @@ namespace bumo {
 
 	void Argument::Usage() {
 		printf(
-			"Usage: bubi [OPTIONS]\n"
+			"Usage: bumo [OPTIONS]\n"
 			"OPTIONS:\n"
 			"  --dropdb                        clean up database\n"
 			"  --peer-address <node-priv-key>  get peer address from crypted node private key\n"

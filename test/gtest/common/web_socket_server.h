@@ -151,7 +151,7 @@
 
 
 using websocketpp::connection_hdl;
-namespace bubi{
+namespace bumo{
 	typedef websocketpp::server<websocketpp::config::asio> server;
 	
 	//gya:define a processor to maintain sending and receiving lists and process the messages in it.

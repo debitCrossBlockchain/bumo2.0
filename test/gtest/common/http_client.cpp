@@ -1,15 +1,15 @@
 
 #include "http_client.h"
 
-bubi::HttpClient::HttpClient()
+bumo::HttpClient::HttpClient()
 {
 }
 
-bubi::HttpClient::~HttpClient()
+bumo::HttpClient::~HttpClient()
 {
 }
 
-bubi::HttpClient::RecvMessage bubi::HttpClient::http_request(HTTP_REQUEST sendtype,std::string path, std::string content)
+bumo::HttpClient::RecvMessage bumo::HttpClient::http_request(HTTP_REQUEST sendtype,std::string path, std::string content)
 {
 	try
 	{
@@ -112,7 +112,7 @@ bubi::HttpClient::RecvMessage bubi::HttpClient::http_request(HTTP_REQUEST sendty
 	}
 }
 
-bool bubi::HttpClient::Initialize(std::string address){
+bool bumo::HttpClient::Initialize(std::string address){
 	do
 	{
 		if (address.empty())break;

@@ -32,7 +32,7 @@
 void SaveWSPort();
 void RunLoop();
 int main(int argc, char *argv[]){
-	utils::Thread::SetCurrentThreadName("bubi-thread");
+	utils::Thread::SetCurrentThreadName("bumo-thread");
 
 	utils::Daemon::InitInstance();
 	utils::net::Initialize();
@@ -225,7 +225,7 @@ int main(int argc, char *argv[]){
 
 	} while (false);
 
-	//bubi::ContractManager::ExitInstance();
+	bumo::ContractManager::ExitInstance();
 	bumo::SlowTimer::ExitInstance();
 	bumo::GlueManager::ExitInstance();
 	bumo::LedgerManager::ExitInstance();
