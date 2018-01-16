@@ -69,6 +69,7 @@ namespace bumo {
 
 		static bool FeesConfigGet(const std::string& hash, protocol::FeeConfig &fee);
 		bool ConsensusValueFromDB(int64_t seq, protocol::ConsensusValue& request);
+		protocol::FeeConfig GetCurFeeConfig();
 
 		Result DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context); // -1: false, 0 : successs, > 0 exception
 		void NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade);
@@ -84,7 +85,6 @@ namespace bumo {
 		KVTrie* tree_;
 
 		LedgerContextManager context_manager_;
-		protocol::FeeConfig fees_;
 	private:
 		LedgerManager();
 		~LedgerManager();
@@ -109,6 +109,9 @@ namespace bumo {
 		utils::ReadWriteLock lcl_header_mutex_;
 		protocol::LedgerHeader lcl_header_;
 		int64_t chain_max_ledger_probaly_;
+
+		utils::ReadWriteLock fee_config_mutex_;
+		protocol::FeeConfig fees_;
 
 		struct SyncStat{
 			int64_t send_time_;

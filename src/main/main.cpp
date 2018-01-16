@@ -200,7 +200,7 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::WebServer::Exit, &web_server));
 		LOG_INFO("Initialize web server successful");
 
-        SaveWSPort();
+		SaveWSPort();
 		
 		bumo::MonitorManager &monitor_manager = bumo::MonitorManager::Instance();
 		if (!bumo::g_enable_ || !monitor_manager.Initialize()) {

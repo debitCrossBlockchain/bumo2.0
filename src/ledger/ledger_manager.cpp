@@ -435,6 +435,11 @@ namespace bumo {
 		return consensus_value.ParseFromString(str_cons);
 	}
 
+	protocol::FeeConfig LedgerManager::GetCurFeeConfig() {
+		utils::ReadLockGuard guard(fee_config_mutex_);
+		return fees_;
+	}
+
 	int LedgerManager::OnConsent(const protocol::ConsensusValue &consensus_value, const std::string& proof) {
 		LOG_INFO("OnConsent Ledger consensus_value seq(" FMT_I64 ")", consensus_value.ledger_seq());
 
@@ -557,6 +562,7 @@ namespace bumo {
 		protocol::FeeConfig new_fees;
 		if (closing_ledger->GetVotedFee(fees_, new_fees)) {
 			FeesConfigSet(account_db_batch, new_fees);
+			utils::WriteLockGuard guard(fee_config_mutex_);
 			fees_ = new_fees;
 		}
 		header->set_fees_hash(HashWrapper::Crypto(fees_.SerializeAsString()));
