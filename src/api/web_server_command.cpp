@@ -331,9 +331,8 @@ namespace bumo {
 						break;
 					}
 					
-					if (!EvaluateFee(tran, result))
+					if ((tran->fee() == 0) && (!EvaluateFee(tran, result)))
 						break;
-
 
 					std::string content = tran->SerializeAsString();
 					result_json["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
@@ -347,7 +346,7 @@ namespace bumo {
 						break;
 					}
 
-					if (!EvaluateFee(tran, result))
+					if ((tran->fee() == 0) && (!EvaluateFee(tran, result)))
 						break;
 
 					std::string content = tran->SerializeAsString();

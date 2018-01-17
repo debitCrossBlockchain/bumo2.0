@@ -293,8 +293,6 @@ namespace bumo {
 	}
 
 	bool LedgerContext::TestTransaction() {
-		//std::shared_ptr<Environment> environment = std::make_shared<Environment>(nullptr);
-
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
 		consensus_value_.set_ledger_seq(lcl.seq() + 1);
 		consensus_value_.set_close_time(lcl.close_time() + 1);
