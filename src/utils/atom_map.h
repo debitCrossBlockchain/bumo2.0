@@ -9,20 +9,20 @@
 
 namespace bumo
 {
-    template<class KEY, class VALUE, class COMPARE = std::less<KEY>>
-    class AtomMap
-    {
-    public:
+	template<class KEY, class VALUE, class COMPARE = std::less<KEY>>
+	class AtomMap
+	{
+	public:
 		typedef std::shared_ptr<VALUE> pointer;
 
-        enum actType
-        {
-            ADD = 0,
-            MOD = 1,
-            DEL = 2,
+		enum actType
+		{
+			ADD = 0,
+			MOD = 1,
+			DEL = 2,
 			REV = 3,
 			MAX,
-        };
+		};
 
 		struct ActValue
 		{
@@ -32,14 +32,14 @@ namespace bumo
 			ActValue(const pointer& val, actType type = MAX) :value_(val), type_(type){}
 		};
 
-        typedef std::map<KEY, ActValue, COMPARE> mapKV;
+		typedef std::map<KEY, ActValue, COMPARE> mapKV;
 
 	protected:
 		bool   isRevertCommit_;
-        mapKV  actionBuf_;
-        mapKV  revertBuf_;
+		mapKV  actionBuf_;
+		mapKV  revertBuf_;
 		mapKV  standby_;
-        mapKV* data_;
+		mapKV* data_;
 
 	public:
 		AtomMap(bool revertCommit = false) : isRevertCommit_(revertCommit)
@@ -114,7 +114,7 @@ namespace bumo
 			return ret;
 		}
 
-    public:
+	public:
 		const mapKV& GetData()
 		{
 			return *data_;
@@ -127,7 +127,7 @@ namespace bumo
 
 		bool Set(const KEY& key, const pointer& val)
 		{
-            bool ret = true;
+			bool ret = true;
 
 			try
 			{
@@ -136,47 +136,47 @@ namespace bumo
 				else
 					SetValue(key, val);
 			}
-            catch(std::exception& e)
-            { 
-                LOG_ERROR("set exception, detail: %s", e.what());
-                ret = false;
-            }
+			catch(std::exception& e)
+			{ 
+				LOG_ERROR("set exception, detail: %s", e.what());
+				ret = false;
+			}
 
-		    return ret;
+			return ret;
 		}
 
-        bool Get(const KEY& key, pointer& val)
-        {
-            bool ret = true;
+		bool Get(const KEY& key, pointer& val)
+		{
+			bool ret = true;
 
-            try{ ret = GetValue(key, val); }
-            catch(std::exception& e)
-            { 
-                LOG_ERROR("get exception, detail: %s", e.what());
-                ret = false;
-            }
-            return ret;
-        }
+			try{ ret = GetValue(key, val); }
+			catch(std::exception& e)
+			{ 
+				LOG_ERROR("get exception, detail: %s", e.what());
+				ret = false;
+			}
+			return ret;
+		}
 
-        bool Del(const KEY& key)
-        {
-            bool ret = true;
+		bool Del(const KEY& key)
+		{
+			bool ret = true;
 
-            try{ actionBuf_[key] = ActValue(DEL); }
-            catch(std::exception& e)
-            { 
-                LOG_ERROR("delete exception, detail: %s", e.what());
-                ret = false;
-            }
+			try{ actionBuf_[key] = ActValue(DEL); }
+			catch(std::exception& e)
+			{ 
+				LOG_ERROR("delete exception, detail: %s", e.what());
+				ret = false;
+			}
 
-            return ret;
-        }
+			return ret;
+		}
 
 	private:
-        bool RevertCommit()
-        {
-            try
-            {
+		bool RevertCommit()
+		{
+			try
+			{
 				for (auto act : actionBuf_)
 				{
 					if(act.second.type_ == ADD)
@@ -186,28 +186,28 @@ namespace bumo
 
 					(*data_)[act.first] = act.second; //include type_ == DEL(UpdateToDB will use DEL and key)
 				}
-            }
-            catch(std::exception& e)
-            { 
-                LOG_ERROR("commit exception, detail: %s", e.what());
+			}
+			catch(std::exception& e)
+			{ 
+				LOG_ERROR("commit exception, detail: %s", e.what());
 
 				UnRevertCommit();
 				actionBuf_.clear();
 				revertBuf_.clear();
 
-                return false;
-            }
+				return false;
+			}
 
 			//CAUTION: now the pointers in actionBuf_ and revertBuf_ are overlapped with data_,
 			//so must be clear, otherwise the later modification to them will aslo directly act on data_.
 			actionBuf_.clear();
 			revertBuf_.clear();
-            return true;
-        }
+			return true;
+		}
 
 		bool UnRevertCommit()
 		{
-            bool ret = true;
+			bool ret = true;
 
 			try
 			{
@@ -219,23 +219,23 @@ namespace bumo
 						(*data_)[rev.first] = rev.second;
 				}
 			}
-            catch(std::exception& e)
-            { 
-                LOG_ERROR("uncommit exception, detail: %s", e.what());
-                ret = false;
-            }
+			catch(std::exception& e)
+			{ 
+				LOG_ERROR("uncommit exception, detail: %s", e.what());
+				ret = false;
+			}
 
-            return ret;
+			return ret;
 		}
 
-        bool CopyCommit()
-        {
+		bool CopyCommit()
+		{
 			mapKV copyBuf = *data_;
-            try
-            {
+			try
+			{
 				for (auto act : actionBuf_)
 					copyBuf[act.first] = act.second;
-            }
+			}
 			catch (std::exception& e)
 			{
 				LOG_ERROR("copy commit exception, detail: %s", e.what());
@@ -248,8 +248,8 @@ namespace bumo
 			//CAUTION: now the pointers in actionBuf_ and dataCopy_ are overlapped with data_,
 			//so must be clear, otherwise the later modification to them will aslo directly act on data_.
 			actionBuf_.clear(); 
-            return true;
-        }
+			return true;
+		}
 
 	public:
 		bool Commit()
@@ -271,7 +271,7 @@ namespace bumo
 			revertBuf_.clear();
 		}
 
-        virtual bool GetFromDB(const KEY& key, pointer& val){ return false; }
+		virtual bool GetFromDB(const KEY& key, pointer& val){ return false; }
 		virtual void updateToDB(){}
 	};
 }
