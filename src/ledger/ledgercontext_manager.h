@@ -58,7 +58,8 @@ namespace bumo {
 			const ContractTestParameter &parameter);
 		LedgerContext(
 			int32_t type,
-			const protocol::ConsensusValue &consensus_value);
+			const protocol::ConsensusValue &consensus_value,
+			int64_t timeout);
 		~LedgerContext();
 
 		enum ACTION_TYPE{

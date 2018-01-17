@@ -154,7 +154,7 @@ namespace bumo {
 			
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
 
-			if (!tx_frm->ValidForApply(environment_)){
+			if (!tx_frm->ValidForApply(environment_,!IsTestMode())){
 				dropped_tx_frms_.push_back(tx_frm);
 				continue;
 			}

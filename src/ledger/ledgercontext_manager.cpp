@@ -55,10 +55,12 @@ namespace bumo {
 	}
 	LedgerContext::LedgerContext(
 		int32_t type,
-		const protocol::ConsensusValue &consensus_value) :
+		const protocol::ConsensusValue &consensus_value,
+		int64_t timeout) :
 		type_(type),
 		consensus_value_(consensus_value),
-		lpmanager_(NULL) {
+		lpmanager_(NULL),
+		tx_timeout_(timeout), {
 		closing_ledger_ = std::make_shared<LedgerFrm>();
 	}
 	LedgerContext::~LedgerContext() {}
@@ -296,8 +298,7 @@ namespace bumo {
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
 		consensus_value_.set_ledger_seq(lcl.seq() + 1);
 		consensus_value_.set_close_time(lcl.close_time() + 1);
-		tx_timeout_ = utils::MICRO_UNITS_PER_SEC;
-		
+
 		closing_ledger_->SetTestMode(true);
 		exe_result_ = closing_ledger_->Apply(consensus_value_, this, tx_timeout_, timeout_tx_index_);
 		return exe_result_;
@@ -398,7 +399,7 @@ namespace bumo {
 		}
 		else if (type == LedgerContext::AT_TEST_TRANSACTION){
 			thread_name = "test-transaction";
-			ledger_context = new LedgerContext(type, ((TransactionTestParameter*)parameter)->consensus_value_);
+			ledger_context = new LedgerContext(type, ((TransactionTestParameter*)parameter)->consensus_value_, total_timeout);
 		}
 		else {
 			LOG_ERROR("Test type(%d) error",type);

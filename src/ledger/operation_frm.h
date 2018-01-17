@@ -47,6 +47,7 @@ namespace bumo{
 		int64_t GetOpeFee() const;
 
 		static Result CheckValid(const protocol::Operation& ope, const std::string &source_address);
+        void OptFee(const protocol::Operation_Type type);
 	protected:
 		void CreateAccount(std::shared_ptr<Environment> environment);
 		void IssueAsset(std::shared_ptr<Environment> environment);
@@ -57,7 +58,7 @@ namespace bumo{
 		void PayCoin(std::shared_ptr<Environment> environment);
 		//void OperationDeployContract(Environment *environment);
 		//void InvokeContract(Environment *environment);
-		void OptFee(const protocol::Operation_Type type);
+		
 	};
 };
 #endif

@@ -166,7 +166,7 @@ namespace bumo {
 		return transaction_env_.transaction().nonce();
 	}
 
-	bool TransactionFrm::ValidForApply(std::shared_ptr<Environment> environment) {
+	bool TransactionFrm::ValidForApply(std::shared_ptr<Environment> environment,bool check_priv) {
 		do {
 			if (!ValidForParameter())
 				break;
@@ -193,7 +193,7 @@ namespace bumo {
 
 			utils::StringVector vec;
 			vec.push_back(transaction_env_.transaction().source_address());
-			if (!ledger_->IsTestMode() && !SignerHashPriv(vec, NULL, -1)) {
+			if (check_priv && !SignerHashPriv(vec, NULL, -1)) {
 				result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
 				result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
 				LOG_ERROR(result_.desc().c_str());
