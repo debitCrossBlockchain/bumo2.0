@@ -28,7 +28,7 @@ function Storage(key, value,del) {
         ]
     };
   var result = callBackDoOperation(transaction);
-  if(result==false) throw "Storage faild";
+  if(result==false) throw 'Storage faild';
   return result
 }
 
@@ -93,7 +93,7 @@ function del_expire_enroll(){
 }
 
 function add_enroll(enroll) {
-  enroll["start_seq"] =consensusValue.sequence;
+  enroll['start_seq'] =consensusValue.sequence;
   enroll_records[enroll.enroll_id] = enroll;
 }
 
@@ -106,7 +106,7 @@ function del_enroll(account_id, enroll_id) {
       delete enroll_records[enroll_id];
       delete vote_records[enroll_id];
       var key=vote_records_detail_key_prefix+enroll_id;
-      var value="";
+      var value='';
       Storage(key,value,true);
       Storage(vote_records_key, vote_records);
       Storage(enroll_records_key, enroll_records);
@@ -116,6 +116,9 @@ function del_enroll(account_id, enroll_id) {
 }
 
 function do_voting(para) {
+  if(!(para.account && para.enroll_id && para.vote_id))
+    throw 'do_voting parameter error';
+
   load_enroll_records();
   if (!enroll_exist(para.enroll_id)) {
     throw 'Vote enroll(' + para.enroll_id + ') not exist';
@@ -152,6 +155,9 @@ function do_voting(para) {
 
 
 function enroll_fee(para) {
+  if(!(para.account && para.enroll_id && para.fee_type && para.price))
+    throw 'enroll_fee parameter error';
+
   load_enroll_records();
   if (account_enrolled(para)) {
     throw 'Account' + para.account + ') has enroll the fee type(' + para.fee_type + ')';
@@ -180,7 +186,7 @@ function vote_statistic() {
       var s = statistic_records_tmp[enroll.fee_type].statistic;
       if (s[enroll_id]) {
         s[enroll_id].count = vote_records[enroll_id];
-        callBackLog('thredhold:' + thredhold + " count:" + s[enroll_id].count);
+        callBackLog('thredhold:' + thredhold + ' count:' + s[enroll_id].count);
 
         if (s[enroll_id].count >= thredhold) {
           victors_records_tmp[enroll.fee_type] = { 'fee_type': enroll.fee_type, 'enroll_id': enroll_id, 'count': s[enroll_id].count, 'price': enroll.price };
