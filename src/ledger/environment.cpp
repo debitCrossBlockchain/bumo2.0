@@ -76,6 +76,11 @@ namespace bumo{
 		return true;
 	}
 
+	bool Environment::GetFromDB(const std::string &address, AccountFrm::pointer &account_ptr)
+	{
+		return AccountFromDB(address, account_ptr);
+	}
+
 	bool Environment::AccountFromDB(const std::string &address, AccountFrm::pointer &account_ptr){
 
 		auto db = Storage::Instance().account_db();
