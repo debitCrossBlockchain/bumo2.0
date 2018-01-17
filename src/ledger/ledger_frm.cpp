@@ -224,13 +224,13 @@ namespace bumo {
 
 			for (auto it = entries.begin(); it != entries.end(); it++){
 
-				if (it->second.type_ == AtomMap<std::string, AccountFrm>::DEL)
+				if (it->second.type_ == Environment::DEL)
 					continue; //there is no delete account function now, not yet
 
 				std::shared_ptr<AccountFrm> account = it->second.value_;
 				account->UpdateHash(batch);
 				std::string ss = account->Serializer();
-				std::string index = utils::String::HexStringToBin(it->first);
+				std::string index = DecodeAddress(it->first);
 				bool is_new = trie->Set(index, ss);
 				if (is_new){
 					new_count++;

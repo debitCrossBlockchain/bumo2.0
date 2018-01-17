@@ -40,6 +40,7 @@ namespace bumo {
 		bool GetEntry(const std::string& key, AccountFrm::pointer &frm);
 		bool AddEntry(const std::string& key, AccountFrm::pointer frm);
 		bool Commit();
+		virtual bool GetFromDB(const std::string &address, AccountFrm::pointer &account_ptr);
 		static bool AccountFromDB(const std::string &address, AccountFrm::pointer &account_ptr);
 	};
 }
