@@ -243,16 +243,28 @@ namespace bumo {
 			if (bdropdb) {
 				bool do_success = false;
 				do {
+					//check the db if opened
+					KeyValueDb *account_db = NewKeyValueDb(db_config);
+					if (!account_db->Open(db_config.account_db_path_)) {
+						delete account_db;
+						LOG_ERROR("Database in used, drop failed");
+						break;
+					}
+					delete account_db;
+
 					if (utils::File::IsExist(db_config.keyvalue_db_path_) && !utils::File::DeleteFolder(db_config.keyvalue_db_path_)) {
 						LOG_ERROR_ERRNO("Delete keyvalue db failed", STD_ERR_CODE, STD_ERR_DESC);
+						break;
 					}
 
 					if (utils::File::IsExist(db_config.ledger_db_path_) && !utils::File::DeleteFolder(db_config.ledger_db_path_)) {
 						LOG_ERROR_ERRNO("Delete ledger db failed", STD_ERR_CODE, STD_ERR_DESC);
+						break;
 					}
 					
 					if (utils::File::IsExist(db_config.account_db_path_) && !utils::File::DeleteFolder(db_config.account_db_path_)) {
 						LOG_ERROR_ERRNO("Delete account db failed", STD_ERR_CODE, STD_ERR_DESC);
+						break;
 					}
 					
 					LOG_INFO("Drop db successful");
