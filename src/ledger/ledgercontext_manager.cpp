@@ -60,7 +60,7 @@ namespace bumo {
 		type_(type),
 		consensus_value_(consensus_value),
 		lpmanager_(NULL),
-		tx_timeout_(timeout), {
+		tx_timeout_(timeout) {
 		closing_ledger_ = std::make_shared<LedgerFrm>();
 	}
 	LedgerContext::~LedgerContext() {}
