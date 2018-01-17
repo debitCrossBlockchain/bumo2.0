@@ -84,7 +84,7 @@ namespace bumo {
 		
 		bool ValidForSourceSignature();
 
-		bool ValidForApply(std::shared_ptr<Environment> environment);
+		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);
 
 		bool PayFee(std::shared_ptr<Environment> environment,int64_t& total_fee);
 		int64_t GetFee() const;

@@ -95,8 +95,6 @@ namespace bumo {
 		ConfigureBase::GetValue(value, "listen_addresses", listen_address_value);
 		utils::StringVector address_array = utils::String::Strtok(listen_address_value, ',');
 		for (size_t i = 0; i < address_array.size(); i++) {
-            if (utils::String::Trim(address_array[i]).empty())
-                address_array[i] = "0.0.0.0";
 			listen_addresses_.push_back(utils::InetAddress(address_array[i]));
 		}
 		ConfigureBase::GetValue(value, "index_name", index_name_);

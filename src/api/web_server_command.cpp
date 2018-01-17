@@ -398,11 +398,18 @@ namespace bumo {
 			LOG_ERROR("%s", result.desc().c_str());
 			return false;
 		}
-		for (int i = 0; tran->operations_size(); i++) {
+
+		int64_t total_opt_fee = 0;
+		for (int i = 0; i < tran->operations_size(); i++) {
 			const protocol::Operation &ope = tran->operations(i);
+			std::shared_ptr<OperationFrm> opt = std::make_shared< OperationFrm>(ope, nullptr, i);
 			std::string ope_source_address = ope.source_address();
+			if (ope_source_address.size() == 0) 
+				ope_source_address = tx_source_address;
 			if (tx_source_address == ope_source_address){
 				auto type = ope.type();
+				opt->OptFee(type);
+				total_opt_fee += opt->GetOpeFee();
 				if (type == protocol::Operation_Type_PAY_COIN){
 					pay_amount += ope.pay_coin().amount();
 				}
@@ -415,7 +422,8 @@ namespace bumo {
 		if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 			bytes_fee = LedgerManager::Instance().GetCurFeeConfig().byte_fee()*tran->ByteSize();
 		}
-		if (fee < bytes_fee) {
+
+		if (fee < bytes_fee + total_opt_fee) {
 			result.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 			result.set_desc(utils::String::Format("Source account(%s) not enough balance for fee", tx_source_address.c_str()));
 			LOG_ERROR("%s", result.desc().c_str());
