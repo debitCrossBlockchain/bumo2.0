@@ -28,7 +28,7 @@ function Storage(key, value,del) {
         ]
     };
   var result = callBackDoOperation(transaction);
-  if(result==false) throw 'Storage faild';
+  if(result===false) throw 'Storage faild';
   return result
 }
 
@@ -38,28 +38,28 @@ function get_validators() {
 
 function load_vote_records() {
   vote_records = callBackGetAccountMetaData(thisAddress, vote_records_key);
-  if (vote_records == false) vote_records={};
+  if (vote_records === false) vote_records={};
   else vote_records = JSON.parse(vote_records.value);
   return true;
 }
 
 function load_enroll_records() {
   enroll_records = callBackGetAccountMetaData(thisAddress, enroll_records_key);
-  if (enroll_records == false) enroll_records={};
+  if (enroll_records === false) enroll_records={};
   else enroll_records = JSON.parse(enroll_records.value);
   return true;
 }
 
 function load_statistic_records() {
   statistic_records = callBackGetAccountMetaData(thisAddress, statistic_records_key);
-  if (statistic_records == false) statistic_records=[];
+  if (statistic_records === false) statistic_records=[];
   else statistic_records = JSON.parse(statistic_records.value);
   return true;
 }
 
 function load_victors_records() {
   victors_records = callBackGetAccountMetaData(thisAddress, victors_records_key);
-  if (victors_records == false) victors_records=[];
+  if (victors_records === false) victors_records=[];
   else victors_records = JSON.parse(victors_records.value);
   return true;
 }
@@ -128,7 +128,7 @@ function do_voting(para) {
   var key=vote_records_detail_key_prefix+para.enroll_id;
   if(vote_records[para.enroll_id]){    
     var vote_records_v = callBackGetAccountMetaData(thisAddress, key);
-    if(vote_records_v ==false) 
+    if(vote_records_v === false) 
       throw 'vote_records exist key(' + para.enroll_id + ') ,but not exist body';
     else
     {
