@@ -130,7 +130,7 @@ namespace bumo {
 						std::string sign = privateKey.Sign(content);
 						protocol::Signature *signpro = tran_env.add_signatures();
 						signpro->set_sign_data(sign);
-                        signpro->set_public_key(privateKey.GetEncPublicKey());
+						signpro->set_public_key(privateKey.GetEncPublicKey());
 					}
 
 					result_item["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));

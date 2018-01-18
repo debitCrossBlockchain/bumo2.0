@@ -461,9 +461,13 @@ namespace bumo {
 			}
 		}
 
+		int64_t real_fee = ledger->total_real_fee_;
+		if (type == LedgerContext::AT_TEST_TRANSACTION){
+			real_fee += (64 + 142 + 10)*LedgerManager::Instance().GetCurFeeConfig().byte_fee();
+		}
 		ledger_context->GetLogs(logs);
 		ledger_context->GetRets(rets);
-		fee = ledger->total_real_fee_;
+		fee = real_fee;
 		ledger_context->JoinWithStop();
 		delete ledger_context;
 		return true;

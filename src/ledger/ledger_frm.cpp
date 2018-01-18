@@ -246,7 +246,7 @@ namespace bumo {
 			std::shared_ptr<AccountFrm> account = it->second;
 			account->UpdateHash(batch);
 			std::string ss = account->Serializer();
-            std::string index = DecodeAddress(it->first);
+			std::string index = DecodeAddress(it->first);
 			bool is_new = trie->Set(index, ss);
 			if (is_new){
 				new_count++;
@@ -259,7 +259,7 @@ namespace bumo {
 	}
 
 	bool LedgerFrm::AllocateFee() {
-		if (total_fee_ == 0){
+		if (total_fee_ == 0 || IsTestMode()){
 			return true;
 		}
 
