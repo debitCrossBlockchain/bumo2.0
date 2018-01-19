@@ -40,6 +40,8 @@ namespace bumo{
 		std::string trigger_tx_;
 		int32_t ope_index_;
 		std::string consensus_value_;
+		int64_t timestamp_;
+		int64_t blocknumber_;
 		LedgerContext *ledger_context_;
 		int64_t pay_coin_amount_;
 		int64_t max_end_time_;
@@ -58,6 +60,7 @@ namespace bumo{
 		std::string code_;
 		std::string input_;
 		std::string source_address_;
+		int64_t contract_balance_;
 		int64_t fee_;
 	};
 
@@ -133,6 +136,8 @@ namespace bumo{
 		static const std::string trigger_tx_index_name_;
 		static const std::string this_header_name_;
 		static const std::string pay_coin_amount_name_;
+		static const std::string block_timestamp_name_;
+		static const std::string block_number_name_;
 
 		static utils::Mutex isolate_to_contract_mutex_;
 		static std::unordered_map<v8::Isolate*, V8Contract *> isolate_to_contract_;
@@ -146,16 +151,12 @@ namespace bumo{
 		static Json::Value ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch);
 		static const char* ToCString(const v8::String::Utf8Value& value);
 		static void CallBackLog(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void CallBackGetAccountMetaData(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void CallBackSetAccountMetaData(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackGetAccountAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackSetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void Include(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void InternalCheckTime(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//get account info from an account
-		static void CallBackGetAccountInfo(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//get a ledger info from a ledger
 		static void CallBackGetLedgerInfo(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//get transaction info from a transaction
@@ -163,11 +164,44 @@ namespace bumo{
 		static void CallBackContractQuery(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//static void CallBackGetThisAddress(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//make a transaction
-		static void CallBackDoOperation(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackDoTransaction(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static V8Contract *UnwrapContract(v8::Local<v8::Object> obj);
 		static bool JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue);
 		static bool CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue);
 		static void CallBackConfigFee(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+
+		//get balance of the given account 
+		static void CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//get the hash of one of the 1024 most recent complete blocks
+		static void CallBackGetBlockHash(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+		//Sends a message with arbitrary date to a given address path
+		static void CallBackStorageStore(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackStorageLoad(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Get caller 
+		static void CallBackGetCaller(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Get block number 
+		static void CallBackBlockNumber(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Get block number 
+		static void CallBackGetTxOrigin(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//selfDestruct
+
+		//Get block timestamp 
+		static void CallBackGetBlockTimestamp(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Int64 add
+		static void CallBackInt64Plus(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Int64 sub
+		static void CallBackInt64Sub(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Int64 div
+		static void CallBackInt64Div(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Int64 mod
+		static void CallBackInt64Mod(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Int64 mod
+		static void CallBackInt64Mul(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//Int64 compare
+		static void CallBackInt64Compare(const v8::FunctionCallbackInfo<v8::Value>& args);
+
 	};
 
 	class QueryContract : public utils::Thread{

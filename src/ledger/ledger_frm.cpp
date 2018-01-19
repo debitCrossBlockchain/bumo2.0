@@ -181,7 +181,14 @@ namespace bumo {
 					time_use / utils::MICRO_UNITS_PER_MILLI, tx_time_out / utils::MICRO_UNITS_PER_MILLI);
 				tx_time_out_index = i;
 				return false;
-			} else {
+			} if (tx_frm->GetContractStep() > General::CONTRACT_STEP_LIMIT) {
+				LOG_ERROR("transaction(%s) apply failed. %s, step(%d > %d)",
+					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
+					tx_frm->GetContractStep(), General::CONTRACT_STEP_LIMIT);
+				tx_time_out_index = i;
+				return false;
+			}
+			 else {
 				if (!ret ) {
 					LOG_ERROR("transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());

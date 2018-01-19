@@ -27,7 +27,7 @@ namespace bumo{
 
 	ContractParameter::~ContractParameter() {}
 
-	ContractTestParameter::ContractTestParameter() : exe_or_query_(true), fee_(0){}
+	ContractTestParameter::ContractTestParameter() : exe_or_query_(true), fee_(0), contract_balance_(0){}
 
 	ContractTestParameter::~ContractTestParameter() {}
 
@@ -116,6 +116,8 @@ namespace bumo{
 	const std::string V8Contract::trigger_tx_index_name_ = "triggerIndex";
 	const std::string V8Contract::this_header_name_ = "consensusValue";
 	const std::string V8Contract::pay_coin_amount_name_ = "payCoinAmount";
+	const std::string V8Contract::block_timestamp_name_ = "blockTimestamp";
+	const std::string V8Contract::block_number_name_ = "blockNumber";
 	utils::Mutex V8Contract::isolate_to_contract_mutex_;
 	std::unordered_map<v8::Isolate*, V8Contract *> V8Contract::isolate_to_contract_;
 
@@ -187,6 +189,8 @@ namespace bumo{
 
 		v8::Context::Scope context_scope(context);
 
+		//block number, timestamp, orginal
+
 		auto string_sender = v8::String::NewFromUtf8(isolate_, parameter_.sender_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, sender_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
@@ -197,28 +201,26 @@ namespace bumo{
 			v8::String::NewFromUtf8(isolate_, this_address_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			string_contractor);
 
-
-		auto str_json_v8 = v8::String::NewFromUtf8(isolate_, parameter_.trigger_tx_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-		auto tx_v8 = v8::JSON::Parse(str_json_v8);
-		context->Global()->Set(context,
-			v8::String::NewFromUtf8(isolate_, trigger_tx_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
-			tx_v8);
-
 		v8::Local<v8::Integer> index_v8 = v8::Int32::New(isolate_, parameter_.ope_index_);
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, trigger_tx_index_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			index_v8);
 
-		v8::Local<v8::Integer> coin_amount = v8::Int32::New(isolate_, parameter_.pay_coin_amount_);
+		auto coin_amount = v8::String::NewFromUtf8(isolate_, utils::String::ToString(parameter_.pay_coin_amount_).c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, pay_coin_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			coin_amount);
 
-		auto v8_consensus_value = v8::String::NewFromUtf8(isolate_, parameter_.consensus_value_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-		auto v8HeadJson = v8::JSON::Parse(v8_consensus_value);
+
+		auto blocknumber_v8 = v8::Number::New(isolate_, (double)parameter_.blocknumber_);
 		context->Global()->Set(context,
-			v8::String::NewFromUtf8(isolate_, this_header_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
-			v8HeadJson);
+			v8::String::NewFromUtf8(isolate_, block_number_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			blocknumber_v8);
+
+		auto timestamp_v8 = v8::Number::New(isolate_, (double)parameter_.timestamp_);
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, block_timestamp_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			timestamp_v8);
 
 		v8::Local<v8::String> v8src = v8::String::NewFromUtf8(isolate_, parameter_.code_.c_str());
 		v8::Local<v8::Script> compiled_script;
@@ -381,23 +383,20 @@ namespace bumo{
 			v8::String::NewFromUtf8(isolate_, this_address_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			string_contractor);
 
-
-		auto str_json_v8 = v8::String::NewFromUtf8(isolate_, parameter_.trigger_tx_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-		auto tx_v8 = v8::JSON::Parse(str_json_v8);
-		context->Global()->Set(context,
-			v8::String::NewFromUtf8(isolate_, trigger_tx_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
-			tx_v8);
-
 		v8::Local<v8::Integer> index_v8 = v8::Int32::New(isolate_, parameter_.ope_index_);
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, trigger_tx_index_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			index_v8);
 
-		auto v8_consensus_value = v8::String::NewFromUtf8(isolate_, parameter_.consensus_value_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-		auto v8HeadJson = v8::JSON::Parse(v8_consensus_value);
+		auto blocknumber_v8 = v8::Number::New(isolate_, (double)parameter_.blocknumber_);
 		context->Global()->Set(context,
-			v8::String::NewFromUtf8(isolate_, this_header_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
-			v8HeadJson);
+			v8::String::NewFromUtf8(isolate_, block_number_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			blocknumber_v8);
+
+		auto timestamp_v8 = v8::Number::New(isolate_, (double)parameter_.timestamp_);
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, block_timestamp_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			timestamp_v8);
 
 
 		v8::Local<v8::String> v8src = v8::String::NewFromUtf8(isolate_, parameter_.code_.c_str());
@@ -504,80 +503,86 @@ namespace bumo{
 		v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
 		// Bind the global 'print' function to the C++ Print callback.
 		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackLog", v8::NewStringType::kNormal)
+			v8::String::NewFromUtf8(isolate, "log", v8::NewStringType::kNormal)
 			.ToLocalChecked(),
 			v8::FunctionTemplate::New(isolate, V8Contract::CallBackLog));
 		
 		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackGetAccountInfo", v8::NewStringType::kNormal)
+			v8::String::NewFromUtf8(isolate, "getBalance", v8::NewStringType::kNormal)
 			.ToLocalChecked(),
-			v8::FunctionTemplate::New(isolate, V8Contract::CallBackGetAccountInfo));
-		
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackGetBalance));
 		
 		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackGetAccountAsset", v8::NewStringType::kNormal)
+			v8::String::NewFromUtf8(isolate, "getAccountAsset", v8::NewStringType::kNormal)
 			.ToLocalChecked(),
 			v8::FunctionTemplate::New(isolate, V8Contract::CallBackGetAccountAsset));
 		
 		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackGetAccountMetaData", v8::NewStringType::kNormal)
+			v8::String::NewFromUtf8(isolate, "storageLoad", v8::NewStringType::kNormal)
 			.ToLocalChecked(),
-			v8::FunctionTemplate::New(isolate, V8Contract::CallBackGetAccountMetaData));
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackStorageLoad));
 
 		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackContractQuery", v8::NewStringType::kNormal)
+			v8::String::NewFromUtf8(isolate, "getBlockHash", v8::NewStringType::kNormal)
+			.ToLocalChecked(),
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackGetBlockHash));
+
+		global->Set(
+			v8::String::NewFromUtf8(isolate, "contractQuery", v8::NewStringType::kNormal)
 			.ToLocalChecked(),
 			v8::FunctionTemplate::New(isolate, V8Contract::CallBackContractQuery));
 		
 		if (!readonly) {
 			global->Set(
-				v8::String::NewFromUtf8(isolate, "callBackSetAccountMetaData", v8::NewStringType::kNormal)
+				v8::String::NewFromUtf8(isolate, "storageStore", v8::NewStringType::kNormal)
 				.ToLocalChecked(),
-				v8::FunctionTemplate::New(isolate, V8Contract::CallBackSetAccountMetaData));
+				v8::FunctionTemplate::New(isolate, V8Contract::CallBackStorageStore));
 
 			global->Set(
-				v8::String::NewFromUtf8(isolate, "callBackDoOperation", v8::NewStringType::kNormal)
+				v8::String::NewFromUtf8(isolate, "doTransaction", v8::NewStringType::kNormal)
 				.ToLocalChecked(),
-				v8::FunctionTemplate::New(isolate, V8Contract::CallBackDoOperation));
+				v8::FunctionTemplate::New(isolate, V8Contract::CallBackDoTransaction));
 
 			global->Set(
-				v8::String::NewFromUtf8(isolate, "callBackConfigFee", v8::NewStringType::kNormal)
+				v8::String::NewFromUtf8(isolate, "configFee", v8::NewStringType::kNormal)
 				.ToLocalChecked(),
 				v8::FunctionTemplate::New(isolate, V8Contract::CallBackConfigFee));
 			global->Set(
-				v8::String::NewFromUtf8(isolate, "callBackSetValidators", v8::NewStringType::kNormal).ToLocalChecked(),
+				v8::String::NewFromUtf8(isolate, "setValidators", v8::NewStringType::kNormal).ToLocalChecked(),
 				v8::FunctionTemplate::New(isolate, V8Contract::CallBackSetValidators));
 
 			global->Set(
-				v8::String::NewFromUtf8(isolate, "callBackPayCoin", v8::NewStringType::kNormal).ToLocalChecked(),
+				v8::String::NewFromUtf8(isolate, "payCoin", v8::NewStringType::kNormal).ToLocalChecked(),
 				v8::FunctionTemplate::New(isolate, V8Contract::CallBackPayCoin));
 		} 
-		
-		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackGetLedgerInfo", v8::NewStringType::kNormal)
-			.ToLocalChecked(),
-			v8::FunctionTemplate::New(isolate, V8Contract::CallBackGetLedgerInfo));
 
 		global->Set(
-			v8::String::NewFromUtf8(isolate, "callBackGetValidators", v8::NewStringType::kNormal).ToLocalChecked(),
+			v8::String::NewFromUtf8(isolate, "getValidators", v8::NewStringType::kNormal).ToLocalChecked(),
 			v8::FunctionTemplate::New(isolate, V8Contract::CallBackGetValidators));
-		
-
-		/*		global->Set(
-		v8::String::NewFromUtf8(isolate_, "callBackGetTransactionInfo", v8::NewStringType::kNormal)
-		.ToLocalChecked(),
-		v8::FunctionTemplate::New(isolate_, ContractManager::CallBackGetTransactionInfo, v8::External::New(isolate_, this)));*/
-
-		
-		global->Set(
-			v8::String::NewFromUtf8(isolate, "include", v8::NewStringType::kNormal)
-			.ToLocalChecked(),
-			v8::FunctionTemplate::New(isolate, V8Contract::Include));
 
 		global->Set(
 			v8::String::NewFromUtf8(isolate, General::CHECK_TIME_FUNCTION, v8::NewStringType::kNormal)
 			.ToLocalChecked(),
 			v8::FunctionTemplate::New(isolate, V8Contract::InternalCheckTime));
+
+		global->Set(
+			v8::String::NewFromUtf8(isolate, "int64Plus", v8::NewStringType::kNormal).ToLocalChecked(),
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackInt64Plus));
+		global->Set(
+			v8::String::NewFromUtf8(isolate, "int64Sub", v8::NewStringType::kNormal).ToLocalChecked(),
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackInt64Sub));;
+		global->Set(
+			v8::String::NewFromUtf8(isolate, "int64Mul", v8::NewStringType::kNormal).ToLocalChecked(),
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackInt64Mul));
+		global->Set(
+			v8::String::NewFromUtf8(isolate, "int64Mod", v8::NewStringType::kNormal).ToLocalChecked(),
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackInt64Mod));
+		global->Set(
+			v8::String::NewFromUtf8(isolate, "int64Div", v8::NewStringType::kNormal).ToLocalChecked(),
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackInt64Div));
+		global->Set(
+			v8::String::NewFromUtf8(isolate, "int64Compare", v8::NewStringType::kNormal).ToLocalChecked(),
+			v8::FunctionTemplate::New(isolate, V8Contract::CallBackInt64Compare));
 
 		return v8::Context::New(isolate, NULL, global);
 	}
@@ -773,6 +778,7 @@ namespace bumo{
 	void V8Contract::InternalCheckTime(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		bumo::AccountFrm::pointer account_frm = nullptr;
 		V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+
 		if (v8_contract && 
 			v8_contract->GetParameter().max_end_time_ != 0 &&
 			utils::Timestamp::HighResolution() > v8_contract->GetParameter().max_end_time_ ) {
@@ -780,13 +786,22 @@ namespace bumo{
 			args.GetIsolate()->ThrowException(
 				v8::String::NewFromUtf8(args.GetIsolate(), "Time expire",
 				v8::NewStringType::kNormal).ToLocalChecked());
-			LOG_INFO("Check time out");
 		}
+
+		if (v8_contract && v8_contract->GetParameter().ledger_context_){
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			TransactionFrm::pointer ptr = ledger_context->GetBottomTx();
+			ptr->ContractStepInc(1);
+			if (ptr->GetContractStep() > General::CONTRACT_STEP_LIMIT){
+				args.GetIsolate()->ThrowException(
+					v8::String::NewFromUtf8(args.GetIsolate(), "Step expire",
+					v8::NewStringType::kNormal).ToLocalChecked());
+			}
+		} 
 	}
 
 	void V8Contract::CallBackLog(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		InternalCheckTime(args);
-		LOG_INFO("CallBackLog");
+		LOG_TRACE("CallBackLog");
 
 		if (args.Length() < 1) {
 			args.GetReturnValue().Set(false);
@@ -829,8 +844,6 @@ namespace bumo{
 	}
 
 	void V8Contract::CallBackGetAccountAsset(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		InternalCheckTime(args);
-
 		if (args.Length() != 2) {
 			LOG_ERROR("parameter error");
 			args.GetReturnValue().Set(false);
@@ -843,23 +856,19 @@ namespace bumo{
 				LOG_ERROR("contract execute error,CallBackGetAccountAsset, parameter 1 should be a String");
 				break;
 			}
-			auto address = std::string(ToCString(v8::String::Utf8Value(args[0])));
+			std::string address = ToCString(v8::String::Utf8Value(args[0]));
 
 			if (!args[1]->IsObject()) {
 				LOG_ERROR("contract execute error,CallBackGetAccountAsset parameter 2 should be a object");
 				break;
 			}
-			auto ss = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), args[1]->ToObject()).ToLocalChecked();
-			auto strjson = std::string(ToCString(v8::String::Utf8Value(ss)));
-			Json::Value json;
-			json.fromString(strjson);
 
-			protocol::AssetProperty property;
-			std::string error_msg;
-			if (!Json2Proto(json, property, error_msg)) {
-				LOG_ERROR("contract execute error,CallBackGetAccountAsset,parameter property not valid. error=%s", error_msg.c_str());
-				break;
-			}
+			protocol::AssetProperty ass_property;
+			v8::Local<v8::Object> v8_asset_property = args[1]->ToObject();
+			v8::Local<v8::Value> v8_issue = v8_asset_property->Get(v8::String::NewFromUtf8(args.GetIsolate(), "issuer"));
+			v8::Local<v8::Value> v8_code = v8_asset_property->Get(v8::String::NewFromUtf8(args.GetIsolate(), "code"));
+			ass_property.set_issuer(ToCString(v8::String::Utf8Value(v8_issue)));
+			ass_property.set_code(ToCString(v8::String::Utf8Value(v8_code)));
 
 			bumo::AccountFrm::pointer account_frm = nullptr;
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
@@ -887,207 +896,22 @@ namespace bumo{
 			}
 
 			protocol::Asset asset;
-			if (!account_frm->GetAsset(property, asset)) {
+			if (!account_frm->GetAsset(ass_property, asset)) {
 				break;
 			}
 
-			Json::Value json_asset = bumo::Proto2Json(asset);
-			std::string strvalue = json_asset.toFastString();
+			v8::Local<v8::Object> ret = v8::Object::New(args.GetIsolate());
+			ret->Set(v8::String::NewFromUtf8(args.GetIsolate(), "amount"), v8::String::NewFromUtf8(args.GetIsolate(), utils::String::ToString(asset.amount()).c_str()));
+			ret->Set(v8::String::NewFromUtf8(args.GetIsolate(), "property"), v8_asset_property);
 
-			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(
-				args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
-
-		} while (false);
-	}
-
-	void V8Contract::CallBackGetAccountMetaData(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		InternalCheckTime(args);
-		do {
-			if (args.Length() != 2) {
-				LOG_ERROR("parameter error");
-				args.GetReturnValue().Set(false);
-				break;
-			}
-			v8::HandleScope handle_scope(args.GetIsolate());
-
-			if (!args[0]->IsString()) {
-				LOG_ERROR("contract execute error,CallBackGetAccountStorage, parameter 0 should be a String");
-				break;
-			}
-
-			v8::String::Utf8Value str(args[0]);
-			std::string address(ToCString(str));
-
-			if (!args[1]->IsString()) {
-				LOG_ERROR("contract execute error,CallBackGetAccountStorage, parameter 1 should be a String");
-				break;
-			}
-			std::string key = ToCString(v8::String::Utf8Value(args[1]));
-
-			bumo::AccountFrm::pointer account_frm = nullptr;
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-
-			bool getAccountSucceed = false;
-			if (v8_contract && v8_contract->GetParameter().ledger_context_) {
-				LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-				if (!ledger_context->transaction_stack_.empty()) {
-					auto environment = ledger_context->transaction_stack_.back()->environment_;
-					if (!environment->GetEntry(address, account_frm)) {
-						LOG_ERROR("not found account");
-						break;
-					}
-					else {
-						getAccountSucceed = true;
-					}
-				}
-			}
-
-			if (!getAccountSucceed) {
-				if (!Environment::AccountFromDB(address, account_frm)) {
-					LOG_ERROR("not found account");
-					break;
-				}
-			}
-
-			protocol::KeyPair kp;
-			if (!account_frm->GetMetaData(key, kp)) {
-				break;
-			}
-
-			Json::Value json = bumo::Proto2Json(kp);
-			std::string strvalue = json.toFastString();
-
-			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(
-				args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
+			args.GetReturnValue().Set(ret);
 			return;
 		} while (false);
-		args.GetReturnValue().Set(false);
-	}
 
-
-	void V8Contract::CallBackSetAccountMetaData(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		InternalCheckTime(args);
-		do {
-			if (args.Length() != 1) {
-				LOG_ERROR("parameter error");
-				args.GetReturnValue().Set(false);
-				break;
-			}
-			v8::HandleScope handle_scope(args.GetIsolate());
-
-			if (!args[0]->IsObject()) {
-				LOG_ERROR("contract execute error,CallBackSetAccountStorage, parameter 0 should be a object");
-				break;
-			}
-
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
-				break;
-			}
-			std::string contractor = v8_contract->parameter_.this_address_;
-
-			v8::Local<v8::String> str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), args[0]->ToObject()).ToLocalChecked();
-			v8::String::Utf8Value  utf8(str);
-
-			protocol::TransactionEnv txenv;
-			txenv.mutable_transaction()->set_source_address(contractor);
-			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
-
-			Json::Value json;
-			if (!json.fromCString(ToCString(utf8))) {
-				LOG_ERROR("fromCString fail, fatal error");
-				break;
-			}
-
-			ope->set_type(protocol::Operation_Type_SET_METADATA);
-			protocol::OperationSetMetadata proto_setmetadata;
-			std::string error_msg;
-			if (!Json2Proto(json, proto_setmetadata, error_msg)) {
-				LOG_ERROR("json error=%s", error_msg.c_str());
-				break;
-			}
-			ope->mutable_set_metadata()->CopyFrom(proto_setmetadata);
-
-			if (v8_contract->IsReadonly()) {
-				LOG_ERROR("The contract is readonly");
-				break;
-			}
-
-			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, v8_contract->parameter_.ledger_context_);
-			if (tmp_result.code() > 0) {
-				v8_contract->SetResult(tmp_result);
-				LOG_ERROR("Do transaction failed");
-				args.GetIsolate()->ThrowException(
-					v8::String::NewFromUtf8(args.GetIsolate(), "Do tx failed",
-					v8::NewStringType::kNormal).ToLocalChecked());
-				break;
-			}
-
-			args.GetReturnValue().Set(tmp_result.code() == 0);
-			return;
-		} while (false);
-		args.GetReturnValue().Set(false);
-	}
-
-	//
-	void V8Contract::CallBackGetAccountInfo(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		InternalCheckTime(args);
-		do {
-			if (args.Length() != 1) {
-				LOG_ERROR("parameter error");
-				args.GetReturnValue().Set(false);
-				break;
-			}
-
-			v8::HandleScope handle_scope(args.GetIsolate());
-			if (!args[0]->IsString()) {
-				LOG_ERROR("CallBackGetAccountInfo, parameter 0 should be a String");
-				break;
-			}
-
-			v8::String::Utf8Value str(args[0]);
-			std::string address(ToCString(str));
-
-			bumo::AccountFrm::pointer account_frm = nullptr;
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-
-			bool getAccountSucceed = false;
-			if (v8_contract && v8_contract->GetParameter().ledger_context_) {
-				LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-				if (!ledger_context->transaction_stack_.empty()) {
-					auto environment = ledger_context->transaction_stack_.back()->environment_;
-					if (!environment->GetEntry(address, account_frm)) {
-						LOG_ERROR("not found account");
-						break;
-					}
-					else {
-						getAccountSucceed = true;
-					}
-				}
-			}
-
-			if (!getAccountSucceed) {
-				if (!Environment::AccountFromDB(address, account_frm)) {
-					LOG_ERROR("not found account");
-					break;
-				}
-			}
-
-			Json::Value json = bumo::Proto2Json(account_frm->GetProtoAccount());
-			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(
-				args.GetIsolate(), json.toFastString().c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
-
-			return;
-		} while (false);
 		args.GetReturnValue().Set(false);
 	}
 
 	void V8Contract::CallBackGetLedgerInfo(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		InternalCheckTime(args);
 		if (args.Length() != 1) {
 			LOG_ERROR("parameter error");
 			args.GetReturnValue().Set(false);
@@ -1121,7 +945,6 @@ namespace bumo{
 	}
 
 	void V8Contract::CallBackContractQuery(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		InternalCheckTime(args);
 		v8::HandleScope handle_scope(args.GetIsolate());
 		v8::Local<v8::Object> obj = v8::Object::New(args.GetIsolate());
 		v8::Local<v8::Boolean> flag_false = v8::Boolean::New(args.GetIsolate(), false);
@@ -1144,8 +967,8 @@ namespace bumo{
 				break;
 			}
 
-			std::string address = ToCString((v8::String::Utf8Value)args[0]);
-			std::string input = ToCString((v8::String::Utf8Value)args[1]);
+			std::string address = ToCString(v8::String::Utf8Value(args[0]));
+			std::string input = ToCString(v8::String::Utf8Value(args[1]));
 
 			bumo::AccountFrm::pointer account_frm = nullptr;
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
@@ -1194,7 +1017,8 @@ namespace bumo{
 			parameter.this_address_ = address;
 			parameter.input_ = input;
 			parameter.ope_index_ = 0;
-			parameter.trigger_tx_ = "{}";
+			parameter.timestamp_ = v8_contract->GetParameter().timestamp_;
+			parameter.blocknumber_ = v8_contract->GetParameter().blocknumber_;
 			parameter.consensus_value_ = v8_contract->GetParameter().consensus_value_;
 			parameter.ledger_context_ = v8_contract->GetParameter().ledger_context_;
 			//do query
@@ -1218,7 +1042,7 @@ namespace bumo{
 		args.GetReturnValue().Set(obj);
 	}
 
-	void V8Contract::CallBackDoOperation(const v8::FunctionCallbackInfo<v8::Value>& args) {
+	void V8Contract::CallBackDoTransaction(const v8::FunctionCallbackInfo<v8::Value>& args) {
 
 		do {
 			if (args.Length() != 1) {
@@ -1363,7 +1187,7 @@ namespace bumo{
 
 	void V8Contract::CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
-			if (args.Length() != 2) {
+			if (args.Length() < 2) {
 				LOG_ERROR("parameter error");
 				args.GetReturnValue().Set(false);
 				break;
@@ -1376,9 +1200,14 @@ namespace bumo{
 				break;
 			}
 
-			if (!args[1]->IsUint32()) {
-				LOG_ERROR("contract execute error,CallBackPayCoin, parameter 1 should be a unsigned int");
+			if (!args[1]->IsString()) {
+				LOG_ERROR("contract execute error,CallBackPayCoin, parameter 1 should be a string");
 				break;
+			}
+
+			std::string input;
+			if (args.Length() > 2) {
+				input = ToCString(v8::String::Utf8Value(args[2]));
 			}
 
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
@@ -1386,10 +1215,16 @@ namespace bumo{
 				LOG_ERROR("Can't find contract object by isolate id");
 				break;
 			}
+
+			if (v8_contract->IsReadonly()) {
+				LOG_ERROR("The contract is readonly");
+				break;
+			}
+
 			std::string contractor = v8_contract->parameter_.this_address_;
 
 			std::string dest_address = std::string(ToCString(v8::String::Utf8Value(args[0])));
-			unsigned pay_amount = args[1]->Uint32Value();
+			int64_t pay_amount = utils::String::Stoi64(ToCString(v8::String::Utf8Value(args[1])));
 
 			protocol::TransactionEnv txenv;
 			txenv.mutable_transaction()->set_source_address(contractor);
@@ -1398,11 +1233,7 @@ namespace bumo{
 			ope->set_type(protocol::Operation_Type_PAY_COIN);
 			ope->mutable_pay_coin()->set_dest_address(dest_address);
 			ope->mutable_pay_coin()->set_amount(pay_amount);
-
-			if (v8_contract->IsReadonly()) {
-				LOG_ERROR("The contract is readonly");
-				break;
-			}
+			ope->mutable_pay_coin()->set_input(input);
 
 			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, v8_contract->parameter_.ledger_context_);
 			if (tmp_result.code() > 0) {
@@ -1415,6 +1246,399 @@ namespace bumo{
 			}
 
 			args.GetReturnValue().Set(tmp_result.code() == 0);
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+	//get balance of the given account 
+	void V8Contract::CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 1) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsString()) {
+				LOG_ERROR("contract execute error, parameter 0 should be a string");
+				break;
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
+
+			std::string address = ToCString(v8::String::Utf8Value(args[0]));
+			AccountFrm::pointer account_frm = NULL;
+			bool getAccountSucceed = false;
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			if (!ledger_context->transaction_stack_.empty()) {
+				auto environment = ledger_context->transaction_stack_.back()->environment_;
+				if (environment->GetEntry(address, account_frm)) {
+					getAccountSucceed = true;
+				}
+			}
+
+			if (!getAccountSucceed) {
+				Environment::AccountFromDB(address, account_frm);
+			}
+
+			std::string balance = "0";
+			if (account_frm) {
+				balance = utils::String::ToString(account_frm->GetAccountBalance());
+			}
+
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(args.GetIsolate(), balance.c_str(),
+				v8::NewStringType::kNormal).ToLocalChecked());
+			return;
+		} while (false);
+
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), "getBalance error",
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+// 	//get the hash of one of the 1024 most recent complete blocks
+	void V8Contract::CallBackGetBlockHash(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 1) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsNumber()) {
+				LOG_ERROR("contract execute error, parameter 0 should be a string");
+				break;
+			}
+
+			protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
+			int64_t seq = lcl.seq() - (int64_t)args[0]->NumberValue();
+			if (seq <= lcl.seq() - 1024 || seq > lcl.seq()) {
+				LOG_ERROR("The parameter seq(" FMT_I64 ") <= " FMT_I64 " or > " FMT_I64, seq, lcl.seq() - 1024, lcl.seq());
+				break;
+			}
+
+			LedgerFrm lfrm;
+			if (lfrm.LoadFromDb(seq)) {
+				args.GetReturnValue().Set(v8::String::NewFromUtf8(
+					args.GetIsolate(), utils::String::BinToHexString(lfrm.GetProtoHeader().hash()).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			}
+			else {
+				break;
+			}
+
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+// 	//Sends a message with arbitrary date to a given address path
+// 	void CallBackCall(const v8::FunctionCallbackInfo<v8::Value>& args);
+// 	//Sends a message with arbitrary date to a given address path
+	void V8Contract::CallBackStorageStore(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 2) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString() || !args[1]->IsString()) {
+				LOG_ERROR("Storage store's parameter should be string");
+				break;
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
+
+			if (v8_contract->IsReadonly()) {
+				LOG_ERROR("The contract is readonly");
+				break;
+			}
+
+			std::string contractor = v8_contract->parameter_.this_address_;
+			std::string  key = ToCString(v8::String::Utf8Value(args[0]));
+			std::string  value = ToCString(v8::String::Utf8Value(args[1]));
+			if (key.empty()) {
+				LOG_ERROR("Key is empty");
+				break;
+			}
+			
+			protocol::TransactionEnv txenv;
+			txenv.mutable_transaction()->set_source_address(contractor);
+			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
+
+			ope->set_type(protocol::Operation_Type_SET_METADATA);
+			protocol::OperationSetMetadata *meta_data = ope->mutable_set_metadata();
+			meta_data->set_key(key);
+			meta_data->set_value(value);
+
+
+			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, v8_contract->parameter_.ledger_context_);
+			if (tmp_result.code() > 0) {
+				v8_contract->SetResult(tmp_result);
+				LOG_ERROR("Do transaction failed");
+				args.GetIsolate()->ThrowException(
+					v8::String::NewFromUtf8(args.GetIsolate(), "Do tx failed",
+					v8::NewStringType::kNormal).ToLocalChecked());
+				break;
+			}
+
+			args.GetReturnValue().Set(tmp_result.code() == 0);
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackStorageLoad(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 1) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString()) {
+				LOG_ERROR("contract execute error,Storage load, parameter 0 should be a String");
+				break;
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
+
+			std::string key = ToCString(v8::String::Utf8Value(args[0]));
+			bumo::AccountFrm::pointer account_frm = nullptr;
+			bool getAccountSucceed = false;
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			if (!ledger_context->transaction_stack_.empty()) {
+				auto environment = ledger_context->transaction_stack_.back()->environment_;
+				if (!environment->GetEntry(v8_contract->parameter_.this_address_, account_frm)) {
+					LOG_ERROR("not found account");
+					break;
+				}
+				else {
+					getAccountSucceed = true;
+				}
+			}
+
+			if (!getAccountSucceed) {
+				if (!Environment::AccountFromDB(v8_contract->parameter_.this_address_, account_frm)) {
+					LOG_ERROR("not found account");
+					break;
+				}
+			}
+
+			protocol::KeyPair kp;
+			if (!account_frm->GetMetaData(key, kp)) {
+				break;
+			}
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), kp.value().c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+// 	//selfDestruct
+
+// 	//Int64 add
+	void V8Contract::CallBackInt64Plus(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 2) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString() && !args[0]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Plus, parameter 0 should be a String or Number");
+				break;
+			}
+			if (!args[1]->IsString() && !args[1]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Plus, parameter 1 should be a String or Number");
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
+			int64_t iarg0 = utils::String::Stoi64(arg0);
+			int64_t iarg1 = utils::String::Stoi64(arg1);
+			iarg0 += iarg1;
+
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), utils::String::ToString(iarg0).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+ 	//Int64 sub
+	void V8Contract::CallBackInt64Sub(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 2) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString() && !args[0]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Sub, parameter 0 should be a String or Number");
+				break;
+			}
+			if (!args[1]->IsString() && !args[1]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Sub, parameter 1 should be a String or Number");
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
+			int64_t iarg0 = utils::String::Stoi64(arg0);
+			int64_t iarg1 = utils::String::Stoi64(arg1);
+			iarg0 -= iarg1;
+
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), utils::String::ToString(iarg0).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+// 	//Int64 compare
+	void V8Contract::CallBackInt64Compare(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 2) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString() && !args[0]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Compare, parameter 0 should be a String or Number");
+				break;
+			}
+			if (!args[1]->IsString() && !args[1]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Compare, parameter 1 should be a String or Number");
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
+			int64_t iarg0 = utils::String::Stoi64(arg0);
+			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int32_t compare1 = 0;
+			if (iarg0 > iarg1) compare1 = 1;
+			else if (iarg0 == iarg1) {
+				compare1 = 0;
+			} else{
+				compare1 = -1;
+			}
+
+			args.GetReturnValue().Set(v8::Int32::New(args.GetIsolate(), compare1));
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+
+	void V8Contract::CallBackInt64Div(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 2) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString() && !args[0]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Div, parameter 0 should be a String or Number");
+				break;
+			}
+			if (!args[1]->IsString() && !args[1]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Div, parameter 1 should be a String or Number");
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
+			int64_t iarg0 = utils::String::Stoi64(arg0);
+			int64_t iarg1 = utils::String::Stoi64(arg1);
+			if (iarg1 == 0 ) {
+				LOG_ERROR("Parameter error");
+				break;
+			}
+
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), utils::String::ToString(iarg0 / iarg1).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+	//Int64 mod
+	void V8Contract::CallBackInt64Mod(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 2) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString() && !args[0]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Mod, parameter 0 should be a String or Number");
+				break;
+			}
+			if (!args[1]->IsString() && !args[1]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Mod, parameter 1 should be a String or Number");
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
+			int64_t iarg0 = utils::String::Stoi64(arg0);
+			int64_t iarg1 = utils::String::Stoi64(arg1);
+			if (iarg1 <= 0 || iarg0 < 0) {
+				LOG_ERROR("Parameter error");
+				break;
+			}
+
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), utils::String::ToString(iarg0 % iarg1).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+	//Int64 mod
+	void V8Contract::CallBackInt64Mul(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 2) {
+				LOG_ERROR("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString() && !args[0]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Mul, parameter 0 should be a String or Number");
+				break;
+			}
+			if (!args[1]->IsString() && !args[1]->IsNumber()) {
+				LOG_ERROR("contract execute error, int64Mul, parameter 1 should be a String or Number");
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
+			int64_t iarg0 = utils::String::Stoi64(arg0);
+			int64_t iarg1 = utils::String::Stoi64(arg1);
+
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), utils::String::ToString(iarg0 * iarg1).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 			return;
 		} while (false);
 		args.GetReturnValue().Set(false);
@@ -1462,34 +1686,6 @@ namespace bumo{
 			contract_ = NULL;
 		} while (false);
 	}
-
-// 	TestContract::TestContract(){}
-// 	TestContract::~TestContract() {}
-// 	bool TestContract::Init(int32_t type, const ContractTestParameter &parameter) {
-// 		if (type == Contract::TYPE_V8) {
-// 			parameter_ = parameter;
-// 			type_ = type;
-// 		}
-// 		else {
-// 			std::string error_msg = utils::String::Format("Contract type(%d) not support", type);
-// 			LOG_ERROR("%s", error_msg.c_str());
-// 			return false;
-// 		}
-// 		return true;
-// 	}
-// 
-// 	void TestContract::Cancel() {
-// 		ledger_context.Cancel();
-// 	}
-// 
-// 	bool TestContract::GetResult(Json::Value &result) {
-// 		result = result_;
-// 		return ret_;
-// 	}
-// 
-// 	void TestContract::Run() {
-// 		ledger_context.Test(type_, parameter_);
-// 	}
 
 	ContractManager::ContractManager() {}
 	ContractManager::~ContractManager() {}
@@ -1594,35 +1790,6 @@ namespace bumo{
 		return false;
 	}
 
-// 	bool ContractManager::Test(int32_t type, const ContractTestParameter &paramter, Json::Value& result) {
-// 		TestContract test_contract;
-// 		if (!test_contract.Init(type, paramter)) {
-// 			return false;
-// 		} 
-// 
-// 		if (!test_contract.Start("query-contract")) {
-// 			LOG_ERROR_ERRNO("Start query contract thread failed", STD_ERR_CODE, STD_ERR_DESC);
-// 			return false;
-// 		} 
-// 
-// 		int64_t time_start = utils::Timestamp::HighResolution();
-// 		bool is_timeout = false;
-// 		while (test_contract.IsRunning()) {
-// 			utils::Sleep(10);
-// 			if (utils::Timestamp::HighResolution() - time_start >  5 * utils::MICRO_UNITS_PER_SEC) {
-// 				is_timeout = true;
-// 				break;
-// 			}
-// 		}
-// 
-// 		if (is_timeout) { //cancel it
-// 			test_contract.Cancel();
-// 			test_contract.JoinWithStop();
-// 		}
-// 
-// 		return test_contract.GetResult(result);
-// 	}
-
 	bool ContractManager::Cancel(int64_t contract_id) {
 		//another thread cancel the vm
 		Contract *contract = NULL;
@@ -1652,25 +1819,4 @@ namespace bumo{
 		return NULL;
 	}
 
-	//bool ContractManager::DoTransaction(protocol::TransactionEnv& env){
-	//	auto back = LedgerManager::Instance().transaction_stack_.second;
-	//	std::shared_ptr<AccountFrm> source_account;
-	//	back->environment_->GetEntry(env.transaction().source_address(), source_account);
-	//	env.mutable_transaction()->set_nonce(source_account->GetAccountNonce() + 1);
-	//	auto txfrm = std::make_shared<bubi::TransactionFrm >(env);
-	//	//LedgerManager::Instance().execute_transaction_.second = txfrm;
-
-	//	auto header = std::make_shared<protocol::LedgerHeader>(LedgerManager::Instance().closing_ledger_->GetProtoHeader());
-
-	//	if (txfrm->ValidForParameter()){
-	//		txfrm->Apply(header, true);
-	//	}
-
-	//	if (txfrm->GetResult().code() == protocol::ERRCODE_SUCCESS){
-	//		txfrm->AllCommit();
-	//	}
-
-	//	//LedgerManager::Instance().execute_transaction_.second = back;
-	//	return txfrm->GetResult().code() == protocol::ERRCODE_SUCCESS;
-	//}
 }

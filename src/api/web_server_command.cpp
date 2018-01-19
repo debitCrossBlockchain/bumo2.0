@@ -226,6 +226,7 @@ namespace bumo {
 		test_parameter.contract_address_ = body["contract_address"].asString();
 		test_parameter.source_address_ = body["source_address"].asString();
 		test_parameter.fee_ = body["fee"].asInt64();
+		test_parameter.contract_balance_ = body["contract_balance"].asInt64();
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc;

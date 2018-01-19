@@ -38,6 +38,7 @@ namespace bumo {
 		processing_operation_(0),
 		real_fee_(0),
 		max_end_time_(0),
+		contract_step_(0),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		utils::AtomicInc(&bumo::General::tx_new_count);
 	}
@@ -53,6 +54,7 @@ namespace bumo {
 		processing_operation_(0),
 		real_fee_(0),
 		max_end_time_(0),
+		contract_step_(0),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		Initialize();
 		utils::AtomicInc(&bumo::General::tx_new_count);
@@ -137,6 +139,14 @@ namespace bumo {
 
 	int64_t TransactionFrm::GetMaxEndTime() {
 		return max_end_time_;
+	}
+
+	void TransactionFrm::ContractStepInc(int32_t step) {
+		contract_step_ += step;
+	}
+
+	int32_t TransactionFrm::GetContractStep() {
+		return contract_step_;
 	}
 
 	bool TransactionFrm::PayFee(std::shared_ptr<Environment> environment, int64_t &total_fee) {
