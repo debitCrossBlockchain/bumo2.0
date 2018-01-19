@@ -134,9 +134,14 @@ namespace bumo {
 				} 
 
 				PrivateKey priv_key(type);
-                std::string public_key = priv_key.GetEncPublicKey();
-                std::string private_key = priv_key.GetEncPrivateKey();
-                std::string public_address = priv_key.GetEncAddress();
+				if (!priv_key.IsValid()) {
+					printf("Generate private key error");
+					return true;
+				}
+
+				std::string public_key = priv_key.GetEncPublicKey();
+				std::string private_key = priv_key.GetEncPrivateKey();
+				std::string public_address = priv_key.GetEncAddress();
 
 				LOG_TRACE("Creating account address:%s", public_address.c_str());
 				Json::Value result = Json::Value(Json::objectValue);
