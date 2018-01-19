@@ -117,6 +117,7 @@ namespace bumo {
 			PrivateKey priv_key(SIGNTYPE_ED25519);
 			Json::Value account_json = Json::Value(Json::objectValue);
 			protocol::Account account;
+			account.set_balance(parameter_.contract_balance_);
 			account.set_address(priv_key.GetEncAddress());
 			account.mutable_contract()->set_payload(parameter_.code_);
 			account.mutable_contract()->set_type((protocol::Contract_ContractType)type_);
@@ -211,7 +212,6 @@ namespace bumo {
 			parameter.this_address_ = parameter_.contract_address_;
 			parameter.input_ = parameter_.input_;
 			parameter.ope_index_ = 0;
-			parameter.trigger_tx_ = "{}";
 			parameter.consensus_value_ = Proto2Json(consensus_value_).toFastString();
 			parameter.ledger_context_ = this;
 			parameter.max_end_time_ = utils::Timestamp::HighResolution() + 5 * utils::MICRO_UNITS_PER_SEC;

@@ -95,6 +95,9 @@ namespace bumo {
 		void SetMaxEndTime(int64_t end_time);
 		int64_t GetMaxEndTime();
 
+		void ContractStepInc(int32_t step);
+		int32_t GetContractStep();
+
 		uint64_t apply_time_;
 		int64_t ledger_seq_;
 		Result result_;	
@@ -114,6 +117,7 @@ namespace bumo {
 
 		//flow the top tx
 		int64_t max_end_time_;
+		int32_t contract_step_;
 	};
 };
 

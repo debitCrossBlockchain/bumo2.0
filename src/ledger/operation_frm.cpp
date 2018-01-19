@@ -558,9 +558,9 @@ namespace bumo {
 				parameter.input_ = payment.input();
 				parameter.this_address_ = payment.dest_address();
 				parameter.sender_ = source_account_->GetAccountAddress();
-				parameter.trigger_tx_ = Proto2Json(transaction_->GetTransactionEnv()).toStyledString();
 				parameter.ope_index_ = index_;
-				parameter.consensus_value_ = Proto2Json(*(transaction_->ledger_->value_)).toFastString();
+				parameter.timestamp_ = transaction_->ledger_->value_->close_time();
+				parameter.blocknumber_ = transaction_->ledger_->value_->ledger_seq();
 				parameter.ledger_context_ = transaction_->ledger_->lpledger_context_;
 				parameter.max_end_time_ = transaction_->GetMaxEndTime();
 
@@ -719,9 +719,9 @@ namespace bumo {
 				parameter.input_ = ope.input();
 				parameter.this_address_ = ope.dest_address();
 				parameter.sender_ = source_account_->GetAccountAddress();
-				parameter.trigger_tx_ = Proto2Json(transaction_->GetTransactionEnv()).toStyledString();
 				parameter.ope_index_ = index_;
-				parameter.consensus_value_ = Proto2Json(*(transaction_->ledger_->value_)).toFastString();
+				parameter.timestamp_ = transaction_->ledger_->value_->close_time();
+				parameter.blocknumber_ = transaction_->ledger_->value_->ledger_seq();
 				parameter.ledger_context_ = transaction_->ledger_->lpledger_context_;
 				parameter.pay_coin_amount_ = ope.amount();
 				parameter.max_end_time_ = transaction_->GetMaxEndTime();

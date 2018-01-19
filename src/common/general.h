@@ -38,7 +38,7 @@ namespace bumo {
 		const static int METADATA_KEY_MAXSIZE = 1024;
 		const static int METADATA_MAX_VALUE_SIZE = 1048576;
 		const static int ASSET_CODE_MAX_SIZE = 64;
-		const static int EXPRCONDITION_MAXSIZE = 1048576;
+		const static int EXPRCONDITION_MAXSIZE = 256;
 
 		//contract A can invoke contract B, and contract B can invoke contract C...
 		// the max RECURSIVE DEPTH is 4
@@ -46,6 +46,8 @@ namespace bumo {
 
 		//at most 512 transaction can be created when a contract executed
 		const static int CONTRACT_TRANSACTION_LIMIT = 512;
+
+		const static int CONTRACT_STEP_LIMIT = 1024;
 
 		const static int LAST_TX_HASHS_LIMIT = 100;
 
