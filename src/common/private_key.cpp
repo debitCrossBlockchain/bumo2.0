@@ -280,7 +280,9 @@ namespace bumo {
         bool valid = GetPublicKeyElement(encode_public_key, prefix, sign_type, raw_pubkey);
 		if (!valid || prefix != PUBLICKEY_PREFIX) {
 			return false;
-		} 
+		}
+
+		if (signature.size() != 64) { return false; }
 
 		if (sign_type == SIGNTYPE_ED25519 ) {
 			return ed25519_sign_open((unsigned char *)data.c_str(), data.size(), (unsigned char *)raw_pubkey.c_str(), (unsigned char *)signature.c_str()) == 0;
