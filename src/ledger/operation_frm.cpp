@@ -562,6 +562,7 @@ namespace bumo {
 				parameter.timestamp_ = transaction_->ledger_->value_->close_time();
 				parameter.blocknumber_ = transaction_->ledger_->value_->ledger_seq();
 				parameter.ledger_context_ = transaction_->ledger_->lpledger_context_;
+				parameter.pay_asset_amount_ = payment.asset();
 
 				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter);
 			}

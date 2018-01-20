@@ -44,7 +44,7 @@ namespace bumo{
 		int64_t blocknumber_;
 		LedgerContext *ledger_context_;
 		int64_t pay_coin_amount_;
-		int64_t max_end_time_;
+		protocol::Asset pay_asset_amount_;
 	};
 
 	class TestParameter{
@@ -136,6 +136,7 @@ namespace bumo{
 		static const std::string trigger_tx_index_name_;
 		static const std::string this_header_name_;
 		static const std::string pay_coin_amount_name_;
+		static const std::string pay_asset_amount_name_;
 		static const std::string block_timestamp_name_;
 		static const std::string block_number_name_;
 
@@ -179,7 +180,7 @@ namespace bumo{
 		//Sends a message with arbitrary date to a given address path
 		static void CallBackStorageStore(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackStorageDel(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void SetMetaData(const v8::FunctionCallbackInfo<v8::Value>& args,bool is_del =false);
+		static void SetMetaData(const v8::FunctionCallbackInfo<v8::Value>& args, bool is_del);
 		static void CallBackStorageLoad(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Get caller 
 		static void CallBackGetCaller(const v8::FunctionCallbackInfo<v8::Value>& args);
