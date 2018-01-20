@@ -539,6 +539,11 @@ namespace bumo{
 				v8::FunctionTemplate::New(isolate, V8Contract::CallBackStorageStore));
 
 			global->Set(
+				v8::String::NewFromUtf8(isolate, "storageDel", v8::NewStringType::kNormal)
+				.ToLocalChecked(),
+				v8::FunctionTemplate::New(isolate, V8Contract::CallBackStorageDel));
+
+			global->Set(
 				v8::String::NewFromUtf8(isolate, "doTransaction", v8::NewStringType::kNormal)
 				.ToLocalChecked(),
 				v8::FunctionTemplate::New(isolate, V8Contract::CallBackDoTransaction));
@@ -1311,15 +1316,32 @@ namespace bumo{
 // 	void CallBackCall(const v8::FunctionCallbackInfo<v8::Value>& args);
 // 	//Sends a message with arbitrary date to a given address path
 	void V8Contract::CallBackStorageStore(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		SetMetaData(args);
+	}
+
+	void V8Contract::CallBackStorageDel(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		SetMetaData(args, true);
+	}
+
+	void V8Contract::SetMetaData(const v8::FunctionCallbackInfo<v8::Value>& args, bool is_del) {
 		do {
-			if (args.Length() != 2) {
+			uint8_t para_num = 2;
+			bool para_type_valid = !args[0]->IsString();
+			if (is_del) {
+				para_num = 1;
+			}
+			else {
+				para_type_valid = para_type_valid || !args[1]->IsString();
+			}
+
+			if (args.Length() != para_num) {
 				LOG_ERROR("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
-			if (!args[0]->IsString() || !args[1]->IsString()) {
-				LOG_ERROR("Storage store's parameter should be string");
+			if (para_type_valid) {
+				LOG_ERROR("Storage operation parameter should be string");
 				break;
 			}
 
@@ -1336,12 +1358,15 @@ namespace bumo{
 
 			std::string contractor = v8_contract->parameter_.this_address_;
 			std::string  key = ToCString(v8::String::Utf8Value(args[0]));
-			std::string  value = ToCString(v8::String::Utf8Value(args[1]));
+			std::string  value = "";
+			if (!is_del){
+				value = ToCString(v8::String::Utf8Value(args[1]));
+			}
 			if (key.empty()) {
 				LOG_ERROR("Key is empty");
 				break;
 			}
-			
+
 			protocol::TransactionEnv txenv;
 			txenv.mutable_transaction()->set_source_address(contractor);
 			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
@@ -1350,7 +1375,7 @@ namespace bumo{
 			protocol::OperationSetMetadata *meta_data = ope->mutable_set_metadata();
 			meta_data->set_key(key);
 			meta_data->set_value(value);
-
+			meta_data->set_delete_flag(is_del);
 
 			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, v8_contract->parameter_.ledger_context_);
 			if (tmp_result.code() > 0) {
