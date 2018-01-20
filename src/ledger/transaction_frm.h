@@ -94,9 +94,12 @@ namespace bumo {
 
 		void SetMaxEndTime(int64_t end_time);
 		int64_t GetMaxEndTime();
-
 		void ContractStepInc(int32_t step);
 		int32_t GetContractStep();
+		void SetMemoryUsage(int64_t memory_usage);
+		int64_t GetMemoryUsage();
+		bool IsExpire(std::string &error_info);
+		void EnableChecked();
 
 		uint64_t apply_time_;
 		int64_t ledger_seq_;
@@ -118,6 +121,8 @@ namespace bumo {
 		//flow the top tx
 		int64_t max_end_time_;
 		int32_t contract_step_;
+		int64_t contract_memory_usage_;
+		bool enable_check_;
 	};
 };
 

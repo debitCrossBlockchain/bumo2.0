@@ -168,17 +168,19 @@ namespace bumo {
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
 
-			int64_t time_start = utils::Timestamp::HighResolution();
-			tx_frm->SetMaxEndTime(time_start + tx_time_out);
+			if (tx_time_out > 0 ) {
+				tx_frm->EnableChecked();
+				tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + tx_time_out);
+			} 
 
 			bool ret = tx_frm->Apply(this, environment_);
-			int64_t time_use = utils::Timestamp::HighResolution() - time_start;
 
 			//caculate byte fee ,do not store when fee not enough 
-			if (tx_time_out > 0 && time_use > tx_time_out ) { //special treatment, return false
-				LOG_ERROR("transaction(%s) apply failed. %s, time out(" FMT_I64 "ms > " FMT_I64 "ms)",
+			std::string error_info;
+			if (tx_frm->IsExpire(error_info)) { //special treatment, return false
+				LOG_ERROR("transaction(%s) apply failed. %s, %s",
 					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-					time_use / utils::MICRO_UNITS_PER_MILLI, tx_time_out / utils::MICRO_UNITS_PER_MILLI);
+					error_info.c_str());
 				tx_time_out_index = i;
 				return false;
 			} if (tx_frm->GetContractStep() > General::CONTRACT_STEP_LIMIT) {

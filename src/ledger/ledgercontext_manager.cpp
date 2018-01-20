@@ -172,6 +172,9 @@ namespace bumo {
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(env);
 			//tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + utils::MICRO_UNITS_PER_SEC);
 			tx_frm->environment_ = environment;
+			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + 5 * utils::MICRO_UNITS_PER_SEC);
+			tx_frm->EnableChecked();
+
 			transaction_stack_.push_back(tx_frm);
 			closing_ledger_->apply_tx_frms_.push_back(tx_frm);
 
@@ -214,10 +217,11 @@ namespace bumo {
 			parameter.ope_index_ = 0;
 			parameter.consensus_value_ = Proto2Json(consensus_value_).toFastString();
 			parameter.ledger_context_ = this;
-			parameter.max_end_time_ = utils::Timestamp::HighResolution() + 5 * utils::MICRO_UNITS_PER_SEC;
 			//do query
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
 			transaction_stack_.push_back(tx_frm);
+			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + 5 * utils::MICRO_UNITS_PER_SEC);
+			tx_frm->EnableChecked();
 
 			Json::Value query_result;
 			return ContractManager::Instance().Query(type_, parameter, query_result);
@@ -390,7 +394,8 @@ namespace bumo {
 		Json::Value &logs,
 		Json::Value &txs,
 		Json::Value &rets,
-		Json::Value &fee) {
+		Json::Value &fee,
+		Json::Value &stat) {
 		LedgerContext *ledger_context = nullptr;
 		std::string thread_name = "test";
 		if (type == LedgerContext::AT_TEST_V8){
@@ -461,6 +466,13 @@ namespace bumo {
 				//std::string hash = HashWrapper::Crypto(env_sto.transaction_env().transaction().SerializeAsString());
 				//batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, hash), env_sto.SerializeAsString());
 			}
+		}
+
+		//add stat
+		if (ledger_context->transaction_stack_.size() > 0) {
+			TransactionFrm::pointer ptr = ledger_context->transaction_stack_[0];
+			stat["step"] = ptr->GetContractStep();
+			stat["memoryUsage"] = ptr->GetMemoryUsage();
 		}
 
 		int64_t real_fee = ledger->total_real_fee_;

@@ -48,6 +48,7 @@ namespace bumo {
 		const static int CONTRACT_TRANSACTION_LIMIT = 512;
 
 		const static int CONTRACT_STEP_LIMIT = 1024;
+		const static int CONTRACT_MEMORY_LIMIT = 30 *1024 * 1024; //limit memory 30M
 
 		const static int LAST_TX_HASHS_LIMIT = 100;
 

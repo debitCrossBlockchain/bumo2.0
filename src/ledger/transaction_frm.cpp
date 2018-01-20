@@ -39,6 +39,8 @@ namespace bumo {
 		real_fee_(0),
 		max_end_time_(0),
 		contract_step_(0),
+		contract_memory_usage_(0),
+		enable_check_(false),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		utils::AtomicInc(&bumo::General::tx_new_count);
 	}
@@ -55,6 +57,8 @@ namespace bumo {
 		real_fee_(0),
 		max_end_time_(0),
 		contract_step_(0),
+		contract_memory_usage_(0),
+		enable_check_(false),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		Initialize();
 		utils::AtomicInc(&bumo::General::tx_new_count);
@@ -147,6 +151,42 @@ namespace bumo {
 
 	int32_t TransactionFrm::GetContractStep() {
 		return contract_step_;
+	}
+
+	void TransactionFrm::SetMemoryUsage(int64_t memory_usage) {
+		contract_memory_usage_ = memory_usage;
+	}
+
+	int64_t TransactionFrm::GetMemoryUsage() {
+		return contract_memory_usage_;
+	}
+
+	bool TransactionFrm::IsExpire(std::string &error_info) {
+		if (!enable_check_) {
+			return false;
+		}
+
+		if (contract_step_ > General::CONTRACT_STEP_LIMIT) {
+			error_info = "Step expire";
+			return true;
+		}
+
+		int64_t now = utils::Timestamp::HighResolution();
+		if (max_end_time_ != 0 && now > max_end_time_) {
+			error_info = "Time expire";
+			return true;
+		}
+
+		if (contract_memory_usage_ > General::CONTRACT_MEMORY_LIMIT) {
+			error_info = "Memory expire";
+			return true;
+		}
+
+		return false;
+	}
+
+	void TransactionFrm::EnableChecked() {
+		enable_check_ = true;
 	}
 
 	bool TransactionFrm::PayFee(std::shared_ptr<Environment> environment, int64_t &total_fee) {
