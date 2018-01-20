@@ -1262,7 +1262,7 @@ function main(input)
 
 - #####  做交易
     ```javascript
-    doOperation(transaction)
+    doTransaction(transaction)
     ```
 
     令合约账号做一笔交易，即里面的任意一个操作的`source_address`都会自动变成合约账号。所以`source_address`是不需要填写的。
