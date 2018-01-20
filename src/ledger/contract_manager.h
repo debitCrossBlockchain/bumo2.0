@@ -180,7 +180,7 @@ namespace bumo{
 		//Sends a message with arbitrary date to a given address path
 		static void CallBackStorageStore(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackStorageDel(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void SetMetaData(const v8::FunctionCallbackInfo<v8::Value>& args, bool is_del);
+		static void SetMetaData(const v8::FunctionCallbackInfo<v8::Value>& args, bool is_del = false);
 		static void CallBackStorageLoad(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Get caller 
 		static void CallBackGetCaller(const v8::FunctionCallbackInfo<v8::Value>& args);

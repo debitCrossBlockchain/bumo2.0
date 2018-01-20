@@ -12,14 +12,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "random.h"
 #include <cstring>
 #include <random>
-#include "openssl\rand.h"
+#include <openssl/rand.h>
 #if defined(_MSC_VER)
 #include <Windows.h>
 #endif
 
+#include "random.h"
 #include "crypto.h"
 
 #define NUM_OS_RANDOM_BYTES 32

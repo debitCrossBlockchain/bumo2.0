@@ -568,6 +568,7 @@ namespace bumo {
 
 		for (size_t i = 0; i < expired_context.size(); i++) {
 			expired_context[i]->Cancel();
+			delete expired_context[i];
 		}
 	}
 
