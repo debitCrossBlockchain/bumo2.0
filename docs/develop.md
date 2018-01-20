@@ -1100,6 +1100,19 @@ function main(input)
   ```
     即可得到本合约账号中自定数据的abc的值
 
+- ##### 删除合约账号的metadata信息
+  `storageDel(metadata_key);`
+  - metadata_key: metadata的key
+  ```javascript
+  var ret  = storageDel('abc');
+  /*
+    bar 的值是如下的格式
+    true
+  */
+
+  ```
+    即可删除本合约账号中自定数据的abc的值
+
 - ##### 获取某个账号的资产信息
 
     `getAccountAsset(account_address, asset_property);`
