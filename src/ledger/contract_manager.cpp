@@ -23,7 +23,7 @@
     
 namespace bumo{
 
-	ContractParameter::ContractParameter() : ope_index_(-1), ledger_context_(NULL), pay_coin_amount_(0), max_end_time_(0){}
+	ContractParameter::ContractParameter() : ope_index_(-1), ledger_context_(NULL), pay_coin_amount_(0){}
 
 	ContractParameter::~ContractParameter() {}
 
@@ -116,6 +116,7 @@ namespace bumo{
 	const std::string V8Contract::trigger_tx_index_name_ = "triggerIndex";
 	const std::string V8Contract::this_header_name_ = "consensusValue";
 	const std::string V8Contract::pay_coin_amount_name_ = "payCoinAmount";
+	const std::string V8Contract::pay_asset_amount_name_ = "payAssetAmount";
 	const std::string V8Contract::block_timestamp_name_ = "blockTimestamp";
 	const std::string V8Contract::block_number_name_ = "blockNumber";
 	utils::Mutex V8Contract::isolate_to_contract_mutex_;
@@ -211,6 +212,19 @@ namespace bumo{
 			v8::String::NewFromUtf8(isolate_, pay_coin_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			coin_amount);
 
+		if (parameter_.pay_asset_amount_.has_property()) {
+			v8::Local<v8::Object> v8_asset = v8::Object::New(isolate_);
+			v8::Local<v8::Object> v8_asset_property = v8::Object::New(isolate_);
+			const protocol::AssetProperty &asspro = parameter_.pay_asset_amount_.property();
+			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "issuer"), v8::String::NewFromUtf8(isolate_, asspro.issuer().c_str()));
+			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "code"), v8::String::NewFromUtf8(isolate_, asspro.code().c_str()));
+			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "amount"), v8::String::NewFromUtf8(isolate_, utils::String::ToString(parameter_.pay_asset_amount_.amount()).c_str()));
+			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "property"), v8_asset_property);
+
+			context->Global()->Set(context,
+				v8::String::NewFromUtf8(isolate_, pay_asset_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+				v8_asset);
+		} 
 
 		auto blocknumber_v8 = v8::Number::New(isolate_, (double)parameter_.blocknumber_);
 		context->Global()->Set(context,
