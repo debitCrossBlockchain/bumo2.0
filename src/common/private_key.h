@@ -27,40 +27,40 @@ namespace bumo {
 		SIGNTYPE_NONE,
 		SIGNTYPE_ED25519 = 1,
 		SIGNTYPE_CFCASM2 = 2,
-    };
+	};
 
-    enum PrivateKeyPrefix {
-        ADDRESS_PREFIX = 0xa0, //0xa0
-        PUBLICKEY_PREFIX = 0xb0, //0xb0
-        PRIVATEKEY_PREFIX = 0xc0  //0xc0
-    };
+	enum PrivateKeyPrefix {
+		ADDRESS_PREFIX = 0xa0, //0xa0
+		PUBLICKEY_PREFIX = 0xb0, //0xb0
+		PRIVATEKEY_PREFIX = 0xc0  //0xc0
+	};
 
-    enum Ed25519KeyLength {
-        ED25519_ADDRESS_LENGTH = 20, // 2+1+20+4
-        ED25519_PUBLICKEY_LENGTH = 32, //1+1+32+4
-        ED25519_PRIVATEKEY_LENGTH = 32, //3+1+32+1+4
-    };
+	enum Ed25519KeyLength {
+		ED25519_ADDRESS_LENGTH = 20, // 2+1+20+4
+		ED25519_PUBLICKEY_LENGTH = 32, //1+1+32+4
+		ED25519_PRIVATEKEY_LENGTH = 32, //3+1+32+1+4
+	};
 
-    enum Sm2KeyLength {
-        SM2_ADDRESS_LENGTH = 20, //2+1+20+4
-        SM2_PUBLICKEY_LENGTH = 65, //1+1+65+4
-        SM2_PRIVATEKEY_LENGTH = 32 //3+1+32+1+4
-    };
-    
-    std::string EncodeAddress(const std::string& address);
-    std::string DecodeAddress(const std::string& address);
-    std::string EncodePublicKey(const std::string& key);
-    std::string DecodePublicKey(const std::string& key);
-    std::string EncodePrivateKey(const std::string& key);
-    std::string DecodePrivateKey(const std::string& key);
+	enum Sm2KeyLength {
+		SM2_ADDRESS_LENGTH = 20, //2+1+20+4
+		SM2_PUBLICKEY_LENGTH = 65, //1+1+65+4
+		SM2_PRIVATEKEY_LENGTH = 32 //3+1+32+1+4
+	};
+	
+	std::string EncodeAddress(const std::string& address);
+	std::string DecodeAddress(const std::string& address);
+	std::string EncodePublicKey(const std::string& key);
+	std::string DecodePublicKey(const std::string& key);
+	std::string EncodePrivateKey(const std::string& key);
+	std::string DecodePrivateKey(const std::string& key);
 
 
-    std::string CalcHash(const std::string &value, const SignatureType &sign_type);
-    bool GetPublicKeyElement(const std::string &encode_pub_key, PrivateKeyPrefix &prefix, SignatureType &sign_type, std::string &raw_data);
+	std::string CalcHash(const std::string &value, const SignatureType &sign_type);
+	bool GetPublicKeyElement(const std::string &encode_pub_key, PrivateKeyPrefix &prefix, SignatureType &sign_type, std::string &raw_data);
 	bool GetKeyElement(const std::string &encode_key, PrivateKeyPrefix &prefix, SignatureType &sign_type, std::string &raw_data);
 	std::string GetSignTypeDesc(SignatureType type);
 	SignatureType GetSignTypeByDesc(const std::string &desc);
-    
+	
 
 	class PublicKey {
 		DISALLOW_COPY_AND_ASSIGN(PublicKey);
@@ -68,7 +68,7 @@ namespace bumo {
 
 	public:
 		PublicKey();
-        PublicKey(const std::string &encode_pub_key);
+		PublicKey(const std::string &encode_pub_key);
 		~PublicKey();
 
 		void Init(std::string rawpkey);
@@ -102,8 +102,8 @@ namespace bumo {
 
 		std::string	Sign(const std::string &input) const;
 		std::string GetEncPrivateKey() const;
-        std::string GetEncAddress() const;
-        std::string GetEncPublicKey() const;
+		std::string GetEncAddress() const;
+		std::string GetEncPublicKey() const;
 		std::string GetRawPublicKey() const;
 		bool IsValid() const { return valid_; }
 		std::string GetRawPrivateKey() {
