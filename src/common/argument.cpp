@@ -94,6 +94,38 @@ namespace bumo {
 				Usage();
 				return true;
 			}
+			else if (s == "--check-signed-data" && argc > 4) {
+				printf("%s\n", PublicKey::Verify(utils::String::HexStringToBin(argv[2]), utils::String::HexStringToBin(argv[3]), argv[4]) ? "true" : "false");
+				return true;
+			}
+			else if (s == "--sign-data" && argc > 3) {
+				PrivateKey priv_key(argv[2]);
+				std::string public_key = priv_key.GetEncPublicKey();
+				std::string raw_data = utils::String::HexStringToBin(argv[3]);
+				Json::Value result = Json::Value(Json::objectValue);
+				
+				result["data"] = argv[3];
+				result["public_key"] = public_key;
+				result["sign_data"] = utils::String::BinToHexString(priv_key.Sign(raw_data));
+				printf("%s\n", result.toStyledString().c_str());
+				return true;
+			}
+			else if (s == "--get-address" && argc > 2) {
+				PrivateKey priv_key(argv[2]);
+				std::string public_key = priv_key.GetEncPublicKey();
+				std::string private_key = priv_key.GetEncPrivateKey();
+				std::string public_address = priv_key.GetEncAddress();
+				Json::Value result = Json::Value(Json::objectValue);
+
+				result["public_key"] = public_key;
+				result["private_key"] = private_key;
+				result["private_key_aes"] = utils::Aes::CryptoHex(private_key, bumo::GetDataSecuretKey());
+				result["address"] = public_address;
+				result["public_key_raw"] = EncodePublicKey(priv_key.GetRawPublicKey());
+				result["sign_type"] = GetSignTypeDesc(priv_key.GetSignType());
+				printf("%s\n", result.toStyledString().c_str());
+				return true;
+			}
 			else if (s == "--create-account" && argc > 2) {
 				SignatureType type = GetSignTypeByDesc(argv[2]);
 				if (type == SIGNTYPE_NONE) {
@@ -102,9 +134,14 @@ namespace bumo {
 				} 
 
 				PrivateKey priv_key(type);
-                std::string public_key = priv_key.GetEncPublicKey();
-                std::string private_key = priv_key.GetEncPrivateKey();
-                std::string public_address = priv_key.GetEncAddress();
+				if (!priv_key.IsValid()) {
+					printf("Generate private key error");
+					return true;
+				}
+
+				std::string public_key = priv_key.GetEncPublicKey();
+				std::string private_key = priv_key.GetEncPrivateKey();
+				std::string public_address = priv_key.GetEncAddress();
 
 				LOG_TRACE("Creating account address:%s", public_address.c_str());
 				Json::Value result = Json::Value(Json::objectValue);
@@ -177,6 +214,9 @@ namespace bumo {
 			"  --dropdb                        clean up database\n"
 			"  --peer-address <node-priv-key>  get peer address from crypted node private key\n"
 			"  --create-account <crypto>       create account, support ed25519\n"
+			"  --get-address <node-priv-key>   get address from private key"
+			"  --sign-data <node-priv-key> <blob data>   sign blob data"
+			"  --check-signed-data <blob data> <signed data> <public key> check signed data"
 			"  --hardware-address              get local hardware address\n"
 			"  --clear-consensus-status        delete consensus status\n"
 			"  --sm3 <arg>                     generate sm3 hash \n"
