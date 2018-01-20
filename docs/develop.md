@@ -1251,7 +1251,7 @@ function main(input)
 
     令合约账号做一笔交易，即里面的任意一个操作的`source_address`都会自动变成合约账号。所以`source_address`是不需要填写的。
 
-  - 入参: transaction, 交易
+  - 入参: transaction, 必须为字符串，且可反序列化
   - 返回值: true/false
 
     例如

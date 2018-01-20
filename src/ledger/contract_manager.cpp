@@ -652,14 +652,7 @@ namespace bumo{
 	}
 
 	bool V8Contract::JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue) {
-		if (jsvalue->IsObject()) {  //include map arrary
-			v8::Local<v8::String> jsStr = v8::JSON::Stringify(context, jsvalue->ToObject()).ToLocalChecked();
-			std::string str = std::string(ToCString(v8::String::Utf8Value(jsStr)));
-			
-			jsonvalue["type"] = "jsobject";
-			jsonvalue["value"] = str;
-		}
-		else if (jsvalue->IsNumber()) {
+		if (jsvalue->IsNumber()) {
 			double s_value = jsvalue->NumberValue();
 			std::string value;
 			value.resize(sizeof(double));
@@ -690,6 +683,10 @@ namespace bumo{
 				LOG_ERROR("parameter error");
 				break;
 			}
+			if (!args[0]->IsString()) {
+				LOG_ERROR("parameter should be string");
+				break;
+			}
 			
 			v8::HandleScope scope(args.GetIsolate());
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
@@ -703,8 +700,7 @@ namespace bumo{
 				break;
 			} 
 
-			v8::Local<v8::String> str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), args[0]->ToObject()).ToLocalChecked();
-			v8::String::Utf8Value  utf8(str);
+			v8::String::Utf8Value  utf8(args[0]);
 			Json::Value json;
 			if (!json.fromCString(ToCString(utf8))) {
 				LOG_ERROR("fromCString fail, fatal error");
@@ -800,46 +796,24 @@ namespace bumo{
 	}
 
 	void V8Contract::CallBackLog(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		LOG_TRACE("CallBackLog");
-
 		if (args.Length() < 1) {
 			args.GetReturnValue().Set(false);
 			return;
 		}
-		v8::HandleScope scope(args.GetIsolate());
-		v8::Local<v8::String> str;
-		if (args[0]->IsObject()) {
-			v8::Local<v8::Object> obj = args[0]->ToObject(args.GetIsolate());
-			str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), obj).ToLocalChecked();
-		} 
-		else {
-			str = args[0]->ToString();
-		}
 
+		v8::HandleScope scope(args.GetIsolate());
 		V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 		if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
 			LOG_ERROR("Can't find contract object by isolate id");
 			return;
 		}
 		std::string this_contract = v8_contract->parameter_.this_address_;
-		
-		auto type = args[0]->TypeOf(args.GetIsolate());
-		LOG_INFO("type is %s", ToCString(v8::String::Utf8Value(type)));
-		if (v8::String::NewFromUtf8(args.GetIsolate(), "undefined", v8::NewStringType::kNormal).ToLocalChecked()->Equals(type)) {
-			LOG_INFO("undefined type");
-			return;
-		}
+		v8::String::Utf8Value str1(args[0]);
+		const char* cstr = ToCString(str1);
+		LOG_INFO("V8contract log[%s:%s]\n%s", this_contract.c_str(), v8_contract->parameter_.sender_.c_str(), cstr);
+			v8_contract->AddLog(cstr);
 
-		//
-		auto context = args.GetIsolate()->GetCurrentContext();
-		auto sender = args.GetIsolate()->GetCurrentContext()->Global()->Get(context,
-			v8::String::NewFromUtf8(args.GetIsolate(), sender_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked()).ToLocalChecked();
-		v8::String::Utf8Value utf8_sender(sender->ToString());
-		//
-		v8::String::Utf8Value utf8value(str);
-		LOG_INFO("LogCallBack[%s:%s]\n%s", this_contract.c_str(), ToCString(utf8_sender), ToCString(utf8value));
-
-		v8_contract->AddLog(ToCString(utf8value));
+		return;
 	}
 
 	void V8Contract::CallBackGetAccountAsset(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -1051,15 +1025,12 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			v8::Local<v8::Object> obj = args[0]->ToObject();
-			if (obj->IsNull()) {
-				LOG_ERROR("CallBackDoOperation, parameter 0 should not be null");
+			if (!obj->IsString()) {
+				LOG_ERROR("CallBackDoOperation, parameter 0 should be string");
 				break;
 			}
 
-			auto str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), obj).ToLocalChecked();
-
-			//v8::Local<v8::String> str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext()/*context*/, obj).ToLocalChecked();
-			v8::String::Utf8Value utf8value(str);
+			v8::String::Utf8Value utf8value(obj);
 			const char* strdata = ToCString(utf8value);
 			Json::Value transaction_json;
 
@@ -1148,7 +1119,12 @@ namespace bumo{
 		{
 			if (args.Length() != 1)
 			{
-				LOG_ERROR("parameter error.");
+				LOG_ERROR("parameter error");
+				break;
+			}
+
+			if (!args[0]->IsString()) {
+				LOG_ERROR("arg0 should be string");
 				break;
 			}
 
@@ -1166,8 +1142,7 @@ namespace bumo{
 				break;
 			}
 
-			v8::Local<v8::String> str = v8::JSON::Stringify(args.GetIsolate()->GetCurrentContext(), args[0]->ToObject()).ToLocalChecked();
-			v8::String::Utf8Value  utf8(str);
+			v8::String::Utf8Value  utf8(args[0]);
 			Json::Value json;
 			if (!json.fromCString(ToCString(utf8))) {
 				LOG_ERROR("fromCString fail, fatal error");
