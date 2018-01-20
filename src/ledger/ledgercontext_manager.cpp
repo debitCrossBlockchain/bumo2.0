@@ -216,6 +216,8 @@ namespace bumo {
 			parameter.ledger_context_ = this;
 			parameter.max_end_time_ = utils::Timestamp::HighResolution() + 5 * utils::MICRO_UNITS_PER_SEC;
 			//do query
+			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
+			transaction_stack_.push_back(tx_frm);
 
 			Json::Value query_result;
 			return ContractManager::Instance().Query(type_, parameter, query_result);
