@@ -642,11 +642,7 @@ namespace bumo {
 
 			for (int32_t i = 0; i < ope.signers_size(); i++) {
 
-				//fix the bug for version < 3001
 				int64_t weight = ope.signers(i).weight();
-				if (transaction_->ledger_->GetProtoHeader().version() < 3001) {
-					weight = weight & UINT8_MAX;
-				}
 				source_account_->UpdateSigner(ope.signers(i).address(), weight);
 			}
 
