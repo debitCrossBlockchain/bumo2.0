@@ -779,25 +779,24 @@ namespace bumo{
 		bumo::AccountFrm::pointer account_frm = nullptr;
 		V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 
-		if (v8_contract && 
-			v8_contract->GetParameter().max_end_time_ != 0 &&
-			utils::Timestamp::HighResolution() > v8_contract->GetParameter().max_end_time_ ) {
-
-			args.GetIsolate()->ThrowException(
-				v8::String::NewFromUtf8(args.GetIsolate(), "Time expire",
-				v8::NewStringType::kNormal).ToLocalChecked());
-		}
-
 		if (v8_contract && v8_contract->GetParameter().ledger_context_){
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			TransactionFrm::pointer ptr = ledger_context->GetBottomTx();
 			ptr->ContractStepInc(1);
-			if (ptr->GetContractStep() > General::CONTRACT_STEP_LIMIT){
+
+			//check the storage
+			v8::HeapStatistics stats;
+			args.GetIsolate()->GetHeapStatistics(&stats);
+			ptr->SetMemoryUsage(stats.used_heap_size());
+
+			std::string error_info;
+			if (ptr->IsExpire(error_info)) {
 				args.GetIsolate()->ThrowException(
-					v8::String::NewFromUtf8(args.GetIsolate(), "Step expire",
+					v8::String::NewFromUtf8(args.GetIsolate(), error_info.c_str(),
 					v8::NewStringType::kNormal).ToLocalChecked());
-			}
+			} 
 		} 
+
 	}
 
 	void V8Contract::CallBackLog(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -1013,7 +1012,6 @@ namespace bumo{
 			ContractParameter parameter;
 			parameter.code_ = contract.payload();
 			parameter.sender_ = v8_contract->GetParameter().this_address_;
-			parameter.max_end_time_ = v8_contract->GetParameter().max_end_time_;
 			parameter.this_address_ = address;
 			parameter.input_ = input;
 			parameter.ope_index_ = 0;

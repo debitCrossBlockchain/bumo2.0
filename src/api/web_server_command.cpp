@@ -258,7 +258,7 @@ namespace bumo {
 			if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_V8,
 				(TestParameter*)&test_parameter,
 				utils::MICRO_UNITS_PER_SEC, 
-				exe_result, result["logs"], result["txs"], result["rets"], result["real_fee"])) {
+				exe_result, result["logs"], result["txs"], result["rets"], result["real_fee"], result["stat"])) {
 				error_code = exe_result.code();
 				error_desc = exe_result.desc();
 				LOG_ERROR("%s", error_desc.c_str());
@@ -371,7 +371,7 @@ namespace bumo {
 				if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
 					(TestParameter*)&test_parameter,
 					utils::MICRO_UNITS_PER_SEC,
-					exe_result, result_json["logs"], result_json["txs"], result_json["rets"], result_json["real_fee"])) {
+					exe_result, result_json["logs"], result_json["txs"], result_json["rets"], result_json["real_fee"], result_json["stat"])) {
 					reply_json["error_code"] = exe_result.code();
 					reply_json["error_desc"] = exe_result.desc();
 					LOG_ERROR("%s", exe_result.desc().c_str());

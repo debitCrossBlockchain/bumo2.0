@@ -562,7 +562,6 @@ namespace bumo {
 				parameter.timestamp_ = transaction_->ledger_->value_->close_time();
 				parameter.blocknumber_ = transaction_->ledger_->value_->ledger_seq();
 				parameter.ledger_context_ = transaction_->ledger_->lpledger_context_;
-				parameter.max_end_time_ = transaction_->GetMaxEndTime();
 
 				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter);
 			}
@@ -724,7 +723,6 @@ namespace bumo {
 				parameter.blocknumber_ = transaction_->ledger_->value_->ledger_seq();
 				parameter.ledger_context_ = transaction_->ledger_->lpledger_context_;
 				parameter.pay_coin_amount_ = ope.amount();
-				parameter.max_end_time_ = transaction_->GetMaxEndTime();
 
 				std::string err_msg;
 				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter);
