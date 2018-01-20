@@ -79,6 +79,7 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\utils\scopeGuard.h">
+    <ClInclude Include="..\..\src\utils\random.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -120,6 +121,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\utils\sm3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\utils\random.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

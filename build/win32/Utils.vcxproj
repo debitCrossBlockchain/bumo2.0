@@ -23,6 +23,7 @@
     <ClInclude Include="..\..\src\utils\net.h" />
     <ClInclude Include="..\..\src\utils\noncopyable.h" />
     <ClInclude Include="..\..\src\utils\scopeGuard.h" />
+    <ClInclude Include="..\..\src\utils\random.h" />
     <ClInclude Include="..\..\src\utils\singleton.h" />
     <ClInclude Include="..\..\src\utils\sm3.h" />
     <ClInclude Include="..\..\src\utils\sqlparser.h" />
@@ -41,6 +42,7 @@
     <ClCompile Include="..\..\src\utils\file.cpp" />
     <ClCompile Include="..\..\src\utils\logger.cpp" />
     <ClCompile Include="..\..\src\utils\net.cpp" />
+    <ClCompile Include="..\..\src\utils\random.cpp" />
     <ClCompile Include="..\..\src\utils\sm3.cpp" />
     <ClCompile Include="..\..\src\utils\sqlparser.cpp" />
     <ClCompile Include="..\..\src\utils\system.cpp" />

@@ -18,6 +18,7 @@
 #include <openssl/ripemd.h>
 #include <utils/logger.h>
 #include <utils/crypto.h>
+#include <utils/random.h>
 #include <utils/sm3.h>
 #include <utils/strings.h>
 #include "general.h"
@@ -25,101 +26,101 @@
 
 namespace bumo {
 
-    std::string EncodeAddress(const std::string& address){
-        return utils::Base58::Encode(address);
-    }
-    std::string DecodeAddress(const std::string& address){
-        return utils::Base58::Decode(address);
-    }
-    std::string EncodePublicKey(const std::string& key){
-        return utils::String::BinToHexString(key);
-    }
-    std::string DecodePublicKey(const std::string& key){
-        return utils::String::HexStringToBin(key);
-    }
-    std::string EncodePrivateKey(const std::string& key){
-        return utils::Base58::Encode(key);
-    }
-    std::string DecodePrivateKey(const std::string& key){
-        return utils::Base58::Decode(key);
-    }
+	std::string EncodeAddress(const std::string& address){
+		return utils::Base58::Encode(address);
+	}
+	std::string DecodeAddress(const std::string& address){
+		return utils::Base58::Decode(address);
+	}
+	std::string EncodePublicKey(const std::string& key){
+		return utils::String::BinToHexString(key);
+	}
+	std::string DecodePublicKey(const std::string& key){
+		return utils::String::HexStringToBin(key);
+	}
+	std::string EncodePrivateKey(const std::string& key){
+		return utils::Base58::Encode(key);
+	}
+	std::string DecodePrivateKey(const std::string& key){
+		return utils::Base58::Decode(key);
+	}
 
-    std::string CalcHash(const std::string &value,const SignatureType &sign_type) {
-        std::string hash;
-        if (sign_type == SIGNTYPE_ED25519) {
-            hash = utils::Sha256::Crypto(value);
-        }
-        else {
-            hash = utils::Sm3::Crypto(value);
-        }
-        return hash;
-    }
+	std::string CalcHash(const std::string &value,const SignatureType &sign_type) {
+		std::string hash;
+		if (sign_type == SIGNTYPE_ED25519) {
+			hash = utils::Sha256::Crypto(value);
+		}
+		else {
+			hash = utils::Sm3::Crypto(value);
+		}
+		return hash;
+	}
 
-    bool GetPublicKeyElement(const std::string &encode_pub_key, PrivateKeyPrefix &prefix, SignatureType &sign_type, std::string &raw_data){
-        std::string buff = DecodePublicKey(encode_pub_key);
-        if (buff.size() < 6)
-            return false;
+	bool GetPublicKeyElement(const std::string &encode_pub_key, PrivateKeyPrefix &prefix, SignatureType &sign_type, std::string &raw_data){
+		std::string buff = DecodePublicKey(encode_pub_key);
+		if (buff.size() < 6)
+			return false;
 
-        uint8_t a = (uint8_t)buff.at(0);
-        uint8_t b = (uint8_t)buff.at(1);
-        
-        PrivateKeyPrefix prefix_tmp = (PrivateKeyPrefix)a;
-        if (prefix_tmp != PUBLICKEY_PREFIX)
-            return false;
-
-        SignatureType sign_type_tmp = (SignatureType)b;
-        size_t datalen = buff.size() - 6;
-
-        bool ret = true;
-        switch (sign_type_tmp) {
-        case SIGNTYPE_ED25519:{
-            ret = (ED25519_PUBLICKEY_LENGTH == datalen);
-            break;
-        }
-        case SIGNTYPE_CFCASM2:{
-            ret = (SM2_PUBLICKEY_LENGTH == datalen);
-            break;
-        }
-        default:
-            ret = false;
-        }
-
-        if (ret){
-            //check sum
-            std::string checksum = buff.substr(buff.size() - 4);
-            std::string hash1 = CalcHash(buff.substr(0, buff.size() - 4), sign_type_tmp);
-            std::string hash2 = CalcHash(hash1, sign_type_tmp);
-            if (checksum.compare(hash2.substr(0, 4)))
-                return false;
-
-            prefix = prefix_tmp;
-            sign_type = sign_type_tmp;
-            raw_data = buff.substr(2, buff.size() - 6);
-        }
-        return ret;
-    }
-
-    bool GetKeyElement(const std::string &encode_key, PrivateKeyPrefix &prefix, SignatureType &sign_type, std::string &raw_data) {
-        PrivateKeyPrefix prefix_tmp;
-        SignatureType sign_type_tmp = SIGNTYPE_NONE;
-        std::string buff = DecodeAddress(encode_key);
-        if (buff.size() == 27 && (uint8_t)buff.at(0) == 0X01 && (uint8_t)buff.at(1) == 0X56){// address
-            prefix_tmp = ADDRESS_PREFIX;
-        }
-        else if (buff.size() == 41 && (uint8_t)buff.at(0) == 0XDA && (uint8_t)buff.at(1) == 0X37 && (uint8_t)buff.at(2) == 0X9F){//private key
-            prefix_tmp = PRIVATEKEY_PREFIX;
-        }
-        else{
-            return false;
-        }     
+		uint8_t a = (uint8_t)buff.at(0);
+		uint8_t b = (uint8_t)buff.at(1);
 		
-       
+		PrivateKeyPrefix prefix_tmp = (PrivateKeyPrefix)a;
+		if (prefix_tmp != PUBLICKEY_PREFIX)
+			return false;
+
+		SignatureType sign_type_tmp = (SignatureType)b;
+		size_t datalen = buff.size() - 6;
+
+		bool ret = true;
+		switch (sign_type_tmp) {
+		case SIGNTYPE_ED25519:{
+			ret = (ED25519_PUBLICKEY_LENGTH == datalen);
+			break;
+		}
+		case SIGNTYPE_CFCASM2:{
+			ret = (SM2_PUBLICKEY_LENGTH == datalen);
+			break;
+		}
+		default:
+			ret = false;
+		}
+
+		if (ret){
+			//check sum
+			std::string checksum = buff.substr(buff.size() - 4);
+			std::string hash1 = CalcHash(buff.substr(0, buff.size() - 4), sign_type_tmp);
+			std::string hash2 = CalcHash(hash1, sign_type_tmp);
+			if (checksum.compare(hash2.substr(0, 4)))
+				return false;
+
+			prefix = prefix_tmp;
+			sign_type = sign_type_tmp;
+			raw_data = buff.substr(2, buff.size() - 6);
+		}
+		return ret;
+	}
+
+	bool GetKeyElement(const std::string &encode_key, PrivateKeyPrefix &prefix, SignatureType &sign_type, std::string &raw_data) {
+		PrivateKeyPrefix prefix_tmp;
+		SignatureType sign_type_tmp = SIGNTYPE_NONE;
+		std::string buff = DecodeAddress(encode_key);
+		if (buff.size() == 27 && (uint8_t)buff.at(0) == 0X01 && (uint8_t)buff.at(1) == 0X56){// address
+			prefix_tmp = ADDRESS_PREFIX;
+		}
+		else if (buff.size() == 41 && (uint8_t)buff.at(0) == 0XDA && (uint8_t)buff.at(1) == 0X37 && (uint8_t)buff.at(2) == 0X9F){//private key
+			prefix_tmp = PRIVATEKEY_PREFIX;
+		}
+		else{
+			return false;
+		}     
+		
+	   
 
 		bool ret = true;
 		if (prefix_tmp == ADDRESS_PREFIX) {
-            uint8_t a = (uint8_t)buff.at(2); 
-            sign_type_tmp = (SignatureType)a;   
-            size_t datalen = buff.size() - 7;
+			uint8_t a = (uint8_t)buff.at(2); 
+			sign_type_tmp = (SignatureType)a;   
+			size_t datalen = buff.size() - 7;
 			switch (sign_type_tmp) {
 			case SIGNTYPE_ED25519:{
 				ret = (ED25519_ADDRESS_LENGTH == datalen);
@@ -134,9 +135,9 @@ namespace bumo {
 			}
 		}
 		else if (prefix_tmp == PRIVATEKEY_PREFIX) {
-            uint8_t a = (uint8_t)buff.at(3);  
-            sign_type_tmp = (SignatureType)a;
-            size_t datalen = buff.size() - 9;
+			uint8_t a = (uint8_t)buff.at(3);  
+			sign_type_tmp = (SignatureType)a;
+			size_t datalen = buff.size() - 9;
 			switch (sign_type_tmp) {
 			case SIGNTYPE_ED25519:{
 				ret = (ED25519_PRIVATEKEY_LENGTH == datalen);
@@ -155,21 +156,21 @@ namespace bumo {
 		}
 
 		if (ret){
-            //checksum
-            std::string checksum = buff.substr(buff.size() - 4);
-            std::string hash1 = CalcHash(buff.substr(0, buff.size() - 4), sign_type_tmp);
-            std::string hash2 = CalcHash(hash1, sign_type_tmp);
-            if (checksum.compare(hash2.substr(0, 4)))
-                return false;
+			//checksum
+			std::string checksum = buff.substr(buff.size() - 4);
+			std::string hash1 = CalcHash(buff.substr(0, buff.size() - 4), sign_type_tmp);
+			std::string hash2 = CalcHash(hash1, sign_type_tmp);
+			if (checksum.compare(hash2.substr(0, 4)))
+				return false;
 
 			prefix = prefix_tmp;
 			sign_type = sign_type_tmp;
-            if (prefix_tmp == ADDRESS_PREFIX) {
-                raw_data = buff.substr(3, buff.size() - 7);
-            }
-            else if (prefix_tmp == PRIVATEKEY_PREFIX) {
-                raw_data = buff.substr(4, buff.size() - 9);
-            }
+			if (prefix_tmp == ADDRESS_PREFIX) {
+				raw_data = buff.substr(3, buff.size() - 7);
+			}
+			else if (prefix_tmp == PRIVATEKEY_PREFIX) {
+				raw_data = buff.substr(4, buff.size() - 9);
+			}
 		} 
 
 		return ret;
@@ -195,16 +196,16 @@ namespace bumo {
 		return SIGNTYPE_NONE;
 	}
 
-    PublicKey::PublicKey() :valid_(false), type_(SIGNTYPE_ED25519) {}
+	PublicKey::PublicKey() :valid_(false), type_(SIGNTYPE_ED25519) {}
 
 	PublicKey::~PublicKey() {}
 
 	PublicKey::PublicKey(const std::string &encode_pub_key) {
 		do {
 			PrivateKeyPrefix prefix;
-            if (GetPublicKeyElement(encode_pub_key, prefix, type_, raw_pub_key_)){
-                valid_ = (prefix == PUBLICKEY_PREFIX);
-            }
+			if (GetPublicKeyElement(encode_pub_key, prefix, type_, raw_pub_key_)){
+				valid_ = (prefix == PUBLICKEY_PREFIX);
+			}
 		} while (false);
 	}
 
@@ -212,14 +213,14 @@ namespace bumo {
 		raw_pub_key_ = rawpkey;
 	}
 
-    bool PublicKey::IsAddressValid(const std::string &encode_address) {
+	bool PublicKey::IsAddressValid(const std::string &encode_address) {
 		do {
-            PrivateKeyPrefix prefix;
-            SignatureType sign_type;
-            std::string raw_pub_key;
-            if (GetKeyElement(encode_address, prefix, sign_type, raw_pub_key)){
-                return (prefix == ADDRESS_PREFIX);
-            }
+			PrivateKeyPrefix prefix;
+			SignatureType sign_type;
+			std::string raw_pub_key;
+			if (GetKeyElement(encode_address, prefix, sign_type, raw_pub_key)){
+				return (prefix == ADDRESS_PREFIX);
+			}
 		} while (false);
 
 		return false;
@@ -228,10 +229,10 @@ namespace bumo {
 	std::string PublicKey::GetEncAddress() const {
 		
 		std::string str_result = "";
-        //append prefix (bubi 0XE6 0X9A 0X73 0XFF)
-        //append prefix (bu)
-        str_result.push_back((char)0X01);
-        str_result.push_back((char)0X56);
+		//append prefix (bubi 0XE6 0X9A 0X73 0XFF)
+		//append prefix (bu)
+		str_result.push_back((char)0X01);
+		str_result.push_back((char)0X56);
 
 		//append version 1byte
 		str_result.push_back((char)type_);
@@ -241,23 +242,23 @@ namespace bumo {
 		str_result.append(hash.substr(12));
 
 		//append check sum 4byte
-        std::string hash1, hash2;
-        hash1 = CalcHash(str_result, type_);
-        hash2 = CalcHash(hash1, type_);
+		std::string hash1, hash2;
+		hash1 = CalcHash(str_result, type_);
+		hash2 = CalcHash(hash1, type_);
 
-        str_result.append(hash2.c_str(), 4);
-        return EncodeAddress(str_result);
+		str_result.append(hash2.c_str(), 4);
+		return EncodeAddress(str_result);
 	}
 
 	std::string PublicKey::GetRawPublicKey() const {
 		return raw_pub_key_;
 	}
 
-    std::string PublicKey::GetEncPublicKey() const {
+	std::string PublicKey::GetEncPublicKey() const {
 		
 		std::string str_result = "";
-        //append PrivateKeyPrefix
-        str_result.push_back((char)PUBLICKEY_PREFIX);
+		//append PrivateKeyPrefix
+		str_result.push_back((char)PUBLICKEY_PREFIX);
 
 		//append version
 		str_result.push_back((char)type_);
@@ -265,19 +266,19 @@ namespace bumo {
 		//append public key
 		str_result.append(raw_pub_key_);
 
-        std::string hash1, hash2;
-        hash1 = CalcHash(str_result, type_);
-        hash2 = CalcHash(hash1, type_);
+		std::string hash1, hash2;
+		hash1 = CalcHash(str_result, type_);
+		hash2 = CalcHash(hash1, type_);
 
-        str_result.append(hash2.c_str(), 4);
-        return EncodePublicKey(str_result);
+		str_result.append(hash2.c_str(), 4);
+		return EncodePublicKey(str_result);
 	}
-    //not modify
-    bool PublicKey::Verify(const std::string &data, const std::string &signature, const std::string &encode_public_key) {
+	//not modify
+	bool PublicKey::Verify(const std::string &data, const std::string &signature, const std::string &encode_public_key) {
 		PrivateKeyPrefix prefix;
 		SignatureType sign_type;
 		std::string raw_pubkey;
-        bool valid = GetPublicKeyElement(encode_public_key, prefix, sign_type, raw_pubkey);
+		bool valid = GetPublicKeyElement(encode_public_key, prefix, sign_type, raw_pubkey);
 		if (!valid || prefix != PUBLICKEY_PREFIX) {
 			return false;
 		}
@@ -290,50 +291,53 @@ namespace bumo {
 		else if (sign_type == SIGNTYPE_CFCASM2) {
 			return utils::EccSm2::verify(utils::EccSm2::GetCFCAGroup(), raw_pubkey, "1234567812345678", data, signature) == 1;
 		}
-        else{
-            LOG_ERROR("Unknown signature type(%d)", sign_type);
-        }
+		else{
+			LOG_ERROR("Unknown signature type(%d)", sign_type);
+		}
 		return false;
 	}
 
 	//地址是否合法
 	PrivateKey::PrivateKey(SignatureType type) {
-        std::string raw_pub_key = "";
+		std::string raw_pub_key = "";
 		type_ = type;
 		if (type_ == SIGNTYPE_ED25519) {
 			utils::MutexGuard guard_(lock_);
 			// ed25519;
 			raw_priv_key_.resize(32);
-			ed25519_randombytes_unsafe((void*)raw_priv_key_.c_str(), 32);
-
-            raw_pub_key.resize(32);
-            ed25519_publickey((const unsigned char*)raw_priv_key_.c_str(), (unsigned char*)raw_pub_key.c_str());
+			//ed25519_randombytes_unsafe((void*)raw_priv_key_.c_str(), 32);
+			if (!utils::GetStrongRandBytes(raw_priv_key_)){
+				valid_ = false;
+				return;
+			}
+			raw_pub_key.resize(32);
+			ed25519_publickey((const unsigned char*)raw_priv_key_.c_str(), (unsigned char*)raw_pub_key.c_str());
 		}
 		else if (type_ == SIGNTYPE_CFCASM2) {
 			utils::EccSm2 key(utils::EccSm2::GetCFCAGroup());
 			key.NewRandom();
 			raw_priv_key_ = key.getSkeyBin();
-            raw_pub_key = key.GetPublicKey();
+			raw_pub_key = key.GetPublicKey();
 		}
-        else{
-            LOG_ERROR("Unknown signature type(%d)", type_);
-        }
-        pub_key_.Init(raw_pub_key);
+		else{
+			LOG_ERROR("Unknown signature type(%d)", type_);
+		}
+		pub_key_.Init(raw_pub_key);
 		pub_key_.type_ = type_;
 		pub_key_.valid_ = true;
 		valid_ = true;
 	}
 
 	PrivateKey::~PrivateKey() {}
-    //not modify
-    bool PrivateKey::From(const std::string &encode_private_key) {
+	//not modify
+	bool PrivateKey::From(const std::string &encode_private_key) {
 		valid_ = false;
 		std::string tmp;
 
 		do {
 			PrivateKeyPrefix prefix;
 			std::string raw_pubkey;
-            valid_ = GetKeyElement(encode_private_key, prefix, type_, raw_priv_key_);
+			valid_ = GetKeyElement(encode_private_key, prefix, type_, raw_priv_key_);
 			if (!valid_ || prefix != PRIVATEKEY_PREFIX) {
 				return false;
 			}
@@ -347,9 +351,9 @@ namespace bumo {
 				skey.From(raw_priv_key_);
 				tmp = skey.GetPublicKey();
 			}
-            else{
-                LOG_ERROR("Unknown signature type(%d)", type_);
-            }
+			else{
+				LOG_ERROR("Unknown signature type(%d)", type_);
+			}
 			//ToBase58();
 			pub_key_.type_ = type_;
 			pub_key_.Init(tmp);
@@ -360,12 +364,12 @@ namespace bumo {
 		return valid_;
 	}
 
-    PrivateKey::PrivateKey(const std::string &encode_private_key) {
-        From(encode_private_key );
+	PrivateKey::PrivateKey(const std::string &encode_private_key) {
+		From(encode_private_key );
 	}
 
 	
-    //not modify
+	//not modify
 	std::string PrivateKey::Sign(const std::string &input) const {
 		unsigned char sig[10240];
 		unsigned int sig_len = 0;
@@ -381,20 +385,20 @@ namespace bumo {
 			std::string r, s;
 			return key.Sign("1234567812345678", input);
 		}
-        else{
-            LOG_ERROR("Unknown signature type(%d)", type_);
-        }
+		else{
+			LOG_ERROR("Unknown signature type(%d)", type_);
+		}
 		std::string output;
 		output.append((const char *)sig, sig_len);
 		return output;
 	}
 
-    std::string PrivateKey::GetEncPrivateKey() const {
-        std::string str_result;
-        //append prefix(priv)
-        str_result.push_back((char)0XDA);
-        str_result.push_back((char)0X37);
-        str_result.push_back((char)0X9F);
+	std::string PrivateKey::GetEncPrivateKey() const {
+		std::string str_result;
+		//append prefix(priv)
+		str_result.push_back((char)0XDA);
+		str_result.push_back((char)0X37);
+		str_result.push_back((char)0X9F);
 
 		//append version 1
 		str_result.push_back((char)type_);
@@ -402,24 +406,24 @@ namespace bumo {
 		//append private key 32
 		str_result.append(raw_priv_key_);
 
-        //压缩标志
-        str_result.push_back(0X00);
+		//压缩标志
+		str_result.push_back(0X00);
 
-        //bitcoin use 4 byte hash check.
-        std::string hash1, hash2;
-        hash1 = CalcHash(str_result, type_);
-        hash2 = CalcHash(hash1, type_);
+		//bitcoin use 4 byte hash check.
+		std::string hash1, hash2;
+		hash1 = CalcHash(str_result, type_);
+		hash2 = CalcHash(hash1, type_);
 
-        str_result.append(hash2.c_str(),4);
-        return EncodePrivateKey(str_result);
+		str_result.append(hash2.c_str(),4);
+		return EncodePrivateKey(str_result);
 	}
 
-    std::string PrivateKey::GetEncAddress() const {
-        return pub_key_.GetEncAddress();
+	std::string PrivateKey::GetEncAddress() const {
+		return pub_key_.GetEncAddress();
 	}
 
-    std::string PrivateKey::GetEncPublicKey() const {
-        return pub_key_.GetEncPublicKey();
+	std::string PrivateKey::GetEncPublicKey() const {
+		return pub_key_.GetEncPublicKey();
 	}
 
 	std::string PrivateKey::GetRawPublicKey() const {
