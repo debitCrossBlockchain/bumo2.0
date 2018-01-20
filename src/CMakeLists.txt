@@ -5,47 +5,47 @@ add_compile_options(-g -O2)
 add_definitions(-DSVNVERSION=\"${SVNVERSION}\")
 message(STATUS "-DSVNVERSION="${SVNVERSION})
 
-set(BUBICHAIN bubichain)
-set(BUBI_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(BUBI_ROOT_DIR ${BUBI_SRC_DIR}/..)
-set(LIBRARY_OUTPUT_PATH ${BUBI_ROOT_DIR}/lib)
-set(EXECUTABLE_OUTPUT_PATH ${BUBI_ROOT_DIR}/bin)
-set(BUBI_LINKER_FLAGS "-Wl,-dy -lpthread -lrt -ldl")
+set(BUMOCHAIN bumochain)
+set(BUMO_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(BUMO_ROOT_DIR ${BUMO_SRC_DIR}/..)
+set(LIBRARY_OUTPUT_PATH ${BUMO_ROOT_DIR}/lib)
+set(EXECUTABLE_OUTPUT_PATH ${BUMO_ROOT_DIR}/bin)
+set(BUMO_LINKER_FLAGS "-Wl,-dy -lpthread -lrt -ldl")
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 
 execute_process(COMMAND make all WORKING_DIRECTORY ${BUBI_SRC_DIR}/3rd)
 
 include_directories(
-    ${BUBI_SRC_DIR}
-    ${BUBI_SRC_DIR}/3rd/basic/include/v8
-    ${BUBI_SRC_DIR}/3rd/protobuf/src
-    ${BUBI_SRC_DIR}/3rd/jsoncpp/include
-    ${BUBI_SRC_DIR}/3rd/sqlite 
-    ${BUBI_SRC_DIR}/3rd/rocksdb/include
-    ${BUBI_SRC_DIR}/3rd/pcre-8.39
-    ${BUBI_SRC_DIR}/3rd/websocketpp
-    ${BUBI_SRC_DIR}/3rd/bzip2-1.0.6
-    ${BUBI_SRC_DIR}/3rd/zlib-1.2.8
-    ${BUBI_SRC_DIR}/3rd/asio/include
-    ${BUBI_SRC_DIR}/3rd/openssl/include
-    ${BUBI_SRC_DIR}/3rd/http
+    ${BUMO_SRC_DIR}
+    ${BUMO_SRC_DIR}/3rd/basic/include/v8
+    ${BUMO_SRC_DIR}/3rd/protobuf/src
+    ${BUMO_SRC_DIR}/3rd/jsoncpp/include
+    ${BUMO_SRC_DIR}/3rd/sqlite 
+    ${BUMO_SRC_DIR}/3rd/rocksdb/include
+    ${BUMO_SRC_DIR}/3rd/pcre-8.39
+    ${BUMO_SRC_DIR}/3rd/websocketpp
+    ${BUMO_SRC_DIR}/3rd/bzip2-1.0.6
+    ${BUMO_SRC_DIR}/3rd/zlib-1.2.8
+    ${BUMO_SRC_DIR}/3rd/asio/include
+    ${BUMO_SRC_DIR}/3rd/openssl/include
+    ${BUMO_SRC_DIR}/3rd/http
 )
 
 link_directories(
-    ${BUBI_SRC_DIR}/3rd/protobuf/src/.libs
-    ${BUBI_SRC_DIR}/3rd/rocksdb
-    ${BUBI_SRC_DIR}/3rd/pcre-8.39/.libs
-    ${BUBI_SRC_DIR}/3rd/jsoncpp/libs
-    ${BUBI_SRC_DIR}/3rd/openssl
-    ${BUBI_SRC_DIR}/3rd/zlib-1.2.8
-    ${BUBI_SRC_DIR}/3rd/bzip2-1.0.6
-    ${BUBI_SRC_DIR}/3rd/basic/lib
-    ${BUBI_SRC_DIR}/3rd/curl/lib/.libs/
+    ${BUMO_SRC_DIR}/3rd/protobuf/src/.libs
+    ${BUMO_SRC_DIR}/3rd/rocksdb
+    ${BUMO_SRC_DIR}/3rd/pcre-8.39/.libs
+    ${BUMO_SRC_DIR}/3rd/jsoncpp/libs
+    ${BUMO_SRC_DIR}/3rd/openssl
+    ${BUMO_SRC_DIR}/3rd/zlib-1.2.8
+    ${BUMO_SRC_DIR}/3rd/bzip2-1.0.6
+    ${BUMO_SRC_DIR}/3rd/basic/lib
+    ${BUMO_SRC_DIR}/3rd/curl/lib/.libs/
     ${LIBRARY_OUTPUT_PATH}
 )
 
-set(BUBI_DEPENDS_LIBS protobuf rocksdb pcreposix pcrecpp pcre json ssl crypto z bz2)
+set(BUMO_DEPENDS_LIBS protobuf rocksdb pcreposix pcrecpp pcre json ssl crypto z bz2)
 
 add_subdirectory(3rd/http)
 add_subdirectory(3rd/ed25519-donna)
@@ -60,26 +60,26 @@ add_subdirectory(daemon)
 add_subdirectory(monitor)
 add_subdirectory(main)
 
-set(BUBI_SCRIPTS ${BUBI_ROOT_DIR}/deploy)
+set(BUMO_SCRIPTS ${BUMO_ROOT_DIR}/deploy)
 install(
-    PROGRAMS ${BUBI_SCRIPTS}/bubi ${BUBI_SCRIPTS}/bubid ${BUBI_SCRIPTS}/start-stop-daemon
-    DESTINATION ${BUBICHAIN}/scripts
+    PROGRAMS ${BUMO_SCRIPTS}/bubi ${BUMO_SCRIPTS}/bubid ${BUMO_SCRIPTS}/start-stop-daemon
+    DESTINATION ${BUMOCHAIN}/scripts
 )
 
 install(
-    DIRECTORY ${BUBI_SRC_DIR}/3rd/basic/bin/
-    DESTINATION ${BUBICHAIN}/bin
+    DIRECTORY ${BUMO_SRC_DIR}/3rd/basic/bin/
+    DESTINATION ${BUMOCHAIN}/bin
     FILES_MATCHING PATTERN "*.bin" PATTERN "*.dat"
 )
 
 install(
-    DIRECTORY ${BUBI_ROOT_DIR}/build/win32/config/
-    DESTINATION ${BUBICHAIN}/config
+    DIRECTORY ${BUMO_ROOT_DIR}/build/win32/config/
+    DESTINATION ${BUMOCHAIN}/config
     REGEX "slave.json|test_case.json|monitor.json|ca.pem" EXCLUDE
 )
 
-set(SUPPLEMENT ${BUBI_ROOT_DIR}/build/linux/MakeSupplement)
-set(FIX_DIR ${CMAKE_INSTALL_PREFIX}/${BUBICHAIN})
+set(SUPPLEMENT ${BUMO_ROOT_DIR}/build/linux/MakeSupplement)
+set(FIX_DIR ${CMAKE_INSTALL_PREFIX}/${BUMOCHAIN})
 message(STATUS "install dir: ${FIX_DIR}")
 
 file(WRITE ${SUPPLEMENT} "soft_link:\n")
