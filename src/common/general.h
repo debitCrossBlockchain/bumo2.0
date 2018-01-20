@@ -36,7 +36,7 @@ namespace bumo {
 		const static int WEBSERVER_PORT = 19333;
 
 		const static int METADATA_KEY_MAXSIZE = 1024;
-		const static int METADATA_MAX_VALUE_SIZE = 1048576;
+		const static int METADATA_MAX_VALUE_SIZE = 256 * utils::BYTES_PER_KILO;
 		const static int ASSET_CODE_MAX_SIZE = 64;
 		const static int EXPRCONDITION_MAXSIZE = 256;
 
@@ -88,7 +88,6 @@ namespace bumo {
 
 		const static int32_t TRANSACTION_LIMIT_SIZE;
 		const static int32_t TXSET_LIMIT_SIZE;
-		const static int32_t ACCOUNT_LIMIT_SIZE;
 
 		typedef enum WARNINGCODE_ {
 			WARNING,

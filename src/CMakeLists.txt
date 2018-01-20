@@ -14,7 +14,7 @@ set(BUMO_LINKER_FLAGS "-Wl,-dy -lpthread -lrt -ldl")
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 
-execute_process(COMMAND make all WORKING_DIRECTORY ${BUBI_SRC_DIR}/3rd)
+execute_process(COMMAND make all WORKING_DIRECTORY ${BUMO_SRC_DIR}/3rd)
 
 include_directories(
     ${BUMO_SRC_DIR}
