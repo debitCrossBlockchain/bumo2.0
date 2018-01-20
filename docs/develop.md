@@ -1068,32 +1068,32 @@ function main(input)
 
     例如
     ```javascript
-    var account = getBalance('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
+    var balance = getBalance('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
-    account具有如下格式
+    balance 具有如下格式
+     '9999111100000'
     */
     ```
 
-- ##### 获取合约账号的metadata信息
+- ##### 存储合约账号的metadata信息
   `storageStore(metadata_key, metadata_value);`
   - metadata_key: metadata的key
   ```javascript
-  var ret = storageLoad('abc', 'values');
+  var ret = storageStore('abc', 'values');
   /*
-    bar的值是如下的格式
+    bar 的值是如下的格式
     true
   */
 
   ```
-    即可得到本合约账号中自定数据的abc的值
 
 - ##### 获取合约账号的metadata信息
   `storageLoad(metadata_key);`
   - metadata_key: metadata的key
   ```javascript
-  var bar = storageLoad('abc');
+  var value = storageLoad('abc');
   /*
-    bar的值是如下的格式
+    value 的值是如下的格式
     'values'
   */
 
@@ -1170,22 +1170,6 @@ function main(input)
     */
 
     ```
-
-    
-- ##### 64位减法
-
-    `int64Sub(left_value, right_value);`
-    - left_value: 左值
-    - right_value：右值
-
-    例如
-    ```javascript
-    var ret = int64Sub('12345678912345', 1);
-    /*
-    '123456789123464'
-    */
-
-    ```
     
 - ##### 64位乘法
 
@@ -1219,7 +1203,7 @@ function main(input)
 
  - ##### 64位取模
 
-    `int64Div(left_value, right_value);`
+    `int64Mod(left_value, right_value);`
     - left_value: 左值
     - right_value：右值
 
@@ -1294,7 +1278,7 @@ function main(input)
 #### 内置变量
 
 - #####  该合约账号的地址
-   `thisAddress`
+   thisAddress
 
     全局变量`thisAddress`的值等于该合约账号的地址。
 
