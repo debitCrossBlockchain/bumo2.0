@@ -79,6 +79,8 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\utils\scopeGuard.h">
+    <Filter>头文件</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\src\utils\random.h">
       <Filter>头文件</Filter>
     </ClInclude>
