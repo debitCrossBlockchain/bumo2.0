@@ -127,11 +127,17 @@ namespace bumo{
 
 		static bool Initialize(int argc, char** argv);
 		static bool LoadJsLibSource();
+		static bool LoadJslintGlobalString();
 		static std::map<std::string, std::string> jslib_sources;
+		static std::map<std::string, v8::FunctionCallback> js_func_read_;
+		static std::map<std::string, v8::FunctionCallback> js_func_write_;
+		static std::string user_global_string_;
+
 		static const std::string sender_name_;
 		static const std::string this_address_;
 		static const char* main_name_;
 		static const char* query_name_;
+		static const char* call_jslint_;
 		static const std::string trigger_tx_name_;
 		static const std::string trigger_tx_index_name_;
 		static const std::string this_header_name_;
