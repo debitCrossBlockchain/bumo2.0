@@ -5,7 +5,7 @@ set(DEAMON_DEPENDS_LIB ssl crypto)
 # -- bumo_bumod -- #
 set(BIN_BUMO_ID bumod)
 
-add_executable(${BIN_BUMO_ID} bumo/main.cpp)
+add_executable(${BIN_BUMO_ID} ./bumo/main.cpp)
 target_link_libraries(${BIN_BUMO_ID} -Wl,-dn ${DEAMON_DEPENDS_LIB} ${BUMO_LINKER_FLAGS})
 
 target_compile_options(${BIN_BUMO_ID}
