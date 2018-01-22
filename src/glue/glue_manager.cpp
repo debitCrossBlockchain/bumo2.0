@@ -275,8 +275,10 @@ namespace bumo {
 
 		} while (false);
 
-		WebSocketServer::Instance().BroadcastChainTxMsg(hash_value, address, err, err.code() == protocol::ERRCODE_SUCCESS ? 
-			protocol::ChainTxStatus_TxStatus_PENDING : protocol::ChainTxStatus_TxStatus_FAILURE);
+		if (err.code() != protocol::ERRCODE_ALREADY_EXIST) {
+			WebSocketServer::Instance().BroadcastChainTxMsg(hash_value, address, err, err.code() == protocol::ERRCODE_SUCCESS ?
+				protocol::ChainTxStatus_TxStatus_PENDING : protocol::ChainTxStatus_TxStatus_FAILURE);
+		}
 		return err.code() == protocol::ERRCODE_SUCCESS;
 	}
 
