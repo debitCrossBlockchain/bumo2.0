@@ -233,18 +233,18 @@ namespace bumo {
 			LOG_INFO("ApiServer OnNewTransaction %d after %llu", xyz, utils::Timestamp::HighResolution() - startTime);
 		}
 
-		protocol::TransactionEnv tran;
-		tran.ParseFromString(message.data());
-
-		//check and decode
-		TransactionFrm::pointer tran_ptr = std::make_shared<TransactionFrm>(tran);
-		//switch to main thread
-		Global::Instance().GetIoService().post([tran_ptr, message, this]() {
-			Result ig_err;
-			if (GlueManager::Instance().OnTransaction(tran_ptr, ig_err)) {
-				BroadcastMsg(message.type(), message.data());
-			}
-		});
+		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
+			protocol::TransactionEnv tran;
+			tran.ParseFromString(message.data());
+			TransactionFrm::pointer tran_ptr = std::make_shared<TransactionFrm>(tran);
+			//switch to main thread
+			Global::Instance().GetIoService().post([tran_ptr, message, this]() {
+				Result ig_err;
+				if (GlueManager::Instance().OnTransaction(tran_ptr, ig_err)) {
+					BroadcastMsg(message.type(), message.data());
+				}
+			});
+		}
 		return true;
 	}
 
