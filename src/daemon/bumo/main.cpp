@@ -69,7 +69,7 @@
 
 	int main(int argc, char** argv) {
 		if (argc < 2) {
-			fprintf(stderr, "use: --exec your_process start --log your_log_file {default[/var/log/bubi-daemon.log]} \n");
+			fprintf(stderr, "use: --exec your_process start --log your_log_file {default[/var/log/bumo-daemon.log]} \n");
 			exit(EXIT_FAILURE);
 		}
 
@@ -94,14 +94,14 @@
 
 		if (commands.find("--exec") == commands.end())
 		{
-			fprintf(stderr, "use: --exec your_process start --log your_log_file {default[/var/log/bubi-daemon.log]} \n");
+			fprintf(stderr, "use: --exec your_process start --log your_log_file {default[/var/log/bumo-daemon.log]} \n");
 			exit(EXIT_FAILURE);
 		}
 		str_exec = commands["--exec"];
 
 		if (commands.find("--log") == commands.end())
 		{
-			str_log = "/var/log/bubi-daemon.log";
+			str_log = "/var/log/bumo-daemon.log";
 		}
 		else {
 			str_log = commands["--log"];
