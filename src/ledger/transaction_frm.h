@@ -92,6 +92,10 @@ namespace bumo {
 		int64_t GetRealFee() const;
 		void AddRealFee(int64_t fee);
 
+		void SetApplyStartTime(int64_t time);
+		void SetApplyEndTime(int64_t time);
+		int64_t GetApplyTime();
+
 		void SetMaxEndTime(int64_t end_time);
 		int64_t GetMaxEndTime();
 		void ContractStepInc(int32_t step);
@@ -123,6 +127,8 @@ namespace bumo {
 		int32_t contract_step_;
 		int64_t contract_memory_usage_;
 		bool enable_check_;
+		int64_t apply_start_time_;
+		int64_t apply_use_time_;
 	};
 };
 

@@ -322,7 +322,11 @@ namespace bumo{
 
 			if (!context->Global()->Get(context, process_name).ToLocal(&process_val) ||
 				!process_val->IsFunction()) {
-				LOG_ERROR("lost of %s function", main_name_);
+				Json::Value json_result;
+				json_result["exception"] = utils::String::Format("Lost of %s function", query_name_);
+				result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_FAIL);
+				result_.set_desc(json_result.toFastString());
+				LOG_ERROR("%s", result_.desc().c_str());
 				break;
 			}
 
@@ -336,10 +340,11 @@ namespace bumo{
 
 			v8::Local<v8::Value> callresult;
 			if (!process->Call(context, context->Global(), argc, argv).ToLocal(&callresult)) {
-				if (result_.code() == 0) {
+				if (result_.code() == 0) { //if not set the code,then set it
 					result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_FAIL);
 					result_.set_desc(ReportException(isolate_, &try_catch).toFastString());
 				}
+				//otherwise has set it other way, for example doTransaction has set it
 				break;
 			}
 
@@ -354,14 +359,10 @@ namespace bumo{
 	}
 
 	bool V8Contract::SourceCodeCheck() {
-
-		//debug
-		return true;
-
-		if (parameter_.code_.find(General::CHECK_TIME_FUNCTION) != std::string::npos) {
-			LOG_ERROR("Source code should not include function(%s)", General::CHECK_TIME_FUNCTION);
-			return false;
-		}
+ 		if (parameter_.code_.find(General::CHECK_TIME_FUNCTION) != std::string::npos) {
+ 			LOG_ERROR("Source code should not include function(%s)", General::CHECK_TIME_FUNCTION);
+ 			return false;
+ 		}
 
 		v8::Isolate::Scope isolate_scope(isolate_);
 		v8::HandleScope handle_scope(isolate_);
@@ -373,6 +374,10 @@ namespace bumo{
 		std::string jslint_file = "jslint.js";
 		std::map<std::string, std::string>::iterator find_jslint_source = jslib_sources.find(jslint_file);
 		if (find_jslint_source == jslib_sources.end()) {
+			Json::Value json_result;
+			json_result["exception"] = utils::String::Format("Can't find the include file(%s) in jslib directory", jslint_file.c_str());
+			result_.set_code(protocol::ERRCODE_CONTRACT_SYNTAX_ERROR);
+			result_.set_desc(json_result.toFastString());
 			LOG_ERROR("Can't find the include file(%s) in jslib directory", jslint_file.c_str());
 			return false;
 		}
@@ -388,7 +393,9 @@ namespace bumo{
 		Json::Value error_desc_f;
 		v8::Local<v8::Value> result;
 		if (!compiled_script->Run(context).ToLocal(&result)) {
-			error_desc_f = ReportException(isolate_, &try_catch);
+			result_.set_code(protocol::ERRCODE_CONTRACT_SYNTAX_ERROR);
+			result_.set_desc(ReportException(isolate_, &try_catch).toFastString());
+			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
 		v8::Local<v8::String> process_name = v8::String::NewFromUtf8(
@@ -397,6 +404,11 @@ namespace bumo{
 		v8::Local<v8::Value> process_val;
 		if (!context->Global()->Get(context, process_name).ToLocal(&process_val) ||
 			!process_val->IsFunction()) {
+			Json::Value json_result;
+			json_result["exception"] = utils::String::Format("Can't find jslint name(%s)", call_jslint_);
+			result_.set_code(protocol::ERRCODE_CONTRACT_SYNTAX_ERROR);
+			result_.set_desc(json_result.toFastString());
+			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
 
@@ -410,23 +422,37 @@ namespace bumo{
 
 		v8::Local<v8::Value> callRet;
 		if (!process->Call(context, context->Global(), argc, argv).ToLocal(&callRet)) {
+			result_.set_code(protocol::ERRCODE_CONTRACT_SYNTAX_ERROR);
+			result_.set_desc(ReportException(isolate_, &try_catch).toFastString());
+			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
 		if (!callRet->IsString()) { 
-			LOG_ERROR("Jslint call result is not a string!");
+			Json::Value json_result;
+			json_result["exception"] = utils::String::Format("Jslint call result is not a string!");
+			result_.set_code(protocol::ERRCODE_CONTRACT_SYNTAX_ERROR);
+			result_.set_desc(json_result.toFastString());
+			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
 
 		Json::Reader reader;
 		Json::Value call_result_json;
 		if (!reader.parse(std::string(ToCString(v8::String::Utf8Value(callRet))), call_result_json)) {
-			LOG_ERROR("Parse Jslint result failed, (%s)", reader.getFormatedErrorMessages().c_str());
+			Json::Value json_result;
+			json_result["exception"] = utils::String::Format("Parse Jslint result failed, (%s)", reader.getFormatedErrorMessages().c_str());
+			result_.set_code(protocol::ERRCODE_CONTRACT_SYNTAX_ERROR);
+			result_.set_desc(json_result.toFastString());
+			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
 		if (!call_result_json.empty())
 		{
-			std::string print_result = call_result_json.toFastString();
-			LOG_ERROR("Parse Jslint result failed, (%s)", print_result.c_str());
+			Json::Value json_result;
+			json_result["exception"] = utils::String::Format("Parse Jslint result failed, (%s)", reader.getFormatedErrorMessages().c_str());
+			result_.set_code(protocol::ERRCODE_CONTRACT_SYNTAX_ERROR);
+			result_.set_desc(call_result_json.toFastString());
+			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
 

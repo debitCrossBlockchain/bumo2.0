@@ -40,7 +40,7 @@ namespace bumo {
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
-		enable_check_(false),
+		enable_check_(false), apply_start_time_(0), apply_use_time_(0),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		utils::AtomicInc(&bumo::General::tx_new_count);
 	}
@@ -58,7 +58,7 @@ namespace bumo {
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
-		enable_check_(false),
+		enable_check_(false), apply_start_time_(0), apply_use_time_(0),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		Initialize();
 		utils::AtomicInc(&bumo::General::tx_new_count);
@@ -135,6 +135,18 @@ namespace bumo {
 
 	void TransactionFrm::AddRealFee(int64_t fee) {
 		real_fee_ += fee;
+	}
+
+	void TransactionFrm::SetApplyStartTime(int64_t time) {
+		apply_start_time_ = time;
+	}
+
+	void TransactionFrm::SetApplyEndTime(int64_t time) {
+		apply_use_time_ = time - apply_start_time_;
+	}
+
+	int64_t TransactionFrm::GetApplyTime() {
+		return apply_use_time_;
 	}
 
 	void TransactionFrm::SetMaxEndTime(int64_t end_time) {

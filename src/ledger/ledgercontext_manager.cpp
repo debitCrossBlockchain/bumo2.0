@@ -172,7 +172,9 @@ namespace bumo {
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(env);
 			//tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + utils::MICRO_UNITS_PER_SEC);
 			tx_frm->environment_ = environment;
-			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + 5 * utils::MICRO_UNITS_PER_SEC);
+			int64_t time_now = utils::Timestamp::HighResolution();
+			tx_frm->SetApplyStartTime(time_now);
+			tx_frm->SetMaxEndTime(time_now + 5 * utils::MICRO_UNITS_PER_SEC);
 			tx_frm->EnableChecked();
 
 			transaction_stack_.push_back(tx_frm);
@@ -181,7 +183,9 @@ namespace bumo {
 			closing_ledger_->value_ = std::make_shared<protocol::ConsensusValue>(consensus_value_);
 			closing_ledger_->lpledger_context_ = this;
 
-			return LedgerManager::Instance().DoTransaction(env, this).code() == 0;
+			bool ret = LedgerManager::Instance().DoTransaction(env, this).code() == 0;
+			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
+			return ret;
 		} else{
 			do {
 				if (parameter_.code_.empty()) {
@@ -220,11 +224,15 @@ namespace bumo {
 			//do query
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
 			transaction_stack_.push_back(tx_frm);
-			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + 5 * utils::MICRO_UNITS_PER_SEC);
+			int64_t time_now = utils::Timestamp::HighResolution();
+			tx_frm->SetApplyStartTime(time_now);
+			tx_frm->SetMaxEndTime(time_now + 5 * utils::MICRO_UNITS_PER_SEC);
 			tx_frm->EnableChecked();
 
 			Json::Value query_result;
-			return ContractManager::Instance().Query(type_, parameter, query_result);
+			bool ret = ContractManager::Instance().Query(type_, parameter, query_result);
+			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
+			return ret;
 		}
 	}
 
@@ -401,6 +409,19 @@ namespace bumo {
 		if (type == LedgerContext::AT_TEST_V8){
 			thread_name = "test-contract";
 			ledger_context = new LedgerContext(type, *((ContractTestParameter*)parameter));
+
+			do {
+				//check syntax error
+				std::string code = ((ContractTestParameter*)parameter)->code_;
+				if (code.empty()) {
+					break;
+				}
+				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, code);
+				if (result.code() == protocol::ERRCODE_SUCCESS) {
+					break;
+				}
+				return false;
+			} while (false);
 		}
 		else if (type == LedgerContext::AT_TEST_TRANSACTION){
 			thread_name = "test-transaction";
@@ -472,7 +493,8 @@ namespace bumo {
 		if (ledger_context->transaction_stack_.size() > 0) {
 			TransactionFrm::pointer ptr = ledger_context->transaction_stack_[0];
 			stat["step"] = ptr->GetContractStep();
-			stat["memoryUsage"] = ptr->GetMemoryUsage();
+			stat["memory_usage"] = ptr->GetMemoryUsage();
+			stat["apply_time"] = ptr->GetApplyTime();
 		}
 
 		int64_t real_fee = ledger->total_real_fee_;
