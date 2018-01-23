@@ -258,14 +258,17 @@ namespace bumo {
 			if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_V8,
 				(TestParameter*)&test_parameter,
 				utils::MICRO_UNITS_PER_SEC, 
-				exe_result, result["logs"], result["txs"], result["rets"], result["real_fee"], result["stat"])) {
+				exe_result, result["logs"], result["txs"], result["query_rets"], result["real_fee"], result["stat"])) {
 				error_code = exe_result.code();
 				error_desc = exe_result.desc();
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
-
 		} while (false);
+
+		if (error_code == protocol::ERRCODE_CONTRACT_SYNTAX_ERROR) {
+			reply_json["error_desc_json"].fromString(error_desc);
+		} 
 
 		reply_json["error_code"] = error_code;
 		reply_json["error_desc"] = error_desc;
@@ -371,7 +374,7 @@ namespace bumo {
 				if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
 					(TestParameter*)&test_parameter,
 					utils::MICRO_UNITS_PER_SEC,
-					exe_result, result_json["logs"], result_json["txs"], result_json["rets"], result_json["real_fee"], result_json["stat"])) {
+					exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["real_fee"], result_json["stat"])) {
 					reply_json["error_code"] = exe_result.code();
 					reply_json["error_desc"] = exe_result.desc();
 					LOG_ERROR("%s", exe_result.desc().c_str());
