@@ -77,11 +77,6 @@ namespace bumo {
 		void SetTestMode(bool test_mode);
 		bool IsTestMode();
 
-		bool UpdateFeeConfig(const Json::Value &fee_config);
-		bool GetVotedFee(const protocol::FeeConfig &old_fee, protocol::FeeConfig& new_fee);
-
-		bool UpdateNewValidators(const Json::Value &validators);
-		bool GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator);
 	private:
 		protocol::Ledger ledger_;
 		bool is_test_mode_;
@@ -96,9 +91,6 @@ namespace bumo {
 		bool enabled_;
 		int64_t total_fee_;
 		int64_t total_real_fee_;
-
-		Json::Value new_validators_;
-		Json::Value fee_config_;
 	};
 }
 #endif //end of ifndef
