@@ -552,7 +552,7 @@ namespace bumo {
 		account_db_batch->Put(bumo::General::KEY_LEDGER_SEQ, utils::String::Format(FMT_I64, ledger_seq));
 		
 		//for validator upgrade
-		if (new_set.validators_size() > 0 || closing_ledger->GetVotedValidators(validators_, new_set)) {
+		if (new_set.validators_size() > 0 || closing_ledger->environment_->GetVotedValidators(validators_, new_set)) {
 			ValidatorsSet(account_db_batch, new_set);
 			validators_ = new_set;
 		}
@@ -560,7 +560,7 @@ namespace bumo {
 
 		//for fee
 		protocol::FeeConfig new_fees;
-		if (closing_ledger->GetVotedFee(fees_, new_fees)) {
+		if (closing_ledger->environment_->GetVotedFee(fees_, new_fees)) {
 			FeesConfigSet(account_db_batch, new_fees);
 			utils::WriteLockGuard guard(fee_config_mutex_);
 			fees_ = new_fees;
@@ -970,7 +970,8 @@ namespace bumo {
 				if (back->environment_->useAtomMap_)
 				{
 					Environment::mapKV& data = back->environment_->GetActionBuf();
-					std::shared_ptr<Environment> cacheEnv = std::make_shared<Environment>(&data, true);
+					Environment::settingKV& settings = back->environment_->settings_.GetActionBuf();
+					std::shared_ptr<Environment> cacheEnv = std::make_shared<Environment>(&data, &settings);
 					txfrm->Apply(ledger_context->closing_ledger_.get(), cacheEnv, true);
 				}
 				else
