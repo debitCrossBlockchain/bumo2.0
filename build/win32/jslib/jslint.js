@@ -283,19 +283,26 @@ const jslint = (function JSLint() {
 //do not use these key. 2018-01-22
 //"Array", "ArrayBuffer", "Float32Array", "Float64Array", "Int8Array", "Int16Array",
 // "Int32Array", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "Date"
-    const standard = [
 
+//do not use these key. 2018-01-23
+//"DataView", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", 
+// "Generator", "GeneratorFunction", "Intl", "Promise", "Proxy", "Reflect", "System", 
+//"URIError", "WeakMap", "WeakSet"
+
+    const standard = [
 // These are the globals that are provided by the language standard.
 
-        "Boolean", "DataView", "decodeURI",
-        "decodeURIComponent", "encodeURI", "encodeURIComponent", "Error",
-        "EvalError",  "Generator",
-        "GeneratorFunction", "Intl",
+        "Boolean", 
+        "Error",
+        "EvalError",
         "JSON", "Map", "Math", "Number", "Object", "parseInt", "parseFloat",
-        "Promise", "Proxy", "RangeError", "ReferenceError", "Reflect", "RegExp",
-        "Set", "String", "Symbol", "SyntaxError", "System", "TypeError",
-        "URIError", "WeakMap", "WeakSet"
+        "RangeError", "ReferenceError", "RegExp",
+        "Set", "String", "Symbol", "SyntaxError", "TypeError"
     ];
+	
+    //const useable_standard = ["print", "log"];
+	
+    const do_not_use_internal_func = ["internal_check_time", "internal_hello_test"];
 
     const bundle = {
 
@@ -377,7 +384,7 @@ const jslint = (function JSLint() {
         unused_a: "Unused '{a}'.",
         use_double: "Use double quotes, not single quotes.",
         use_spaces: "Use spaces, not tabs.",
-        use_strict: "This function needs a \"use strict\" pragma.",
+        use_strict: "This function needs a \"use strict\"; pragma.",
         var_loop: "Don't declare variables in a loop.",
         var_switch: "Don't declare variables in a switch.",
         weird_condition_a: "Weird condition '{a}'.",
@@ -2442,6 +2449,14 @@ const jslint = (function JSLint() {
         }
         return token;
     });
+    //internal name 2018-01-23
+    do_not_use_internal_func.forEach(function (name) {
+        constant(name, "function", function () {
+            warn("unexpected_a", token);
+            return token;
+        });
+    });
+		
     constant("false", "boolean", false);
     constant("Function", "function", function () {
         if (!option.eval) {
@@ -4925,6 +4940,7 @@ const jslint = (function JSLint() {
             token_nr = 0;
             var_mode = undefined;
             populate(declared_globals, standard, false);
+            //populate(declared_globals, useable_standard, false);
             if (global_array !== undefined) {
                 populate(declared_globals, global_array, false);
             }
