@@ -213,6 +213,7 @@ namespace bumo{
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
+        js_func_write_["storageDel"] = V8Contract::CallBackStorageDel;
 		js_func_write_["doTransaction"] = V8Contract::CallBackDoTransaction;
 		js_func_write_["configFee"] = V8Contract::CallBackConfigFee;
 		js_func_write_["setValidators"] = V8Contract::CallBackSetValidators;
