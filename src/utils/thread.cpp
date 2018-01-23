@@ -60,14 +60,28 @@ bool utils::Thread::Start(std::string name) {
 	bool result = false;
 	enabled_ = true;
 	running_ = true;
+	int ret = 0;
 #ifdef WIN32
 	handle_ = ::CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadProc, (LPVOID)this, 0, (LPDWORD)&thread_id_);
 	result = (NULL != handle_);
 #else
-	int ret = pthread_create(&handle_, NULL, threadProc, (void *)this);
+	pthread_attr_t object_attr;
+	pthread_attr_init(&object_attr);
+	pthread_attr_setdetachstate(&object_attr, PTHREAD_CREATE_DETACHED);
+
+	ret = pthread_create(&handle_, &object_attr, threadProc, (void *)this);
 	result = (0 == ret);
 	thread_id_ = handle_;
+	pthread_attr_destroy(&object_attr);
 #endif
+	if (!result) {
+		// restore _beginthread or pthread_create's error
+		utils::set_error_code(ret);
+
+		handle_ = Thread::INVALID_HANDLE;
+		enabled_ = false;
+		running_ = false;
+	}
 	return result;
 }
 
