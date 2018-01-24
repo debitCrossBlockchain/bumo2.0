@@ -202,6 +202,7 @@ message Contract{
 	}
 	ContractType type = 1; //合约类型
 	string payload = 2;		//合约内容,js 代码
+	string init_input = 3;
 }
 
 //创建账户

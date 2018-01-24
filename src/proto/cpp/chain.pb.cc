@@ -508,9 +508,10 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, _is_default_instance_));
   Contract_descriptor_ = file->message_type(21);
-  static const int Contract_offsets_[2] = {
+  static const int Contract_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, payload_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, init_input_),
   };
   Contract_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -769,19 +770,19 @@ void protobuf_AddDesc_chain_2eproto() {
     "close_time\030\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014"
     "\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024previous_ledger_"
     "hash\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001(\0132\027.pro"
-    "tocol.LedgerUpgrade\"j\n\010Contract\022-\n\004type\030"
+    "tocol.LedgerUpgrade\"~\n\010Contract\022-\n\004type\030"
     "\001 \001(\0162\037.protocol.Contract.ContractType\022\017"
-    "\n\007payload\030\002 \001(\t\"\036\n\014ContractType\022\016\n\nJAVAS"
-    "CRIPT\020\000\"\272\001\n\026OperationCreateAccount\022\024\n\014de"
-    "st_address\030\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.pro"
-    "tocol.Contract\022(\n\004priv\030\003 \001(\0132\032.protocol."
-    "AccountPrivilege\022$\n\tmetadatas\030\004 \003(\0132\021.pr"
-    "otocol.KeyPair\022\024\n\014init_balance\030\005 \001(\003\"X\n\024"
-    "OperationSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005val"
-    "ue\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_flag"
-    "\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATUR"
-    "E\020dB\035\n\033cn.bubi.blockchain.adapter3b\006prot"
-    "o3", 3602);
+    "\n\007payload\030\002 \001(\t\022\022\n\ninit_input\030\003 \001(\t\"\036\n\014C"
+    "ontractType\022\016\n\nJAVASCRIPT\020\000\"\272\001\n\026Operatio"
+    "nCreateAccount\022\024\n\014dest_address\030\001 \001(\t\022$\n\010"
+    "contract\030\002 \001(\0132\022.protocol.Contract\022(\n\004pr"
+    "iv\030\003 \001(\0132\032.protocol.AccountPrivilege\022$\n\t"
+    "metadatas\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014in"
+    "it_balance\030\005 \001(\003\"X\n\024OperationSetMetadata"
+    "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030"
+    "\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007U"
+    "NKNOWN\020\000\022\r\n\tSIGNATURE\020dB\035\n\033cn.bubi.block"
+    "chain.adapter3b\006proto3", 3622);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -11256,6 +11257,7 @@ const int Contract::ContractType_ARRAYSIZE;
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Contract::kTypeFieldNumber;
 const int Contract::kPayloadFieldNumber;
+const int Contract::kInitInputFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Contract::Contract()
@@ -11282,6 +11284,7 @@ void Contract::SharedCtor() {
   _cached_size_ = 0;
   type_ = 0;
   payload_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  init_input_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 Contract::~Contract() {
@@ -11291,6 +11294,7 @@ Contract::~Contract() {
 
 void Contract::SharedDtor() {
   payload_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  init_input_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
 }
@@ -11324,6 +11328,7 @@ void Contract::Clear() {
 // @@protoc_insertion_point(message_clear_start:protocol.Contract)
   type_ = 0;
   payload_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  init_input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 bool Contract::MergePartialFromCodedStream(
@@ -11361,6 +11366,23 @@ bool Contract::MergePartialFromCodedStream(
             this->payload().data(), this->payload().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
             "protocol.Contract.payload"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_init_input;
+        break;
+      }
+
+      // optional string init_input = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_init_input:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_init_input()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->init_input().data(), this->init_input().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "protocol.Contract.init_input"));
         } else {
           goto handle_unusual;
         }
@@ -11408,6 +11430,16 @@ void Contract::SerializeWithCachedSizes(
       2, this->payload(), output);
   }
 
+  // optional string init_input = 3;
+  if (this->init_input().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->init_input().data(), this->init_input().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.Contract.init_input");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->init_input(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.Contract)
 }
 
@@ -11431,6 +11463,17 @@ void Contract::SerializeWithCachedSizes(
         2, this->payload(), target);
   }
 
+  // optional string init_input = 3;
+  if (this->init_input().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->init_input().data(), this->init_input().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.Contract.init_input");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->init_input(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Contract)
   return target;
 }
@@ -11450,6 +11493,13 @@ int Contract::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->payload());
+  }
+
+  // optional string init_input = 3;
+  if (this->init_input().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->init_input());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -11487,6 +11537,10 @@ void Contract::MergeFrom(const Contract& from) {
 
     payload_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.payload_);
   }
+  if (from.init_input().size() > 0) {
+
+    init_input_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.init_input_);
+  }
 }
 
 void Contract::CopyFrom(const ::google::protobuf::Message& from) {
@@ -11515,6 +11569,7 @@ void Contract::Swap(Contract* other) {
 void Contract::InternalSwap(Contract* other) {
   std::swap(type_, other->type_);
   payload_.Swap(&other->payload_);
+  init_input_.Swap(&other->init_input_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -11586,6 +11641,50 @@ void Contract::clear_payload() {
   }
   payload_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), payload);
   // @@protoc_insertion_point(field_set_allocated:protocol.Contract.payload)
+}
+
+// optional string init_input = 3;
+void Contract::clear_init_input() {
+  init_input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Contract::init_input() const {
+  // @@protoc_insertion_point(field_get:protocol.Contract.init_input)
+  return init_input_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Contract::set_init_input(const ::std::string& value) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Contract.init_input)
+}
+ void Contract::set_init_input(const char* value) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Contract.init_input)
+}
+ void Contract::set_init_input(const char* value, size_t size) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.Contract.init_input)
+}
+ ::std::string* Contract::mutable_init_input() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.Contract.init_input)
+  return init_input_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Contract::release_init_input() {
+  // @@protoc_insertion_point(field_release:protocol.Contract.init_input)
+  
+  return init_input_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Contract::set_allocated_init_input(::std::string* init_input) {
+  if (init_input != NULL) {
+    
+  } else {
+    
+  }
+  init_input_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), init_input);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Contract.init_input)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

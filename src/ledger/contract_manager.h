@@ -91,6 +91,7 @@ namespace bumo{
 
 	public:
 		virtual bool Execute();
+		virtual bool InitContract();
 		virtual bool Cancel();
 		virtual bool SourceCodeCheck();
 		virtual bool Query(Json::Value& jsResult);
@@ -121,6 +122,7 @@ namespace bumo{
 		virtual ~V8Contract();
 	public:
 		virtual bool Execute();
+		virtual bool InitContract();
 		virtual bool Cancel();
 		virtual bool Query(Json::Value& jsResult);
 		virtual bool SourceCodeCheck();
@@ -137,6 +139,7 @@ namespace bumo{
 		static const std::string this_address_;
 		static const char* main_name_;
 		static const char* query_name_;
+		static const char* init_name_;
 		static const char* call_jslint_;
 		static const std::string trigger_tx_name_;
 		static const std::string trigger_tx_index_name_;
@@ -176,7 +179,8 @@ namespace bumo{
 		static bool JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue);
 		static bool CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue);
 		static void CallBackConfigFee(const v8::FunctionCallbackInfo<v8::Value>& args);
-
+        //assert a express
+        static void CallBackAssert(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 		//get balance of the given account 
 		static void CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -211,6 +215,8 @@ namespace bumo{
 		//Int64 compare
 		static void CallBackInt64Compare(const v8::FunctionCallbackInfo<v8::Value>& args);
 
+    private:
+        bool ExecuteCode(const char* fname);
 	};
 
 	class QueryContract : public utils::Thread{
@@ -260,7 +266,7 @@ namespace bumo{
 		bool Initialize(int argc, char** argv);
 		bool Exit();
 
-		Result Execute(int32_t type, const ContractParameter &paramter);
+		Result Execute(int32_t type, const ContractParameter &paramter,bool init_execute = false);
 		bool Query(int32_t type, const ContractParameter &paramter, Json::Value &result);
 		bool Cancel(int64_t contract_id);
 		Result SourceCodeCheck(int32_t type, const std::string &code);
