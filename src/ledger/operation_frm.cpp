@@ -470,6 +470,24 @@ namespace bumo {
 
 			environment->AddEntry(dest_account->GetAccountAddress(), dest_account);
 
+			std::string javascript = dest_account->GetProtoAccount().contract().payload();
+			if (!javascript.empty()) {
+
+				ContractParameter parameter;
+				parameter.code_ = javascript;
+				parameter.input_ = createaccount.contract().init_input();
+				parameter.this_address_ = createaccount.dest_address();
+				parameter.sender_ = source_account_->GetAccountAddress();
+				parameter.ope_index_ = index_;
+				parameter.timestamp_ = transaction_->ledger_->value_->close_time();
+				parameter.blocknumber_ = transaction_->ledger_->value_->ledger_seq();
+				parameter.ledger_context_ = transaction_->ledger_->lpledger_context_;
+				parameter.pay_coin_amount_ = 0;
+
+				std::string err_msg;
+				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter, true);
+			}
+
 		} while (false);
 	}
 
@@ -670,6 +688,7 @@ namespace bumo {
 		std::string address = ope.dest_address();
 		std::shared_ptr<AccountFrm> dest_account_ptr = nullptr;
 		int64_t reserve_coin = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
+		bool create_account = false;
 		do {
 			protocol::Account& proto_source_account = source_account_->GetProtoAccount();
 			if (proto_source_account.balance() < ope.amount() + reserve_coin) {
@@ -693,6 +712,7 @@ namespace bumo {
 					break;
 				}
 
+				create_account = true;
 				protocol::Account account;
 				account.set_balance(0);
 				account.mutable_priv()->set_master_weight(1);
@@ -722,7 +742,8 @@ namespace bumo {
 				parameter.pay_coin_amount_ = ope.amount();
 
 				std::string err_msg;
-				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter);
+				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter,create_account);
+
 			}
 		} while (false);
 	}

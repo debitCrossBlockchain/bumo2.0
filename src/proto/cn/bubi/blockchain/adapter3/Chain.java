@@ -20612,6 +20612,16 @@ public final class Chain {
      */
     com.google.protobuf.ByteString
         getPayloadBytes();
+
+    /**
+     * <code>optional string init_input = 3;</code>
+     */
+    java.lang.String getInitInput();
+    /**
+     * <code>optional string init_input = 3;</code>
+     */
+    com.google.protobuf.ByteString
+        getInitInputBytes();
   }
   /**
    * Protobuf type {@code protocol.Contract}
@@ -20627,6 +20637,7 @@ public final class Chain {
     private Contract() {
       type_ = 0;
       payload_ = "";
+      initInput_ = "";
     }
 
     @java.lang.Override
@@ -20664,6 +20675,12 @@ public final class Chain {
               java.lang.String s = input.readStringRequireUtf8();
 
               payload_ = s;
+              break;
+            }
+            case 26: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              initInput_ = s;
               break;
             }
           }
@@ -20844,6 +20861,40 @@ public final class Chain {
       }
     }
 
+    public static final int INIT_INPUT_FIELD_NUMBER = 3;
+    private volatile java.lang.Object initInput_;
+    /**
+     * <code>optional string init_input = 3;</code>
+     */
+    public java.lang.String getInitInput() {
+      java.lang.Object ref = initInput_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        initInput_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string init_input = 3;</code>
+     */
+    public com.google.protobuf.ByteString
+        getInitInputBytes() {
+      java.lang.Object ref = initInput_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        initInput_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -20862,6 +20913,9 @@ public final class Chain {
       if (!getPayloadBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, payload_);
       }
+      if (!getInitInputBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, initInput_);
+      }
     }
 
     public int getSerializedSize() {
@@ -20875,6 +20929,9 @@ public final class Chain {
       }
       if (!getPayloadBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, payload_);
+      }
+      if (!getInitInputBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, initInput_);
       }
       memoizedSize = size;
       return size;
@@ -20895,6 +20952,8 @@ public final class Chain {
       result = result && type_ == other.type_;
       result = result && getPayload()
           .equals(other.getPayload());
+      result = result && getInitInput()
+          .equals(other.getInitInput());
       return result;
     }
 
@@ -20909,6 +20968,8 @@ public final class Chain {
       hash = (53 * hash) + type_;
       hash = (37 * hash) + PAYLOAD_FIELD_NUMBER;
       hash = (53 * hash) + getPayload().hashCode();
+      hash = (37 * hash) + INIT_INPUT_FIELD_NUMBER;
+      hash = (53 * hash) + getInitInput().hashCode();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -21031,6 +21092,8 @@ public final class Chain {
 
         payload_ = "";
 
+        initInput_ = "";
+
         return this;
       }
 
@@ -21055,6 +21118,7 @@ public final class Chain {
         cn.bubi.blockchain.adapter3.Chain.Contract result = new cn.bubi.blockchain.adapter3.Chain.Contract(this);
         result.type_ = type_;
         result.payload_ = payload_;
+        result.initInput_ = initInput_;
         onBuilt();
         return result;
       }
@@ -21101,6 +21165,10 @@ public final class Chain {
         }
         if (!other.getPayload().isEmpty()) {
           payload_ = other.payload_;
+          onChanged();
+        }
+        if (!other.getInitInput().isEmpty()) {
+          initInput_ = other.initInput_;
           onChanged();
         }
         onChanged();
@@ -21278,6 +21346,75 @@ public final class Chain {
   checkByteStringIsUtf8(value);
         
         payload_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object initInput_ = "";
+      /**
+       * <code>optional string init_input = 3;</code>
+       */
+      public java.lang.String getInitInput() {
+        java.lang.Object ref = initInput_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          initInput_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string init_input = 3;</code>
+       */
+      public com.google.protobuf.ByteString
+          getInitInputBytes() {
+        java.lang.Object ref = initInput_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          initInput_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string init_input = 3;</code>
+       */
+      public Builder setInitInput(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        initInput_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string init_input = 3;</code>
+       */
+      public Builder clearInitInput() {
+        
+        initInput_ = getDefaultInstance().getInitInput();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string init_input = 3;</code>
+       */
+      public Builder setInitInputBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        initInput_ = value;
         onChanged();
         return this;
       }
@@ -23665,19 +23802,19 @@ public final class Chain {
       "close_time\030\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014" +
       "\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024previous_ledger_" +
       "hash\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001(\0132\027.pro" +
-      "tocol.LedgerUpgrade\"j\n\010Contract\022-\n\004type\030" +
+      "tocol.LedgerUpgrade\"~\n\010Contract\022-\n\004type\030" +
       "\001 \001(\0162\037.protocol.Contract.ContractType\022\017",
-      "\n\007payload\030\002 \001(\t\"\036\n\014ContractType\022\016\n\nJAVAS" +
-      "CRIPT\020\000\"\272\001\n\026OperationCreateAccount\022\024\n\014de" +
-      "st_address\030\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.pro" +
-      "tocol.Contract\022(\n\004priv\030\003 \001(\0132\032.protocol." +
-      "AccountPrivilege\022$\n\tmetadatas\030\004 \003(\0132\021.pr" +
-      "otocol.KeyPair\022\024\n\014init_balance\030\005 \001(\003\"X\n\024" +
-      "OperationSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005val" +
-      "ue\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_flag" +
-      "\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATUR" +
-      "E\020dB\035\n\033cn.bubi.blockchain.adapter3b\006prot",
-      "o3"
+      "\n\007payload\030\002 \001(\t\022\022\n\ninit_input\030\003 \001(\t\"\036\n\014C" +
+      "ontractType\022\016\n\nJAVASCRIPT\020\000\"\272\001\n\026Operatio" +
+      "nCreateAccount\022\024\n\014dest_address\030\001 \001(\t\022$\n\010" +
+      "contract\030\002 \001(\0132\022.protocol.Contract\022(\n\004pr" +
+      "iv\030\003 \001(\0132\032.protocol.AccountPrivilege\022$\n\t" +
+      "metadatas\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014in" +
+      "it_balance\030\005 \001(\003\"X\n\024OperationSetMetadata" +
+      "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030" +
+      "\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007U" +
+      "NKNOWN\020\000\022\r\n\tSIGNATURE\020dB\035\n\033cn.bubi.block",
+      "chain.adapter3b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -23829,7 +23966,7 @@ public final class Chain {
     internal_static_protocol_Contract_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_Contract_descriptor,
-        new java.lang.String[] { "Type", "Payload", });
+        new java.lang.String[] { "Type", "Payload", "InitInput", });
     internal_static_protocol_OperationCreateAccount_descriptor =
       getDescriptor().getMessageTypes().get(22);
     internal_static_protocol_OperationCreateAccount_fieldAccessorTable = new

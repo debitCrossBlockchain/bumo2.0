@@ -58,6 +58,10 @@ namespace bumo{
 		return true;
 	}
 
+	bool Contract::InitContract() {
+		return true;
+	}
+
 	bool Contract::Cancel() {
 		return true;
 	}
@@ -116,6 +120,7 @@ namespace bumo{
 	const std::string V8Contract::this_address_ = "thisAddress";
 	const char* V8Contract::main_name_ = "main";
 	const char* V8Contract::query_name_ = "query";
+	const char* V8Contract::init_name_ = "init";
 	const char* V8Contract::call_jslint_ = "callJslint";
 	const std::string V8Contract::trigger_tx_name_ = "trigger";
 	const std::string V8Contract::trigger_tx_index_name_ = "triggerIndex";
@@ -210,10 +215,11 @@ namespace bumo{
 		js_func_read_["int64Mod"] = V8Contract::CallBackInt64Mod;
 		js_func_read_["int64Div"] = V8Contract::CallBackInt64Div;
 		js_func_read_["int64Compare"] = V8Contract::CallBackInt64Compare;
+		js_func_read_["assert"] = V8Contract::CallBackAssert;
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
-        js_func_write_["storageDel"] = V8Contract::CallBackStorageDel;
+		js_func_write_["storageDel"] = V8Contract::CallBackStorageDel;
 		js_func_write_["doTransaction"] = V8Contract::CallBackDoTransaction;
 		js_func_write_["configFee"] = V8Contract::CallBackConfigFee;
 		js_func_write_["setValidators"] = V8Contract::CallBackSetValidators;
@@ -235,7 +241,7 @@ namespace bumo{
 		return true;
 	}
 
-	bool V8Contract::Execute() {
+	bool V8Contract::ExecuteCode(const char* fname){
 		v8::Isolate::Scope isolate_scope(isolate_);
 		v8::HandleScope handle_scope(isolate_);
 		v8::TryCatch try_catch(isolate_);
@@ -278,7 +284,7 @@ namespace bumo{
 			context->Global()->Set(context,
 				v8::String::NewFromUtf8(isolate_, pay_asset_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 				v8_asset);
-		} 
+		}
 
 		auto blocknumber_v8 = v8::Number::New(isolate_, (double)parameter_.blocknumber_);
 		context->Global()->Set(context,
@@ -299,7 +305,7 @@ namespace bumo{
 				result_.set_desc(error_random.toFastString());
 				break;
 			}
-		
+
 			v8::Local<v8::String> check_time_name(
 				v8::String::NewFromUtf8(context->GetIsolate(), "__enable_check_time__",
 				v8::NewStringType::kNormal).ToLocalChecked());
@@ -317,14 +323,14 @@ namespace bumo{
 			}
 
 			v8::Local<v8::String> process_name =
-				v8::String::NewFromUtf8(isolate_, main_name_, v8::NewStringType::kNormal, strlen(main_name_))
+				v8::String::NewFromUtf8(isolate_, fname, v8::NewStringType::kNormal, strlen(fname))
 				.ToLocalChecked();
 			v8::Local<v8::Value> process_val;
 
 			if (!context->Global()->Get(context, process_name).ToLocal(&process_val) ||
 				!process_val->IsFunction()) {
 				Json::Value json_result;
-				json_result["exception"] = utils::String::Format("Lost of %s function", query_name_);
+				json_result["exception"] = utils::String::Format("Lost of %s function", fname);
 				result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_FAIL);
 				result_.set_desc(json_result.toFastString());
 				LOG_ERROR("%s", result_.desc().c_str());
@@ -352,6 +358,14 @@ namespace bumo{
 			return true;
 		} while (false);
 		return false;
+	}
+
+	bool V8Contract::Execute() {
+		return ExecuteCode(main_name_);
+	}
+
+	bool V8Contract::InitContract(){
+		return ExecuteCode(init_name_);
 	}
 
 	bool V8Contract::Cancel() {
@@ -743,6 +757,43 @@ namespace bumo{
 			return;
 		} while (false);
 
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackAssert(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		std::string desc = "assert expression occur";
+		do {
+			if (args.Length() < 1 || args.Length() > 2) {
+				LOG_ERROR("parameter error");
+				desc.append(",parameter error");
+				break;
+			}
+			if (!args[0]->IsBoolean()) {
+				LOG_ERROR("parameter args[0] should be boolean");
+				desc.append(",parameter error");
+				break;
+			}
+			if (args.Length() == 2) {
+				if (!args[1]->IsString()) {
+					LOG_ERROR("parameter args[1] should be string");
+					desc.append(",parameter error");
+					break;
+				}
+				else {
+					v8::String::Utf8Value str1(args[1]);
+					desc = ToCString(str1);
+				}
+			}
+			if (args[0]->BooleanValue() == false){
+				break;
+			}
+			args.GetReturnValue().Set(true);
+
+		}while (false);
+
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
 		args.GetReturnValue().Set(false);
 	}
 
@@ -1739,7 +1790,7 @@ namespace bumo{
 		return tmp_result;
 	}
 
-	Result ContractManager::Execute(int32_t type, const ContractParameter &paramter) {
+	Result ContractManager::Execute(int32_t type, const ContractParameter &paramter, bool init_execute) {
 		Result ret;
 		do {
 			Contract *contract;
@@ -1759,7 +1810,10 @@ namespace bumo{
 
 			LedgerContext *ledger_context = contract->GetParameter().ledger_context_;
 			ledger_context->PushContractId(contract->GetId());
-			contract->Execute();
+			if (init_execute)
+				contract->InitContract();
+			else
+				contract->Execute();
 			ret = contract->GetResult();
 			ledger_context->PopContractId();
 			ledger_context->PushLog(contract->GetParameter().this_address_, contract->GetLogs());
