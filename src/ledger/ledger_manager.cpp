@@ -969,7 +969,7 @@ namespace bumo {
 			if (txfrm->ValidForParameter()) {
 				if (back->environment_->useAtomMap_)
 				{
-					auto cacheEnv = back->environment_->NewStackFrameEnv();
+					std::shared_ptr<Environment> cacheEnv = back->environment_->NewStackFrameEnv();
 					txfrm->Apply(ledger_context->closing_ledger_.get(), cacheEnv, true);
 				}
 				else
