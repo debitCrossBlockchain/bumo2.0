@@ -562,12 +562,12 @@ namespace bumo{
 			}
 
 			JsValueToCppJson(context, callRet, temp_result);
-			Json::Value &result_v = js_result["result"];
-			result_v[result_v.size()] = temp_result;
+			js_result["result"] = temp_result;
 			return true;
 		} while (false);
 
-		js_result["error_desc_f"] = error_desc_f;
+		Json::Value &error_obj = js_result["error"];
+		error_obj ["data"] = error_desc_f;
 		return false;
 	}
 
@@ -652,7 +652,7 @@ namespace bumo{
 			v8::Local<v8::Context> context(isolate->GetCurrentContext());
 			const char* filename_string = ToCString(filename);
 			int linenum = message->GetLineNumber(context).FromJust();
-			json_result["filename"] = filename_string;
+			//json_result["filename"] = filename_string;
 			json_result["linenum"] = linenum;
 			json_result["exception"] = exec_string;
 
@@ -773,6 +773,8 @@ namespace bumo{
 				desc.append(",parameter error");
 				break;
 			}
+
+			v8::HandleScope scope(args.GetIsolate());
 			if (args.Length() == 2) {
 				if (!args[1]->IsString()) {
 					LOG_ERROR("parameter args[1] should be string");
@@ -1078,17 +1080,19 @@ namespace bumo{
 
 			Json::Value query_result;
 			bool ret = ContractManager::Instance().Query(contract.type(), parameter, query_result);
-
-			v8::Local<v8::Boolean> flag = v8::Boolean::New(args.GetIsolate(), ret);
-			obj->Set(v8::String::NewFromUtf8(args.GetIsolate(), "success"), flag);
-
-			Json::Value js_array = query_result["result"];
-			if (ret && js_array.size() > 0) {
-
+			
+			//just like this, {"success": true, "result": "abcde"}
+			if (!ret) {
+				v8::Local<v8::Boolean> flag = v8::Boolean::New(args.GetIsolate(), true);
+				obj->Set(v8::String::NewFromUtf8(args.GetIsolate(), "error"), flag);
+			}
+			else {
+				Json::Value js_object = query_result["result"];
 				v8::Local<v8::Value> v8_result;
-				CppJsonToJsValue(args.GetIsolate(), js_array[(uint32_t)0], v8_result);
+				CppJsonToJsValue(args.GetIsolate(), js_object, v8_result);
 				obj->Set(v8::String::NewFromUtf8(args.GetIsolate(), "result"), v8_result);
-			} 
+			}
+
 
 		} while (false);
 
@@ -1863,10 +1867,7 @@ namespace bumo{
 			bool ret = contract->Query(result);
 			ledger_context->PopContractId();
 			ledger_context->PushLog(contract->GetParameter().this_address_, contract->GetLogs());
-			Json::Value ret_obj = Json::Value(Json::objectValue);
-			ret_obj = result;
-			ret_obj["success"] = ret;
-			ledger_context->PushRet(contract->GetParameter().this_address_, ret_obj);
+			ledger_context->PushRet(contract->GetParameter().this_address_, result);
 			do {
 				//delete the contract from map
 				contracts_.erase(contract->GetId());
