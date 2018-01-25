@@ -191,6 +191,82 @@ namespace bumo
 		virtual bool GetFromDB(const KEY& key, pointer& val){ return false; }
 		virtual void updateToDB(){}
 	};
+
+	template<class KEY, class VALUE, class COMPARE = std::less<KEY>>
+	class AtomBaseMap
+	{
+	public:
+		typedef std::map<KEY, VALUE, COMPARE> mapKV;
+
+	protected:
+		mapKV  actionBuf_;
+		mapKV  standby_;
+		mapKV* data_;
+
+	public:
+		AtomBaseMap()
+		{
+			data_ = &standby_; //avoid manual memory management
+		}
+
+		AtomBaseMap(mapKV* data)
+		{
+			if (data)
+				data_ = data;
+			else
+				data_ = &standby_; //avoid manual memory management
+		}
+
+		void SetValue(const KEY& key, const VALUE& val)
+		{
+			actionBuf_[key] = val;
+		}
+
+		bool GetValue(const KEY& key, VALUE& val)
+		{
+			bool ret = false;
+			auto itAct = actionBuf_.find(key);
+			if (itAct != actionBuf_.end())
+			{
+				val = actionBuf_[key];
+				ret = true;
+			}
+			else
+			{
+				auto itData = data_->find(key);
+				if (itData != data_->end())
+				{
+					actionBuf_[key] = (*data_)[key];
+					val = actionBuf_[key];
+					ret = true;
+				}
+			}
+			return ret;
+		}
+
+		const mapKV& GetData()
+		{
+			return *data_;
+		}
+
+		mapKV& GetActionBuf()
+		{
+			return actionBuf_;
+		}
+
+		void Commit()
+		{
+			for (auto act : actionBuf_)
+				(*data_)[act.first] = act.second;
+
+			actionBuf_.clear();
+		}
+
+		void ClearChangeBuf()
+		{
+			actionBuf_.clear();
+		}
+	};
 }
 
 #endif //TEMPLATE_ATOMIC_MAP_H

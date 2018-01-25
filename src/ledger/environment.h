@@ -27,12 +27,12 @@
 namespace bumo {
 	class Environment : public AtomMap<std::string, AccountFrm>{
 	public:
-		const std::string validatorsKey = "validators_key";
-		const std::string feesKey		= "fees_key";
+		std::map<std::string, AccountFrm::pointer> entries_;	
+		AtomBaseMap<protocol::FeeConfig_Type, int64_t> fees_;
+		AtomBaseMap<int32_t, std::string> validators_;
 
-		std::map<std::string, AccountFrm::pointer> entries_;
-		AtomMap<std::string, Json::Value> settings_;
-		typedef AtomMap<std::string, Json::Value>::mapKV  settingKV;
+		typedef AtomBaseMap<protocol::FeeConfig_Type, int64_t>::mapKV  feesKV;
+		typedef AtomBaseMap<int32_t, std::string>::mapKV  validatorsKV;
 
 		Environment *parent_;
 		bool useAtomMap_;
@@ -42,19 +42,17 @@ namespace bumo {
 		Environment& operator=(Environment const&) = delete;
 
 		Environment(Environment *parent);
-		Environment(mapKV* data, settingKV* settingsData);
+		Environment(mapKV* data, validatorsKV* sets, feesKV* fees);
 
 		bool GetEntry(const std::string& key, AccountFrm::pointer &frm);
 		bool AddEntry(const std::string& key, AccountFrm::pointer frm);
 
-		const std::shared_ptr<Json::Value>& InitValidators();
-		const std::shared_ptr<Json::Value>& GetValidators();
-		const std::shared_ptr<Json::Value>& GetFees();
+		const validatorsKV& GetValidators();
 
 		bool UpdateFeeConfig(const Json::Value &fee_config);
 		bool GetVotedFee(const protocol::FeeConfig &old_fee, protocol::FeeConfig& new_fee);
 
-		bool UpdateNewValidators(const std::shared_ptr<Json::Value>& validators);
+		bool UpdateNewValidators(const Json::Value& validators);
 		bool GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator);
 
 		bool Commit();
@@ -62,6 +60,7 @@ namespace bumo {
 
 		virtual bool GetFromDB(const std::string &address, AccountFrm::pointer &account_ptr);
 		static bool AccountFromDB(const std::string &address, AccountFrm::pointer &account_ptr);
+		std::shared_ptr<Environment> NewStackFrameEnv();
 	};
 }
 #endif

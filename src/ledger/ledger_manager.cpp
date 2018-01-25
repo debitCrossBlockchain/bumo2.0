@@ -969,9 +969,7 @@ namespace bumo {
 			if (txfrm->ValidForParameter()) {
 				if (back->environment_->useAtomMap_)
 				{
-					Environment::mapKV& data = back->environment_->GetActionBuf();
-					Environment::settingKV& settings = back->environment_->settings_.GetActionBuf();
-					std::shared_ptr<Environment> cacheEnv = std::make_shared<Environment>(&data, &settings);
+					auto cacheEnv = back->environment_->NewStackFrameEnv();
 					txfrm->Apply(ledger_context->closing_ledger_.get(), cacheEnv, true);
 				}
 				else
