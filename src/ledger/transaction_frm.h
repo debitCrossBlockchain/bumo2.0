@@ -61,7 +61,7 @@ namespace bumo {
 		bool CheckValid(int64_t last_seq);
 		bool CheckExpr(const std::string &code, const std::string &log_prefix);
 
-		bool SignerHashPriv(utils::StringVector &address, std::shared_ptr<Environment> env, int32_t type) const;
+		bool SignerHashPriv(AccountFrm::pointer account_ptr, int32_t type) const;
 
 		const protocol::Transaction &GetTx() const;
 
@@ -82,8 +82,6 @@ namespace bumo {
 
 		bool ValidForParameter();
 		
-		bool ValidForSourceSignature();
-
 		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);
 
 		bool PayFee(std::shared_ptr<Environment> environment,int64_t& total_fee);

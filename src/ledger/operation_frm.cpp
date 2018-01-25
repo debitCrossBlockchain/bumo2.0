@@ -355,7 +355,7 @@ namespace bumo {
 
 		utils::StringVector vec;
 		vec.push_back(source_address_);
-		if (!transaction_->SignerHashPriv(vec, txenvironment, operation_.type())) {
+		if (!transaction_->SignerHashPriv(source_account_, operation_.type())) {
 			LOG_ERROR("Check operation's signature failed");
 			result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
 			result_.set_desc(utils::String::Format("Check operation's signature failed"));
@@ -688,7 +688,6 @@ namespace bumo {
 		std::string address = ope.dest_address();
 		std::shared_ptr<AccountFrm> dest_account_ptr = nullptr;
 		int64_t reserve_coin = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
-		bool create_account = false;
 		do {
 			protocol::Account& proto_source_account = source_account_->GetProtoAccount();
 			if (proto_source_account.balance() < ope.amount() + reserve_coin) {
@@ -712,7 +711,6 @@ namespace bumo {
 					break;
 				}
 
-				create_account = true;
 				protocol::Account account;
 				account.set_balance(0);
 				account.mutable_priv()->set_master_weight(1);
@@ -742,7 +740,7 @@ namespace bumo {
 				parameter.pay_coin_amount_ = ope.amount();
 
 				std::string err_msg;
-				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter,create_account);
+				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter);
 
 			}
 		} while (false);
