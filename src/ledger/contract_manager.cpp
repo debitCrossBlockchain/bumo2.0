@@ -1178,10 +1178,25 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 
-			LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
-			const std::shared_ptr<Json::Value> sets = ledger_frm->environment_->GetValidators();
+			Json::Value jsonValidators;
+			auto env = v8_contract->parameter_.ledger_context_->closing_ledger_->environment_;
 
-			std::string strvalue = sets->toFastString();
+			if (env){
+				auto validators = env->GetValidators();
+				for (auto kv : validators){
+					jsonValidators[kv.first] = kv.second;
+				}
+			}
+			else{
+				auto validators = LedgerManager::Instance().Validators();
+				for (int i = 0; i < validators.validators_size(); i++){
+					std::string address = *validators.mutable_validators(i);
+					jsonValidators[i] = address;
+				}
+
+			}
+
+			std::string strvalue = jsonValidators.toFastString();
 			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
 
@@ -1220,8 +1235,8 @@ namespace bumo{
 			}
 
 			v8::String::Utf8Value  utf8(args[0]);
-			std::shared_ptr<Json::Value> json;
-			if (!json->fromCString(ToCString(utf8))) {
+			Json::Value json;
+			if (!json.fromCString(ToCString(utf8))) {
 				LOG_ERROR("fromCString fail, fatal error");
 				break;
 			}

@@ -18,8 +18,8 @@
 #include "environment.h"
 
 namespace bumo{
-	Environment::Environment(mapKV* data, settingKV* settingsData) :
-		AtomMap<std::string, AccountFrm>(data), settings_(settingsData)
+	Environment::Environment(mapKV* data, validatorsKV* sets, feesKV* fees) :
+		AtomMap<std::string, AccountFrm>(data), validators_(sets), fees_(fees)
 	{
 		useAtomMap_ = Configure::Instance().ledger_configure_.use_atom_map_;
 		parent_ = nullptr;
@@ -64,7 +64,8 @@ namespace bumo{
 	bool Environment::Commit(){
 		if (useAtomMap_)
 		{
-			settings_.Commit();
+			fees_.Commit();
+			validators_.Commit();
 			return AtomMap<std::string, AccountFrm>::Commit();
 		}
 
@@ -74,8 +75,9 @@ namespace bumo{
 
 	void Environment::ClearChangeBuf()
 	{
+		fees_.ClearChangeBuf();
+		validators_.ClearChangeBuf();
 		AtomMap<std::string, AccountFrm>::ClearChangeBuf();
-		settings_.ClearChangeBuf();
 	}
 
 	bool Environment::AddEntry(const std::string& key, AccountFrm::pointer frm){
@@ -109,43 +111,32 @@ namespace bumo{
 
 	}
 
-	const std::shared_ptr<Json::Value>& Environment::InitValidators()
+	std::shared_ptr<Environment> Environment::NewStackFrameEnv()
 	{
-		protocol::ValidatorSet currentSets = LedgerManager::Instance().Validators();
-		std::shared_ptr<Json::Value> validators;
-		for (int i = 0; i < currentSets.validators_size(); i++)
-		{
-			std::string address = *currentSets.mutable_validators(i);
-			(*validators)[i] = address;
+		mapKV& data	       = GetActionBuf();
+		feesKV& fees       = fees_.GetActionBuf();
+		validatorsKV& sets = validators_.GetActionBuf();
+		std::shared_ptr<Environment> next = std::make_shared<Environment>(&data, &sets, &fees);
+
+		return next;
+	}
+
+	const Environment::validatorsKV& Environment::GetValidators(){
+		if (validators_.GetActionBuf().empty()){
+			auto sets = LedgerManager::Instance().Validators();
+			for (int i = 0; i < sets.validators_size(); i++){
+				validators_.SetValue(i, *sets.mutable_validators(i));
+			}
 		}
 
-		settings_.Set(validatorsKey, validators);
-		return validators;
+		return validators_.GetActionBuf();
 	}
 
-	const std::shared_ptr<Json::Value>& Environment::GetValidators()
-	{
-		std::shared_ptr<Json::Value> sets;
-		settings_.Get(validatorsKey, sets);
-
-		if (!sets)
-			sets = InitValidators();
-
-		return sets;
-	}
-	const std::shared_ptr<Json::Value>& Environment::GetFees()
-	{
-		std::shared_ptr<Json::Value> fees;
-		settings_.Get(feesKey, fees);
-		return fees;
-	}
-
-	bool Environment::UpdateFeeConfig(const Json::Value &fee_config) {
-		std::shared_ptr<Json::Value> fees;
-		settings_.Get(feesKey, fees);
-
-		for (Json::Value::iterator it = fees->begin(); it != fees->end(); it++) {
-			(*fees)[it.memberName()] = fee_config[it.memberName()];
+	bool Environment::UpdateFeeConfig(const Json::Value &feeConfig) {
+		for (auto it = feeConfig.begin(); it != feeConfig.end(); it++) {
+			auto type     = (protocol::FeeConfig_Type)utils::String::Stoi(it.memberName());
+			auto price = feeConfig[it.memberName()].asInt64();
+			fees_.SetValue(type, price);
 		}
 
 		return true;
@@ -155,13 +146,12 @@ namespace bumo{
 		bool change = false;
 		new_fee = old_fee;
 
-		std::shared_ptr<Json::Value> fees;
-		settings_.Get(feesKey, fees);
-		if (!fees) return false;
+		auto fees = fees_.GetData();
+		if (fees.empty()) return false;
 
-		for (Json::Value::iterator it = fees->begin(); it != fees->end(); it++) {
-			int32_t fee_type = utils::String::Stoi(it.memberName());
-			int64_t price = (*fees)[it.memberName()].asInt64();
+		for (auto kv : fees) {
+			int32_t fee_type = kv.first;
+			int64_t price = kv.second;
 
 			switch ((protocol::FeeConfig_Type)fee_type) {
 			case protocol::FeeConfig_Type_UNKNOWN:
@@ -231,28 +221,25 @@ namespace bumo{
 		return change;
 	}
 
-	bool Environment::UpdateNewValidators(const std::shared_ptr<Json::Value>& validators) {
-		return settings_.Set(validatorsKey, validators);
+	bool Environment::UpdateNewValidators(const Json::Value& validators) {
+		for (uint32_t i = 0; i < validators.size(); i++) {
+			validators_.SetValue(i, validators[i].asString());
+		}
+		return true;
 	}
 
-	bool Environment::GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator) {
-		std::shared_ptr<Json::Value> sets;
-		settings_.Get(validatorsKey, sets);
-		if (!sets)
+	bool Environment::GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator){
+		auto validators = validators_.GetData();
+
+		if (validators.empty())
 		{
 			new_validator = old_validator;
 			return false;
 		}
 
-		if (sets->size() > 0){
-			for (uint32_t i = 0; i < sets->size(); i++) {
-				new_validator.add_validators((*sets)[i].asString());
-			}
-
-			return true;
+		for (auto kv : validators){
+			new_validator.add_validators(kv.second);
 		}
-
-		new_validator = old_validator;
-		return false;
+		return true;
 	}
 }
