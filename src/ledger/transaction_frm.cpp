@@ -255,7 +255,7 @@ namespace bumo {
 
 			utils::StringVector vec;
 			vec.push_back(transaction_env_.transaction().source_address());
-			if (check_priv && !SignerHashPriv(vec, NULL, -1)) {
+			if (check_priv && !SignerHashPriv(source_account, -1)) {
 				result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
 				result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
 				LOG_ERROR(result_.desc().c_str());
@@ -301,9 +301,6 @@ namespace bumo {
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
-
-		//LOG_INFO("CheckValid source balance(" FMT_I64 ") GetFee(" FMT_I64 ") base reserve(" FMT_I64 ")", 
-		//	source_account->GetAccountBalance(), GetFee(), LedgerManager::Instance().fees_.base_reserve());
 
 		int64_t bytes_fee = GetSelfByteFee();
 		int64_t tran_fee = GetFee();
@@ -477,74 +474,40 @@ namespace bumo {
 		return false;
 	}
 
-	bool TransactionFrm::ValidForSourceSignature() {
-		utils::StringVector vec;
-		vec.push_back(transaction_env_.transaction().source_address());
-		if (!SignerHashPriv(vec, NULL, -1)) {
-			result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
-			result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
-			LOG_ERROR(result_.desc().c_str());
-			return false;
-		}
-		return true;
-	}
-
-	bool TransactionFrm::SignerHashPriv(utils::StringVector &addresses, std::shared_ptr<Environment> env, int32_t type) const {
-
-		//find not the signer
-		AccountFrm::pointer account = NULL;
-		if (env) {
-			env->GetEntry(addresses.back(), account);
-		}
-		else {
-			Environment::AccountFromDB(addresses.back(), account);
+	bool TransactionFrm::SignerHashPriv(AccountFrm::pointer account_ptr, int32_t type) const {
+		const protocol::AccountPrivilege &priv = account_ptr->GetProtoAccount().priv();
+		int64_t threshold = priv.thresholds().tx_threshold();
+		int64_t type_threshold = account_ptr->GetTypeThreshold((protocol::Operation::Type)type);
+		if (type_threshold > 0) {
+			threshold = type_threshold;
 		}
 
-		if (addresses.size() >= 5 || !account) {
-			return valid_signature_.find(addresses.back()) != valid_signature_.end();
+		if (valid_signature_.find(account_ptr->GetAccountAddress()) != valid_signature_.end()) {
+			threshold -= priv.master_weight();
 		}
-		else {
-			const protocol::AccountPrivilege &priv = account->GetProtoAccount().priv();
-			int64_t threshold = priv.thresholds().tx_threshold();
-			int64_t type_threshold = account->GetTypeThreshold((protocol::Operation::Type)type);
-			if (type_threshold > 0) {
-				threshold = type_threshold;
+
+		if (threshold <= 0) {
+			return true;
+		}
+
+		for (int32_t i = 0; i < priv.signers_size(); i++) {
+			const protocol::Signer &signer = priv.signers(i);
+
+			if (valid_signature_.find(signer.address()) != valid_signature_.end()) {
+				threshold -= signer.weight();
 			}
 
-			if (valid_signature_.find(addresses.back()) != valid_signature_.end()) {
-				threshold -= priv.master_weight();
+			if (threshold <= 0) {
+				return true;
 			}
-
-			for (int32_t i = 0; i < priv.signers_size(); i++) {
-				const protocol::Signer &signer = priv.signers(i);
-
-				//judge if the address exist the path
-				bool exist = false;
-				for (size_t i = 0; i < addresses.size(); i++) {
-					if (addresses[i] == signer.address()) {
-						exist = true;
-						break;
-					}
-				}
-
-				utils::StringVector vec_tmp = addresses;
-				vec_tmp.push_back(signer.address());
-				if (!exist && SignerHashPriv(vec_tmp, env, type)) {
-					threshold -= signer.weight();
-				}
-				if (threshold <= 0) {
-					break;
-				}
-			}
-
-			return threshold <= 0;
 		}
+
+		return false;
 	}
 
 	Result TransactionFrm::GetResult() const {
 		return result_;
 	}
-
 
 	uint32_t TransactionFrm::LoadFromDb(const std::string &hash) {
 		KeyValueDb *db = Storage::Instance().ledger_db();
