@@ -868,6 +868,11 @@ namespace bumo{
 			args.GetIsolate()->GetHeapStatistics(&stats);
 			ptr->SetMemoryUsage(stats.used_heap_size());
 
+			//check the stack
+			v8::V8InternalInfo internal_info;
+			args.GetIsolate()->GetV8InternalInfo(internal_info);
+			//LOG_INFO("v8 max_stack_size:%d, remain:%d\n", internal_info.max_stack_size, internal_info.remain_stack_size);
+
 			std::string error_info;
 			if (ptr->IsExpire(error_info)) {
 				args.GetIsolate()->ThrowException(
