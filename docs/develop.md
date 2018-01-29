@@ -25,6 +25,7 @@
             - [设置metadata](#设置metadata)
             - [设置权重](#设置权重)
             - [设置门限](#设置门限)
+            - [支付转账](#支付转账)
     - [高级功能](#高级功能)
         - [控制权的分配](#控制权的分配)
         - [版本化控制](#版本化控制)
@@ -947,6 +948,43 @@ POST /getTransactionBlob
   }
   ```
 
+#### 支付转账
+|参数|描述
+|:--- | --- 
+|pay_coin.dest_address |目标账户
+|pay_coin.amount |支付转账的数量
+|pay_coin.input |触发合约调用的入参
+
+
+- 功能
+  给目标账户支付指定数量的资金，如果目标账户不存在则创建账户，账户初始资金为原账户支付的资金
+- 成功条件
+  - 各项参数合法
+- json格式
+  ```json
+  {
+    "type": 7,
+    "pay_coin": {
+      "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
+      "amount": 100,
+      "input":  "{\"bar\":\"foo\"}"
+    }
+  }
+    ```
+
+- protocol buffer 结构
+
+  ```text
+  message OperationPayCoin{
+	string dest_address = 1;
+	int64 amount = 2;
+	string input = 3;
+  }
+  ```
+  - dest_address: 资金接收方账号地址
+  - amount: 支付的资金数量
+  - input: 本次转移触发接收方的合约，合约的执行入参就是input
+
 ## 高级功能
 
 ### 控制权的分配
@@ -1587,7 +1625,8 @@ GET /getLedger?seq=xxxx&with_fee=true
 
 ```json
 {
-    "query_enroll":1
+    "method":"queryEnroll",
+    "params":""
 }
 ```
 
@@ -1597,7 +1636,7 @@ json格式需转换成字符串形式填写到testContract接口结构
 {
     "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
     "code" : "",
-    "input" : "{\"query_enroll\":\"1\"}",
+    "input" : "{\"method\":\"queryEnroll\",\"param\":\"\"}"},
     "exe_or_query" : false,
     "source_address" : ""
 }
@@ -1622,7 +1661,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
                 "result": [
                     {
                         "type": "jsobject",
-                        "value": "{\"xx1\":{\"account\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enroll_id\":\"xx1\",\"fee_type\":1,\"price\":5}}"
+                        "value": "{\"xx1\":{\"accountID\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enrollID\":\"xx1\",\"feeType\":1,\"price\":5}}"
                     }
                 ],
                 "success": true
@@ -1641,9 +1680,9 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 ```json
 {
-   "query_voting":
-    {
-        "enroll_id": "xxxx",
+    "method":"queryVoting",
+    "params":{
+      "enrollID": "xxxx"
     }
 }
 ```
@@ -1654,7 +1693,7 @@ json格式需转换成字符串形式填写到testContract接口结构
 {
     "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
     "code" : "",
-    "input" : "{\"query_voting\":{\"enroll_id\":\"xxxx\"}}",
+    "input" : :"{\"method\":\"queryVoting\",\"params\":{\"enrollID\":\"xxxx\"}}"},
     "exe_or_query" : false,
     "source_address" : ""
 }
@@ -1679,7 +1718,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
                 "result": [
                     {
                         "type": "jsobject",
-                        "value": "{\"key\":\"vote-records-xx1\",\"value\":\"{\\\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\\\":{\\\"account\\\":\\\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\\\",\\\"vote_id\\\":\\\"yy1\\\",\\\"enroll_id\\\":\\\"xx1\\\"}}\",\"version\":1}"
+                        "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\":{\"account\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"voteID\":\"yy1\",\"enrollID\":\"xx1\"}}"
                     }
                 ],
                 "success": true
@@ -1697,10 +1736,11 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 ```json
 {
-    "enroll_fee": {
-        "account": "账户地址",
-        "enroll_id": "xxxx",
-        "fee_type": 1,//费用种类
+  "method":"enrollFee",
+    "params":{
+        "accountID": "buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg",
+        "enrollID": "xxxx",
+        "feeType": 1, //费用种类
         "price": 5    //费用价格
     }
 }
@@ -1714,7 +1754,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
        "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
        "amount":0,
-        "input":"{\"enroll_fee\":{\"account\":\"buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg\",\"enroll_id\":\"xxxx\",\"fee_type\":1,\"price\":5}}"
+        "input":"{\"method\":\"enrollFee\",\"params\":{\"accountID\":\"buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg\",\"enrollID\":\"xxxx\",\"feeType\":1,\"price\":5}}"
     }
 }
 ```
@@ -1725,11 +1765,12 @@ json格式需转换成字符串形式填写到paycoin接口结构
 
 ```json
 {
-    "do_voting": {
-        "account": "账户地址",
-        "vote_id": "vvvv",
-        "enroll_id": "xxxx"
-    }
+  "method":"doVoting",
+  "params":{
+      "accountID": "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+      "enrollID": "xxxx",
+      "voteID": 1
+   }
 }
 ```
 
@@ -1741,7 +1782,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
         "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
         "amount":0,
-        "input":"{\"do_voting\":{\"account\":\"buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg\",\"vote_id\":\"vvvv\",\"enroll_id\":\"xxxx\"}}"
+        "input":"{\"method\":\"doVoting\",\"params\":{\"accountID\":\"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1\",\"enrollID\":\"xxxx\",\"voteID\":1}}"
     }
 }
 ```
