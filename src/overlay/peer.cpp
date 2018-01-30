@@ -67,7 +67,7 @@ namespace bumo {
 	void Peer::SetPeerInfo(const protocol::Hello &hello) {
 		peer_overlay_version_ = hello.overlay_version();
 		peer_ledger_version_ = hello.ledger_version();
-		peer_version_ = hello.BUMO_VERSION();
+		peer_version_ = hello.bumo_version();
 		peer_listen_port_ = hello.listening_port();
 		peer_node_address_ = hello.node_address();
 	}
@@ -82,7 +82,7 @@ namespace bumo {
 		hello.set_ledger_version(General::LEDGER_VERSION);
 		hello.set_overlay_version(General::OVERLAY_VERSION);
 		hello.set_listening_port(listen_port);
-		hello.set_BUMO_VERSION(General::BUMO_VERSION);
+		hello.set_bumo_version(General::BUMO_VERSION);
 		hello.set_node_address(node_address);
 		hello.set_node_rand(node_rand);
 		hello.set_network_id(network_id);

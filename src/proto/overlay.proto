@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protocol;
-option java_package = "cn.bubi.blockchain.adapter3";
+option java_package = "cn.bumo.blockchain.adapter3";
 
 import "common.proto";
 import "chain.proto";
@@ -20,7 +20,7 @@ message Hello {
     int64 network_id = 1;
     int64 ledger_version = 2;
     int64 overlay_version = 3;
-    string bubi_version = 4;
+    string bumo_version = 4;
     int64 listening_port = 5;
     string node_address = 6;
     string node_rand = 7;
@@ -101,7 +101,7 @@ enum ChainMessageType {
 	CHAIN_PEER_OFFLINE = 13;
 	CHAIN_PEER_MESSAGE = 14;
 	CHAIN_SUBMITTRANSACTION = 15;
-	CHAIN_LEDGER_HEADER = 16; //bubi notify the client ledger(protocol::LedgerHeader) when closed
+	CHAIN_LEDGER_HEADER = 16; //bumo notify the client ledger(protocol::LedgerHeader) when closed
 }
 
 //register notification events
@@ -117,7 +117,7 @@ message ChainStatus {
 	string self_addr		= 1;
 	int64 ledger_version	= 2;
 	int64 monitor_version	= 3;
-	string bubi_version		= 4;
+	string bumo_version		= 4;
 	int64	timestamp		= 5;
 }
 

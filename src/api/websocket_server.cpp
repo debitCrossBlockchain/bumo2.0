@@ -65,7 +65,7 @@ namespace bumo {
 
 	bool WebSocketServer::OnChainHello(protocol::WsMessage &message, int64_t conn_id) {
 		protocol::ChainStatus cmsg;
-		cmsg.set_BUMO_VERSION(General::BUMO_VERSION);
+		cmsg.set_bumo_version(General::BUMO_VERSION);
 		cmsg.set_monitor_version(General::MONITOR_VERSION);
 		cmsg.set_ledger_version(General::LEDGER_VERSION);
 		cmsg.set_self_addr(PeerManager::Instance().GetPeerNodeAddress());

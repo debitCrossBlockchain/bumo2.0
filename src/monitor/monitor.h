@@ -31,7 +31,7 @@ namespace bumo {
 		std::string session_id_;
 		std::string peer_node_address_;
 		//bubi пео╒
-		std::string BUMO_VERSION_;
+		std::string bumo_version_;
 		int64_t monitor_version_;
 		int64_t bubi_ledger_version_;
 		std::string bubi_node_address_;
