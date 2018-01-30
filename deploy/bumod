@@ -1,12 +1,7 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          bubi
-# Required-Start:    $remote_fs $time
-# Required-Stop:     umountnfs $time
-# X-Stop-After:      sendsigs
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: bubid server
+# Provides:          bumo
+# Short-Description: bumod server
 # Description:      block-chain based server 
 #
 #
@@ -16,12 +11,12 @@
 set -e
 
 # Must be a valid filename
-NAME=bubid
+NAME=bumod
 PIDFILE=/var/run/$NAME.pid
-install_dir=/usr/local/bubichain
+install_dir=/usr/local/bumochain
 #This is the command to be run, give the full pathname
-DAEMON=${install_dir}/bin/bubid
-DAEMON_WATCH=${install_dir}/scripts/bubi
+DAEMON=${install_dir}/bin/bumod
+DAEMON_WATCH=${install_dir}/scripts/bumo
 DAEMON_OPTS="--exec $DAEMON_WATCH start --log ${install_dir}/log/daemon.log"
 
 export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
@@ -41,20 +36,20 @@ stop(){
 }
 
 status(){
-	var=$(ps -ef|grep -w ${install_dir}/bin/bubid |grep -v grep | wc -l);	
+	var=$(ps -ef|grep -w ${install_dir}/bin/bumod |grep -v grep | wc -l);	
 	if [ $var != 0 ];
 	then
-	echo "bubid is running";
+	echo "bumod is running";
 	else
-	echo "bubid is not running";
+	echo "bumod is not running";
 	fi
 	
-	var=$(ps -ef|grep -w ${install_dir}/bin/bubi |grep -v grep | wc -l);	
+	var=$(ps -ef|grep -w ${install_dir}/bin/bumo |grep -v grep | wc -l);	
 	if [ $var != 0 ];
 	then
-	echo "bubi is running";
+	echo "bumo is running";
 	else
-	echo "bubi is not running";
+	echo "bumo is not running";
 	fi
 }
 
