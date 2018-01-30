@@ -751,10 +751,15 @@ namespace bumo{
 				break;
 			}
 
-			LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
-			ledger_frm->environment_->UpdateFeeConfig(json);
-			args.GetReturnValue().Set(true);
-			return;
+
+			//LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
+			//ledger_frm->environment_->UpdateFeeConfig(json);
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			if (!ledger_context->transaction_stack_.empty()) {
+				ledger_context->transaction_stack_.back()->environment_->UpdateFeeConfig(json);
+				args.GetReturnValue().Set(true);
+				return;
+			}
 		} while (false);
 
 		args.GetReturnValue().Set(false);
@@ -1189,9 +1194,10 @@ namespace bumo{
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 
 			Json::Value jsonValidators;
-			auto env = v8_contract->parameter_.ledger_context_->closing_ledger_->environment_;
-
-			if (env){
+			//auto env = v8_contract->parameter_.ledger_context_->closing_ledger_->environment_;
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			if (!ledger_context->transaction_stack_.empty()) {
+				auto env = ledger_context->transaction_stack_.back()->environment_;
 				auto validators = env->GetValidators();
 				for (auto kv : validators){
 					jsonValidators[kv.first] = kv.second;
@@ -1203,7 +1209,6 @@ namespace bumo{
 					std::string address = *validators.mutable_validators(i);
 					jsonValidators[i] = address;
 				}
-
 			}
 
 			std::string strvalue = jsonValidators.toFastString();
@@ -1251,11 +1256,14 @@ namespace bumo{
 				break;
 			}
 
-			LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
-			ledger_frm->environment_->UpdateNewValidators(json);
-			args.GetReturnValue().Set(true);
-			return;
-
+			//LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
+			//ledger_frm->environment_->UpdateNewValidators(json);
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			if (!ledger_context->transaction_stack_.empty()) {
+				ledger_context->transaction_stack_.back()->environment_->UpdateNewValidators(json);
+				args.GetReturnValue().Set(true);
+				return;
+			}
 		} while (false);
 		args.GetReturnValue().Set(false);
 	}
