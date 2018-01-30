@@ -16,6 +16,7 @@
         - [提交交易](#提交交易)
         - [序列化交易](#序列化交易)
         - [调试合约](#调试合约)
+        - [评估费用](#评估费用)
     - [定义交易](#定义交易)
         - [交易的基本结构](#交易的基本结构)
         - [操作](#操作)
@@ -548,6 +549,72 @@ POST /getTransactionBlob
       },
       "txs" : null
    }
+}
+```
+
+### 评估费用
+
+```json
+{
+  "items": [
+    {
+      "transaction_json": {
+        "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB",
+        "nonce": 6,
+        "fee":0,
+        "operations": [
+          {
+            "type": 7,
+            "pay_coin": {
+              "dest_address": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw",
+              "amount": 10000
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+  评估费用不改变账号余额基础上进行的评估，交易中涉及的原账号和目标账号都必须在系统中存在，创建账号的目标地址除外。
+  - source_address：模拟交易的原地址。
+  - nonce : 在原账号基础上加1。
+  - fee : 费用填0系统会自动填写一个大概费用来进行交易，计算出实际费用，如果费用不足，交易终止；非0不填写费用字段，直接交易计算出实际费用，如果费用不足，交易终止。
+  - operations : 可以是任何一种操作类型。
+
+  - 返回值如下：
+
+```json
+{
+    "error_code": 0,
+    "error_desc": "",
+    "result": {
+        "hash": "63109579662d7165ee3c4de0a00932d8b721651101d3255e2326de10eea6de15",
+        "logs": null,
+        "query_rets": null,
+        "real_fee": 1000,
+        "stat": null,
+        "txs": [
+            {
+                "transaction_env": {
+                    "transaction": {
+                        "fee": 99999999974939995,
+                        "nonce": 6,
+                        "operations": [
+                            {
+                                "pay_coin": {
+                                    "amount": 10000,
+                                    "dest_address": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw"
+                                },
+                                "type": 7
+                            }
+                        ],
+                        "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB"
+                    }
+                }
+            }
+        ]
+    }
 }
 ```
 
