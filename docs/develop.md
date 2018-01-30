@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-- [BUMO 区块链开发文档](#BUMO 区块链开发文档)
+- [BUMO区块链开发文档](#BUMO区块链开发文档)
     - [基础知识](#基础知识)
         - [了解protocol buffer3](#了解protocol-buffer3)
         - [protocol buffer 3和json](#protocol-buffer-3和json)
