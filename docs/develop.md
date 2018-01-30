@@ -663,6 +663,7 @@ POST /getTransactionBlob
   - 各项参数合法
   - 要创建的账号不存在
 - json格式
+- **注意：如果目标为合约账户，则priv配置必须符合 {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}**
 
 
 ```json
@@ -673,6 +674,8 @@ POST /getTransactionBlob
         "contract": {
           "payload": "function main(input) { /*do what ever you want*/ }"
         },
+        "init_balance": 100000,  //give the init_balance to this account
+        "init_input" : "",  // if create contract , then init with this input
         "metadatas": [{
             "key": "111",
             "value": "hello 111!",
@@ -716,6 +719,7 @@ POST /getTransactionBlob
       AccountPrivilege priv = 3;
       repeated KeyPair metadatas = 4;
       int64    init_balance = 5;
+      string  init_input = 6;
   }
   ```
 
@@ -766,7 +770,8 @@ POST /getTransactionBlob
     ```
 
     这是一个版本化的键值对数据库，如果您不需要，可以不填写这部分。
-  - init_balance:暂时未启用
+  - init_balance: 给创建的账户初始化的 BU 数。
+  - init_input:  如果被创建的账户是合约账户，则传参执行初始化合约操作。
 
 #### 发行资产
 
@@ -843,9 +848,7 @@ POST /getTransactionBlob
     message OperationPayment
     {
         string dest_address = 1;
-
         Asset asset = 2;
-
         string input = 3;
     }
     ```
@@ -869,8 +872,8 @@ POST /getTransactionBlob
 #### 设置metadata
 |参数|描述
 |:--- | --- 
-| set_metadata.key  |required，length:(0, 256]
-| set_metadata.value  |optional，length:(0, 1048576]
+| set_metadata.key  |required，length:(0, 1024]
+| set_metadata.value  |optional，length:(0, 262144]
 | set_metadata.version |optional，default 0, 0：不限制版本，>0 : 当前 value 的版本必须为该值， <0 : 非法
 
 - 功能
@@ -900,7 +903,7 @@ POST /getTransactionBlob
     }
     ```
     - key: 主键，账号内唯一。长度范围[1,1024]
-    - value: 值。长度范围[0,1M]
+    - value: 值。长度范围[0,256K]
     - version: 版本号，可以不填写。若您想使用这个高级功能，参见[版本化控制](#版本化控制)
 
 #### 设置权重
@@ -1019,7 +1022,7 @@ POST /getTransactionBlob
     {
       "type": 7,
       "pay_coin": {
-        "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
+          "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
           "amount": 100,
           "input": "{\"bar\":\"foo\"}"
         }
@@ -1032,9 +1035,7 @@ POST /getTransactionBlob
     message OperationPayCoin
     {
         string dest_address = 1;
-
         int64 amount = 2;
-
         string input = 3;
     }
     ```
@@ -1135,6 +1136,7 @@ function init(bar)
   /*init whatever you want*/
 
 }
+
 function main(input)
 {
   var para = JSON.parse(input);
@@ -1145,9 +1147,14 @@ function main(input)
     };
   }
 }
+
+function query(input)
+{ 
+  return input;
+}
 ```
 
-系统提供了几个全局函数, 这些函数可以获取区块链的一些信息，也可驱动账号发起交易
+系统提供了几个全局函数, 这些函数可以获取区块链的一些信息，也可驱动账号发起所有交易，除了设置门限和权重这两种类型的操作。
 **注意，自定义的函数和变量不要与内置变量和全局函数重名，否则会造成不可控的数据错误。**
 
 #### 内置函数

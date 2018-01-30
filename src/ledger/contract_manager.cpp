@@ -1100,9 +1100,20 @@ namespace bumo{
 			std::string contractor = v8_contract->parameter_.this_address_;
 			transaction.set_source_address(contractor);
 
+			bool ope_has_pri = false;
 			for (int i = 0; i < transaction.operations_size(); i++) {
 				protocol::Operation*  ope = transaction.mutable_operations(i);
 				ope->set_source_address(contractor);
+				if (ope->type() == protocol::Operation_Type_SET_SIGNER_WEIGHT ||
+					ope->type() == protocol::Operation_Type_SET_THRESHOLD) {
+					ope_has_pri = true;
+					break;
+				}
+			}
+
+			if (ope_has_pri) {
+				LOG_ERROR("Contract operation cann't has priv object");
+				break;
 			}
 
 			protocol::TransactionEnv env;

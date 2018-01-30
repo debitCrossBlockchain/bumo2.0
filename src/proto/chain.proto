@@ -168,9 +168,7 @@ enum Limit{
 
 message TransactionEnv {
 	Transaction transaction = 1;
-
 	repeated Signature signatures 	= 2;
-
 	Trigger trigger = 3;
 }
 
@@ -201,8 +199,7 @@ message Contract{
 		JAVASCRIPT = 0;
 	}
 	ContractType type = 1; //合约类型
-	string payload = 2;		//合约内容,js 代码
-	string init_input = 3;
+	string payload = 2;	   //合约内容,js 代码
 }
 
 //创建账户
@@ -212,6 +209,7 @@ message OperationCreateAccount{
 	AccountPrivilege priv = 3;
 	repeated KeyPair metadatas = 4;	
 	int64	init_balance = 5;
+	string  init_input = 6;
 }
 
 

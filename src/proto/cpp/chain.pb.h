@@ -2885,24 +2885,12 @@ class Contract : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_payload();
   void set_allocated_payload(::std::string* payload);
 
-  // optional string init_input = 3;
-  void clear_init_input();
-  static const int kInitInputFieldNumber = 3;
-  const ::std::string& init_input() const;
-  void set_init_input(const ::std::string& value);
-  void set_init_input(const char* value);
-  void set_init_input(const char* value, size_t size);
-  ::std::string* mutable_init_input();
-  ::std::string* release_init_input();
-  void set_allocated_init_input(::std::string* init_input);
-
   // @@protoc_insertion_point(class_scope:protocol.Contract)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr payload_;
-  ::google::protobuf::internal::ArenaStringPtr init_input_;
   int type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -3021,6 +3009,17 @@ class OperationCreateAccount : public ::google::protobuf::Message /* @@protoc_in
   ::google::protobuf::int64 init_balance() const;
   void set_init_balance(::google::protobuf::int64 value);
 
+  // optional string init_input = 6;
+  void clear_init_input();
+  static const int kInitInputFieldNumber = 6;
+  const ::std::string& init_input() const;
+  void set_init_input(const ::std::string& value);
+  void set_init_input(const char* value);
+  void set_init_input(const char* value, size_t size);
+  ::std::string* mutable_init_input();
+  ::std::string* release_init_input();
+  void set_allocated_init_input(::std::string* init_input);
+
   // @@protoc_insertion_point(class_scope:protocol.OperationCreateAccount)
  private:
 
@@ -3031,6 +3030,7 @@ class OperationCreateAccount : public ::google::protobuf::Message /* @@protoc_in
   ::protocol::AccountPrivilege* priv_;
   ::google::protobuf::RepeatedPtrField< ::protocol::KeyPair > metadatas_;
   ::google::protobuf::int64 init_balance_;
+  ::google::protobuf::internal::ArenaStringPtr init_input_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -5878,50 +5878,6 @@ inline void Contract::set_allocated_payload(::std::string* payload) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Contract.payload)
 }
 
-// optional string init_input = 3;
-inline void Contract::clear_init_input() {
-  init_input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& Contract::init_input() const {
-  // @@protoc_insertion_point(field_get:protocol.Contract.init_input)
-  return init_input_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Contract::set_init_input(const ::std::string& value) {
-  
-  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Contract.init_input)
-}
-inline void Contract::set_init_input(const char* value) {
-  
-  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Contract.init_input)
-}
-inline void Contract::set_init_input(const char* value, size_t size) {
-  
-  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Contract.init_input)
-}
-inline ::std::string* Contract::mutable_init_input() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.Contract.init_input)
-  return init_input_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Contract::release_init_input() {
-  // @@protoc_insertion_point(field_release:protocol.Contract.init_input)
-  
-  return init_input_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Contract::set_allocated_init_input(::std::string* init_input) {
-  if (init_input != NULL) {
-    
-  } else {
-    
-  }
-  init_input_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), init_input);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Contract.init_input)
-}
-
 // -------------------------------------------------------------------
 
 // OperationCreateAccount
@@ -6088,6 +6044,50 @@ inline void OperationCreateAccount::set_init_balance(::google::protobuf::int64 v
   
   init_balance_ = value;
   // @@protoc_insertion_point(field_set:protocol.OperationCreateAccount.init_balance)
+}
+
+// optional string init_input = 6;
+inline void OperationCreateAccount::clear_init_input() {
+  init_input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& OperationCreateAccount::init_input() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationCreateAccount.init_input)
+  return init_input_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationCreateAccount::set_init_input(const ::std::string& value) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.OperationCreateAccount.init_input)
+}
+inline void OperationCreateAccount::set_init_input(const char* value) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.OperationCreateAccount.init_input)
+}
+inline void OperationCreateAccount::set_init_input(const char* value, size_t size) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationCreateAccount.init_input)
+}
+inline ::std::string* OperationCreateAccount::mutable_init_input() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.OperationCreateAccount.init_input)
+  return init_input_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* OperationCreateAccount::release_init_input() {
+  // @@protoc_insertion_point(field_release:protocol.OperationCreateAccount.init_input)
+  
+  return init_input_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationCreateAccount::set_allocated_init_input(::std::string* init_input) {
+  if (init_input != NULL) {
+    
+  } else {
+    
+  }
+  init_input_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), init_input);
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationCreateAccount.init_input)
 }
 
 // -------------------------------------------------------------------

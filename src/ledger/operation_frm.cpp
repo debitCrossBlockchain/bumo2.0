@@ -145,11 +145,19 @@ namespace bumo {
 				duplicate_type.insert(type_thresholds.type());
 			}
 
-			///////////////////////////////////////////////////
+			//if it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
 			if (create_account.contract().payload() != ""){
-				std::string err_msg;
+				if (!(priv.master_weight() == 0 &&
+					priv.signers_size() == 0 &&
+					threshold.tx_threshold() == 1 &&
+					threshold.type_thresholds_size() == 0 
+					)) {
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("Contract account 'priv' config must be({master_weight:0, thresholds:{tx_threshold:1}})"));
+					break;
+				}
+				
 				std::string src = create_account.contract().payload();
-
 				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, src);
 			}
 
@@ -475,7 +483,7 @@ namespace bumo {
 
 				ContractParameter parameter;
 				parameter.code_ = javascript;
-				parameter.input_ = createaccount.contract().init_input();
+				parameter.input_ = createaccount.init_input();
 				parameter.this_address_ = createaccount.dest_address();
 				parameter.sender_ = source_account_->GetAccountAddress();
 				parameter.ope_index_ = index_;
