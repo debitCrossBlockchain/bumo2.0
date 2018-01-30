@@ -264,7 +264,15 @@ namespace bumo {
 	}
 
 	std::shared_ptr<TransactionFrm> LedgerContext::GetBottomTx() {
-		return transaction_stack_[0];
+		return transaction_stack_.front();
+	}
+
+	std::shared_ptr<TransactionFrm> LedgerContext::GetTopTx() {
+		if (transaction_stack_.size() > 0) {
+			return transaction_stack_.back();
+		} else{
+			return NULL;
+		}
 	}
 
 	void LedgerContext::GetLogs(Json::Value &logs) {

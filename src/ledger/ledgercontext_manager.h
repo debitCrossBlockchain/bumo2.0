@@ -105,6 +105,7 @@ namespace bumo {
 
 		void PushLog();
 		std::shared_ptr<TransactionFrm> GetBottomTx();
+		std::shared_ptr<TransactionFrm> GetTopTx();
 	};
 
 	typedef std::multimap<std::string, LedgerContext *> LedgerContextMultiMap;

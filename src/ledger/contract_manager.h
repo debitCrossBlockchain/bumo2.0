@@ -167,8 +167,6 @@ namespace bumo{
 		static void CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void Include(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void InternalCheckTime(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//get a ledger info from a ledger
-		static void CallBackGetLedgerInfo(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//get transaction info from a transaction
 		static void CallBackGetTransactionInfo(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackContractQuery(const v8::FunctionCallbackInfo<v8::Value>& args);

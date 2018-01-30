@@ -934,20 +934,17 @@ namespace bumo{
 
 			bumo::AccountFrm::pointer account_frm = nullptr;
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
 
 			bool getAccountSucceed = false;
-			if (v8_contract && v8_contract->GetParameter().ledger_context_) {
-				LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-				if (!ledger_context->transaction_stack_.empty()) {
-					auto environment = ledger_context->transaction_stack_.back()->environment_;
-					if (!environment->GetEntry(address, account_frm)) {
-						LOG_ERROR("not found account");
-						break;
-					}
-					else {
-						getAccountSucceed = true;
-					}
-				}
+			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
+			if (!environment->GetEntry(address, account_frm)) {
+				LOG_ERROR("not found account");
+				break;
+			}
+			else {
+				getAccountSucceed = true;
 			}
 
 			if (!getAccountSucceed) {
@@ -971,39 +968,6 @@ namespace bumo{
 		} while (false);
 
 		args.GetReturnValue().Set(false);
-	}
-
-	void V8Contract::CallBackGetLedgerInfo(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		if (args.Length() != 1) {
-			LOG_ERROR("parameter error");
-			args.GetReturnValue().Set(false);
-			return;
-		}
-
-		v8::HandleScope handle_scope(args.GetIsolate());
-		v8::String::Utf8Value str(args[0]);
-		std::string key(ToCString(str));
-
-		int64_t seq = utils::String::Stoi64(key);
-		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
-		if (seq <= lcl.seq() - 1024 || seq > lcl.seq()) {
-			args.GetReturnValue().Set(false);
-			LOG_ERROR("The parameter seq(" FMT_I64 ") <= " FMT_I64 " or > " FMT_I64, seq, lcl.seq() - 1024, lcl.seq());
-			return;
-		}
-
-		LedgerFrm lfrm;
-		if (lfrm.LoadFromDb(seq)) {
-
-			std::string strvalue = bumo::Proto2Json(lfrm.GetProtoHeader()).toStyledString();
-			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(
-				args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-
-			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
-		}
-		else {
-			args.GetReturnValue().Set(false);
-		}
 	}
 
 	void V8Contract::CallBackContractQuery(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -1034,27 +998,15 @@ namespace bumo{
 
 			bumo::AccountFrm::pointer account_frm = nullptr;
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
 
-			bool getAccountSucceed = false;
-			if (v8_contract && v8_contract->GetParameter().ledger_context_) {
-				LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-				if (!ledger_context->transaction_stack_.empty()) {
-					auto environment = ledger_context->transaction_stack_.back()->environment_;
-					if (!environment->GetEntry(address, account_frm)) {
-						LOG_ERROR("not found account");
-						break;
-					}
-					else {
-						getAccountSucceed = true;
-					}
-				}
-			}
-			else {
-				LOG_ERROR("Server internal error");
+			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
+			if (!environment->GetEntry(address, account_frm)) {
+				LOG_ERROR("not found account");
 				break;
 			}
-
-			if (!getAccountSucceed) {
+			else {
 				if (!Environment::AccountFromDB(address, account_frm)) {
 					LOG_ERROR("not found account");
 					break;
@@ -1142,6 +1094,9 @@ namespace bumo{
 				LOG_ERROR("Can't find contract object by isolate id");
 				break;
 			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
 			std::string contractor = v8_contract->parameter_.this_address_;
 			transaction.set_source_address(contractor);
 
@@ -1158,7 +1113,7 @@ namespace bumo{
 				break;
 			}
 
-			Result tmp_result = LedgerManager::Instance().DoTransaction(env, v8_contract->parameter_.ledger_context_);
+			Result tmp_result = LedgerManager::Instance().DoTransaction(env, ledger_context);
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
 				LOG_ERROR("Do transaction failed");
@@ -1290,6 +1245,8 @@ namespace bumo{
 				LOG_ERROR("Can't find contract object by isolate id");
 				break;
 			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
 
 			if (v8_contract->IsReadonly()) {
 				LOG_ERROR("The contract is readonly");
@@ -1310,7 +1267,7 @@ namespace bumo{
 			ope->mutable_pay_coin()->set_amount(pay_amount);
 			ope->mutable_pay_coin()->set_input(input);
 
-			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, v8_contract->parameter_.ledger_context_);
+			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
 				LOG_ERROR("Do transaction failed");
@@ -1344,19 +1301,14 @@ namespace bumo{
 				LOG_ERROR("Can't find contract object by isolate id");
 				break;
 			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
 
 			std::string address = ToCString(v8::String::Utf8Value(args[0]));
 			AccountFrm::pointer account_frm = NULL;
-			bool getAccountSucceed = false;
-			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			if (!ledger_context->transaction_stack_.empty()) {
-				auto environment = ledger_context->transaction_stack_.back()->environment_;
-				if (environment->GetEntry(address, account_frm)) {
-					getAccountSucceed = true;
-				}
-			}
 
-			if (!getAccountSucceed) {
+			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
+			if (!environment->GetEntry(address, account_frm)) {
 				Environment::AccountFromDB(address, account_frm);
 			}
 
@@ -1370,9 +1322,7 @@ namespace bumo{
 			return;
 		} while (false);
 
-		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), "getBalance error",
-			v8::NewStringType::kNormal).ToLocalChecked());
+		args.GetReturnValue().Set(false);
 	}
 
 // 	//get the hash of one of the 1024 most recent complete blocks
@@ -1387,6 +1337,13 @@ namespace bumo{
 				LOG_ERROR("contract execute error, parameter 0 should be a string");
 				break;
 			}
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_ERROR("Can't find contract object by isolate id");
+				break;
+			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
 
 			protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
 			int64_t seq = lcl.seq() - (int64_t)args[0]->NumberValue();
@@ -1447,6 +1404,8 @@ namespace bumo{
 				LOG_ERROR("Can't find contract object by isolate id");
 				break;
 			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
 
 			if (v8_contract->IsReadonly()) {
 				LOG_ERROR("The contract is readonly");
@@ -1474,7 +1433,7 @@ namespace bumo{
 			meta_data->set_value(value);
 			meta_data->set_delete_flag(is_del);
 
-			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, v8_contract->parameter_.ledger_context_);
+			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
 				LOG_ERROR("Do transaction failed");
@@ -1508,23 +1467,13 @@ namespace bumo{
 				LOG_ERROR("Can't find contract object by isolate id");
 				break;
 			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetTopTx()->ContractStepInc(100);
 
 			std::string key = ToCString(v8::String::Utf8Value(args[0]));
 			bumo::AccountFrm::pointer account_frm = nullptr;
-			bool getAccountSucceed = false;
-			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			if (!ledger_context->transaction_stack_.empty()) {
-				auto environment = ledger_context->transaction_stack_.back()->environment_;
-				if (!environment->GetEntry(v8_contract->parameter_.this_address_, account_frm)) {
-					LOG_ERROR("not found account");
-					break;
-				}
-				else {
-					getAccountSucceed = true;
-				}
-			}
-
-			if (!getAccountSucceed) {
+			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
+			if (!environment->GetEntry(v8_contract->parameter_.this_address_, account_frm)) {
 				if (!Environment::AccountFromDB(v8_contract->parameter_.this_address_, account_frm)) {
 					LOG_ERROR("not found account");
 					break;
@@ -1641,7 +1590,6 @@ namespace bumo{
 		} while (false);
 		args.GetReturnValue().Set(false);
 	}
-
 
 	void V8Contract::CallBackInt64Div(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
