@@ -283,7 +283,7 @@ namespace bumo {
 			if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 				if (tran_fee < bytes_fee) {
 					std::string error_desc = utils::String::Format(
-						"Transaction(%s) fee(" FMT_I64 ")< bytes_fee(" FMT_I64 ") not enought",
+						"Transaction(%s) fee(" FMT_I64 ")< bytes_fee(" FMT_I64 ") not enough",
 						utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 					result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
@@ -322,7 +322,7 @@ namespace bumo {
 		if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 			if (tran_fee < bytes_fee) {
 				std::string error_desc = utils::String::Format(
-					"Transaction(%s) fee(" FMT_I64 " < " FMT_I64 ") not enought",
+					"Transaction(%s) fee(" FMT_I64 " < " FMT_I64 ") not enough",
 					utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);

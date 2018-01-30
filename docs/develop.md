@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-- [BUMO 区块链开发文档](#BUMO 区块链开发文档)
+- [BUMO区块链开发文档](#BUMO区块链开发文档)
     - [基础知识](#基础知识)
         - [了解protocol buffer3](#了解protocol-buffer3)
         - [protocol buffer 3和json](#protocol-buffer-3和json)
@@ -465,6 +465,7 @@ POST /getTransactionBlob
 {
   "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
   "nonce": 1,
+  "fee": 1000000,
   "operations": [{
       "type": 1,
       "create_account": {
@@ -560,6 +561,7 @@ POST /getTransactionBlob
   {
       "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
       "nonce":2, //nonce值
+      "fee" : 1000000, //愿为交易花费的手续费
       "expr_condition":"", //可选，表达式。参见高级功能:表达式
       "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
       "operations":[
@@ -1752,7 +1754,6 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
         "stat": {
             "apply_time": 4596,
             "memory_usage": 1330128,
-            "stack_usage": -440,
             "step": 20
         },
         "txs": null
@@ -1813,7 +1814,6 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
         "stat": {
             "apply_time": 4490,
             "memory_usage": 1335584,
-            "stack_usage": -424,
             "step": 29
         },
         "txs": null
