@@ -27,7 +27,6 @@ namespace bumo {
 	GlueManager::GlueManager() {
 		time_start_consenus_ = 0;
 		ledgerclose_check_timer_ = 0;
-		empty_transaction_times_ = 0;
 		check_interval_ = 2 * utils::MICRO_UNITS_PER_SEC;
 		start_consensus_timer_ = 0;
 		process_uptime_ = 0;
@@ -262,16 +261,6 @@ namespace bumo {
 
 			LOG_INFO("Recv new tx(%s:" FMT_I64 ")", key.GetTopic().c_str(), key.GetSeq());
 			topic_caches_.insert(std::make_pair(key, tx));
-
-			if (empty_transaction_times_ > 0) {
-				empty_transaction_times_ = 0;
-
-				if (utils::Timer::Instance().DelTimer(start_consensus_timer_)) {
-					start_consensus_timer_ = utils::Timer::Instance().AddTimer(0, 0, [this](int64_t data) {
-						StartConsensus();
-					});
-				}
-			}
 
 		} while (false);
 
@@ -588,28 +577,6 @@ namespace bumo {
 
 	int64_t GlueManager::GetIntervalTime(bool empty_block) {
 		return Configure::Instance().validation_configure_.close_interval_;
-		LedgerConfigure &ledger_configure = Configure::Instance().ledger_configure_;
-
-		//there is still transaction in memory
-		bool trans_empty_in_memory = true;
-
-		do {
-			utils::MutexGuard guard(lock_);
-			if (topic_caches_.size() > 0) {
-				trans_empty_in_memory = false;
-			}
-		} while (false);
-
-		if (trans_empty_in_memory && empty_block) {
-			empty_transaction_times_++;
-// 			return empty_transaction_times_ > 20 ? MAX_LEDGER_TIMESPAN_SECONDS :
-// 				MIN(MAX_LEDGER_TIMESPAN_SECONDS, (int64_t)(Configure::Instance().validation_configure_.close_interval_ * pow(2, empty_transaction_times_)));
-			return MAX_LEDGER_TIMESPAN_SECONDS;
-		}
-		else {
-			empty_transaction_times_ = 0;
-			return Configure::Instance().validation_configure_.close_interval_;
-		}
 	}
 
 	void GlueManager::OnResetCloseTimer() {

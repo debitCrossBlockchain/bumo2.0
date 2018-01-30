@@ -790,7 +790,7 @@ namespace bumo{
 				break;
 			}
 			args.GetReturnValue().Set(true);
-
+			return;
 		}while (false);
 
 		args.GetIsolate()->ThrowException(

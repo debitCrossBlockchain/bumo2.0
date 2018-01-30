@@ -41,7 +41,6 @@ namespace bumo {
 		std::shared_ptr<Consensus> consensus_;
 
 		int64_t ledgerclose_check_timer_;
-		int64_t empty_transaction_times_;
 		int64_t start_consensus_timer_;
 
 		//for get module status
