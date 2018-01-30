@@ -156,8 +156,7 @@ namespace bumo {
 	}
 
 	ValidationConfigure::ValidationConfigure() {
-		close_interval_ = 3;
-		threshold_ = 1;
+		close_interval_ = 10;
 		is_validator_ = false;
 	}
 
@@ -169,10 +168,8 @@ namespace bumo {
 		Configure::GetValue(value, "is_validator", is_validator_);
 		Configure::GetValue(value, "node_private_key", node_privatekey_);
 		Configure::GetValue(value, "validators", validators_);
-		Configure::GetValue(value, "close_interval", close_interval_);
-		Configure::GetValue(value, "threshold", threshold_);
-		if ((int32_t)validators_.size() < threshold_
-			|| validators_.empty()) {
+		//Configure::GetValue(value, "close_interval", close_interval_);
+		if (validators_.empty()) {
 			return false;
 		}
 		if (node_privatekey_.empty()) {

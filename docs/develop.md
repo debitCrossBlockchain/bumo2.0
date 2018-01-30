@@ -15,6 +15,7 @@
         - [查询区块头](#查询区块头)
         - [提交交易](#提交交易)
         - [序列化交易](#序列化交易)
+        - [调试合约](#调试合约)
     - [定义交易](#定义交易)
         - [交易的基本结构](#交易的基本结构)
         - [操作](#操作)
@@ -500,6 +501,54 @@ POST /getTransactionBlob
    }
 }
 ```
+### 调试合约
+```http
+{
+  "code" : "\"use strict\";log(undefined);function query() { return 1; }",
+  "input" : "{}",
+  "contract_balance" : "100009000000",
+  "fee" : 100000000000000000,
+  "exe_or_query" : false,
+  "source_address" : ""
+}
+```
+  - contract_address: 调用的智能合约地址，如果从数据库查询不到则返回错误。
+  - code：需要调试的合约代码，如果 contract_address 为空，则使用code 字段，如果code字段你也为空，则返回错误。
+  - input： 给被调用的合约传参。
+  - fee : 执行合约传递的参数。
+  - contract_balance : 赋予合约的初始 BU 余额。
+  - exe_or_query: true :准备调用合约的读写接口main，false :调用只读接口query。
+  - source_address：模拟调用合约的原地址。
+
+  - 返回值如下：
+
+```json
+  {
+   "error_code" : 0,
+   "error_desc" : "",
+   "result" : {
+      "logs" : {
+         "0-buQVkReBYUPUYHBinVDrrb9FQRpo49b9YRXq" : [ "undefined" ]
+      },
+      "query_rets" : [
+         {
+            "result" : {
+               "type" : "number",
+               "value" : "000000000000f03f",
+               "valuePlain" : 1
+            }
+         }
+      ],
+      "real_fee" : 0,
+      "stat" : {
+         "apply_time" : 6315,
+         "memory_usage" : 886176,
+         "step" : 3
+      },
+      "txs" : null
+   }
+}
+```
 
 ## 定义交易
 
@@ -779,9 +828,9 @@ POST /getTransactionBlob
             "issuer": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
             "code": "CNY"
           },
-          "amount": 100
-        },
-        "input": "{\"bar\":\"foo\"}"
+          "amount": 100,
+          "input": "{\"bar\":\"foo\"}"
+        }
       }
     }
   ```
@@ -947,6 +996,54 @@ POST /getTransactionBlob
   }
   ```
 
+  #### 转移 BU 资产
+
+|参数|描述
+|:--- | --- 
+|pay_coin.dest_address |  目标账户
+|pay_coin.amount|  要转移的数量
+|pay_coin.input|  触发合约调用的入参
+
+- 功能
+  操作源账号将一笔资产转给目标账号
+- 成功条件
+  - 各项参数合法
+  - 源账号该类型的资产数量足够
+- json格式
+
+
+  ```JSON
+    {
+      "type": 3,
+      "pay_coin": {
+        "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
+        "asset": {
+          "property": {
+            "issuer": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
+            "code": "CNY"
+          },
+          "amount": 100,
+          "input": "{\"bar\":\"foo\"}"
+        }
+      }
+    }
+  ```
+
+- protocol buffer 结构
+    ```text
+    message OperationPayment
+    {
+        string dest_address = 1;
+
+        int64 amount = 2;
+
+        string input = 3;
+    }
+    ```
+    - dest_address: BU接收方账号地址
+    - amount: 要转移的BU数量
+    - input: 本次转移触发接收方的合约，合约的执行入参就是input
+
 ## 高级功能
 
 ### 控制权的分配
@@ -1031,13 +1128,13 @@ jsonpath(account("buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"), ".priv.master_weight")
 
 ### 合约
 
-合约是一段JavaScript代码,标准(ECMAScript as specified in ECMA-262)。合约的入口函数是main函数，您写的合约代码中必须有main函数的定义。该函数的入参是字符串input，是调用该合约的时候指定的。
+合约是一段JavaScript代码,标准(ECMAScript as specified in ECMA-262)。合约的初始化函数是init, 执行的入口函数是main函数，您写的合约代码中必须有init和main函数的定义。该函数的入参是字符串input，是调用该合约的时候指定的。
 下面是一个简单的例子
 
 ```javascript
-function foo(bar)
+function init(bar)
 {
-  /*do whatever you want*/
+  /*init whatever you want*/
 
 }
 function main(input)
@@ -1048,7 +1145,6 @@ function main(input)
     var x = {
       'hello' : 'world'
     };
-    foo(x);
   }
 }
 ```
@@ -1106,7 +1202,7 @@ function main(input)
   ```javascript
   var ret  = storageDel('abc');
   /*
-    bar 的值是如下的格式
+    ret 的值是如下的格式
     true
   */
 
@@ -1257,7 +1353,7 @@ function main(input)
     */
     ```
 
-- #####  做交易
+- ##### 做交易
     ```javascript
     doTransaction(transaction)
     ```
@@ -1288,6 +1384,31 @@ function main(input)
     /*result 为true或false*/
     ```
 
+- ##### 转账
+
+    `payCoin(address, amount[, input]);`
+     - address: 发送BU的目标地址
+     - amount: 发送BU的数量
+     - input: 可选，合约参数
+
+    例如
+    ```javascript
+    var ret = payCoin("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "10000", "{}");
+ /*result 为true或false*/
+    ```
+
+- ##### 断言
+
+    `assert(condition[, message]);`
+     - condition: 断言变量
+     - message: 可选，失败时抛出异常的消息
+
+    例如
+    ```javascript
+    var ret = assert(1===1, "Not valid");
+ /*失败时抛出异常*/
+    ```
+
 #### 内置变量
 
 - #####  该合约账号的地址
@@ -1306,6 +1427,11 @@ function main(input)
 
 - ##### 本次支付操作的 BU coin
     payCoinAmount
+
+- ##### 本次支付操作的Asset
+    payAssetAmount
+
+    为对象类型{"amount": 1000, "asset_property" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
  
 - ##### 当前区块高度
     blockNumber

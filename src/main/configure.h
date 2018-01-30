@@ -114,7 +114,6 @@ namespace bumo {
 		bool is_validator_;
 		std::string node_privatekey_;
 		utils::StringList validators_;
-		int32_t threshold_;
 		int64_t close_interval_;
 		bool Load(const Json::Value &value);
 	};

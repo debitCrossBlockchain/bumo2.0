@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protocol;
-option java_package = "cn.bubi.blockchain.adapter3";
+option java_package = "cn.bumo.blockchain.adapter3";
 
 import "common.proto";
 
@@ -218,6 +218,6 @@ message OperationCreateAccount{
 message OperationSetMetadata{
 	string	key = 1;  
 	string  value = 2;
-	int64 	version = 3; //可选。metadata的版本号。如果设置了，必须和帐号现有的metadata_version相同。从ledger 1005 开始
+	int64 	version = 3; //可选。metadata的版本号。如果设置了，必须和帐号现有的metadata_version相同。
 	bool    delete_flag = 4;
 }
