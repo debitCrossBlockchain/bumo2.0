@@ -822,7 +822,7 @@ POST /getTransactionBlob
             int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
             repeated OperationTypeThreshold type_thresholds = 2; //如果这个设置，则操作门限以这个为准
         }
-        ```
+      ```
 
     若你想创建一个不受其他账号控制的账号。将priv.master_weight设置为1，将`priv.thresholds.tx_threshold`设为1即可。若您想创建一个受其他账号控制的账号，参见[控制权的分配](#控制权的分配)
 
@@ -1467,7 +1467,7 @@ function query(input)
     例如
     ```javascript
     var ret = payCoin("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "10000", "{}");
- /*result 为true或false*/
+    /*result 为true或false*/
     ```
 
 - ##### 断言
@@ -1479,7 +1479,7 @@ function query(input)
     例如
     ```javascript
     var ret = assert(1===1, "Not valid");
- /*失败时抛出异常*/
+    /*失败时抛出异常*/
     ```
 
 #### 内置变量
