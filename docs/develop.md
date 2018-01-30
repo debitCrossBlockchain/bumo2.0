@@ -26,6 +26,7 @@
             - [设置metadata](#设置metadata)
             - [设置权重](#设置权重)
             - [设置门限](#设置门限)
+            - [转移BU资产](#转移BU资产)
     - [高级功能](#高级功能)
         - [控制权的分配](#控制权的分配)
         - [版本化控制](#版本化控制)
@@ -996,7 +997,7 @@ POST /getTransactionBlob
   }
   ```
 
-  #### 转移 BU 资产
+  #### 转移BU资产
 
 |参数|描述
 |:--- | --- 
@@ -1014,14 +1015,9 @@ POST /getTransactionBlob
 
   ```JSON
     {
-      "type": 3,
+      "type": 7,
       "pay_coin": {
         "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-        "asset": {
-          "property": {
-            "issuer": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-            "code": "CNY"
-          },
           "amount": 100,
           "input": "{\"bar\":\"foo\"}"
         }
@@ -1031,7 +1027,7 @@ POST /getTransactionBlob
 
 - protocol buffer 结构
     ```text
-    message OperationPayment
+    message OperationPayCoin
     {
         string dest_address = 1;
 
