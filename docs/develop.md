@@ -2,7 +2,7 @@
 
 <!-- TOC -->
 
-- [BUMO区块链开发文档](#BUMO区块链开发文档)
+- [BUMO 区块链开发文档](#BUMO 区块链开发文档)
     - [基础知识](#基础知识)
         - [了解protocol buffer3](#了解protocol-buffer3)
         - [protocol buffer 3和json](#protocol-buffer-3和json)
@@ -26,6 +26,7 @@
             - [设置metadata](#设置metadata)
             - [设置权重](#设置权重)
             - [设置门限](#设置门限)
+            - [转移BU资产](#转移BU资产)
     - [高级功能](#高级功能)
         - [控制权的分配](#控制权的分配)
         - [版本化控制](#版本化控制)
@@ -996,7 +997,7 @@ POST /getTransactionBlob
   }
   ```
 
-  #### 转移 BU 资产
+  #### 转移BU资产
 
 |参数|描述
 |:--- | --- 
@@ -1014,14 +1015,9 @@ POST /getTransactionBlob
 
   ```JSON
     {
-      "type": 3,
+      "type": 7,
       "pay_coin": {
         "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-        "asset": {
-          "property": {
-            "issuer": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-            "code": "CNY"
-          },
           "amount": 100,
           "input": "{\"bar\":\"foo\"}"
         }
@@ -1031,7 +1027,7 @@ POST /getTransactionBlob
 
 - protocol buffer 结构
     ```text
-    message OperationPayment
+    message OperationPayCoin
     {
         string dest_address = 1;
 
@@ -1713,7 +1709,8 @@ GET /getLedger?seq=xxxx&with_fee=true
 
 ```json
 {
-    "query_enroll":1
+    "method":"queryEnroll",
+    "params":""
 }
 ```
 
@@ -1723,9 +1720,10 @@ json格式需转换成字符串形式填写到testContract接口结构
 {
     "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
     "code" : "",
-    "input" : "{\"query_enroll\":\"1\"}",
+    "input" : "{\"method\":\"queryEnroll\",\"param\":\"\"}"},
     "exe_or_query" : false,
-    "source_address" : ""
+    "source_address" : "",
+    "fee":100000
 }
 ```
 
@@ -1742,18 +1740,21 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
         "logs": {
             "0-buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1": null
         },
-        "real_fee": 0,
-        "rets": [
+        "query_rets": [
             {
-                "result": [
-                    {
-                        "type": "jsobject",
-                        "value": "{\"xx1\":{\"account\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enroll_id\":\"xx1\",\"fee_type\":1,\"price\":5}}"
-                    }
-                ],
-                "success": true
+                "result": {
+                    "type": "string",
+                    "value": "{\"xx1\":{\"accountID\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enrollID\":\"xx1\",\"feeType\":1,\"price\":\"5\"}}"
+                }
             }
         ],
+        "real_fee": 0,
+        "stat": {
+            "apply_time": 4596,
+            "memory_usage": 1330128,
+            "stack_usage": -440,
+            "step": 20
+        },
         "txs": null
     }
 }
@@ -1767,9 +1768,9 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 ```json
 {
-   "query_voting":
-    {
-        "enroll_id": "xxxx",
+    "method":"queryVoting",
+    "params":{
+      "enrollID": "xxxx"
     }
 }
 ```
@@ -1780,9 +1781,10 @@ json格式需转换成字符串形式填写到testContract接口结构
 {
     "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
     "code" : "",
-    "input" : "{\"query_voting\":{\"enroll_id\":\"xxxx\"}}",
+    "input" :"{\"method\":\"queryVoting\",\"params\":{\"enrollID\":\"xxxx\"}}"},
     "exe_or_query" : false,
-    "source_address" : ""
+    "source_address" : "",
+    "fee":100000
 }
 ```
 
@@ -1799,18 +1801,21 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
         "logs": {
             "0-buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1": null
         },
-        "real_fee": 0,
-        "rets": [
+        "query_rets": [
             {
-                "result": [
-                    {
-                        "type": "jsobject",
-                        "value": "{\"key\":\"vote-records-xx1\",\"value\":\"{\\\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\\\":{\\\"account\\\":\\\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\\\",\\\"vote_id\\\":\\\"yy1\\\",\\\"enroll_id\\\":\\\"xx1\\\"}}\",\"version\":1}"
-                    }
-                ],
-                "success": true
+                "result": {
+                    "type": "string",
+                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\":{\"accountID\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enrollID\":\"xx1\",\"voteID\":\"yy1\"}}"
+                }
             }
         ],
+        "real_fee": 0,
+        "stat": {
+            "apply_time": 4490,
+            "memory_usage": 1335584,
+            "stack_usage": -424,
+            "step": 29
+        },
         "txs": null
     }
 }
@@ -1823,11 +1828,12 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 ```json
 {
-    "enroll_fee": {
-        "account": "账户地址",
-        "enroll_id": "xxxx",
-        "fee_type": 1,//费用种类
-        "price": 5    //费用价格
+  "method":"enrollFee",
+    "params":{
+        "accountID": "buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg",
+        "enrollID": "xxxx",
+        "feeType": 1, //费用种类
+        "price": "5"    //费用价格
     }
 }
 ```
@@ -1840,7 +1846,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
        "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
        "amount":0,
-        "input":"{\"enroll_fee\":{\"account\":\"buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg\",\"enroll_id\":\"xxxx\",\"fee_type\":1,\"price\":5}}"
+        "input":"{\"method\":\"enrollFee\",\"params\":{\"accountID\":\"buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg\",\"enrollID\":\"xxxx\",\"feeType\":1,\"price\":\"5\"}}";
     }
 }
 ```
@@ -1851,11 +1857,12 @@ json格式需转换成字符串形式填写到paycoin接口结构
 
 ```json
 {
-    "do_voting": {
-        "account": "账户地址",
-        "vote_id": "vvvv",
-        "enroll_id": "xxxx"
-    }
+  "method":"doVoting",
+  "params":{
+      "accountID": "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+      "enrollID": "xxxx",
+      "voteID": "yyyy"
+   }
 }
 ```
 
@@ -1867,7 +1874,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
         "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
         "amount":0,
-        "input":"{\"do_voting\":{\"account\":\"buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg\",\"vote_id\":\"vvvv\",\"enroll_id\":\"xxxx\"}}"
+        "input":"{\"method\":\"doVoting\",\"params\":{\"accountID\":\"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1\",\"enrollID\":\"xxxx\",\"voteID\":yyyy}}"
     }
 }
 ```

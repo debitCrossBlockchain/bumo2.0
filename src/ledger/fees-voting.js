@@ -12,23 +12,17 @@ let validators = [];
 
 function storageSet(key, value) {
   let result = storageStore(key,JSON.stringify(value));
-  if (result === false) {
-    throw 'Storage set faild';
-  }
+  assert(result !== false,'Storage set faild');
 }
 
 function storageDelete(key) {
   let result = storageDel(key);
-  if (result === false) {
-    throw 'Storage del faild';
-  }
+  assert(result !== false,'Storage del faild');
 }
 
 function loadValidators() {
   let result = getValidators();
-  if(result === false){
-    throw 'getValidators failed';
-  }
+  assert(result !== false,'getValidators failed');
   validators = result;
 }
 
@@ -98,9 +92,6 @@ function delEnroll(accountID, enrollID) {
 }
 
 function doVoting(accountID,enrollID,voteID) {
-  if (!(accountID && enrollID && voteID)) {
-    throw 'doVoting parameter error';
-  }
 
   if(loadEnrollRecords() === false){
     throw 'enroll records not exist';
@@ -114,19 +105,13 @@ function doVoting(accountID,enrollID,voteID) {
   let voteRecordBody;
   if (voteRecords[enrollID]) {
     let result = storageLoad(key);
-    if (result === false) {
-      throw 'voteRecords exist key(' + enrollID + ') ,but not exist body';
-    }
+    assert(result !== false,'voteRecords exist key(' + enrollID + ') ,but not exist body');
     voteRecordBody = JSON.parse(result);
-    if (voteRecordBody[accountID]) {
-      throw 'Account(' + accountID + ') have voted the enroll(' + enrollID + ')';
-    }
+    assert (voteRecordBody[accountID] !==null ,'Account(' + accountID + ') have voted the enroll(' + enrollID + ')');
 
     voteRecords[enrollID] = voteRecords[enrollID] + 1;
     voteRecordBody[accountID] = {'accountID':accountID,'enrollID':enrollID,'voteID':voteID };
     storageSet(key, voteRecordBody);
-
-
   } else {
     voteRecords[enrollID] = 1;
     voteRecordBody = {};
@@ -140,9 +125,7 @@ function doVoting(accountID,enrollID,voteID) {
 
 
 function enrollFee(accountID,enrollID,feeType,price) {
-  if(!(accountID && enrollID && feeType && price)){
-    throw 'enrollFee parameter error';
-  }
+
   loadEnrollRecords();
   let exist =false;
   Object.keys(enrollRecords).every(
@@ -151,9 +134,7 @@ function enrollFee(accountID,enrollID,feeType,price) {
         exist =true;
         delEnroll(enrollRecords[key].accountID,enrollRecords[key].enrollID);
         enrollRecords[enrollID] = {'accountID':accountID,'enrollID':enrollID,'feeType':feeType,'price':price};
-        //voteRecords[enrollID]=0;
         storageSet(enrollRecordsKey, enrollRecords);
-        //storage_data(voteRecordsKey, voteRecords);
         return false;
       }
       else{
@@ -217,7 +198,7 @@ function voteStatistic() {
     victorsRecordsTmp.every(
       function (item) {
         let k = item.enrollID;
-        if (k !== enrollRecords[k].enrollID) { throw 'enroll_records key(' + k + ') != enrollID(' + enrollRecords[k].enrollID + ')'; }
+        assert(k === enrollRecords[k].enrollID, 'enroll_records key(' + k + ') != enrollID(' + enrollRecords[k].enrollID + ')');
         delEnroll(enrollRecords[k].accountID, enrollRecords[k].enrollID);
         return true;
       }
@@ -228,44 +209,36 @@ function voteStatistic() {
 }
 
 function queryVoting(enrollID) {
-  if(enrollID===null || enrollID===""){
-    throw 'queryVoting parameter error';
-  }
   loadVoteRecords();
-  if(voteRecords[enrollID] ===null){
-    throw 'vote_records not exist key(' + enrollID + ') vote';
-  }
+  assert(voteRecords[enrollID] !==null,'vote_records not exist key(' + enrollID + ') vote');
   let key =voteRecordsDetailKeyPrefix+enrollID;
-  let vote_records_v={};
   let result = storageLoad(key);
-  if(result === false) {
-    throw 'vote_records not exist key(' + enrollID + ') vote';
-  }
-
+  assert(result !== false,'vote_records not exist key(' + enrollID + ') vote');
   return result;
 }
 
 function queryEnroll() {
   
   let result = storageLoad(enrollRecordsKey);
-  if (result === false) {
-    throw 'queryEnroll error';
-  }  
+  assert(result !== false,'queryEnroll error');
   return result;
 }
 
 function main(input) {
-  if (input === ''){throw 'main input is empty';}
+  assert(input !== '','main input is empty');
 
   let para = JSON.parse(input);
+  assert(para.method !==undefined ,'para.method undefined');
   if (para.method === 'doVoting') {
-    let p =para.params;
-    doVoting(p.accountID,p.enrollID,p.voteID);
+    assert(para.params !==undefined ,'para.params undefined');
+    assert(para.params.accountID !==undefined || para.params.enrollID !==undefined || para.params.voteID !==undefined,'params accountID enrollID voteID undefined');
+    doVoting(para.params.accountID,para.params.enrollID,para.params.voteID);
     voteStatistic();
   }
   else if (para.method === 'enrollFee') {
-    let p =para.params;
-    enrollFee(p.accountID,p.enrollID,p.feeType,p.price);
+    assert(para.params !==undefined ,'para.params undefined');
+    assert(para.params.accountID !==undefined || para.params.enrollID !==undefined || para.params.feeType !==undefined|| para.params.price !==undefined,'params  accountID enrollID feeType price undefined');
+    enrollFee(para.params.accountID,para.params.enrollID,para.params.feeType,para.params.price);
   }
   else {
     throw 'main input para error';
@@ -274,12 +247,14 @@ function main(input) {
 
 
 function query(input) {
-  if (input === ''){ throw 'query input is empty';}
+  assert(input !== '','query input is empty');
 
   let para = JSON.parse(input);
-  if (para.method === 'queryVoting') {
-    let p =para.params;
-    return queryVoting(p.enrollID);
+  assert(para.method !==undefined ,'para.method undefined');
+  if (para.method === 'queryVoting') {    
+    assert(para.params !==undefined ,'para.params undefined');
+    assert(para.params.enrollID !==undefined ,'params.enrollID undefined');
+    return queryVoting(para.params.enrollID);
   }
   else if (para.method === 'queryEnroll') {
     return queryEnroll();
@@ -288,3 +263,5 @@ function query(input) {
     throw 'query input para error';
   }
 }
+
+function init(){ return true; }
