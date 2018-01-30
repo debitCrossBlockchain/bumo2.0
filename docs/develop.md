@@ -1925,7 +1925,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 
 ## 示例
 
-下面我们用`a002d8345b89dc34a57574eb497635ff125a3799fe77b6`发起一笔交易，这笔交易只有1个操作:创建一个账号。
+下面我们用`buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3`发起一笔交易，这笔交易只有1个操作:创建一个账号。
 
 1. 组装交易，将交易序列化
 
@@ -1947,10 +1947,8 @@ json格式需转换成字符串形式填写到paycoin接口结构
               }
             ],
             "priv": {
-              "master_weight": 10,
-              "signers": [],
               "thresholds": {
-                "tx_threshold": 7
+                "tx_threshold": 1
               }
             },
             "contract": {
