@@ -223,6 +223,7 @@ namespace bumo {
 			parameter.ledger_context_ = this;
 			//do query
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
+			tx_frm->environment_ = environment;
 			transaction_stack_.push_back(tx_frm);
 			int64_t time_now = utils::Timestamp::HighResolution();
 			tx_frm->SetApplyStartTime(time_now);
