@@ -655,6 +655,8 @@ POST /getTransactionBlob
 |dest_address |  账号的地址
 |contract|  如果不填写，那么这是一个普通的账号。如果填写，那么这是一个合约账号
 | priv|  该账号的权限信息
+|init_balance | 初始化账户 BU 值 
+|init_input | 给合约传初始化参数
 
 - 功能
   在区块链上创建一个新的账号
