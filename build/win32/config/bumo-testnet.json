@@ -38,7 +38,7 @@
 		"hardfork_points": []
 	},
 	"logger": {
-		"path": "log/bubi.log",
+		"path": "log/bumo.log",
 		"dest": "FILE|STDOUT|STDERR",
 		"level": "TRACE|INFO|WARNING|ERROR|FATAL",
 		"time_capacity": 1,
