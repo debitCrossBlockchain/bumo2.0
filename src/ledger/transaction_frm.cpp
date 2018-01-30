@@ -40,6 +40,7 @@ namespace bumo {
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
+		contract_stack_usage_(0),
 		enable_check_(false), apply_start_time_(0), apply_use_time_(0),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		utils::AtomicInc(&bumo::General::tx_new_count);
@@ -58,6 +59,7 @@ namespace bumo {
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
+		contract_stack_usage_(0),
 		enable_check_(false), apply_start_time_(0), apply_use_time_(0),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		Initialize();
@@ -173,6 +175,14 @@ namespace bumo {
 		return contract_memory_usage_;
 	}
 
+	void TransactionFrm::SetStackUsage(int64_t memory_usage) {
+		contract_stack_usage_ = memory_usage;
+	}
+
+	int64_t TransactionFrm::GetStackUsage() {
+		return contract_stack_usage_;
+	}
+
 	bool TransactionFrm::IsExpire(std::string &error_info) {
 		if (!enable_check_) {
 			return false;
@@ -191,6 +201,11 @@ namespace bumo {
 
 		if (contract_memory_usage_ > General::CONTRACT_MEMORY_LIMIT) {
 			error_info = "Memory expire";
+			return true;
+		}
+
+		if (contract_stack_usage_ > General::CONTRACT_STACK_LIMIT) {
+			error_info = "Stack expire";
 			return true;
 		}
 

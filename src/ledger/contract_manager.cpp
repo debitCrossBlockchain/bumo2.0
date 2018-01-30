@@ -871,6 +871,7 @@ namespace bumo{
 			//check the stack
 			v8::V8InternalInfo internal_info;
 			args.GetIsolate()->GetV8InternalInfo(internal_info);
+			ptr->SetStackUsage(internal_info.max_stack_size - internal_info.remain_stack_size);
 			//LOG_INFO("v8 max_stack_size:%d, remain:%d\n", internal_info.max_stack_size, internal_info.remain_stack_size);
 
 			std::string error_info;

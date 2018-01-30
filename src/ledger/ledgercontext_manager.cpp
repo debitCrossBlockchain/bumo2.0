@@ -494,12 +494,15 @@ namespace bumo {
 			TransactionFrm::pointer ptr = ledger_context->transaction_stack_[0];
 			stat["step"] = ptr->GetContractStep();
 			stat["memory_usage"] = ptr->GetMemoryUsage();
+			stat["stack_usage"] = ptr->GetStackUsage();
 			stat["apply_time"] = ptr->GetApplyTime();
 		}
 
 		int64_t real_fee = ledger->total_real_fee_;
 		if (type == LedgerContext::AT_TEST_TRANSACTION){
-			real_fee += (64 + 76 + 10 )*LedgerManager::Instance().GetCurFeeConfig().byte_fee();
+			real_fee += (64 + 76 + 100 )*LedgerManager::Instance().GetCurFeeConfig().byte_fee();
+			int64_t suggest_fee = LedgerManager::Instance().GetCurFeeConfig().byte_fee() * 1000;
+			real_fee = real_fee < suggest_fee ? suggest_fee : real_fee;
 		}
 		ledger_context->GetLogs(logs);
 		ledger_context->GetRets(rets);

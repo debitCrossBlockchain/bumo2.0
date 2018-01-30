@@ -100,6 +100,8 @@ namespace bumo {
 		int32_t GetContractStep();
 		void SetMemoryUsage(int64_t memory_usage);
 		int64_t GetMemoryUsage();
+		void SetStackUsage(int64_t memory_usage);
+		int64_t GetStackUsage();
 		bool IsExpire(std::string &error_info);
 		void EnableChecked();
 
@@ -124,6 +126,7 @@ namespace bumo {
 		int64_t max_end_time_;
 		int32_t contract_step_;
 		int64_t contract_memory_usage_;
+		int64_t contract_stack_usage_;
 		bool enable_check_;
 		int64_t apply_start_time_;
 		int64_t apply_use_time_;
