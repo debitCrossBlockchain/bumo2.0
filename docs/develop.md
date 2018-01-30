@@ -662,8 +662,8 @@ POST /getTransactionBlob
 - 成功条件
   - 各项参数合法
   - 要创建的账号不存在
-- json格式
 - **注意：如果目标为合约账户，则priv配置必须符合 {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}**
+- json格式
 
 
 ```json
