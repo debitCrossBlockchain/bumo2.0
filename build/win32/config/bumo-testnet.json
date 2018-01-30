@@ -11,20 +11,20 @@
 		"enabled" : false
 	},
 	"p2p": {
-		"network_id": 30000,
+		"network_id": 20000,
 		"consensus_network": {
 			"heartbeat_interval": 60,
-			"listen_port": 36001,
+			"listen_port": 26001,
 			"target_peer_connection": 50,
-			"known_peers": ["bumo.chinacloudapp.cn:36001"]
+			"known_peers": ["bumo.chinacloudapp.cn:26001"]
 		}
 	},
 	"webserver": {
-		"listen_addresses": "0.0.0.0:36002",
+		"listen_addresses": "0.0.0.0:26002",
 		"remote_authorized": false
 	},
 	"wsserver": {
-		"listen_address": "0.0.0.0:36003"
+		"listen_address": "0.0.0.0:26003"
 	},
 	"ledger": {
     	"genesis_account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",//privatekey:privbvYfqQyG3kZyHE4RX4TYVa32htw8xG4WdpCTrymPUJQ923XkKVbM
