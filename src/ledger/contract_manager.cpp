@@ -912,7 +912,7 @@ namespace bumo{
 	}
 
 	void V8Contract::CallBackTopicLog(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		if (args.Length() != 2) {
+		if (args.Length() < 2 || args.Length() > 6) {
 			LOG_ERROR("parameter error");
 			args.GetReturnValue().Set(false);
 			return;
@@ -923,23 +923,14 @@ namespace bumo{
 				break;
 			}
 
-			if (!args[1]->IsString()) {
-				LOG_ERROR("CallBackTopicLog parameter 1 should be a String");
-				break;
+			for (int i = 1; i < args.Length();i++) {
+				if (!(args[i]->IsString() || args[i]->IsNumber() || args[i]->IsBoolean())) {
+					LOG_ERROR("CallBackTopicLog parameter %d should be a String , Number or Boolean",i);
+					break;
+				}
 			}
 
 			std::string topic = ToCString(v8::String::Utf8Value(args[0]));
-			std::string data = ToCString(v8::String::Utf8Value(args[1]));
-			if (topic.empty() || data.empty()){
-				LOG_ERROR("CallBackTopicLog parameter should not be empty");
-				break;
-			}
-			if (topic.length() > General::TRANSACTION_LOG_TOPIC_MAXSIZE) {
-				topic = topic.substr(0, General::TRANSACTION_LOG_TOPIC_MAXSIZE);
-			}
-			if (data.length() > General::TRANSACTION_LOG_DATA_MAXSIZE) {
-				data = data.substr(0, General::TRANSACTION_LOG_DATA_MAXSIZE);
-			}
 
 			v8::HandleScope scope(args.GetIsolate());
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
@@ -955,9 +946,16 @@ namespace bumo{
 			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
 
 			ope->set_type(protocol::Operation_Type_LOG);
-			ope->mutable_log()->set_logger_address(this_contract);
 			ope->mutable_log()->set_topic(topic);
-			ope->mutable_log()->set_data(data);
+			for (int i = 1; i < args.Length(); i++) {
+				std::string data;
+				if (args[i]->IsString())
+					data = ToCString(v8::String::Utf8Value(args[i]));
+				else
+					data = ToCString(v8::String::Utf8Value(args[i]->ToString()));
+				*ope->mutable_log()->add_datas() = data;
+			}
+
 
 			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, v8_contract->parameter_.ledger_context_);
 			if (tmp_result.code() > 0) {

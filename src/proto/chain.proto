@@ -86,9 +86,8 @@ message OperationSetSignerWeight{
 }
 
 message OperationLog{
-	string logger_address = 1;
-	string topic = 2;
-	string data = 3;
+	string topic = 1;
+	repeated string datas = 2;
 }
 
 

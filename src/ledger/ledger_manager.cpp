@@ -975,6 +975,14 @@ namespace bumo {
 				else
 					txfrm->Apply(ledger_context->closing_ledger_.get(), back->environment_, true);
 			}
+			else {
+				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
+				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
+				if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
+					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
+					LOG_ERROR("Transaction(%s) Fee not enough", utils::String::BinToHexString(txfrm->GetContentHash()).c_str());
+				}
+			}
 
 			TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 			//throw the contract

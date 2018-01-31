@@ -1573,20 +1573,9 @@ class OperationLog : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // optional string logger_address = 1;
-  void clear_logger_address();
-  static const int kLoggerAddressFieldNumber = 1;
-  const ::std::string& logger_address() const;
-  void set_logger_address(const ::std::string& value);
-  void set_logger_address(const char* value);
-  void set_logger_address(const char* value, size_t size);
-  ::std::string* mutable_logger_address();
-  ::std::string* release_logger_address();
-  void set_allocated_logger_address(::std::string* logger_address);
-
-  // optional string topic = 2;
+  // optional string topic = 1;
   void clear_topic();
-  static const int kTopicFieldNumber = 2;
+  static const int kTopicFieldNumber = 1;
   const ::std::string& topic() const;
   void set_topic(const ::std::string& value);
   void set_topic(const char* value);
@@ -1595,25 +1584,29 @@ class OperationLog : public ::google::protobuf::Message /* @@protoc_insertion_po
   ::std::string* release_topic();
   void set_allocated_topic(::std::string* topic);
 
-  // optional string data = 3;
-  void clear_data();
-  static const int kDataFieldNumber = 3;
-  const ::std::string& data() const;
-  void set_data(const ::std::string& value);
-  void set_data(const char* value);
-  void set_data(const char* value, size_t size);
-  ::std::string* mutable_data();
-  ::std::string* release_data();
-  void set_allocated_data(::std::string* data);
+  // repeated string datas = 2;
+  int datas_size() const;
+  void clear_datas();
+  static const int kDatasFieldNumber = 2;
+  const ::std::string& datas(int index) const;
+  ::std::string* mutable_datas(int index);
+  void set_datas(int index, const ::std::string& value);
+  void set_datas(int index, const char* value);
+  void set_datas(int index, const char* value, size_t size);
+  ::std::string* add_datas();
+  void add_datas(const ::std::string& value);
+  void add_datas(const char* value);
+  void add_datas(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& datas() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_datas();
 
   // @@protoc_insertion_point(class_scope:protocol.OperationLog)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::internal::ArenaStringPtr logger_address_;
   ::google::protobuf::internal::ArenaStringPtr topic_;
-  ::google::protobuf::internal::ArenaStringPtr data_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> datas_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -4625,51 +4618,7 @@ OperationSetSignerWeight::signers() const {
 
 // OperationLog
 
-// optional string logger_address = 1;
-inline void OperationLog::clear_logger_address() {
-  logger_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& OperationLog::logger_address() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationLog.logger_address)
-  return logger_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void OperationLog::set_logger_address(const ::std::string& value) {
-  
-  logger_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.OperationLog.logger_address)
-}
-inline void OperationLog::set_logger_address(const char* value) {
-  
-  logger_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.OperationLog.logger_address)
-}
-inline void OperationLog::set_logger_address(const char* value, size_t size) {
-  
-  logger_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.OperationLog.logger_address)
-}
-inline ::std::string* OperationLog::mutable_logger_address() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.OperationLog.logger_address)
-  return logger_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* OperationLog::release_logger_address() {
-  // @@protoc_insertion_point(field_release:protocol.OperationLog.logger_address)
-  
-  return logger_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void OperationLog::set_allocated_logger_address(::std::string* logger_address) {
-  if (logger_address != NULL) {
-    
-  } else {
-    
-  }
-  logger_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), logger_address);
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationLog.logger_address)
-}
-
-// optional string topic = 2;
+// optional string topic = 1;
 inline void OperationLog::clear_topic() {
   topic_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -4713,48 +4662,59 @@ inline void OperationLog::set_allocated_topic(::std::string* topic) {
   // @@protoc_insertion_point(field_set_allocated:protocol.OperationLog.topic)
 }
 
-// optional string data = 3;
-inline void OperationLog::clear_data() {
-  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// repeated string datas = 2;
+inline int OperationLog::datas_size() const {
+  return datas_.size();
 }
-inline const ::std::string& OperationLog::data() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationLog.data)
-  return data_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void OperationLog::clear_datas() {
+  datas_.Clear();
 }
-inline void OperationLog::set_data(const ::std::string& value) {
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.OperationLog.data)
+inline const ::std::string& OperationLog::datas(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.OperationLog.datas)
+  return datas_.Get(index);
 }
-inline void OperationLog::set_data(const char* value) {
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.OperationLog.data)
+inline ::std::string* OperationLog::mutable_datas(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.OperationLog.datas)
+  return datas_.Mutable(index);
 }
-inline void OperationLog::set_data(const char* value, size_t size) {
-  
-  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.OperationLog.data)
+inline void OperationLog::set_datas(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:protocol.OperationLog.datas)
+  datas_.Mutable(index)->assign(value);
 }
-inline ::std::string* OperationLog::mutable_data() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.OperationLog.data)
-  return data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void OperationLog::set_datas(int index, const char* value) {
+  datas_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:protocol.OperationLog.datas)
 }
-inline ::std::string* OperationLog::release_data() {
-  // @@protoc_insertion_point(field_release:protocol.OperationLog.data)
-  
-  return data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void OperationLog::set_datas(int index, const char* value, size_t size) {
+  datas_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationLog.datas)
 }
-inline void OperationLog::set_allocated_data(::std::string* data) {
-  if (data != NULL) {
-    
-  } else {
-    
-  }
-  data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationLog.data)
+inline ::std::string* OperationLog::add_datas() {
+  // @@protoc_insertion_point(field_add_mutable:protocol.OperationLog.datas)
+  return datas_.Add();
+}
+inline void OperationLog::add_datas(const ::std::string& value) {
+  datas_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:protocol.OperationLog.datas)
+}
+inline void OperationLog::add_datas(const char* value) {
+  datas_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:protocol.OperationLog.datas)
+}
+inline void OperationLog::add_datas(const char* value, size_t size) {
+  datas_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:protocol.OperationLog.datas)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+OperationLog::datas() const {
+  // @@protoc_insertion_point(field_list:protocol.OperationLog.datas)
+  return datas_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+OperationLog::mutable_datas() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.OperationLog.datas)
+  return &datas_;
 }
 
 // -------------------------------------------------------------------

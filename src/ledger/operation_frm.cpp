@@ -329,10 +329,17 @@ namespace bumo {
 		case protocol::Operation_Type_LOG:
 		{
 			const protocol::OperationLog &log = operation.log();
-			if (log.topic().size() == 0 || log.data().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE || log.data().size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
+			if (log.topic().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE ){
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc(utils::String::Format("Log's parameter topic should be (0,%d] , data should be (0, %d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE, General::TRANSACTION_LOG_DATA_MAXSIZE));
+				result.set_desc(utils::String::Format("Log's parameter topic should be (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE));
 				break;
+			}
+			for (int i = 0; i < log.datas_size();i++) {
+				if (log.datas(i).size() == 0 || log.datas(i).size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("Log's parameter data should be (0, %d]",General::TRANSACTION_LOG_DATA_MAXSIZE));
+					break;
+				}
 			}
 			break;
 		}
@@ -759,14 +766,7 @@ namespace bumo {
 		} while (false);
 	}
 
-	void OperationFrm::Log(std::shared_ptr<Environment> environment) {
-		protocol::OperationLog* ope = operation_.mutable_log();
-		std::string source_address =ope->logger_address();
-		if (source_address.size() == 0) {
-			source_address = transaction_->GetSourceAddress();
-			ope->set_logger_address(source_address);
-		}
-	}
+	void OperationFrm::Log(std::shared_ptr<Environment> environment) {}
 	
 	void OperationFrm::OptFee(const protocol::Operation_Type type) {
 		protocol::FeeConfig fee_config = LedgerManager::Instance().GetCurFeeConfig();
