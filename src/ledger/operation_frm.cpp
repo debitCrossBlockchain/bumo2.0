@@ -147,6 +147,13 @@ namespace bumo {
 
 			//if it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
 			if (create_account.contract().payload() != ""){
+ 				if (create_account.contract().payload().size() > General::CONTRACT_CODE_LIMIT) {
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("Contract payload size(" FMT_SIZE ") > limit(%d)",
+						create_account.contract().payload().size(), General::CONTRACT_CODE_LIMIT));
+					break;
+				}
+
 				if (!(priv.master_weight() == 0 &&
 					priv.signers_size() == 0 &&
 					threshold.tx_threshold() == 1 &&

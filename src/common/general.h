@@ -32,8 +32,8 @@ namespace bumo {
 		const static uint32_t MONITOR_VERSION;
 		const static char *BUMO_VERSION;
 
-		const static int CONSENSUS_PORT = 9333;
-		const static int WEBSERVER_PORT = 19333;
+		const static int CONSENSUS_PORT = 16001;
+		const static int WEBSERVER_PORT = 16002;
 
 		const static int METADATA_KEY_MAXSIZE = 1024;
 		const static int METADATA_MAX_VALUE_SIZE = 256 * utils::BYTES_PER_KILO;
@@ -47,9 +47,10 @@ namespace bumo {
 		//at most 512 transaction can be created when a contract executed
 		const static int CONTRACT_TRANSACTION_LIMIT = 512;
 
-		const static int CONTRACT_STEP_LIMIT = 10240;
-		const static int CONTRACT_MEMORY_LIMIT = 30 *1024 * 1024; //limit memory 30M
-		const static int CONTRACT_STACK_LIMIT = 512 * 1024;
+		const static int CONTRACT_CODE_LIMIT = 256 * utils::BYTES_PER_KILO;
+		const static int CONTRACT_STEP_LIMIT = 10 * utils::BYTES_PER_KILO;
+		const static int CONTRACT_MEMORY_LIMIT = 30 * utils::BYTES_PER_MEGA; //limit memory 30M
+		const static int CONTRACT_STACK_LIMIT = 512 * utils::BYTES_PER_KILO;
 
 		const static int LAST_TX_HASHS_LIMIT = 100;
 
