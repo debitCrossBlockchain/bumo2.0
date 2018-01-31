@@ -739,7 +739,7 @@ namespace bumo{
 				break;
 			}
 
-			if (v8_contract->parameter_.this_address_ != Configure::Instance().ledger_configure_.fees_vote_account_) {
+			if (v8_contract->parameter_.this_address_ != General::CONTRACT_FEE_ADDRESS) {
 				LOG_ERROR("This address has no priority");
 				break;
 			} 
@@ -1203,8 +1203,7 @@ namespace bumo{
 				break;
 			}
 
-			std::string election_account = Configure::Instance().ledger_configure_.validators_vote_account_;
-			if (v8_contract->parameter_.this_address_ != election_account)
+			if (v8_contract->parameter_.this_address_ != General::CONTRACT_VALIDATOR_ADDRESS)
 			{
 				LOG_ERROR("contract(%s) has no permission to call callBackSetValidators interface", v8_contract->parameter_.this_address_.c_str());
 				break;

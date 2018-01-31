@@ -77,6 +77,14 @@ namespace bumo {
 
 	const char *General::CHECK_TIME_FUNCTION = "internal_check_time";
 
+	//bumo::PublicKey pub_key;
+	//pub_key.Init("1");
+	//std::string account1 = pub_key.GetEncAddress(); "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ"
+	//pub_key.Init("2");
+	//std::string account2 = pub_key.GetEncAddress();"buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe"
+
+	const char *General::CONTRACT_VALIDATOR_ADDRESS = "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ";
+	const char *General::CONTRACT_FEE_ADDRESS = "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe";
 
 	const int32_t General::TRANSACTION_LIMIT_SIZE = utils::BYTES_PER_MEGA;
 	const int32_t General::TXSET_LIMIT_SIZE = 32 * utils::BYTES_PER_MEGA;
