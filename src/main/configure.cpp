@@ -84,7 +84,6 @@ namespace bumo {
 		ssl_enable_ = false;
 		query_limit_ = 1000;
 		multiquery_limit_ = 100;
-		remote_authorized_ = false;
 		thread_count_ = 0;
 	}
 
@@ -102,7 +101,6 @@ namespace bumo {
 		ConfigureBase::GetValue(value, "ssl_enable", ssl_enable_);
 		ConfigureBase::GetValue(value, "query_limit", query_limit_);
 		ConfigureBase::GetValue(value, "multiquery_limit", multiquery_limit_);
-		ConfigureBase::GetValue(value, "remote_authorized", remote_authorized_);
 		ConfigureBase::GetValue(value, "thread_count", thread_count_);
 		
 		if (ssl_enable_)

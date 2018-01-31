@@ -20,8 +20,7 @@
 		}
 	},
 	"webserver": {
-		"listen_addresses": "0.0.0.0:26002",
-		"remote_authorized": false
+		"listen_addresses": "0.0.0.0:26002"
 	},
 	"wsserver": {
 		"listen_address": "0.0.0.0:26003"
