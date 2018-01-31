@@ -145,7 +145,7 @@ int main(int argc, char *argv[]){
 
 		//consensus manager must be initialized before ledger manager and glue manager
 		bumo::ConsensusManager &consensus_manager = bumo::ConsensusManager::Instance();
-		if (!bumo::g_enable_ || !consensus_manager.Initialize(bumo::Configure::Instance().validation_configure_)) {
+		if (!bumo::g_enable_ || !consensus_manager.Initialize(bumo::Configure::Instance().ledger_configure_.validation_type_)) {
 			LOG_ERROR("Initialize consensus manager failed");
 			break;
 		}

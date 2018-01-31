@@ -26,13 +26,20 @@
 		"listen_address": "0.0.0.0:26003"
 	},
 	"ledger": {
-		"genesis_account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",//privatekey:privbvYfqQyG3kZyHE4RX4TYVa32htw8xG4WdpCTrymPUJQ923XkKVbM
-		"fees" : {"base_reserve":100000000, "byte_fee" :100},
+		"validation_address1": "buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g",
+		"validation_private_key1": "01ab35a14935d51faf48f51c3bfd1e0478e83d21d378f3bc92332dbbee5b180b9e122475517da2651227ce4a8bb37e2621c4611a889a8d7e45679efe881d56f2",
 		"max_trans_per_ledger": 1000,
 		"max_ledger_per_message": 5,
 		"max_trans_in_memory": 2000,
 		"max_apply_ledger_per_round": 3,
 		"hardfork_points": []
+	},
+	"genesis" :{
+		"account" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+		"fees": {"base_reserve":100000000, "byte_fee" :100},
+		"validators": [
+			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
+		]
 	},
 	"logger": {
 		"path": "log/bumo.log",
@@ -41,12 +48,5 @@
 		"time_capacity": 1,
 		"size_capacity": 10,
 		"expire_days": 10
-	},
-	"validation": {
-		"address1": "buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g",
-		"node_private_key1": "01ab35a14935d51faf48f51c3bfd1e0478e83d21d378f3bc92332dbbee5b180b9e122475517da2651227ce4a8bb37e2621c4611a889a8d7e45679efe881d56f2",
-		"validators": [
-			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
-		]
 	}
 }

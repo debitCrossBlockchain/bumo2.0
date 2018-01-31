@@ -251,7 +251,7 @@ namespace bumo {
 		//set global hash caculate
 		statistics_["account_count"] = 1;
 		protocol::Account acc;
-		acc.set_address(Configure::Instance().ledger_configure_.genesis_account_);
+		acc.set_address(Configure::Instance().genesis_configure_.account_);
 		acc.set_nonce(0);
 		acc.set_balance(100000000000000000);
 
@@ -277,7 +277,7 @@ namespace bumo {
 		header->set_account_tree_hash(tree_->GetRootHash());
 
 		//for validators
-		const utils::StringList &list = Configure::Instance().validation_configure_.validators_;
+		const utils::StringList &list = Configure::Instance().genesis_configure_.validators_;
 		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
 			validators_.add_validators(*iter);
 		}
@@ -285,17 +285,17 @@ namespace bumo {
 		header->set_validators_hash(validators_hash);
 
 		//for fee
-		fees_.set_byte_fee(Configure::Instance().ledger_configure_.fees_.byte_fee_);
-		fees_.set_base_reserve(Configure::Instance().ledger_configure_.fees_.base_reserve_);
-		fees_.set_create_account_fee(Configure::Instance().ledger_configure_.fees_.create_account_fee_);
-		fees_.set_pay_fee(Configure::Instance().ledger_configure_.fees_.pay_fee_);
-		fees_.set_issue_asset_fee(Configure::Instance().ledger_configure_.fees_.issue_asset_fee_);
-		fees_.set_set_metadata_fee(Configure::Instance().ledger_configure_.fees_.set_metadata_fee_);
-		fees_.set_set_sigure_weight_fee(Configure::Instance().ledger_configure_.fees_.set_sigure_weight_fee_);
-		fees_.set_set_threshold_fee(Configure::Instance().ledger_configure_.fees_.set_threshold_fee_);
-		fees_.set_pay_coin_fee(Configure::Instance().ledger_configure_.fees_.pay_coin_fee_);
+		fees_.set_byte_fee(Configure::Instance().genesis_configure_.fees_.byte_fee_);
+		fees_.set_base_reserve(Configure::Instance().genesis_configure_.fees_.base_reserve_);
+		fees_.set_create_account_fee(Configure::Instance().genesis_configure_.fees_.create_account_fee_);
+		fees_.set_pay_fee(Configure::Instance().genesis_configure_.fees_.pay_fee_);
+		fees_.set_issue_asset_fee(Configure::Instance().genesis_configure_.fees_.issue_asset_fee_);
+		fees_.set_set_metadata_fee(Configure::Instance().genesis_configure_.fees_.set_metadata_fee_);
+		fees_.set_set_sigure_weight_fee(Configure::Instance().genesis_configure_.fees_.set_sigure_weight_fee_);
+		fees_.set_set_threshold_fee(Configure::Instance().genesis_configure_.fees_.set_threshold_fee_);
+		fees_.set_pay_coin_fee(Configure::Instance().genesis_configure_.fees_.pay_coin_fee_);
 		std::string fees_hash = HashWrapper::Crypto(fees_.SerializeAsString());
-		header->set_fees_hash(HashWrapper::Crypto(fees_.SerializeAsString()));
+		header->set_fees_hash(fees_hash);
 
 		header->set_hash("");
 		header->set_hash(HashWrapper::Crypto(ledger.SerializeAsString()));
@@ -304,7 +304,7 @@ namespace bumo {
 		last_closed_ledger_->ProtoLedger().CopyFrom(ledger);
 		auto batch = tree_->batch_;
 		batch->Put(bumo::General::KEY_LEDGER_SEQ, "1");
-		batch->Put(bumo::General::KEY_GENE_ACCOUNT, Configure::Instance().ledger_configure_.genesis_account_);
+		batch->Put(bumo::General::KEY_GENE_ACCOUNT, Configure::Instance().genesis_configure_.account_);
 		ValidatorsSet(batch, validators_);
 		FeesConfigSet(batch, fees_);
 
@@ -364,7 +364,7 @@ namespace bumo {
 			account_db->Get(General::LAST_PROOF, str_proof);
 
 			//this validator 
-			PrivateKey private_key(Configure::Instance().validation_configure_.node_privatekey_);
+			PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
             std::string this_node_address = private_key.GetEncAddress();
 
 			//compose the new ledger
@@ -378,7 +378,7 @@ namespace bumo {
 			new_validator_set.add_validators(this_node_address);
 
 			request.set_previous_ledger_hash(last_closed_ledger_hdr.hash());
-			request.set_close_time(last_closed_ledger_hdr.close_time() + Configure::Instance().validation_configure_.close_interval_);
+			request.set_close_time(last_closed_ledger_hdr.close_time() + Configure::Instance().ledger_configure_.close_interval_);
 			request.set_ledger_seq(last_closed_ledger_hdr.seq() + 1);
 			request.set_previous_proof(str_proof);
 			std::string consensus_value_hash = HashWrapper::Crypto(request.SerializeAsString());

@@ -28,8 +28,8 @@ namespace bumo {
 	}
 	ConsensusManager::~ConsensusManager() {}
 
-	bool ConsensusManager::Initialize(const ValidationConfigure &config) {
-		if (config.type_ == "one_node") {
+	bool ConsensusManager::Initialize(const std::string &validation_type) {
+		if (validation_type == "one_node") {
 			consensus_ = std::shared_ptr<Consensus>(new OneNode());
 			if (!consensus_->Initialize())
 				return false;

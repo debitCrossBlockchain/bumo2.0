@@ -134,8 +134,8 @@ namespace bumo {
 		}
 
 		int64_t next_close_time = utils::Timestamp::Now().timestamp();
-		if (next_close_time < lcl.close_time() + Configure::Instance().validation_configure_.close_interval_) {
-			next_close_time = lcl.close_time() + Configure::Instance().validation_configure_.close_interval_;
+		if (next_close_time < lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_) {
+			next_close_time = lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_;
 		}
 
 		//get previous block proof
@@ -473,11 +473,11 @@ namespace bumo {
 		//not too closed
 		if (!(
 			now > consensus_value.close_time() && 
-			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().validation_configure_.close_interval_)
+			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_)
 			) {
 			LOG_ERROR("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid", 
 				now / utils::MICRO_UNITS_PER_SEC, consensus_value.close_time() / utils::MICRO_UNITS_PER_SEC,
-				lcl.close_time(), Configure::Instance().validation_configure_.close_interval_ / utils::MICRO_UNITS_PER_SEC);
+				lcl.close_time(), Configure::Instance().ledger_configure_.close_interval_ / utils::MICRO_UNITS_PER_SEC);
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
@@ -576,7 +576,7 @@ namespace bumo {
 	}
 
 	int64_t GlueManager::GetIntervalTime(bool empty_block) {
-		return Configure::Instance().validation_configure_.close_interval_;
+		return Configure::Instance().ledger_configure_.close_interval_;
 	}
 
 	void GlueManager::OnResetCloseTimer() {

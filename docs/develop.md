@@ -948,7 +948,7 @@ POST /getTransactionBlob
 |参数|描述
 |:--- | --- 
 | set_metadata.key  |required，length:(0, 1024]
-| set_metadata.value  |optional，length:(0, 262144]
+| set_metadata.value  |optional，length:(0, 256K]
 | set_metadata.version |optional，default 0, 0：不限制版本，>0 : 当前 value 的版本必须为该值， <0 : 非法
 
 - 功能
