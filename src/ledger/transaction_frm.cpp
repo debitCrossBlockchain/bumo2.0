@@ -319,6 +319,12 @@ namespace bumo {
 
 		int64_t bytes_fee = GetSelfByteFee();
 		int64_t tran_fee = GetFee();
+		if (tran_fee < 0){
+			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+			result_.set_desc(utils::String::Format("Transaction(%s) fee(" FMT_I64 ") should not be negative number", utils::String::BinToHexString(hash_).c_str(), tran_fee));
+			return false;
+		}
+
 		if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 			if (tran_fee < bytes_fee) {
 				std::string error_desc = utils::String::Format(

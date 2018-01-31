@@ -150,7 +150,7 @@ namespace bumo {
 		else {
 			bool found = false;
 			protocol::AccountThreshold *thresholds = account_info_.mutable_priv()->mutable_thresholds();
-			std::vector<std::pair<protocol::Operation::Type, int32_t> > nold;
+			std::vector<std::pair<protocol::Operation::Type, int64_t> > nold;
 			for (int32_t i = 0; i < thresholds->type_thresholds_size(); i++) {
 				if (thresholds->type_thresholds(i).type() != type) {
 					nold.push_back(std::make_pair(thresholds->type_thresholds(i).type(), thresholds->type_thresholds(i).threshold()));
@@ -180,7 +180,7 @@ namespace bumo {
 	void AccountFrm::GetAllAssets(std::vector<protocol::Asset>& assets){
 		KVTrie trie;
 		auto batch = std::make_shared<WRITE_BATCH>();
-        std::string prefix = ComposePrefix(General::ASSET_PREFIX, DecodeAddress(account_info_.address()));
+		std::string prefix = ComposePrefix(General::ASSET_PREFIX, DecodeAddress(account_info_.address()));
 		trie.Init(Storage::Instance().account_db(), batch, prefix, 1);
 		std::vector<std::string> values;
 		trie.GetAll("", values);
@@ -194,7 +194,7 @@ namespace bumo {
 	void AccountFrm::GetAllMetaData(std::vector<protocol::KeyPair>& metadata){
 		KVTrie trie;
 		auto batch = std::make_shared<WRITE_BATCH>();
-        std::string prefix = ComposePrefix(General::METADATA_PREFIX, DecodeAddress(account_info_.address()));
+		std::string prefix = ComposePrefix(General::METADATA_PREFIX, DecodeAddress(account_info_.address()));
 		trie.Init(Storage::Instance().account_db(), batch, prefix, 1);
 		std::vector<std::string> values;
 		trie.GetAll("", values);
@@ -217,7 +217,7 @@ namespace bumo {
 		}
 
 		auto batch = std::make_shared<WRITE_BATCH>();
-        std::string asset_prefix = ComposePrefix(General::ASSET_PREFIX, DecodeAddress(account_info_.address()));
+		std::string asset_prefix = ComposePrefix(General::ASSET_PREFIX, DecodeAddress(account_info_.address()));
 		KVTrie trie;
 		trie.Init(Storage::Instance().account_db(), batch, asset_prefix, 1);
 
@@ -260,7 +260,7 @@ namespace bumo {
 
 		auto batch = std::make_shared<WRITE_BATCH>();
 		KVTrie trie;
-        std::string prefix = ComposePrefix(General::METADATA_PREFIX, DecodeAddress(account_info_.address()));
+		std::string prefix = ComposePrefix(General::METADATA_PREFIX, DecodeAddress(account_info_.address()));
 		trie.Init(Storage::Instance().account_db(), batch, prefix, 1);
 
 		std::string buff;
@@ -296,11 +296,11 @@ namespace bumo {
 
 	void AccountFrm::UpdateHash(std::shared_ptr<WRITE_BATCH> batch){
 		KVTrie trie_asset;
-        std::string asset_prefix = ComposePrefix(General::ASSET_PREFIX, DecodeAddress(account_info_.address()));
+		std::string asset_prefix = ComposePrefix(General::ASSET_PREFIX, DecodeAddress(account_info_.address()));
 		trie_asset.Init(Storage::Instance().account_db(), batch, asset_prefix, 1);
 
 		KVTrie trie_metadata;
-        std::string meta_prefix = ComposePrefix(General::METADATA_PREFIX, DecodeAddress(account_info_.address()));
+		std::string meta_prefix = ComposePrefix(General::METADATA_PREFIX, DecodeAddress(account_info_.address()));
 		trie_metadata.Init(Storage::Instance().account_db(), batch, meta_prefix, 1);
 
 		auto& map = assets_;

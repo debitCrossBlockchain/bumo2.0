@@ -161,6 +161,7 @@ namespace bumo{
 		static Json::Value ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch);
 		static const char* ToCString(const v8::String::Utf8Value& value);
 		static void CallBackLog(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackTopicLog(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackGetAccountAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackSetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -179,8 +180,8 @@ namespace bumo{
 		static bool JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue);
 		static bool CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue);
 		static void CallBackConfigFee(const v8::FunctionCallbackInfo<v8::Value>& args);
-        //assert a express
-        static void CallBackAssert(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//assert a express
+		static void CallBackAssert(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 		//get balance of the given account 
 		static void CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args);

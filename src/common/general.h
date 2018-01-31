@@ -90,6 +90,9 @@ namespace bumo {
 		const static int32_t TRANSACTION_LIMIT_SIZE;
 		const static int32_t TXSET_LIMIT_SIZE;
 
+		const static int TRANSACTION_LOG_TOPIC_MAXSIZE = 128;
+		const static int TRANSACTION_LOG_DATA_MAXSIZE = 1024;
+
 		typedef enum WARNINGCODE_ {
 			WARNING,
 			NOWARNING

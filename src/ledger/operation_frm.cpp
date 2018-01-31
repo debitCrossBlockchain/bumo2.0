@@ -326,6 +326,16 @@ namespace bumo {
 			}
 			break;
 		}
+		case protocol::Operation_Type_LOG:
+		{
+			const protocol::OperationLog &log = operation.log();
+			if (log.topic().size() == 0 || log.data().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE || log.data().size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
+				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+				result.set_desc(utils::String::Format("Log's parameter topic should be (0,%d] , data should be (0, %d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE, General::TRANSACTION_LOG_DATA_MAXSIZE));
+				break;
+			}
+			break;
+		}
 
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
@@ -401,6 +411,9 @@ namespace bumo {
 			break;
 		case protocol::Operation_Type_PAY_COIN:
 			PayCoin(environment);
+			break;
+		case protocol::Operation_Type_LOG:
+			Log(environment);
 			break;
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
@@ -744,6 +757,15 @@ namespace bumo {
 
 			}
 		} while (false);
+	}
+
+	void OperationFrm::Log(std::shared_ptr<Environment> environment) {
+		protocol::OperationLog* ope = operation_.mutable_log();
+		std::string source_address =ope->logger_address();
+		if (source_address.size() == 0) {
+			source_address = transaction_->GetSourceAddress();
+			ope->set_logger_address(source_address);
+		}
 	}
 	
 	void OperationFrm::OptFee(const protocol::Operation_Type type) {
