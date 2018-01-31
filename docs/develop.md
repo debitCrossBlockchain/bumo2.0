@@ -504,6 +504,10 @@ POST /getTransactionBlob
 }
 ```
 ### 调试合约
+```text
+   POST /testContract
+```
+- post内容如下
 ```http
 {
   "code" : "\"use strict\";log(undefined);function query() { return 1; }",
