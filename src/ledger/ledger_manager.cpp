@@ -279,7 +279,10 @@ namespace bumo {
 		//for validators
 		const utils::StringList &list = Configure::Instance().validation_configure_.validators_;
 		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
-			validators_.add_validators(*iter);
+			//validators_.add_validators(*iter);
+			auto validator = validators_.add_validators();
+			validator->set_address(*iter);
+			validator->set_pledge_coin_amount(0);
 		}
 		std::string validators_hash = HashWrapper::Crypto(validators_.SerializeAsString());
 		header->set_validators_hash(validators_hash);
@@ -375,7 +378,9 @@ namespace bumo {
 			ledger_upgrade->set_new_validator(this_node_address);
 			//for validators
 			protocol::ValidatorSet new_validator_set;
-			new_validator_set.add_validators(this_node_address);
+			auto validator = new_validator_set.add_validators();
+			validator->set_address(this_node_address);
+			validator->set_pledge_coin_amount(0);
 
 			request.set_previous_ledger_hash(last_closed_ledger_hdr.hash());
 			request.set_close_time(last_closed_ledger_hdr.close_time() + Configure::Instance().validation_configure_.close_interval_);
@@ -541,7 +546,9 @@ namespace bumo {
 			//for hardfork new validator
 			if (ledger_upgrade.new_validator().size() > 0) {
 				new_set.Clear();
-				new_set.add_validators(ledger_upgrade.new_validator());
+				auto newValidator = new_set.add_validators();
+				newValidator->set_address(ledger_upgrade.new_validator());
+				newValidator->set_pledge_coin_amount(0);
 			} 
 		}
 

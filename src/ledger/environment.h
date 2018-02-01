@@ -29,10 +29,10 @@ namespace bumo {
 	public:
 		std::map<std::string, AccountFrm::pointer> entries_;	
 		AtomBaseMap<protocol::FeeConfig_Type, int64_t> fees_;
-		AtomBaseMap<int32_t, std::string> validators_;
+		AtomBaseMap<std::string, int64_t> validators_;
 
 		typedef AtomBaseMap<protocol::FeeConfig_Type, int64_t>::mapKV  feesKV;
-		typedef AtomBaseMap<int32_t, std::string>::mapKV  validatorsKV;
+		typedef AtomBaseMap<std::string, int64_t>::mapKV  validatorsKV;
 
 		Environment *parent_;
 		bool useAtomMap_;
@@ -47,7 +47,7 @@ namespace bumo {
 		bool GetEntry(const std::string& key, AccountFrm::pointer &frm);
 		bool AddEntry(const std::string& key, AccountFrm::pointer frm);
 
-		const validatorsKV& GetValidators();
+		validatorsKV& GetValidators();
 
 		bool UpdateFeeConfig(const Json::Value &fee_config);
 		bool GetVotedFee(const protocol::FeeConfig &old_fee, protocol::FeeConfig& new_fee);

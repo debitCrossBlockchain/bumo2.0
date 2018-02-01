@@ -121,11 +121,12 @@ namespace bumo{
 		return next;
 	}
 
-	const Environment::validatorsKV& Environment::GetValidators(){
+	Environment::validatorsKV& Environment::GetValidators(){
 		if (validators_.GetActionBuf().empty()){
 			auto sets = LedgerManager::Instance().Validators();
 			for (int i = 0; i < sets.validators_size(); i++){
-				validators_.SetValue(i, *sets.mutable_validators(i));
+				auto validator = sets.mutable_validators(i);
+				validators_.SetValue(validator->address(), validator->pledge_coin_amount());
 			}
 		}
 
@@ -133,8 +134,8 @@ namespace bumo{
 	}
 
 	bool Environment::UpdateFeeConfig(const Json::Value &feeConfig) {
-		for (auto it = feeConfig.begin(); it != feeConfig.end(); it++) {
-			auto type     = (protocol::FeeConfig_Type)utils::String::Stoi(it.memberName());
+		for (auto it   = feeConfig.begin(); it != feeConfig.end(); it++) {
+			auto type  = (protocol::FeeConfig_Type)utils::String::Stoi(it.memberName());
 			auto price = feeConfig[it.memberName()].asInt64();
 			fees_.SetValue(type, price);
 		}
@@ -222,8 +223,10 @@ namespace bumo{
 	}
 
 	bool Environment::UpdateNewValidators(const Json::Value& validators) {
-		for (uint32_t i = 0; i < validators.size(); i++) {
-			validators_.SetValue(i, validators[i].asString());
+		for (auto it = validators.begin(); it != validators.end(); it++){
+			std::string address = it.memberName();
+			int64_t pledge_amount = validators[it.memberName()].asInt64();
+			validators_.SetValue(address, pledge_amount);
 		}
 		return true;
 	}
@@ -238,7 +241,9 @@ namespace bumo{
 		}
 
 		for (auto kv : validators){
-			new_validator.add_validators(kv.second);
+			auto validator = new_validator.add_validators();
+			validator->set_address(kv.first);
+			validator->set_pledge_coin_amount(kv.second);
 		}
 		return true;
 	}

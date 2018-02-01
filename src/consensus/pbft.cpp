@@ -264,9 +264,13 @@ namespace bumo {
 
 			int64_t counter = 0;
 			protocol::ValidatorSet proto_validators;
-			for (uint32_t i = 0; i < json_instance.size(); i++) {
-				const Json::Value &item = json_instance[i];
-				proto_validators.add_validators(item.asString());
+			for (auto it = json_instance.begin(); it != json_instance.end(); it++){
+				std::string address = it.memberName();
+				int64_t amount      = json_instance[it.memberName()].asInt64();
+
+				auto validator = proto_validators.add_validators();
+				validator->set_address(address);
+				validator->set_pledge_coin_amount(amount);
 			}
 
 			Consensus::UpdateValidators(proto_validators);
@@ -1933,7 +1937,7 @@ namespace bumo {
 		size_t quorum_size;
 		GetValidation(set, quorum_size);
 		for (int32_t i = 0; i < set.validators_size(); i++) {
-			validators[validators.size()] = set.validators(i);
+			validators[validators.size()] = set.validators(i).address();
 		}
 		data["quorum_size"] = quorum_size;
 	}
@@ -2015,7 +2019,7 @@ namespace bumo {
 		bool validator_changed = (validators.validators_size() != validators_.size());
 		int32_t validator_index = 0;
 		for (int32_t i = 0; i < validators.validators_size(); i++) {
-			std::map<std::string, int64_t>::iterator iter = validators_.find(validators.validators(i));
+			std::map<std::string, int64_t>::iterator iter = validators_.find(validators.validators(i).address());
 			if (iter == validators_.end()){
 				validator_changed = true;
 				break;
@@ -2094,7 +2098,7 @@ namespace bumo {
 		ValidatorMap temp_vs;
 		int64_t counter = 0;
 		for (int32_t i = 0; i < validators.validators_size(); i++) {
-			temp_vs.insert(std::make_pair(validators.validators(i), counter++));
+			temp_vs.insert(std::make_pair(validators.validators(i).address(), counter++));
 		}
 		size_t total_size = temp_vs.size();
 		size_t qsize = GetQuorumSize(temp_vs.size()) + 1;

@@ -1266,13 +1266,6 @@ namespace bumo{
 					jsonValidators[kv.first] = kv.second;
 				}
 			}
-			else{
-				auto validators = LedgerManager::Instance().Validators();
-				for (int i = 0; i < validators.validators_size(); i++){
-					std::string address = *validators.mutable_validators(i);
-					jsonValidators[i] = address;
-				}
-			}
 
 			std::string strvalue = jsonValidators.toFastString();
 			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();

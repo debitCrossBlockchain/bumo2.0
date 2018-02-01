@@ -57,8 +57,8 @@ namespace bumo {
         std::string node_address = private_key_.GetEncAddress();
 		int64_t counter = 0;
 		for (int32_t i = 0; i < validators.validators_size(); i++) {
-			validators_.insert(std::make_pair(validators.validators(i), counter++));
-			if (node_address == validators.validators(i)) {
+			validators_.insert(std::make_pair(validators.validators(i).address(), counter++));
+			if (node_address == validators.validators(i).address()) {
 				is_validator_ = true;
 			}
 		}
@@ -84,7 +84,9 @@ namespace bumo {
 		}
 
 		for (size_t i = 0; i < vec_validators.size(); i++) {
-			validators.add_validators(vec_validators[i]);
+			auto validator = validators.add_validators();
+			validator->set_address(vec_validators[i]);
+			validator->set_pledge_coin_amount(0);
 		}
 
 		quorum_size = GetQuorumSize();
