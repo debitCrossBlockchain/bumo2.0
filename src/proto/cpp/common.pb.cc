@@ -235,7 +235,7 @@ void protobuf_AddDesc_common_2eproto() {
     "ERRCODE_CONTRACT_SYNTAX_ERROR\020\230\001\022(\n#ERRC"
     "ODE_CONTRACT_TOO_MANY_RECURSION\020\231\001\022+\n&ER"
     "RCODE_CONTRACT_TOO_MANY_TRANSACTIONS\020\232\001\022"
-    "\034\n\027ERRCODE_CONTEXT_EXPIRED\020\233\001B\035\n\033cn.bubi"
+    "\034\n\027ERRCODE_CONTEXT_EXPIRED\020\233\001B\035\n\033cn.bumo"
     ".blockchain.adapter3b\006proto3", 1428);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "common.proto", &protobuf_RegisterTypes);

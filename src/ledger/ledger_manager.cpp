@@ -980,8 +980,8 @@ namespace bumo {
 				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
 				if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
 					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,Transaction(%s) self byte fee(" FMT_I64 "),current real fee(" FMT_I64 ")",
-						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee(), bottom_tx->GetRealFee()));
+					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 ") ,Transaction(%s) self byte fee(" FMT_I64 ")",
+						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
 				}
 			}
 

@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protocol;
-option java_package = "cn.bubi.blockchain.adapter3";
+option java_package = "cn.bumo.blockchain.adapter3";
 
 message KeyPair{
 	string key = 1;
@@ -57,7 +57,7 @@ enum ERRORCODE
 	
 	
 	ERRCODE_BAD_SEQUENCE					= 99;
-	ERRCODE_ACCOUNT_LOW_RESERVE				= 100;   //BUBI LOW RESERVE
+	ERRCODE_ACCOUNT_LOW_RESERVE				= 100;   //BUMO LOW RESERVE
 	ERRCODE_ACCOUNT_SOURCEDEST_EQUAL		= 101;
 	ERRCODE_ACCOUNT_DEST_EXIST				= 102;
 	ERRCODE_ACCOUNT_NOT_EXIST				= 103;

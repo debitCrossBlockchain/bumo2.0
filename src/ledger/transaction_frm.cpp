@@ -283,7 +283,7 @@ namespace bumo {
 			if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 				if (tran_fee < bytes_fee) {
 					std::string error_desc = utils::String::Format(
-						"Transaction(%s) fee(" FMT_I64 ")< bytes_fee(" FMT_I64 ") not enought",
+						"Transaction(%s) fee(" FMT_I64 ") not enought for self byte fee(" FMT_I64 ") ",
 						utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 					result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
@@ -294,7 +294,7 @@ namespace bumo {
 
 				if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 					std::string error_desc = utils::String::Format(
-						"Account(%s) reserve balance not enough for transaction fee and base reserve:" FMT_I64 " - " FMT_I64 " < " FMT_I64,
+						"Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base_reserve(" FMT_I64 ")",
 						str_address.c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().GetCurFeeConfig().base_reserve());
 					result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
 					result_.set_desc(error_desc);
@@ -328,7 +328,7 @@ namespace bumo {
 		if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 			if (tran_fee < bytes_fee) {
 				std::string error_desc = utils::String::Format(
-					"Transaction(%s) fee(" FMT_I64 ") < self byte fee(" FMT_I64 ") not enough",
+					"Transaction(%s) fee(" FMT_I64 ") not enough for self byte fee(" FMT_I64 ") ",
 					utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
@@ -339,9 +339,10 @@ namespace bumo {
 
 			if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc("source account balance is not enough");
-				LOG_ERROR("Account(%s) reserve ballance not enough for transaction fee and base reserve:" FMT_I64 "- " FMT_I64 " < " FMT_I64 ",last transaction hash(%s)",
+				std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 "),last transaction hash(%s)",
 					GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
 				return false;
 			}
 		}
@@ -626,8 +627,8 @@ namespace bumo {
 		bottom_tx->AddRealFee(GetSelfByteFee());
 		if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
 			result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-			std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,Transaction(%s) self byte fee(" FMT_I64 "),current real fee(" FMT_I64 ")",
-				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), utils::String::BinToHexString(hash_).c_str(), GetSelfByteFee(), bottom_tx->GetRealFee());
+			std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 "),Transaction(%s) self byte fee(" FMT_I64 ")",
+				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), GetSelfByteFee());
 			//result_.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
 			bSucess = false;
@@ -675,8 +676,8 @@ namespace bumo {
 			bottom_tx->AddRealFee(opt->GetOpeFee());
 			if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-				std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,Transaction(%s) operation(%d) fee(" FMT_I64 "),current real fee(" FMT_I64 ")",
-						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), utils::String::BinToHexString(hash_).c_str(), processing_operation_, opt->GetOpeFee(), bottom_tx->GetRealFee());
+				std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 "), Transaction(%s) operation(%d) fee(" FMT_I64 ")",
+					utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), processing_operation_, opt->GetOpeFee());
 				//result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				bSucess = false;
