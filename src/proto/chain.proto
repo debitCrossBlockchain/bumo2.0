@@ -85,6 +85,11 @@ message OperationSetSignerWeight{
 	 repeated Signer signers = 2; //address:weight, 如果weight 为0 表示删除这个signer
 }
 
+message OperationLog{
+	string topic = 1;
+	repeated string datas = 2;
+}
+
 
 message Operation {
 	enum Type {
@@ -96,6 +101,7 @@ message Operation {
 			SET_SIGNER_WEIGHT		= 5;
 			SET_THRESHOLD			= 6;
 			PAY_COIN                = 7;
+			LOG						= 8;
 	};
 	Type type = 1;
 	string source_address = 2;
@@ -110,6 +116,7 @@ message Operation {
 	OperationSetSignerWeight	set_signer_weight  = 10;
 	OperationSetThreshold		set_threshold 	   = 11;
 	OperationPayCoin			pay_coin           = 12;
+	OperationLog				log				   = 13;
 }
 
 message OperationSetThreshold{

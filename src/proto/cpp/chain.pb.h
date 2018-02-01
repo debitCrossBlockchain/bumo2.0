@@ -50,6 +50,7 @@ class LedgerHeader;
 class Operation;
 class OperationCreateAccount;
 class OperationIssueAsset;
+class OperationLog;
 class OperationPayCoin;
 class OperationPayment;
 class OperationSetMetadata;
@@ -73,12 +74,13 @@ enum Operation_Type {
   Operation_Type_SET_SIGNER_WEIGHT = 5,
   Operation_Type_SET_THRESHOLD = 6,
   Operation_Type_PAY_COIN = 7,
+  Operation_Type_LOG = 8,
   Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   Operation_Type_Operation_Type_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool Operation_Type_IsValid(int value);
 const Operation_Type Operation_Type_Type_MIN = Operation_Type_UNKNOWN;
-const Operation_Type Operation_Type_Type_MAX = Operation_Type_PAY_COIN;
+const Operation_Type Operation_Type_Type_MAX = Operation_Type_LOG;
 const int Operation_Type_Type_ARRAYSIZE = Operation_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Operation_Type_descriptor();
@@ -1511,6 +1513,110 @@ class OperationSetSignerWeight : public ::google::protobuf::Message /* @@protoc_
 };
 // -------------------------------------------------------------------
 
+class OperationLog : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.OperationLog) */ {
+ public:
+  OperationLog();
+  virtual ~OperationLog();
+
+  OperationLog(const OperationLog& from);
+
+  inline OperationLog& operator=(const OperationLog& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const OperationLog& default_instance();
+
+  void Swap(OperationLog* other);
+
+  // implements Message ----------------------------------------------
+
+  inline OperationLog* New() const { return New(NULL); }
+
+  OperationLog* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const OperationLog& from);
+  void MergeFrom(const OperationLog& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(OperationLog* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string topic = 1;
+  void clear_topic();
+  static const int kTopicFieldNumber = 1;
+  const ::std::string& topic() const;
+  void set_topic(const ::std::string& value);
+  void set_topic(const char* value);
+  void set_topic(const char* value, size_t size);
+  ::std::string* mutable_topic();
+  ::std::string* release_topic();
+  void set_allocated_topic(::std::string* topic);
+
+  // repeated string datas = 2;
+  int datas_size() const;
+  void clear_datas();
+  static const int kDatasFieldNumber = 2;
+  const ::std::string& datas(int index) const;
+  ::std::string* mutable_datas(int index);
+  void set_datas(int index, const ::std::string& value);
+  void set_datas(int index, const char* value);
+  void set_datas(int index, const char* value, size_t size);
+  ::std::string* add_datas();
+  void add_datas(const ::std::string& value);
+  void add_datas(const char* value);
+  void add_datas(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& datas() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_datas();
+
+  // @@protoc_insertion_point(class_scope:protocol.OperationLog)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr topic_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> datas_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_chain_2eproto();
+  friend void protobuf_AssignDesc_chain_2eproto();
+  friend void protobuf_ShutdownFile_chain_2eproto();
+
+  void InitAsDefaultInstance();
+  static OperationLog* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.Operation) */ {
  public:
   Operation();
@@ -1586,6 +1692,8 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
     Operation_Type_SET_THRESHOLD;
   static const Type PAY_COIN =
     Operation_Type_PAY_COIN;
+  static const Type LOG =
+    Operation_Type_LOG;
   static inline bool Type_IsValid(int value) {
     return Operation_Type_IsValid(value);
   }
@@ -1711,6 +1819,15 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::protocol::OperationPayCoin* release_pay_coin();
   void set_allocated_pay_coin(::protocol::OperationPayCoin* pay_coin);
 
+  // optional .protocol.OperationLog log = 13;
+  bool has_log() const;
+  void clear_log();
+  static const int kLogFieldNumber = 13;
+  const ::protocol::OperationLog& log() const;
+  ::protocol::OperationLog* mutable_log();
+  ::protocol::OperationLog* release_log();
+  void set_allocated_log(::protocol::OperationLog* log);
+
   // @@protoc_insertion_point(class_scope:protocol.Operation)
  private:
 
@@ -1726,6 +1843,7 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::protocol::OperationSetSignerWeight* set_signer_weight_;
   ::protocol::OperationSetThreshold* set_threshold_;
   ::protocol::OperationPayCoin* pay_coin_;
+  ::protocol::OperationLog* log_;
   int type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -4498,6 +4616,109 @@ OperationSetSignerWeight::signers() const {
 
 // -------------------------------------------------------------------
 
+// OperationLog
+
+// optional string topic = 1;
+inline void OperationLog::clear_topic() {
+  topic_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& OperationLog::topic() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationLog.topic)
+  return topic_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationLog::set_topic(const ::std::string& value) {
+  
+  topic_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.OperationLog.topic)
+}
+inline void OperationLog::set_topic(const char* value) {
+  
+  topic_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.OperationLog.topic)
+}
+inline void OperationLog::set_topic(const char* value, size_t size) {
+  
+  topic_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationLog.topic)
+}
+inline ::std::string* OperationLog::mutable_topic() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.OperationLog.topic)
+  return topic_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* OperationLog::release_topic() {
+  // @@protoc_insertion_point(field_release:protocol.OperationLog.topic)
+  
+  return topic_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationLog::set_allocated_topic(::std::string* topic) {
+  if (topic != NULL) {
+    
+  } else {
+    
+  }
+  topic_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), topic);
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationLog.topic)
+}
+
+// repeated string datas = 2;
+inline int OperationLog::datas_size() const {
+  return datas_.size();
+}
+inline void OperationLog::clear_datas() {
+  datas_.Clear();
+}
+inline const ::std::string& OperationLog::datas(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.OperationLog.datas)
+  return datas_.Get(index);
+}
+inline ::std::string* OperationLog::mutable_datas(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.OperationLog.datas)
+  return datas_.Mutable(index);
+}
+inline void OperationLog::set_datas(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:protocol.OperationLog.datas)
+  datas_.Mutable(index)->assign(value);
+}
+inline void OperationLog::set_datas(int index, const char* value) {
+  datas_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:protocol.OperationLog.datas)
+}
+inline void OperationLog::set_datas(int index, const char* value, size_t size) {
+  datas_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationLog.datas)
+}
+inline ::std::string* OperationLog::add_datas() {
+  // @@protoc_insertion_point(field_add_mutable:protocol.OperationLog.datas)
+  return datas_.Add();
+}
+inline void OperationLog::add_datas(const ::std::string& value) {
+  datas_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:protocol.OperationLog.datas)
+}
+inline void OperationLog::add_datas(const char* value) {
+  datas_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:protocol.OperationLog.datas)
+}
+inline void OperationLog::add_datas(const char* value, size_t size) {
+  datas_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:protocol.OperationLog.datas)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+OperationLog::datas() const {
+  // @@protoc_insertion_point(field_list:protocol.OperationLog.datas)
+  return datas_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+OperationLog::mutable_datas() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.OperationLog.datas)
+  return &datas_;
+}
+
+// -------------------------------------------------------------------
+
 // Operation
 
 // optional .protocol.Operation.Type type = 1;
@@ -4910,6 +5131,44 @@ inline void Operation::set_allocated_pay_coin(::protocol::OperationPayCoin* pay_
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.pay_coin)
+}
+
+// optional .protocol.OperationLog log = 13;
+inline bool Operation::has_log() const {
+  return !_is_default_instance_ && log_ != NULL;
+}
+inline void Operation::clear_log() {
+  if (GetArenaNoVirtual() == NULL && log_ != NULL) delete log_;
+  log_ = NULL;
+}
+inline const ::protocol::OperationLog& Operation::log() const {
+  // @@protoc_insertion_point(field_get:protocol.Operation.log)
+  return log_ != NULL ? *log_ : *default_instance_->log_;
+}
+inline ::protocol::OperationLog* Operation::mutable_log() {
+  
+  if (log_ == NULL) {
+    log_ = new ::protocol::OperationLog;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.Operation.log)
+  return log_;
+}
+inline ::protocol::OperationLog* Operation::release_log() {
+  // @@protoc_insertion_point(field_release:protocol.Operation.log)
+  
+  ::protocol::OperationLog* temp = log_;
+  log_ = NULL;
+  return temp;
+}
+inline void Operation::set_allocated_log(::protocol::OperationLog* log) {
+  delete log_;
+  log_ = log;
+  if (log) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.log)
 }
 
 // -------------------------------------------------------------------
@@ -6211,6 +6470,8 @@ inline void OperationSetMetadata::set_delete_flag(bool value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
