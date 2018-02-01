@@ -1701,7 +1701,7 @@ arg1 为要查询的内容，为字符串类型。
 
 ### 费用选举合约
 
-此合约为交易费用标准制定合约，每项费用标准由共识节点提出议案，所有共识节点投票选举，获胜的议案作为新的费用收取标准，在下一个区块实施，当提案提出后超过100个区块，提案作废。
+此合约为交易费用标准制定合约，每项费用标准由共识节点提出议案，所有共识节点投票选举，获胜的议案作为新的费用收取标准，在下一个区块实施，当提案提出后超过15天仍未胜出，提案作废。
 
 #### 费用结构
 
@@ -1804,7 +1804,7 @@ json格式需转换成字符串形式填写到testContract接口结构
 {
     "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
     "code" : "",
-    "input" : "{\"method\":\"queryEnroll\",\"param\":\"\"}"},
+    "input" : "{\"method\":\"queryProposal\",\"param\":\"\"}"},
     "exe_or_query" : false,
     "source_address" : "",
     "fee":100000
@@ -1828,15 +1828,16 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
             {
                 "result": {
                     "type": "string",
-                    "value": "{\"xx1\":{\"accountID\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enrollID\":\"xx1\",\"feeType\":1,\"price\":\"5\"}}"
+                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\":{\"accountId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\",\"feeType\":1,\"price\":\"5\",\"voteCount\":0,\"time\":1517470155872949}}"
                 }
             }
         ],
         "real_fee": 0,
         "stat": {
-            "apply_time": 4596,
-            "memory_usage": 1330128,
-            "step": 20
+            "apply_time": 11342,
+            "memory_usage": 1325072,
+            "stack_usage": -440,
+            "step": 16
         },
         "txs": null
     }
@@ -1853,7 +1854,7 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 {
     "method":"queryVoting",
     "params":{
-      "enrollID": "xxxx"
+      "proposalId": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1"
     }
 }
 ```
@@ -1864,7 +1865,7 @@ json格式需转换成字符串形式填写到testContract接口结构
 {
     "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
     "code" : "",
-    "input" :"{\"method\":\"queryVoting\",\"params\":{\"enrollID\":\"xxxx\"}}"},
+    "input" :"{\"method\":\"queryVoting\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"},
     "exe_or_query" : false,
     "source_address" : "",
     "fee":100000
@@ -1888,15 +1889,16 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
             {
                 "result": {
                     "type": "string",
-                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\":{\"accountID\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enrollID\":\"xx1\",\"voteID\":\"yy1\"}}"
+                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\":1}"
                 }
             }
         ],
         "real_fee": 0,
         "stat": {
-            "apply_time": 4490,
-            "memory_usage": 1335584,
-            "step": 29
+            "apply_time": 18020,
+            "memory_usage": 1326456,
+            "stack_usage": -424,
+            "step": 19
         },
         "txs": null
     }
@@ -1906,14 +1908,12 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 #### 费用提案
 
-通过发送转移资产交易或者付币交易来给合约发起费用提案。合约入参input参数json格式
+通过发送转移资产交易或者付币交易来给合约发起费用提案。合约入参input参数json格式。一个账户只能发起一类费用提案，如果再次发起提案，会销毁上次提案及相关投票。
 
 ```json
 {
-  "method":"enrollFee",
+  "method":"proposalFee",
     "params":{
-        "accountID": "buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg",
-        "enrollID": "xxxx",
         "feeType": 1, //费用种类
         "price": "5"    //费用价格
     }
@@ -1928,7 +1928,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
        "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
        "amount":0,
-        "input":"{\"method\":\"enrollFee\",\"params\":{\"accountID\":\"buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg\",\"enrollID\":\"xxxx\",\"feeType\":1,\"price\":\"5\"}}";
+        "input":"{\"method\":\"proposalFee\",\"params\":{\"feeType\":1,\"price\":\"5\"}}";
     }
 }
 ```
@@ -1941,9 +1941,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 {
   "method":"doVoting",
   "params":{
-      "accountID": "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
-      "enrollID": "xxxx",
-      "voteID": "yyyy"
+      "proposalId": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1"
    }
 }
 ```
@@ -1956,7 +1954,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
         "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
         "amount":0,
-        "input":"{\"method\":\"doVoting\",\"params\":{\"accountID\":\"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1\",\"enrollID\":\"xxxx\",\"voteID\":yyyy}}"
+        "input":"{\"method\":\"doVoting\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"
     }
 }
 ```

@@ -341,6 +341,23 @@ namespace bumo {
 			}
 			break;
 		}
+		case protocol::Operation_Type_LOG:
+		{
+			const protocol::OperationLog &log = operation.log();
+			if (log.topic().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE ){
+				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+				result.set_desc(utils::String::Format("Log's parameter topic should be (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE));
+				break;
+			}
+			for (int i = 0; i < log.datas_size();i++) {
+				if (log.datas(i).size() == 0 || log.datas(i).size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("Log's parameter data should be (0, %d]",General::TRANSACTION_LOG_DATA_MAXSIZE));
+					break;
+				}
+			}
+			break;
+		}
 
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
@@ -417,6 +434,9 @@ namespace bumo {
 		case protocol::Operation_Type_PAY_COIN:
 			PayCoin(environment);
 			break;
+		case protocol::Operation_Type_LOG:
+			Log(environment);
+			break;
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
 		case protocol::Operation_Type_Operation_Type_INT_MAX_SENTINEL_DO_NOT_USE_:
@@ -444,14 +464,16 @@ namespace bumo {
 			int64_t base_reserve = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
 			if (createaccount.init_balance() < base_reserve) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc("Dest address balance is low");
-				LOG_ERROR("Dest address balance is low");
+				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") base_reserve (" FMT_I64 ")", createaccount.init_balance(), base_reserve);
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
 			if (source_account_->GetAccountBalance() - base_reserve < createaccount.init_balance()) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc("Source address balance is low");
-				LOG_ERROR("Source address(%s) balance is low", source_account_->GetAccountAddress().c_str());
+				std::string error_desc = utils::String::Format("Source account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for init balance(" FMT_I64 ")", source_account_->GetAccountBalance(), base_reserve, createaccount.init_balance());
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
 			source_account_->AddBalance(-1 * createaccount.init_balance());
@@ -707,10 +729,11 @@ namespace bumo {
 			protocol::Account& proto_source_account = source_account_->GetProtoAccount();
 			if (proto_source_account.balance() < ope.amount() + reserve_coin) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc(utils::String::Format("Account(%s) balance(" FMT_I64 ") not enough to pay (" FMT_I64 ")",
+				result_.set_desc(utils::String::Format("Account(%s) balance(" FMT_I64 ") not enough for pay (" FMT_I64 ") + base_reserve(" FMT_I64 ")",
 					address.c_str(),
 					proto_source_account.balance(),
-					ope.amount()
+					ope.amount(),
+					reserve_coin
 					));
 				break;
 			}
@@ -760,6 +783,8 @@ namespace bumo {
 			}
 		} while (false);
 	}
+
+	void OperationFrm::Log(std::shared_ptr<Environment> environment) {}
 	
 	void OperationFrm::OptFee(const protocol::Operation_Type type) {
 		protocol::FeeConfig fee_config = LedgerManager::Instance().GetCurFeeConfig();

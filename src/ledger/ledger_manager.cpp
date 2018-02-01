@@ -975,6 +975,15 @@ namespace bumo {
 				else
 					txfrm->Apply(ledger_context->closing_ledger_.get(), back->environment_, true);
 			}
+			else {
+				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
+				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
+				if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
+					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
+					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,Transaction(%s) self byte fee(" FMT_I64 "),current real fee(" FMT_I64 ")",
+						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee(), bottom_tx->GetRealFee()));
+				}
+			}
 
 			TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 			//throw the contract
