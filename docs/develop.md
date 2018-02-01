@@ -1793,7 +1793,7 @@ GET /getLedger?seq=xxxx&with_fee=true
 
 ```json
 {
-    "method":"queryEnroll",
+    "method":"queryProposal",
     "params":""
 }
 ```
