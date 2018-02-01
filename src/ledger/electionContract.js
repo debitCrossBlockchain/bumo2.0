@@ -336,55 +336,51 @@ function voteAbolishValidator(malicious){
 
 function query(input_str){
     let input  = JSON.parse(input_str);
+
     let result = {};
-    switch(input.type){
-        case 1:
-            result.Current_validators = getCurrentValidators();
-            break;
-        case 2:
-            result.Current_candidates = getObjectMetaData(candidatesVar);
-            break;
-        case 3:
-            result.application_proposal = getObjectMetaData(applicantVar + input.arg1);
-            break;
-        case 4:
-            result.abolish_proposal = getObjectMetaData(abolishVar + input.arg1);
-            break;
-        default:
-	    	log('unidentified operation type.');
+    if(input.method === 'validators'){
+        result.Current_validators = getCurrentValidators();
+    }
+    else if(input.method === 'candidates'){
+        result.Current_candidates = getObjectMetaData(candidatesVar);
+    }
+    else if(input.method === 'applicantProposal'){
+        result.application_proposal = getObjectMetaData(applicantVar + input.params.address);
+    }
+    else if(input.method === 'abolishProposal'){
+        result.abolish_proposal = getObjectMetaData(abolishVar + input.params.address);
+    }
+    else{
+       	result.default = 'unidentified operation type.';
     }
 
     log(result);
-    return result;
+    return JSON.stringify(result);
 }
 
 function main(input_str){
-    let result = false;
 	let input = JSON.parse(input_str);
-    switch(input.type){
-        case 1:
-	    	result = applyAsValidatorCandidate();
-            break;
-        case 2:
-	    	result = voteForApplicant(input.arg1);
-            break;
-        case 3:
-	    	result = takebackAllPledgeCoin();
-            break;
-        case 4:
-	    	result = abolishValidator(input.arg1, input.arg2);
-            break;
-        case 5:
-	    	result = quitAbolishValidator(input.arg1);
-            break;
-        case 6:
-	    	result = voteAbolishValidator(input.arg1);
-            break;
-        default:
-	    	log('unidentified operation type.');
+    if(input.method === 'pledgeCoin'){
+        applyAsValidatorCandidate();
     }
-
-    return result;
+    else if(input.method === 'voteForApplicant'){
+	    voteForApplicant(input.params.applicant);
+    }
+    else if(input.method === 'takebackCoin'){
+	    takebackAllPledgeCoin();
+    }
+    else if(input.method === 'abolishValidator'){
+    	abolishValidator(input.params.address, input.params.proof);
+    }
+    else if(input.method === 'quitAbolish'){
+    	quitAbolishValidator(input.params.address);
+    }
+    else if(input.method === 'voteForAbolish'){
+    	voteAbolishValidator(input.params.address);
+    }
+    else{
+    	log('unidentified operation type.');
+    }
 }
 
 function init(){
