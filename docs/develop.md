@@ -1432,6 +1432,17 @@ function query(input)
   buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY
     */
     ```
+- #### 输出交易日志
+
+    `tlog(topic,args...);`
+     - tlog会产生一笔交易写在区块上
+     - topic: 日志主题，必须为字符串类型
+     - args...: 最多可以包含5个参数，参数类型可以是字符串、数值或者布尔类型
+
+    例如
+    ```javascript
+    tlog('transfer',sender +' transfer 1000',true);
+    ```
 
 - ##### 做交易
     ```javascript

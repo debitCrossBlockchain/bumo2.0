@@ -200,8 +200,9 @@ namespace bumo {
 					tx_frm->environment_->Commit();
 				}
 			}
-
-			tx_frm->environment_->ClearChangeBuf();
+			
+			if (environment_->useAtomMap_)
+				environment_->Commit();
 			total_real_fee_ += tx_frm->GetRealFee();
 			apply_tx_frms_.push_back(tx_frm);			
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
