@@ -1862,7 +1862,7 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 ```json
 {
-    "method":"queryVoting",
+    "method":"queryVote",
     "params":{
       "proposalId": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1"
     }
@@ -1875,7 +1875,7 @@ json格式需转换成字符串形式填写到testContract接口结构
 {
     "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
     "code" : "",
-    "input" :"{\"method\":\"queryVoting\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"},
+    "input" :"{\"method\":\"queryVote\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"},
     "exe_or_query" : false,
     "source_address" : "",
     "fee":100000
@@ -1948,7 +1948,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 
 ```json
 {
-  "method":"doVoting",
+  "method":"voteFee",
   "params":{
       "proposalId": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1"
    }
@@ -1963,7 +1963,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
         "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
         "amount":0,
-        "input":"{\"method\":\"doVoting\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"
+        "input":"{\"method\":\"voteFee\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"
     }
 }
 ```

@@ -4,7 +4,6 @@ const voteRecordKeyPrefix ='voteRecords_';
 const nonceKey ='nonce';
 const expireTime =15;
 let proposalRecords = {};
-let nonce =0;
 let validators = {};
 
 function storageSet(key, value) {
@@ -34,10 +33,10 @@ function loadProposalRecords() {
   return true;
 }
 
-function doVoting(proposalId) {
+function voteFee(proposalId) {
   let accountId =sender;
   loadValidators();
-  assert(validators.hasOwnProperty(accountId),accountId +' is not validator');
+  isValidator(accountId);
   if(loadProposalRecords() === false){
     throw 'proposal records not exist';
   }
@@ -69,13 +68,27 @@ function doVoting(proposalId) {
   storageSet(proposalRecordsKey, proposalRecords);
 }
 
+function isValidator(accountId){
+  let found =false;
+  validators.every(
+    function(item){
+      if(item[0] ===accountId) {
+        found =true;
+        return false;
+      }
+    }
+  );
+  assert(found,accountId +' is not validator');
+}
+
 function proposalFee(feeType,price) {
   let accountId =sender;
   loadValidators();
-  assert(validators.hasOwnProperty(accountId),accountId +' is not validator');
+  isValidator(accountId);
   
   let result =storageLoad(nonceKey);
-  if(result !==false){ nonce =result; }
+  assert(result !==false,'load nonce failed');
+  let nonce = parseInt(result);
   nonce+=1;
   let newProposalId =accountId + nonce;
   loadProposalRecords();
@@ -103,10 +116,12 @@ function proposalFee(feeType,price) {
     storageSet(proposalRecordsKey, proposalRecords);
     storageSet(voteRecordKeyPrefix + newProposalId,{});
   }  
-  return true;
+
+  result =storageStore(nonceKey,nonce.toString());
+  assert(result !==false,'storage nonce failed');
 }
 
-function queryVoting(proposalId) {
+function queryVote(proposalId) {
   let key =voteRecordKeyPrefix+proposalId;
   let result = storageLoad(key);
   assert(result !== false,'vote records of proposal(' +proposalId +')not exist');
@@ -120,14 +135,12 @@ function queryProposal() {
 }
 
 function feeTypeCheck(feeType){
-  assert(Number.isInteger(feeType),'feeType type error');
-  assert(feeType>0 && feeType<10,'feeType value error');
+  assert(Number.isInteger(feeType) && feeType>0 && feeType<10,'feeType error');
 }
 
-function isStringType(val) {return typeof val === "string";}
 
 function priceCheck(price){
-  assert(isStringType(price),'price is not string');
+  assert(typeof price === "string",'price is not string');
   Object.keys(price).every(
     function(i){
         assert(Number.isInteger(parseInt(price[i])),'price contain NaN char');
@@ -157,14 +170,12 @@ function checkExpire(){
 
 function main(input) {
   let para = JSON.parse(input);
-  if (para.method === 'doVoting') {
-    assert(para.params !==undefined ,'para.params undefined');
+  if (para.method === 'voteFee') {
     assert(para.params.proposalId !==undefined,'params proposalId undefined');
-    doVoting(para.params.proposalId);
+    voteFee(para.params.proposalId);
     checkExpire();
   }
   else if (para.method === 'proposalFee') {
-    assert(para.params !==undefined ,'para.params undefined');
     assert(para.params.feeType !==undefined && para.params.price !==undefined,'params feeType price undefined');
     feeTypeCheck(para.params.feeType);
     priceCheck(para.params.price);
@@ -176,13 +187,11 @@ function main(input) {
   }
 }
 
-
 function query(input) {
   let para = JSON.parse(input);
-  if (para.method === 'queryVoting') {    
-    assert(para.params !==undefined ,'para.params undefined');
+  if (para.method === 'queryVote') {    
     assert(para.params.proposalId !==undefined ,'params.proposalId undefined');
-    return queryVoting(para.params.proposalId);
+    return queryVote(para.params.proposalId);
   }
   else if (para.method === 'queryProposal') {
     return queryProposal();
@@ -192,4 +201,4 @@ function query(input) {
   }
 }
 
-function init(){ return true; }
+function init(){ let result =storageStore(nonceKey,'0'); assert(result !==false,'storage nonce failed');}
