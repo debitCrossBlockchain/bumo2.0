@@ -60,6 +60,20 @@ function sortDictionary(Dict){
     return sortMap;
 }
 
+function getObjectValidators(){
+    let arr = getValidators();
+    assert(arr !== false, 'Get validators failed.');
+
+    let i = 0;
+    let validators = {};
+    while(i < arr.length){
+        validators[arr[i][0]] = arr[i][1];
+        i += 1;
+    }
+
+    return validators;
+}
+
 function getObjectMetaData(key){
     assert(typeof key === 'string', 'Args type error, key must be a string.');
 
@@ -136,11 +150,14 @@ function insertcandidatesSorted(applicant, amount, candidates){
 
 function setValidatorsFromCandidate(candidates){
     let i = 0;
-    let newValidators = {};
+    let newValidators = [];
     let keys = Object.keys(candidates);
 
     while(i < validatorSetSize){
-        newValidators[keys[i]] = candidates[keys[i]];
+        let validator    = [];
+        validator[0]     = keys[i];
+        validator[1]     = candidates[keys[i]];
+        newValidators[i] = validator;
         i += 1;
     }
 
@@ -193,7 +210,7 @@ function applyAsValidatorCandidate(){
 function voteForApplicant(applicant){
     assert(typeof applicant === 'string', 'Args type error, it must be an object.'); 
 
-    let validators = getValidators();
+    let validators = getObjectValidators();
     assert(validators !== false, 'Get validators failed.');
     assert(validators[sender] !== undefined,  sender + ' has no permission to vote.');
 
@@ -230,7 +247,7 @@ function takebackAllPledgeCoin(){
     let applicantKey = applicantVar + sender;
     let applicantStr = storageLoad(applicantKey);
     if(applicantStr !== false){
-        applicantData = JSON.parse(applicantStr);
+        let applicantData = JSON.parse(applicantStr);
         transferCoin(sender, applicantData[pledgeAmountVar]);
         setMetaData(applicantKey);
         return;
@@ -242,7 +259,7 @@ function takebackAllPledgeCoin(){
         delete candidates[sender];
         setMetaData(candidatesVar, candidates);
 
-        let validators = getValidators();
+        let validators = getObjectValidators();
         assert(validators !== false, 'Get validators failed.');
         if(validators[sender] !== undefined) {
             setValidatorsFromCandidate(candidates);
@@ -254,7 +271,7 @@ function takebackAllPledgeCoin(){
 function abolishValidator(malicious, proof){
     assert((typeof malicious === 'string') && (typeof proof === 'string'), 'Args type error, the two of them must be string.'); 
 
-    let validators = getValidators();
+    let validators = getObjectValidators();
     assert(validators !== false, 'Get validators failed.');
     assert(validators[sender] !== undefined, sender + ' has no permmition to abolish validator.'); 
     assert(validators[malicious] !== undefined, 'current validator sets has no ' + malicious); 
@@ -295,7 +312,7 @@ function quitAbolishValidator(malicious){
 function voteAbolishValidator(malicious){
     assert(typeof malicious === 'string', 'Args type error, the malicious must be string.'); 
 
-    let validators = getValidators();
+    let validators = getObjectValidators();
     assert(validators !== false, 'Get validators failed.');
     assert(validators[sender] !== undefined, sender + ' has no permission to vote.'); 
 
@@ -341,7 +358,7 @@ function query(input_str){
 
     let result = {};
     if(input.method === 'validators'){
-        result.Current_validators = getValidators();
+        result.Current_validators = getObjectValidators();
     }
     else if(input.method === 'candidates'){
         result.Current_candidates = getObjectMetaData(candidatesVar);
@@ -386,7 +403,7 @@ function main(input_str){
 }
 
 function init(){
-    let validators = getValidators();
+    let validators = getObjectValidators();
     assert(validators !== false, 'Get validators failed.');
 
     let initCandidates = sortDictionary(validators);

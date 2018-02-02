@@ -1257,13 +1257,15 @@ namespace bumo{
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 
 			Json::Value jsonValidators;
-			//auto env = v8_contract->parameter_.ledger_context_->closing_ledger_->environment_;
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			if (!ledger_context->transaction_stack_.empty()) {
 				auto env = ledger_context->transaction_stack_.back()->environment_;
 				auto validators = env->GetValidators();
 				for (auto kv : validators){
-					jsonValidators[kv.first] = kv.second;
+					Json::Value value;
+					value.append(kv.first);
+					value.append(kv.second);
+					jsonValidators.append(value);
 				}
 			}
 
@@ -1312,8 +1314,6 @@ namespace bumo{
 				break;
 			}
 
-			//LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
-			//ledger_frm->environment_->UpdateNewValidators(json);
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			if (!ledger_context->transaction_stack_.empty()) {
 				ledger_context->transaction_stack_.back()->environment_->UpdateNewValidators(json);

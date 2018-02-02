@@ -224,9 +224,10 @@ namespace bumo{
 
 	bool Environment::UpdateNewValidators(const Json::Value& validators) {
 		validators_.ClearChangeBuf();
-		for (auto it = validators.begin(); it != validators.end(); it++){
-			std::string address = it.memberName();
-			int64_t pledge_amount = validators[it.memberName()].asInt64();
+
+		for (Json::Value::UInt i = 0; i < validators.size(); i++){
+			std::string address = validators[i][(Json::Value::UInt)0].asString();
+			int64_t pledge_amount = validators[i][1].asInt64();
 			validators_.SetValue(address, pledge_amount);
 		}
 		return true;
