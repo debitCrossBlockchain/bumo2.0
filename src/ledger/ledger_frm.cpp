@@ -167,6 +167,7 @@ namespace bumo {
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
+			environment_->Commit();
 
 			if (tx_time_out > 0 ) {
 				tx_frm->EnableChecked();
