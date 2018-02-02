@@ -218,6 +218,7 @@ function voteForApplicant(applicant){
         return;
     }
 
+    assert(applicantData[ballotVar].includes(sender) !== true, sender + ' has voted.');
     applicantData[ballotVar].push(sender);
     if(Object.keys(applicantData[ballotVar]).length / Object.keys(validators).length < votePassRate){
         setMetaData(applicantKey, applicantData);
@@ -311,6 +312,7 @@ function voteAbolishValidator(malicious){
         return;
     }
     
+    assert(abolishProposal[ballotVar].includes(sender) !== true, sender + ' has voted.');
     abolishProposal[ballotVar].push(sender);
     if(Object.keys(abolishProposal[ballotVar]).length / Object.keys(validators).length < votePassRate){
         return;
