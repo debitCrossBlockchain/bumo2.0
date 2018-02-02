@@ -155,7 +155,7 @@ namespace bumo {
 
 	bool GenesisConfigure::Load(const Json::Value &value) {
 		Configure::GetValue(value, "validators", validators_);
-		Configure::GetValue(value, "genesis_account", account_);
+		Configure::GetValue(value, "account", account_);
 		if (validators_.empty()) {
 			return false;
 		}
