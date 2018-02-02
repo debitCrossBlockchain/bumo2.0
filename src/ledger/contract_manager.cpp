@@ -933,6 +933,8 @@ namespace bumo{
 				LOG_ERROR("Can't find contract object by isolate id");
 				break;
 			}
+			LedgerContext *ledger_context = v8_contract->parameter_.ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
 			std::string this_contract = v8_contract->parameter_.this_address_;
 
 			//add to transaction
@@ -951,8 +953,7 @@ namespace bumo{
 				*ope->mutable_log()->add_datas() = data;
 			}
 
-
-			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, v8_contract->parameter_.ledger_context_);
+			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
 				LOG_ERROR("Do transaction failed");

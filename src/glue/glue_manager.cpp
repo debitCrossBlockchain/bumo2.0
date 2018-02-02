@@ -407,7 +407,7 @@ namespace bumo {
 		//if it exist in hardfork point, we ignore the proof
 		std::string consensus_value_hash = HashWrapper::Crypto(consensus_value);
 		std::set<std::string>::const_iterator iter = hardfork_points_.find(consensus_value_hash);
-		return CheckValueHelper(proto_value, utils::MAX_INT64) == Consensus::CHECK_VALUE_VALID &&
+		return CheckValueHelper(proto_value, -1) == Consensus::CHECK_VALUE_VALID &&   //-1 not check time
 			(consensus_->CheckProof(set, HashWrapper::Crypto(consensus_value), proof)
 			|| iter != hardfork_points_.end());
 	}
@@ -471,13 +471,13 @@ namespace bumo {
 		}
 
 		//not too closed
-		if (!(
+		if (now != -1 && !(
 			now > consensus_value.close_time() && 
 			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_)
 			) {
 			LOG_ERROR("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid", 
-				now / utils::MICRO_UNITS_PER_SEC, consensus_value.close_time() / utils::MICRO_UNITS_PER_SEC,
-				lcl.close_time(), Configure::Instance().ledger_configure_.close_interval_ / utils::MICRO_UNITS_PER_SEC);
+				now, consensus_value.close_time() ,
+				lcl.close_time(), Configure::Instance().ledger_configure_.close_interval_ );
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 

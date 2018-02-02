@@ -471,7 +471,8 @@ namespace bumo {
 			}
 			if (source_account_->GetAccountBalance() - base_reserve < createaccount.init_balance()) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				std::string error_desc = utils::String::Format("Source account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for init balance(" FMT_I64 ")", source_account_->GetAccountBalance(), base_reserve, createaccount.init_balance());
+				std::string error_desc = utils::String::Format("Source account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for init balance(" FMT_I64 ")", 
+				source_account_->GetAccountAddress().c_str(),source_account_->GetAccountBalance(), base_reserve, createaccount.init_balance());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
@@ -730,7 +731,7 @@ namespace bumo {
 			if (proto_source_account.balance() < ope.amount() + reserve_coin) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
 				result_.set_desc(utils::String::Format("Account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for pay (" FMT_I64 ") ",
-					address.c_str(),
+					proto_source_account.address().c_str(),
 					proto_source_account.balance(),
 					reserve_coin,
 					ope.amount()					

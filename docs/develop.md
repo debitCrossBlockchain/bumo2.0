@@ -75,12 +75,11 @@ BUMO 区块链提供了websocket和http 两种API接口。您可以在 安装目
 ```json
     "webserver":
     {
-        "listen_addresses": "0.0.0.0:29333",
-        "remote_authorized": false
+        "listen_addresses": "0.0.0.0:36002"
     },
     "wsserver":
     {
-        "listen_address": "0.0.0.0:7053"
+        "listen_address": "0.0.0.0:36003"
     }
 ```
 
@@ -1077,7 +1076,7 @@ POST /getTransactionBlob
   }
   ```
 
-  #### 转移BU资产
+#### 转移BU资产
 
 |参数|描述
 |:--- | --- 
@@ -1406,8 +1405,9 @@ function query(input)
     ```
 
  - ##### 64位比较
-    - 返回值 1：左值大于右值，0：等于，-1 ：小于
     `int64Compare(left_value, right_value);`
+
+    - 返回值 1：左值大于右值，0：等于，-1 ：小于
     - left_value: 左值
     - right_value：右值
 
@@ -1836,7 +1836,6 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
         "stat": {
             "apply_time": 11342,
             "memory_usage": 1325072,
-            "stack_usage": -440,
             "step": 16
         },
         "txs": null
@@ -1897,7 +1896,6 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
         "stat": {
             "apply_time": 18020,
             "memory_usage": 1326456,
-            "stack_usage": -424,
             "step": 19
         },
         "txs": null
