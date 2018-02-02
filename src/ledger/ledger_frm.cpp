@@ -167,6 +167,7 @@ namespace bumo {
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
+			environment_->Commit();
 
 			if (tx_time_out > 0 ) {
 				tx_frm->EnableChecked();
@@ -201,8 +202,7 @@ namespace bumo {
 				}
 			}
 			
-			if (environment_->useAtomMap_)
-				environment_->Commit();
+			environment_->ClearChangeBuf();
 			total_real_fee_ += tx_frm->GetRealFee();
 			apply_tx_frms_.push_back(tx_frm);			
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
