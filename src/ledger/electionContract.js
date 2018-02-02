@@ -1,18 +1,11 @@
 'use strict';
 
-/*for test*/
-let validatorSetSize       = 5;
-let votePassRate           = 0.5;
-let effectiveVoteInterval  = 60 * 60 * 1000 * 1000;
-let minPledgeAmount        = 10000;
-let minSuperadditionAmount = 100;
 let payCoinNumber          = Number(payCoinAmount);
-
-//let validatorSetSize       = 100;
-//let votePassRate           = 0.8;
-//let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
-//let minPledgeAmount        = 100000000;
-//let minSuperadditionAmount = 1000000;
+let validatorSetSize       = 100;
+let votePassRate           = 0.8;
+let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
+let minPledgeAmount        = 100000000;
+let minSuperadditionAmount = 1000000;
 
 let applicantVar    = 'applicant_';
 let abolishVar      = 'abolish_';
@@ -148,6 +141,7 @@ function setValidatorsFromCandidate(candidates){
 
     while(i < validatorSetSize){
         newValidators[keys[i]] = candidates[keys[i]];
+        i += 1;
     }
 
     let validatorsStr = JSON.stringify(newValidators);
@@ -234,8 +228,9 @@ function voteForApplicant(applicant){
 
 function takebackAllPledgeCoin(){
     let applicantKey = applicantVar + sender;
-    let applicantData = storageLoad(applicantKey);
-    if(applicantData !== false){
+    let applicantStr = storageLoad(applicantKey);
+    if(applicantStr !== false){
+        applicantData = JSON.parse(applicantStr);
         transferCoin(sender, applicantData[pledgeAmountVar]);
         setMetaData(applicantKey);
         return;
@@ -315,6 +310,7 @@ function voteAbolishValidator(malicious){
     assert(abolishProposal[ballotVar].includes(sender) !== true, sender + ' has voted.');
     abolishProposal[ballotVar].push(sender);
     if(Object.keys(abolishProposal[ballotVar]).length / Object.keys(validators).length < votePassRate){
+        setMetaData(abolishKey, abolishProposal);
         return;
     }
 

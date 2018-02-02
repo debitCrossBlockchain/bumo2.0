@@ -223,6 +223,7 @@ namespace bumo{
 	}
 
 	bool Environment::UpdateNewValidators(const Json::Value& validators) {
+		validators_.ClearChangeBuf();
 		for (auto it = validators.begin(); it != validators.end(); it++){
 			std::string address = it.memberName();
 			int64_t pledge_amount = validators[it.memberName()].asInt64();
