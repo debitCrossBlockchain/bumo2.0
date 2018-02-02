@@ -6,6 +6,7 @@ let votePassRate           = 0.5;
 let effectiveVoteInterval  = 60 * 60 * 1000 * 1000;
 let minPledgeAmount        = 10000;
 let minSuperadditionAmount = 100;
+let payCoinNumber          = Number(payCoinAmount);
 
 //let validatorSetSize       = 100;
 //let votePassRate           = 0.8;
@@ -157,7 +158,7 @@ function setValidatorsFromCandidate(candidates){
 function applyAsValidatorCandidate(){
     let candidates = getObjectMetaData(candidatesVar);
     if (candidates[sender] !== undefined){
-        let newAmount = Number(candidates[sender]) + Number(payCoinAmount);
+        let newAmount = candidates[sender] + payCoinNumber;
         delete candidates[sender];
         insertcandidatesSorted(sender, newAmount, candidates);
         setMetaData(candidatesVar, candidates);
@@ -168,23 +169,23 @@ function applyAsValidatorCandidate(){
         let applicantKey = applicantVar + sender;
         let applicantStr = storageLoad(applicantKey);
         if(applicantStr !== false){
-            if(payCoinAmount < minSuperadditionAmount){
+            if(payCoinNumber < minSuperadditionAmount){
                 log('Superaddition coin amount must more than ' + minSuperadditionAmount);
-                transferCoin(sender, Number(payCoinAmount));
+                transferCoin(sender, payCoinNumber);
                 return;
             }
 
             applicant = JSON.parse(applicantStr); 
-            applicant[pledgeAmountVar] = Number(applicant[pledgeAmountVar]) + Number(payCoinAmount);
+            applicant[pledgeAmountVar] = applicant[pledgeAmountVar] + payCoinNumber;
        }
        else{
-             if(payCoinAmount < minPledgeAmount){
+             if(payCoinNumber < minPledgeAmount){
                 log('Pledge coin amount must more than ' + minPledgeAmount);
-                transferCoin(sender, Number(payCoinAmount));
+                transferCoin(sender, payCoinNumber);
                 return;
             }
 
-            applicant[pledgeAmountVar] = Number(payCoinAmount);
+            applicant[pledgeAmountVar] = payCoinNumber;
             applicant[ballotVar] = [];
        }
 
@@ -206,7 +207,7 @@ function voteForApplicant(applicant){
     let applicantData = getObjectMetaData(applicantKey);
     if(blockTimestamp > applicantData[expiredTimeVar]){
         log('Vote time is expired, applicant ' + applicant + ' be refused.');
-        transferCoin(applicant, Number(applicantData[pledgeAmountVar]));
+        transferCoin(applicant, applicantData[pledgeAmountVar]);
         setMetaData(applicantKey);
         return;
     }
@@ -234,14 +235,14 @@ function takebackAllPledgeCoin(){
     let applicantKey = applicantVar + sender;
     let applicantData = storageLoad(applicantKey);
     if(applicantData !== false){
-        transferCoin(sender, Number(applicantData[pledgeAmountVar]));
+        transferCoin(sender, applicantData[pledgeAmountVar]);
         setMetaData(applicantKey);
         return;
     }
 
     let candidates = getObjectMetaData(candidatesVar);
     if(candidates[sender] !== undefined){
-        transferCoin(sender, Number(candidates[sender]));
+        transferCoin(sender, candidates[sender]);
         delete candidates[sender];
         setMetaData(candidatesVar, candidates);
 
@@ -319,7 +320,7 @@ function voteAbolishValidator(malicious){
     let forfeit    = candidates[malicious] / 10;
     let leftCoin   = candidates[malicious] - forfeit;
 
-    transferCoin(malicious, Number(leftCoin));
+    transferCoin(malicious, leftCoin);
     setMetaData(abolishKey);
     delete candidates[malicious];
     delete validators[malicious];
