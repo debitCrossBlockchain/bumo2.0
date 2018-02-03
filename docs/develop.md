@@ -38,8 +38,9 @@
         - [验证者节点选举](#验证者节点选举)
             - [创建选举合约账户](#创建选举合约账户)
             - [申请成为验证节点候选人](#申请成为验证节点候选人)
+            - [对验证节点候选人申请者投票](#对验证节点候选人申请者投票)
             - [审核验证节点候选人](#审核验证节点候选人)
-            - [放弃验证节点候选人身份](#放弃验证节点候选人身份)
+            - [收回押金](#收回押金)
             - [废止恶意节点](#废止恶意节点)
             - [取消废止恶意节点](#取消废止恶意节点)
             - [对废止恶意节点投票](#对废止恶意节点投票)
@@ -1544,76 +1545,273 @@ function main(input)
 ### 验证者节点选举
 
 #### 创建选举合约账户
+
 验证节点选举账户创建成功后，才可以进行后续的操作, 且该账户是全局唯一的, 不能重复创建。
 
-- 创建一个合约账户（参见‘创建账号操作’），账户的地址必须是配置文件 config\bumo.json 中 validators_vote_account  字段设定的地址。
+- 创建一个合约账户（参见[创建账号](#创建账号)），账户的地址必须是配置文件 config\bumo.json 中 validators_vote_account  字段设定的地址。
+
+>例
+
+```
+"validators_vote_account": "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+```
+
 - 将 src\ledger\validators_vote.js 文件中的源码全部拷贝作为账户中 payload 字段的值。
 
- 在 validators_vote.js 文件指定的合约代码中，validatorSetsSize、auditAddress、numberOfVotesPassed 和 effectiveVotingInterval 四个变量的值可根据需要设置，但一旦验证节点选举账户创建成功，则不能再修改。
- - validatorSetsSize 指定网络内验证节点的个数；
- - auditAddress 指定审核账户，审核账户有权审核申请成为验证节点候选人的用户是否有候选人资格，且只有 auditAddress 指定的账户有审核权限
- - numberOfVotesPassed 设置投票通过值，赞成票 / 可投票总数（即拥有投票权的总数，非投票总数） 超过该值投票通过，反对票 / 可投票总数 超过 1 - numberOfVotesPassed 则投票提案被否决
- - effectiveVotingInterval 为最长投票间隔，单位为微秒，超过最长投票间隔，投票尚无有效结果，则投票作废。现阶段，投票主要是指所有验证节点对废止恶意节点提案投票。
+>例
 
-注意: 如果 validators_vote.js 内有注释，请务必删掉所有注释。
+```
+     "contract" :
+     {
+       "contract_id" : "something identify this contract",
+       "payload" : "拷贝 src\ledger\validators_vote.js 中全部代码至此处"
+     },
+```
+
+ 在 validators_vote.js 文件指定的合约代码中, 以下变量可根据需要修改。但一旦验证节点选举账户创建成功，则不能再修改。
+
+ ```
+   let validatorSetSize       = 100;
+   let votePassRate           = 0.8;
+   let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
+   let minPledgeAmount        = 100000000;
+   let minSuperadditionAmount = 1000000;
+```
+ 
+ - validatorSetSize 指定网络内验证节点的个数；
+ - votePassRate 设置投票通过值，只有验证节点有投票权限，投票数 / 验证节点总数 >= votePassRate 则投票通过;
+ - effectiveVoteInterval 设置投票有效期，单位为微秒，超过有效期，则提案和投票作废；
+ - minPledgeAmount 设置最小押金数额，低于该额度则拒绝；
+ - minSuperadditionAmount 设置押金最小追加数额，低于该数额将被拒绝。
 
 #### 申请成为验证节点候选人
-- 申请者向验证节点选举账户转移一笔 coin 作为押金（参见‘转移货币操作’），该押金可通过 ‘放弃验证节点候选人身份’ 操作收回。
-- ‘转移货币’操作的 input 字段填入 { \"type\" : 1 }。 
 
-候选人能否成为真正的验证节点取决于押金数额。假设网络需要 100 个验证节点（ validatorSetsSize 值为 100），那么押金数额排在前 100 位以内的申请者将拥有更高的成功率。另外，押金可以追加，且不限次数，追加方式即再次执行‘申请成为验证节点候选人’操作。申请者在申请之前可先通过‘查询功能’查询已交押金的申请者和他们所交纳的押金数额，具体内容请参见‘查询功能’。
+任意一个拥有网络节点的账户可以通过向验证节点选举账户转移一笔 coin 作为押金，申请成为验证节点候选人。但能否成为候选节点，需经过验证节点投票决定。
+
+- 申请者向验证节点选举账户转移一笔 coin 作为押金（参见[转移BU资产](#转移BU资产)），该押金可通过 ‘[收回押金](#收回押金)’ 操作收回。
+- ‘转移货币’操作的 input 字段填入 { "method" : "pledgeCoin"}，注意使用转义字符。
+
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :100000,
+    "input":
+    "{\"method\":\"pledgeCoin\"}"
+  }
+``` 
+
+验证节点将对申请者投票(请参见‘[对验证节点候选人申请者投票](#对验证节点候选人申请者投票)’)，投票通过后将成为验证节点候选人。
+候选人能否成为真正的验证节点取决于押金数额。假设网络需要 100 个验证节点（ validatorSetSize 值为 100），那么押金数额排在前 100 位以内的申请者将成为验证节点。押金数额可以追加，且不限次数，追加方式即再次执行‘[申请成为验证节点候选人](#申请成为验证节点候选人)’操作。申请者可通过‘[查询功能](#查询功能)’查询候选人名单和他们所交纳的押金数额。
 
 注意：申请成为验证节点候选人的账户必须拥有节点，且节点和账户为同一地址。
 
+#### 对验证节点候选人申请者投票
 
-#### 放弃验证节点候选人身份
-- 放弃者向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
-- ‘转移资产’或‘转移货币’操作的 input 字段填入 { \"type\" : 3 }。
+验证节点对申请者投票通过后，则该节点成为验证节点候选人。如果投票有效期内未通过，则自动退回全部押金。
+
+- 向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
+- ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method":"voteForApplicant", "params":{ "address":"填入申请者地址" } }，注意使用转义字符。
+
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input":
+    "{ 
+        \"method\":\"voteForApplicant\",
+        \"params\":
+        { 
+          \"address\":\"buQtZrMdBQqYzfxvqKX3M8qLZD3LNAuoSKj4\"
+        }
+    }"
+  }
+```
+
+注意：只有验证节点有投票权，且每个验证节点只能投票一次。如果在有效投票期内投票未通过，则申请提案和已投票数全部作废。
+
+#### 收回押金
+
+验证节点、验证节点候选人和候选人申请者可通过此操作收回全部押金。
+
+- 向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
+- ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method":"takebackCoin" }，注意使用转义字符。
+
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input":"{\"method\":\"takebackCoin\"}"
+  }
+```
 
 操作成功后，选举账户会将所有押金退回原账户，如果当前节点已经是验证节点，将丢失验证节点身份。选举合约将选出新的验证节点替代退出验证节点的位置。
 
 #### 废止恶意节点
-如果某验证节点发现有另一个验证节点为恶意节点，或者不再适合作为验证节点，可以申请废止该恶意节点。发起‘废止恶意节点’操作后，需要所有验证节点投票决定是否执行废止操作，且投票拥有时间限制，投票机制请参见‘创建选举合约账户’操作。
+
+如果某验证节点发现有另一个验证节点为恶意节点，或者不再适合作为验证节点，可以申请废止该恶意节点。发起‘废止恶意节点’操作后，需要所有验证节点投票决定是否执行废止操作。
 
 - 废止者向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
-- ‘转移资产’或‘转移货币’操作的 input 字段填入 { \"type\" : 4, \"arg1\" : \"被废止验证节点的地址\", \"arg2\" : \"废止该验证节点的理由\" }。
+- ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method" : "abolishValidator",  "params" : { "address" : "此处填入恶意验证节点地址", "proof" : "此处填入废止该验证节点的原因"} }，注意使用转义字符。
 
-arg1 字段为要废止节点的地址，且该节点必须为验证节点。arg2 为废止该节点的原因（字符串类型）， 以供其他验证节点在投票阶段审核决策。
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input":
+    "{
+      \"method\":\"abolishValidator\",
+      \"params\":
+      {
+        \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"，
+        \"proof\":\"I_saw_it_uncomfotable.\"
+      }
+    }"
+  }
+```
+
 注意：申请废止者和被废止者必须都是验证者节点。
 
 #### 取消废止恶意节点
+
 如果发起废止操作的验证节点后来发现被废止节点并非恶意节点，可以取消废止操作。但如果该废止操作已经被其他验证节点投票通过，则无法取消。
 
 - 废止者向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
-- ‘转移资产’或‘转移货币’操作的 input 字段填入 { \"type\" : 5 }。
+- ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method" : "quitAbolish",  "params" : { "address" : "此处填入恶意验证节点地址" } }。
+
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input":
+    "{ 
+      \"method\":\"quitAbolish\",
+      \"params\":
+      { 
+        \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
+      }
+    }"
+  }
+```
 
 注意：只有申请废止者才可以取消，其他节点和验证者节点无权取消。
 
 #### 对废止恶意节点投票
-如果由某一个验证节点对另一个节点发起了‘废止恶意节点操作’，需要其他验证节点对该提案投票，投票机制请参见‘创建选举合约账户’操作。赞成票超过规定值后，恶意节点将被废止。恶意节点被废止后，选举账户只将该节点 90% 的押金退回原账户，10% 的押金将被罚没，且平均分给剩余其他所有验证节点作为押金。
+投票通过后，恶意节点将被废止。恶意节点被废止后，选举账户只将该节点 90% 的押金退回原账户，10% 的押金将被罚没，且平均分给剩余其他所有验证节点作为押金。
 
 - 验证节点向选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
-- ‘转移资产’或‘转移货币’操作的 input 字段填入 { \"type\" : 6, \"arg1\" : boolean }。
+- ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method" : "voteForAbolish", "params" : { "address" : "此处填入被投票的恶意验证节点地址" } }，注意使用转移字符。
 
-arg1 为布尔类型，同意填入 true, 否则 false。
-注意：只有验证节点拥有投票权。且投票有规定时间，超过规定时间，提案作废，申请被废止的节点仍然继续作为验证节点参与共识。
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input":
+    "{
+       \"method\":\"voteForAbolish\",
+      \"params\":
+      {
+         \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
+      }
+    }"
+  }
+```
+
+注意：只有验证节点拥有投票权。若有效期内该废止提案未投票通过，则提案作废，申请被废止的节点将继续作为验证节点参与共识。
 
 #### 查询功能
-用户在执行‘申请成为验证节点候选人’、‘审核验证节点候选人’、‘对废止恶意节点投票’等操作前，可以先通过‘查询功能’查看相关信息以供决策。
+
+用户通过向查询接口提供指定参数，可以查看相关信息。
+
 - 用户向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
-- ‘转移资产’或‘转移货币’操作的 input 字段填入 { \"type\" : 7，\"arg1\" : \"查询内容\" }。
+- ‘转移资产’或‘转移货币’操作的 input 字段填入  { "method" : "查询方法", "params" : { "查询参数" } }，注意使用转移字符。
 
-arg1 为要查询的内容，为字符串类型。
-- ‘1’ 查询当前验证节点集合；
-- ‘2’ 查询验证节点候选人的所有申请者；
-- ‘3’ 查询当前所有验证节点候选人；
-- ‘4’ 查询被投票的废止恶意节点的信息；
-- ‘5’ 查询废止恶意节点的投票情况；
-- ‘6’ 查询以上所有内容。
+##### 查询当前验证节点集合
 
-注意：arg1是字符串类型，不是数字。
+>例
 
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input": "{\"method\":\"getValidators\"}"
+  }
+```
 
+##### 查询验证节点候选人名单和押金数额；
+
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input": "{\"method\":\"getCandidates\"}"
+  }
+```
+
+##### 查询指定的验证节点候选人申请提案信息；
+
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input":
+    "{
+       \"method\":\"getApplicantProposal\",
+      \"params\":
+      {
+         \"address\":\"applicant_buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
+      }
+    }"
+  }
+```
+
+注意：参数中的 address 为 "applicant_" + 地址 组成的字符串。
+
+##### 查询指定的废止恶意节点提案的信息；
+
+>例
+
+```
+  "pay_coin" :
+  {
+    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "amount" :0,
+    "input":
+    "{
+       \"method\":\"getAbolishProposal\",
+      \"params\":
+      {
+         \"address\":\"abolish_buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
+      }
+    }"
+  }
+```
+
+注意：参数中的 address 为 "abolish_" + 地址 组成的字符串。
 
 ### 费用选举合约
 

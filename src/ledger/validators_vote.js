@@ -326,16 +326,16 @@ function query(input_str){
     let input  = JSON.parse(input_str);
 
     let result = {};
-    if(input.method === 'validators'){
+    if(input.method === 'getValidators'){
         result.Current_validators = getValidators();
     }
-    else if(input.method === 'candidates'){
+    else if(input.method === 'getCandidates'){
         result.Current_candidates = storageLoad(candidatesVar);
     }
-    else if(input.method === 'applicantProposal'){
+    else if(input.method === 'getApplicantProposal'){
         result.application_proposal = storageLoad(applicantVar + input.params.address);
     }
-    else if(input.method === 'abolishProposal'){
+    else if(input.method === 'getAbolishProposal'){
         result.abolish_proposal = storageLoad(abolishVar + input.params.address);
     }
     else{
