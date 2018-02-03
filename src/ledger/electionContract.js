@@ -283,9 +283,7 @@ function voteAbolishValidator(malicious){
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
     assert(findI0(validators, sender) !== false, sender + ' has no permission to vote.'); 
-
-    let position = findI0(validators, malicious);
-    assert(position !== false, malicious + ' is not validator.'); 
+    assert(findI0(validators, malicious) !== false, malicious + ' is not validator.'); 
 
     let abolishKey = abolishVar + malicious;
     let abolishProposal = getObjectMetaData(abolishKey);
@@ -302,19 +300,19 @@ function voteAbolishValidator(malicious){
         return true;
     }
 
-    let forfeit  = validators[position][1] / 10;
-    let leftCoin = validators[position][1] - forfeit;
+    let candidates = getObjectMetaData(candidatesVar);
+    let position = findI0(candidates, malicious);
+    let forfeit  = candidates[position][1] / 10;
+    let leftCoin = candidates[position][1] - forfeit;
 
     transferCoin(malicious, leftCoin);
     setMetaData(abolishKey);
-    validators.splice(position, 1);
-
-    let candidates = getObjectMetaData(candidatesVar);
     candidates.splice(position, 1);
 
     let i = 0;
-    let average = forfeit / validators.length;
-    while(i < validators.length){
+    let leftValidatorsCnt = validators.length - 1;
+    let average = forfeit / leftValidatorsCnt;
+    while(i < leftValidatorsCnt){
         candidates[i][1] += average;
         i += 1;
     }
