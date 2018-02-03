@@ -18,8 +18,9 @@
 #include "environment.h"
 
 namespace bumo{
-	Environment::Environment(mapKV* data, validatorsKV* sets, feesKV* fees) :
-		AtomMap<std::string, AccountFrm>(data), validators_(sets), fees_(fees)
+
+	Environment::Environment(mapKV* data, settingKV* settings) :
+		AtomMap<std::string, AccountFrm>(data), settings_(settings)
 	{
 		useAtomMap_ = Configure::Instance().ledger_configure_.use_atom_map_;
 		parent_ = nullptr;
@@ -64,8 +65,7 @@ namespace bumo{
 	bool Environment::Commit(){
 		if (useAtomMap_)
 		{
-			fees_.Commit();
-			validators_.Commit();
+			settings_.Commit();
 			return AtomMap<std::string, AccountFrm>::Commit();
 		}
 
@@ -75,8 +75,7 @@ namespace bumo{
 
 	void Environment::ClearChangeBuf()
 	{
-		fees_.ClearChangeBuf();
-		validators_.ClearChangeBuf();
+		settings_.ClearChangeBuf();
 		AtomMap<std::string, AccountFrm>::ClearChangeBuf();
 	}
 
@@ -113,31 +112,25 @@ namespace bumo{
 
 	std::shared_ptr<Environment> Environment::NewStackFrameEnv()
 	{
-		mapKV& data	       = GetActionBuf();
-		feesKV& fees       = fees_.GetActionBuf();
-		validatorsKV& sets = validators_.GetActionBuf();
-		std::shared_ptr<Environment> next = std::make_shared<Environment>(&data, &sets, &fees);
+		mapKV& data	= GetActionBuf();
+		settingKV& settings = settings_.GetActionBuf();
+		std::shared_ptr<Environment> next = std::make_shared<Environment>(&data, &settings);
 
 		return next;
 	}
 
-	Environment::validatorsKV& Environment::GetValidators(){
-		if (validators_.GetActionBuf().empty()){
-			auto sets = LedgerManager::Instance().Validators();
-			for (int i = 0; i < sets.validators_size(); i++){
-				auto validator = sets.mutable_validators(i);
-				validators_.SetValue(validator->address(), validator->pledge_coin_amount());
+	bool Environment::UpdateFeeConfig(const Json::Value &feeConfig) {
+		std::shared_ptr<Json::Value> fees;
+		settings_.Get(feesKey, fees);
+
+		if (fees){
+			for (auto it = feeConfig.begin(); it != feeConfig.end(); it++) {
+				(*fees)[it.memberName()] = feeConfig[it.memberName()];
 			}
 		}
-
-		return validators_.GetActionBuf();
-	}
-
-	bool Environment::UpdateFeeConfig(const Json::Value &feeConfig) {
-		for (auto it   = feeConfig.begin(); it != feeConfig.end(); it++) {
-			auto type  = (protocol::FeeConfig_Type)utils::String::Stoi(it.memberName());
-			auto price = feeConfig[it.memberName()].asInt64();
-			fees_.SetValue(type, price);
+		else{
+			fees = std::make_shared<Json::Value>(feeConfig);
+			settings_.Set(feesKey, fees);
 		}
 
 		return true;
@@ -147,12 +140,13 @@ namespace bumo{
 		bool change = false;
 		new_fee = old_fee;
 
-		auto fees = fees_.GetData();
-		if (fees.empty()) return false;
+		std::shared_ptr<Json::Value> fees;
+		settings_.Get(feesKey, fees);
+		if (!fees) return false;
 
-		for (auto kv : fees) {
-			int32_t fee_type = kv.first;
-			int64_t price = kv.second;
+		for (auto it = fees->begin(); it != fees->end(); it++) {
+			int32_t fee_type = (protocol::FeeConfig_Type)utils::String::Stoi(it.memberName());
+			int64_t price = (*fees)[it.memberName()].asInt64();
 
 			switch ((protocol::FeeConfig_Type)fee_type) {
 			case protocol::FeeConfig_Type_UNKNOWN:
@@ -222,31 +216,48 @@ namespace bumo{
 		return change;
 	}
 
-	bool Environment::UpdateNewValidators(const Json::Value& validators) {
-		validators_.ClearChangeBuf();
+	Json::Value& Environment::GetValidators(){
+		std::shared_ptr<Json::Value> validators;
+		settings_.Get(validatorsKey, validators);
 
-		for (Json::Value::UInt i = 0; i < validators.size(); i++){
-			std::string address = validators[i][(Json::Value::UInt)0].asString();
-			int64_t pledge_amount = validators[i][1].asInt64();
-			validators_.SetValue(address, pledge_amount);
+		if (!validators){
+			validators = std::make_shared<Json::Value>();
+			auto sets = LedgerManager::Instance().Validators();
+
+			for (int i = 0; i < sets.validators_size(); i++){
+				auto validator = sets.mutable_validators(i);
+				Json::Value value;
+				value.append(validator->address());
+				value.append(validator->pledge_coin_amount());
+				validators->append(value);
+			}
+			settings_.Set(validatorsKey, validators);
 		}
-		return true;
+
+		return *validators;
+	}
+
+	bool Environment::UpdateNewValidators(const Json::Value& validators) {
+		return settings_.Set(validatorsKey, std::make_shared<Json::Value>(validators));
 	}
 
 	bool Environment::GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator){
-		auto validators = validators_.GetData();
-
-		if (validators.empty())
-		{
+		std::shared_ptr<Json::Value> validators;
+		bool ret = settings_.Get(validatorsKey, validators);
+		if (!validators){
 			new_validator = old_validator;
 			return false;
 		}
 
-		for (auto kv : validators){
+		for (Json::Value::UInt i = 0; i < validators->size(); i++){
+			std::string address = (*validators)[i][(Json::Value::UInt)0].asString();
+			int64_t pledge_amount = (*validators)[i][1].asInt64();
+
 			auto validator = new_validator.add_validators();
-			validator->set_address(kv.first);
-			validator->set_pledge_coin_amount(kv.second);
+			validator->set_address(address);
+			validator->set_pledge_coin_amount(pledge_amount);
 		}
+
 		return true;
 	}
 }

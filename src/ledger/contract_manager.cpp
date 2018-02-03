@@ -1260,13 +1260,7 @@ namespace bumo{
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			if (!ledger_context->transaction_stack_.empty()) {
 				auto env = ledger_context->transaction_stack_.back()->environment_;
-				auto validators = env->GetValidators();
-				for (auto kv : validators){
-					Json::Value value;
-					value.append(kv.first);
-					value.append(kv.second);
-					jsonValidators.append(value);
-				}
+				jsonValidators = env->GetValidators();
 			}
 
 			std::string strvalue = jsonValidators.toFastString();
