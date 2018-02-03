@@ -431,6 +431,7 @@ POST /getTransactionBlob
     "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
     "nonce":2, //nonce值
     "expr_condition":"", //可选，表达式。参见高级功能:表达式
+    "fee":1000, //交易支付的费用
     "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
     "operations":[
     {
