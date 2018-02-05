@@ -39,13 +39,17 @@ namespace bumo {
 		void GetBalance(const utils::StringVector &args);
 		void GetAddress(const utils::StringVector &args);
 		void PayCoin(const utils::StringVector &args);
+		void GetState(const utils::StringVector &args);
+		void ShowKey(const utils::StringVector &args);
 
 	private:
 		utils::Thread *thread_ptr_;
 		ConsolePocMap funcs_;
 
 		PrivateKey *priv_key_;
+		std::string keystore_path_;
 		void CreateKestore(const utils::StringVector &args, std::string &private_key);
+		PrivateKey *OpenKeystore( const std::string &path);
 	};
 }
 

@@ -636,6 +636,35 @@ namespace utils {
 			return nLocalTimestamp;
 		}
 
+		/*
+		assert(FormatDecimal(123456789, 1) == "12345678.9");
+		assert(FormatDecimal(123456789, 2) == "1234567.89");
+		*/
+		template <typename VALUE_TYPE>
+		static std::string FormatDecimal(VALUE_TYPE number, size_t decimal) {
+			std::string result = utils::String::ToString(number);
+			if (decimal >= result.size()) result.insert(0, decimal - result.size() + 1, '0');
+
+			std::string result_decimal;
+			bool zero_not_show = true;
+			for (size_t i = 0; i < result.size(); i++) {
+				size_t rev_index = result.size() - i - 1;
+				if (result[rev_index] != '0') zero_not_show = false;
+				if (i < decimal) {
+					if (result[rev_index] != '0' || !zero_not_show) result_decimal.push_back(result[rev_index]);
+				}
+				else if (i == decimal) {
+					if (result_decimal.size() > 0) result_decimal.push_back('.');
+					result_decimal.push_back(result[rev_index]);
+				}
+				else {
+					result_decimal.push_back(result[rev_index]);
+				}
+			}
+			std::reverse(result_decimal.begin(), result_decimal.end());
+			return result_decimal;
+		}
+
 		static StringVector Strtok(const std::string &str, char separator) {
 			size_t pos = 0;
 			size_t newPos = 0;

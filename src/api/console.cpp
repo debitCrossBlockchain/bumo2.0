@@ -17,6 +17,8 @@
 #include <utils/headers.h>
 #include <common/key_store.h>
 #include <ledger/ledger_manager.h>
+#include <glue/glue_manager.h>
+#include <overlay/peer_manager.h>
 #include "console.h"
 
 namespace bumo {
@@ -32,6 +34,8 @@ namespace bumo {
 		funcs_["help"] = std::bind(&Console::Usage, this, std::placeholders::_1);
 		funcs_["getAddress"] = std::bind(&Console::GetAddress, this, std::placeholders::_1);
 		funcs_["payCoin"] = std::bind(&Console::PayCoin, this, std::placeholders::_1);
+		funcs_["showKey"] = std::bind(&Console::ShowKey, this, std::placeholders::_1);
+		funcs_["getState"] = std::bind(&Console::GetState, this, std::placeholders::_1);
 	}
 
 	Console::~Console() {
@@ -73,53 +77,63 @@ namespace bumo {
 	}
 
 	void Console::OpenWallet(const utils::StringVector &args) {
-		std::string password;
-		if (args.size() > 1) {
-
-			if (!utils::File::IsExist(args[1])) {
-				std::cout << "path (" << args[1] << ") not exist" << std::endl;
-				return;
-			}
-
-			password = utils::GetCinPassword("input the password:");
-			std::cout << std::endl;
-			if (password.empty()) {
-				std::cout << "error, empty" << std::endl;
-				return;
-			}
-		}
-		else {
+		if (args.size() < 2) {
+			std::cout << "error params" << std::endl;
 			return;
+		}
+
+		PrivateKey *tmp_private = OpenKeystore(args[1]);
+		if (tmp_private != NULL) {
+			if (priv_key_) {
+				delete priv_key_;
+				priv_key_ = NULL;
+			}
+
+			priv_key_ = tmp_private;
+			std::cout << "ok" << std::endl;
+		}
+	}
+
+	PrivateKey *Console::OpenKeystore(const std::string &path) {
+		std::string password;
+
+		if (!utils::File::IsExist(path)) {
+			std::cout << "path (" << path << ") not exist" << std::endl;
+			return NULL;
+		}
+
+		password = utils::GetCinPassword("input the password:");
+		std::cout << std::endl;
+		if (password.empty()) {
+			std::cout << "error, empty" << std::endl;
+			return NULL;
 		}
 
 		utils::File file_object;
-		if (!file_object.Open(args[1], utils::File::FILE_M_READ)) {
+		if (!file_object.Open(path, utils::File::FILE_M_READ)) {
 			std::string error_info = utils::String::Format("open failed, error desc(%s)", STD_ERR_DESC);
 			std::cout << error_info << std::endl;
-			return;
+			return NULL;
 		}
 		std::string serial_str;
 		file_object.ReadData(serial_str, 1 * utils::BYTES_PER_MEGA);
 
 		Json::Value key_store_json;
-		if (!key_store_json.fromString(serial_str)){
+		if (!key_store_json.fromString(serial_str)) {
 			std::cout << "parse string failed" << std::endl;
-			return;
+			return NULL;
 		}
 
 		KeyStore key_store;
 		std::string restore_priv_key;
 		bool ret = key_store.From(key_store_json, password, restore_priv_key);
 		if (ret) {
-			if (priv_key_) {
-				delete priv_key_;
-				priv_key_ = NULL;
-			}
-			priv_key_ = new PrivateKey(restore_priv_key);
-			std::cout << "ok" << std::endl;
+			keystore_path_ = path;
+			return new PrivateKey(restore_priv_key);
 		}
 		else {
-			std::cout << "error" <<std::endl;
+			std::cout << "error" << std::endl;
+			return NULL;
 		}
 	}
 
@@ -152,8 +166,7 @@ namespace bumo {
 
 		KeyStore key_store;
 		Json::Value key_store_json;
-		std::string new_priv_key;
-		bool ret = key_store.Generate(password, key_store_json, new_priv_key);
+		bool ret = key_store.Generate(password, key_store_json, private_key);
 		if (ret) {
 			std::string serial_str = key_store_json.toFastString();
 			std::cout << serial_str << std::endl;
@@ -162,7 +175,8 @@ namespace bumo {
 				delete priv_key_;
 				priv_key_ = NULL;
 			}
-			priv_key_ = new PrivateKey(new_priv_key);
+			keystore_path_ = args[1];
+			priv_key_ = new PrivateKey(private_key);
 		}
 		else {
 			std::cout << "error" << std::endl;
@@ -230,7 +244,7 @@ namespace bumo {
 			std::cout << "error " << address << " not exist" << std::endl;
 		}
 		else {
-			std::cout << account_ptr->GetAccountBalance() << std::endl;
+			std::cout << utils::String::FormatDecimal(account_ptr->GetAccountBalance(), General::BU_DECIMALS ) << " BU"<<std::endl;
 		}
 	}
 
@@ -243,6 +257,39 @@ namespace bumo {
 		}
 	}
 
+	void Console::GetState(const utils::StringVector &args) {
+		Json::Value reply_json;
+		do {
+			utils::ReadLockGuard guard(bumo::StatusModule::status_lock_);
+			reply_json = *bumo::StatusModule::modules_status_;
+		} while (false);
+
+		std::cout << reply_json.toStyledString() << std::endl;
+	}
+
+	void Console::ShowKey(const utils::StringVector &args) {
+		if (priv_key_ != NULL) {
+
+			//check the password again;
+			PrivateKey *tmp_private = OpenKeystore(keystore_path_);
+			if (tmp_private != NULL) {
+				if (tmp_private->GetEncAddress() != priv_key_->GetEncAddress()) {
+					std::cout << "error" << std::endl;
+					return;
+				}
+
+				delete tmp_private;
+			}
+			else {
+				return;
+			}
+			std::cout << priv_key_->GetEncPrivateKey() << std::endl;
+		}
+		else {
+			std::cout << "error, wallet not opened" << std::endl;
+		}
+	}
+
 	void Console::PayCoin(const utils::StringVector &args) {
 		if (args.size() < 4) {
 			std::cout << "error params" << std::endl;
@@ -250,13 +297,74 @@ namespace bumo {
 		}
 
 		if (priv_key_ != NULL) {
+
+			//check the password again;
+			PrivateKey *tmp_private = OpenKeystore(keystore_path_);
+			if (tmp_private != NULL ) {
+				if (tmp_private->GetEncAddress() != priv_key_->GetEncAddress()) {
+					std::cout << "error" << std::endl;
+					return;
+				}
+
+				delete tmp_private;
+			}
+			else {
+				return;
+			}
+
 			std::string source_address = priv_key_->GetEncAddress();
 			std::string dest_address = args[1];
 			int64_t coin_amount = utils::String::Stoi64(args[2]);
-			int64_t fee = utils::String::Stoi64(args[3]);
+			double fee = utils::String::Stod(args[3]);
+			
 			std::string metadata, contract_input;
 			if (args.size() > 4) metadata = args[4];
 			if (args.size() > 5) contract_input = args[5];
+
+			int64_t nonce = 0;
+			do {
+				AccountFrm::pointer account_ptr;
+				if (!Environment::AccountFromDB(source_address, account_ptr)) {
+					std::cout << "error " << source_address << " not exist" << std::endl;
+					return;
+				}
+				else {
+					nonce = account_ptr->GetAccountNonce() + 1;
+				}
+			} while (false);
+
+			protocol::TransactionEnv tran_env;
+			protocol::Transaction *tran = tran_env.mutable_transaction();
+			tran->set_source_address(source_address);
+			tran->set_metadata(metadata);
+			tran->set_fee(fee * (int64_t)std::pow(10, General::BU_DECIMALS));
+			tran->set_nonce(nonce);
+			protocol::Operation *ope = tran->add_operations();
+			ope->set_type(protocol::Operation_Type_PAY_COIN);
+			protocol::OperationPayCoin *pay_coin = ope->mutable_pay_coin();
+			pay_coin->set_amount(coin_amount * (int64_t)std::pow(10, General::BU_DECIMALS));
+			pay_coin->set_dest_address(dest_address);
+			pay_coin->set_input(contract_input);
+
+			std::string content = tran->SerializeAsString();
+
+			std::string sign = priv_key_->Sign(content);
+			protocol::Signature *signpro = tran_env.add_signatures();
+			signpro->set_sign_data(sign);
+			signpro->set_public_key(priv_key_->GetEncPublicKey());
+
+			std::string hash = utils::String::BinToHexString(HashWrapper::Crypto(content));
+
+			Result result;
+			TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
+			GlueManager::Instance().OnTransaction(ptr, result);
+			if (result.code() != 0) {
+				std::cout << "error, desc(" << result.desc() << ")" << std::endl;
+			}
+			else {
+				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
+				std::cout << "ok, tx hash(" << hash << ")" << std::endl;
+			}
 		}
 		else {
 			std::cout << "error, wallet not opened" << std::endl;
@@ -271,8 +379,10 @@ namespace bumo {
 			"openWallet <path>                          open keystore\n"
 			"closeWallet                                 close current wallet opened\n"
 			"payCoin <to-address> <bu coin> <fee> [metatdata] [contract-input] \n"
-			"getBalance <account>                          \n"
-			"getBlockNumber <account>                          \n"
+			"getBalance [account]                         get balance of BU \n"
+			"getBlockNumber                               get lastest closed block number\n"
+			"showKey                                      show wallet private key\n"
+			"getState                                     get current state of node\n"
 			);
 	}
 }

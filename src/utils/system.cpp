@@ -817,7 +817,6 @@ namespace utils{
 		mount_table = NULL;
 		mount_table = setmntent("/etc/mtab", "r");
 		if (!mount_table) {
-			fprintf(stderr, "set mount entry error\n");
 			return false;
 		}
 		PhysicalPartition nPartition;
@@ -836,7 +835,6 @@ namespace utils{
 			device = mount_entry->mnt_fsname;
 			mount_point = mount_entry->mnt_dir;
 			if (statfs(mount_point, &s) != 0)  {
-				fprintf(stderr, "statfs failed!\n");
 				continue;
 			}
 			if ((s.f_blocks > 0) || !mount_table )  {
