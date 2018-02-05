@@ -14,6 +14,7 @@ set -e
 NAME=bumod
 PIDFILE=/var/run/$NAME.pid
 install_dir=/usr/local/bumochain
+script_dir=${install_dir}/scripts
 #This is the command to be run, give the full pathname
 DAEMON=${install_dir}/bin/bumod
 DAEMON_WATCH=${install_dir}/scripts/bumo
@@ -24,13 +25,13 @@ export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
 start(){
 		$DAEMON_WATCH start
         echo "Starting "$NAME "..."
-		start-stop-daemon --start --oknodo --background  --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+		$script_dir/start-stop-daemon --start --oknodo --background  --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
         echo "."
 }
 
 stop(){
         echo "Stopping "$NAME "..."
-		start-stop-daemon --stop --oknodo --pidfile $PIDFILE --retry 10
+		$script_dir/start-stop-daemon --stop --oknodo --pidfile $PIDFILE --retry 10
         echo "."
 		$DAEMON_WATCH stop
 }
