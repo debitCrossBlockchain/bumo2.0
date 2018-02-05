@@ -821,7 +821,7 @@ namespace utils {
 // 	}
 
 	AesCtr::AesCtr(unsigned char* iv, unsigned char* ckey) {
-		memcpy(iv_, iv, 8);
+		memcpy(iv_, iv, 16);
 		memcpy(ckey_, ckey, 16);
 	}
 

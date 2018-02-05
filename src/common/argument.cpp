@@ -165,7 +165,17 @@ namespace bumo {
 				std::string password;
 				if (argc <= 2) {
 					password = utils::GetCinPassword("input the password:");
-					printf("\n");
+					std::cout << std::endl;
+					if (password.empty()) {
+						std::cout << "error, empty" << std::endl;
+						return true;
+					}
+					std::string password1 = utils::GetCinPassword("input the password again:");
+					std::cout << std::endl;
+					if (password != password1) {
+						std::cout << "error, not match" << std::endl;
+						return true;
+					}
 				}
 				else {
 					password = argv[2];
@@ -173,6 +183,45 @@ namespace bumo {
 
 				KeyStore key_store;
 				std::string new_priv_key;
+				Json::Value key_store_json;
+				bool ret = key_store.Generate(password, key_store_json, new_priv_key);
+				if (ret) {
+					printf("%s", key_store_json.toFastString().c_str());
+				}
+				else {
+					printf("error");
+				}
+				return true;
+			}
+
+			else if (s == "--create-keystore-from-privatekey") {
+				std::string password;
+				if (argc <= 3) {
+					password = utils::GetCinPassword("input the password:");
+					std::cout << std::endl;
+					if (password.empty()) {
+						std::cout << "error, empty" << std::endl;
+						return true;
+					}
+					std::string password1 = utils::GetCinPassword("input the password again:");
+					std::cout << std::endl;
+					if (password != password1) {
+						std::cout << "error, not match" << std::endl;
+						return true;
+					}
+				}
+				else {
+					password = argv[3];
+				}
+
+				PrivateKey key(argv[2]);
+				if (!key.IsValid()) {
+					printf("error, private key not valid");
+					return true;
+				} 
+
+				KeyStore key_store;
+				std::string new_priv_key = argv[2];
 				Json::Value key_store_json;
 				bool ret = key_store.Generate(password, key_store_json, new_priv_key);
 				if (ret) {
@@ -197,7 +246,21 @@ namespace bumo {
 				}
 				return true;
 			}
-			else if (s == "--sign-data-keystore" && argc > 4) {
+			else if (s == "--get-privatekey-from-keystore" && argc > 3) {
+				KeyStore key_store;
+				Json::Value key_store_json;
+				key_store_json.fromString(argv[2]);
+				std::string private_key;
+				bool ret = key_store.From(key_store_json, argv[3], private_key);
+				if (ret) {
+					printf("%s", private_key.c_str());
+				}
+				else {
+					printf("error");
+				}
+				return true;
+			}
+			else if (s == "--sign-data-with-keystore" && argc > 4) {
 				KeyStore key_store;
 				Json::Value key_store_json;
 				key_store_json.fromString(argv[2]);
@@ -293,25 +356,27 @@ namespace bumo {
 		printf(
 			"Usage: bumo [OPTIONS]\n"
 			"OPTIONS:\n"
-			"  --dropdb                        clean up database\n"
-			"  --peer-address <node-priv-key>  get peer address from crypted node private key\n"
-			"  --create-account <crypto>       create account, support ed25519\n"
-			"  --get-address <node-priv-key>   get address from private key\n"
-			"  --sign-data <node-priv-key> <blob data>   sign blob data\n"
-			"  --check-signed-data <blob data> <signed data> <public key> check signed data\n"
-			"  --hardware-address              get local hardware address\n"
-			"  --clear-consensus-status        delete consensus status\n"
-			"  --sm3 <arg>                     generate sm3 hash \n"
-			"  --sm3-hex <arg>                 generate sm3 hash from hex format \n"
-			"  --aes-crypto <value>            crypto value\n"
-			"  --version                       display version information\n"
-			"  --create-hardfork               create hard fork ledger\n"
-			"  --clear-peer-addresses          clear peer list\n"
-			"  --create-keystore <password>    create key store\n"
-			"  --sign-data-keystore <keystore> <password> <blob data>  sign blob data with keystore\n"
-			"  --check-keystore <keystore> <password> check password match the keystore\n"
-			"  --log-dest <dest>               set log dest, LIKE FILE+STDOUT+STDERR\n"
-			"  --help                          display this help\n"
+			"  --dropdb                                                      clean up database\n"
+			"  --peer-address <node-priv-key>                                get peer address from crypted node private key\n"
+			"  --create-account <crypto>                                     create account, support ed25519\n"
+			"  --get-address <node-priv-key>                                 get address from private key\n"
+			"  --sign-data <node-priv-key> <blob data>                       sign blob data\n"
+			"  --check-signed-data <blob data> <signed data> <public key>    check signed data\n"
+			"  --hardware-address                                            get local hardware address\n"
+			"  --clear-consensus-status                                      delete consensus status\n"
+			"  --sm3 <arg>                                                   generate sm3 hash \n"
+			"  --sm3-hex <arg>                                               generate sm3 hash from hex format \n"
+			"  --aes-crypto <value>                                          crypto value\n"
+			"  --version                                                     display version information\n"
+			"  --create-hardfork                                             create hard fork ledger\n"
+			"  --clear-peer-addresses                                        clear peer list\n"
+			"  --create-keystore <password>                                  create key store\n"
+			"  --create-keystore-from-privatekey <private key> <password>    create key store\n"
+			"  --sign-data-with-keystore <keystore> <password> <blob data>   sign blob data with keystore\n"
+			"  --check-keystore <keystore> <password>                        check password match the keystore\n"
+			"  --get-privatekey-from-keystore <keystore> <password>          check password match the keystore\n"
+			"  --log-dest <dest>                                             set log dest, LIKE FILE+STDOUT+STDERR\n"
+			"  --help                                                        display this help\n"
 			);
 	}
 

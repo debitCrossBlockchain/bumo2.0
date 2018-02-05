@@ -51,12 +51,26 @@ namespace bumo {
 		dk.resize(32);
 		libscrypt_scrypt((uint8_t *)password.c_str(), password.size(), (uint8_t *)salt.c_str(), salt.size(), n, r, p, (uint8_t *)dk.c_str(), dk.size());
 
-		PrivateKey priv_key(SIGNTYPE_ED25519);
-		if (!priv_key.IsValid()) {
-			return false;
-		} 
+		//printf("%s\n", utils::String::BinToHexString(dk).c_str());
 
-		new_priv_key = priv_key.GetEncPrivateKey();
+		std::string address;
+		if (new_priv_key.empty()) {
+			PrivateKey priv_key(SIGNTYPE_ED25519);
+			if (!priv_key.IsValid()) {
+				return false;
+			}
+			new_priv_key = priv_key.GetEncPrivateKey();
+			address = priv_key.GetEncAddress();
+		}
+		else {
+			PrivateKey priv_key(new_priv_key);
+			if (!priv_key.IsValid()) {
+				return false;
+			}
+
+			address = priv_key.GetEncAddress();
+		}
+
 		utils::AesCtr aes((uint8_t *)aes_iv.c_str(), (uint8_t *)dk.c_str());
 		
 		std::string cyper_text;
@@ -70,7 +84,7 @@ namespace bumo {
 		scrypt_params["salt"] = utils::String::BinToHexString(salt);
 		key_store["aes128ctr_iv"] = utils::String::BinToHexString(aes_iv);
 		key_store["cypher_text"] = utils::String::BinToHexString(cyper_text);
-		key_store["address"] = priv_key.GetEncAddress();
+		key_store["address"] = address;
 
 		return true;
 	}
@@ -96,7 +110,9 @@ namespace bumo {
 		int32_t ret = libscrypt_scrypt((uint8_t *)password.c_str(), password.size(), (uint8_t *)salt.c_str(), salt.size(), n, r, p, (uint8_t *)dk.c_str(), dk.size());
 		if (ret != 0 ){
 			return false;
-		} 
+		}
+
+		//printf("%s\n", utils::String::BinToHexString(dk).c_str());
 
 		utils::AesCtr aes((uint8_t *)aes_iv.c_str(), (uint8_t *)dk.c_str());
 		std::string priv_key_de;

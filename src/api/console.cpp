@@ -136,7 +136,7 @@ namespace bumo {
 				std::cout << "error, empty" << std::endl;
 				return;
 			}
-			std::string password1 = utils::GetCinPassword("input the password verified:");
+			std::string password1 = utils::GetCinPassword("input the password again:");
 			std::cout << std::endl;
 			if (password != password1) {
 				std::cout << "error, not match" << std::endl;
