@@ -54,6 +54,8 @@ namespace bumo {
 
 		const static int LAST_TX_HASHS_LIMIT = 100;
 
+		const static int32_t BU_DECIMALS = 8;  // 10^8
+
 		const static char *DEFAULT_KEYVALUE_DB_PATH;
 		const static char *DEFAULT_ACCOUNT_DB_PATH;
 

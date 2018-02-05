@@ -463,7 +463,7 @@ namespace bumo {
 
 			int64_t base_reserve = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
 			if (createaccount.init_balance() < base_reserve) {
-				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
+				result_.set_code(protocol::ERRCODE_ACCOUNT_INIT_LOW_RESERVE);
 				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") not enough for base_reserve (" FMT_I64 ")", createaccount.init_balance(), base_reserve);
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
@@ -741,7 +741,7 @@ namespace bumo {
 
 			if (!environment->GetEntry(address, dest_account_ptr)) {
 				if (ope.amount() < reserve_coin) {
-					result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
+					result_.set_code(protocol::ERRCODE_ACCOUNT_INIT_LOW_RESERVE);
 					result_.set_desc(utils::String::Format("Account(%s) init balance(" FMT_I64 ") not enough for reserve(" FMT_I64 ")",
 						address.c_str(),
 						ope.amount(),

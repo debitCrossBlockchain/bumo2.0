@@ -26,10 +26,12 @@ namespace bumo {
 		funcs_["createWallet"] = std::bind(&Console::CreateWallet, this, std::placeholders::_1);
 		funcs_["openWallet"] = std::bind(&Console::OpenWallet, this, std::placeholders::_1);
 		funcs_["closeWallet"] = std::bind(&Console::CloseWallet, this, std::placeholders::_1);
+		funcs_["restoreWallet"] = std::bind(&Console::RestoreWallet, this, std::placeholders::_1);
 		funcs_["getBalance"] = std::bind(&Console::GetBalance, this, std::placeholders::_1);
 		funcs_["getBlockNumber"] = std::bind(&Console::GetBlockNumber, this, std::placeholders::_1);
 		funcs_["help"] = std::bind(&Console::Usage, this, std::placeholders::_1);
 		funcs_["getAddress"] = std::bind(&Console::GetAddress, this, std::placeholders::_1);
+		funcs_["payCoin"] = std::bind(&Console::PayCoin, this, std::placeholders::_1);
 	}
 
 	Console::~Console() {
@@ -121,29 +123,23 @@ namespace bumo {
 		}
 	}
 
-	void Console::CreateWallet(const utils::StringVector &args) {
-		std::string password;
-		if (args.size() > 1) {
-
-			if (utils::File::IsExist(args[1])) {
-				std::cout << "path (" << args[1] << ") exist" << std::endl;
-				return;
-			}
-
-			password = utils::GetCinPassword("input the password:");
-			std::cout << std::endl;
-			if (password.empty()) {
-				std::cout << "error, empty" << std::endl;
-				return;
-			}
-			std::string password1 = utils::GetCinPassword("input the password again:");
-			std::cout << std::endl;
-			if (password != password1) {
-				std::cout << "error, not match" << std::endl;
-				return;
-			}
+	void Console::CreateKestore(const utils::StringVector &args, std::string &private_key) {
+		if (utils::File::IsExist(args[1])) {
+			std::cout << "path (" << args[1] << ") exist" << std::endl;
+			return;
 		}
-		else {
+
+		std::string password;
+		password = utils::GetCinPassword("input the password:");
+		std::cout << std::endl;
+		if (password.empty()) {
+			std::cout << "error, empty" << std::endl;
+			return;
+		}
+		std::string password1 = utils::GetCinPassword("input the password again:");
+		std::cout << std::endl;
+		if (password != password1) {
+			std::cout << "error, not match" << std::endl;
 			return;
 		}
 
@@ -170,6 +166,35 @@ namespace bumo {
 		}
 		else {
 			std::cout << "error" << std::endl;
+		}
+	}
+
+	void Console::CreateWallet(const utils::StringVector &args) {
+		std::string password;
+		if (args.size() > 1) {
+
+			std::string private_key;
+			CreateKestore(args, private_key);
+		}
+		else {
+			return;
+		}
+	}
+
+	void Console::RestoreWallet(const utils::StringVector &args) {
+		std::string password;
+		if (args.size() > 2) {
+
+			std::string private_key = args[2];
+			PrivateKey priv_key(private_key);
+			if (!priv_key.IsValid()) {
+				std::cout << "error, private key not valid" << std::endl;
+				return;
+			} 
+			CreateKestore(args, private_key);
+		}
+		else {
+			return;
 		}
 	}
 
@@ -218,16 +243,36 @@ namespace bumo {
 		}
 	}
 
+	void Console::PayCoin(const utils::StringVector &args) {
+		if (args.size() < 4) {
+			std::cout << "error params" << std::endl;
+			return;
+		}
+
+		if (priv_key_ != NULL) {
+			std::string source_address = priv_key_->GetEncAddress();
+			std::string dest_address = args[1];
+			int64_t coin_amount = utils::String::Stoi64(args[2]);
+			int64_t fee = utils::String::Stoi64(args[3]);
+			std::string metadata, contract_input;
+			if (args.size() > 4) metadata = args[4];
+			if (args.size() > 5) contract_input = args[5];
+		}
+		else {
+			std::cout << "error, wallet not opened" << std::endl;
+		}
+	}
+
 	void Console::Usage(const utils::StringVector &args) {
 		printf(
 			"Usage: bumo [OPTIONS]\n"
 			"OPTIONS:\n"
 			"createWallet <path>                        create wallet\n"
 			"openWallet <path>                          open keystore\n"
-			"payCoin <to-address> <bu coin> <fee>          \n"
+			"closeWallet                                 close current wallet opened\n"
+			"payCoin <to-address> <bu coin> <fee> [metatdata] [contract-input] \n"
 			"getBalance <account>                          \n"
 			"getBlockNumber <account>                          \n"
-			"closeWallet \n"
 			);
 	}
 }

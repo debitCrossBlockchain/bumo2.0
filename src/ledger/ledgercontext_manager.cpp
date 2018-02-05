@@ -358,7 +358,7 @@ namespace bumo {
 			}
 		} while (false);
 
-		LOG_INFO("Syn processing the consensus value, ledger seq(" FMT_I64 ")", consensus_value.ledger_seq());
+		LOG_TRACE("Syn processing the consensus value, ledger seq(" FMT_I64 ")", consensus_value.ledger_seq());
 		LedgerContext ledger_context(chash, consensus_value, -1);
 		ledger_context.Do();
 		return ledger_context.closing_ledger_;

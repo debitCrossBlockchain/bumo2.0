@@ -911,9 +911,9 @@ POST /getTransactionBlob
             "issuer": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
             "code": "CNY"
           },
-          "amount": 100,
-          "input": "{\"bar\":\"foo\"}"
-        }
+          "amount": 100
+        },
+        "input": "{\"bar\":\"foo\"}"
       }
     }
   ```

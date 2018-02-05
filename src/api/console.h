@@ -34,14 +34,18 @@ namespace bumo {
 		void OpenWallet(const utils::StringVector &args);
 		void CreateWallet(const utils::StringVector &args);
 		void CloseWallet(const utils::StringVector &args);
+		void RestoreWallet(const utils::StringVector &args);
 		void GetBlockNumber(const utils::StringVector &args);
 		void GetBalance(const utils::StringVector &args);
 		void GetAddress(const utils::StringVector &args);
+		void PayCoin(const utils::StringVector &args);
+
 	private:
 		utils::Thread *thread_ptr_;
 		ConsolePocMap funcs_;
 
 		PrivateKey *priv_key_;
+		void CreateKestore(const utils::StringVector &args, std::string &private_key);
 	};
 }
 
