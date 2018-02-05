@@ -15,7 +15,7 @@
 		"consensus_network": {
 			"heartbeat_interval": 60,
 			"listen_port": 36001,
-			"target_peer_connection": 50,
+			"target_peer_connection": 10,
 			"known_peers": ["bumo.chinacloudapp.cn:36001"]
 		}
 	},
@@ -29,7 +29,7 @@
 		"validation_address1": "buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g",
 		"validation_private_key1": "01ab35a14935d51faf48f51c3bfd1e0478e83d21d378f3bc92332dbbee5b180b9e122475517da2651227ce4a8bb37e2621c4611a889a8d7e45679efe881d56f2",
 		"max_trans_per_ledger": 1000,
-		"max_ledger_per_message": 5,
+		"max_ledger_per_message": 30,
 		"max_trans_in_memory": 2000,
 		"max_apply_ledger_per_round": 3,
 		"hardfork_points": []

@@ -11,6 +11,7 @@ set(APP_BUMO_SRC
     ../api/web_server_command.cpp
     ../api/web_server_helper.cpp
     ../api/websocket_server.cpp
+    ../api/console.cpp
 )
 
 set(INNER_LIBS bumo_glue bumo_ledger bumo_consensus bumo_overlay bumo_common bumo_utils bumo_proto bumo_http bumo_ed25519 bumo_monitor)

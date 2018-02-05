@@ -97,6 +97,8 @@ namespace bumo {
 		const static int TRANSACTION_LOG_TOPIC_MAXSIZE = 128;
 		const static int TRANSACTION_LOG_DATA_MAXSIZE = 1024;
 
+		const static int PEER_DB_COUNT = 5000;
+
 		typedef enum WARNINGCODE_ {
 			WARNING,
 			NOWARNING

@@ -18,8 +18,8 @@ LIBZ_PATH = zlib-1.2.8
 JSONCPP = jsoncpp/libs/libjson.a
 JSONCPP_PATH = jsoncpp
 
-POSTGRE = postgresql-9.4.0/src/interfaces/libpq/libpq.a 
-POSTGRE_PATH = postgresql-9.4.0/
+LIBSCRYPT = libscrypt/libscrypt.a
+LIBSCRYPT_PATH = libscrypt
 
 CURL = curl/lib/.libs/libcurl.a
 CURL_PATH = curl
@@ -43,6 +43,7 @@ all:add_permission\
     $(LIBCRYPTO) \
     $(LIBBZ2) \
     $(LIBZ) \
+    $(LIBSCRYPT) \
     $(JSONCPP) \
     $(PCRE) \
 	$(CURL) \
@@ -70,6 +71,8 @@ $(LIBBZ2) :
 	@echo "*************building BZIP2 now ***************" && cd $(LIBBZ2_PATH) && $(MAKE)
 $(LIBZ) :
 	@echo "*************building LIBZ now ***************" && cd $(LIBZ_PATH) && chmod +x configure && ./configure && $(MAKE)
+$(LIBSCRYPT) :
+	@echo "*************building LIBSCRYPT now ***************" && cd $(LIBSCRYPT_PATH) && $(MAKE)
 $(JSONCPP) :
 	@echo "*************building jsoncpp now***************" && cd $(JSONCPP_PATH) && ./automake.sh
 $(CURL):
@@ -89,6 +92,7 @@ clean_3rd: \
     LIBCRYPTO_clean \
     LIBBZ2_clean \
     LIBZ_clean \
+    LIBSCRYPT_clean \
     JSONCPP_clean \
 	CURL_clean \
 	PCRE_clean \
@@ -109,6 +113,8 @@ LIBBZ2_clean:
 	@echo "******************Cleaning rocksdb now*************" && cd $(LIBBZ2_PATH) && make clean
 LIBZ_clean:
 	@echo "******************Cleaning rocksdb now*************" && cd $(LIBZ_PATH) && make clean
+LIBSCRYPT_clean:
+	@echo "******************Cleaning libscrypt now*************" && cd $(LIBSCRYPT_PATH) && make clean
 CURL_clean:
 	@echo "******************Cleaning curl now*************" && cd $(CURL_PATH) && make clean
 PCRE_clean:

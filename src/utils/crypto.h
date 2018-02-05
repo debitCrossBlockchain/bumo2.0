@@ -27,6 +27,7 @@
 #include <openssl/err.h>
 #include <openssl/ecdsa.h>
 #include <openssl/sha.h>
+#include <openssl/aes.h>
 
 
 namespace utils {
@@ -113,6 +114,26 @@ namespace utils {
 	};
 
 
+	class AesCtr {
+		struct ctr_state {
+			unsigned char ivec[AES_BLOCK_SIZE];
+			unsigned int num;
+			unsigned char ecount[AES_BLOCK_SIZE];
+		};
+
+	public:
+		AES_KEY key;
+		int BYTES_SIZE = 1024;
+		int KEY_SIZE = 128;
+		unsigned char ckey_[32];
+		unsigned char iv_[16];
+		int InitCtr(struct ctr_state *state, const unsigned char iv[16]);
+		void Encrypt(unsigned char *indata, unsigned char *outdata, int bytes_read);
+		void Encrypt(const std::string &indata, std::string &outdata);
+		//AesCtr();
+		AesCtr(unsigned char* iv, unsigned char* ckey);
+		~AesCtr();
+	};
 
 	class Aes {
 	public:

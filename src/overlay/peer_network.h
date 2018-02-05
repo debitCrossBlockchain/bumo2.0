@@ -55,6 +55,7 @@ namespace bumo {
 		std::string peer_node_address_;
 		std::string node_rand_;
 		int64_t network_id_;
+		int32_t total_peers_count_;
 
 		std::error_code last_ec_;
 
@@ -62,6 +63,7 @@ namespace bumo {
 
  		bool ResolveSeeds(const utils::StringList &address_list, int32_t rank);
 		bool ConnectToPeers(size_t max);
+		void CleanNotActivePeers();
 		bool LoadSeed();
 		bool LoadHardcode();
 

@@ -13,37 +13,18 @@
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ARGUMENT_H_
-#define ARGUMENT_H_
-
-#include "storage.h"
+#ifndef KEYSTORE_H_
+#define KEYSTORE_H_
 
 namespace bumo {
-	class Argument {
+	class KeyStore {
 	public:
-		Argument();
-		~Argument();
+		KeyStore();
+		~KeyStore();
 
-		bool help_modle_;
-		bool drop_db_;
-		int32_t log_dest_;
-		bool console_;
-
-		bool peer_addr_;
-		bool clear_peer_addresses_;
-		bool clear_consensus_status_;
-		bool create_hardfork_;
-
-		bool Parse(int argc, char *argv[]);
-		void Usage();
-		void ShowHardwareAddress();
-		void ShowNodeId(int argc, char *argv[]);
-		void RequestCert(int argc, char *argv[]);
-		void ShowRequest(int argc, char *argv[]);
+		bool Generate(const std::string &password, Json::Value &key_store, std::string &new_priv_key);
+		bool From(const Json::Value &key_store, const std::string &password, std::string &priv_key);
 	};
-
-	extern bool g_enable_;
-
-	void InstallSignal();
 }
+
 #endif

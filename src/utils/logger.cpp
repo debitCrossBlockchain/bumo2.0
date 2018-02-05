@@ -306,13 +306,13 @@ int utils::Logger::LogStub(utils::LogLevel log_Level,
 			fmt, ap);
 	}
 
-	if (log_Level <= LOG_LEVEL_WARN && log_dest_ & LOG_DEST_OUT) {
+	if (log_Level < LOG_LEVEL_WARN && log_dest_ & LOG_DEST_OUT) {
 		log_writers_[LOG_DEST_OUT_ID].Write(this, log_Level, time_string.c_str(),
 			file_name.c_str(), funcName, lineNum,
 			fmt, ap);
 	}
 
-	if (log_Level > LOG_LEVEL_WARN && log_dest_ & LOG_DEST_ERR) {
+	if (log_Level >= LOG_LEVEL_WARN && log_dest_ & LOG_DEST_ERR) {
 		log_writers_[LOG_DEST_ERR_ID].Write(this, log_Level, time_string.c_str(),
 			file_name.c_str(), funcName, lineNum,
 			fmt, ap);

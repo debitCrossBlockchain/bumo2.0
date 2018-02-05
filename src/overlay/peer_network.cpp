@@ -33,7 +33,8 @@ namespace bumo {
 		cert_is_valid_(false),
 		broadcast_(this) {
 		check_interval_ = 5 * utils::MICRO_UNITS_PER_SEC;
-		dns_seed_inited_ = false;  
+		dns_seed_inited_ = false; 
+		total_peers_count_ = 0;
 		timer_name_ = utils::String::Format("%s Network", "Consensus" );
 
 		request_methods_[protocol::OVERLAY_MSGTYPE_HELLO] = std::bind(&PeerNetwork::OnMethodHello, this, std::placeholders::_1, std::placeholders::_2);
@@ -115,7 +116,7 @@ namespace bumo {
 				continue;
 			}
 
-			CreatePeerIfNotExist(utils::InetAddress(ip, port));
+			if (total_peers_count_ < General::PEER_DB_COUNT) CreatePeerIfNotExist(utils::InetAddress(ip, port));
 		}
 
 		return true;
@@ -192,7 +193,7 @@ namespace bumo {
 				peer->SendHello(p2p_configure.listen_port_, peer_node_address_, network_id_, node_rand_, last_ec_);
 
 				//create
-				CreatePeerIfNotExist(peer->GetRemoteAddress());
+				if (total_peers_count_ < General::PEER_DB_COUNT) CreatePeerIfNotExist(peer->GetRemoteAddress());
 
 				//async send peers
 				int64_t peer_id = peer->GetId();
@@ -335,14 +336,15 @@ namespace bumo {
 
 	bool PeerNetwork::OnConnectOpen(Connection *conn) { 
 		const P2pNetwork &p2p_configure = Configure::Instance().p2p_configure_.consensus_network_configure_;
-		if (connections_.size() < p2p_configure.target_peer_connection_) {
+		size_t total_connection = 2000;
+		if (connections_.size() < total_connection) {
 			if (!conn->InBound()) {
 				Peer *peer = (Peer *)conn;
 				peer->SendHello(p2p_configure.listen_port_, peer_node_address_, network_id_, node_rand_, last_ec_);
 			}
 			return true;
 		} else{
-			LOG_ERROR("Connection open failed, exceed the threshold(" FMT_SIZE ")", p2p_configure.target_peer_connection_);
+			LOG_ERROR("Connection open failed, exceed the threshold(" FMT_SIZE ")", total_connection);
 			return false;
 		}
 	}
@@ -356,6 +358,40 @@ namespace bumo {
 	void PeerNetwork::OnDisconnect(Connection *conn) {
 		Peer *peer = (Peer *)conn;
 		UpdateItemDisconnect(peer->GetRemoteAddress(), conn->GetId());
+	}
+
+	void PeerNetwork::CleanNotActivePeers() {
+		std::string peers;
+		KeyValueDb *db = Storage::Instance().keyvalue_db();
+		int32_t count = db->Get(General::PEERS_TABLE, peers);
+		if (count < 0) {
+			return ;
+		}
+
+		protocol::Peers all;
+		if (!all.ParseFromString(peers)) {
+			LOG_ERROR("Parse peers string failed");
+			return ;
+		}
+		total_peers_count_ = all.peers_size();
+
+		protocol::Peers new_all;
+		for (int32_t i = 0; i < all.peers_size(); i++) {
+			protocol::Peer *record_temp = all.mutable_peers(i);
+			if (record_temp->num_failures() < 50 ) {
+				*new_all.add_peers() = *record_temp;
+			}
+		}
+
+		if (all.peers_size() > new_all.peers_size()) {
+			if (!db->Put(General::PEERS_TABLE, new_all.SerializeAsString())) {
+				LOG_ERROR("Write new peer table failed, error desc(%s)", db->error_desc().c_str());
+			}
+			else {
+				LOG_INFO("Clean %d not active peers, left %d peers", all.peers_size() - new_all.peers_size(), new_all.peers_size());
+			}
+		}
+		total_peers_count_ = new_all.peers_size();
 	}
 
 	bool PeerNetwork::ConnectToPeers(size_t max) {
@@ -545,6 +581,7 @@ namespace bumo {
 			LOG_ERROR("Parse peers string failed");
 			return -1;
 		} 
+		total_peers_count_ = all.peers_size();
 
 		int32_t peer_count = 0;
 		std::string ip = address.ToIp();
@@ -573,6 +610,7 @@ namespace bumo {
 			LOG_ERROR("Parse peers string failed");
 			return false;
 		}
+		total_peers_count_ = all.peers_size();
 
 		int32_t peer_count = 0;
 		std::string ip = address.ToIp();
@@ -598,7 +636,8 @@ namespace bumo {
 		bool ret = db->Put(General::PEERS_TABLE, all.SerializeAsString());
 		if (!ret) {
 			LOG_ERROR("Write peer table failed, error desc(%s)", db->error_desc().c_str());
-		} 
+		}
+		total_peers_count_ = all.peers_size();
 
 		return ret;
 	}
@@ -616,6 +655,7 @@ namespace bumo {
 			LOG_ERROR("Parse peers string failed");
 			return false;
 		}
+		total_peers_count_ = all.peers_size();
 
 		int32_t peer_count = 0;
 		std::string ip = address.ToIp();
@@ -635,7 +675,8 @@ namespace bumo {
 		if (peer_count > 0 && !db->Put(General::PEERS_TABLE, all.SerializeAsString())) {
 			LOG_ERROR("Write peer table failed, error desc(%s)", db->error_desc().c_str());
 			return false;
-		} 
+		}
+		total_peers_count_ = all.peers_size();
 		return true;
 	}
 
@@ -652,6 +693,7 @@ namespace bumo {
 			LOG_ERROR("Parse peers string failed");
 			return -1;
 		}
+		total_peers_count_ = all.peers_size();
 
 		std::multimap<int64_t, protocol::Peer> sorted_records;
 
@@ -701,6 +743,8 @@ namespace bumo {
 		if (con_size < p2p_configure.target_peer_connection_) {
 			ConnectToPeers(p2p_configure.target_peer_connection_ - con_size);
 		}
+
+		CleanNotActivePeers();
 
 		broadcast_.OnTimer();
 	}

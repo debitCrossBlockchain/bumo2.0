@@ -18,6 +18,7 @@
 #include <common/private_key.h>
 #include <common/network.h>
 #include <common/pb2json.h>
+#include <common/key_store.h>
 #include <proto/cpp/consensus.pb.h>
 #include "channel.h"
 #include "test.h"
@@ -430,6 +431,27 @@ int main(int32_t argc, char *argv[]){
 
 	utils::net::Initialize();
 	InitLog();
+
+	bumo::KeyStore key_store;
+	Json::Value keyss;
+	bool ret = key_store.Generate("bubi#07150926", keyss);
+	printf("%s\n", keyss.toFastString().c_str());
+	std::string pk;
+	ret = key_store.From(keyss, "bub", pk);
+	ret = key_store.From(keyss, "bubi", pk);
+	ret = key_store.From(keyss, "bubi#", pk);
+	ret = key_store.From(keyss, "bubi#0", pk);
+	ret = key_store.From(keyss, "bubi#07", pk);
+	ret = key_store.From(keyss, "bubi#071", pk);
+	ret = key_store.From(keyss, "bubi#0715092", pk);
+	ret = key_store.From(keyss, "bubi#07150926", pk);
+
+// 	utils::AesCtr aes;
+// 	std::string out;
+// 	aes.Encrypt("1234abcd3fff", out);
+// 
+// 	std::string out1;
+// 	aes.Encrypt(out, out1);
 
 	//TestSignature();
 	ParseFromProto();

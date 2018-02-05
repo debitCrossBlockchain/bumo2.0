@@ -3,7 +3,7 @@
 set(LIB_BUMO_COMMON bumo_common)
 set(COMMON_SRC
     configure_base.cpp general.cpp storage.cpp private_key.cpp 
-    daemon.cpp argument.cpp pb2json.cpp network.cpp data_secret_key.cpp
+    daemon.cpp argument.cpp pb2json.cpp network.cpp data_secret_key.cpp key_store.cpp
 )
 
 #generate static library file

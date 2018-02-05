@@ -19,7 +19,6 @@
 #include <openssl/ec.h>
 #include <openssl/bn.h>
 #include <openssl/obj_mac.h>
-#include <openssl/aes.h>
 
 #include "crypto.h"
 #include "strings.h"
@@ -735,4 +734,96 @@ namespace utils {
 	std::string Aes::HexDecrypto(const std::string &input, const std::string &key) {
 		return Decrypto(utils::String::HexStringToBin(input), key);
 	}
+
+	int AesCtr::InitCtr(struct ctr_state *state, const unsigned char iv[16]) {
+		state->num = 0;
+		memset(state->ecount, 0, AES_BLOCK_SIZE);
+		memcpy(state->ivec, iv, 16);
+
+		return 0;
+	}
+	// encrypt twice  == decrypt
+
+	void AesCtr::Encrypt(unsigned char *indata, unsigned char *outdata, int bytes_read) {
+
+		int i = 0;
+		int mod_len = 0;
+
+		AES_set_encrypt_key(ckey_, KEY_SIZE, &key);
+
+		if (bytes_read < BYTES_SIZE) {
+			struct ctr_state state;
+			InitCtr(&state, iv_);
+			AES_ctr128_encrypt(indata, outdata, bytes_read, &key, state.ivec, state.ecount, &state.num);
+			return;
+		}
+		// loop block size  = [ BYTES_SIZE ]
+		for (i = BYTES_SIZE; i <= bytes_read; i += BYTES_SIZE) {
+			struct ctr_state state;
+			InitCtr(&state, iv_);
+			AES_ctr128_encrypt(indata, outdata, BYTES_SIZE, &key, state.ivec, state.ecount, &state.num);
+			indata += BYTES_SIZE;
+			outdata += BYTES_SIZE;
+		}
+
+		mod_len = bytes_read % BYTES_SIZE;
+		if (mod_len != 0) {
+			struct ctr_state state;
+			InitCtr(&state, iv_);
+			AES_ctr128_encrypt(indata, outdata, mod_len, &key, state.ivec, state.ecount, &state.num);
+		}
+	}
+
+	void AesCtr::Encrypt(const std::string &instr, std::string &outstr) {
+
+		int i = 0;
+		int mod_len = 0;
+		unsigned char *indata;
+		unsigned char *outdata;
+
+		indata = (unsigned char *)instr.c_str();
+		outstr.resize(instr.size());
+		outdata = (unsigned char *)outstr.c_str();
+
+		AES_set_encrypt_key(ckey_, KEY_SIZE, &key);
+
+		if (instr.size() < BYTES_SIZE) {
+			struct ctr_state state;
+			InitCtr(&state, iv_);
+			AES_ctr128_encrypt(indata, outdata, instr.size(), &key, state.ivec, state.ecount, &state.num);
+			return;
+		}
+		// loop block size  = [ BYTES_SIZE ]
+		for (i = BYTES_SIZE; i <= instr.size(); i += BYTES_SIZE) {
+			struct ctr_state state;
+			InitCtr(&state, iv_);
+			AES_ctr128_encrypt(indata, outdata, BYTES_SIZE, &key, state.ivec, state.ecount, &state.num);
+			indata += BYTES_SIZE;
+			outdata += BYTES_SIZE;
+		}
+
+		mod_len = instr.size() % BYTES_SIZE;
+		if (mod_len != 0) {
+			struct ctr_state state;
+			InitCtr(&state, iv_);
+			AES_ctr128_encrypt(indata, outdata, mod_len, &key, state.ivec, state.ecount, &state.num);
+		}
+	}
+
+// 	AesCtr::AesCtr() {
+// 		unsigned char temp_iv[8] = { 0x66, 0x61, 0x63, 0x65, 0x73, 0x65, 0x61, 0x00 };
+// 		memcpy(iv_, temp_iv, 8);
+// 
+// 		unsigned char temp_ckey[32] = {
+// 			0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0,
+// 			0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0, 0x12 }; // 32bytes = AES256, 16bytes = AES128
+// 		memcpy(ckey_, temp_ckey, 32);
+// 	}
+
+	AesCtr::AesCtr(unsigned char* iv, unsigned char* ckey) {
+		memcpy(iv_, iv, 8);
+		memcpy(ckey_, ckey, 16);
+	}
+
+	AesCtr::~AesCtr() {}
 }

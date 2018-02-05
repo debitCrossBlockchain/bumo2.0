@@ -13,8 +13,10 @@
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <utils/logger.h>
 #include "general.h"
 #include "private_key.h"
+#include "key_store.h"
 #include "argument.h"
 
 namespace bumo {
@@ -25,6 +27,8 @@ namespace bumo {
 		peer_addr_(false),
 		clear_peer_addresses_(false),
 		clear_consensus_status_(false),
+		log_dest_(-1),
+		console_(false),
 		create_hardfork_(false){}
 	Argument::~Argument() {}
 
@@ -33,6 +37,9 @@ namespace bumo {
 			std::string s(argv[1]);
 			if (s == "--dropdb") {
 				drop_db_ = true;
+			}
+			else if (s == "--console") {
+				console_ = true;
 			}
 			else if (s == "--hardware-address") {
 				ShowHardwareAddress();
@@ -154,6 +161,81 @@ namespace bumo {
 				printf("%s\n", result.toStyledString().c_str());
 				return true;
 			}
+			else if (s == "--create-keystore") {
+				std::string password;
+				if (argc <= 2) {
+					password = utils::GetCinPassword("input the password:");
+					printf("\n");
+				}
+				else {
+					password = argv[2];
+				}
+
+				KeyStore key_store;
+				std::string new_priv_key;
+				Json::Value key_store_json;
+				bool ret = key_store.Generate(password, key_store_json, new_priv_key);
+				if (ret) {
+					printf("%s", key_store_json.toFastString().c_str());
+				}
+				else {
+					printf("error");
+				}
+				return true;
+			}
+			else if (s == "--check-keystore" && argc > 3) {
+				KeyStore key_store;
+				Json::Value key_store_json;
+				key_store_json.fromString(argv[2]);
+				std::string private_key;
+				bool ret = key_store.From(key_store_json, argv[3], private_key);
+				if (ret) {
+					printf("ok");
+				}
+				else {
+					printf("error");
+				}
+				return true;
+			}
+			else if (s == "--sign-data-keystore" && argc > 4) {
+				KeyStore key_store;
+				Json::Value key_store_json;
+				key_store_json.fromString(argv[2]);
+				std::string private_key;
+				bool ret = key_store.From(key_store_json, argv[3], private_key);
+				if (ret) {
+					printf("%s", key_store_json.toFastString().c_str());
+				}
+				else {
+					printf("error");
+				}
+
+				PrivateKey priv_key(argv[4]);
+				std::string public_key = priv_key.GetEncPublicKey();
+				std::string raw_data = utils::String::HexStringToBin(argv[3]);
+				Json::Value result = Json::Value(Json::objectValue);
+
+				result["data"] = argv[3];
+				result["public_key"] = public_key;
+				result["sign_data"] = utils::String::BinToHexString(priv_key.Sign(raw_data));
+				printf("%s\n", result.toStyledString().c_str());
+				return true;
+			}
+			else if (s == "--log-dest" && argc > 2) {
+				utils::StringVector dests, levels;
+				log_dest_ = utils::LOG_DEST_NONE;
+				dests = utils::String::Strtok(argv[2], '+');
+
+				for (auto &dest : dests) {
+					std::string destitem = utils::String::ToUpper(dest);
+
+					if (destitem == "ALL")         log_dest_ = utils::LOG_DEST_ALL;
+					else if (destitem == "STDOUT") log_dest_ |= utils::LOG_DEST_OUT;
+					else if (destitem == "STDERR") log_dest_ |= utils::LOG_DEST_ERR;
+					else if (destitem == "FILE")   log_dest_ |= utils::LOG_DEST_FILE;
+				}
+				return false;
+			}
 			else if (s == "--dbtool") {
 				printf("input database path:\n");
 				std::string path;
@@ -225,6 +307,10 @@ namespace bumo {
 			"  --version                       display version information\n"
 			"  --create-hardfork               create hard fork ledger\n"
 			"  --clear-peer-addresses          clear peer list\n"
+			"  --create-keystore <password>    create key store\n"
+			"  --sign-data-keystore <keystore> <password> <blob data>  sign blob data with keystore\n"
+			"  --check-keystore <keystore> <password> check password match the keystore\n"
+			"  --log-dest <dest>               set log dest, LIKE FILE+STDOUT+STDERR\n"
 			"  --help                          display this help\n"
 			);
 	}

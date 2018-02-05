@@ -25,6 +25,7 @@
 #include <glue/glue_manager.h>
 #include <api/web_server.h>
 #include <api/websocket_server.h>
+#include <api/console.h>
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
 #include "configure.h"
@@ -42,6 +43,7 @@ int main(int argc, char *argv[]){
 	bumo::Global::InitInstance();
 	bumo::SlowTimer::InitInstance();
 	utils::Logger::InitInstance();
+	bumo::Console::InitInstance();
 	bumo::PeerManager::InitInstance();
 	bumo::LedgerManager::InitInstance();
 	bumo::ConsensusManager::InitInstance();
@@ -59,6 +61,13 @@ int main(int argc, char *argv[]){
 	do {
 		utils::ObjectExit object_exit;
 		bumo::InstallSignal();
+
+		if (arg.console_){
+			arg.log_dest_ = utils::LOG_DEST_FILE; //cancel the std output
+			bumo::Console &console = bumo::Console::Instance();
+			console.Initialize();
+			object_exit.Push(std::bind(&bumo::Console::Exit, &console));
+		}
 
 		srand((uint32_t)time(NULL));
 		bumo::StatusModule::modules_status_ = new Json::Value;
@@ -85,11 +94,12 @@ int main(int argc, char *argv[]){
 		if (!utils::File::IsAbsolute(log_path)){
 			log_path = utils::String::Format("%s/%s", utils::File::GetBinHome().c_str(), log_path.c_str());
 		}
-		bumo::LoggerConfigure logger_config = bumo::Configure::Instance().logger_configure_;
+		const bumo::LoggerConfigure &logger_config = bumo::Configure::Instance().logger_configure_;
 		utils::Logger &logger = utils::Logger::Instance();
 		logger.SetCapacity(logger_config.time_capacity_, logger_config.size_capacity_);
 		logger.SetExpireDays(logger_config.expire_days_);
-		if (!bumo::g_enable_ || !logger.Initialize((utils::LogDest)logger_config.dest_, (utils::LogLevel)logger_config.level_, log_path, true)){
+		if (!bumo::g_enable_ || !logger.Initialize((utils::LogDest)(arg.log_dest_ >= 0 ? arg.log_dest_ : logger_config.dest_),
+			(utils::LogLevel)logger_config.level_, log_path, true)){
 			LOG_STD_ERR("Initialize logger failed");
 			break;
 		}

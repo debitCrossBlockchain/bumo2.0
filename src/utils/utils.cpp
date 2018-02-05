@@ -18,6 +18,12 @@
 #include "strings.h"
 #include "base_int.h"
 
+#if defined(_WIN32)
+#include <windows.h>
+#else
+#include <termios.h>
+#endif
+
 uint32_t utils::error_code() {
 #ifdef WIN32
 	return (uint32_t)GetLastError();
@@ -154,6 +160,54 @@ time_t utils::GetStartupTime(time_t time_now) {
 #endif
 
 	return nStartupTime;
+}
+
+std::string utils::GetCinPassword(const std::string &_prompt) {
+#if defined(_WIN32)
+	std::cout << _prompt << std::flush;
+	// Get current Console input flags
+	HANDLE hStdin;
+	DWORD fdwSaveOldMode;
+	if ((hStdin = GetStdHandle(STD_INPUT_HANDLE)) == INVALID_HANDLE_VALUE)
+		abort();
+	if (!GetConsoleMode(hStdin, &fdwSaveOldMode))
+		abort();
+	// Set console flags to no echo
+	if (!SetConsoleMode(hStdin, fdwSaveOldMode & (~ENABLE_ECHO_INPUT)))
+		abort();
+	// Read the string
+	std::string ret;
+	std::getline(std::cin, ret);
+	// Restore old input mode
+	if (!SetConsoleMode(hStdin, fdwSaveOldMode))
+		abort();
+	return ret;
+#else
+	struct termios oflags;
+	struct termios nflags;
+	char password[256];
+
+	// disable echo in the terminal
+	tcgetattr(fileno(stdin), &oflags);
+	nflags = oflags;
+	nflags.c_lflag &= ~ECHO;
+	nflags.c_lflag |= ECHONL;
+
+	if (tcsetattr(fileno(stdin), TCSANOW, &nflags) != 0)
+		abort();
+
+	printf("%s", _prompt.c_str());
+	if (!fgets(password, sizeof(password), stdin))
+		abort();
+	password[strlen(password) - 1] = 0;
+
+	// restore terminal
+	if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
+		abort();
+
+
+	return password;
+#endif
 }
 
 #ifndef WIN32
