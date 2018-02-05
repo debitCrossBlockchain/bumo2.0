@@ -100,11 +100,7 @@
     <ClCompile Include="..\..\src\proto\cpp\chain.pb.cc" />
     <ClCompile Include="..\..\src\proto\cpp\common.pb.cc" />
     <ClCompile Include="..\..\src\proto\cpp\consensus.pb.cc" />
-    <ClCompile Include="..\..\src\proto\cpp\helloworld.grpc.pb.cc" />
-    <ClCompile Include="..\..\src\proto\cpp\helloworld.pb.cc" />
     <ClCompile Include="..\..\test\testlib\channel.cpp" />
-    <ClCompile Include="..\..\test\testlib\greeter_client.cc" />
-    <ClCompile Include="..\..\test\testlib\greeter_server.cc" />
     <ClCompile Include="..\..\test\testlib\test.cpp" />
     <ClCompile Include="..\..\test\testlib\testbubikey.cpp" />
     <ClCompile Include="..\..\test\testlib\test_ed25519.cpp" />
@@ -118,8 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\proto\cpp\common.pb.h" />
-    <ClInclude Include="..\..\src\proto\cpp\helloworld.grpc.pb.h" />
-    <ClInclude Include="..\..\src\proto\cpp\helloworld.pb.h" />
     <ClInclude Include="..\..\test\testlib\channel.h" />
     <ClInclude Include="..\..\test\testlib\test.h" />
     <ClInclude Include="..\..\test\testlib\test_v8_terminate.h" />

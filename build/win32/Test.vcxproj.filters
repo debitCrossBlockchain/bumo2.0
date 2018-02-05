@@ -45,18 +45,6 @@
     <ClCompile Include="..\..\test\testlib\testbubikey.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\testlib\greeter_client.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\test\testlib\greeter_server.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\proto\cpp\helloworld.grpc.pb.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\proto\cpp\helloworld.pb.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\test\testlib\channel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -75,12 +63,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test\testlib\test.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\proto\cpp\helloworld.grpc.pb.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\proto\cpp\helloworld.pb.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\test\testlib\channel.h">
