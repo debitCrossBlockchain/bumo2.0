@@ -64,7 +64,7 @@ function transferCoin(dest, amount)
 {
     assert((typeof dest === 'string') && (typeof amount === 'number'), 'Args type error. arg-dest must be a string, and arg-amount must be a number.');
     assert(amount >= 0, 'Coin amount must >= 0.');
-    if(amount === 0){ return; }
+    if(amount === 0){ return true; }
 
     assert(false !== payCoin(dest, String(amount)), 'Pay coin( ' + amount + ') to dest account(' + dest + ') failed.');
     log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
@@ -94,7 +94,7 @@ function insertcandidatesSorted(applicant, amount, candidates){
 
     if(candidates.length >= (validatorSetSize * 2)){
         log('Validator candidates is enough.');
-        return;
+        return false;
     }
 
     let i = 0;
@@ -116,6 +116,7 @@ function setValidatorsFromCandidate(candidates){
     let result        = setValidators(validatorsStr);
     assert(result !== false, 'Set validator sets failed.');
     log('Set new validator sets(' + validatorsStr + ') succeed.');
+    return true;
 }
 
 function applyAsValidatorCandidate(){
@@ -140,7 +141,7 @@ function applyAsValidatorCandidate(){
             if(payCoinNumber < minSuperadditionAmount){
                 log('Superaddition coin amount must more than ' + minSuperadditionAmount);
                 transferCoin(sender, payCoinNumber);
-                return;
+                return false;
             }
 
             applicant = JSON.parse(applicantStr); 
@@ -150,7 +151,7 @@ function applyAsValidatorCandidate(){
              if(payCoinNumber < minPledgeAmount){
                 log('Pledge coin amount must more than ' + minPledgeAmount);
                 transferCoin(sender, payCoinNumber);
-                return;
+                return false;
             }
 
             applicant[pledgeAmountVar] = payCoinNumber;
