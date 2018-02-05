@@ -4,6 +4,7 @@
 #include <cstring>
 #include <exception>
 #include <asio.hpp>
+#include <algorithm>
 
 /*
 #include "ledger.h"
@@ -432,9 +433,30 @@ int main(int32_t argc, char *argv[]){
 	utils::net::Initialize();
 	InitLog();
 
+	assert(utils::String::FormatDecimal(100000000, 1) == "10000000");
+	assert(utils::String::FormatDecimal(100000000, 2) == "1000000");
+	assert(utils::String::FormatDecimal(100000000, 3) == "100000");
+	assert(utils::String::FormatDecimal(100000000, 4) == "10000");
+	assert(utils::String::FormatDecimal(100000000, 5) == "1000");
+	assert(utils::String::FormatDecimal(100000000, 6) == "100");
+	assert(utils::String::FormatDecimal(100000000, 7) == "10");
+	assert(utils::String::FormatDecimal(100000000, 8) == "1");
+	assert(utils::String::FormatDecimal(100000000, 9) == "0.1");
+
+	assert(utils::String::FormatDecimal(123456789, 1) == "12345678.9");
+	assert(utils::String::FormatDecimal(123456789, 2) == "1234567.89");
+	assert(utils::String::FormatDecimal(123456789, 3) == "123456.789");
+	assert(utils::String::FormatDecimal(123456789, 4) == "12345.6789");
+	assert(utils::String::FormatDecimal(123456789, 5) == "1234.56789");
+	assert(utils::String::FormatDecimal(123456789, 6) == "123.456789");
+	assert(utils::String::FormatDecimal(123456789, 7) == "12.3456789");
+	assert(utils::String::FormatDecimal(123456789, 8) == "1.23456789");
+	assert(utils::String::FormatDecimal(123456789, 9) == "0.123456789");
+
 	bumo::KeyStore key_store;
 	Json::Value keyss;
-	bool ret = key_store.Generate("bubi#07150926", keyss);
+	std::string new_private;
+	bool ret = key_store.Generate("bubi#07150926", keyss, new_private);
 	printf("%s\n", keyss.toFastString().c_str());
 	std::string pk;
 	ret = key_store.From(keyss, "bub", pk);
