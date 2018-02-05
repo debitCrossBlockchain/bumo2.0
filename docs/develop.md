@@ -2021,6 +2021,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     {
       "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
       "nonce": 1,
+      "fee":1000,
       "operations": [{
           "type": 1,
           "create_account": {
