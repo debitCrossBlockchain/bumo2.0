@@ -1783,13 +1783,11 @@ function main(input)
        \"method\":\"getApplicantProposal\",
       \"params\":
       {
-         \"address\":\"applicant_buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
+         \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
     }"
   }
 ```
-
-注意：参数中的 address 为 "applicant_" + 地址 组成的字符串。
 
 ##### 查询指定的废止恶意节点提案的信息；
 
@@ -1805,13 +1803,11 @@ function main(input)
        \"method\":\"getAbolishProposal\",
       \"params\":
       {
-         \"address\":\"abolish_buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
+         \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
     }"
   }
 ```
-
-注意：参数中的 address 为 "abolish_" + 地址 组成的字符串。
 
 ### 费用选举合约
 
