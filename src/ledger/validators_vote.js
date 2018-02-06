@@ -1,20 +1,26 @@
 'use strict';
 
-let payCoinNumber          = Number(payCoinAmount);
-let validatorSetSize       = 100;
-let votePassRate           = 0.8;
-let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
-let minPledgeAmount        = 100000000;
-let minSuperadditionAmount = 1000000;
+const validatorSetSize       = 100;
+const votePassRate           = 0.8;
+const effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
+const minPledgeAmount        = 100 * 100000000;
+const minSuperadditionAmount = 100 * 100000000;
+const applicantVar    = 'applicant_';
+const abolishVar      = 'abolish_';
+const proposerVar     = 'proposer';
+const reasonVar       = 'reason';
+const ballotVar       = 'ballot';
+const candidatesVar   = 'validator_candidates';
+const pledgeAmountVar = 'pledge_coin_amount';
+const expiredTimeVar  = 'voting_expired_time';
 
-let applicantVar    = 'applicant_';
-let abolishVar      = 'abolish_';
-let proposerVar     = 'proposer';
-let reasonVar       = 'reason';
-let ballotVar       = 'ballot';
-let candidatesVar   = 'validator_candidates';
-let pledgeAmountVar = 'pledge_coin_amount';
-let expiredTimeVar  = 'voting_expired_time';
+function byString(name){
+    let fun = function(x,y){
+        assert(x && y && typeof x === 'object' && typeof y ==='object', 'x or y undefined, or their type are not object.');
+        return x[name] > y[name] ? -1:1;
+    };
+    return fun;
+}
 
 function by(name, minor){
     let fun = function(x,y){
@@ -22,15 +28,15 @@ function by(name, minor){
 
         let a = x[name];
         let b = y[name];
-        if(a === b){
+        let comRet = int64Compare(b, a);
+
+        if(comRet === 0){
             return typeof minor === 'function' ? minor(y, x) : 0;
         }
-
-        if(typeof a === typeof b){
-            return a > b ? -1:1;
+        else{
+            return comRet;
         }
 
-        return typeof a > typeof b ? -1 : 1;
     };
     return fun;
 }
@@ -62,11 +68,10 @@ function setMetaData(key, value)
 
 function transferCoin(dest, amount)
 {
-    assert((typeof dest === 'string') && (typeof amount === 'number'), 'Args type error. arg-dest must be a string, and arg-amount must be a number.');
-    assert(amount >= 0, 'Coin amount must >= 0.');
-    if(amount === 0){ return true; }
+    assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string.');
+    if(amount === '0'){ return true; }
 
-    assert(false !== payCoin(dest, String(amount)), 'Pay coin( ' + amount + ') to dest account(' + dest + ') failed.');
+    assert(false !== payCoin(dest, amount), 'Pay coin( ' + amount + ') to dest account(' + dest + ') failed.');
     log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
 }
 
@@ -90,7 +95,7 @@ function findI0(arr, key){
 }
 
 function insertcandidatesSorted(applicant, amount, candidates){
-    assert(typeof applicant === 'string' && typeof amount === 'number' && typeof candidates === 'object', 'args error, arg-applicant must be string, arg-amount must be number, arg-candidates must be arrary.');
+    assert(typeof applicant === 'string' && typeof amount === 'string' && typeof candidates === 'object', 'args error, arg-applicant and arg-amount must be string, arg-candidates must be arrary.');
 
     if(candidates.length >= (validatorSetSize * 2)){
         log('Validator candidates is enough.');
@@ -98,10 +103,10 @@ function insertcandidatesSorted(applicant, amount, candidates){
     }
 
     let i = 0;
-    while(amount < candidates[i][1]){ i += 1; }
+    while(amount < candidates[i][1] && amount < candidates.length){ i += 1; }
 
     if(amount === candidates[i][1]){
-        while(applicant > candidates[i][0]){ i += 1; }
+        while(applicant > candidates[i][0] && amount < candidates.length){ i += 1; }
     }
 
     let element = [applicant, amount];
@@ -124,9 +129,11 @@ function applyAsValidatorCandidate(){
     let position   = findI0(candidates, sender);
 
     if (position !== false){
-        let newAmount = candidates[position][1] + payCoinNumber;
+        let candidateAmount = int64Plus(candidates[position][1], payCoinAmount);
+        assert(candidateAmount !== false, 'callBack int64Plus failed.');
+
         candidates.splice(position, 1);
-        let newCandidates = insertcandidatesSorted(sender, newAmount, candidates);
+        let newCandidates = insertcandidatesSorted(sender, candidateAmount, candidates);
         setMetaData(candidatesVar, newCandidates);
 
         if(findI0(newCandidates, sender) < validatorSetSize){
@@ -138,23 +145,19 @@ function applyAsValidatorCandidate(){
         let applicantKey = applicantVar + sender;
         let applicantStr = storageLoad(applicantKey);
         if(applicantStr !== false){
-            if(payCoinNumber < minSuperadditionAmount){
-                log('Superaddition coin amount must more than ' + minSuperadditionAmount);
-                transferCoin(sender, payCoinNumber);
-                return false;
-            }
+            let additionCompare = int64Compare(payCoinAmount, minSuperadditionAmount);
+            assert(additionCompare === 1 || additionCompare === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
             applicant = JSON.parse(applicantStr); 
-            applicant[pledgeAmountVar] += payCoinNumber;
+            let applicantAmount = int64Plus(applicant[pledgeAmountVar], payCoinAmount);
+            assert(applicantAmount !== false, 'callBack int64Plus failed.');
+
+            applicant[pledgeAmountVar] = applicantAmount;
        }
        else{
-             if(payCoinNumber < minPledgeAmount){
-                log('Pledge coin amount must more than ' + minPledgeAmount);
-                transferCoin(sender, payCoinNumber);
-                return false;
-            }
-
-            applicant[pledgeAmountVar] = payCoinNumber;
+            let pledgeCompare = int64Compare(payCoinAmount, minPledgeAmount);
+            assert(pledgeCompare === 1 || pledgeCompare === 0, 'Pledge coin amount must more than ' + minPledgeAmount);
+            applicant[pledgeAmountVar] = payCoinAmount;
             applicant[ballotVar] = [];
        }
 
@@ -223,9 +226,7 @@ function takebackAllPledgeCoin(){
         candidates.splice(position, 1);
         setMetaData(candidatesVar, candidates);
 
-        let validators = getValidators();
-        assert(validators !== false, 'Get validators failed.');
-        if(findI0(validators, sender) !== false) {
+        if(position < validatorSetSize){
             setValidatorsFromCandidate(candidates);
         }
     }
@@ -328,10 +329,10 @@ function query(input_str){
 
     let result = {};
     if(input.method === 'getValidators'){
-        result.Current_validators = getValidators();
+        result.current_validators = getValidators();
     }
     else if(input.method === 'getCandidates'){
-        result.Current_candidates = storageLoad(candidatesVar);
+        result.current_candidates = storageLoad(candidatesVar);
     }
     else if(input.method === 'getApplicantProposal'){
         result.application_proposal = storageLoad(applicantVar + input.params.address);
@@ -340,7 +341,7 @@ function query(input_str){
         result.abolish_proposal = storageLoad(abolishVar + input.params.address);
     }
     else{
-       	result.default = '<unidentified operation type>';
+       	throw '<unidentified operation type>';
     }
 
     log(result);
@@ -369,7 +370,7 @@ function main(input_str){
     	voteAbolishValidator(input.params.address);
     }
     else{
-    	log('<unidentified operation type>');
+        throw '<undidentified operation type>';
     }
 }
 
@@ -377,7 +378,7 @@ function init(){
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
 
-    let initCandidates = validators.sort(by(1, by(0)));
+    let initCandidates = validators.sort(by(1, byString(0)));
     let candidateStr   = JSON.stringify(initCandidates);
     assert(storageStore(candidatesVar, candidateStr) !== false, 'Store candidates failed.');
     assert(setValidators(candidateStr) !== false, 'Set validators failed.');

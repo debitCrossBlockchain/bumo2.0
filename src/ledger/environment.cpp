@@ -228,7 +228,7 @@ namespace bumo{
 				auto validator = sets.mutable_validators(i);
 				Json::Value value;
 				value.append(validator->address());
-				value.append(validator->pledge_coin_amount());
+				value.append(utils::String::ToString(validator->pledge_coin_amount()));
 				validators->append(value);
 			}
 			settings_.Set(validatorsKey, validators);
@@ -251,7 +251,7 @@ namespace bumo{
 
 		for (Json::Value::UInt i = 0; i < validators->size(); i++){
 			std::string address = (*validators)[i][(Json::Value::UInt)0].asString();
-			int64_t pledge_amount = (*validators)[i][1].asInt64();
+			int64_t pledge_amount = utils::String::Stoi64( (*validators)[i][1].asString() );
 
 			auto validator = new_validator.add_validators();
 			validator->set_address(address);
