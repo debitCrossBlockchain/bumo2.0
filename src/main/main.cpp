@@ -71,6 +71,7 @@ int main(int argc, char *argv[]){
 
 		srand((uint32_t)time(NULL));
 		bumo::StatusModule::modules_status_ = new Json::Value;
+#ifndef OS_MAC
 		utils::Daemon &daemon = utils::Daemon::Instance();
 		if (!bumo::g_enable_ || !daemon.Initialize((int32_t)1234))
 		{
@@ -78,6 +79,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&utils::Daemon::Exit, &daemon));
+#endif
 
 		bumo::Configure &config = bumo::Configure::Instance();
 		std::string config_path = bumo::General::CONFIG_FILE;

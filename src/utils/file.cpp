@@ -25,6 +25,10 @@
 #include <fnmatch.h>
 #endif
 
+#ifdef OS_MAC
+#include <libproc.h>
+#endif
+
 #ifdef WIN32
 const char *utils::File::PATH_SEPARATOR = "\\";
 const char  utils::File::PATH_CHAR = '\\';
@@ -293,12 +297,28 @@ std::string utils::File::GetBinPath() {
 		szpath[path_len] = '\0';
 		path = szpath;
 	}
-#else
+#elif defined OS_LINUX
 	ssize_t path_len = readlink("/proc/self/exe", szpath, File::MAX_PATH_LEN * 4 - 1);
 	if (path_len >= 0) {
 		szpath[path_len] = '\0';
 		path = szpath;
 	}
+#elif defined OS_MAC
+	int ret;
+	pid_t pid;
+	char pathbuf[PROC_PIDPATHINFO_MAXSIZE];
+
+	pid = getpid();
+	ret = proc_pidpath(pid, pathbuf, sizeof(pathbuf));
+	if (ret <= 0) {
+		fprintf(stderr, "PID %d: proc_pidpath ();\n", pid);
+		fprintf(stderr, "    %s\n", strerror(errno));
+	}
+	else {
+		//printf("proc %d: %s\n", pid, pathbuf);
+		path = pathbuf;
+	}
+
 #endif
 
 	return path;

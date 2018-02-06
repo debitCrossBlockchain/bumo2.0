@@ -20,8 +20,10 @@
 #include "common.h"
 #include "basen.h"
 
-#ifndef WIN32
+#ifdef OS_LINUX
 #include <sys/sysinfo.h>
+#elif defined OS_MAC
+#include <sys/sysctl.h>
 #endif
 
 namespace utils {
@@ -62,17 +64,25 @@ namespace utils {
 #ifdef WIN32
 #define LOCK_CAS(mem, with, cmp) InterlockedCompareExchange(mem, with, cmp)
 #define LOCK_YIELD()             SwitchToThread()
-#else
+#elif defined OS_LINUX
 #define LOCK_CAS(mem, with, cmp) __sync_val_compare_and_swap(mem, cmp, with)
 #define LOCK_YIELD()             pthread_yield();
+#elif defined OS_MAC
+#define LOCK_CAS(mem, with, cmp) __sync_val_compare_and_swap(mem, cmp, with)
+#define LOCK_YIELD()             pthread_yield_np();
 #endif
 
 #ifdef WIN32
 	inline LONG AtomicInc(volatile LONG *value) {
 		return InterlockedIncrement(value);
 	}
-#else
+#elif defined OS_LINUX
 	inline int32_t AtomicInc(volatile int32_t *value) {
+		__sync_fetch_and_add(value, 1);
+		return *value;
+	}
+#elif defined OS_MAC
+	inline int32_t AtomicInc(volatile long *value) {
 		__sync_fetch_and_add(value, 1);
 		return *value;
 	}
@@ -82,7 +92,12 @@ namespace utils {
 	inline LONGLONG AtomicInc(volatile LONGLONG *value) {
 		return InterlockedIncrement64(value);
 	}
-#else
+#elif defined OS_LINUX
+	inline int64_t AtomicInc(volatile int64_t *value) {
+		__sync_fetch_and_add(value, 1);
+		return *value;
+	}
+#elif defined OS_MAC
 	inline int64_t AtomicInc(volatile int64_t *value) {
 		__sync_fetch_and_add(value, 1);
 		return *value;
@@ -93,8 +108,13 @@ namespace utils {
 	inline LONG AtomicDec(volatile LONG *value) {
 		return InterlockedDecrement(value);
 	}
-#else
+#elif defined OS_LINUX
 	inline int32_t AtomicDec(volatile int32_t *value) {
+		__sync_fetch_and_sub(value, 1);
+		return *value;
+	}
+#elif defined OS_MAC
+	inline int32_t AtomicDec(volatile long *value) {
 		__sync_fetch_and_sub(value, 1);
 		return *value;
 	}
@@ -104,7 +124,12 @@ namespace utils {
 	inline LONGLONG AtomicDec(volatile LONGLONG *value) {
 		return InterlockedDecrement64(value);
 	}
-#else
+#elif defined OS_LINUX
+	inline int64_t AtomicDec(volatile int64_t *value) {
+		__sync_fetch_and_sub(value, 1);
+		return *value;
+	}
+#elif defined OS_MAC
 	inline int64_t AtomicDec(volatile int64_t *value) {
 		__sync_fetch_and_sub(value, 1);
 		return *value;

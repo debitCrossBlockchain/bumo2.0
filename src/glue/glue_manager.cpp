@@ -562,8 +562,8 @@ namespace bumo {
 	void GlueManager::GetModuleStatus(Json::Value &data) {
 		data["name"] = "glue_manager";
 
-		data["transaction_size"] = topic_caches_.size();
-		data["cache_topic_size"] = last_topic_seqs_.size();
+        data["transaction_size"] = (Json::UInt64)topic_caches_.size();
+		data["cache_topic_size"] = (Json::UInt64)last_topic_seqs_.size();
 
 		Json::Value &system_json = data["system"];
 		utils::Timestamp time_stamp(utils::GetStartupTime() * utils::MICRO_UNITS_PER_SEC);

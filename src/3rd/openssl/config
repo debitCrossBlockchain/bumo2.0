@@ -565,7 +565,12 @@ case "$GUESSOS" in
 	    OUT="darwin64-x86_64-cc"
 	else
 	    OUT="darwin-i386-cc"
-	fi ;;
+	fi 
+	CUR_OS=`(uname) 2>/dev/null`
+	echo $CUR_OS $ISA64 $KERNEL_BITS
+	if [ "$CUR_OS" == "Darwin" ]; then
+	    OUT="darwin64-x86_64-cc"
+	fi;;
   armv6+7-*-iphoneos)
 	options="$options -arch%20armv6 -arch%20armv7"
 	OUT="iphoneos-cross" ;;

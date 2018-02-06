@@ -43,8 +43,10 @@ void utils::set_error_code(uint32_t code) {
 void utils::Sleep(int time_milli) {
 #ifdef WIN32
 	::Sleep(time_milli);
-#else
+#elif defined OS_LINUX
 	::usleep(((__useconds_t)time_milli) * 1000);
+#elif defined OS_MAC
+	::usleep(time_milli * 1000);
 #endif //WIN32
 }
 
@@ -131,7 +133,7 @@ time_t utils::GetStartupTime(time_t time_now) {
 	}
 
 	nStartupTime = time_now - (time_t)(nCount.QuadPart / nFreq.QuadPart);
-#else
+#elif defined OS_LINUX
 	struct sysinfo nInfo;
 
 	memset(&nInfo, 0, sizeof(nInfo));
@@ -157,6 +159,15 @@ time_t utils::GetStartupTime(time_t time_now) {
 
 	//uint32 nTimeSecs = Utils::String::ParseNumber(nValues[0], (uint32)0);
 	//nStartupTime = nTimeNow - (time_t)nTimeSecs;
+#elif defined OS_MAC
+	struct timeval boottime;
+	size_t len = sizeof(boottime);
+	int mib[2] = { CTL_KERN, KERN_BOOTTIME };
+	if (sysctl(mib, 2, &boottime, &len, NULL, 0) < 0)
+	{
+		return -1.0;
+	}
+	nStartupTime = boottime.tv_sec;
 #endif
 
 	return nStartupTime;
@@ -210,7 +221,7 @@ std::string utils::GetCinPassword(const std::string &_prompt) {
 #endif
 }
 
-#ifndef WIN32
+#ifdef OS_LINUX
 extern "C"
 {
 	void * __wrap_memcpy(void *dest, const void *src, size_t n) {
@@ -218,4 +229,5 @@ extern "C"
 		return memcpy(dest, src, n);
 	}
 }
+#elif defined OS_MAC
 #endif

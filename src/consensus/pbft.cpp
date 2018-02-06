@@ -343,7 +343,7 @@ namespace bumo {
 
 			//for tags
 			item["phase"] = instance.phase_;
-			item["phase_item"] = instance.phase_item_;
+			item["phase_item"] = (Json::UInt64)instance.phase_item_;
 			item["start_time"] = instance.start_time_;
 			item["end_time"] = instance.end_time_;
 			item["last_propose_time"] = instance.last_propose_time_;
@@ -1876,7 +1876,7 @@ namespace bumo {
 		data["view_number"] = view_number_;
 		data["ckp_interval"] = ckp_interval_;
 		data["last_exe_seq"] = last_exe_seq_;
-		data["fault_number"] = fault_number_;
+		data["fault_number"] = (Json::Int64)fault_number_;
 		data["view_active"] = view_active_;
 		Json::Value &instances = data["instances"];
 		for (PbftInstanceMap::const_iterator iter = instances_.begin(); iter != instances_.end(); iter++) {
@@ -1886,7 +1886,7 @@ namespace bumo {
 			item["vn"] = index.view_number_;
 			item["seq"] = index.sequence_;
 			item["phase"] = GetPhaseDesc(instance.phase_);
-			item["phase_item"] = instance.phase_item_;
+			item["phase_item"] = (Json::UInt64)instance.phase_item_;
 			item["pre_prepare"] = PbftDesc::GetPrePrepare(instance.pre_prepare_);
 
 			Json::Value &prepares = item["prepares"];
@@ -1935,7 +1935,7 @@ namespace bumo {
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			validators[validators.size()] = set.validators(i);
 		}
-		data["quorum_size"] = quorum_size;
+		data["quorum_size"] = (Json::UInt64)quorum_size;
 	}
 
 	int32_t Pbft::IsLeader() {

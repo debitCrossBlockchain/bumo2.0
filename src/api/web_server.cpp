@@ -218,7 +218,7 @@ namespace bumo {
 		data["start_request_count"] = server_ptr_->start_count_;
 		data["end_request_count"] = server_ptr_->end_count_;
 		data["expire_request_count"] = server_ptr_->expire_count_;
-		data["thread_count"] = thread_count_;
+		data["thread_count"] = (Json::Int64)thread_count_;
 	}
 
 	uint16_t WebServer::GetListenPort(){

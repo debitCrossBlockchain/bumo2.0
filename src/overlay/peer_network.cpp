@@ -814,12 +814,12 @@ namespace bumo {
 	void PeerNetwork::GetModuleStatus(Json::Value &data) {
 		do {
 			utils::MutexGuard guard(conns_list_lock_);
-			data["peer_list_size"] = connections_.size();
-			data["peer_listdel_size"] = connections_delete_.size();
+			data["peer_list_size"] = (Json::UInt64)connections_.size();
+			data["peer_listdel_size"] = (Json::UInt64)connections_delete_.size();
 		} while (false);
-		data["peer_cache_size"] = db_peer_cache_.size();
-		data["recv_peerlist_size"] = received_peer_list_.size();
-		data["broad_record_size"] = broadcast_.GetRecordSize();
+		data["peer_cache_size"] = (Json::UInt64)db_peer_cache_.size();
+		data["recv_peerlist_size"] = (Json::UInt64)received_peer_list_.size();
+		data["broad_record_size"] = (Json::UInt64)broadcast_.GetRecordSize();
 		int active_size = 0;
 		Json::Value peers;
 

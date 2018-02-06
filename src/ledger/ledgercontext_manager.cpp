@@ -581,8 +581,8 @@ namespace bumo {
 
 	void LedgerContextManager::GetModuleStatus(Json::Value &data) {
 		utils::MutexGuard guard(ctxs_lock_);
-		data["completed_size"] = completed_ctxs_.size();
-		data["running_size"] = running_ctxs_.size();
+		data["completed_size"] = (Json::UInt64)completed_ctxs_.size();
+		data["running_size"] = (Json::UInt64)running_ctxs_.size();
 	}
 
 	void LedgerContextManager::OnTimer(int64_t current_time) {

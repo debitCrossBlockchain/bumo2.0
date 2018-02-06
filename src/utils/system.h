@@ -31,7 +31,7 @@
 #include <Winnls.h>
 #include <windows.h> 
 #include <lm.h>
-#else
+#elif defined OS_LINUX
 #include <cstring>
 #include <algorithm>
 #include <net/if.h>
@@ -41,6 +41,13 @@
 #include <sys/statfs.h>
 #include <sys/utsname.h>
 #include <shadow.h>
+#elif defined OS_MAC
+#include <cstring>
+#include <algorithm>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <sys/utsname.h>
 #endif
 
 namespace utils {

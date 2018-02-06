@@ -24,6 +24,11 @@ namespace Json {
    typedef unsigned __int64 UInt64;
 	#define _JSON_I64FMT_ "%I64d"
 	#define _JSON_U64FMT_ "%I64u"
+#elif defined OS_MAC
+   typedef long long Int64;
+   typedef unsigned long long UInt64;
+   #define _JSON_I64FMT_ "%ld"
+   #define _JSON_U64FMT_ "%lu"
 #elif defined(__x86_64__)
 
    typedef long Int64;

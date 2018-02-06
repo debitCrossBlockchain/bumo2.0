@@ -171,7 +171,11 @@ esac
 
 JAVA_LDFLAGS="$PLATFORM_LDFLAGS"
 
-if [ "$CROSS_COMPILE" = "true" -o "$FBCODE_BUILD" = "true" ]; then
+if [ "$PLATFORM" = "OS_MACOSX" ]; then
+    CC=clang 
+    CXX=clang++
+    CXXFLAGS='-O3 -Wunused-command-line-argument -g'
+elif [ "$CROSS_COMPILE" = "true" -o "$FBCODE_BUILD" = "true" ]; then
     # Cross-compiling; do not try any compilation tests.
     # Also don't need any compilation tests if compiling on fbcode
     true
