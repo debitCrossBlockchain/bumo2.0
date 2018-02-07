@@ -103,10 +103,10 @@ function insertcandidatesSorted(applicant, amount, candidates){
     }
 
     let i = 0;
-    while(amount < candidates[i][1] && amount < candidates.length){ i += 1; }
+    while((int64Compare(amount, candidates[i][1]) === -1) && i < candidates.length){ i += 1; }
 
     if(amount === candidates[i][1]){
-        while(applicant > candidates[i][0] && amount < candidates.length){ i += 1; }
+        while(applicant > candidates[i][0] && i < candidates.length){ i += 1; }
     }
 
     let element = [applicant, amount];
