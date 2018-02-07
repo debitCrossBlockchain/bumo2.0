@@ -323,11 +323,17 @@ function voteAbolishValidator(malicious){
     assert(leftCoin !== false, 'Callback int64Sub failed.');
 
     transferCoin(malicious, leftCoin);
-    let proposer = abolishProposal[proposerVar];
     setMetaData(abolishKey);
     candidates.splice(position, 1);
 
     let leftValidatorsCnt = validators.length - 1;
+    let award = int64Mod(forfeit, leftValidatorsCnt);
+    assert(award !== false, 'Callback int64Mod failed.');
+    if(award !== '0'){
+        candidates[0][1] = int64Plus(candidates[0][1], award);
+        assert(candidates[0][1] !== false, 'Callback int64Plus failed.');
+    }
+
     let average = int64Div(forfeit, leftValidatorsCnt);
     assert(average !== false, 'Callback int64Div failed.');
 
@@ -335,18 +341,7 @@ function voteAbolishValidator(malicious){
     while(i < leftValidatorsCnt){
         candidates[i][1] = int64Plus(candidates[i][1], average);
         assert(candidates[i][1] !== false, 'Callback int64Plus failed.');
-
         i += 1;
-    }
-
-    let award = int64Mod(forfeit, leftValidatorsCnt);
-    assert(award !== false, 'Callback int64Mod failed.');
-    if(award !== '0'){
-        let proposerPos = findI0(candidates, proposer);
-        let newProposerAmount = int64Plus(candidates[proposerPos][1], award);
-        assert(newProposerAmount !== false, 'Callback int64Plus failed.');
-        candidates.splice(proposerPos, 1);
-        candidates = insertcandidatesSorted(abolishProposal[proposerVar], newProposerAmount, candidates);
     }
 
     setMetaData(candidatesVar, candidates);
