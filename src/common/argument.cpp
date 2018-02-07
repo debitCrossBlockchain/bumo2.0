@@ -105,6 +105,10 @@ namespace bumo {
 				printf("%s\n", PublicKey::Verify(utils::String::HexStringToBin(argv[2]), utils::String::HexStringToBin(argv[3]), argv[4]) ? "true" : "false");
 				return true;
 			}
+			else if (s == "--check-address" && argc > 2) {
+				printf("%s\n", PublicKey::IsAddressValid(argv[2]) ? "ok" : "error");
+				return true;
+			}
 			else if (s == "--sign-data" && argc > 3) {
 				PrivateKey priv_key(argv[2]);
 				std::string public_key = priv_key.GetEncPublicKey();
@@ -133,12 +137,15 @@ namespace bumo {
 				printf("%s\n", result.toStyledString().c_str());
 				return true;
 			}
-			else if (s == "--create-account" && argc > 2) {
-				SignatureType type = GetSignTypeByDesc(argv[2]);
-				if (type == SIGNTYPE_NONE) {
-					printf("parameter \"%s\" error, support ed25519 \n", argv[2]);
-					return true;
-				} 
+			else if (s == "--create-account") {
+				SignatureType type = SIGNTYPE_ED25519;
+				if (argc > 2) {
+					type = GetSignTypeByDesc(argv[2]);
+					if (type == SIGNTYPE_NONE) {
+						printf("parameter \"%s\" error, support ed25519 \n", argv[2]);
+						return true;
+					}
+				}
 
 				PrivateKey priv_key(type);
 				if (!priv_key.IsValid()) {
@@ -358,10 +365,11 @@ namespace bumo {
 			"OPTIONS:\n"
 			"  --dropdb                                                      clean up database\n"
 			"  --peer-address <node-priv-key>                                get peer address from crypted node private key\n"
-			"  --create-account <crypto>                                     create account, support ed25519\n"
+			"  --create-account [crypto]                                     create account, support ed25519\n"
 			"  --get-address <node-priv-key>                                 get address from private key\n"
 			"  --sign-data <node-priv-key> <blob data>                       sign blob data\n"
 			"  --check-signed-data <blob data> <signed data> <public key>    check signed data\n"
+			"  --check-address <address>                                     check address\n"
 			"  --hardware-address                                            get local hardware address\n"
 			"  --clear-consensus-status                                      delete consensus status\n"
 			"  --sm3 <arg>                                                   generate sm3 hash \n"
@@ -371,7 +379,7 @@ namespace bumo {
 			"  --create-hardfork                                             create hard fork ledger\n"
 			"  --clear-peer-addresses                                        clear peer list\n"
 			"  --create-keystore <password>                                  create key store\n"
-			"  --create-keystore-from-privatekey <private key> <password>    create key store\n"
+			"  --create-keystore-from-privatekey <private key> <password>    create key store from private key\n"
 			"  --sign-data-with-keystore <keystore> <password> <blob data>   sign blob data with keystore\n"
 			"  --check-keystore <keystore> <password>                        check password match the keystore\n"
 			"  --get-privatekey-from-keystore <keystore> <password>          check password match the keystore\n"

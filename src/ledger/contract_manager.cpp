@@ -215,6 +215,7 @@ namespace bumo{
 		js_func_read_["int64Mod"] = V8Contract::CallBackInt64Mod;
 		js_func_read_["int64Div"] = V8Contract::CallBackInt64Div;
 		js_func_read_["int64Compare"] = V8Contract::CallBackInt64Compare;
+		js_func_read_["toSatoshi"] = V8Contract::CallBackToSatoshi;
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 
 		//write func
@@ -725,35 +726,35 @@ namespace bumo{
 	void V8Contract::CallBackConfigFee(const v8::FunctionCallbackInfo<v8::Value>& args){
 		do{
 			if (args.Length() < 1) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			if (!args[0]->IsString()) {
-				LOG_ERROR("parameter should be string");
+				LOG_TRACE("parameter should be string");
 				break;
 			}
 			
 			v8::HandleScope scope(args.GetIsolate());
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 
 			if (v8_contract->parameter_.this_address_ != General::CONTRACT_FEE_ADDRESS) {
-				LOG_ERROR("This address has no priority");
+				LOG_TRACE("This address has no priority");
 				break;
 			} 
 
 			v8::String::Utf8Value  utf8(args[0]);
 			Json::Value json;
 			if (!json.fromCString(ToCString(utf8))) {
-				LOG_ERROR("fromCString fail, fatal error");
+				LOG_TRACE("fromCString fail, fatal error");
 				break;
 			}
 
-			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			ledger_context->GetTopTx()->environment_->UpdateFeeConfig(json);
+			LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
+			ledger_frm->environment_->UpdateFeeConfig(json);
 			args.GetReturnValue().Set(true);
 			return;
 		} while (false);
@@ -765,12 +766,12 @@ namespace bumo{
 		std::string desc = "assert expression occur";
 		do {
 			if (args.Length() < 1 || args.Length() > 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				desc.append(",parameter error");
 				break;
 			}
 			if (!args[0]->IsBoolean()) {
-				LOG_ERROR("parameter args[0] should be boolean");
+				LOG_TRACE("parameter args[0] should be boolean");
 				desc.append(",parameter error");
 				break;
 			}
@@ -778,7 +779,7 @@ namespace bumo{
 			v8::HandleScope scope(args.GetIsolate());
 			if (args.Length() == 2) {
 				if (!args[1]->IsString()) {
-					LOG_ERROR("parameter args[1] should be string");
+					LOG_TRACE("parameter args[1] should be string");
 					desc.append(",parameter error");
 					break;
 				}
@@ -813,13 +814,13 @@ namespace bumo{
 	void V8Contract::Include(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
-				LOG_ERROR("Include parameter error, args length(%d) not equal 1", args.Length());
+				LOG_TRACE("Include parameter error, args length(%d) not equal 1", args.Length());
 				args.GetReturnValue().Set(false);
 				break;
 			}
 
 			if (!args[0]->IsString()) {
-				LOG_ERROR("Include parameter error, parameter should be a String");
+				LOG_TRACE("Include parameter error, parameter should be a String");
 				args.GetReturnValue().Set(false);
 				break;
 			}
@@ -827,7 +828,7 @@ namespace bumo{
 
 			std::map<std::string, std::string>::iterator find_source = jslib_sources.find(*str);
 			if (find_source == jslib_sources.end()) {
-				LOG_ERROR("Can't find the include file(%s) in jslib directory", *str);
+				LOG_TRACE("Can't find the include file(%s) in jslib directory", *str);
 				args.GetReturnValue().Set(false);
 				break;
 			}
@@ -894,7 +895,7 @@ namespace bumo{
 		v8::HandleScope scope(args.GetIsolate());
 		V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 		if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-			LOG_ERROR("Can't find contract object by isolate id");
+			LOG_TRACE("Can't find contract object by isolate id");
 			return;
 		}
 		std::string this_contract = v8_contract->parameter_.this_address_;
@@ -908,19 +909,19 @@ namespace bumo{
 
 	void V8Contract::CallBackTopicLog(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		if (args.Length() < 2 || args.Length() > 6) {
-			LOG_ERROR("parameter error");
+			LOG_TRACE("parameter error");
 			args.GetReturnValue().Set(false);
 			return;
 		}
 		do {
 			if (!args[0]->IsString()) { 
-				LOG_ERROR("CallBackTopicLog parameter 0 should be a String");
+				LOG_TRACE("CallBackTopicLog parameter 0 should be a String");
 				break;
 			}
 
 			for (int i = 1; i < args.Length();i++) {
 				if (!(args[i]->IsString() || args[i]->IsNumber() || args[i]->IsBoolean())) {
-					LOG_ERROR("CallBackTopicLog parameter %d should be a String , Number or Boolean",i);
+					LOG_TRACE("CallBackTopicLog parameter %d should be a String , Number or Boolean", i);
 					break;
 				}
 			}
@@ -930,7 +931,7 @@ namespace bumo{
 			v8::HandleScope scope(args.GetIsolate());
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 			LedgerContext *ledger_context = v8_contract->parameter_.ledger_context_;
@@ -956,7 +957,7 @@ namespace bumo{
 			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
-				LOG_ERROR("Do transaction failed");
+				LOG_TRACE("Do transaction failed");
 				args.GetIsolate()->ThrowException(
 					v8::String::NewFromUtf8(args.GetIsolate(), "Do tx failed",
 					v8::NewStringType::kNormal).ToLocalChecked());
@@ -971,7 +972,7 @@ namespace bumo{
 
 	void V8Contract::CallBackGetAccountAsset(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		if (args.Length() != 2) {
-			LOG_ERROR("parameter error");
+			LOG_TRACE("parameter error");
 			args.GetReturnValue().Set(false);
 			return;
 		}
@@ -979,13 +980,13 @@ namespace bumo{
 		do {
 			v8::HandleScope handle_scope(args.GetIsolate());
 			if (!args[0]->IsString()) {
-				LOG_ERROR("contract execute error,CallBackGetAccountAsset, parameter 1 should be a String");
+				LOG_TRACE("contract execute error,CallBackGetAccountAsset, parameter 1 should be a String");
 				break;
 			}
 			std::string address = ToCString(v8::String::Utf8Value(args[0]));
 
 			if (!args[1]->IsObject()) {
-				LOG_ERROR("contract execute error,CallBackGetAccountAsset parameter 2 should be a object");
+				LOG_TRACE("contract execute error,CallBackGetAccountAsset parameter 2 should be a object");
 				break;
 			}
 
@@ -1004,7 +1005,7 @@ namespace bumo{
 			bool getAccountSucceed = false;
 			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
 			if (!environment->GetEntry(address, account_frm)) {
-				LOG_ERROR("not found account");
+				LOG_TRACE("not found account");
 				break;
 			}
 			else {
@@ -1013,7 +1014,7 @@ namespace bumo{
 
 			if (!getAccountSucceed) {
 				if (!Environment::AccountFromDB(address, account_frm)) {
-					LOG_ERROR("not found account");
+					LOG_TRACE("not found account");
 					break;
 				}
 			}
@@ -1042,18 +1043,18 @@ namespace bumo{
 
 		do {
 			if (args.Length() != 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				args.GetReturnValue().Set(false);
 				break;
 			}
 
 			if (!args[0]->IsString()) { //the called contract address
-				LOG_ERROR("contract execute error,CallBackContractQuery, parameter 0 should be a String");
+				LOG_TRACE("contract execute error,CallBackContractQuery, parameter 0 should be a String");
 				break;
 			}
 
 			if (!args[1]->IsString()) {
-				LOG_ERROR("contract execute error,CallBackContractQuery, parameter 1 should be a String");
+				LOG_TRACE("contract execute error,CallBackContractQuery, parameter 1 should be a String");
 				break;
 			}
 
@@ -1067,24 +1068,24 @@ namespace bumo{
 
 			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
 			if (!environment->GetEntry(address, account_frm)) {
-				LOG_ERROR("not found account");
+				LOG_TRACE("not found account");
 				break;
 			}
 			else {
 				if (!Environment::AccountFromDB(address, account_frm)) {
-					LOG_ERROR("not found account");
+					LOG_TRACE("not found account");
 					break;
 				}
 			}
 
 			if (!account_frm->GetProtoAccount().has_contract()) {
-				LOG_ERROR("the called address not contract");
+				LOG_TRACE("the called address not contract");
 				break;
 			}
 
 			protocol::Contract contract = account_frm->GetProtoAccount().contract();
 			if (contract.payload().size() == 0) {
-				LOG_ERROR("the called address not contract");
+				LOG_TRACE("the called address not contract");
 				break;
 			}
 
@@ -1126,14 +1127,14 @@ namespace bumo{
 		do {
 			if (args.Length() != 1) {
 				args.GetReturnValue().SetNull();
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			v8::Local<v8::Object> obj = args[0]->ToObject();
 			if (!obj->IsString()) {
-				LOG_ERROR("CallBackDoOperation, parameter 0 should be string");
+				LOG_TRACE("CallBackDoOperation, parameter 0 should be string");
 				break;
 			}
 
@@ -1142,20 +1143,20 @@ namespace bumo{
 			Json::Value transaction_json;
 
 			if (!transaction_json.fromCString(strdata)) {
-				LOG_ERROR("string to json failed, string=%s", strdata);
+				LOG_TRACE("string to json failed, string=%s", strdata);
 				break;
 			}
 
 			protocol::Transaction transaction;
 			std::string error_msg;
 			if (!Json2Proto(transaction_json, transaction, error_msg)) {
-				LOG_ERROR("json to protocol object failed: json=%s. error=%s", strdata, error_msg.c_str());
+				LOG_TRACE("json to protocol object failed: json=%s. error=%s", strdata, error_msg.c_str());
 				break;
 			}
 
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
@@ -1176,7 +1177,7 @@ namespace bumo{
 			}
 
 			if (ope_has_pri) {
-				LOG_ERROR("Contract operation cann't has priv object");
+				LOG_TRACE("Contract operation cann't has priv object");
 				break;
 			}
 
@@ -1184,14 +1185,14 @@ namespace bumo{
 			env.mutable_transaction()->CopyFrom(transaction);
 
 			if (v8_contract->IsReadonly()) {
-				LOG_ERROR("The contract is readonly");
+				LOG_TRACE("The contract is readonly");
 				break;
 			}
 
 			Result tmp_result = LedgerManager::Instance().DoTransaction(env, ledger_context);
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
-				LOG_ERROR("Do transaction failed");
+				LOG_TRACE("Do transaction failed");
 				args.GetIsolate()->ThrowException(
 					v8::String::NewFromUtf8(args.GetIsolate(), "Do tx failed",
 					v8::NewStringType::kNormal).ToLocalChecked());
@@ -1211,7 +1212,7 @@ namespace bumo{
 		do {
 			if (args.Length() != 0) 
 			{
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				args.GetReturnValue().Set(false);
 				break;
 			}
@@ -1237,32 +1238,32 @@ namespace bumo{
 		{
 			if (args.Length() != 1)
 			{
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 
 			if (!args[0]->IsString()) {
-				LOG_ERROR("arg0 should be string");
+				LOG_TRACE("arg0 should be string");
 				break;
 			}
 
 			v8::HandleScope handle_scope(args.GetIsolate());
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 
 			if (v8_contract->parameter_.this_address_ != General::CONTRACT_VALIDATOR_ADDRESS)
 			{
-				LOG_ERROR("contract(%s) has no permission to call callBackSetValidators interface", v8_contract->parameter_.this_address_.c_str());
+				LOG_TRACE("contract(%s) has no permission to call callBackSetValidators interface", v8_contract->parameter_.this_address_.c_str());
 				break;
 			}
 
 			v8::String::Utf8Value  utf8(args[0]);
 			Json::Value json;
 			if (!json.fromCString(ToCString(utf8))) {
-				LOG_ERROR("fromCString fail, fatal error");
+				LOG_TRACE("fromCString fail, fatal error");
 				break;
 			}
 
@@ -1270,6 +1271,7 @@ namespace bumo{
 			ledger_context->GetTopTx()->environment_->UpdateNewValidators(json);
 			args.GetReturnValue().Set(true);
 			return;
+
 		} while (false);
 		args.GetReturnValue().Set(false);
 	}
@@ -1277,7 +1279,7 @@ namespace bumo{
 	void V8Contract::CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() < 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				args.GetReturnValue().Set(false);
 				break;
 			}
@@ -1285,12 +1287,12 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString()) {
-				LOG_ERROR("contract execute error,CallBackPayCoin, parameter 0 should be a string");
+				LOG_TRACE("contract execute error,CallBackPayCoin, parameter 0 should be a string");
 				break;
 			}
 
 			if (!args[1]->IsString()) {
-				LOG_ERROR("contract execute error,CallBackPayCoin, parameter 1 should be a string");
+				LOG_TRACE("contract execute error,CallBackPayCoin, parameter 1 should be a string");
 				break;
 			}
 
@@ -1301,14 +1303,14 @@ namespace bumo{
 
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			ledger_context->GetBottomTx()->ContractStepInc(100);
 
 			if (v8_contract->IsReadonly()) {
-				LOG_ERROR("The contract is readonly");
+				LOG_TRACE("The contract is readonly");
 				break;
 			}
 
@@ -1329,7 +1331,7 @@ namespace bumo{
 			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
-				LOG_ERROR("Do transaction failed");
+				LOG_TRACE("Do transaction failed");
 				args.GetIsolate()->ThrowException(
 					v8::String::NewFromUtf8(args.GetIsolate(), "Do tx failed",
 					v8::NewStringType::kNormal).ToLocalChecked());
@@ -1346,18 +1348,18 @@ namespace bumo{
 	void V8Contract::CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 			if (!args[0]->IsString()) {
-				LOG_ERROR("contract execute error, parameter 0 should be a string");
+				LOG_TRACE("contract execute error, parameter 0 should be a string");
 				break;
 			}
 
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
@@ -1388,17 +1390,17 @@ namespace bumo{
 	void V8Contract::CallBackGetBlockHash(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 			if (!args[0]->IsNumber()) {
-				LOG_ERROR("contract execute error, parameter 0 should be a string");
+				LOG_TRACE("contract execute error, parameter 0 should be a string");
 				break;
 			}
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
@@ -1407,7 +1409,7 @@ namespace bumo{
 			protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
 			int64_t seq = lcl.seq() - (int64_t)args[0]->NumberValue();
 			if (seq <= lcl.seq() - 1024 || seq > lcl.seq()) {
-				LOG_ERROR("The parameter seq(" FMT_I64 ") <= " FMT_I64 " or > " FMT_I64, seq, lcl.seq() - 1024, lcl.seq());
+				LOG_TRACE("The parameter seq(" FMT_I64 ") <= " FMT_I64 " or > " FMT_I64, seq, lcl.seq() - 1024, lcl.seq());
 				break;
 			}
 
@@ -1448,26 +1450,26 @@ namespace bumo{
 			}
 
 			if (args.Length() != para_num) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (para_type_valid) {
-				LOG_ERROR("Storage operation parameter should be string");
+				LOG_TRACE("Storage operation parameter should be string");
 				break;
 			}
 
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			ledger_context->GetBottomTx()->ContractStepInc(100);
 
 			if (v8_contract->IsReadonly()) {
-				LOG_ERROR("The contract is readonly");
+				LOG_TRACE("The contract is readonly");
 				break;
 			}
 
@@ -1478,7 +1480,7 @@ namespace bumo{
 				value = ToCString(v8::String::Utf8Value(args[1]));
 			}
 			if (key.empty()) {
-				LOG_ERROR("Key is empty");
+				LOG_TRACE("Key is empty");
 				break;
 			}
 
@@ -1495,7 +1497,7 @@ namespace bumo{
 			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
-				LOG_ERROR("Do transaction failed");
+				LOG_TRACE("Do transaction failed");
 				args.GetIsolate()->ThrowException(
 					v8::String::NewFromUtf8(args.GetIsolate(), "Do tx failed",
 					v8::NewStringType::kNormal).ToLocalChecked());
@@ -1511,19 +1513,19 @@ namespace bumo{
 	void V8Contract::CallBackStorageLoad(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString()) {
-				LOG_ERROR("contract execute error,Storage load, parameter 0 should be a String");
+				LOG_TRACE("contract execute error,Storage load, parameter 0 should be a String");
 				break;
 			}
 
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				LOG_ERROR("Can't find contract object by isolate id");
+				LOG_TRACE("Can't find contract object by isolate id");
 				break;
 			}
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
@@ -1556,17 +1558,17 @@ namespace bumo{
 	void V8Contract::CallBackInt64Plus(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Plus, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Plus, parameter 0 should be a String or Number");
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Plus, parameter 1 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Plus, parameter 1 should be a String or Number");
 				break;
 			}
 
@@ -1587,17 +1589,17 @@ namespace bumo{
 	void V8Contract::CallBackInt64Sub(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Sub, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Sub, parameter 0 should be a String or Number");
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Sub, parameter 1 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Sub, parameter 1 should be a String or Number");
 				break;
 			}
 
@@ -1618,17 +1620,17 @@ namespace bumo{
 	void V8Contract::CallBackInt64Compare(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Compare, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Compare, parameter 0 should be a String or Number");
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Compare, parameter 1 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Compare, parameter 1 should be a String or Number");
 				break;
 			}
 
@@ -1653,17 +1655,17 @@ namespace bumo{
 	void V8Contract::CallBackInt64Div(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Div, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Div, parameter 0 should be a String or Number");
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Div, parameter 1 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Div, parameter 1 should be a String or Number");
 				break;
 			}
 
@@ -1672,7 +1674,7 @@ namespace bumo{
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
 			if (iarg1 == 0 ) {
-				LOG_ERROR("Parameter error");
+				LOG_TRACE("Parameter error");
 				break;
 			}
 
@@ -1686,17 +1688,17 @@ namespace bumo{
 	void V8Contract::CallBackInt64Mod(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Mod, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Mod, parameter 0 should be a String or Number");
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Mod, parameter 1 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Mod, parameter 1 should be a String or Number");
 				break;
 			}
 
@@ -1705,7 +1707,7 @@ namespace bumo{
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
 			if (iarg1 <= 0 || iarg0 < 0) {
-				LOG_ERROR("Parameter error");
+				LOG_TRACE("Parameter error");
 				break;
 			}
 
@@ -1720,17 +1722,17 @@ namespace bumo{
 	void V8Contract::CallBackInt64Mul(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 2) {
-				LOG_ERROR("parameter error");
+				LOG_TRACE("parameter error");
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Mul, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Mul, parameter 0 should be a String or Number");
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				LOG_ERROR("contract execute error, int64Mul, parameter 1 should be a String or Number");
+				LOG_TRACE("contract execute error, int64Mul, parameter 1 should be a String or Number");
 				break;
 			}
 
@@ -1741,6 +1743,32 @@ namespace bumo{
 
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
 				args.GetIsolate(), utils::String::ToString(iarg0 * iarg1).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackToSatoshi(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 1) {
+				LOG_TRACE("parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString() && !args[0]->IsNumber()) {
+				LOG_TRACE("contract execute error, toSatoshi, parameter 0 should be a String or Number");
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+			if (utils::String::IsDecNumber(arg0, General::BU_DECIMALS)) {
+				LOG_TRACE("Not decimal number");
+				break;
+			} 
+
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), utils::String::MultiplyDecimal(arg0, General::BU_DECIMALS).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 			return;
 		} while (false);
 		args.GetReturnValue().Set(false);

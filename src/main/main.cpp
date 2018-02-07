@@ -230,6 +230,10 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::ContractManager::Exit, &contract_manager));
 		LOG_INFO("Initialize contract manager successful");
 
+		if (!arg.console_) { //the log is used for noticing the gui
+			printf("ready\n");
+		}
+
 		RunLoop();
 
 		LOG_INFO("Process begin quit...");

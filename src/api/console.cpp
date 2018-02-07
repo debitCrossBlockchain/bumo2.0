@@ -309,13 +309,25 @@ namespace bumo {
 				delete tmp_private;
 			}
 			else {
+				std::cout << "error, wallet not opened" << std::endl;
 				return;
 			}
 
 			std::string source_address = priv_key_->GetEncAddress();
 			std::string dest_address = args[1];
-			int64_t coin_amount = utils::String::Stoi64(args[2]);
-			double fee = utils::String::Stod(args[3]);
+
+			if (!utils::String::IsDecNumber(args[2], General::BU_DECIMALS)) {
+				std::cout << "error, amount not valid" << std::endl;
+				return;
+			}
+
+			if (!utils::String::IsDecNumber(args[3], General::BU_DECIMALS)) {
+				std::cout << "error, fee not valid" << std::endl;
+				return;
+			}
+
+			int64_t coin_amount = utils::String::Stoi64(utils::String::MultiplyDecimal(args[2], General::BU_DECIMALS));
+			int64_t fee = utils::String::Stoi64(utils::String::MultiplyDecimal(args[3], General::BU_DECIMALS));
 			
 			std::string metadata, contract_input;
 			if (args.size() > 4) metadata = args[4];
@@ -337,12 +349,12 @@ namespace bumo {
 			protocol::Transaction *tran = tran_env.mutable_transaction();
 			tran->set_source_address(source_address);
 			tran->set_metadata(metadata);
-			tran->set_fee(fee * (int64_t)std::pow(10, General::BU_DECIMALS));
+			tran->set_fee(fee);
 			tran->set_nonce(nonce);
 			protocol::Operation *ope = tran->add_operations();
 			ope->set_type(protocol::Operation_Type_PAY_COIN);
 			protocol::OperationPayCoin *pay_coin = ope->mutable_pay_coin();
-			pay_coin->set_amount(coin_amount * (int64_t)std::pow(10, General::BU_DECIMALS));
+			pay_coin->set_amount(coin_amount);
 			pay_coin->set_dest_address(dest_address);
 			pay_coin->set_input(contract_input);
 
@@ -373,11 +385,10 @@ namespace bumo {
 
 	void Console::Usage(const utils::StringVector &args) {
 		printf(
-			"Usage: bumo [OPTIONS]\n"
 			"OPTIONS:\n"
-			"createWallet <path>                        create wallet\n"
-			"openWallet <path>                          open keystore\n"
-			"closeWallet                                 close current wallet opened\n"
+			"createWallet <path>                          create wallet\n"
+			"openWallet <path>                            open keystore\n"
+			"closeWallet                                  close current wallet opened\n"
 			"payCoin <to-address> <bu coin> <fee> [metatdata] [contract-input] \n"
 			"getBalance [account]                         get balance of BU \n"
 			"getBlockNumber                               get lastest closed block number\n"

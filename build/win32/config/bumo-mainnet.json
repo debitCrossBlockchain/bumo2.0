@@ -4,12 +4,7 @@
 		"ledger_path": "data/ledger.db",
 		"keyvalue_path": "data/keyvalue.db"
 	},
-	"monitor": {
-		"id": "",
-		"center": "127.0.0.1:19336",
-		"disk_path": "/,/mnt/",
-		"enabled" : false
-	},
+
 	"p2p": {
 		"network_id": 10000,
 		"consensus_network": {
@@ -26,8 +21,6 @@
 		"listen_address": "0.0.0.0:16003"
 	},
 	"ledger": {
-		"validation_address1": "buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g",
-		"validation_private_key1": "01ab35a14935d51faf48f51c3bfd1e0478e83d21d378f3bc92332dbbee5b180b9e122475517da2651227ce4a8bb37e2621c4611a889a8d7e45679efe881d56f2",
 		"max_trans_per_ledger": 1000,
 		"max_ledger_per_message": 5,
 		"max_trans_in_memory": 2000,

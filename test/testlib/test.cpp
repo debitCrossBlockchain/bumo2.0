@@ -428,10 +428,53 @@ void ParseFromProto() {
 int main2(int32_t argc, char** argv);
 int main1(int32_t argc, char** argv);
 
+
+
 int main(int32_t argc, char *argv[]){
 
 	utils::net::Initialize();
 	InitLog();
+
+	uint32_t s1 = std::stoul("4294967295");
+	uint64_t s2 = std::stoull("FFFFFFFFFFFFFFFF", NULL ,16);
+	uint32_t s = utils::String::Stoui("4294967295");
+	uint64_t s3 = utils::String::Stoui64(utils::String::ToString(s2));
+	assert(s == 0xFFFFFFFF);
+
+	assert(utils::String::IsDecNumber("0.01234", 8));
+	assert(utils::String::IsDecNumber("0.012345", 8));
+	assert(utils::String::IsDecNumber("0.0123456", 8));
+	assert(utils::String::IsDecNumber("0.01234567", 8));
+	assert(utils::String::IsDecNumber("10.01234567", 8));
+	assert(utils::String::IsDecNumber(".12345678", 8));
+	assert(!utils::String::IsDecNumber("100.012345678", 8));
+
+	assert(!utils::String::IsDecNumber("12345678.", 8));
+	assert(!utils::String::IsDecNumber("0.0.12345678", 8));
+	assert(!utils::String::IsDecNumber(" 0.012345678", 8));
+	assert(!utils::String::IsDecNumber("0.012345678 ", 8));
+	assert(!utils::String::IsDecNumber("0.012345678", 8));
+	assert(!utils::String::IsDecNumber("00.012345678", 8));
+	assert(!utils::String::IsDecNumber("x00.012345678", 8));
+	assert(!utils::String::IsDecNumber("x00.012345x678", 8));
+	assert(!utils::String::IsDecNumber("a00.012345x678", 8));
+
+	assert(utils::String::MultiplyDecimal("0.01234", 1) == "0.1234");
+	assert(utils::String::MultiplyDecimal("0.01234", 2) == "1.234");
+	assert(utils::String::MultiplyDecimal("0.01234", 3) == "12.34");
+	assert(utils::String::MultiplyDecimal("0.01234", 4) == "123.4");
+	assert(utils::String::MultiplyDecimal("0.01234", 5) == "1234");
+	assert(utils::String::MultiplyDecimal("0.01234", 6) == "12340");
+	assert(utils::String::MultiplyDecimal("0.01234", 7) == "123400");
+
+
+	assert(utils::String::MultiplyDecimal("1110.012345678", 1) == "11100.12345678");
+	assert(utils::String::MultiplyDecimal("1110.012345678", 2) == "111001.2345678");
+	assert(utils::String::MultiplyDecimal("1110.012345678", 3) == "1110012.345678");
+	assert(utils::String::MultiplyDecimal("1110.012345678", 4) == "11100123.45678");
+	assert(utils::String::MultiplyDecimal("1110.012345678", 5) == "111001234.5678");
+	assert(utils::String::MultiplyDecimal("1110.012345678", 6) == "1110012345.678");
+	assert(utils::String::MultiplyDecimal("1110.012345678", 7) == "11100123456.78");
 
 	assert(utils::String::FormatDecimal(100000000, 1) == "10000000");
 	assert(utils::String::FormatDecimal(100000000, 2) == "1000000");
