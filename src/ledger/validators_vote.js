@@ -286,7 +286,7 @@ function quitAbolishValidator(malicious){
 }
 
 function voteAbolishValidator(malicious){
-    assert(typeof malicious === 'string', 'Args type error, the malicious must be string.'); 
+    assert(typeof malicious === 'string', 'Args type error, the arg-malicious must be string.'); 
 
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
@@ -315,20 +315,38 @@ function voteAbolishValidator(malicious){
     }
 
     let candidates = getObjectMetaData(candidatesVar);
-    let position = findI0(candidates, malicious);
-    let forfeit  = candidates[position][1] / 10;
-    let leftCoin = candidates[position][1] - forfeit;
+    let position   = findI0(candidates, malicious); /*step here, logic promising position !== false*/
+    let forfeit    = int64Div(candidates[position][1], 10);
+    assert(forfeit !== false, 'Callback int64Div failed.');
+
+    let leftCoin = int64Sub(candidates[position][1], forfeit);
+    assert(leftCoin !== false, 'Callback int64Sub failed.');
 
     transferCoin(malicious, leftCoin);
+    let proposer = abolishProposal[proposerVar];
     setMetaData(abolishKey);
     candidates.splice(position, 1);
 
-    let i = 0;
     let leftValidatorsCnt = validators.length - 1;
-    let average = forfeit / leftValidatorsCnt;
+    let average = int64Div(forfeit, leftValidatorsCnt);
+    assert(average !== false, 'Callback int64Div failed.');
+
+    let i = 0;
     while(i < leftValidatorsCnt){
-        candidates[i][1] += average;
+        candidates[i][1] = int64Plus(candidates[i][1], average);
+        assert(candidates[i][1] !== false, 'Callback int64Plus failed.');
+
         i += 1;
+    }
+
+    let award = int64Mod(forfeit, leftValidatorsCnt);
+    assert(award !== false, 'Callback int64Mod failed.');
+    if(award !== '0'){
+        let proposerPos = findI0(candidates, proposer);
+        let newProposerAmount = int64Plus(candidates[proposerPos][1], award);
+        assert(newProposerAmount !== false, 'Callback int64Plus failed.');
+        candidates.splice(proposerPos, 1);
+        candidates = insertcandidatesSorted(abolishProposal[proposerVar], newProposerAmount, candidates);
     }
 
     setMetaData(candidatesVar, candidates);
