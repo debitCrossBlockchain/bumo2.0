@@ -264,13 +264,10 @@ namespace bumo {
 
 			int64_t counter = 0;
 			protocol::ValidatorSet proto_validators;
-			for (auto it = json_instance.begin(); it != json_instance.end(); it++){
-				std::string address = it.memberName();
-				int64_t amount      = json_instance[it.memberName()].asInt64();
-
+			for (uint32_t i = 0; i < json_instance.size(); i++) {
 				auto validator = proto_validators.add_validators();
-				validator->set_address(address);
-				validator->set_pledge_coin_amount(amount);
+				validator->set_address(json_instance[i].asString());
+				validator->set_pledge_coin_amount(0);
 			}
 
 			Consensus::UpdateValidators(proto_validators);
@@ -283,9 +280,7 @@ namespace bumo {
 		Json::Value total = Json::Value(Json::arrayValue);
 		std::vector<std::string> vec_validators;
 		vec_validators.resize(validators_.size());
-		for (std::map<std::string, int64_t>::iterator iter = validators_.begin();
-			iter != validators_.end();
-			iter++) {
+		for (auto iter = validators_.begin(); iter != validators_.end(); iter++) {
 			vec_validators[(uint32_t)iter->second] = iter->first;
 		}
 
