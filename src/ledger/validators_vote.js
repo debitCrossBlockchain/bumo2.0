@@ -177,7 +177,13 @@ function voteForApplicant(applicant){
     assert(findI0(validators, sender) !== false,  sender + ' has no permission to vote.');
 
     let applicantKey = applicantVar + applicant;
-    let applicantData = getObjectMetaData(applicantKey);
+    let applicantStr = storageLoad(applicantKey);
+    if(applicantStr === false){
+        log(applicantKey + ' is not exist, maybe voting passed or expired.');
+        return false;
+    }
+
+    let applicantData = JSON.parse(applicantStr);
     if(blockTimestamp > applicantData[expiredTimeVar]){
         log('Vote time is expired, applicant ' + applicant + ' be refused.');
         transferCoin(applicant, applicantData[pledgeAmountVar]);
@@ -288,7 +294,13 @@ function voteAbolishValidator(malicious){
     assert(findI0(validators, malicious) !== false, malicious + ' is not validator.'); 
 
     let abolishKey = abolishVar + malicious;
-    let abolishProposal = getObjectMetaData(abolishKey);
+    let abolishStr = storageLoad(abolishKey);
+    if(abolishStr === false){
+        log(abolishKey + ' is not exist, maybe voting passed or expired.');
+        return false;
+    }
+
+    let abolishProposal = JSON.parse(abolishStr);
     if(blockTimestamp >abolishProposal[expiredTimeVar]){
         log('Voting time expired, ' + malicious + ' is still validator.'); 
         setMetaData(abolishKey);
