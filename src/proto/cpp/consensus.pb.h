@@ -49,6 +49,7 @@ class PbftPrepare;
 class PbftPreparedSet;
 class PbftProof;
 class PbftViewChange;
+class Validator;
 class ValidatorSet;
 
 enum FeeConfig_Type {
@@ -1151,6 +1152,100 @@ class PbftEnv : public ::google::protobuf::Message /* @@protoc_insertion_point(c
 };
 // -------------------------------------------------------------------
 
+class Validator : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.Validator) */ {
+ public:
+  Validator();
+  virtual ~Validator();
+
+  Validator(const Validator& from);
+
+  inline Validator& operator=(const Validator& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Validator& default_instance();
+
+  void Swap(Validator* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Validator* New() const { return New(NULL); }
+
+  Validator* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Validator& from);
+  void MergeFrom(const Validator& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Validator* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string address = 1;
+  void clear_address();
+  static const int kAddressFieldNumber = 1;
+  const ::std::string& address() const;
+  void set_address(const ::std::string& value);
+  void set_address(const char* value);
+  void set_address(const char* value, size_t size);
+  ::std::string* mutable_address();
+  ::std::string* release_address();
+  void set_allocated_address(::std::string* address);
+
+  // optional int64 pledge_coin_amount = 2;
+  void clear_pledge_coin_amount();
+  static const int kPledgeCoinAmountFieldNumber = 2;
+  ::google::protobuf::int64 pledge_coin_amount() const;
+  void set_pledge_coin_amount(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.Validator)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr address_;
+  ::google::protobuf::int64 pledge_coin_amount_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_consensus_2eproto();
+  friend void protobuf_AssignDesc_consensus_2eproto();
+  friend void protobuf_ShutdownFile_consensus_2eproto();
+
+  void InitAsDefaultInstance();
+  static Validator* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class ValidatorSet : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ValidatorSet) */ {
  public:
   ValidatorSet();
@@ -1211,28 +1306,24 @@ class ValidatorSet : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // repeated string validators = 1;
+  // repeated .protocol.Validator validators = 1;
   int validators_size() const;
   void clear_validators();
   static const int kValidatorsFieldNumber = 1;
-  const ::std::string& validators(int index) const;
-  ::std::string* mutable_validators(int index);
-  void set_validators(int index, const ::std::string& value);
-  void set_validators(int index, const char* value);
-  void set_validators(int index, const char* value, size_t size);
-  ::std::string* add_validators();
-  void add_validators(const ::std::string& value);
-  void add_validators(const char* value);
-  void add_validators(const char* value, size_t size);
-  const ::google::protobuf::RepeatedPtrField< ::std::string>& validators() const;
-  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_validators();
+  const ::protocol::Validator& validators(int index) const;
+  ::protocol::Validator* mutable_validators(int index);
+  ::protocol::Validator* add_validators();
+  ::google::protobuf::RepeatedPtrField< ::protocol::Validator >*
+      mutable_validators();
+  const ::google::protobuf::RepeatedPtrField< ::protocol::Validator >&
+      validators() const;
 
   // @@protoc_insertion_point(class_scope:protocol.ValidatorSet)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::RepeatedPtrField< ::std::string> validators_;
+  ::google::protobuf::RepeatedPtrField< ::protocol::Validator > validators_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_consensus_2eproto();
   friend void protobuf_AssignDesc_consensus_2eproto();
@@ -2529,61 +2620,98 @@ inline void PbftEnv::set_allocated_signature(::protocol::Signature* signature) {
 
 // -------------------------------------------------------------------
 
+// Validator
+
+// optional string address = 1;
+inline void Validator::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Validator::address() const {
+  // @@protoc_insertion_point(field_get:protocol.Validator.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Validator::set_address(const ::std::string& value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Validator.address)
+}
+inline void Validator::set_address(const char* value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Validator.address)
+}
+inline void Validator::set_address(const char* value, size_t size) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.Validator.address)
+}
+inline ::std::string* Validator::mutable_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.Validator.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Validator::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.Validator.address)
+  
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Validator::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
+    
+  } else {
+    
+  }
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Validator.address)
+}
+
+// optional int64 pledge_coin_amount = 2;
+inline void Validator::clear_pledge_coin_amount() {
+  pledge_coin_amount_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Validator::pledge_coin_amount() const {
+  // @@protoc_insertion_point(field_get:protocol.Validator.pledge_coin_amount)
+  return pledge_coin_amount_;
+}
+inline void Validator::set_pledge_coin_amount(::google::protobuf::int64 value) {
+  
+  pledge_coin_amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Validator.pledge_coin_amount)
+}
+
+// -------------------------------------------------------------------
+
 // ValidatorSet
 
-// repeated string validators = 1;
+// repeated .protocol.Validator validators = 1;
 inline int ValidatorSet::validators_size() const {
   return validators_.size();
 }
 inline void ValidatorSet::clear_validators() {
   validators_.Clear();
 }
-inline const ::std::string& ValidatorSet::validators(int index) const {
+inline const ::protocol::Validator& ValidatorSet::validators(int index) const {
   // @@protoc_insertion_point(field_get:protocol.ValidatorSet.validators)
   return validators_.Get(index);
 }
-inline ::std::string* ValidatorSet::mutable_validators(int index) {
+inline ::protocol::Validator* ValidatorSet::mutable_validators(int index) {
   // @@protoc_insertion_point(field_mutable:protocol.ValidatorSet.validators)
   return validators_.Mutable(index);
 }
-inline void ValidatorSet::set_validators(int index, const ::std::string& value) {
-  // @@protoc_insertion_point(field_set:protocol.ValidatorSet.validators)
-  validators_.Mutable(index)->assign(value);
-}
-inline void ValidatorSet::set_validators(int index, const char* value) {
-  validators_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:protocol.ValidatorSet.validators)
-}
-inline void ValidatorSet::set_validators(int index, const char* value, size_t size) {
-  validators_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:protocol.ValidatorSet.validators)
-}
-inline ::std::string* ValidatorSet::add_validators() {
-  // @@protoc_insertion_point(field_add_mutable:protocol.ValidatorSet.validators)
+inline ::protocol::Validator* ValidatorSet::add_validators() {
+  // @@protoc_insertion_point(field_add:protocol.ValidatorSet.validators)
   return validators_.Add();
 }
-inline void ValidatorSet::add_validators(const ::std::string& value) {
-  validators_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:protocol.ValidatorSet.validators)
-}
-inline void ValidatorSet::add_validators(const char* value) {
-  validators_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:protocol.ValidatorSet.validators)
-}
-inline void ValidatorSet::add_validators(const char* value, size_t size) {
-  validators_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:protocol.ValidatorSet.validators)
-}
-inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
-ValidatorSet::validators() const {
-  // @@protoc_insertion_point(field_list:protocol.ValidatorSet.validators)
-  return validators_;
-}
-inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+inline ::google::protobuf::RepeatedPtrField< ::protocol::Validator >*
 ValidatorSet::mutable_validators() {
   // @@protoc_insertion_point(field_mutable_list:protocol.ValidatorSet.validators)
   return &validators_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::protocol::Validator >&
+ValidatorSet::validators() const {
+  // @@protoc_insertion_point(field_list:protocol.ValidatorSet.validators)
+  return validators_;
 }
 
 // -------------------------------------------------------------------
@@ -2751,6 +2879,8 @@ inline void FeeConfig::set_pay_coin_fee(::google::protobuf::int64 value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

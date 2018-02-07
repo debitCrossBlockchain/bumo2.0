@@ -48,6 +48,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* PbftEnv_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftEnv_reflection_ = NULL;
+const ::google::protobuf::Descriptor* Validator_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  Validator_reflection_ = NULL;
 const ::google::protobuf::Descriptor* ValidatorSet_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ValidatorSet_reflection_ = NULL;
@@ -235,7 +238,23 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftEnv),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, _is_default_instance_));
-  ValidatorSet_descriptor_ = file->message_type(9);
+  Validator_descriptor_ = file->message_type(9);
+  static const int Validator_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, address_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, pledge_coin_amount_),
+  };
+  Validator_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      Validator_descriptor_,
+      Validator::default_instance_,
+      Validator_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(Validator),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, _is_default_instance_));
+  ValidatorSet_descriptor_ = file->message_type(10);
   static const int ValidatorSet_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, validators_),
   };
@@ -250,7 +269,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(ValidatorSet),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, _is_default_instance_));
-  PbftProof_descriptor_ = file->message_type(10);
+  PbftProof_descriptor_ = file->message_type(11);
   static const int PbftProof_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, commits_),
   };
@@ -265,7 +284,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftProof),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, _is_default_instance_));
-  FeeConfig_descriptor_ = file->message_type(11);
+  FeeConfig_descriptor_ = file->message_type(12);
   static const int FeeConfig_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, byte_fee_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, base_reserve_),
@@ -323,6 +342,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftEnv_descriptor_, &PbftEnv::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      Validator_descriptor_, &Validator::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       ValidatorSet_descriptor_, &ValidatorSet::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftProof_descriptor_, &PbftProof::default_instance());
@@ -351,6 +372,8 @@ void protobuf_ShutdownFile_consensus_2eproto() {
   delete Pbft_reflection_;
   delete PbftEnv::default_instance_;
   delete PbftEnv_reflection_;
+  delete Validator::default_instance_;
+  delete Validator_reflection_;
   delete ValidatorSet::default_instance_;
   delete ValidatorSet_reflection_;
   delete PbftProof::default_instance_;
@@ -399,26 +422,28 @@ void protobuf_AddDesc_consensus_2eproto() {
     "bftViewChange\022\'\n\010new_view\030\010 \001(\0132\025.protoc"
     "ol.PbftNewView\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132"
     "\016.protocol.Pbft\022&\n\tsignature\030\002 \001(\0132\023.pro"
-    "tocol.Signature\"\"\n\014ValidatorSet\022\022\n\nvalid"
-    "ators\030\001 \003(\t\"/\n\tPbftProof\022\"\n\007commits\030\001 \003("
-    "\0132\021.protocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010by"
-    "te_fee\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022cr"
-    "eate_account_fee\030\003 \001(\003\022\027\n\017issue_asset_fe"
-    "e\030\004 \001(\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata"
-    "_fee\030\006 \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001("
-    "\003\022\031\n\021set_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin"
-    "_fee\030\t \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE"
-    "_FEE\020\001\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_A"
-    "CCOUNT_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAY"
-    "MENT_FEE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_"
-    "SIGNER_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE"
-    "\020\010\022\020\n\014PAY_COIN_FEE\020\t*\243\001\n\017PbftMessageType"
-    "\022\030\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_"
-    "PREPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_"
-    "TYPE_CHECKPOINT\020\003\022\030\n\024PBFT_TYPE_VIEWCHANG"
-    "E\020\004\022\025\n\021PBFT_TYPE_NEWVIEW\020\005*8\n\rPbftValueT"
-    "ype\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXS"
-    "ET\020\001b\006proto3", 2012);
+    "tocol.Signature\"8\n\tValidator\022\017\n\007address\030"
+    "\001 \001(\t\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Val"
+    "idatorSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol"
+    ".Validator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\013"
+    "2\021.protocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010byt"
+    "e_fee\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022cre"
+    "ate_account_fee\030\003 \001(\003\022\027\n\017issue_asset_fee"
+    "\030\004 \001(\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata_"
+    "fee\030\006 \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(\003"
+    "\022\031\n\021set_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin_"
+    "fee\030\t \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE_"
+    "FEE\020\001\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_AC"
+    "COUNT_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAYM"
+    "ENT_FEE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_S"
+    "IGNER_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE\020"
+    "\010\022\020\n\014PAY_COIN_FEE\020\t*\243\001\n\017PbftMessageType\022"
+    "\030\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_P"
+    "REPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_T"
+    "YPE_CHECKPOINT\020\003\022\030\n\024PBFT_TYPE_VIEWCHANGE"
+    "\020\004\022\025\n\021PBFT_TYPE_NEWVIEW\020\005*8\n\rPbftValueTy"
+    "pe\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXSE"
+    "T\020\001b\006proto3", 2091);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "consensus.proto", &protobuf_RegisterTypes);
   PbftPrePrepare::default_instance_ = new PbftPrePrepare();
@@ -430,6 +455,7 @@ void protobuf_AddDesc_consensus_2eproto() {
   PbftNewView::default_instance_ = new PbftNewView();
   Pbft::default_instance_ = new Pbft();
   PbftEnv::default_instance_ = new PbftEnv();
+  Validator::default_instance_ = new Validator();
   ValidatorSet::default_instance_ = new ValidatorSet();
   PbftProof::default_instance_ = new PbftProof();
   FeeConfig::default_instance_ = new FeeConfig();
@@ -442,6 +468,7 @@ void protobuf_AddDesc_consensus_2eproto() {
   PbftNewView::default_instance_->InitAsDefaultInstance();
   Pbft::default_instance_->InitAsDefaultInstance();
   PbftEnv::default_instance_->InitAsDefaultInstance();
+  Validator::default_instance_->InitAsDefaultInstance();
   ValidatorSet::default_instance_->InitAsDefaultInstance();
   PbftProof::default_instance_->InitAsDefaultInstance();
   FeeConfig::default_instance_->InitAsDefaultInstance();
@@ -4795,6 +4822,343 @@ void PbftEnv::set_allocated_signature(::protocol::Signature* signature) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Validator::kAddressFieldNumber;
+const int Validator::kPledgeCoinAmountFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+Validator::Validator()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.Validator)
+}
+
+void Validator::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+Validator::Validator(const Validator& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.Validator)
+}
+
+void Validator::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  pledge_coin_amount_ = GOOGLE_LONGLONG(0);
+}
+
+Validator::~Validator() {
+  // @@protoc_insertion_point(destructor:protocol.Validator)
+  SharedDtor();
+}
+
+void Validator::SharedDtor() {
+  address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void Validator::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* Validator::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return Validator_descriptor_;
+}
+
+const Validator& Validator::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_consensus_2eproto();
+  return *default_instance_;
+}
+
+Validator* Validator::default_instance_ = NULL;
+
+Validator* Validator::New(::google::protobuf::Arena* arena) const {
+  Validator* n = new Validator;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void Validator::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.Validator)
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  pledge_coin_amount_ = GOOGLE_LONGLONG(0);
+}
+
+bool Validator::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.Validator)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string address = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_address()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->address().data(), this->address().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "protocol.Validator.address"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_pledge_coin_amount;
+        break;
+      }
+
+      // optional int64 pledge_coin_amount = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_pledge_coin_amount:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &pledge_coin_amount_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.Validator)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.Validator)
+  return false;
+#undef DO_
+}
+
+void Validator::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.Validator)
+  // optional string address = 1;
+  if (this->address().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->address().data(), this->address().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.Validator.address");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->address(), output);
+  }
+
+  // optional int64 pledge_coin_amount = 2;
+  if (this->pledge_coin_amount() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->pledge_coin_amount(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.Validator)
+}
+
+::google::protobuf::uint8* Validator::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.Validator)
+  // optional string address = 1;
+  if (this->address().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->address().data(), this->address().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.Validator.address");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->address(), target);
+  }
+
+  // optional int64 pledge_coin_amount = 2;
+  if (this->pledge_coin_amount() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->pledge_coin_amount(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.Validator)
+  return target;
+}
+
+int Validator::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.Validator)
+  int total_size = 0;
+
+  // optional string address = 1;
+  if (this->address().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->address());
+  }
+
+  // optional int64 pledge_coin_amount = 2;
+  if (this->pledge_coin_amount() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->pledge_coin_amount());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void Validator::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.Validator)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const Validator* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const Validator>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.Validator)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.Validator)
+    MergeFrom(*source);
+  }
+}
+
+void Validator::MergeFrom(const Validator& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.Validator)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.address().size() > 0) {
+
+    address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.address_);
+  }
+  if (from.pledge_coin_amount() != 0) {
+    set_pledge_coin_amount(from.pledge_coin_amount());
+  }
+}
+
+void Validator::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.Validator)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Validator::CopyFrom(const Validator& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.Validator)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Validator::IsInitialized() const {
+
+  return true;
+}
+
+void Validator::Swap(Validator* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void Validator::InternalSwap(Validator* other) {
+  address_.Swap(&other->address_);
+  std::swap(pledge_coin_amount_, other->pledge_coin_amount_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata Validator::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = Validator_descriptor_;
+  metadata.reflection = Validator_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// Validator
+
+// optional string address = 1;
+void Validator::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Validator::address() const {
+  // @@protoc_insertion_point(field_get:protocol.Validator.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Validator::set_address(const ::std::string& value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Validator.address)
+}
+ void Validator::set_address(const char* value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Validator.address)
+}
+ void Validator::set_address(const char* value, size_t size) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.Validator.address)
+}
+ ::std::string* Validator::mutable_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.Validator.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Validator::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.Validator.address)
+  
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Validator::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
+    
+  } else {
+    
+  }
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Validator.address)
+}
+
+// optional int64 pledge_coin_amount = 2;
+void Validator::clear_pledge_coin_amount() {
+  pledge_coin_amount_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 Validator::pledge_coin_amount() const {
+  // @@protoc_insertion_point(field_get:protocol.Validator.pledge_coin_amount)
+  return pledge_coin_amount_;
+}
+ void Validator::set_pledge_coin_amount(::google::protobuf::int64 value) {
+  
+  pledge_coin_amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Validator.pledge_coin_amount)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ValidatorSet::kValidatorsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -4818,7 +5182,6 @@ ValidatorSet::ValidatorSet(const ValidatorSet& from)
 
 void ValidatorSet::SharedCtor() {
     _is_default_instance_ = false;
-  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
 }
 
@@ -4872,21 +5235,18 @@ bool ValidatorSet::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // repeated string validators = 1;
+      // repeated .protocol.Validator validators = 1;
       case 1: {
         if (tag == 10) {
-         parse_validators:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->add_validators()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->validators(this->validators_size() - 1).data(),
-            this->validators(this->validators_size() - 1).length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.ValidatorSet.validators"));
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_validators:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_validators()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(10)) goto parse_validators;
+        if (input->ExpectTag(10)) goto parse_loop_validators;
+        input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -4915,13 +5275,9 @@ failure:
 void ValidatorSet::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:protocol.ValidatorSet)
-  // repeated string validators = 1;
-  for (int i = 0; i < this->validators_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->validators(i).data(), this->validators(i).length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.ValidatorSet.validators");
-    ::google::protobuf::internal::WireFormatLite::WriteString(
+  // repeated .protocol.Validator validators = 1;
+  for (unsigned int i = 0, n = this->validators_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
       1, this->validators(i), output);
   }
 
@@ -4931,14 +5287,11 @@ void ValidatorSet::SerializeWithCachedSizes(
 ::google::protobuf::uint8* ValidatorSet::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:protocol.ValidatorSet)
-  // repeated string validators = 1;
-  for (int i = 0; i < this->validators_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->validators(i).data(), this->validators(i).length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.ValidatorSet.validators");
+  // repeated .protocol.Validator validators = 1;
+  for (unsigned int i = 0, n = this->validators_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(1, this->validators(i), target);
+      InternalWriteMessageNoVirtualToArray(
+        1, this->validators(i), false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.ValidatorSet)
@@ -4949,11 +5302,12 @@ int ValidatorSet::ByteSize() const {
 // @@protoc_insertion_point(message_byte_size_start:protocol.ValidatorSet)
   int total_size = 0;
 
-  // repeated string validators = 1;
+  // repeated .protocol.Validator validators = 1;
   total_size += 1 * this->validators_size();
   for (int i = 0; i < this->validators_size(); i++) {
-    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-      this->validators(i));
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->validators(i));
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -5027,59 +5381,34 @@ void ValidatorSet::InternalSwap(ValidatorSet* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // ValidatorSet
 
-// repeated string validators = 1;
+// repeated .protocol.Validator validators = 1;
 int ValidatorSet::validators_size() const {
   return validators_.size();
 }
 void ValidatorSet::clear_validators() {
   validators_.Clear();
 }
- const ::std::string& ValidatorSet::validators(int index) const {
+const ::protocol::Validator& ValidatorSet::validators(int index) const {
   // @@protoc_insertion_point(field_get:protocol.ValidatorSet.validators)
   return validators_.Get(index);
 }
- ::std::string* ValidatorSet::mutable_validators(int index) {
+::protocol::Validator* ValidatorSet::mutable_validators(int index) {
   // @@protoc_insertion_point(field_mutable:protocol.ValidatorSet.validators)
   return validators_.Mutable(index);
 }
- void ValidatorSet::set_validators(int index, const ::std::string& value) {
-  // @@protoc_insertion_point(field_set:protocol.ValidatorSet.validators)
-  validators_.Mutable(index)->assign(value);
-}
- void ValidatorSet::set_validators(int index, const char* value) {
-  validators_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:protocol.ValidatorSet.validators)
-}
- void ValidatorSet::set_validators(int index, const char* value, size_t size) {
-  validators_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:protocol.ValidatorSet.validators)
-}
- ::std::string* ValidatorSet::add_validators() {
-  // @@protoc_insertion_point(field_add_mutable:protocol.ValidatorSet.validators)
+::protocol::Validator* ValidatorSet::add_validators() {
+  // @@protoc_insertion_point(field_add:protocol.ValidatorSet.validators)
   return validators_.Add();
 }
- void ValidatorSet::add_validators(const ::std::string& value) {
-  validators_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:protocol.ValidatorSet.validators)
-}
- void ValidatorSet::add_validators(const char* value) {
-  validators_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:protocol.ValidatorSet.validators)
-}
- void ValidatorSet::add_validators(const char* value, size_t size) {
-  validators_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:protocol.ValidatorSet.validators)
-}
- const ::google::protobuf::RepeatedPtrField< ::std::string>&
-ValidatorSet::validators() const {
-  // @@protoc_insertion_point(field_list:protocol.ValidatorSet.validators)
-  return validators_;
-}
- ::google::protobuf::RepeatedPtrField< ::std::string>*
+::google::protobuf::RepeatedPtrField< ::protocol::Validator >*
 ValidatorSet::mutable_validators() {
   // @@protoc_insertion_point(field_mutable_list:protocol.ValidatorSet.validators)
   return &validators_;
+}
+const ::google::protobuf::RepeatedPtrField< ::protocol::Validator >&
+ValidatorSet::validators() const {
+  // @@protoc_insertion_point(field_list:protocol.ValidatorSet.validators)
+  return validators_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

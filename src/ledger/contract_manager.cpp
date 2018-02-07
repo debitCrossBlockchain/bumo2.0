@@ -752,8 +752,8 @@ namespace bumo{
 				break;
 			}
 
-			LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
-			ledger_frm->environment_->UpdateFeeConfig(json);
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetTopTx()->environment_->UpdateFeeConfig(json);
 			args.GetReturnValue().Set(true);
 			return;
 		} while (false);
@@ -1219,22 +1219,8 @@ namespace bumo{
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 
 			Json::Value jsonValidators;
-			auto env = v8_contract->parameter_.ledger_context_->closing_ledger_->environment_;
-
-			if (env){
-				auto validators = env->GetValidators();
-				for (auto kv : validators){
-					jsonValidators[kv.first] = kv.second;
-				}
-			}
-			else{
-				auto validators = LedgerManager::Instance().Validators();
-				for (int i = 0; i < validators.validators_size(); i++){
-					std::string address = *validators.mutable_validators(i);
-					jsonValidators[i] = address;
-				}
-
-			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			jsonValidators = ledger_context->GetTopTx()->environment_->GetValidators();
 
 			std::string strvalue = jsonValidators.toFastString();
 			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
@@ -1280,11 +1266,10 @@ namespace bumo{
 				break;
 			}
 
-			LedgerFrm::pointer ledger_frm = v8_contract->parameter_.ledger_context_->closing_ledger_;
-			ledger_frm->environment_->UpdateNewValidators(json);
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetTopTx()->environment_->UpdateNewValidators(json);
 			args.GetReturnValue().Set(true);
 			return;
-
 		} while (false);
 		args.GetReturnValue().Set(false);
 	}

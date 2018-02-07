@@ -27,12 +27,12 @@
 namespace bumo {
 	class Environment : public AtomMap<std::string, AccountFrm>{
 	public:
-		std::map<std::string, AccountFrm::pointer> entries_;	
-		AtomBaseMap<protocol::FeeConfig_Type, int64_t> fees_;
-		AtomBaseMap<int32_t, std::string> validators_;
+		typedef AtomMap<std::string, Json::Value>::mapKV settingKV;
+		const std::string validatorsKey = "validators";
+		const std::string feesKey = "configFees";
 
-		typedef AtomBaseMap<protocol::FeeConfig_Type, int64_t>::mapKV  feesKV;
-		typedef AtomBaseMap<int32_t, std::string>::mapKV  validatorsKV;
+		AtomMap<std::string, Json::Value> settings_;
+		std::map<std::string, AccountFrm::pointer> entries_;
 
 		Environment *parent_;
 		bool useAtomMap_;
@@ -42,16 +42,15 @@ namespace bumo {
 		Environment& operator=(Environment const&) = delete;
 
 		Environment(Environment *parent);
-		Environment(mapKV* data, validatorsKV* sets, feesKV* fees);
+		Environment(mapKV* data, settingKV* settings);
 
 		bool GetEntry(const std::string& key, AccountFrm::pointer &frm);
 		bool AddEntry(const std::string& key, AccountFrm::pointer frm);
 
-		const validatorsKV& GetValidators();
-
 		bool UpdateFeeConfig(const Json::Value &fee_config);
 		bool GetVotedFee(const protocol::FeeConfig &old_fee, protocol::FeeConfig& new_fee);
 
+		Json::Value& GetValidators();
 		bool UpdateNewValidators(const Json::Value& validators);
 		bool GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator);
 

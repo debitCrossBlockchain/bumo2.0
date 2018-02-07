@@ -9266,28 +9266,600 @@ public final class Consensus {
 
   }
 
+  public interface ValidatorOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:protocol.Validator)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>optional string address = 1;</code>
+     */
+    java.lang.String getAddress();
+    /**
+     * <code>optional string address = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
+
+    /**
+     * <code>optional int64 pledge_coin_amount = 2;</code>
+     */
+    long getPledgeCoinAmount();
+  }
+  /**
+   * Protobuf type {@code protocol.Validator}
+   */
+  public  static final class Validator extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:protocol.Validator)
+      ValidatorOrBuilder {
+    // Use Validator.newBuilder() to construct.
+    private Validator(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private Validator() {
+      address_ = "";
+      pledgeCoinAmount_ = 0L;
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    }
+    private Validator(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!input.skipField(tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              address_ = s;
+              break;
+            }
+            case 16: {
+
+              pledgeCoinAmount_ = input.readInt64();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return protocol.Consensus.internal_static_protocol_Validator_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return protocol.Consensus.internal_static_protocol_Validator_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              protocol.Consensus.Validator.class, protocol.Consensus.Validator.Builder.class);
+    }
+
+    public static final int ADDRESS_FIELD_NUMBER = 1;
+    private volatile java.lang.Object address_;
+    /**
+     * <code>optional string address = 1;</code>
+     */
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string address = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int PLEDGE_COIN_AMOUNT_FIELD_NUMBER = 2;
+    private long pledgeCoinAmount_;
+    /**
+     * <code>optional int64 pledge_coin_amount = 2;</code>
+     */
+    public long getPledgeCoinAmount() {
+      return pledgeCoinAmount_;
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getAddressBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, address_);
+      }
+      if (pledgeCoinAmount_ != 0L) {
+        output.writeInt64(2, pledgeCoinAmount_);
+      }
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getAddressBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, address_);
+      }
+      if (pledgeCoinAmount_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(2, pledgeCoinAmount_);
+      }
+      memoizedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof protocol.Consensus.Validator)) {
+        return super.equals(obj);
+      }
+      protocol.Consensus.Validator other = (protocol.Consensus.Validator) obj;
+
+      boolean result = true;
+      result = result && getAddress()
+          .equals(other.getAddress());
+      result = result && (getPledgeCoinAmount()
+          == other.getPledgeCoinAmount());
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptorForType().hashCode();
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
+      hash = (37 * hash) + PLEDGE_COIN_AMOUNT_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getPledgeCoinAmount());
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static protocol.Consensus.Validator parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static protocol.Consensus.Validator parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static protocol.Consensus.Validator parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static protocol.Consensus.Validator parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static protocol.Consensus.Validator parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static protocol.Consensus.Validator parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static protocol.Consensus.Validator parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static protocol.Consensus.Validator parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static protocol.Consensus.Validator parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static protocol.Consensus.Validator parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(protocol.Consensus.Validator prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code protocol.Validator}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:protocol.Validator)
+        protocol.Consensus.ValidatorOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return protocol.Consensus.internal_static_protocol_Validator_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return protocol.Consensus.internal_static_protocol_Validator_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                protocol.Consensus.Validator.class, protocol.Consensus.Validator.Builder.class);
+      }
+
+      // Construct using protocol.Consensus.Validator.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        address_ = "";
+
+        pledgeCoinAmount_ = 0L;
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return protocol.Consensus.internal_static_protocol_Validator_descriptor;
+      }
+
+      public protocol.Consensus.Validator getDefaultInstanceForType() {
+        return protocol.Consensus.Validator.getDefaultInstance();
+      }
+
+      public protocol.Consensus.Validator build() {
+        protocol.Consensus.Validator result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public protocol.Consensus.Validator buildPartial() {
+        protocol.Consensus.Validator result = new protocol.Consensus.Validator(this);
+        result.address_ = address_;
+        result.pledgeCoinAmount_ = pledgeCoinAmount_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof protocol.Consensus.Validator) {
+          return mergeFrom((protocol.Consensus.Validator)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(protocol.Consensus.Validator other) {
+        if (other == protocol.Consensus.Validator.getDefaultInstance()) return this;
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          onChanged();
+        }
+        if (other.getPledgeCoinAmount() != 0L) {
+          setPledgeCoinAmount(other.getPledgeCoinAmount());
+        }
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        protocol.Consensus.Validator parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (protocol.Consensus.Validator) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object address_ = "";
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        address_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public Builder clearAddress() {
+        
+        address_ = getDefaultInstance().getAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        address_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long pledgeCoinAmount_ ;
+      /**
+       * <code>optional int64 pledge_coin_amount = 2;</code>
+       */
+      public long getPledgeCoinAmount() {
+        return pledgeCoinAmount_;
+      }
+      /**
+       * <code>optional int64 pledge_coin_amount = 2;</code>
+       */
+      public Builder setPledgeCoinAmount(long value) {
+        
+        pledgeCoinAmount_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int64 pledge_coin_amount = 2;</code>
+       */
+      public Builder clearPledgeCoinAmount() {
+        
+        pledgeCoinAmount_ = 0L;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:protocol.Validator)
+    }
+
+    // @@protoc_insertion_point(class_scope:protocol.Validator)
+    private static final protocol.Consensus.Validator DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new protocol.Consensus.Validator();
+    }
+
+    public static protocol.Consensus.Validator getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Validator>
+        PARSER = new com.google.protobuf.AbstractParser<Validator>() {
+      public Validator parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new Validator(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Validator> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Validator> getParserForType() {
+      return PARSER;
+    }
+
+    public protocol.Consensus.Validator getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface ValidatorSetOrBuilder extends
       // @@protoc_insertion_point(interface_extends:protocol.ValidatorSet)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>repeated string validators = 1;</code>
+     * <code>repeated .protocol.Validator validators = 1;</code>
      */
-    java.util.List<java.lang.String>
+    java.util.List<protocol.Consensus.Validator> 
         getValidatorsList();
     /**
-     * <code>repeated string validators = 1;</code>
+     * <code>repeated .protocol.Validator validators = 1;</code>
+     */
+    protocol.Consensus.Validator getValidators(int index);
+    /**
+     * <code>repeated .protocol.Validator validators = 1;</code>
      */
     int getValidatorsCount();
     /**
-     * <code>repeated string validators = 1;</code>
+     * <code>repeated .protocol.Validator validators = 1;</code>
      */
-    java.lang.String getValidators(int index);
+    java.util.List<? extends protocol.Consensus.ValidatorOrBuilder> 
+        getValidatorsOrBuilderList();
     /**
-     * <code>repeated string validators = 1;</code>
+     * <code>repeated .protocol.Validator validators = 1;</code>
      */
-    com.google.protobuf.ByteString
-        getValidatorsBytes(int index);
+    protocol.Consensus.ValidatorOrBuilder getValidatorsOrBuilder(
+        int index);
   }
   /**
    * Protobuf type {@code protocol.ValidatorSet}
@@ -9301,7 +9873,7 @@ public final class Consensus {
       super(builder);
     }
     private ValidatorSet() {
-      validators_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      validators_ = java.util.Collections.emptyList();
     }
 
     @java.lang.Override
@@ -9330,12 +9902,12 @@ public final class Consensus {
               break;
             }
             case 10: {
-              java.lang.String s = input.readStringRequireUtf8();
               if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                validators_ = new com.google.protobuf.LazyStringArrayList();
+                validators_ = new java.util.ArrayList<protocol.Consensus.Validator>();
                 mutable_bitField0_ |= 0x00000001;
               }
-              validators_.add(s);
+              validators_.add(
+                  input.readMessage(protocol.Consensus.Validator.parser(), extensionRegistry));
               break;
             }
           }
@@ -9347,7 +9919,7 @@ public final class Consensus {
             e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          validators_ = validators_.getUnmodifiableView();
+          validators_ = java.util.Collections.unmodifiableList(validators_);
         }
         makeExtensionsImmutable();
       }
@@ -9365,32 +9937,38 @@ public final class Consensus {
     }
 
     public static final int VALIDATORS_FIELD_NUMBER = 1;
-    private com.google.protobuf.LazyStringList validators_;
+    private java.util.List<protocol.Consensus.Validator> validators_;
     /**
-     * <code>repeated string validators = 1;</code>
+     * <code>repeated .protocol.Validator validators = 1;</code>
      */
-    public com.google.protobuf.ProtocolStringList
-        getValidatorsList() {
+    public java.util.List<protocol.Consensus.Validator> getValidatorsList() {
       return validators_;
     }
     /**
-     * <code>repeated string validators = 1;</code>
+     * <code>repeated .protocol.Validator validators = 1;</code>
+     */
+    public java.util.List<? extends protocol.Consensus.ValidatorOrBuilder> 
+        getValidatorsOrBuilderList() {
+      return validators_;
+    }
+    /**
+     * <code>repeated .protocol.Validator validators = 1;</code>
      */
     public int getValidatorsCount() {
       return validators_.size();
     }
     /**
-     * <code>repeated string validators = 1;</code>
+     * <code>repeated .protocol.Validator validators = 1;</code>
      */
-    public java.lang.String getValidators(int index) {
+    public protocol.Consensus.Validator getValidators(int index) {
       return validators_.get(index);
     }
     /**
-     * <code>repeated string validators = 1;</code>
+     * <code>repeated .protocol.Validator validators = 1;</code>
      */
-    public com.google.protobuf.ByteString
-        getValidatorsBytes(int index) {
-      return validators_.getByteString(index);
+    public protocol.Consensus.ValidatorOrBuilder getValidatorsOrBuilder(
+        int index) {
+      return validators_.get(index);
     }
 
     private byte memoizedIsInitialized = -1;
@@ -9406,7 +9984,7 @@ public final class Consensus {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       for (int i = 0; i < validators_.size(); i++) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, validators_.getRaw(i));
+        output.writeMessage(1, validators_.get(i));
       }
     }
 
@@ -9415,13 +9993,9 @@ public final class Consensus {
       if (size != -1) return size;
 
       size = 0;
-      {
-        int dataSize = 0;
-        for (int i = 0; i < validators_.size(); i++) {
-          dataSize += computeStringSizeNoTag(validators_.getRaw(i));
-        }
-        size += dataSize;
-        size += 1 * getValidatorsList().size();
+      for (int i = 0; i < validators_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(1, validators_.get(i));
       }
       memoizedSize = size;
       return size;
@@ -9569,12 +10143,17 @@ public final class Consensus {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
+          getValidatorsFieldBuilder();
         }
       }
       public Builder clear() {
         super.clear();
-        validators_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
+        if (validatorsBuilder_ == null) {
+          validators_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        } else {
+          validatorsBuilder_.clear();
+        }
         return this;
       }
 
@@ -9598,11 +10177,15 @@ public final class Consensus {
       public protocol.Consensus.ValidatorSet buildPartial() {
         protocol.Consensus.ValidatorSet result = new protocol.Consensus.ValidatorSet(this);
         int from_bitField0_ = bitField0_;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          validators_ = validators_.getUnmodifiableView();
-          bitField0_ = (bitField0_ & ~0x00000001);
+        if (validatorsBuilder_ == null) {
+          if (((bitField0_ & 0x00000001) == 0x00000001)) {
+            validators_ = java.util.Collections.unmodifiableList(validators_);
+            bitField0_ = (bitField0_ & ~0x00000001);
+          }
+          result.validators_ = validators_;
+        } else {
+          result.validators_ = validatorsBuilder_.build();
         }
-        result.validators_ = validators_;
         onBuilt();
         return result;
       }
@@ -9644,15 +10227,31 @@ public final class Consensus {
 
       public Builder mergeFrom(protocol.Consensus.ValidatorSet other) {
         if (other == protocol.Consensus.ValidatorSet.getDefaultInstance()) return this;
-        if (!other.validators_.isEmpty()) {
-          if (validators_.isEmpty()) {
-            validators_ = other.validators_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureValidatorsIsMutable();
-            validators_.addAll(other.validators_);
+        if (validatorsBuilder_ == null) {
+          if (!other.validators_.isEmpty()) {
+            if (validators_.isEmpty()) {
+              validators_ = other.validators_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+            } else {
+              ensureValidatorsIsMutable();
+              validators_.addAll(other.validators_);
+            }
+            onChanged();
           }
-          onChanged();
+        } else {
+          if (!other.validators_.isEmpty()) {
+            if (validatorsBuilder_.isEmpty()) {
+              validatorsBuilder_.dispose();
+              validatorsBuilder_ = null;
+              validators_ = other.validators_;
+              bitField0_ = (bitField0_ & ~0x00000001);
+              validatorsBuilder_ = 
+                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
+                   getValidatorsFieldBuilder() : null;
+            } else {
+              validatorsBuilder_.addAllMessages(other.validators_);
+            }
+          }
         }
         onChanged();
         return this;
@@ -9681,98 +10280,244 @@ public final class Consensus {
       }
       private int bitField0_;
 
-      private com.google.protobuf.LazyStringList validators_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private java.util.List<protocol.Consensus.Validator> validators_ =
+        java.util.Collections.emptyList();
       private void ensureValidatorsIsMutable() {
         if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          validators_ = new com.google.protobuf.LazyStringArrayList(validators_);
+          validators_ = new java.util.ArrayList<protocol.Consensus.Validator>(validators_);
           bitField0_ |= 0x00000001;
          }
       }
+
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          protocol.Consensus.Validator, protocol.Consensus.Validator.Builder, protocol.Consensus.ValidatorOrBuilder> validatorsBuilder_;
+
       /**
-       * <code>repeated string validators = 1;</code>
+       * <code>repeated .protocol.Validator validators = 1;</code>
        */
-      public com.google.protobuf.ProtocolStringList
-          getValidatorsList() {
-        return validators_.getUnmodifiableView();
+      public java.util.List<protocol.Consensus.Validator> getValidatorsList() {
+        if (validatorsBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(validators_);
+        } else {
+          return validatorsBuilder_.getMessageList();
+        }
       }
       /**
-       * <code>repeated string validators = 1;</code>
+       * <code>repeated .protocol.Validator validators = 1;</code>
        */
       public int getValidatorsCount() {
-        return validators_.size();
+        if (validatorsBuilder_ == null) {
+          return validators_.size();
+        } else {
+          return validatorsBuilder_.getCount();
+        }
       }
       /**
-       * <code>repeated string validators = 1;</code>
+       * <code>repeated .protocol.Validator validators = 1;</code>
        */
-      public java.lang.String getValidators(int index) {
-        return validators_.get(index);
+      public protocol.Consensus.Validator getValidators(int index) {
+        if (validatorsBuilder_ == null) {
+          return validators_.get(index);
+        } else {
+          return validatorsBuilder_.getMessage(index);
+        }
       }
       /**
-       * <code>repeated string validators = 1;</code>
-       */
-      public com.google.protobuf.ByteString
-          getValidatorsBytes(int index) {
-        return validators_.getByteString(index);
-      }
-      /**
-       * <code>repeated string validators = 1;</code>
+       * <code>repeated .protocol.Validator validators = 1;</code>
        */
       public Builder setValidators(
-          int index, java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureValidatorsIsMutable();
-        validators_.set(index, value);
-        onChanged();
+          int index, protocol.Consensus.Validator value) {
+        if (validatorsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValidatorsIsMutable();
+          validators_.set(index, value);
+          onChanged();
+        } else {
+          validatorsBuilder_.setMessage(index, value);
+        }
         return this;
       }
       /**
-       * <code>repeated string validators = 1;</code>
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public Builder setValidators(
+          int index, protocol.Consensus.Validator.Builder builderForValue) {
+        if (validatorsBuilder_ == null) {
+          ensureValidatorsIsMutable();
+          validators_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          validatorsBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public Builder addValidators(protocol.Consensus.Validator value) {
+        if (validatorsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValidatorsIsMutable();
+          validators_.add(value);
+          onChanged();
+        } else {
+          validatorsBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
        */
       public Builder addValidators(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  ensureValidatorsIsMutable();
-        validators_.add(value);
-        onChanged();
+          int index, protocol.Consensus.Validator value) {
+        if (validatorsBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureValidatorsIsMutable();
+          validators_.add(index, value);
+          onChanged();
+        } else {
+          validatorsBuilder_.addMessage(index, value);
+        }
         return this;
       }
       /**
-       * <code>repeated string validators = 1;</code>
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public Builder addValidators(
+          protocol.Consensus.Validator.Builder builderForValue) {
+        if (validatorsBuilder_ == null) {
+          ensureValidatorsIsMutable();
+          validators_.add(builderForValue.build());
+          onChanged();
+        } else {
+          validatorsBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public Builder addValidators(
+          int index, protocol.Consensus.Validator.Builder builderForValue) {
+        if (validatorsBuilder_ == null) {
+          ensureValidatorsIsMutable();
+          validators_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          validatorsBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
        */
       public Builder addAllValidators(
-          java.lang.Iterable<java.lang.String> values) {
-        ensureValidatorsIsMutable();
-        com.google.protobuf.AbstractMessageLite.Builder.addAll(
-            values, validators_);
-        onChanged();
+          java.lang.Iterable<? extends protocol.Consensus.Validator> values) {
+        if (validatorsBuilder_ == null) {
+          ensureValidatorsIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, validators_);
+          onChanged();
+        } else {
+          validatorsBuilder_.addAllMessages(values);
+        }
         return this;
       }
       /**
-       * <code>repeated string validators = 1;</code>
+       * <code>repeated .protocol.Validator validators = 1;</code>
        */
       public Builder clearValidators() {
-        validators_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        onChanged();
+        if (validatorsBuilder_ == null) {
+          validators_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00000001);
+          onChanged();
+        } else {
+          validatorsBuilder_.clear();
+        }
         return this;
       }
       /**
-       * <code>repeated string validators = 1;</code>
+       * <code>repeated .protocol.Validator validators = 1;</code>
        */
-      public Builder addValidatorsBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        ensureValidatorsIsMutable();
-        validators_.add(value);
-        onChanged();
+      public Builder removeValidators(int index) {
+        if (validatorsBuilder_ == null) {
+          ensureValidatorsIsMutable();
+          validators_.remove(index);
+          onChanged();
+        } else {
+          validatorsBuilder_.remove(index);
+        }
         return this;
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public protocol.Consensus.Validator.Builder getValidatorsBuilder(
+          int index) {
+        return getValidatorsFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public protocol.Consensus.ValidatorOrBuilder getValidatorsOrBuilder(
+          int index) {
+        if (validatorsBuilder_ == null) {
+          return validators_.get(index);  } else {
+          return validatorsBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public java.util.List<? extends protocol.Consensus.ValidatorOrBuilder> 
+           getValidatorsOrBuilderList() {
+        if (validatorsBuilder_ != null) {
+          return validatorsBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(validators_);
+        }
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public protocol.Consensus.Validator.Builder addValidatorsBuilder() {
+        return getValidatorsFieldBuilder().addBuilder(
+            protocol.Consensus.Validator.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public protocol.Consensus.Validator.Builder addValidatorsBuilder(
+          int index) {
+        return getValidatorsFieldBuilder().addBuilder(
+            index, protocol.Consensus.Validator.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .protocol.Validator validators = 1;</code>
+       */
+      public java.util.List<protocol.Consensus.Validator.Builder> 
+           getValidatorsBuilderList() {
+        return getValidatorsFieldBuilder().getBuilderList();
+      }
+      private com.google.protobuf.RepeatedFieldBuilderV3<
+          protocol.Consensus.Validator, protocol.Consensus.Validator.Builder, protocol.Consensus.ValidatorOrBuilder> 
+          getValidatorsFieldBuilder() {
+        if (validatorsBuilder_ == null) {
+          validatorsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+              protocol.Consensus.Validator, protocol.Consensus.Validator.Builder, protocol.Consensus.ValidatorOrBuilder>(
+                  validators_,
+                  ((bitField0_ & 0x00000001) == 0x00000001),
+                  getParentForChildren(),
+                  isClean());
+          validators_ = null;
+        }
+        return validatorsBuilder_;
       }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
@@ -11716,6 +12461,11 @@ public final class Consensus {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_protocol_PbftEnv_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_protocol_Validator_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_protocol_Validator_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_protocol_ValidatorSet_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -11770,26 +12520,28 @@ public final class Consensus {
       "bftViewChange\022\'\n\010new_view\030\010 \001(\0132\025.protoc" +
       "ol.PbftNewView\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132",
       "\016.protocol.Pbft\022&\n\tsignature\030\002 \001(\0132\023.pro" +
-      "tocol.Signature\"\"\n\014ValidatorSet\022\022\n\nvalid" +
-      "ators\030\001 \003(\t\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(" +
-      "\0132\021.protocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010by" +
-      "te_fee\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022cr" +
-      "eate_account_fee\030\003 \001(\003\022\027\n\017issue_asset_fe" +
-      "e\030\004 \001(\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata" +
-      "_fee\030\006 \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(" +
-      "\003\022\031\n\021set_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin" +
-      "_fee\030\t \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE",
-      "_FEE\020\001\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_A" +
-      "CCOUNT_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAY" +
-      "MENT_FEE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_" +
-      "SIGNER_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE" +
-      "\020\010\022\020\n\014PAY_COIN_FEE\020\t*\243\001\n\017PbftMessageType" +
-      "\022\030\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_" +
-      "PREPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_" +
-      "TYPE_CHECKPOINT\020\003\022\030\n\024PBFT_TYPE_VIEWCHANG" +
-      "E\020\004\022\025\n\021PBFT_TYPE_NEWVIEW\020\005*8\n\rPbftValueT" +
-      "ype\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXS",
-      "ET\020\001b\006proto3"
+      "tocol.Signature\"8\n\tValidator\022\017\n\007address\030" +
+      "\001 \001(\t\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Val" +
+      "idatorSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol" +
+      ".Validator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\013" +
+      "2\021.protocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010byt" +
+      "e_fee\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022cre" +
+      "ate_account_fee\030\003 \001(\003\022\027\n\017issue_asset_fee" +
+      "\030\004 \001(\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata_" +
+      "fee\030\006 \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(\003",
+      "\022\031\n\021set_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin_" +
+      "fee\030\t \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE_" +
+      "FEE\020\001\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_AC" +
+      "COUNT_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAYM" +
+      "ENT_FEE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_S" +
+      "IGNER_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE\020" +
+      "\010\022\020\n\014PAY_COIN_FEE\020\t*\243\001\n\017PbftMessageType\022" +
+      "\030\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_P" +
+      "REPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_T" +
+      "YPE_CHECKPOINT\020\003\022\030\n\024PBFT_TYPE_VIEWCHANGE",
+      "\020\004\022\025\n\021PBFT_TYPE_NEWVIEW\020\005*8\n\rPbftValueTy" +
+      "pe\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXSE" +
+      "T\020\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -11858,20 +12610,26 @@ public final class Consensus {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_PbftEnv_descriptor,
         new java.lang.String[] { "Pbft", "Signature", });
-    internal_static_protocol_ValidatorSet_descriptor =
+    internal_static_protocol_Validator_descriptor =
       getDescriptor().getMessageTypes().get(9);
+    internal_static_protocol_Validator_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_protocol_Validator_descriptor,
+        new java.lang.String[] { "Address", "PledgeCoinAmount", });
+    internal_static_protocol_ValidatorSet_descriptor =
+      getDescriptor().getMessageTypes().get(10);
     internal_static_protocol_ValidatorSet_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_ValidatorSet_descriptor,
         new java.lang.String[] { "Validators", });
     internal_static_protocol_PbftProof_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_protocol_PbftProof_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_PbftProof_descriptor,
         new java.lang.String[] { "Commits", });
     internal_static_protocol_FeeConfig_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(12);
     internal_static_protocol_FeeConfig_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_FeeConfig_descriptor,

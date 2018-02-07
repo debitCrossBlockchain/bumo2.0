@@ -113,7 +113,7 @@ namespace bumo {
 
 		std::set<std::string> validator_set;
 		for (int32_t i = 0; i < validators.validators_size(); i++) {
-			validator_set.insert(validators.validators(i));
+			validator_set.insert(validators.validators(i).address());
 		}
 
 		std::map<LedgerUpgradeFrm, size_t> counter_upgrade;

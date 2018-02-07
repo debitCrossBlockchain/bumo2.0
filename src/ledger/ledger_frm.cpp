@@ -169,6 +169,7 @@ namespace bumo {
 			tx_frm->NonceIncrease(this, environment_);
 			if (environment_->useAtomMap_)
 				environment_->Commit();
+
 			if (tx_time_out > 0 ) {
 				tx_frm->EnableChecked();
 				tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + tx_time_out);
@@ -201,8 +202,8 @@ namespace bumo {
 					tx_frm->environment_->Commit();
 				}
 			}
-			
-			environment_->ClearChangeBuf();
+
+			tx_frm->environment_->ClearChangeBuf();
 			total_real_fee_ += tx_frm->GetRealFee();
 			apply_tx_frms_.push_back(tx_frm);			
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
@@ -285,8 +286,8 @@ namespace bumo {
 		int64_t fee = tfee / set.validators_size();
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
-			if (!environment_->GetEntry(set.validators(i), account)) {
-				account = CreatBookKeeperAccount(set.validators(i));
+			if (!environment_->GetEntry(set.validators(i).address(), account)) {
+				account = CreatBookKeeperAccount(set.validators(i).address());
 			}
 			if (random_index == i) {
 				random_account = account;
@@ -299,6 +300,7 @@ namespace bumo {
 		proto_account.set_balance(proto_account.balance() + tfee);
 		return true;
 	}
+
 	AccountFrm::pointer LedgerFrm::CreatBookKeeperAccount(const std::string& account_address) {
 		protocol::Account acc;
 		acc.set_address(account_address);
