@@ -246,8 +246,8 @@ namespace bumo {
 					//check the db if opened
 					KeyValueDb *account_db = NewKeyValueDb(db_config);
 					if (!account_db->Open(db_config.account_db_path_)) {
+						LOG_ERROR("Drop failed, error desc(%s)", account_db->error_desc().c_str());
 						delete account_db;
-						LOG_ERROR("Database in used, drop failed");
 						break;
 					}
 					delete account_db;

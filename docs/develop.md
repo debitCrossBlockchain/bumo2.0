@@ -7,6 +7,7 @@
         - [了解protocol buffer3](#了解protocol-buffer3)
         - [protocol buffer 3和json](#protocol-buffer-3和json)
         - [websocket和http](#websocket和http)
+        - [端口配置](#端口配置)
         - [交易执行的基本过程](#交易执行的基本过程)
         - [试一试](#试一试)
     - [HTTP接口](#http接口)
@@ -84,6 +85,15 @@ BUMO 区块链提供了websocket和http 两种API接口。您可以在 安装目
     }
 ```
 
+### 端口配置
+
+| 网络类型        | 网络ID（network_id）|WebServer |P2P  | WebSocket |
+| :------------- | -------|--------- |-----|-----------|
+| mainnet        | 10000|16002 |16001 |16003
+| testnet | 20000|26002 | 26001 | 26003
+| 内测版本 | 30000 | 36002 | 36001 | 36003 
+
+
 ### 交易执行的基本过程
 
 1. 根据意愿组装交易对象`Transaction`
@@ -95,7 +105,7 @@ BUMO 区块链提供了websocket和http 两种API接口。您可以在 安装目
 ### 试一试
 
 如果您的区块链刚刚部署完成，那么目前区块链系统中只有创世账号。您可以通过http接口查询创世账号
-`HTTP GET host:29333/getGenesisAccount`
+`HTTP GET host:36002/getGenesisAccount`
 您会得到类似这样的返回内容
 
 ```json
@@ -1422,6 +1432,21 @@ function query(input)
 
     ```
       
+ - ##### 变换单位
+    `toSatoshi(value);`
+
+    - 返回值: 乘以 10^8
+    - value: 左值
+
+    例如
+    ```javascript
+    var ret = toSatoshi('12345678912');
+    /*
+    '1234567891200000000'
+    */
+
+    ```
+
 - ##### 输出日志
 
     `log(info);`
