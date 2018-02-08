@@ -21,6 +21,7 @@
 
 namespace bumo {
 	bool g_enable_ = true;
+	bool g_ready_ = false;
 	Argument::Argument() :
 		help_modle_(false),
 		drop_db_(false),

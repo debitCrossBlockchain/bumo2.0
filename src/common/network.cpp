@@ -188,7 +188,7 @@ namespace bumo {
 			last_send_time_ = utils::Timestamp::HighResolution();
 		} while (false);
 
-		LOG_INFO("Send ping to ip(%s),error code(%d)", GetPeerAddress().ToIpPort().c_str(), ec.value());
+		LOG_TRACE("Send ping to ip(%s),error code(%d)", GetPeerAddress().ToIpPort().c_str(), ec.value());
 		return ec.value() == 0;
 	}
 
@@ -197,7 +197,7 @@ namespace bumo {
 		ping.set_nonce(utils::Timestamp::HighResolution());
 		bool ret = SendRequest(OVERLAY_PING, ping.SerializeAsString(), ec);
 		last_send_time_ = utils::Timestamp::HighResolution();
-		LOG_INFO("Send ping to ip(%s),error code(%d:%s)", GetPeerAddress().ToIpPort().c_str(), ec.value(), ec.message().c_str());
+		LOG_TRACE("Send ping to ip(%s),error code(%d:%s)", GetPeerAddress().ToIpPort().c_str(), ec.value(), ec.message().c_str());
 		return !ec;
 	}
 
@@ -730,7 +730,7 @@ namespace bumo {
 		Connection *conn = GetConnection(conn_id);
 		if (conn) {
 			conn->TouchReceiveTime();
-			LOG_INFO("Recv pong, nonce(" FMT_I64 ") from ip(%s)", pong.nonce(), conn->GetPeerAddress().ToIpPort().c_str());
+			LOG_TRACE("Recv pong, nonce(" FMT_I64 ") from ip(%s)", pong.nonce(), conn->GetPeerAddress().ToIpPort().c_str());
 		}
 
 		return true;

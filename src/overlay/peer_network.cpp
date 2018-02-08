@@ -241,9 +241,8 @@ namespace bumo {
 			//switch to main thread
 			Global::Instance().GetIoService().post([tran_ptr, message, this]() {
 				Result ig_err;
-				if (GlueManager::Instance().OnTransaction(tran_ptr, ig_err)) {
-					BroadcastMsg(message.type(), message.data());
-				}
+				GlueManager::Instance().OnTransaction(tran_ptr, ig_err);
+				BroadcastMsg(message.type(), message.data());
 			});
 		}
 		return true;
@@ -562,7 +561,7 @@ namespace bumo {
 				break;
 			}
 
-			db_peer_cache_ = Proto2Json(peers);
+			db_peer_cache_ = Proto2Json(peers)["peers"];
 			return true;
 		} while (false);
 		return false;

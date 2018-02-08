@@ -60,7 +60,7 @@ namespace bumo {
 	const char *General::KEY_LEDGER_SEQ = "max_seq";
 	const char *General::KEY_GENE_ACCOUNT = "genesis_account";
 	const char *General::VALIDATORS = "validators";
-	const char *General::PEERS_TABLE = "peers";
+	const char *General::PEERS_TABLE = "peers_table";
 	const char *General::LAST_TX_HASHS = "last_tx_hashs";
 	const char *General::LAST_PROOF = "last_proof";
 

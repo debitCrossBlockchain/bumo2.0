@@ -241,9 +241,10 @@ namespace bumo {
 
 			TransactionMap::iterator iter = topic_caches_.find(key);
 			if (iter != topic_caches_.end())  {
-				err.set_code(protocol::ERRCODE_ALREADY_EXIST);
-				err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
-				LOG_ERROR("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
+				//dont't reply the tx, then break;
+				//err.set_code(protocol::ERRCODE_ALREADY_EXIST);
+				//err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
+				LOG_INFO("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
 				break;
 			}
 
@@ -264,10 +265,7 @@ namespace bumo {
 
 		} while (false);
 
-		if (err.code() != protocol::ERRCODE_ALREADY_EXIST) {
-			WebSocketServer::Instance().BroadcastChainTxMsg(hash_value, address, err, err.code() == protocol::ERRCODE_SUCCESS ?
-				protocol::ChainTxStatus_TxStatus_PENDING : protocol::ChainTxStatus_TxStatus_FAILURE);
-		}
+
 		return err.code() == protocol::ERRCODE_SUCCESS;
 	}
 
@@ -322,9 +320,9 @@ namespace bumo {
 			iter != txs.end();
 			iter++) {
 
-			TransactionFrm::pointer tx = *iter;
-			WebSocketServer::Instance().BroadcastChainTxMsg(tx->GetContentHash(), tx->GetSourceAddress(), 
-				tx->GetResult(), tx->GetResult().code() == protocol::ERRCODE_SUCCESS ? protocol::ChainTxStatus_TxStatus_COMPLETE : protocol::ChainTxStatus_TxStatus_FAILURE);
+//			TransactionFrm::pointer tx = *iter;
+//			WebSocketServer::Instance().BroadcastChainTxMsg(tx->GetContentHash(), tx->GetSourceAddress(), 
+//				tx->GetResult(), tx->GetResult().code() == protocol::ERRCODE_SUCCESS ? protocol::ChainTxStatus_TxStatus_COMPLETE : protocol::ChainTxStatus_TxStatus_FAILURE);
 		}
 	}
 

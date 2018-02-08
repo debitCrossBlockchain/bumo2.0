@@ -43,6 +43,7 @@ namespace bumo {
 	};
 
 	extern bool g_enable_;
+	extern bool g_ready_;
 
 	void InstallSignal();
 }

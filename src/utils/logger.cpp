@@ -196,6 +196,11 @@ bool utils::Logger::Initialize(utils::LogDest log_dest, utils::LogLevel log_leve
 	log_level_ = log_level;
 	log_dest_ = log_dest;
 
+	std::string  file_dir = utils::File::GetUpLevelPath(file_name);
+	if (!utils::File::IsExist(file_dir)) {
+		utils::File::CreateDir(file_dir);
+	} 
+
 	if (log_dest & LOG_DEST_FILE && !file_name.empty()) {
 		std::string out_file_name = file_name + "-out";
 		std::string err_file_name = file_name + "-err";

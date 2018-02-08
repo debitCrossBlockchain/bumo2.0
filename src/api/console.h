@@ -41,6 +41,7 @@ namespace bumo {
 		void PayCoin(const utils::StringVector &args);
 		void GetState(const utils::StringVector &args);
 		void ShowKey(const utils::StringVector &args);
+		void CmdExit(const utils::StringVector &args);
 
 	private:
 		utils::Thread *thread_ptr_;

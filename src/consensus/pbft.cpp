@@ -953,7 +953,6 @@ namespace bumo {
 	}
 
 	bool Pbft::OnPrepare(const protocol::Pbft &pbft, PbftInstance &pinstance) {
-		LOG_INFO("Receive prepare");
 		const protocol::PbftPrepare &prepare = pbft.prepare();
 		if (CompareValue(pinstance.pre_prepare_.value_digest(), prepare.value_digest()) != 0) {
 			LOG_ERROR("The message prepare value(%s) != this pre-prepare value(%s) , desc(%s)",

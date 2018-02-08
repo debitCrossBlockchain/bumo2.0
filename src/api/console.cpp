@@ -36,6 +36,7 @@ namespace bumo {
 		funcs_["payCoin"] = std::bind(&Console::PayCoin, this, std::placeholders::_1);
 		funcs_["showKey"] = std::bind(&Console::ShowKey, this, std::placeholders::_1);
 		funcs_["getState"] = std::bind(&Console::GetState, this, std::placeholders::_1);
+		funcs_["exit"] = std::bind(&Console::CmdExit, this, std::placeholders::_1);
 	}
 
 	Console::~Console() {
@@ -61,7 +62,13 @@ namespace bumo {
 	}
 
 	extern bool g_enable_;
+	extern bool g_ready_;
 	void Console::Run(utils::Thread *thread) {
+		while (g_enable_ && !g_ready_) {
+			utils::Sleep(100);
+		}
+
+		std::cout << "ready" << std::endl;
 		while (g_enable_) {
 			std::string input;
 			std::cout << "> ";
@@ -290,6 +297,10 @@ namespace bumo {
 		}
 	}
 
+	void Console::CmdExit(const utils::StringVector &args) {
+		g_enable_ = false;
+	}
+
 	void Console::PayCoin(const utils::StringVector &args) {
 		if (args.size() < 4) {
 			std::cout << "error params" << std::endl;
@@ -394,6 +405,7 @@ namespace bumo {
 			"getBlockNumber                               get lastest closed block number\n"
 			"showKey                                      show wallet private key\n"
 			"getState                                     get current state of node\n"
+			"exit                                         exit\n"
 			);
 	}
 }
