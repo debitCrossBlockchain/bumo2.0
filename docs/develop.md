@@ -1494,7 +1494,7 @@ function query(input)
 
     例如
     ```javascript
-    var transaction =
+    let transaction =
     {
       'operations' :
       [
@@ -1575,7 +1575,7 @@ function query(input)
     例如某账号发起了一笔交易，该交易中有个操作是调用合约Y（该操作的source_address是x），那么合约Y执行过程中，sender的值就是x账号的地址。
 
     ```javascript
-    var bar = sender;
+    let bar = sender;
     /*
     那么bar的值是x的账号地址。
     */
@@ -1589,7 +1589,7 @@ function query(input)
     例如某账号A发起了一笔交易tx0，tx0中第0（从0开始计数）个操作是给某个合约账户转移资产(调用合约), 那么```triggerIndex```的值就是0。
 
     ```javascript
-    var bar = triggerIndex;
+    let bar = triggerIndex;
     /* bar 是一个非负整数*/
     ```
 
@@ -1604,12 +1604,12 @@ function query(input)
   >例: Bob的合约是这么写的
   ```javascript
   function main(inputStr) {
-    var recvAsset = trigger.transaction.operations[triggerIndex].payment.asset;
+    let recvAsset = trigger.transaction.operations[triggerIndex].payment.asset;
 
     if (recvAsset.property.code != 'CNY' || recvAsset.property.issuer != 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY') {
       throw '不支持的资产类型';
     }
-    var tx = {
+    let tx = {
       'operations': [{
           'type': 3,
           'payment': {
@@ -1626,53 +1626,14 @@ function query(input)
       ]
     };
 
-    var bSuccess = doTransaction(tx);
-    if (!bSuccess) {
-      throw 'IOU卖完了';
-    }
+    doTransaction(JSON.stringify(tx));
+
   }
   ```
   这段合约的功能就是，Bob以1：1的价格收`buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY`发行的`CNY`,售卖自己的IOU借条(I owe you )。Alice向Bob转移一笔资产，触发了Bob的合约，如果此时Bob的IOU已经卖完，那么会执行到`throw 'IOU卖完了';`这一步。未捕获的异常会导致JavaScript代码执行出错，那么本次合约执行失败。Alice转给Bob的资产会自动回退到Alice的账户中，同时，Alice的这笔交易执行状态为失败，错误代码为`151`。
 
 - 执行交易失败
-  合约中可以执行多个交易，每个交易本身具有事物性。
-  >例
-
-  ```JavaScript
-  var tx1 = {
-    "operations":[
-      {
-        "type": 2,
-        "issue_asset": {
-          "amount": 1000,
-          "code": "CNY"
-        }
-      }
-    ]
-  };
-  var ret1 = doTransaction(tx1);
-
-  var tx2 = {
-    'operations':[
-      {
-        "type": 1,
-        "create_account": {
-          "dest_address": "buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg",
-          "priv": {
-            "master_weight": 10,
-            "thresholds": {
-              "tx_threshold": 7
-            }
-          }
-        }
-      }
-    ]
-  };
-
-  var ret2 = doTransaction(tx2);
-  ```
-
-  如果tx1执行成功了，tx2执行失败了，那么tx2不会生效，tx1会生效。您如果需要保证事务性，请将两个交易合并起来。
+  <font color=red>合约中可以执行多个交易，只要有一个交易失败，就会抛出异常，导致整个交易失败</font>
 
 ### 验证者节点选举
 

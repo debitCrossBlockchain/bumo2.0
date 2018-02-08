@@ -1196,7 +1196,7 @@ namespace bumo{
 			env.mutable_transaction()->CopyFrom(transaction);
 
 			if (v8_contract->IsReadonly()) {
-				error_desc ="The contract is readonly";
+				error_desc = "The contract is readonly";
 				break;
 			}
 
@@ -1465,7 +1465,7 @@ namespace bumo{
 			}
 
 			if (args.Length() != para_num) {
-				error_desc = "parameter number error";
+				error_desc = "Parameter number error";
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
@@ -1574,17 +1574,17 @@ namespace bumo{
 		std::string error_desc;
 		do {
 			if (args.Length() != 2) {
-				error_desc = "parameter number error";
+				error_desc = "Parameter number error";
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				error_desc = "contract execute error, int64Plus, parameter 0 should be a String or Number";
+				error_desc = "Contract execute error, int64Plus, parameter 0 should be a String or Number";
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				error_desc = "contract execute error, int64Plus, parameter 1 should be a String or Number";
+				error_desc = "Contract execute error, int64Plus, parameter 1 should be a String or Number";
 				break;
 			}
 
@@ -1609,17 +1609,17 @@ namespace bumo{
 		std::string error_desc;
 		do {
 			if (args.Length() != 2) {
-				error_desc ="parameter number error";
+				error_desc ="Parameter number error";
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				error_desc  ="contract execute error, int64Sub, parameter 0 should be a String or Number";
+				error_desc  ="Contract execute error, int64Sub, parameter 0 should be a String or Number";
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				error_desc ="contract execute error, int64Sub, parameter 1 should be a String or Number";
+				error_desc ="Contract execute error, int64Sub, parameter 1 should be a String or Number";
 				break;
 			}
 
@@ -1644,17 +1644,17 @@ namespace bumo{
 		std::string error_desc;
 		do {
 			if (args.Length() != 2) {
-				error_desc = "parameter number error";
+				error_desc = " Parameter number error";
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				error_desc  = "contract execute error, int64Compare, parameter 0 should be a String or Number";
+				error_desc  = "Contract execute error, int64Compare, parameter 0 should be a String or Number";
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				error_desc = "contract execute error, int64Compare, parameter 1 should be a String or Number";
+				error_desc = "Contract execute error, int64Compare, parameter 1 should be a String or Number";
 				break;
 			}
 
@@ -1683,17 +1683,17 @@ namespace bumo{
 		std::string error_desc;
 		do {
 			if (args.Length() != 2) {
-				error_desc = "parameter number error";
+				error_desc = "Parameter number error";
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				error_desc = "contract execute error, int64Div, parameter 0 should be a String or Number";
+				error_desc = "Contract execute error, int64Div, parameter 0 should be a String or Number";
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				error_desc = "contract execute error, int64Div, parameter 1 should be a String or Number";
+				error_desc = "Contract execute error, int64Div, parameter 1 should be a String or Number";
 				break;
 			}
 
@@ -1720,17 +1720,17 @@ namespace bumo{
 		std::string error_desc;
 		do {
 			if (args.Length() != 2) {
-				error_desc = "parameter number error";
+				error_desc = "Parameter number error";
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				error_desc = "contract execute error, int64Mod, parameter 0 should be a String or Number";
+				error_desc = "Contract execute error, int64Mod, parameter 0 should be a String or Number";
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				error_desc = "contract execute error, int64Mod, parameter 1 should be a String or Number";
+				error_desc = "Contract execute error, int64Mod, parameter 1 should be a String or Number";
 				break;
 			}
 
@@ -1758,17 +1758,17 @@ namespace bumo{
 		std::string error_desc;
 		do {
 			if (args.Length() != 2) {
-				error_desc = "parameter number error";
+				error_desc = "Parameter number error";
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				error_desc ="contract execute error, int64Mul, parameter 0 should be a String or Number";
+				error_desc ="Contract execute error, int64Mul, parameter 0 should be a String or Number";
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				error_desc = "contract execute error, int64Mul, parameter 1 should be a String or Number";
+				error_desc = "Contract execute error, int64Mul, parameter 1 should be a String or Number";
 				break;
 			}
 
