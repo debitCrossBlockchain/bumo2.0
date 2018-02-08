@@ -3,17 +3,16 @@ const proposalRecordsKey = 'proposalRecordsKey';
 const voteRecordKeyPrefix ='voteRecords_';
 const nonceKey ='nonce';
 const expireTime =15;
+const microSecOfOneDay =1000000*60*60*24;
 let proposalRecords = {};
 let validators = {};
 
 function storageSet(key, value) {
-  let result = storageStore(key,JSON.stringify(value));
-  assert(result !== false,'Storage set faild');
+  assert(storageStore(key,JSON.stringify(value))!== false,'Storage set faild');
 }
 
 function storageDelete(key) {
-  let result = storageDel(key);
-  assert(result !== false,'Storage del faild');
+  assert(storageDel(key) !==false,'Storage del faild');
 }
 
 function loadValidators() {
@@ -31,6 +30,19 @@ function loadProposalRecords() {
   }
   proposalRecords = JSON.parse(result);
   return true;
+}
+
+function isValidator(accountId){
+  let found =false;
+  validators.every(
+    function(item){
+      if(item[0] ===accountId) {
+        found =true;
+        return false;
+      }
+    }
+  );
+  assert(found,accountId +' is not validator');
 }
 
 function voteFee(proposalId) {
@@ -58,7 +70,6 @@ function voteFee(proposalId) {
   {
     let output = {};
     output[proposalRecords[proposalId].feeType] = proposalRecords[proposalId].price;
-    configFee(JSON.stringify(output));
     delete proposalRecords[proposalId];
     storageDelete(key);   
   }
@@ -68,24 +79,11 @@ function voteFee(proposalId) {
   storageSet(proposalRecordsKey, proposalRecords);
 }
 
-function isValidator(accountId){
-  let found =false;
-  validators.every(
-    function(item){
-      if(item[0] ===accountId) {
-        found =true;
-        return false;
-      }
-    }
-  );
-  assert(found,accountId +' is not validator');
-}
-
 function proposalFee(feeType,price) {
   let accountId =sender;
   loadValidators();
   isValidator(accountId);
-  
+
   let result =storageLoad(nonceKey);
   assert(result !==false,'load nonce failed');
   let nonce = parseInt(result);
@@ -153,7 +151,8 @@ function checkExpire(){
   let curTime =blockTimestamp;
   Object.keys(proposalRecords).every(
     function(proposalId){
-      let span = (curTime-proposalRecords[proposalId].time)/(1000000*60*60*24*15);
+      //let span = (curTime-proposalRecords[proposalId].time)/(1000000*60*60*24);
+      let span = (curTime-proposalRecords[proposalId].time)/microSecOfOneDay;
       if(span>=expireTime){
         delete proposalRecords[proposalId];
         let key =voteRecordKeyPrefix + proposalId;
