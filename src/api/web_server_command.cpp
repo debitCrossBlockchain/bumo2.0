@@ -123,7 +123,7 @@ namespace bumo {
 						PrivateKey privateKey(private_key);
 						if (!privateKey.IsValid()) {
 							result.set_code(protocol::ERRCODE_INVALID_PRIKEY);
-							result.set_desc("signature failed");
+							result.set_desc("Private key format error");
 							break;
 						}
 

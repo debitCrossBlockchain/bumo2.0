@@ -1627,15 +1627,13 @@ function query(input)
     };
 
     doTransaction(JSON.stringify(tx));
-    if (!bSuccess) {
-      throw 'IOU卖完了';
-    }
+
   }
   ```
   这段合约的功能就是，Bob以1：1的价格收`buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY`发行的`CNY`,售卖自己的IOU借条(I owe you )。Alice向Bob转移一笔资产，触发了Bob的合约，如果此时Bob的IOU已经卖完，那么会执行到`throw 'IOU卖完了';`这一步。未捕获的异常会导致JavaScript代码执行出错，那么本次合约执行失败。Alice转给Bob的资产会自动回退到Alice的账户中，同时，Alice的这笔交易执行状态为失败，错误代码为`151`。
 
 - 执行交易失败
-  `合约中可以执行多个交易，只要有一个交易失败，就会抛出异常，导致整个交易失败`
+  <font color=red>合约中可以执行多个交易，只要有一个交易失败，就会抛出异常，导致整个交易失败</font>
 
 ### 验证者节点选举
 
