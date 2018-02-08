@@ -26,6 +26,36 @@ make
 
 生成的可执行文件目录：bumo/bin
 
+### MAC
+- 安装最新的Xcode 和 Command Tools，至少在8.0以上版本， 可以通过[苹果官网下载](https://developer.apple.com/download/more/)或者[苹果APP商城下载](https://itunes.apple.com/us/app/xcode/id497799835)
+- 安装brew，参考 [brew安装](https://brew.sh/index_zh-cn.html)
+- 使用brew执行安装依赖包
+
+ ```
+bash
+export HOMEBREW_NO_AUTO_UPDATE=true
+brew install automake
+brew install autoconf
+brew install libtool
+brew install cmake
+brew install python
+brew install m4
+```
+
+- 编译 
+
+
+ ```
+bash
+cd bumo
+make
+cp src/3rd/v8_target/mac/*.bin bin/
+cp src/3rd/v8_target/mac/*.dat bin/
+```
+
+生成的编译临时目录:bumo/bulid/mac/
+生成的可执行文件目录：bumo/bin/
+
 ### Windows
 - 安装 Visual Studio Ulimate 2013
 - 打开 bumochain\build\win32\Bumo.vs12.sln, 使用 VS 自带编译器编译即可。生成的可执行文件在bumo\build\win32\dbin 目录下。
