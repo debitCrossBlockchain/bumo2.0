@@ -270,20 +270,33 @@ namespace bumo {
 	}
 
 	bool LedgerFrm::AllocateFee() {
-		if (total_fee_ == 0 || IsTestMode()){
+		if (total_fee_ == 0 || IsTestMode()) {
 			return true;
 		}
 
 		protocol::ValidatorSet set;
-		if (!LedgerManager::Instance().GetValidators(ledger_.header().seq() - 1, set))	{
+		if (!LedgerManager::Instance().GetValidators(ledger_.header().seq() - 1, set)) {
 			LOG_ERROR("Get validator failed of ledger seq(" FMT_I64 ")", ledger_.header().seq() - 1);
 			return false;
+		}
+		if (set.validators_size() == 0) {
+			LOG_ERROR("Validator should not be empty");
+			return false;
+		}
+
+		bool average_allocte = false;
+		int64_t total_pledge_amount = 0;
+		for (int32_t i = 0; i < set.validators_size(); i++) {
+			total_pledge_amount += set.validators(i).pledge_coin_amount();
+		}
+		if (total_pledge_amount == 0) {
+			average_allocte = true;
 		}
 
 		int64_t tfee = total_fee_;
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = ledger_.header().seq() % set.validators_size();
-		int64_t fee = tfee / set.validators_size();
+		int64_t average_fee = tfee / set.validators_size();
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
 			if (!environment_->GetEntry(set.validators(i).address(), account)) {
@@ -292,12 +305,22 @@ namespace bumo {
 			if (random_index == i) {
 				random_account = account;
 			}
+
+			int64_t fee = 0;
+			if (average_allocte) {
+				fee = average_fee;
+			}
+			else {
+				fee = tfee*set.validators(i).pledge_coin_amount() / total_pledge_amount;;
+			}
 			tfee -= fee;
 			protocol::Account &proto_account = account->GetProtoAccount();
 			proto_account.set_balance(proto_account.balance() + fee);
 		}
-		protocol::Account &proto_account = random_account->GetProtoAccount();
-		proto_account.set_balance(proto_account.balance() + tfee);
+		if (tfee > 0) {
+			protocol::Account &proto_account = random_account->GetProtoAccount();
+			proto_account.set_balance(proto_account.balance() + tfee);
+		}
 		return true;
 	}
 

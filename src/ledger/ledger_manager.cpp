@@ -950,6 +950,7 @@ namespace bumo {
 		do {
 			if (ledger_context->transaction_stack_.size() > General::CONTRACT_MAX_RECURSIVE_DEPTH) {
 				txfrm->result_.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_RECURSION);
+				txfrm->result_.set_desc("Too many recursion ");
 				//add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
@@ -1019,7 +1020,7 @@ namespace bumo {
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
-			result.set_code(txfrm->GetResult().code() == protocol::ERRCODE_SUCCESS? 0:-1);
+			result = txfrm->GetResult();
 			return result;
 		} while (false);
 
@@ -1033,7 +1034,7 @@ namespace bumo {
 		trigger->mutable_transaction()->set_index(back->processing_operation_);
 		back->instructions_.push_back(tx_store);
 		
-		result.set_code(-1);
+		result = txfrm->GetResult();
 		return result;
 	}
 }

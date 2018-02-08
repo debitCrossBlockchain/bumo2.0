@@ -28,7 +28,7 @@
             - [设置metadata](#设置metadata)
             - [设置权重](#设置权重)
             - [设置门限](#设置门限)
-            - [转移BU资产](#转移BU资产)
+            - [转移bu资产](#转移bu资产)
     - [高级功能](#高级功能)
         - [控制权的分配](#控制权的分配)
         - [版本化控制](#版本化控制)
@@ -958,7 +958,7 @@ POST /getTransactionBlob
 |参数|描述
 |:--- | --- 
 | set_metadata.key  |required，length:(0, 1024]
-| set_metadata.value  |optional，length:(0, 256K]
+| set_metadata.value  |optional，length:[0, 256K]
 | set_metadata.version |optional，default 0, 0：不限制版本，>0 : 当前 value 的版本必须为该值， <0 : 非法
 
 - 功能
@@ -1087,7 +1087,7 @@ POST /getTransactionBlob
   }
   ```
 
-#### 转移BU资产
+#### 转移bu资产
 
 |参数|描述
 |:--- | --- 
@@ -1254,7 +1254,7 @@ function query(input)
 
     例如
     ```javascript
-    var balance = getBalance('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
+    let balance = getBalance('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
     balance 具有如下格式
      '9999111100000'
@@ -1265,10 +1265,10 @@ function query(input)
   `storageStore(metadata_key, metadata_value);`
   - metadata_key: metadata的key
   ```javascript
-  var ret = storageStore('abc', 'values');
+  storageStore('abc', 'values');
   /*
-    bar 的值是如下的格式
-    true
+    参数字符串格式
+    执行成功或者失败抛异常
   */
 
   ```
@@ -1277,10 +1277,11 @@ function query(input)
   `storageLoad(metadata_key);`
   - metadata_key: metadata的key
   ```javascript
-  var value = storageLoad('abc');
+  let value = storageLoad('abc');
   /*
     value 的值是如下的格式
     'values'
+    失败返回false
   */
 
   ```
@@ -1290,10 +1291,10 @@ function query(input)
   `storageDel(metadata_key);`
   - metadata_key: metadata的key
   ```javascript
-  var ret  = storageDel('abc');
+  storageDel('abc');
   /*
-    ret 的值是如下的格式
-    true
+    参数字符串格式
+    执行成功或者失败抛异常
   */
 
   ```
@@ -1308,12 +1309,12 @@ function query(input)
 
     例如
     ```javascript
-    var asset_property =
+    let asset_property =
     {
       'issuer' : 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY',
       'code' : 'CNY'
     };
-    var bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_property);
+    let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_property);
 
     /*
     {
@@ -1323,6 +1324,7 @@ function query(input)
         "issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY"
       }
     }
+    失败返回false
     */
     ```
 
@@ -1333,9 +1335,10 @@ function query(input)
 
     例如
     ```javascript
-    var ledger = getBlockHash(4);
+    let ledger = getBlockHash(4);
     /*
     'c2f6892eb934d56076a49f8b01aeb3f635df3d51aaed04ca521da3494451afb3'
+    失败返回false
     */
 
     ```
@@ -1348,9 +1351,10 @@ function query(input)
 
     例如
     ```javascript
-    var ret = int64Plus('12345678912345', 1);
+    let ret = int64Plus('12345678912345', 1);
     /*
-    '12345678912346'
+    成功：'12345678912346'
+    失败：抛异常
     */
 
     ```
@@ -1363,9 +1367,10 @@ function query(input)
 
     例如
     ```javascript
-    var ret = int64Sub('12345678912345', 1);
+    let ret = int64Sub('12345678912345', 1);
     /*
-    '123456789123464'
+    成功：'123456789123464'
+    失败：抛异常
     */
 
     ```
@@ -1378,9 +1383,10 @@ function query(input)
 
     例如
     ```javascript
-    var ret = int64Mul('12345678912345', 2);
+    let ret = int64Mul('12345678912345', 2);
     /*
-    '24691357824690'
+    成功：'24691357824690'
+    失败：抛异常
     */
 
     ```
@@ -1393,9 +1399,10 @@ function query(input)
 
     例如
     ```javascript
-    var ret = int64Div('12345678912345', 2);
+    let ret = int64Div('12345678912345', 2);
     /*
-    '6172839456172'
+    成功：'6172839456172'
+    失败：抛异常
     */
 
     ```
@@ -1408,9 +1415,10 @@ function query(input)
 
     例如
     ```javascript
-    var ret = int64Mod('12345678912345', 2);
+    let ret = int64Mod('12345678912345', 2);
     /*
-    '1'
+    成功：'1'
+    失败：抛异常
     */
 
     ```
@@ -1424,9 +1432,10 @@ function query(input)
 
     例如
     ```javascript
-    var ret = int64Compare('12345678912345', 2);
+    let ret = int64Compare('12345678912345', 2);
     /*
-    1
+    成功：1
+    失败：抛异常
     */
 
     ```
@@ -1453,21 +1462,24 @@ function query(input)
 
     例如
     ```javascript
-    var account = log('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
+    let ret = log('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
-  buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY
+     成功不返回,失败返回false
     */
     ```
 - #### 输出交易日志
 
     `tlog(topic,args...);`
      - tlog会产生一笔交易写在区块上
-     - topic: 日志主题，必须为字符串类型
-     - args...: 最多可以包含5个参数，参数类型可以是字符串、数值或者布尔类型
+     - topic: 日志主题，必须为字符串类型,参数长度(0,128]
+     - args...: 最多可以包含5个参数，参数类型可以是字符串、数值或者布尔类型,每个参数长度(0,1024]
 
     例如
     ```javascript
     tlog('transfer',sender +' transfer 1000',true);
+    /*
+     成功不返回,失败抛异常
+    */
     ```
 
 - ##### 做交易
@@ -1497,8 +1509,8 @@ function query(input)
       ]
     };
 
-    var result = callBackDoOperation(transaction);
-    /*result 为true或false*/
+    doTransaction(JSON.stringify(transaction));
+    /*失败抛异常*/
     ```
 
 - ##### 转账
@@ -1510,8 +1522,8 @@ function query(input)
 
     例如
     ```javascript
-    var ret = payCoin("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "10000", "{}");
-    /*result 为true或false*/
+    payCoin("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "10000", "{}");
+    /*失败抛异常*/
     ```
 
 - ##### 断言
@@ -1522,8 +1534,8 @@ function query(input)
 
     例如
     ```javascript
-    var ret = assert(1===1, "Not valid");
-    /*失败时抛出异常*/
+    assert(1===1, "Not valid");
+    /*失败抛异常*/
     ```
 
 #### 内置变量
@@ -1932,6 +1944,7 @@ input 中的 address 字段填入指定的恶意节点地址。
 ### 费用选举合约
 
 此合约为交易费用标准制定合约，每项费用标准由共识节点提出议案，所有共识节点投票选举，获胜的议案作为新的费用收取标准，在下一个区块实施，当提案提出后超过15天仍未胜出，提案作废。
+此合约地址：buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe
 
 #### 费用结构
 
