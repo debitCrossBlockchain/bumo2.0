@@ -46,8 +46,8 @@ function getObjectMetaData(key){
 
     let data = storageLoad(key);
     assert(data !== false, 'Get ' + key + ' from metadata failed.');
-    let value = JSON.parse(data);
 
+    let value = JSON.parse(data);
     return value;
 }
 
@@ -56,12 +56,12 @@ function setMetaData(key, value)
     assert(typeof key === 'string', 'Args type error. key must be a string.');
 
     if(value === undefined){
-        assert(false !== storageDel(key), 'Delete (' + key + ') from metadata failed.');
+        storageDel(key);
         log('Delete (' + key + ') from metadata succeed.');
     }
     else{
         let strVal = JSON.stringify(value);
-        assert(false !== storageStore(key, strVal), 'Set key(' + key + '), value(' + strVal + ') in metadata failed.');
+        storageStore(key, strVal);
         log('Set key(' + key + '), value(' + strVal + ') in metadata succeed.');
     }
 }
@@ -71,7 +71,7 @@ function transferCoin(dest, amount)
     assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string.');
     if(amount === '0'){ return true; }
 
-    assert(false !== payCoin(dest, amount), 'Pay coin( ' + amount + ') to dest account(' + dest + ') failed.');
+    payCoin(dest, amount);
     log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
 }
 
@@ -118,8 +118,7 @@ function insertcandidatesSorted(applicant, amount, candidates){
 function setValidatorsFromCandidate(candidates){
     let validators    = candidates.slice(0, validatorSetSize);
     let validatorsStr = JSON.stringify(validators);
-    let result        = setValidators(validatorsStr);
-    assert(result !== false, 'Set validator sets failed.');
+    setValidators(validatorsStr);
     log('Set new validator sets(' + validatorsStr + ') succeed.');
     return true;
 }
@@ -129,11 +128,9 @@ function applyAsValidatorCandidate(){
     let position   = findI0(candidates, sender);
 
     if (position !== false){
-        let candidateAmount = int64Plus(candidates[position][1], payCoinAmount);
-        assert(candidateAmount !== false, 'callBack int64Plus failed.');
-
+        let amountc = int64Plus(candidates[position][1], payCoinAmount);
         candidates.splice(position, 1);
-        let newCandidates = insertcandidatesSorted(sender, candidateAmount, candidates);
+        let newCandidates = insertcandidatesSorted(sender, amountc, candidates);
         setMetaData(candidatesVar, newCandidates);
 
         if(findI0(newCandidates, sender) < validatorSetSize){
@@ -145,18 +142,16 @@ function applyAsValidatorCandidate(){
         let applicantKey = applicantVar + sender;
         let applicantStr = storageLoad(applicantKey);
         if(applicantStr !== false){
-            let additionCompare = int64Compare(payCoinAmount, minSuperadditionAmount);
-            assert(additionCompare === 1 || additionCompare === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
+            let coms = int64Compare(payCoinAmount, minSuperadditionAmount);
+            assert(coms === 1 || coms === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
             applicant = JSON.parse(applicantStr); 
-            let applicantAmount = int64Plus(applicant[pledgeAmountVar], payCoinAmount);
-            assert(applicantAmount !== false, 'callBack int64Plus failed.');
-
-            applicant[pledgeAmountVar] = applicantAmount;
+            let amountp = int64Plus(applicant[pledgeAmountVar], payCoinAmount);
+            applicant[pledgeAmountVar] = amountp;
        }
        else{
-            let pledgeCompare = int64Compare(payCoinAmount, minPledgeAmount);
-            assert(pledgeCompare === 1 || pledgeCompare === 0, 'Pledge coin amount must more than ' + minPledgeAmount);
+            let comp = int64Compare(payCoinAmount, minPledgeAmount);
+            assert(comp === 1 || comp === 0, 'Pledge coin amount must more than ' + minPledgeAmount);
             applicant[pledgeAmountVar] = payCoinAmount;
             applicant[ballotVar] = [];
        }
@@ -317,30 +312,22 @@ function voteAbolishValidator(malicious){
     let candidates = getObjectMetaData(candidatesVar);
     let position   = findI0(candidates, malicious); /*step here, logic promising position !== false*/
     let forfeit    = int64Div(candidates[position][1], 10);
-    assert(forfeit !== false, 'Callback int64Div failed.');
-
-    let leftCoin = int64Sub(candidates[position][1], forfeit);
-    assert(leftCoin !== false, 'Callback int64Sub failed.');
+    let leftCoin   = int64Sub(candidates[position][1], forfeit);
 
     transferCoin(malicious, leftCoin);
     setMetaData(abolishKey);
     candidates.splice(position, 1);
 
     let leftValidatorsCnt = validators.length - 1;
-    let award = int64Mod(forfeit, leftValidatorsCnt);
-    assert(award !== false, 'Callback int64Mod failed.');
+    let award   = int64Mod(forfeit, leftValidatorsCnt);
+    let average = int64Div(forfeit, leftValidatorsCnt);
     if(award !== '0'){
         candidates[0][1] = int64Plus(candidates[0][1], award);
-        assert(candidates[0][1] !== false, 'Callback int64Plus failed.');
     }
-
-    let average = int64Div(forfeit, leftValidatorsCnt);
-    assert(average !== false, 'Callback int64Div failed.');
 
     let i = 0;
     while(i < leftValidatorsCnt){
         candidates[i][1] = int64Plus(candidates[i][1], average);
-        assert(candidates[i][1] !== false, 'Callback int64Plus failed.');
         i += 1;
     }
 
@@ -405,8 +392,8 @@ function init(){
 
     let initCandidates = validators.sort(by(1, byString(0)));
     let candidateStr   = JSON.stringify(initCandidates);
-    assert(storageStore(candidatesVar, candidateStr) !== false, 'Store candidates failed.');
-    assert(setValidators(candidateStr) !== false, 'Set validators failed.');
+    storageStore(candidatesVar, candidateStr);
+    setValidators(candidateStr);
 
     return true;
 }
