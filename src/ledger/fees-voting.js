@@ -7,13 +7,6 @@ const microSecOfOneDay =1000000*60*60*24;
 let proposalRecords = {};
 let validators = {};
 
-function storageSet(key, value) {
-  assert(storageStore(key,JSON.stringify(value))!== false,'Storage set faild');
-}
-
-function storageDelete(key) {
-  assert(storageDel(key) !==false,'Storage del faild');
-}
 
 function loadValidators() {
   let result = getValidators();
@@ -40,6 +33,7 @@ function isValidator(accountId){
         found =true;
         return false;
       }
+      return true;
     }
   );
   assert(found,accountId +' is not validator');
@@ -71,12 +65,13 @@ function voteFee(proposalId) {
     let output = {};
     output[proposalRecords[proposalId].feeType] = proposalRecords[proposalId].price;
     delete proposalRecords[proposalId];
-    storageDelete(key);   
+    storageDel(key);   
+    configFee(JSON.stringify(output));
   }
   else{
-    storageSet(key, proposalRecordBody);
+    storageStore(key,JSON.stringify(proposalRecordBody));
   }  
-  storageSet(proposalRecordsKey, proposalRecords);
+  storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
 }
 
 function proposalFee(feeType,price) {
@@ -97,10 +92,10 @@ function proposalFee(feeType,price) {
         exist =true;
         delete proposalRecords[proposalId];
         let key =voteRecordKeyPrefix + proposalId;
-        storageDelete(key); 
+        storageDel(key); 
         proposalRecords[newProposalId] = {'accountId':accountId,'proposalId':newProposalId,'feeType':feeType,'price':price,'voteCount':0,'time':blockTimestamp };               
-        storageSet(proposalRecordsKey, proposalRecords);
-        storageSet(voteRecordKeyPrefix + newProposalId,{});
+        storageStore(proposalRecordsKey,JSON.stringify(proposalRecords));
+        storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({}));
         return false;
       }
       else{
@@ -111,12 +106,11 @@ function proposalFee(feeType,price) {
 
   if (!exist) {
     proposalRecords[newProposalId] = { 'accountId': accountId, 'proposalId': newProposalId, 'feeType': feeType, 'price': price, 'voteCount': 0,'time':blockTimestamp };
-    storageSet(proposalRecordsKey, proposalRecords);
-    storageSet(voteRecordKeyPrefix + newProposalId,{});
+    storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
+    storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({}));
   }  
 
-  result =storageStore(nonceKey,nonce.toString());
-  assert(result !==false,'storage nonce failed');
+  storageStore(nonceKey,nonce.toString());
 }
 
 function queryVote(proposalId) {
@@ -156,14 +150,14 @@ function checkExpire(){
       if(span>=expireTime){
         delete proposalRecords[proposalId];
         let key =voteRecordKeyPrefix + proposalId;
-        storageDelete(key); 
+        storageDel(key); 
         proposalChange =true;
       }
       return true;
     }
   );
   if(proposalChange){
-    storageSet(proposalRecordsKey, proposalRecords);
+    storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
   }
 }
 
@@ -200,4 +194,4 @@ function query(input) {
   }
 }
 
-function init(){ let result =storageStore(nonceKey,'0'); assert(result !==false,'storage nonce failed');}
+function init(){ storageStore(nonceKey,'0');}
