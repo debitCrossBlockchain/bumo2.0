@@ -100,7 +100,7 @@ namespace bumo{
 
 	void Contract::AddLog(const std::string &log) {
 		logs_.push_back(log);
-		if (logs_.size() > 100) logs_.pop_front();
+		if (logs_.size() > 10) logs_.pop_front();
 	}
 
 	Result &Contract::GetResult() {
@@ -911,8 +911,8 @@ namespace bumo{
 		std::string this_contract = v8_contract->parameter_.this_address_;
 		v8::String::Utf8Value str1(args[0]);
 		const char* cstr = ToCString(str1);
-		LOG_INFO("V8contract log[%s:%s]\n%s", this_contract.c_str(), v8_contract->parameter_.sender_.c_str(), cstr);
-		v8_contract->AddLog(cstr);
+		LOG_TRACE("V8contract log[%s:%s]\n%s", this_contract.c_str(), v8_contract->parameter_.sender_.c_str(), cstr);
+		//v8_contract->AddLog(cstr);
 
 		return;
 	}
@@ -937,6 +937,10 @@ namespace bumo{
 				}
 			}
 
+			if (!error_desc.empty() ) {
+				break;
+			} 
+
 			std::string topic = ToCString(v8::String::Utf8Value(args[0]));
 
 			v8::HandleScope scope(args.GetIsolate());
@@ -958,10 +962,12 @@ namespace bumo{
 			ope->mutable_log()->set_topic(topic);
 			for (int i = 1; i < args.Length(); i++) {
 				std::string data;
-				if (args[i]->IsString())
+				if (args[i]->IsString()) {
 					data = ToCString(v8::String::Utf8Value(args[i]));
-				else
+				}
+				else {
 					data = ToCString(v8::String::Utf8Value(args[i]->ToString()));
+				}
 				*ope->mutable_log()->add_datas() = data;
 			}
 
