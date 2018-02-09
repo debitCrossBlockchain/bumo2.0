@@ -209,11 +209,11 @@ namespace bumo {
 	void ValueSaver::SaveValue(const std::string &name, const std::string &value) {
 		writes.Put(utils::String::Format("%s_%s", bumo::General::CONSENSUS_PREFIX, name.c_str()), value);
 		write_size++;
-		LOG_INFO("Set %s of size(" FMT_SIZE ")", name.c_str(), value.size());
+		LOG_TRACE("Set %s of size(" FMT_SIZE ")", name.c_str(), value.size());
 	}
 
 	void ValueSaver::SaveValue(const std::string &name, int64_t value) {
-		LOG_INFO("Set %s to value(" FMT_I64 ") ", name.c_str(), value);
+		LOG_TRACE("Set %s to value(" FMT_I64 ") ", name.c_str(), value);
 		SaveValue(name, utils::String::ToString(value));
 	}
 

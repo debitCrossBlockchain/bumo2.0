@@ -638,25 +638,6 @@ namespace bumo {
 	}
 
 	void WebServer::GetPeerNodeAddress(const http::server::request &request, std::string &reply) {
-		std::string token = request.GetParamValue("token");
-		if (token != "bubiokqwer") {
-			reply = "Access is not valid";
-			return;
-		}
-
-		bumo::PrivateKey priv_key(bumo::Configure::Instance().p2p_configure_.node_private_key_);
-		if (priv_key.IsValid()) {
-            reply = utils::String::Format("%s", priv_key.GetEncAddress().c_str());
-		}
-		else {
-			reply = "address not exist";
-		}
-	}
-
-	static bool AssetAmountSorter(std::pair < std::string, int64_t> const& ac1, std::pair < std::string, int64_t> const& ac2) {
-		// need to use the hash of whole tx here since multiple txs could have
-		// the same Contents
-		return ac1.second > ac2.second;
 	}
 
 	void WebServer::GetPeerAddresses(const http::server::request &request, std::string &reply) {
@@ -689,7 +670,7 @@ namespace bumo {
 		} while (false);
 
 		reply_json["error_code"] = error_code;
-		reply = reply_json.toStyledString();
+		reply = reply_json.toFastString();
 	}
 
 	void WebServer::ContractQuery(const http::server::request &request, std::string &reply) {

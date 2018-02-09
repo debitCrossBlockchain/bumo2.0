@@ -820,13 +820,15 @@ namespace bumo {
 
 		for (auto &item : connections_) {
 			Peer *peer = (Peer *)item.second;
-			peer->ToJson(peers[peers.size()]);
+			if (peers.size() < 20) { //only record the 20
+				peer->ToJson(peers[peers.size()]);
+			}
 			if (peer->IsActive()) {
 				active_size++;
 			}
 		}
 		data["peers"] = peers;
-		data["active_size"] = active_size;
+		data["peer_active_size"] = active_size;
 		data["node_rand"] = node_rand_;
 	}
 
