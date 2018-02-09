@@ -51,7 +51,6 @@ namespace bumo {
 		~WsServerConfigure();
 
 		utils::InetAddress listen_address_;
-		bool listen_tx_status_;
 
 		bool Load(const Json::Value &value);
 	};
@@ -143,7 +142,6 @@ namespace bumo {
 		GenesisConfigure genesis_configure_;
 
 		MonitorConfigure monitor_configure_;
-		//MqServerConfigure		mqserver_configure_;
 
 		virtual bool LoadFromJson(const Json::Value &values);
 	};

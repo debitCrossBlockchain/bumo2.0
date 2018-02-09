@@ -24,7 +24,7 @@
 namespace bumo {
 
 	P2pNetwork::P2pNetwork() :
-		target_peer_connection_(50),
+		target_peer_connection_(10),
 		connect_timeout_(5),// second
 		heartbeat_interval_(1800) {// second
 			listen_port_ = General::CONSENSUS_PORT;
@@ -71,13 +71,11 @@ namespace bumo {
 		std::string address;
 		Configure::GetValue(value, "listen_address", address);
 		listen_address_ = utils::InetAddress(address);
-		Configure::GetValue(value, "listen_tx_status", listen_tx_status_);
 
 		return true;
 	}
 
 	WsServerConfigure::WsServerConfigure() {
-		listen_tx_status_ = false;
 	}
 
 	WebServerConfigure::WebServerConfigure() {
@@ -109,11 +107,13 @@ namespace bumo {
 	}
 
 	LedgerConfigure::LedgerConfigure() {
-		max_trans_per_ledger_ = 10000;
-		max_trans_in_memory_ = 100000;
-		max_ledger_per_message_ = 5;
-		max_apply_ledger_per_round_ = 3;
+		max_trans_per_ledger_ = 2000;
+		max_trans_in_memory_ = 50000;
+		max_ledger_per_message_ = 20;
+		max_apply_ledger_per_round_ = 5;
 		close_interval_ = 10;
+		use_atom_map_ = true;
+		hash_type_ = 0; // 0 : SHA256, 1 :SM2
 	}
 
 	LedgerConfigure::~LedgerConfigure() {
