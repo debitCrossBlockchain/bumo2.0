@@ -50,18 +50,8 @@ namespace bumo {
 		return active_time_ > 0;
 	}
 
-	bool Peer::SendPeers(const Json::Value &db_peers, std::error_code &ec) {
-
-		protocol::Peers peers;
-		for (size_t i = 0; i < db_peers.size(); i++) {
-			const Json::Value &item = db_peers[i];
-			protocol::Peer *peerp = peers.add_peers();
-			peerp->set_ip(item["ip"].asCString());
-			peerp->set_port(item["port"].asInt());
-			peerp->set_num_failures(item["num_failures"].asInt());
-		}
-
-		return SendRequest(protocol::OVERLAY_MSGTYPE_PEERS, peers.SerializeAsString(), ec);
+	bool Peer::SendPeers(const protocol::Peers &db_peers, std::error_code &ec) {
+		return SendRequest(protocol::OVERLAY_MSGTYPE_PEERS, db_peers.SerializeAsString(), ec);
 	}
 
 	void Peer::SetPeerInfo(const protocol::Hello &hello) {

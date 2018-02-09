@@ -552,7 +552,7 @@ namespace bumo {
 
 	bool PeerNetwork::GetActivePeers(int32_t max) {
 		do {
-			db_peer_cache_.clear();
+			db_peer_cache_.clear_peers();
 			protocol::Peers peers;
 			
 			int32_t row_count = QueryTopItem(true, max, -1, peers);
@@ -561,7 +561,7 @@ namespace bumo {
 				break;
 			}
 
-			db_peer_cache_ = Proto2Json(peers)["peers"];
+			db_peer_cache_ = peers;
 			return true;
 		} while (false);
 		return false;
@@ -748,10 +748,6 @@ namespace bumo {
 		broadcast_.OnTimer();
 	}
 
-	Json::Value PeerNetwork::GetPeersCache() {
-		return db_peer_cache_;
-	}
-
 	void PeerNetwork::AddReceivedPeers(const utils::StringMap &item) {
 		utils::MutexGuard guard(peer_lock_);
 		received_peer_list_.push_back(item);
@@ -816,7 +812,7 @@ namespace bumo {
 			data["peer_list_size"] = (Json::UInt64)connections_.size();
 			data["peer_listdel_size"] = (Json::UInt64)connections_delete_.size();
 		} while (false);
-		data["peer_cache_size"] = (Json::UInt64)db_peer_cache_.size();
+		data["peer_cache_size"] = (Json::UInt64)db_peer_cache_.peers_size();
 		data["recv_peerlist_size"] = (Json::UInt64)received_peer_list_.size();
 		data["broad_record_size"] = (Json::UInt64)broadcast_.GetRecordSize();
 		int active_size = 0;
