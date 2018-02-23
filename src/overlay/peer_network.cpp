@@ -241,8 +241,9 @@ namespace bumo {
 			//switch to main thread
 			Global::Instance().GetIoService().post([tran_ptr, message, this]() {
 				Result ig_err;
-				GlueManager::Instance().OnTransaction(tran_ptr, ig_err);
-				BroadcastMsg(message.type(), message.data());
+				if (GlueManager::Instance().OnTransaction(tran_ptr, ig_err)) {
+					BroadcastMsg(message.type(), message.data());
+				}
 			});
 		}
 		return true;

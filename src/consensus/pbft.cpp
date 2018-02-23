@@ -1570,7 +1570,7 @@ namespace bumo {
 
 			//delete the older check point
 			for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end();) {
-				if (iter->first.sequence_ <= index.sequence_ - ckp_interval_) {
+				if (iter->first.sequence_ <= index.sequence_ - ckp_interval_ / 2) {
 					instances_.erase(iter++);
 				} 
 				else {

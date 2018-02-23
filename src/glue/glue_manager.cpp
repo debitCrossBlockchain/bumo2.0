@@ -468,12 +468,15 @@ namespace bumo {
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		//not too closed
-		if (now != -1 && !(
-			now > consensus_value.close_time() && 
-			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_)
+		//not too closed, can tolerate 1 second 
+		if (now != -1 && 
+			!(
+			now > (consensus_value.close_time() - 1)
+			&& 
+			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_
+			)
 			) {
-			LOG_ERROR("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid", 
+			LOG_WARN("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid", 
 				now, consensus_value.close_time() ,
 				lcl.close_time(), Configure::Instance().ledger_configure_.close_interval_ );
 			return Consensus::CHECK_VALUE_MAYVALID;
