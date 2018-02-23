@@ -300,7 +300,7 @@ const jslint = (function JSLint() {
         "Set", "String", "Symbol", "SyntaxError", "TypeError"
     ];
 	
-    //const useable_standard = ["print", "log"];
+    const useable_standard = ["print", "log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "internal_check_time", "int64Plus", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "doTransaction", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "payCoinAmount", "payAssetAmount", "blockTimestamp", "blockNumber"];
 	
     const do_not_use_internal_func = ["internal_check_time", "internal_hello_test"];
 
@@ -2940,7 +2940,10 @@ const jslint = (function JSLint() {
             the_function.arity === "statement"
             && next_token.line === token.line
         ) {
-            return stop("unexpected_a", next_token);
+            if(next_token.id != "function")
+            {
+               return stop("unexpected_a", next_token);
+            }
         }
         if (next_token.id === "." || next_token.id === "[") {
             warn("unexpected_a");
@@ -4497,7 +4500,7 @@ const jslint = (function JSLint() {
                             || name.function.arity !== "unary"
                         )
                     ) {
-                        warn("unused_a", name);
+                        //warn("unused_a", name);
                     } else if (!name.init) {
                         warn("uninitialized_a", name);
                     }
@@ -4940,7 +4943,7 @@ const jslint = (function JSLint() {
             token_nr = 0;
             var_mode = undefined;
             populate(declared_globals, standard, false);
-            //populate(declared_globals, useable_standard, false);
+            populate(declared_globals, useable_standard, false);
             if (global_array !== undefined) {
                 populate(declared_globals, global_array, false);
             }

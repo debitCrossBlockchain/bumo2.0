@@ -1,0 +1,1 @@
+jsmin <validators_vote.js >validators_vote.min.js
