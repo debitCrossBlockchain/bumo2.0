@@ -1042,11 +1042,11 @@ namespace bumo{
 				break;
 			}
 
-			v8::Local<v8::Object> ret = v8::Object::New(args.GetIsolate());
-			ret->Set(v8::String::NewFromUtf8(args.GetIsolate(), "amount"), v8::String::NewFromUtf8(args.GetIsolate(), utils::String::ToString(asset.amount()).c_str()));
-			ret->Set(v8::String::NewFromUtf8(args.GetIsolate(), "property"), v8_asset_property);
-
-			args.GetReturnValue().Set(ret);
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(args.GetIsolate(), utils::String::ToString(asset.amount()).c_str()));
+// 			v8::Local<v8::Object> ret = v8::Object::New(args.GetIsolate());
+// 			ret->Set(v8::String::NewFromUtf8(args.GetIsolate(), "amount"), v8::String::NewFromUtf8(args.GetIsolate(), utils::String::ToString(asset.amount()).c_str()));
+// 			ret->Set(v8::String::NewFromUtf8(args.GetIsolate(), "property"), v8_asset_property);
+//			args.GetReturnValue().Set(ret);
 			return;
 		} while (false);
 

@@ -1317,13 +1317,8 @@ function query(input)
     let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_property);
 
     /*
-    {
-      "amount": 1,
-      "property": {
-        "code": "CNY",
-        "issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY"
-      }
-    }
+     1
+
     失败返回false
     */
     ```
