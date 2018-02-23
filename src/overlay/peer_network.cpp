@@ -818,16 +818,18 @@ namespace bumo {
 		data["broad_record_size"] = (Json::UInt64)broadcast_.GetRecordSize();
 		int active_size = 0;
 		Json::Value peers;
-
-		for (auto &item : connections_) {
-			Peer *peer = (Peer *)item.second;
-			if (peers.size() < 20) { //only record the 20
-				peer->ToJson(peers[peers.size()]);
+		do {
+			utils::MutexGuard guard(conns_list_lock_);
+			for (auto &item : connections_) {
+				Peer *peer = (Peer *)item.second;
+				if (peers.size() < 20) { //only record the 20
+					peer->ToJson(peers[peers.size()]);
+				}
+				if (peer->IsActive()) {
+					active_size++;
+				}
 			}
-			if (peer->IsActive()) {
-				active_size++;
-			}
-		}
+		} while (false);
 		data["peers"] = peers;
 		data["peer_active_size"] = active_size;
 		data["node_rand"] = node_rand_;

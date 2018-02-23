@@ -257,7 +257,7 @@ int main(int argc, char *argv[]){
 }
 
 void RunLoop(){
-	int64_t check_module_interval = 2 * utils::MICRO_UNITS_PER_SEC;
+	int64_t check_module_interval = 5 * utils::MICRO_UNITS_PER_SEC;
 	int64_t last_check_module = 0;
 	while (bumo::g_enable_){
 		int64_t current_time = utils::Timestamp::HighResolution();
