@@ -47,11 +47,11 @@ namespace bumo {
 
 	std::string CalcHash(const std::string &value,const SignatureType &sign_type) {
 		std::string hash;
-		if (sign_type == SIGNTYPE_ED25519) {
-			hash = utils::Sha256::Crypto(value);
+		if (sign_type == SIGNTYPE_CFCASM2) {
+			hash = utils::Sm3::Crypto(value);
 		}
 		else {
-			hash = utils::Sm3::Crypto(value);
+			hash = utils::Sha256::Crypto(value);
 		}
 		return hash;
 	}
