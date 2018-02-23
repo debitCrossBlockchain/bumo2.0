@@ -170,7 +170,7 @@ namespace bumo {
 
 			for (int32_t i = 0; i < create_account.metadatas_size(); i++){
 				const auto kp = create_account.metadatas(i);
-				if (kp.key().size() > General::METADATA_KEY_MAXSIZE){
+				if (kp.key().size() == 0 || kp.key().size() > General::METADATA_KEY_MAXSIZE) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 					result.set_desc(utils::String::Format("Length of the key should be between [1, %d]. key=%s,key.length=%d",
 						General::METADATA_KEY_MAXSIZE, kp.key().c_str(), kp.key().length()));
