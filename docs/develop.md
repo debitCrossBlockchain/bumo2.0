@@ -2001,9 +2001,9 @@ json格式需转换成字符串形式填写到testContract接口结构
 
 ```json
 {
-    "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+    "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
-    "input" : "{\"method\":\"queryProposal\",\"param\":\"\"}"},
+    "input" : "{\"method\":\"queryProposal\",\"params\":\"\"}",
     "exe_or_query" : false,
     "source_address" : "",
     "fee":100000
@@ -2021,7 +2021,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
     "error_desc": "",
     "result": {
         "logs": {
-            "0-buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1": null
+            "0-buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe": null
         },
         "query_rets": [
             {
@@ -2061,9 +2061,9 @@ json格式需转换成字符串形式填写到testContract接口结构
 
 ```json
 {
-    "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+    "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
-    "input" :"{\"method\":\"queryVote\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"},
+    "input" :"{\"method\":\"queryVote\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}",
     "exe_or_query" : false,
     "source_address" : "",
     "fee":100000
@@ -2081,7 +2081,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
     "error_desc": "",
     "result": {
         "logs": {
-            "0-buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1": null
+            "0-buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe": null
         },
         "query_rets": [
             {
@@ -2123,7 +2123,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 {
     "type" : "PAY_COIN",
     "pay_coin" : {
-       "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+       "dest_address" :"buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
        "amount":0,
         "input":"{\"method\":\"proposalFee\",\"params\":{\"feeType\":1,\"price\":\"5\"}}";
     }
@@ -2149,7 +2149,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 {
    "type" : "PAY_COIN",
     "pay_coin" : {
-        "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+        "dest_address" :"buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
         "amount":0,
         "input":"{\"method\":\"voteFee\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"
     }
