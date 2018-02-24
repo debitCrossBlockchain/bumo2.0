@@ -293,7 +293,7 @@ namespace bumo {
 		if (json_items.size() > 1) {			
 			LOG_ERROR("Test transaction too much(%d)", json_items.size());
 			Json::Value reply_json;
-			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_TX_SIZE_TOO_BIG;
+			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
 			reply_json["results"][Json::UInt(0)]["error_desc"] = "Test transaction too much,just can test only one transaction";
 			reply_json["success_count"] = Json::UInt(0);
 			reply = reply_json.toStyledString();

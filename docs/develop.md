@@ -2187,12 +2187,17 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 103               | ERRCODE_ACCOUNT_NOT_EXIST              | 账户不存在                                                                                   |
 | 104               | ERRCODE_ACCOUNT_ASSET_LOW_RESERVE      | 支付操作，资产余额不足                                                                       |
 | 105               | ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE | 资产数量过大，超出了int64的范围                                                              |
+| 106               | ERRCODE_ACCOUNT_INIT_LOW_RESERVE       | 创建账号初始化资金不足                                                                       |
+| 111               | ERRCODE_FEE_NOT_ENOUGH                 | 费用不足                                                                                     |
 | 114               | ERRCODE_OUT_OF_TXCACHE                 | TX 缓存队列已满                                                                              |
 | 120               | ERRCODE_WEIGHT_NOT_VALID               | 权重值不在有效范围内                                                                         |
 | 121               | ERRCODE_THRESHOLD_NOT_VALID            | 门限值不在有效范围内                                                                         |
 | 144               | ERRCODE_INVALID_DATAVERSION            | metadata的version版本号不与已有的匹配（一个版本化的数据库）                                  |
+| 146               | ERRCODE_TX_SIZE_TOO_BIG                | 交易数据超出上限                                  |
 | 151               | ERRCODE_CONTRACT_EXECUTE_FAIL          | 合约执行失败                                                                                 |
 | 152               | ERRCODE_CONTRACT_SYNTAX_ERROR          | 合约语法分析失败                                                                             |
+| 153               | ERRCODE_CONTRACT_TOO_MANY_RECURSION    | 合约递归深度超出上限                                                                             |
+| 154               | ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS | 合约产生的交易超出上限                                                                             |
 
 ## 示例
 

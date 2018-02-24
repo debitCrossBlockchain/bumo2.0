@@ -629,7 +629,7 @@ namespace bumo {
 			result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 			std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 "),Transaction(%s) self byte fee(" FMT_I64 ")",
 				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), GetSelfByteFee());
-			//result_.set_desc(error_desc);
+			result_.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
 			bSucess = false;
 			return bSucess;
@@ -678,7 +678,7 @@ namespace bumo {
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 				std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 "), Transaction(%s) operation(%d) fee(" FMT_I64 ")",
 					utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), processing_operation_, opt->GetOpeFee());
-				//result_.set_desc(error_desc);
+				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				bSucess = false;
 				break;
