@@ -321,6 +321,8 @@ namespace bumo {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
 			proto_account.set_balance(proto_account.balance() + tfee);
 		}
+		if (environment_->useAtomMap_)
+			environment_->Commit();
 		return true;
 	}
 

@@ -40,9 +40,8 @@ namespace bumo{
 			for (auto it = parent_->entries_.begin(); it != parent_->entries_.end(); it++){
 				entries_[it->first] = std::make_shared<AccountFrm>(it->second);
 			}
+			settings_ = parent->settings_;
 		}
-
-		settings_ = parent->settings_;
 	}
 
 	bool Environment::GetEntry(const std::string &key, AccountFrm::pointer &frm){
