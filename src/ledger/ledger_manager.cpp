@@ -248,18 +248,27 @@ namespace bumo {
 
 	bool LedgerManager::CreateGenesisAccount() {
 		LOG_INFO("There is no ledger exist,then create a init ledger");
+
 		//set global hash caculate
-		statistics_["account_count"] = 1;
-		protocol::Account acc;
-		acc.set_address(Configure::Instance().genesis_configure_.account_);
-		acc.set_nonce(0);
-		acc.set_balance(100000000000000000);
+		int32_t account_count = 0;
+		//create account of genesis
+		AccountFrm::pointer acc_frm =AccountFrm::CreatAccountFrm(Configure::Instance().genesis_configure_.account_, 100000000000000000);
+		tree_->Set(DecodeAddress(acc_frm->GetAccountAddress()), acc_frm->Serializer());
+		account_count++;
 
-		AccountFrm::pointer acc_frm = std::make_shared<AccountFrm>(acc);
-		acc_frm->SetProtoMasterWeight(1);
-		acc_frm->SetProtoTxThreshold(1);
+		//load validators config,create account of validators
+		const utils::StringList &list = Configure::Instance().genesis_configure_.validators_;
+		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
+			auto validator = validators_.add_validators();
+			validator->set_address(*iter);
+			validator->set_pledge_coin_amount(0);
 
-        tree_->Set(DecodeAddress(acc.address()), acc_frm->Serializer());
+			AccountFrm::pointer acc_frm = AccountFrm::CreatAccountFrm(*iter, 0);
+			tree_->Set(DecodeAddress(acc_frm->GetAccountAddress()), acc_frm->Serializer());
+			account_count++;
+		}
+		statistics_["account_count"] = account_count;
+
 		tree_->UpdateHash();
 		protocol::Ledger ledger;
 		protocol::LedgerHeader *header = ledger.mutable_header();
@@ -277,13 +286,6 @@ namespace bumo {
 		header->set_account_tree_hash(tree_->GetRootHash());
 
 		//for validators
-		const utils::StringList &list = Configure::Instance().genesis_configure_.validators_;
-		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
-			//validators_.add_validators(*iter);
-			auto validator = validators_.add_validators();
-			validator->set_address(*iter);
-			validator->set_pledge_coin_amount(0);
-		}
 		std::string validators_hash = HashWrapper::Crypto(validators_.SerializeAsString());
 		header->set_validators_hash(validators_hash);
 

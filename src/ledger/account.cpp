@@ -354,5 +354,17 @@ namespace bumo {
 		int64_t new_nonce = account_info_.nonce() + 1;
 		account_info_.set_nonce(new_nonce);
 	}
+
+	AccountFrm::pointer AccountFrm::CreatAccountFrm(const std::string& account_address, int64_t balance) {
+		protocol::Account acc;
+		acc.set_address(account_address);
+		acc.set_nonce(0);
+		acc.set_balance(balance);
+
+		AccountFrm::pointer acc_frm = std::make_shared<AccountFrm>(acc);
+		acc_frm->SetProtoMasterWeight(1);
+		acc_frm->SetProtoTxThreshold(1);
+		return acc_frm;
+	}
 }
 

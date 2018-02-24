@@ -108,6 +108,7 @@ namespace bumo {
 		void NonceIncrease();
 		int64_t GetAccountBalance() const;
 		bool AddBalance(int64_t amount);
+		static AccountFrm::pointer CreatAccountFrm(const std::string& account_address, int64_t balance);
 	public:
 
 		template <class T>

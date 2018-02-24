@@ -300,7 +300,8 @@ namespace bumo {
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
 			if (!environment_->GetEntry(set.validators(i).address(), account)) {
-				account = CreatBookKeeperAccount(set.validators(i).address());
+				account = AccountFrm::CreatAccountFrm(set.validators(i).address(), 0);
+				environment_->AddEntry(account->GetAccountAddress(), account);
 			}
 			if (random_index == i) {
 				random_account = account;
@@ -324,19 +325,6 @@ namespace bumo {
 		if (environment_->useAtomMap_)
 			environment_->Commit();
 		return true;
-	}
-
-	AccountFrm::pointer LedgerFrm::CreatBookKeeperAccount(const std::string& account_address) {
-		protocol::Account acc;
-		acc.set_address(account_address);
-		acc.set_nonce(0);
-		acc.set_balance(0);
-		AccountFrm::pointer acc_frm = std::make_shared<AccountFrm>(acc);
-		acc_frm->SetProtoMasterWeight(1);
-		acc_frm->SetProtoTxThreshold(1);
-		environment_->AddEntry(acc_frm->GetAccountAddress(), acc_frm);
-		LOG_INFO("Add bookeeper account(%s)", account_address.c_str());
-		return acc_frm;
 	}
 
 	void LedgerFrm::SetTestMode(bool test_mode){
