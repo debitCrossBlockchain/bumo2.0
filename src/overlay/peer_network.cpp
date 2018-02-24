@@ -228,11 +228,6 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodTransaction(protocol::WsMessage &message, int64_t conn_id) {
-		static int xyz = 0;
-		static int64_t startTime = utils::Timestamp::HighResolution();
-		if (xyz++ % 10000 == 9999) {
-			LOG_INFO("ApiServer OnNewTransaction %d after %llu", xyz, utils::Timestamp::HighResolution() - startTime);
-		}
 
 		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
 			protocol::TransactionEnv tran;
