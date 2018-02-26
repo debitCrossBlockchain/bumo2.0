@@ -1683,7 +1683,7 @@ function query(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :100000,
     "input":
     "{\"method\":\"pledgeCoin\"}"
@@ -1707,7 +1707,7 @@ function query(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":
     "{ 
@@ -1734,7 +1734,7 @@ function query(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":"{\"method\":\"takebackCoin\"}"
   }
@@ -1754,7 +1754,7 @@ function query(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":
     "{
@@ -1781,7 +1781,7 @@ function query(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":
     "{ 
@@ -1807,7 +1807,7 @@ function query(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":
     "{
@@ -1824,21 +1824,19 @@ function query(input)
 
 #### 查询功能
 
-用户通过向查询接口提供指定参数，可以查看相关信息。
-
-- 用户向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
-- ‘转移资产’或‘转移货币’操作的 input 字段填入  { "method" : "查询方法", "params" : { "查询参数" } }，注意使用转义字符。
+用户通过向查询接口（即 query 接口）提供指定参数，可以查看相关信息, 调用查询接口当前只能通过 testContract, contract_address 字段填入验证者候选节点选举账户地址。
 
 ##### 查询当前验证节点集合
 
 >例
 
 ```
-  "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
-    "amount" :0,
-    "input": "{\"method\":\"getValidators\"}"
+    "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
+    "code" : "",
+    "input" : "{\"method\": \"getValidators\"}",
+    "exe_or_query" : false,
+    "source_address" : ""
   }
 ```
 
@@ -1847,11 +1845,12 @@ function query(input)
 >例
 
 ```
-  "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
-    "amount" :0,
-    "input": "{\"method\":\"getCandidates\"}"
+    "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
+    "code" : "",
+    "input" : "{\"method\": \"getCandidates\"}",
+    "exe_or_query" : false,
+    "source_address" : ""
   }
 ```
 
@@ -1861,18 +1860,19 @@ input 中的 address 字段填入申请者地址。
 >例
 
 ```
-  "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
-    "amount" :0,
-    "input":
+    "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
+    "code" : "",
+    "input" :
     "{
-       \"method\":\"getApplicantProposal\",
+      \"method\": \"getApplicantProposal\",
       \"params\":
       {
          \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
-    }"
+    }",
+    "exe_or_query" : false,
+    "source_address" : ""
   }
 ```
 
@@ -1882,18 +1882,19 @@ input 中的 address 字段填入指定的恶意节点地址。
 >例
 
 ```
-  "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
-    "amount" :0,
-    "input":
+    "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
+    "code" : "",
+    "input" :
     "{
-       \"method\":\"getAbolishProposal\",
+      \"method\": \"getAbolishProposal\",
       \"params\":
       {
          \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
-    }"
+    }",
+    "exe_or_query" : false,
+    "source_address" : ""
   }
 ```
 
