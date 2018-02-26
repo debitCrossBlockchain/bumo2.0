@@ -746,17 +746,18 @@ namespace utils {
 		static std::string MultiplyDecimal(std::string value, size_t decimals) {
 			size_t dot_pos = value.find(".");
 			if (dot_pos == std::string::npos) {
-				dot_pos = value.size();
+				value.insert(value.end(), decimals, '0');
 			}
-
-			size_t right = value.size() - dot_pos - 1;
-			if (right <= decimals) {
-				value.erase(value.find("."), 1);
-				value.insert(value.end(), decimals - right, '0');
-			}
-			else {
-				value.erase(dot_pos, 1);
-				value.insert(dot_pos + decimals, 1, '.');
+			else{
+				size_t right = value.size() - dot_pos - 1;
+				if (right <= decimals) {
+					value.erase(value.find("."), 1);
+					value.insert(value.end(), decimals - right, '0');
+				}
+				else {
+					value.erase(dot_pos, 1);
+					value.insert(dot_pos + decimals, 1, '.');
+				}			
 			}
 
 			size_t i = 0;

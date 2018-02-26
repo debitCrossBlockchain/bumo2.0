@@ -172,15 +172,15 @@ function main(input) {
   let para = JSON.parse(input);
   if (para.method === 'voteFee') {
     assert(para.params.proposalId !==undefined,'params proposalId undefined');
-    voteFee(para.params.proposalId);
     checkExpire();
+    voteFee(para.params.proposalId);
   }
   else if (para.method === 'proposalFee') {
     assert(para.params.feeType !==undefined && para.params.price !==undefined,'params feeType price undefined');
     feeTypeCheck(para.params.feeType);
     priceCheck(para.params.price);
-    proposalFee(para.params.feeType,para.params.price);
     checkExpire();
+    proposalFee(para.params.feeType,para.params.price);
   }
   else {
     throw 'main input para error';
