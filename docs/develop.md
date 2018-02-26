@@ -1640,7 +1640,7 @@ function query(input)
 >例
 
 ```
-"validators_vote_account": "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+"validators_vote_account": "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
 ```
 
 - 将 src\ledger\validators_vote.js 文件中的源码全部拷贝作为账户中 payload 字段的值。
