@@ -61,8 +61,8 @@ function voteFee(proposalId) {
   proposalRecordBody[accountId] = 1;
 
   let rate =proposalRecords[proposalId].voteCount/Object.keys(validators).length;
-  if(parseFloat((rate-thredhold).toFixed(10))>=0)
-  {
+  let epsilon =0.01;
+  if( (rate - thredhold > epsilon) && (Math.abs(rate - thredhold) > epsilon) ) {
     let output = {};
     output[proposalRecords[proposalId].feeType] = proposalRecords[proposalId].price;
     delete proposalRecords[proposalId];
