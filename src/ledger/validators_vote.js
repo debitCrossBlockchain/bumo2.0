@@ -101,6 +101,11 @@ function insertcandidatesSorted(applicant, amount, candidates){
         log('Validator candidates is enough.');
         return false;
     }
+	
+	if(candidates.length === 0){
+		candidates.push([applicant, amount]);
+		return candidates;
+	}
 
     let i = 0;
     while((int64Compare(amount, candidates[i][1]) === -1) && i < candidates.length){ i += 1; }
@@ -109,9 +114,7 @@ function insertcandidatesSorted(applicant, amount, candidates){
         while(applicant > candidates[i][0] && i < candidates.length){ i += 1; }
     }
 
-    let element = [applicant, amount];
-    candidates.splice(i, 0, element);
-
+    candidates.splice(i, 0, [applicant, amount]);
     return candidates;
 }
 
