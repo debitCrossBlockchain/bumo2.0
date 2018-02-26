@@ -185,14 +185,7 @@ namespace bumo {
 					error_info.c_str());
 				tx_time_out_index = i;
 				return false;
-			} if (tx_frm->GetContractStep() > General::CONTRACT_STEP_LIMIT) {
-				LOG_ERROR("transaction(%s) apply failed. %s, step(%d > %d)",
-					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-					tx_frm->GetContractStep(), General::CONTRACT_STEP_LIMIT);
-				tx_time_out_index = i;
-				return false;
-			}
-			 else {
+			}else {
 				if (!ret ) {
 					LOG_ERROR("transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());

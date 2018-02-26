@@ -103,9 +103,16 @@ namespace bumo {
 		if (!sync_){
 			callback_(exe_result_);
 		}
-		//move running to complete
-		if (lpmanager_){
-			lpmanager_->MoveRunningToComplete(this);
+
+		//async
+		if (lpmanager_) {
+			//move running to complete
+			if (exe_result_) {
+				lpmanager_->MoveRunningToComplete(this);
+			}
+			else { //delete
+				lpmanager_->MoveRunningToDelete(this);
+			}
 		}
 	}
 
@@ -561,7 +568,13 @@ namespace bumo {
 			return false;
 		}
 
-		return true;
+		if (!ledger_context->exe_result_) {
+			timeout_tx_index = ledger_context->GetTxTimeoutIndex();
+			LOG_ERROR("Pre execute expire, timeout tx index(%d)", timeout_tx_index);
+
+		}
+
+		return ledger_context->exe_result_;
 	}
 
 	void LedgerContextManager::RemoveCompleted(int64_t ledger_seq) {
@@ -587,26 +600,56 @@ namespace bumo {
 
 	void LedgerContextManager::OnTimer(int64_t current_time) {
 
-		std::vector<LedgerContext *> expired_context;
+		std::vector<LedgerContext *> delete_context;
 		do {
 			utils::MutexGuard guard(ctxs_lock_);
 			for (LedgerContextMultiMap::iterator iter = running_ctxs_.begin(); 
-				iter != running_ctxs_.end();
-				iter++) {
+				iter != running_ctxs_.end();) {
 				if (iter->second->CheckExpire( 5 * utils::MICRO_UNITS_PER_SEC)){
-					expired_context.push_back(iter->second);
-				} 
+					delete_context.push_back(iter->second);
+					iter = running_ctxs_.erase(iter);
+				}
+				else {
+					iter++;
+				}
+			}
+
+			for (LedgerContextTimeMultiMap::iterator iter = delete_ctxs_.begin();
+				iter != delete_ctxs_.end();
+				) {
+				if (current_time > iter->first) {
+					delete_context.push_back(iter->second);
+					iter = delete_ctxs_.erase(iter);
+				} else{
+					iter++;
+				}
 			}
 			 
 		} while (false);
 
-		for (size_t i = 0; i < expired_context.size(); i++) {
-			expired_context[i]->Cancel();
-			delete expired_context[i];
+		for (size_t i = 0; i < delete_context.size(); i++) {
+			delete_context[i]->Cancel();
+			delete delete_context[i];
 		}
 	}
 
 	void LedgerContextManager::OnSlowTimer(int64_t current_time) {}
+	
+	void LedgerContextManager::MoveRunningToDelete(LedgerContext *ledger_context) {
+		utils::MutexGuard guard(ctxs_lock_);
+		for (LedgerContextMultiMap::iterator iter = running_ctxs_.begin();
+			iter != running_ctxs_.end();
+			) {
+			if (iter->second == ledger_context) {
+				running_ctxs_.erase(iter++);
+			}
+			else {
+				iter++;
+			}
+		}
+
+		delete_ctxs_.insert(std::make_pair(utils::Timestamp::HighResolution() + 5 * utils::MICRO_UNITS_PER_SEC, ledger_context));
+	}
 
 	void LedgerContextManager::MoveRunningToComplete(LedgerContext *ledger_context) {
 		utils::MutexGuard guard(ctxs_lock_);
@@ -621,7 +664,6 @@ namespace bumo {
 			}
 		}
 
-		//LOG_ERROR("Push hash(%s)", utils::String::Bin4ToHexString(ledger_context->GetHash()).c_str());
 		completed_ctxs_.insert(std::make_pair(ledger_context->GetHash(), ledger_context));
 	}
 }

@@ -109,12 +109,14 @@ namespace bumo {
 	};
 
 	typedef std::multimap<std::string, LedgerContext *> LedgerContextMultiMap;
+	typedef std::multimap<int64_t, LedgerContext *> LedgerContextTimeMultiMap;
 	typedef std::map<std::string, LedgerContext *> LedgerContextMap;
 	class LedgerContextManager :
 		public bumo::TimerNotify {
 		utils::Mutex ctxs_lock_;
 		LedgerContextMultiMap running_ctxs_;
 		LedgerContextMap completed_ctxs_;
+		LedgerContextTimeMultiMap delete_ctxs_;
 	public:
 		LedgerContextManager();
 		~LedgerContextManager();
@@ -123,6 +125,7 @@ namespace bumo {
 		virtual void OnTimer(int64_t current_time);
 		virtual void OnSlowTimer(int64_t current_time);
 		void MoveRunningToComplete(LedgerContext *ledger_context);
+		void MoveRunningToDelete(LedgerContext *ledger_context);
 		void RemoveCompleted(int64_t ledger_seq);
 		void GetModuleStatus(Json::Value &data);
 
