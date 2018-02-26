@@ -1224,10 +1224,10 @@ function init(bar)
 
 function main(input)
 {
-  var para = JSON.parse(input);
+  let para = JSON.parse(input);
   if (para.do_foo)
   {
-    var x = {
+    let x = {
       'hello' : 'world'
     };
   }
@@ -1443,7 +1443,7 @@ function query(input)
 
     例如
     ```javascript
-    var ret = toSatoshi('12345678912');
+    let ret = toSatoshi('12345678912');
     /*
     '1234567891200000000'
     */
@@ -1543,7 +1543,7 @@ function query(input)
     例如账号x发起了一笔交易调用合约Y，本次执行过程中，thisAddress的值就是Y合约账号的地址。
 
     ```text
-    var bar = thisAddress;
+    let bar = thisAddress;
     /*
     bar的值是Y合约的账号地址。
     */
