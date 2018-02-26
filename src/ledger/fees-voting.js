@@ -4,6 +4,7 @@ const voteRecordKeyPrefix ='voteRecords_';
 const nonceKey ='nonce';
 const expireTime =15;
 const microSecOfOneDay =1000000*60*60*24;
+const thredhold =0.8;
 let proposalRecords = {};
 let validators = {};
 
@@ -59,8 +60,8 @@ function voteFee(proposalId) {
   proposalRecords[proposalId].voteCount +=1;
   proposalRecordBody[accountId] = 1;
 
-  let thredhold = Math.floor(Object.keys(validators).length*0.8);
-  if(proposalRecords[proposalId].voteCount>=thredhold)
+  let rate =proposalRecords[proposalId].voteCount/Object.keys(validators).length;
+  if(parseFloat((rate-thredhold).toFixed(10))>=0)
   {
     let output = {};
     output[proposalRecords[proposalId].feeType] = proposalRecords[proposalId].price;
