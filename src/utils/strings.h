@@ -816,8 +816,7 @@ namespace utils {
 				) {  //00123 or 01223, except 0.123 or .123
 				return false;
 			}
-
-			if (value.size() - dot_pos - 1 > decimal) {
+			if ((dot_pos != std::string::npos) && (value.size() - dot_pos - 1 > decimal)) {
 				return false;
 			}
 

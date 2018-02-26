@@ -1807,7 +1807,7 @@ namespace bumo{
 			}
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
-			if (utils::String::IsDecNumber(arg0, General::BU_DECIMALS)) {
+			if (!utils::String::IsDecNumber(arg0, General::BU_DECIMALS)) {
 				LOG_TRACE("Not decimal number");
 				break;
 			} 
