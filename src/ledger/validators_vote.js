@@ -94,18 +94,18 @@ function findI0(arr, key){
     }
 }
 
-function insertcandidatesSorted(applicant, amount, candidates){
+function insertCandidatesSorted(applicant, amount, candidates){
     assert(typeof applicant === 'string' && typeof amount === 'string' && typeof candidates === 'object', 'args error, arg-applicant and arg-amount must be string, arg-candidates must be arrary.');
 
     if(candidates.length >= (validatorSetSize * 2)){
         log('Validator candidates is enough.');
         return false;
     }
-	
-	if(candidates.length === 0){
-		candidates.push([applicant, amount]);
-		return candidates;
-	}
+
+    if(candidates.length === 0){
+        candidates.push([applicant, amount]);
+        return candidates;
+    }
 
     let i = 0;
     while((int64Compare(amount, candidates[i][1]) === -1) && i < candidates.length){ i += 1; }
@@ -133,7 +133,7 @@ function applyAsValidatorCandidate(){
     if (position !== false){
         let amountc = int64Plus(candidates[position][1], payCoinAmount);
         candidates.splice(position, 1);
-        let newCandidates = insertcandidatesSorted(sender, amountc, candidates);
+        let newCandidates = insertCandidatesSorted(sender, amountc, candidates);
         setMetaData(candidatesVar, newCandidates);
 
         if(findI0(newCandidates, sender) < validatorSetSize){
@@ -202,7 +202,7 @@ function voteForApplicant(applicant){
         return true;
     }
 
-    let newCandidates = insertcandidatesSorted(applicant, applicantData[pledgeAmountVar], candidates);
+    let newCandidates = insertCandidatesSorted(applicant, applicantData[pledgeAmountVar], candidates);
     setMetaData(candidatesVar, newCandidates);
     setMetaData(applicantKey);
 
