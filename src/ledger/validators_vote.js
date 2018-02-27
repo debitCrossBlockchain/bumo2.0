@@ -294,6 +294,7 @@ function voteAbolishValidator(malicious){
 
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
+    assert(validators.length > 1, 'The number of validators must > 1.');
     assert(findI0(validators, sender) !== false, sender + ' has no permission to vote.'); 
     assert(findI0(validators, malicious) !== false, malicious + ' is not validator.'); 
 
