@@ -285,31 +285,6 @@ namespace bumo {
 		reply = reply_json.toStyledString();
 	}
 
-	void WebServer::GetExprResult(const http::server::request &request, std::string &reply) {
-		Result result;
-		Json::Value reply_json = Json::Value(Json::objectValue);
-		Json::Value &js_result = reply_json["result"];
-
-		std::string parse = request.GetParamValue("parse");
-		do {
-			protocol::ConsensusValue cons_null;
-			ExprCondition parser(request.body, NULL, cons_null);
-			utils::ExprValue value;
-			if (parse == "true") {
-				result = parser.Parse(value);
-			}
-			else {
-				result = parser.Eval(value);
-				js_result["value"] = value.Print();
-			}
-
-		} while (false);
-
-		reply_json["error_code"] = result.code();
-		reply_json["error_desc"] = result.desc();
-		reply = reply_json.toStyledString();
-	}
-
 	void WebServer::GetTransactionHistory(const http::server::request &request, std::string &reply) {
 		WebServerConfigure &web_config = Configure::Instance().webserver_configure_;
 		bumo::KeyValueDb *db = bumo::Storage::Instance().ledger_db();

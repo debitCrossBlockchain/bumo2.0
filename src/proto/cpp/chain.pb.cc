@@ -342,11 +342,10 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationLog, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationLog, _is_default_instance_));
   Operation_descriptor_ = file->message_type(13);
-  static const int Operation_offsets_[12] = {
+  static const int Operation_offsets_[11] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, metadata_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, expr_condition_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, create_account_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, issue_asset_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, payment_),
@@ -388,10 +387,10 @@ void protobuf_AssignDesc_chain_2eproto() {
   static const int Transaction_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, nonce_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, expr_condition_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, operations_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, metadata_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, fee_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, ceil_ledger_seq_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, metadata_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, operations_),
   };
   Transaction_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -749,66 +748,66 @@ void protobuf_AddDesc_chain_2eproto() {
     "t\030\003 \001(\t\"T\n\030OperationSetSignerWeight\022\025\n\rm"
     "aster_weight\030\001 \001(\003\022!\n\007signers\030\002 \003(\0132\020.pr"
     "otocol.Signer\",\n\014OperationLog\022\r\n\005topic\030\001"
-    " \001(\t\022\r\n\005datas\030\002 \003(\t\"\253\005\n\tOperation\022&\n\004typ"
+    " \001(\t\022\r\n\005datas\030\002 \003(\t\"\223\005\n\tOperation\022&\n\004typ"
     "e\030\001 \001(\0162\030.protocol.Operation.Type\022\026\n\016sou"
-    "rce_address\030\002 \001(\t\022\020\n\010metadata\030\003 \001(\014\022\026\n\016e"
-    "xpr_condition\030\004 \001(\t\0228\n\016create_account\030\005 "
-    "\001(\0132 .protocol.OperationCreateAccount\0222\n"
-    "\013issue_asset\030\006 \001(\0132\035.protocol.OperationI"
-    "ssueAsset\022+\n\007payment\030\007 \001(\0132\032.protocol.Op"
-    "erationPayment\0224\n\014set_metadata\030\t \001(\0132\036.p"
-    "rotocol.OperationSetMetadata\022=\n\021set_sign"
-    "er_weight\030\n \001(\0132\".protocol.OperationSetS"
-    "ignerWeight\0226\n\rset_threshold\030\013 \001(\0132\037.pro"
-    "tocol.OperationSetThreshold\022,\n\010pay_coin\030"
-    "\014 \001(\0132\032.protocol.OperationPayCoin\022#\n\003log"
-    "\030\r \001(\0132\026.protocol.OperationLog\"\230\001\n\004Type\022"
-    "\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_ACCOUNT\020\001\022\017\n\013ISSU"
-    "E_ASSET\020\002\022\013\n\007PAYMENT\020\003\022\020\n\014SET_METADATA\020\004"
-    "\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\rSET_THRESHOLD"
-    "\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\"h\n\025OperationSe"
-    "tThreshold\022\024\n\014tx_threshold\030\001 \001(\003\0229\n\017type"
-    "_thresholds\030\004 \003(\0132 .protocol.OperationTy"
-    "peThreshold\"\273\001\n\013Transaction\022\026\n\016source_ad"
-    "dress\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\026\n\016expr_condi"
-    "tion\030\003 \001(\t\022\'\n\noperations\030\004 \003(\0132\023.protoco"
-    "l.Operation\022\020\n\010metadata\030\005 \001(\014\022\013\n\003fee\030\006 \001"
-    "(\003\"%\n\005Limit\022\013\n\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350"
-    "\007\"O\n\006Signer\022\017\n\007address\030\001 \001(\t\022\016\n\006weight\030\002"
-    " \001(\003\"$\n\005Limit\022\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER"
-    "\020d\"\211\002\n\007Trigger\022;\n\020transaction_type\030\001 \001(\016"
-    "2!.protocol.Trigger.TransactionType\022\022\n\nl"
-    "edger_seq\030\002 \001(\003\0227\n\013transaction\030\003 \001(\0132\".p"
-    "rotocol.Trigger.OperationTrigger\032/\n\020Oper"
-    "ationTrigger\022\014\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001("
-    "\003\"C\n\017TransactionType\022\026\n\022NORMAL_TRANSACTI"
-    "ON\020\000\022\030\n\024CONTRACT_TRANSACTION\020\001\"\211\001\n\016Trans"
-    "actionEnv\022*\n\013transaction\030\001 \001(\0132\025.protoco"
-    "l.Transaction\022\'\n\nsignatures\030\002 \003(\0132\023.prot"
-    "ocol.Signature\022\"\n\007trigger\030\003 \001(\0132\021.protoc"
-    "ol.Trigger\"\230\001\n\023TransactionEnvStore\0221\n\017tr"
-    "ansaction_env\030\001 \001(\0132\030.protocol.Transacti"
-    "onEnv\022\022\n\nerror_code\030\002 \001(\005\022\022\n\nerror_desc\030"
-    "\003 \001(\t\022\022\n\nledger_seq\030\004 \001(\003\022\022\n\nclose_time\030"
-    "\005 \001(\003\":\n\021TransactionEnvSet\022%\n\003txs\030\002 \003(\0132"
-    "\030.protocol.TransactionEnv\"\313\001\n\016ConsensusV"
-    "alue\022*\n\005txset\030\001 \001(\0132\033.protocol.Transacti"
-    "onEnvSet\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016previous"
-    "_proof\030\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024prev"
-    "ious_ledger_hash\030\005 \001(\014\022/\n\016ledger_upgrade"
-    "\030\006 \001(\0132\027.protocol.LedgerUpgrade\"j\n\010Contr"
-    "act\022-\n\004type\030\001 \001(\0162\037.protocol.Contract.Co"
-    "ntractType\022\017\n\007payload\030\002 \001(\t\"\036\n\014ContractT"
-    "ype\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026OperationCreateA"
-    "ccount\022\024\n\014dest_address\030\001 \001(\t\022$\n\010contract"
-    "\030\002 \001(\0132\022.protocol.Contract\022(\n\004priv\030\003 \001(\013"
-    "2\032.protocol.AccountPrivilege\022$\n\tmetadata"
-    "s\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014init_balan"
-    "ce\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024Operatio"
-    "nSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t"
-    "\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#"
-    "\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\035\n\033c"
-    "n.bumo.blockchain.adapter3b\006proto3", 3714);
+    "rce_address\030\002 \001(\t\022\020\n\010metadata\030\003 \001(\014\0228\n\016c"
+    "reate_account\030\004 \001(\0132 .protocol.Operation"
+    "CreateAccount\0222\n\013issue_asset\030\005 \001(\0132\035.pro"
+    "tocol.OperationIssueAsset\022+\n\007payment\030\006 \001"
+    "(\0132\032.protocol.OperationPayment\0224\n\014set_me"
+    "tadata\030\007 \001(\0132\036.protocol.OperationSetMeta"
+    "data\022=\n\021set_signer_weight\030\010 \001(\0132\".protoc"
+    "ol.OperationSetSignerWeight\0226\n\rset_thres"
+    "hold\030\t \001(\0132\037.protocol.OperationSetThresh"
+    "old\022,\n\010pay_coin\030\n \001(\0132\032.protocol.Operati"
+    "onPayCoin\022#\n\003log\030\013 \001(\0132\026.protocol.Operat"
+    "ionLog\"\230\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_A"
+    "CCOUNT\020\001\022\017\n\013ISSUE_ASSET\020\002\022\013\n\007PAYMENT\020\003\022\020"
+    "\n\014SET_METADATA\020\004\022\025\n\021SET_SIGNER_WEIGHT\020\005\022"
+    "\021\n\rSET_THRESHOLD\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020"
+    "\010\"h\n\025OperationSetThreshold\022\024\n\014tx_thresho"
+    "ld\030\001 \001(\003\0229\n\017type_thresholds\030\004 \003(\0132 .prot"
+    "ocol.OperationTypeThreshold\"\274\001\n\013Transact"
+    "ion\022\026\n\016source_address\030\001 \001(\t\022\r\n\005nonce\030\002 \001"
+    "(\003\022\013\n\003fee\030\003 \001(\003\022\027\n\017ceil_ledger_seq\030\004 \001(\003"
+    "\022\020\n\010metadata\030\005 \001(\014\022\'\n\noperations\030\006 \003(\0132\023"
+    ".protocol.Operation\"%\n\005Limit\022\013\n\007UNKNOWN\020"
+    "\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Signer\022\017\n\007address\030"
+    "\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005Limit\022\017\n\013SIGNER"
+    "_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007Trigger\022;\n\020trans"
+    "action_type\030\001 \001(\0162!.protocol.Trigger.Tra"
+    "nsactionType\022\022\n\nledger_seq\030\002 \001(\003\0227\n\013tran"
+    "saction\030\003 \001(\0132\".protocol.Trigger.Operati"
+    "onTrigger\032/\n\020OperationTrigger\022\014\n\004hash\030\001 "
+    "\001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017TransactionType\022\026\n"
+    "\022NORMAL_TRANSACTION\020\000\022\030\n\024CONTRACT_TRANSA"
+    "CTION\020\001\"\211\001\n\016TransactionEnv\022*\n\013transactio"
+    "n\030\001 \001(\0132\025.protocol.Transaction\022\'\n\nsignat"
+    "ures\030\002 \003(\0132\023.protocol.Signature\022\"\n\007trigg"
+    "er\030\003 \001(\0132\021.protocol.Trigger\"\230\001\n\023Transact"
+    "ionEnvStore\0221\n\017transaction_env\030\001 \001(\0132\030.p"
+    "rotocol.TransactionEnv\022\022\n\nerror_code\030\002 \001"
+    "(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledger_seq\030\004 \001"
+    "(\003\022\022\n\nclose_time\030\005 \001(\003\":\n\021TransactionEnv"
+    "Set\022%\n\003txs\030\002 \003(\0132\030.protocol.TransactionE"
+    "nv\"\313\001\n\016ConsensusValue\022*\n\005txset\030\001 \001(\0132\033.p"
+    "rotocol.TransactionEnvSet\022\022\n\nclose_time\030"
+    "\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\nledger_"
+    "seq\030\004 \001(\003\022\034\n\024previous_ledger_hash\030\005 \001(\014\022"
+    "/\n\016ledger_upgrade\030\006 \001(\0132\027.protocol.Ledge"
+    "rUpgrade\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037.pro"
+    "tocol.Contract.ContractType\022\017\n\007payload\030\002"
+    " \001(\t\"\036\n\014ContractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n"
+    "\026OperationCreateAccount\022\024\n\014dest_address\030"
+    "\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.protocol.Contr"
+    "act\022(\n\004priv\030\003 \001(\0132\032.protocol.AccountPriv"
+    "ilege\022$\n\tmetadatas\030\004 \003(\0132\021.protocol.KeyP"
+    "air\022\024\n\014init_balance\030\005 \001(\003\022\022\n\ninit_input\030"
+    "\006 \001(\t\"X\n\024OperationSetMetadata\022\013\n\003key\030\001 \001"
+    "(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013de"
+    "lete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n"
+    "\tSIGNATURE\020dB\035\n\033cn.bumo.blockchain.adapt"
+    "er3b\006proto3", 3691);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -6669,7 +6668,6 @@ const int Operation::Type_ARRAYSIZE;
 const int Operation::kTypeFieldNumber;
 const int Operation::kSourceAddressFieldNumber;
 const int Operation::kMetadataFieldNumber;
-const int Operation::kExprConditionFieldNumber;
 const int Operation::kCreateAccountFieldNumber;
 const int Operation::kIssueAssetFieldNumber;
 const int Operation::kPaymentFieldNumber;
@@ -6713,7 +6711,6 @@ void Operation::SharedCtor() {
   type_ = 0;
   source_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   metadata_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  expr_condition_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   create_account_ = NULL;
   issue_asset_ = NULL;
   payment_ = NULL;
@@ -6732,7 +6729,6 @@ Operation::~Operation() {
 void Operation::SharedDtor() {
   source_address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   metadata_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  expr_condition_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
     delete create_account_;
     delete issue_asset_;
@@ -6775,7 +6771,6 @@ void Operation::Clear() {
   type_ = 0;
   source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   metadata_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  expr_condition_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && create_account_ != NULL) delete create_account_;
   create_account_ = NULL;
   if (GetArenaNoVirtual() == NULL && issue_asset_ != NULL) delete issue_asset_;
@@ -6845,121 +6840,104 @@ bool Operation::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_expr_condition;
+        if (input->ExpectTag(34)) goto parse_create_account;
         break;
       }
 
-      // optional string expr_condition = 4;
+      // optional .protocol.OperationCreateAccount create_account = 4;
       case 4: {
         if (tag == 34) {
-         parse_expr_condition:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_expr_condition()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->expr_condition().data(), this->expr_condition().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.Operation.expr_condition"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(42)) goto parse_create_account;
-        break;
-      }
-
-      // optional .protocol.OperationCreateAccount create_account = 5;
-      case 5: {
-        if (tag == 42) {
          parse_create_account:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_create_account()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_issue_asset;
+        if (input->ExpectTag(42)) goto parse_issue_asset;
         break;
       }
 
-      // optional .protocol.OperationIssueAsset issue_asset = 6;
-      case 6: {
-        if (tag == 50) {
+      // optional .protocol.OperationIssueAsset issue_asset = 5;
+      case 5: {
+        if (tag == 42) {
          parse_issue_asset:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_issue_asset()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(58)) goto parse_payment;
+        if (input->ExpectTag(50)) goto parse_payment;
         break;
       }
 
-      // optional .protocol.OperationPayment payment = 7;
-      case 7: {
-        if (tag == 58) {
+      // optional .protocol.OperationPayment payment = 6;
+      case 6: {
+        if (tag == 50) {
          parse_payment:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_payment()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(74)) goto parse_set_metadata;
+        if (input->ExpectTag(58)) goto parse_set_metadata;
         break;
       }
 
-      // optional .protocol.OperationSetMetadata set_metadata = 9;
-      case 9: {
-        if (tag == 74) {
+      // optional .protocol.OperationSetMetadata set_metadata = 7;
+      case 7: {
+        if (tag == 58) {
          parse_set_metadata:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_set_metadata()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(82)) goto parse_set_signer_weight;
+        if (input->ExpectTag(66)) goto parse_set_signer_weight;
         break;
       }
 
-      // optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
-      case 10: {
-        if (tag == 82) {
+      // optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
+      case 8: {
+        if (tag == 66) {
          parse_set_signer_weight:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_set_signer_weight()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(90)) goto parse_set_threshold;
+        if (input->ExpectTag(74)) goto parse_set_threshold;
         break;
       }
 
-      // optional .protocol.OperationSetThreshold set_threshold = 11;
-      case 11: {
-        if (tag == 90) {
+      // optional .protocol.OperationSetThreshold set_threshold = 9;
+      case 9: {
+        if (tag == 74) {
          parse_set_threshold:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_set_threshold()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(98)) goto parse_pay_coin;
+        if (input->ExpectTag(82)) goto parse_pay_coin;
         break;
       }
 
-      // optional .protocol.OperationPayCoin pay_coin = 12;
-      case 12: {
-        if (tag == 98) {
+      // optional .protocol.OperationPayCoin pay_coin = 10;
+      case 10: {
+        if (tag == 82) {
          parse_pay_coin:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_pay_coin()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(106)) goto parse_log;
+        if (input->ExpectTag(90)) goto parse_log;
         break;
       }
 
-      // optional .protocol.OperationLog log = 13;
-      case 13: {
-        if (tag == 106) {
+      // optional .protocol.OperationLog log = 11;
+      case 11: {
+        if (tag == 90) {
          parse_log:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_log()));
@@ -7016,62 +6994,52 @@ void Operation::SerializeWithCachedSizes(
       3, this->metadata(), output);
   }
 
-  // optional string expr_condition = 4;
-  if (this->expr_condition().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->expr_condition().data(), this->expr_condition().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.Operation.expr_condition");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->expr_condition(), output);
-  }
-
-  // optional .protocol.OperationCreateAccount create_account = 5;
+  // optional .protocol.OperationCreateAccount create_account = 4;
   if (this->has_create_account()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, *this->create_account_, output);
+      4, *this->create_account_, output);
   }
 
-  // optional .protocol.OperationIssueAsset issue_asset = 6;
+  // optional .protocol.OperationIssueAsset issue_asset = 5;
   if (this->has_issue_asset()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, *this->issue_asset_, output);
+      5, *this->issue_asset_, output);
   }
 
-  // optional .protocol.OperationPayment payment = 7;
+  // optional .protocol.OperationPayment payment = 6;
   if (this->has_payment()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      7, *this->payment_, output);
+      6, *this->payment_, output);
   }
 
-  // optional .protocol.OperationSetMetadata set_metadata = 9;
+  // optional .protocol.OperationSetMetadata set_metadata = 7;
   if (this->has_set_metadata()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      9, *this->set_metadata_, output);
+      7, *this->set_metadata_, output);
   }
 
-  // optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
+  // optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
   if (this->has_set_signer_weight()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      10, *this->set_signer_weight_, output);
+      8, *this->set_signer_weight_, output);
   }
 
-  // optional .protocol.OperationSetThreshold set_threshold = 11;
+  // optional .protocol.OperationSetThreshold set_threshold = 9;
   if (this->has_set_threshold()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      11, *this->set_threshold_, output);
+      9, *this->set_threshold_, output);
   }
 
-  // optional .protocol.OperationPayCoin pay_coin = 12;
+  // optional .protocol.OperationPayCoin pay_coin = 10;
   if (this->has_pay_coin()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      12, *this->pay_coin_, output);
+      10, *this->pay_coin_, output);
   }
 
-  // optional .protocol.OperationLog log = 13;
+  // optional .protocol.OperationLog log = 11;
   if (this->has_log()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      13, *this->log_, output);
+      11, *this->log_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.Operation)
@@ -7104,71 +7072,60 @@ void Operation::SerializeWithCachedSizes(
         3, this->metadata(), target);
   }
 
-  // optional string expr_condition = 4;
-  if (this->expr_condition().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->expr_condition().data(), this->expr_condition().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.Operation.expr_condition");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->expr_condition(), target);
-  }
-
-  // optional .protocol.OperationCreateAccount create_account = 5;
+  // optional .protocol.OperationCreateAccount create_account = 4;
   if (this->has_create_account()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        5, *this->create_account_, false, target);
+        4, *this->create_account_, false, target);
   }
 
-  // optional .protocol.OperationIssueAsset issue_asset = 6;
+  // optional .protocol.OperationIssueAsset issue_asset = 5;
   if (this->has_issue_asset()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        6, *this->issue_asset_, false, target);
+        5, *this->issue_asset_, false, target);
   }
 
-  // optional .protocol.OperationPayment payment = 7;
+  // optional .protocol.OperationPayment payment = 6;
   if (this->has_payment()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        7, *this->payment_, false, target);
+        6, *this->payment_, false, target);
   }
 
-  // optional .protocol.OperationSetMetadata set_metadata = 9;
+  // optional .protocol.OperationSetMetadata set_metadata = 7;
   if (this->has_set_metadata()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        9, *this->set_metadata_, false, target);
+        7, *this->set_metadata_, false, target);
   }
 
-  // optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
+  // optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
   if (this->has_set_signer_weight()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        10, *this->set_signer_weight_, false, target);
+        8, *this->set_signer_weight_, false, target);
   }
 
-  // optional .protocol.OperationSetThreshold set_threshold = 11;
+  // optional .protocol.OperationSetThreshold set_threshold = 9;
   if (this->has_set_threshold()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        11, *this->set_threshold_, false, target);
+        9, *this->set_threshold_, false, target);
   }
 
-  // optional .protocol.OperationPayCoin pay_coin = 12;
+  // optional .protocol.OperationPayCoin pay_coin = 10;
   if (this->has_pay_coin()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        12, *this->pay_coin_, false, target);
+        10, *this->pay_coin_, false, target);
   }
 
-  // optional .protocol.OperationLog log = 13;
+  // optional .protocol.OperationLog log = 11;
   if (this->has_log()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        13, *this->log_, false, target);
+        11, *this->log_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Operation)
@@ -7199,63 +7156,56 @@ int Operation::ByteSize() const {
         this->metadata());
   }
 
-  // optional string expr_condition = 4;
-  if (this->expr_condition().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->expr_condition());
-  }
-
-  // optional .protocol.OperationCreateAccount create_account = 5;
+  // optional .protocol.OperationCreateAccount create_account = 4;
   if (this->has_create_account()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->create_account_);
   }
 
-  // optional .protocol.OperationIssueAsset issue_asset = 6;
+  // optional .protocol.OperationIssueAsset issue_asset = 5;
   if (this->has_issue_asset()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->issue_asset_);
   }
 
-  // optional .protocol.OperationPayment payment = 7;
+  // optional .protocol.OperationPayment payment = 6;
   if (this->has_payment()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->payment_);
   }
 
-  // optional .protocol.OperationSetMetadata set_metadata = 9;
+  // optional .protocol.OperationSetMetadata set_metadata = 7;
   if (this->has_set_metadata()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->set_metadata_);
   }
 
-  // optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
+  // optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
   if (this->has_set_signer_weight()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->set_signer_weight_);
   }
 
-  // optional .protocol.OperationSetThreshold set_threshold = 11;
+  // optional .protocol.OperationSetThreshold set_threshold = 9;
   if (this->has_set_threshold()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->set_threshold_);
   }
 
-  // optional .protocol.OperationPayCoin pay_coin = 12;
+  // optional .protocol.OperationPayCoin pay_coin = 10;
   if (this->has_pay_coin()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->pay_coin_);
   }
 
-  // optional .protocol.OperationLog log = 13;
+  // optional .protocol.OperationLog log = 11;
   if (this->has_log()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -7300,10 +7250,6 @@ void Operation::MergeFrom(const Operation& from) {
   if (from.metadata().size() > 0) {
 
     metadata_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.metadata_);
-  }
-  if (from.expr_condition().size() > 0) {
-
-    expr_condition_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.expr_condition_);
   }
   if (from.has_create_account()) {
     mutable_create_account()->::protocol::OperationCreateAccount::MergeFrom(from.create_account());
@@ -7358,7 +7304,6 @@ void Operation::InternalSwap(Operation* other) {
   std::swap(type_, other->type_);
   source_address_.Swap(&other->source_address_);
   metadata_.Swap(&other->metadata_);
-  expr_condition_.Swap(&other->expr_condition_);
   std::swap(create_account_, other->create_account_);
   std::swap(issue_asset_, other->issue_asset_);
   std::swap(payment_, other->payment_);
@@ -7484,51 +7429,7 @@ void Operation::clear_metadata() {
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.metadata)
 }
 
-// optional string expr_condition = 4;
-void Operation::clear_expr_condition() {
-  expr_condition_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& Operation::expr_condition() const {
-  // @@protoc_insertion_point(field_get:protocol.Operation.expr_condition)
-  return expr_condition_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void Operation::set_expr_condition(const ::std::string& value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Operation.expr_condition)
-}
- void Operation::set_expr_condition(const char* value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Operation.expr_condition)
-}
- void Operation::set_expr_condition(const char* value, size_t size) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Operation.expr_condition)
-}
- ::std::string* Operation::mutable_expr_condition() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.Operation.expr_condition)
-  return expr_condition_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* Operation::release_expr_condition() {
-  // @@protoc_insertion_point(field_release:protocol.Operation.expr_condition)
-  
-  return expr_condition_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void Operation::set_allocated_expr_condition(::std::string* expr_condition) {
-  if (expr_condition != NULL) {
-    
-  } else {
-    
-  }
-  expr_condition_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), expr_condition);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.expr_condition)
-}
-
-// optional .protocol.OperationCreateAccount create_account = 5;
+// optional .protocol.OperationCreateAccount create_account = 4;
 bool Operation::has_create_account() const {
   return !_is_default_instance_ && create_account_ != NULL;
 }
@@ -7566,7 +7467,7 @@ void Operation::set_allocated_create_account(::protocol::OperationCreateAccount*
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.create_account)
 }
 
-// optional .protocol.OperationIssueAsset issue_asset = 6;
+// optional .protocol.OperationIssueAsset issue_asset = 5;
 bool Operation::has_issue_asset() const {
   return !_is_default_instance_ && issue_asset_ != NULL;
 }
@@ -7604,7 +7505,7 @@ void Operation::set_allocated_issue_asset(::protocol::OperationIssueAsset* issue
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.issue_asset)
 }
 
-// optional .protocol.OperationPayment payment = 7;
+// optional .protocol.OperationPayment payment = 6;
 bool Operation::has_payment() const {
   return !_is_default_instance_ && payment_ != NULL;
 }
@@ -7642,7 +7543,7 @@ void Operation::set_allocated_payment(::protocol::OperationPayment* payment) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.payment)
 }
 
-// optional .protocol.OperationSetMetadata set_metadata = 9;
+// optional .protocol.OperationSetMetadata set_metadata = 7;
 bool Operation::has_set_metadata() const {
   return !_is_default_instance_ && set_metadata_ != NULL;
 }
@@ -7680,7 +7581,7 @@ void Operation::set_allocated_set_metadata(::protocol::OperationSetMetadata* set
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_metadata)
 }
 
-// optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
+// optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
 bool Operation::has_set_signer_weight() const {
   return !_is_default_instance_ && set_signer_weight_ != NULL;
 }
@@ -7718,7 +7619,7 @@ void Operation::set_allocated_set_signer_weight(::protocol::OperationSetSignerWe
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_signer_weight)
 }
 
-// optional .protocol.OperationSetThreshold set_threshold = 11;
+// optional .protocol.OperationSetThreshold set_threshold = 9;
 bool Operation::has_set_threshold() const {
   return !_is_default_instance_ && set_threshold_ != NULL;
 }
@@ -7756,7 +7657,7 @@ void Operation::set_allocated_set_threshold(::protocol::OperationSetThreshold* s
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_threshold)
 }
 
-// optional .protocol.OperationPayCoin pay_coin = 12;
+// optional .protocol.OperationPayCoin pay_coin = 10;
 bool Operation::has_pay_coin() const {
   return !_is_default_instance_ && pay_coin_ != NULL;
 }
@@ -7794,7 +7695,7 @@ void Operation::set_allocated_pay_coin(::protocol::OperationPayCoin* pay_coin) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.pay_coin)
 }
 
-// optional .protocol.OperationLog log = 13;
+// optional .protocol.OperationLog log = 11;
 bool Operation::has_log() const {
   return !_is_default_instance_ && log_ != NULL;
 }
@@ -8170,10 +8071,10 @@ const int Transaction::Limit_ARRAYSIZE;
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Transaction::kSourceAddressFieldNumber;
 const int Transaction::kNonceFieldNumber;
-const int Transaction::kExprConditionFieldNumber;
-const int Transaction::kOperationsFieldNumber;
-const int Transaction::kMetadataFieldNumber;
 const int Transaction::kFeeFieldNumber;
+const int Transaction::kCeilLedgerSeqFieldNumber;
+const int Transaction::kMetadataFieldNumber;
+const int Transaction::kOperationsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Transaction::Transaction()
@@ -8200,9 +8101,9 @@ void Transaction::SharedCtor() {
   _cached_size_ = 0;
   source_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   nonce_ = GOOGLE_LONGLONG(0);
-  expr_condition_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  metadata_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   fee_ = GOOGLE_LONGLONG(0);
+  ceil_ledger_seq_ = GOOGLE_LONGLONG(0);
+  metadata_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 Transaction::~Transaction() {
@@ -8212,7 +8113,6 @@ Transaction::~Transaction() {
 
 void Transaction::SharedDtor() {
   source_address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  expr_condition_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   metadata_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
@@ -8245,11 +8145,29 @@ Transaction* Transaction::New(::google::protobuf::Arena* arena) const {
 
 void Transaction::Clear() {
 // @@protoc_insertion_point(message_clear_start:protocol.Transaction)
+#if defined(__clang__)
+#define ZR_HELPER_(f) \
+  _Pragma("clang diagnostic push") \
+  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
+  __builtin_offsetof(Transaction, f) \
+  _Pragma("clang diagnostic pop")
+#else
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<Transaction*>(16)->f)
+#endif
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(nonce_, ceil_ledger_seq_);
   source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  nonce_ = GOOGLE_LONGLONG(0);
-  expr_condition_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   metadata_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  fee_ = GOOGLE_LONGLONG(0);
+
+#undef ZR_HELPER_
+#undef ZR_
+
   operations_.Clear();
 }
 
@@ -8290,40 +8208,36 @@ bool Transaction::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_expr_condition;
+        if (input->ExpectTag(24)) goto parse_fee;
         break;
       }
 
-      // optional string expr_condition = 3;
+      // optional int64 fee = 3;
       case 3: {
-        if (tag == 26) {
-         parse_expr_condition:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_expr_condition()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->expr_condition().data(), this->expr_condition().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.Transaction.expr_condition"));
+        if (tag == 24) {
+         parse_fee:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &fee_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_operations;
+        if (input->ExpectTag(32)) goto parse_ceil_ledger_seq;
         break;
       }
 
-      // repeated .protocol.Operation operations = 4;
+      // optional int64 ceil_ledger_seq = 4;
       case 4: {
-        if (tag == 34) {
-         parse_operations:
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_operations:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_operations()));
+        if (tag == 32) {
+         parse_ceil_ledger_seq:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &ceil_ledger_seq_)));
+
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_loop_operations;
-        input->UnsafeDecrementRecursionDepth();
         if (input->ExpectTag(42)) goto parse_metadata;
         break;
       }
@@ -8337,21 +8251,23 @@ bool Transaction::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(48)) goto parse_fee;
+        if (input->ExpectTag(50)) goto parse_operations;
         break;
       }
 
-      // optional int64 fee = 6;
+      // repeated .protocol.Operation operations = 6;
       case 6: {
-        if (tag == 48) {
-         parse_fee:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &fee_)));
-
+        if (tag == 50) {
+         parse_operations:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_operations:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_operations()));
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(50)) goto parse_loop_operations;
+        input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -8395,20 +8311,14 @@ void Transaction::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->nonce(), output);
   }
 
-  // optional string expr_condition = 3;
-  if (this->expr_condition().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->expr_condition().data(), this->expr_condition().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.Transaction.expr_condition");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->expr_condition(), output);
+  // optional int64 fee = 3;
+  if (this->fee() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->fee(), output);
   }
 
-  // repeated .protocol.Operation operations = 4;
-  for (unsigned int i = 0, n = this->operations_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->operations(i), output);
+  // optional int64 ceil_ledger_seq = 4;
+  if (this->ceil_ledger_seq() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->ceil_ledger_seq(), output);
   }
 
   // optional bytes metadata = 5;
@@ -8417,9 +8327,10 @@ void Transaction::SerializeWithCachedSizes(
       5, this->metadata(), output);
   }
 
-  // optional int64 fee = 6;
-  if (this->fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(6, this->fee(), output);
+  // repeated .protocol.Operation operations = 6;
+  for (unsigned int i = 0, n = this->operations_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      6, this->operations(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.Transaction)
@@ -8444,22 +8355,14 @@ void Transaction::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->nonce(), target);
   }
 
-  // optional string expr_condition = 3;
-  if (this->expr_condition().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->expr_condition().data(), this->expr_condition().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.Transaction.expr_condition");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->expr_condition(), target);
+  // optional int64 fee = 3;
+  if (this->fee() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->fee(), target);
   }
 
-  // repeated .protocol.Operation operations = 4;
-  for (unsigned int i = 0, n = this->operations_size(); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        4, this->operations(i), false, target);
+  // optional int64 ceil_ledger_seq = 4;
+  if (this->ceil_ledger_seq() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->ceil_ledger_seq(), target);
   }
 
   // optional bytes metadata = 5;
@@ -8469,9 +8372,11 @@ void Transaction::SerializeWithCachedSizes(
         5, this->metadata(), target);
   }
 
-  // optional int64 fee = 6;
-  if (this->fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(6, this->fee(), target);
+  // repeated .protocol.Operation operations = 6;
+  for (unsigned int i = 0, n = this->operations_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        6, this->operations(i), false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Transaction)
@@ -8496,11 +8401,18 @@ int Transaction::ByteSize() const {
         this->nonce());
   }
 
-  // optional string expr_condition = 3;
-  if (this->expr_condition().size() > 0) {
+  // optional int64 fee = 3;
+  if (this->fee() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->expr_condition());
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->fee());
+  }
+
+  // optional int64 ceil_ledger_seq = 4;
+  if (this->ceil_ledger_seq() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->ceil_ledger_seq());
   }
 
   // optional bytes metadata = 5;
@@ -8510,14 +8422,7 @@ int Transaction::ByteSize() const {
         this->metadata());
   }
 
-  // optional int64 fee = 6;
-  if (this->fee() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->fee());
-  }
-
-  // repeated .protocol.Operation operations = 4;
+  // repeated .protocol.Operation operations = 6;
   total_size += 1 * this->operations_size();
   for (int i = 0; i < this->operations_size(); i++) {
     total_size +=
@@ -8561,16 +8466,15 @@ void Transaction::MergeFrom(const Transaction& from) {
   if (from.nonce() != 0) {
     set_nonce(from.nonce());
   }
-  if (from.expr_condition().size() > 0) {
-
-    expr_condition_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.expr_condition_);
+  if (from.fee() != 0) {
+    set_fee(from.fee());
+  }
+  if (from.ceil_ledger_seq() != 0) {
+    set_ceil_ledger_seq(from.ceil_ledger_seq());
   }
   if (from.metadata().size() > 0) {
 
     metadata_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.metadata_);
-  }
-  if (from.fee() != 0) {
-    set_fee(from.fee());
   }
 }
 
@@ -8600,10 +8504,10 @@ void Transaction::Swap(Transaction* other) {
 void Transaction::InternalSwap(Transaction* other) {
   source_address_.Swap(&other->source_address_);
   std::swap(nonce_, other->nonce_);
-  expr_condition_.Swap(&other->expr_condition_);
-  operations_.UnsafeArenaSwap(&other->operations_);
-  metadata_.Swap(&other->metadata_);
   std::swap(fee_, other->fee_);
+  std::swap(ceil_ledger_seq_, other->ceil_ledger_seq_);
+  metadata_.Swap(&other->metadata_);
+  operations_.UnsafeArenaSwap(&other->operations_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -8677,78 +8581,32 @@ void Transaction::clear_nonce() {
   // @@protoc_insertion_point(field_set:protocol.Transaction.nonce)
 }
 
-// optional string expr_condition = 3;
-void Transaction::clear_expr_condition() {
-  expr_condition_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional int64 fee = 3;
+void Transaction::clear_fee() {
+  fee_ = GOOGLE_LONGLONG(0);
 }
- const ::std::string& Transaction::expr_condition() const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.expr_condition)
-  return expr_condition_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+ ::google::protobuf::int64 Transaction::fee() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.fee)
+  return fee_;
 }
- void Transaction::set_expr_condition(const ::std::string& value) {
+ void Transaction::set_fee(::google::protobuf::int64 value) {
   
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Transaction.expr_condition)
-}
- void Transaction::set_expr_condition(const char* value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Transaction.expr_condition)
-}
- void Transaction::set_expr_condition(const char* value, size_t size) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Transaction.expr_condition)
-}
- ::std::string* Transaction::mutable_expr_condition() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.Transaction.expr_condition)
-  return expr_condition_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* Transaction::release_expr_condition() {
-  // @@protoc_insertion_point(field_release:protocol.Transaction.expr_condition)
-  
-  return expr_condition_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void Transaction::set_allocated_expr_condition(::std::string* expr_condition) {
-  if (expr_condition != NULL) {
-    
-  } else {
-    
-  }
-  expr_condition_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), expr_condition);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Transaction.expr_condition)
+  fee_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.fee)
 }
 
-// repeated .protocol.Operation operations = 4;
-int Transaction::operations_size() const {
-  return operations_.size();
+// optional int64 ceil_ledger_seq = 4;
+void Transaction::clear_ceil_ledger_seq() {
+  ceil_ledger_seq_ = GOOGLE_LONGLONG(0);
 }
-void Transaction::clear_operations() {
-  operations_.Clear();
+ ::google::protobuf::int64 Transaction::ceil_ledger_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.ceil_ledger_seq)
+  return ceil_ledger_seq_;
 }
-const ::protocol::Operation& Transaction::operations(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.operations)
-  return operations_.Get(index);
-}
-::protocol::Operation* Transaction::mutable_operations(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.Transaction.operations)
-  return operations_.Mutable(index);
-}
-::protocol::Operation* Transaction::add_operations() {
-  // @@protoc_insertion_point(field_add:protocol.Transaction.operations)
-  return operations_.Add();
-}
-::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
-Transaction::mutable_operations() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.Transaction.operations)
-  return &operations_;
-}
-const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
-Transaction::operations() const {
-  // @@protoc_insertion_point(field_list:protocol.Transaction.operations)
-  return operations_;
+ void Transaction::set_ceil_ledger_seq(::google::protobuf::int64 value) {
+  
+  ceil_ledger_seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.ceil_ledger_seq)
 }
 
 // optional bytes metadata = 5;
@@ -8795,18 +8653,34 @@ void Transaction::clear_metadata() {
   // @@protoc_insertion_point(field_set_allocated:protocol.Transaction.metadata)
 }
 
-// optional int64 fee = 6;
-void Transaction::clear_fee() {
-  fee_ = GOOGLE_LONGLONG(0);
+// repeated .protocol.Operation operations = 6;
+int Transaction::operations_size() const {
+  return operations_.size();
 }
- ::google::protobuf::int64 Transaction::fee() const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.fee)
-  return fee_;
+void Transaction::clear_operations() {
+  operations_.Clear();
 }
- void Transaction::set_fee(::google::protobuf::int64 value) {
-  
-  fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.Transaction.fee)
+const ::protocol::Operation& Transaction::operations(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.operations)
+  return operations_.Get(index);
+}
+::protocol::Operation* Transaction::mutable_operations(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.Transaction.operations)
+  return operations_.Mutable(index);
+}
+::protocol::Operation* Transaction::add_operations() {
+  // @@protoc_insertion_point(field_add:protocol.Transaction.operations)
+  return operations_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
+Transaction::mutable_operations() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.Transaction.operations)
+  return &operations_;
+}
+const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
+Transaction::operations() const {
+  // @@protoc_insertion_point(field_list:protocol.Transaction.operations)
+  return operations_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

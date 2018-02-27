@@ -97,7 +97,6 @@ namespace bumo {
 		server_ptr_->addRoute("getAddress", std::bind(&WebServer::GetAddress, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getTransactionFromBlob", std::bind(&WebServer::GetTransactionFromBlob, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getPeerNodeAddress", std::bind(&WebServer::GetPeerNodeAddress, this, std::placeholders::_1, std::placeholders::_2));
-		server_ptr_->addRoute("getExprResult", std::bind(&WebServer::GetExprResult, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getLedgerValidators", std::bind(&WebServer::GetLedgerValidators, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getPeerAddresses", std::bind(&WebServer::GetPeerAddresses, this, std::placeholders::_1, std::placeholders::_2));
 		

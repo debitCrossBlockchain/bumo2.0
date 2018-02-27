@@ -106,17 +106,16 @@ message Operation {
 	Type type = 1;
 	string source_address = 2;
 	bytes metadata	= 3;
-	string expr_condition = 4;
 
 	//
-	OperationCreateAccount		create_account 	   = 5;
-	OperationIssueAsset			issue_asset 	   = 6;
-	OperationPayment			payment 		   = 7;
-	OperationSetMetadata		set_metadata	   = 9;
-	OperationSetSignerWeight	set_signer_weight  = 10;
-	OperationSetThreshold		set_threshold 	   = 11;
-	OperationPayCoin			pay_coin           = 12;
-	OperationLog				log				   = 13;
+	OperationCreateAccount		create_account 	   = 4;
+	OperationIssueAsset			issue_asset 	   = 5;
+	OperationPayment			payment 		   = 6;
+	OperationSetMetadata		set_metadata	   = 7;
+	OperationSetSignerWeight	set_signer_weight  = 8;
+	OperationSetThreshold		set_threshold 	   = 9;
+	OperationPayCoin			pay_coin           = 10;
+	OperationLog				log				   = 11;
 }
 
 message OperationSetThreshold{
@@ -133,14 +132,15 @@ message Transaction {
 		string source_address = 1;
 
 		int64 nonce = 2;
+		
+		int64  fee = 3;
 
-		string expr_condition = 3;
-
-		repeated Operation operations = 4;
-
+		int64 ceil_ledger_seq = 4;
+		
 		bytes metadata = 5;
 
-		int64  fee = 6;
+		repeated Operation operations = 6;
+
 }
 
 message Signer {

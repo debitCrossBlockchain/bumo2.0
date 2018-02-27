@@ -65,7 +65,6 @@ namespace bumo {
 		void GetAddress(const http::server::request &request, std::string &reply);
 		void GetPeerNodeAddress(const http::server::request &request, std::string &reply);
 		void GetTransactionFromBlob(const http::server::request &request, std::string &reply);
-		void GetExprResult(const http::server::request &request, std::string &reply);
 		void GetPeerAddresses(const http::server::request &request, std::string &reply);
 
 		void GetConsensusInfo(const http::server::request &request, std::string &reply);

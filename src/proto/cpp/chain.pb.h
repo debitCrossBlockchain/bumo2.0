@@ -1745,84 +1745,73 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::std::string* release_metadata();
   void set_allocated_metadata(::std::string* metadata);
 
-  // optional string expr_condition = 4;
-  void clear_expr_condition();
-  static const int kExprConditionFieldNumber = 4;
-  const ::std::string& expr_condition() const;
-  void set_expr_condition(const ::std::string& value);
-  void set_expr_condition(const char* value);
-  void set_expr_condition(const char* value, size_t size);
-  ::std::string* mutable_expr_condition();
-  ::std::string* release_expr_condition();
-  void set_allocated_expr_condition(::std::string* expr_condition);
-
-  // optional .protocol.OperationCreateAccount create_account = 5;
+  // optional .protocol.OperationCreateAccount create_account = 4;
   bool has_create_account() const;
   void clear_create_account();
-  static const int kCreateAccountFieldNumber = 5;
+  static const int kCreateAccountFieldNumber = 4;
   const ::protocol::OperationCreateAccount& create_account() const;
   ::protocol::OperationCreateAccount* mutable_create_account();
   ::protocol::OperationCreateAccount* release_create_account();
   void set_allocated_create_account(::protocol::OperationCreateAccount* create_account);
 
-  // optional .protocol.OperationIssueAsset issue_asset = 6;
+  // optional .protocol.OperationIssueAsset issue_asset = 5;
   bool has_issue_asset() const;
   void clear_issue_asset();
-  static const int kIssueAssetFieldNumber = 6;
+  static const int kIssueAssetFieldNumber = 5;
   const ::protocol::OperationIssueAsset& issue_asset() const;
   ::protocol::OperationIssueAsset* mutable_issue_asset();
   ::protocol::OperationIssueAsset* release_issue_asset();
   void set_allocated_issue_asset(::protocol::OperationIssueAsset* issue_asset);
 
-  // optional .protocol.OperationPayment payment = 7;
+  // optional .protocol.OperationPayment payment = 6;
   bool has_payment() const;
   void clear_payment();
-  static const int kPaymentFieldNumber = 7;
+  static const int kPaymentFieldNumber = 6;
   const ::protocol::OperationPayment& payment() const;
   ::protocol::OperationPayment* mutable_payment();
   ::protocol::OperationPayment* release_payment();
   void set_allocated_payment(::protocol::OperationPayment* payment);
 
-  // optional .protocol.OperationSetMetadata set_metadata = 9;
+  // optional .protocol.OperationSetMetadata set_metadata = 7;
   bool has_set_metadata() const;
   void clear_set_metadata();
-  static const int kSetMetadataFieldNumber = 9;
+  static const int kSetMetadataFieldNumber = 7;
   const ::protocol::OperationSetMetadata& set_metadata() const;
   ::protocol::OperationSetMetadata* mutable_set_metadata();
   ::protocol::OperationSetMetadata* release_set_metadata();
   void set_allocated_set_metadata(::protocol::OperationSetMetadata* set_metadata);
 
-  // optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
+  // optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
   bool has_set_signer_weight() const;
   void clear_set_signer_weight();
-  static const int kSetSignerWeightFieldNumber = 10;
+  static const int kSetSignerWeightFieldNumber = 8;
   const ::protocol::OperationSetSignerWeight& set_signer_weight() const;
   ::protocol::OperationSetSignerWeight* mutable_set_signer_weight();
   ::protocol::OperationSetSignerWeight* release_set_signer_weight();
   void set_allocated_set_signer_weight(::protocol::OperationSetSignerWeight* set_signer_weight);
 
-  // optional .protocol.OperationSetThreshold set_threshold = 11;
+  // optional .protocol.OperationSetThreshold set_threshold = 9;
   bool has_set_threshold() const;
   void clear_set_threshold();
-  static const int kSetThresholdFieldNumber = 11;
+  static const int kSetThresholdFieldNumber = 9;
   const ::protocol::OperationSetThreshold& set_threshold() const;
   ::protocol::OperationSetThreshold* mutable_set_threshold();
   ::protocol::OperationSetThreshold* release_set_threshold();
   void set_allocated_set_threshold(::protocol::OperationSetThreshold* set_threshold);
 
-  // optional .protocol.OperationPayCoin pay_coin = 12;
+  // optional .protocol.OperationPayCoin pay_coin = 10;
   bool has_pay_coin() const;
   void clear_pay_coin();
-  static const int kPayCoinFieldNumber = 12;
+  static const int kPayCoinFieldNumber = 10;
   const ::protocol::OperationPayCoin& pay_coin() const;
   ::protocol::OperationPayCoin* mutable_pay_coin();
   ::protocol::OperationPayCoin* release_pay_coin();
   void set_allocated_pay_coin(::protocol::OperationPayCoin* pay_coin);
 
-  // optional .protocol.OperationLog log = 13;
+  // optional .protocol.OperationLog log = 11;
   bool has_log() const;
   void clear_log();
-  static const int kLogFieldNumber = 13;
+  static const int kLogFieldNumber = 11;
   const ::protocol::OperationLog& log() const;
   ::protocol::OperationLog* mutable_log();
   ::protocol::OperationLog* release_log();
@@ -1835,7 +1824,6 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr source_address_;
   ::google::protobuf::internal::ArenaStringPtr metadata_;
-  ::google::protobuf::internal::ArenaStringPtr expr_condition_;
   ::protocol::OperationCreateAccount* create_account_;
   ::protocol::OperationIssueAsset* issue_asset_;
   ::protocol::OperationPayment* payment_;
@@ -2053,28 +2041,17 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::int64 nonce() const;
   void set_nonce(::google::protobuf::int64 value);
 
-  // optional string expr_condition = 3;
-  void clear_expr_condition();
-  static const int kExprConditionFieldNumber = 3;
-  const ::std::string& expr_condition() const;
-  void set_expr_condition(const ::std::string& value);
-  void set_expr_condition(const char* value);
-  void set_expr_condition(const char* value, size_t size);
-  ::std::string* mutable_expr_condition();
-  ::std::string* release_expr_condition();
-  void set_allocated_expr_condition(::std::string* expr_condition);
+  // optional int64 fee = 3;
+  void clear_fee();
+  static const int kFeeFieldNumber = 3;
+  ::google::protobuf::int64 fee() const;
+  void set_fee(::google::protobuf::int64 value);
 
-  // repeated .protocol.Operation operations = 4;
-  int operations_size() const;
-  void clear_operations();
-  static const int kOperationsFieldNumber = 4;
-  const ::protocol::Operation& operations(int index) const;
-  ::protocol::Operation* mutable_operations(int index);
-  ::protocol::Operation* add_operations();
-  ::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
-      mutable_operations();
-  const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
-      operations() const;
+  // optional int64 ceil_ledger_seq = 4;
+  void clear_ceil_ledger_seq();
+  static const int kCeilLedgerSeqFieldNumber = 4;
+  ::google::protobuf::int64 ceil_ledger_seq() const;
+  void set_ceil_ledger_seq(::google::protobuf::int64 value);
 
   // optional bytes metadata = 5;
   void clear_metadata();
@@ -2087,11 +2064,17 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_metadata();
   void set_allocated_metadata(::std::string* metadata);
 
-  // optional int64 fee = 6;
-  void clear_fee();
-  static const int kFeeFieldNumber = 6;
-  ::google::protobuf::int64 fee() const;
-  void set_fee(::google::protobuf::int64 value);
+  // repeated .protocol.Operation operations = 6;
+  int operations_size() const;
+  void clear_operations();
+  static const int kOperationsFieldNumber = 6;
+  const ::protocol::Operation& operations(int index) const;
+  ::protocol::Operation* mutable_operations(int index);
+  ::protocol::Operation* add_operations();
+  ::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
+      mutable_operations();
+  const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
+      operations() const;
 
   // @@protoc_insertion_point(class_scope:protocol.Transaction)
  private:
@@ -2100,10 +2083,10 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr source_address_;
   ::google::protobuf::int64 nonce_;
-  ::google::protobuf::internal::ArenaStringPtr expr_condition_;
-  ::google::protobuf::RepeatedPtrField< ::protocol::Operation > operations_;
-  ::google::protobuf::internal::ArenaStringPtr metadata_;
   ::google::protobuf::int64 fee_;
+  ::google::protobuf::int64 ceil_ledger_seq_;
+  ::google::protobuf::internal::ArenaStringPtr metadata_;
+  ::google::protobuf::RepeatedPtrField< ::protocol::Operation > operations_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -4823,51 +4806,7 @@ inline void Operation::set_allocated_metadata(::std::string* metadata) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.metadata)
 }
 
-// optional string expr_condition = 4;
-inline void Operation::clear_expr_condition() {
-  expr_condition_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& Operation::expr_condition() const {
-  // @@protoc_insertion_point(field_get:protocol.Operation.expr_condition)
-  return expr_condition_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Operation::set_expr_condition(const ::std::string& value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Operation.expr_condition)
-}
-inline void Operation::set_expr_condition(const char* value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Operation.expr_condition)
-}
-inline void Operation::set_expr_condition(const char* value, size_t size) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Operation.expr_condition)
-}
-inline ::std::string* Operation::mutable_expr_condition() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.Operation.expr_condition)
-  return expr_condition_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Operation::release_expr_condition() {
-  // @@protoc_insertion_point(field_release:protocol.Operation.expr_condition)
-  
-  return expr_condition_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Operation::set_allocated_expr_condition(::std::string* expr_condition) {
-  if (expr_condition != NULL) {
-    
-  } else {
-    
-  }
-  expr_condition_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), expr_condition);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.expr_condition)
-}
-
-// optional .protocol.OperationCreateAccount create_account = 5;
+// optional .protocol.OperationCreateAccount create_account = 4;
 inline bool Operation::has_create_account() const {
   return !_is_default_instance_ && create_account_ != NULL;
 }
@@ -4905,7 +4844,7 @@ inline void Operation::set_allocated_create_account(::protocol::OperationCreateA
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.create_account)
 }
 
-// optional .protocol.OperationIssueAsset issue_asset = 6;
+// optional .protocol.OperationIssueAsset issue_asset = 5;
 inline bool Operation::has_issue_asset() const {
   return !_is_default_instance_ && issue_asset_ != NULL;
 }
@@ -4943,7 +4882,7 @@ inline void Operation::set_allocated_issue_asset(::protocol::OperationIssueAsset
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.issue_asset)
 }
 
-// optional .protocol.OperationPayment payment = 7;
+// optional .protocol.OperationPayment payment = 6;
 inline bool Operation::has_payment() const {
   return !_is_default_instance_ && payment_ != NULL;
 }
@@ -4981,7 +4920,7 @@ inline void Operation::set_allocated_payment(::protocol::OperationPayment* payme
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.payment)
 }
 
-// optional .protocol.OperationSetMetadata set_metadata = 9;
+// optional .protocol.OperationSetMetadata set_metadata = 7;
 inline bool Operation::has_set_metadata() const {
   return !_is_default_instance_ && set_metadata_ != NULL;
 }
@@ -5019,7 +4958,7 @@ inline void Operation::set_allocated_set_metadata(::protocol::OperationSetMetada
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_metadata)
 }
 
-// optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
+// optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
 inline bool Operation::has_set_signer_weight() const {
   return !_is_default_instance_ && set_signer_weight_ != NULL;
 }
@@ -5057,7 +4996,7 @@ inline void Operation::set_allocated_set_signer_weight(::protocol::OperationSetS
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_signer_weight)
 }
 
-// optional .protocol.OperationSetThreshold set_threshold = 11;
+// optional .protocol.OperationSetThreshold set_threshold = 9;
 inline bool Operation::has_set_threshold() const {
   return !_is_default_instance_ && set_threshold_ != NULL;
 }
@@ -5095,7 +5034,7 @@ inline void Operation::set_allocated_set_threshold(::protocol::OperationSetThres
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_threshold)
 }
 
-// optional .protocol.OperationPayCoin pay_coin = 12;
+// optional .protocol.OperationPayCoin pay_coin = 10;
 inline bool Operation::has_pay_coin() const {
   return !_is_default_instance_ && pay_coin_ != NULL;
 }
@@ -5133,7 +5072,7 @@ inline void Operation::set_allocated_pay_coin(::protocol::OperationPayCoin* pay_
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.pay_coin)
 }
 
-// optional .protocol.OperationLog log = 13;
+// optional .protocol.OperationLog log = 11;
 inline bool Operation::has_log() const {
   return !_is_default_instance_ && log_ != NULL;
 }
@@ -5281,78 +5220,32 @@ inline void Transaction::set_nonce(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.Transaction.nonce)
 }
 
-// optional string expr_condition = 3;
-inline void Transaction::clear_expr_condition() {
-  expr_condition_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional int64 fee = 3;
+inline void Transaction::clear_fee() {
+  fee_ = GOOGLE_LONGLONG(0);
 }
-inline const ::std::string& Transaction::expr_condition() const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.expr_condition)
-  return expr_condition_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::google::protobuf::int64 Transaction::fee() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.fee)
+  return fee_;
 }
-inline void Transaction::set_expr_condition(const ::std::string& value) {
+inline void Transaction::set_fee(::google::protobuf::int64 value) {
   
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Transaction.expr_condition)
-}
-inline void Transaction::set_expr_condition(const char* value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Transaction.expr_condition)
-}
-inline void Transaction::set_expr_condition(const char* value, size_t size) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Transaction.expr_condition)
-}
-inline ::std::string* Transaction::mutable_expr_condition() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.Transaction.expr_condition)
-  return expr_condition_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Transaction::release_expr_condition() {
-  // @@protoc_insertion_point(field_release:protocol.Transaction.expr_condition)
-  
-  return expr_condition_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Transaction::set_allocated_expr_condition(::std::string* expr_condition) {
-  if (expr_condition != NULL) {
-    
-  } else {
-    
-  }
-  expr_condition_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), expr_condition);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Transaction.expr_condition)
+  fee_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.fee)
 }
 
-// repeated .protocol.Operation operations = 4;
-inline int Transaction::operations_size() const {
-  return operations_.size();
+// optional int64 ceil_ledger_seq = 4;
+inline void Transaction::clear_ceil_ledger_seq() {
+  ceil_ledger_seq_ = GOOGLE_LONGLONG(0);
 }
-inline void Transaction::clear_operations() {
-  operations_.Clear();
+inline ::google::protobuf::int64 Transaction::ceil_ledger_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.ceil_ledger_seq)
+  return ceil_ledger_seq_;
 }
-inline const ::protocol::Operation& Transaction::operations(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.operations)
-  return operations_.Get(index);
-}
-inline ::protocol::Operation* Transaction::mutable_operations(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.Transaction.operations)
-  return operations_.Mutable(index);
-}
-inline ::protocol::Operation* Transaction::add_operations() {
-  // @@protoc_insertion_point(field_add:protocol.Transaction.operations)
-  return operations_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
-Transaction::mutable_operations() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.Transaction.operations)
-  return &operations_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
-Transaction::operations() const {
-  // @@protoc_insertion_point(field_list:protocol.Transaction.operations)
-  return operations_;
+inline void Transaction::set_ceil_ledger_seq(::google::protobuf::int64 value) {
+  
+  ceil_ledger_seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.ceil_ledger_seq)
 }
 
 // optional bytes metadata = 5;
@@ -5399,18 +5292,34 @@ inline void Transaction::set_allocated_metadata(::std::string* metadata) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Transaction.metadata)
 }
 
-// optional int64 fee = 6;
-inline void Transaction::clear_fee() {
-  fee_ = GOOGLE_LONGLONG(0);
+// repeated .protocol.Operation operations = 6;
+inline int Transaction::operations_size() const {
+  return operations_.size();
 }
-inline ::google::protobuf::int64 Transaction::fee() const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.fee)
-  return fee_;
+inline void Transaction::clear_operations() {
+  operations_.Clear();
 }
-inline void Transaction::set_fee(::google::protobuf::int64 value) {
-  
-  fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.Transaction.fee)
+inline const ::protocol::Operation& Transaction::operations(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.operations)
+  return operations_.Get(index);
+}
+inline ::protocol::Operation* Transaction::mutable_operations(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.Transaction.operations)
+  return operations_.Mutable(index);
+}
+inline ::protocol::Operation* Transaction::add_operations() {
+  // @@protoc_insertion_point(field_add:protocol.Transaction.operations)
+  return operations_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
+Transaction::mutable_operations() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.Transaction.operations)
+  return &operations_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
+Transaction::operations() const {
+  // @@protoc_insertion_point(field_list:protocol.Transaction.operations)
+  return operations_;
 }
 
 // -------------------------------------------------------------------

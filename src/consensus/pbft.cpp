@@ -1229,7 +1229,7 @@ namespace bumo {
 
 			std::map<int64_t, protocol::PbftEnv>::iterator iter = pre_prepares.find(pre_prepare.replica_id());
 			if (iter == pre_prepares.end()) {
-				LOG_ERROR("The new view message(number:" FMT_I64 ")', check the computed pre-prepare message failed",
+				LOG_ERROR("The new view message(number:" FMT_I64 "), check the computed pre-prepare message failed",
 					new_view.view_number());
 				compare_ret = false;
 				break;
@@ -1241,7 +1241,7 @@ namespace bumo {
 				pre_prepare_comp.view_number() != pre_prepare.view_number() ||
 				pre_prepare_comp.replica_id() != pre_prepare.replica_id() ||
 				CompareValue(pre_prepare_comp.value(), pre_prepare.value()) != 0) {
-				LOG_ERROR("The new view message(number:" FMT_I64 ")', check the computed pre-prepare message failed",
+				LOG_ERROR("The new view message(number:" FMT_I64 "), check the computed pre-prepare message failed",
 					new_view.view_number());
 				compare_ret = false;
 				break;

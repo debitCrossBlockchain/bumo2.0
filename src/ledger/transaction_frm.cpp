@@ -413,11 +413,25 @@ namespace bumo {
 			return check_valid;
 		}
 
-		if (tran.expr_condition().size() > 0 &&
-			!CheckExpr(tran.expr_condition(), utils::String::Format("Transaction(%s) ",
-			utils::String::Bin4ToHexString(hash_).c_str()))) {
-			check_valid = false;
-			return check_valid;
+		if (tran.ceil_ledger_seq() > 0) {
+			int64_t current_ledger_seq = 0;
+			if (ledger_) {
+				current_ledger_seq = ledger_->lpledger_context_->consensus_value_.ledger_seq();
+			}
+			else {
+				current_ledger_seq = LedgerManager::Instance().GetLastClosedLedger().seq() + 1;
+			}
+
+			if (tran.ceil_ledger_seq() < current_ledger_seq) {
+				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+				//result_.set_desc("Transaction metadata too long");
+				result_.set_desc(utils::String::Format("Limit ledger seq(" FMT_I64 ") < seq(" FMT_I64 ")",
+					tran.ceil_ledger_seq(), current_ledger_seq));
+
+				LOG_ERROR("%s", result_.desc().c_str());
+				check_valid = false;
+				return check_valid;
+			} 
 		}
 
 		check_valid = true;
@@ -445,13 +459,6 @@ namespace bumo {
 				}
 			}
 
-			if (ope.expr_condition().size() > 0 &&
-				!CheckExpr(ope.expr_condition(), utils::String::Format("Transaction(%s)'s Operation(id:%d) ",
-				utils::String::Bin4ToHexString(hash_).c_str(), i))) {
-				check_valid = false;
-				break;
-			}
-
 			result_ = OperationFrm::CheckValid(ope, ope_source);
 
 			if (result_.code() != protocol::ERRCODE_SUCCESS) {
@@ -460,40 +467,6 @@ namespace bumo {
 			}
 		}
 		return check_valid;
-	}
-
-	bool TransactionFrm::CheckExpr(const std::string &code, const std::string &log_prefix) {
-		do {
-			if (code.size() > General::EXPRCONDITION_MAXSIZE || code.size() == 0) {
-				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result_.set_desc(utils::String::AppendFormat(code, "expression condition is too long or zero"));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			protocol::ConsensusValue cons_null;
-			ExprCondition expr(code, NULL, cons_null);
-			utils::ExprValue value;
-			result_ = expr.Parse(value);
-
-			if (result_.code() != 0) {
-				result_.set_code(protocol::ERRCODE_EXPR_CONDITION_SYNTAX_ERROR);
-				result_.set_desc(utils::String::AppendFormat(log_prefix, "parse expression failed(%s)", result_.desc().c_str()));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			if (value.type_ != utils::ExprValue::UNSURE && !value.IsSuccess()) {
-				result_.set_code(protocol::ERRCODE_EXPR_CONDITION_RESULT_FALSE);
-				result_.set_desc(utils::String::AppendFormat(log_prefix, "expression result predict false(%s)", value.Print().c_str()));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			return true;
-		} while (false);
-
-		return false;
 	}
 
 	bool TransactionFrm::SignerHashPriv(AccountFrm::pointer account_ptr, int32_t type) const {
@@ -541,7 +514,7 @@ namespace bumo {
 			return protocol::ERRCODE_INTERNAL_ERROR;
 		}
 		else if (res == 0) {
-			LOG_ERROR("Tx(%s) not exist", utils::String::BinToHexString(hash).c_str());
+			LOG_TRACE("Tx(%s) not exist", utils::String::BinToHexString(hash).c_str());
 			return protocol::ERRCODE_NOT_EXIST;
 		}
 
@@ -568,32 +541,6 @@ namespace bumo {
 		return false;
 	}
 
-	bool TransactionFrm::ApplyExpr(const std::string &code, const std::string &log_prefix) {
-		do {
-			ExprCondition expr(code, environment_, ledger_->lpledger_context_->consensus_value_);
-			utils::ExprValue value;
-			result_ = expr.Eval(value);
-
-			if (result_.code() != 0) {
-				result_.set_code(protocol::ERRCODE_EXPR_CONDITION_SYNTAX_ERROR);
-				result_.set_desc(utils::String::AppendFormat(log_prefix, "parse expression failed(%s)", result_.desc().c_str()));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			if (!value.IsSuccess()) {
-				result_.set_code(protocol::ERRCODE_EXPR_CONDITION_RESULT_FALSE);
-				result_.set_desc(utils::String::AppendFormat(log_prefix, "expression result false(%s)", value.Print().c_str()));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			return true;
-		} while (false);
-
-		return false;
-	}
-
 	void TransactionFrm::NonceIncrease(LedgerFrm* ledger_frm, std::shared_ptr<Environment> parent) {
 		AccountFrm::pointer source_account;
 		std::string str_address = GetSourceAddress();
@@ -615,13 +562,6 @@ namespace bumo {
 
 		bool bSucess = true;
 		const protocol::Transaction &tran = transaction_env_.transaction();
-		//check the expression
-		if (tran.expr_condition().size() > 0 &&
-			!ApplyExpr(tran.expr_condition(), utils::String::Format("Transaction(%s) ",
-			utils::String::Bin4ToHexString(hash_).c_str()))) {
-			bSucess = false;
-			return bSucess;
-		}
 
 		std::shared_ptr<TransactionFrm> bottom_tx = ledger_frm->lpledger_context_->GetBottomTx();
 		bottom_tx->AddRealFee(GetSelfByteFee());
@@ -652,14 +592,6 @@ namespace bumo {
 					bSucess = false;
 					break;
 				}
-			}
-
-			//check the expression
-			if (ope.expr_condition().size() > 0 &&
-				!ApplyExpr(ope.expr_condition(), utils::String::Format("Transaction(%s)'s Operation(id:%d) ",
-				utils::String::Bin4ToHexString(hash_).c_str(), processing_operation_))) {
-				bSucess = false;
-				break;
 			}
 
 			//opt->SourceRelationTx();

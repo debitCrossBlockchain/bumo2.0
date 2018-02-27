@@ -138,6 +138,20 @@ namespace bumo {
 				printf("%s\n", result.toStyledString().c_str());
 				return true;
 			}
+
+			else if (s == "--get-address-from-pubkey" && argc > 2) {
+				bumo::PublicKey pub_key(argv[2]);
+				std::string public_key_str = pub_key.GetEncPublicKey();
+				std::string public_address = pub_key.GetEncAddress();
+				Json::Value result = Json::Value(Json::objectValue);
+
+				result["public_key"] = public_key_str;
+				result["address"] = public_address;
+				result["public_key_raw"] = EncodePublicKey(pub_key.GetRawPublicKey());
+				result["sign_type"] = GetSignTypeDesc(pub_key.GetSignType());
+				printf("%s\n", result.toStyledString().c_str());
+				return true;
+			}
 			else if (s == "--create-account") {
 				SignatureType type = SIGNTYPE_ED25519;
 				if (argc > 2) {
@@ -368,6 +382,7 @@ namespace bumo {
 			"  --peer-address <node-priv-key>                                get peer address from crypted node private key\n"
 			"  --create-account [crypto]                                     create account, support ed25519\n"
 			"  --get-address <node-priv-key>                                 get address from private key\n"
+			"  --get-address-from-pubkey <public-key>                        get address from public key\n"
 			"  --sign-data <node-priv-key> <blob data>                       sign blob data\n"
 			"  --check-signed-data <blob data> <signed data> <public key>    check signed data\n"
 			"  --check-address <address>                                     check address\n"

@@ -126,7 +126,7 @@ namespace bumo {
 
 		time_start_consenus_ = utils::Timestamp::HighResolution();
 		if (!consensus_->IsLeader()) {
-			LOG_INFO("Start consensus process, but it not leader, just waiting");
+			LOG_INFO("Start consensus process, but it is not leader, just waiting");
 			return true;
 		} 
 		else {
@@ -365,7 +365,8 @@ namespace bumo {
 
 		//start time
 		int64_t next_interval = GetIntervalTime(txset_frm.Size() == 0);
-		int64_t waiting_time = next_interval - (utils::Timestamp::HighResolution() - time_start_consenus_);
+		int64_t next_timestamp = next_interval + req.close_time();
+		int64_t waiting_time = next_timestamp - utils::Timestamp::Now().timestamp();
 		if (waiting_time <= 0)  waiting_time = 1;
 		start_consensus_timer_ = utils::Timer::Instance().AddTimer(waiting_time, 0, [this](int64_t data) {
 			StartConsensus();
