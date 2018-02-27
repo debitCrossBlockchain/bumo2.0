@@ -305,10 +305,10 @@ namespace bumo {
 				fee = average_fee;
 			}
 			else {
-				fee = tfee*set.validators(i).pledge_coin_amount() / total_pledge_amount;
+				fee = total_fee_*set.validators(i).pledge_coin_amount() / total_pledge_amount;
 			}
-			LOG_INFO("Account(%s) allocate fee(" FMT_I64 ") left(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, tfee, ledger_.header().seq());
 			tfee -= fee;
+			LOG_INFO("Account(%s) allocate fee(" FMT_I64 ") left total(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, tfee, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
 			proto_account.set_balance(proto_account.balance() + fee);
 		}
