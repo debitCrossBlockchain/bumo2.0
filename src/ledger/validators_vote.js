@@ -108,10 +108,16 @@ function insertCandidatesSorted(applicant, amount, candidates){
     }
 
     let i = 0;
-    while((int64Compare(amount, candidates[i][1]) === -1) && i < candidates.length){ i += 1; }
+    while(i < candidates.length){
+        if(int64Compare(amount, candidates[i][1]) >= 0){ break; }
+        i += 1;
+    }
 
     if(amount === candidates[i][1]){
-        while(applicant > candidates[i][0] && i < candidates.length){ i += 1; }
+        while(i < candidates.length){
+            if(applicant <= candidates[i][0]){ break; }
+            i += 1;
+        }
     }
 
     candidates.splice(i, 0, [applicant, amount]);
