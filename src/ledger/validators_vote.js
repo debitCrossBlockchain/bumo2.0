@@ -120,7 +120,7 @@ function insertCandidatesSorted(applicant, amount, candidates){
 
     if(amount === candidates[i][1]){
         while(i < candidates.length){
-            if(applicant <= candidates[i][0]){ break; }
+            if(applicant <= candidates[i][0] || int64Compare(amount, candidates[i][1]) > 0){ break; }
             i += 1;
         }
     }
