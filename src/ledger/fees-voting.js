@@ -2,8 +2,8 @@
 const proposalRecordsKey = 'proposalRecordsKey';
 const voteRecordKeyPrefix ='voteRecords_';
 const nonceKey ='nonce';
-const expireTime =15;
-const microSecOfOneDay =1000000*60*60*24;
+//const effectiveProposalInterval =15*1000000*60*60*24;
+const effectiveProposalInterval = 2 * 1000000 * 60;
 const thredhold =0.8;
 let proposalRecords = {};
 let validators = {};
@@ -47,11 +47,17 @@ function voteFee(proposalId) {
   if(loadProposalRecords() === false){
     throw 'proposal records not exist';
   }
-
   assert(proposalRecords.hasOwnProperty(proposalId),'Vote proposal(' + proposalId + ') not exist');
-  let key = voteRecordKeyPrefix + proposalId;
-  let proposalRecordBody = {};
 
+  let key = voteRecordKeyPrefix + proposalId;
+  if(blockTimestamp>proposalRecords[proposalId].expireTime){
+    delete proposalRecords[proposalId];
+    storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
+    storageDel(key);     
+    return false;  
+  }
+  
+  let proposalRecordBody = {};
   let result = storageLoad(key);
   assert(result !== false,'proposalId('+proposalId+') not exist voteRecords');
   proposalRecordBody = JSON.parse(result);
@@ -69,10 +75,11 @@ function voteFee(proposalId) {
     storageDel(key);   
     configFee(JSON.stringify(output));
   }
-  else{
+  else {
     storageStore(key,JSON.stringify(proposalRecordBody));
   }  
   storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
+  return true;
 }
 
 function proposalFee(feeType,price) {
@@ -94,7 +101,7 @@ function proposalFee(feeType,price) {
         delete proposalRecords[proposalId];
         let key =voteRecordKeyPrefix + proposalId;
         storageDel(key); 
-        proposalRecords[newProposalId] = {'accountId':accountId,'proposalId':newProposalId,'feeType':feeType,'price':price,'voteCount':0,'time':blockTimestamp };               
+        proposalRecords[newProposalId] = {'accountId':accountId,'proposalId':newProposalId,'feeType':feeType,'price':price,'voteCount':0,'expireTime':blockTimestamp+effectiveProposalInterval };               
         storageStore(proposalRecordsKey,JSON.stringify(proposalRecords));
         storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({}));
         return false;
@@ -106,7 +113,7 @@ function proposalFee(feeType,price) {
   );
 
   if (!exist) {
-    proposalRecords[newProposalId] = { 'accountId': accountId, 'proposalId': newProposalId, 'feeType': feeType, 'price': price, 'voteCount': 0,'time':blockTimestamp };
+    proposalRecords[newProposalId] = { 'accountId': accountId, 'proposalId': newProposalId, 'feeType': feeType, 'price': price, 'voteCount': 0,'expireTime':blockTimestamp+effectiveProposalInterval };
     storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
     storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({}));
   }  
@@ -147,39 +154,16 @@ function priceCheck(price){
   );
 }
 
-function checkExpire(){
-  let proposalChange =false;
-  let curTime =blockTimestamp;
-  Object.keys(proposalRecords).every(
-    function(proposalId){
-      //let span = (curTime-proposalRecords[proposalId].time)/(1000000*60*60*24);
-      let span = (curTime-proposalRecords[proposalId].time)/microSecOfOneDay;
-      if(span>=expireTime){
-        delete proposalRecords[proposalId];
-        let key =voteRecordKeyPrefix + proposalId;
-        storageDel(key); 
-        proposalChange =true;
-      }
-      return true;
-    }
-  );
-  if(proposalChange){
-    storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
-  }
-}
-
 function main(input) {
   let para = JSON.parse(input);
   if (para.method === 'voteFee') {
     assert(para.params.proposalId !==undefined,'params proposalId undefined');
-    checkExpire();
     voteFee(para.params.proposalId);
   }
   else if (para.method === 'proposalFee') {
     assert(para.params.feeType !==undefined && para.params.price !==undefined,'params feeType price undefined');
     feeTypeCheck(para.params.feeType);
     priceCheck(para.params.price);
-    checkExpire();
     proposalFee(para.params.feeType,para.params.price);
   }
   else {
