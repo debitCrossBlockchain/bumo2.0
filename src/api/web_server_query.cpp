@@ -390,6 +390,7 @@ namespace bumo {
 		} while (false);
 
 		reply_json["error_code"] = error_code;
+		reply_json["error_desc"] = "query result not exist";
 		reply = reply_json.toFastString();
 	}
 
