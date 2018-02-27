@@ -113,6 +113,11 @@ function insertCandidatesSorted(applicant, amount, candidates){
         i += 1;
     }
 
+    if(i >= candidates.length){
+        candidates.splice(i, 0, [applicant, amount]);
+        return candidates;
+    }
+
     if(amount === candidates[i][1]){
         while(i < candidates.length){
             if(applicant <= candidates[i][0]){ break; }
