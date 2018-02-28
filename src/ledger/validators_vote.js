@@ -390,12 +390,15 @@ function main(input_str){
 	    takebackAllPledgeCoin();
     }
     else if(input.method === 'abolishValidator'){
+        assert(addressCheck(input.params.address) === true, 'Arg-address is not valid.');
     	abolishValidator(input.params.address, input.params.proof);
     }
     else if(input.method === 'quitAbolish'){
+        assert(addressCheck(input.params.address) === true, 'Arg-address is not valid.');
     	quitAbolishValidator(input.params.address);
     }
     else if(input.method === 'voteForAbolish'){
+        assert(addressCheck(input.params.address) === true, 'Arg-address is not valid.');
     	voteAbolishValidator(input.params.address);
     }
     else{

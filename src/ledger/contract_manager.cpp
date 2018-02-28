@@ -16,6 +16,7 @@
 
 #include <utils/logger.h>
 #include <common/pb2json.h>
+#include <common/private_key.h>
 #include "ledger_frm.h"
 #include "ledger_manager.h"
 #include "contract_manager.h"
@@ -217,6 +218,7 @@ namespace bumo{
 		js_func_read_["int64Compare"] = V8Contract::CallBackInt64Compare;
 		js_func_read_["toSatoshi"] = V8Contract::CallBackToSatoshi;
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
+		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
@@ -1289,6 +1291,37 @@ namespace bumo{
 			args.GetReturnValue().Set(true);
 			return;
 		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	void V8Contract::CallBackAddressValidCheck(const v8::FunctionCallbackInfo<v8::Value>& args)
+	{
+		std::string error_desc;
+		do
+		{
+			if (args.Length() != 1){
+				error_desc = "parameter number error";
+				break;
+			}
+
+			if (!args[0]->IsString()) {
+				error_desc = "arg0 should be string";
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			v8::String::Utf8Value utf8(args[0]);
+			std::string address = std::string(ToCString(utf8));
+			bool ret = PublicKey::IsAddressValid(address);
+
+			args.GetReturnValue().Set(ret);
+			return;
+		} while (false);
+
 		LOG_ERROR("%s", error_desc.c_str());
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
