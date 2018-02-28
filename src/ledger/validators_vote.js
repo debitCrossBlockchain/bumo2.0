@@ -235,10 +235,9 @@ function takebackAllPledgeCoin(){
     }
 
     let candidates = getObjectMetaData(candidatesVar);
-    assert(candidates.length > 1, 'The number of validators must > 1.');
-
     let position = findI0(candidates, sender);
     if(position !== false){
+        assert(candidates.length > 1, 'The number of validators must > 1.');
         transferCoin(sender, candidates[position][1]);
         candidates.splice(position, 1);
         setMetaData(candidatesVar, candidates);
