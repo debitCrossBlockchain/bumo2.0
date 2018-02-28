@@ -290,7 +290,7 @@ function quitAbolishValidator(malicious){
 
     let abolishKey = abolishVar + malicious;
     let abolishProposal = getObjectMetaData(abolishKey);
-    assert(sender === abolishProposal[proposerVar], sender + 'is not proposer, has no permission to quit the abolishProposal.');
+    assert(sender === abolishProposal[proposerVar], sender + ' is not proposer, has no permission to quit the abolishProposal.');
 
     setMetaData(abolishKey);
     return true;
