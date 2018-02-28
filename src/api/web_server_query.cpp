@@ -365,7 +365,9 @@ namespace bumo {
 		} while (false);
 
 		reply_json["error_code"] = error_code;
-		reply_json["error_desc"] = "query result not exist";
+		if (error_code == protocol::ERRCODE_NOT_EXIST){
+			reply_json["error_desc"] = "query result not exist";
+		}
 		reply = reply_json.toFastString();
 	}
 
