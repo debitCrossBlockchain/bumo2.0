@@ -108,13 +108,15 @@ function contractInfo(){
 
 function init(input_str){
     assert(input_str !== undefined, 'Arg-input_str is undefined.');
-
     let input = JSON.parse(input_str);
 
     name_ = input.params.name;
     symbol_ = input.params.symbol;
-    decimals_ = input.params.decimals;
-    totalSupply_ = input.params.totalSupply;
+    decimals_ = parseInt(input.params.decimals);
+
+    let unit = 10 ** decimals_;
+    let entire = int64Mul(input.params.totalSupply, unit);
+    totalSupply_ = entire;
 
     storageStore(balance_, totalSupply_);
 }
