@@ -413,8 +413,11 @@ namespace bumo {
 				auto type = ope.type();
 				opt->OptFee(type);
 				total_opt_fee += opt->GetOpeFee();
-				if (type == protocol::Operation_Type_PAY_COIN || type == protocol::Operation_Type_CREATE_ACCOUNT) {
+				if (type == protocol::Operation_Type_PAY_COIN) {
 					pay_amount += ope.pay_coin().amount();
+				}
+				if (type == protocol::Operation_Type_CREATE_ACCOUNT) {
+					pay_amount += ope.create_account().init_balance();
 				}
 			}
 		}
