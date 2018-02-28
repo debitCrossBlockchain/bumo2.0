@@ -426,9 +426,9 @@ POST /submitTransaction
 | 参数           | 描述                                                                                                    |
 | :------------- | ------------------------------------------------------------------------------------------------------- |
 | source_address | 必填，交易的发起方账号地址                                                                              |
-| nonce          | 必填，交易序号，必须等于发起方账号的nonce+1。您可以通过[查询账号](#查询账号)返回的结果中得到账号的nonce |
-| expr_condition | 表达式字段, 可选                                                                                        |
-| metadata       | 可选, 用户自定义交易的备注数据, 必须为16进制表示                                                        |
+| nonce          | 必填，交易序号，必须等于发起方账号的nonce+1。您可以通过[查询账号](#查询账号)返回的结果中得到账号的nonce      |
+| ceil_ledger_seq| 区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效，如果为0，则不判断。                 |
+| metadata       | 可选, 用户自定义交易的备注数据, 必须为16进制表示                                                         |
 
 关于operations中的数据格式，参照[操作](#操作)下面各种不同的操作的**json格式**
 
@@ -440,7 +440,7 @@ POST /getTransactionBlob
 {
     "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
     "nonce":2, //nonce值
-    "expr_condition":"", //可选，表达式。参见高级功能:表达式
+    "ceil_ledger_seq": 0, //可选
     "fee":1000, //交易支付的费用
     "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
     "operations":[
@@ -645,7 +645,7 @@ POST /getTransactionBlob
       "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
       "nonce":2, //nonce值
       "fee" : 1000000, //愿为交易花费的手续费
-      "expr_condition":"", //可选，表达式。参见高级功能:表达式
+      "ceil_ledger_seq": 100, //可选，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效
       "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
       "operations":[
       {
@@ -668,10 +668,10 @@ POST /getTransactionBlob
       };
       string source_address = 1;
       int64 nonce = 2;
-      string expr_condition = 3;
-      repeated Operation operations = 4;
+      int64 fee = 3;
+      int64 ceil_ledger_seq = 4;
       bytes metadata = 5;
-      int64  fee = 6;
+      repeated Operation operations = 6;
   }
   ```
 
@@ -679,7 +679,7 @@ POST /getTransactionBlob
 
   - source_address: 交易源账号，即交易发起方的账号。当这笔交易成功后，交易源账号的nonce字段会自动加1。账号中的nonce意义是本账号作为交易源执行过的交易数量。
   - nonce:其值必须等于交易源账号的当前nonce+1，这是为了防止重放攻击而设计的。如何查询一个账号的nonce可参考[查询账号](#查询账号)。若查询账号没有显示nonce值，说明账号的当前nonce是0.
-  - expr_condition:针对本交易的表达式，高级功能。详见[表达式](#表达式)
+  - ceil_ledger_seq:针对本交易的区块高度限制条件，高级功能。
   - operations:操作列表。本交易的有效负载，即本交易想要做什么事情。见[操作](#操作)
   - metadata:用户自定义字段，可以不填写，备注用。
 
@@ -701,22 +701,20 @@ POST /getTransactionBlob
       Type type = 1;
       string source_address = 2;
       bytes metadata = 3;
-      string expr_condition = 4;
 
-      OperationCreateAccount create_account = 5;
-      OperationIssueAsset issue_asset = 6;
-      OperationPayment payment = 7;
-      OperationSetMetadata set_metadata = 9;
-      OperationSetSignerWeight set_signer_weight = 10;
-      OperationSetThreshold set_threshold = 11;
-      OperationPayCoin pay_coin = 12;
+      OperationCreateAccount create_account = 4;
+      OperationIssueAsset issue_asset = 5;
+      OperationPayment payment = 6;
+      OperationSetMetadata set_metadata = 7;
+      OperationSetSignerWeight set_signer_weight = 8;
+      OperationSetThreshold set_threshold = 9;
+      OperationPayCoin pay_coin = 10;
   }
   ```
 
   - type: 操作类型的枚举。如其值为ISSUE_ASSET（发行资产），那么本操作中的issue_asset字段就会被使用；如果其值为PAYMENT，那么本操作中payment字段就会被使用……详见[操作码](#操作码)
   - source_address:操作源，即本操作针对哪个账号生效。若不填写，则默认本操作源等于本操作源。
   - metadata:本操作的备注，用户自定义，可以不填写
-  - expr_condition:针对本操作的表达式，若您用不着这个功能，可以不填写。详见[表达式](#表达式)
 
 ### 操作
 
@@ -1183,32 +1181,6 @@ POST /getTransactionBlob
 ### 版本化控制
 
 每一个账号的metadata都是一个版本化的小型数据库。版本化的特点是可以避免修改冲突的问题。
-
-### 表达式
-
-该表达式字段，用于自定义交易有效规则，比如设置交易在某个账户的master_weight 大于 100 有效，则填:
-
-```JavaScript
-jsonpath(account("buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"), ".priv.master_weight") > 100
-```
-
-表达式可用的函数
-
-| 参数                            | 描述                                 |
-| :------------------------------ | ------------------------------------ |
-| account(address)                | 获取账户信息, 返回 json 序列化字符串 |
-| jsonpath(json_string, path)     | 获取json对象的属性值                 |
-| LEDGER_SEQ                      | 内置变量，代表最新的区块高度         |
-| LEDGER_TIME                     | 内置变量，代表最新的区块生成时间     |
-| `( )` `=`                       | 嵌套括号，函数调用如sqrt(x)          |
-| `*` `/`                         | 乘法、除法                           |
-| `+` `-`                         | 加法、减法                           |
-| `<` `<=`  `>`  `>=`  `==`  `!=` | 比较运算                             |
-| `&&`                            | 与 运算                              |
-| \|\|                              | 或运算                               |
-| ,                               | 逗号运算                             |
-
->例: Alice发起了一笔交易，她想要使这笔交易在5秒内有效。她发现当前时间戳(微秒)是 `1506393720000000`，5秒之后也就是 `1506393725000000`。那么她就可以在交易中的`expr_condition`字段写上下面这句`LEDGER_TIME >= 1506393720000000 && LEDGER_TIME <= 1506393725000000`这句话的意思是，该交易只在时间范围`[1506393720000000, 1506393725000000]`内有效。过段时间之后，Alice发现当前时间已经超过1506393725000000，那么Alice就可以断定这笔交易要么已经被处理，要么已经彻底失效。
 
 ### 合约
 
