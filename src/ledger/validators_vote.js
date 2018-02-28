@@ -179,7 +179,7 @@ function applyAsValidatorCandidate(){
 }
 
 function voteForApplicant(applicant){
-    assert(typeof applicant === 'string', 'Args type error, it must be an object.'); 
+    assert(addressCheck(applicant) === true, 'Arg-applicant is not valid adress.');
 
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
