@@ -251,7 +251,8 @@ function takebackAllPledgeCoin(){
 }
 
 function abolishValidator(malicious, proof){
-    assert((typeof malicious === 'string') && (typeof proof === 'string'), 'Args type error, the two of them must be string.'); 
+    assert(addressCheck(malicious) === true, 'Arg-malicious is not valid adress.');
+    assert(typeof proof === 'string', 'Args type error, arg-proof must be string.'); 
 
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
@@ -286,7 +287,7 @@ function abolishValidator(malicious, proof){
 }
 
 function quitAbolishValidator(malicious){
-    assert(typeof malicious === 'string', 'Args type error, the malicious must be string.'); 
+    assert(addressCheck(malicious) === true, 'Arg-malicious is not valid adress.');
 
     let abolishKey = abolishVar + malicious;
     let abolishProposal = getObjectMetaData(abolishKey);
@@ -297,7 +298,7 @@ function quitAbolishValidator(malicious){
 }
 
 function voteAbolishValidator(malicious){
-    assert(typeof malicious === 'string', 'Args type error, the arg-malicious must be string.'); 
+    assert(addressCheck(malicious) === true, 'Arg-malicious is not valid adress.');
 
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
@@ -390,15 +391,12 @@ function main(input_str){
 	    takebackAllPledgeCoin();
     }
     else if(input.method === 'abolishValidator'){
-        assert(addressCheck(input.params.address) === true, 'Arg-address is not valid.');
     	abolishValidator(input.params.address, input.params.proof);
     }
     else if(input.method === 'quitAbolish'){
-        assert(addressCheck(input.params.address) === true, 'Arg-address is not valid.');
     	quitAbolishValidator(input.params.address);
     }
     else if(input.method === 'voteForAbolish'){
-        assert(addressCheck(input.params.address) === true, 'Arg-address is not valid.');
     	voteAbolishValidator(input.params.address);
     }
     else{
