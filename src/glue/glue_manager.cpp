@@ -472,7 +472,7 @@ namespace bumo {
 		//not too closed, can tolerate 1 second 
 		if (now != -1 && 
 			!(
-			now > (consensus_value.close_time() - 1)
+			now > (consensus_value.close_time() - utils::MICRO_UNITS_PER_SEC)
 			&& 
 			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_
 			)
