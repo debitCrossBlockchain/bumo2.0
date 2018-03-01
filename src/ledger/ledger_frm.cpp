@@ -202,7 +202,7 @@ namespace bumo {
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
 		}
-		AllocateFee();
+		AllocateReward();
 		apply_time_ = utils::Timestamp::HighResolution() - start_time;
 		return true;
 	}
