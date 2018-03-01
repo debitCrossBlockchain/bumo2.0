@@ -6,10 +6,17 @@ function globalAttributeKey(){
     return 'global_attribute';
 }
 
-function getGlobalAttributeFromMetadata(){
-    let value = storageLoad(globalAttributeKey());
-    assert(value !== false, 'Get global attribute from metadata failed.');
-    globalAttribute = JSON.parse(value);
+function loadGlobalAttribute(){
+    if(Object.keys(globalAttribute).length === 0){
+        let value = storageLoad(globalAttributeKey());
+        assert(value !== false, 'Get global attribute from metadata failed.');
+        globalAttribute = JSON.parse(value);
+    }
+}
+
+function storeGlobalAttribute(){
+    let value = JSON.stringify(globalAttribute);
+    storageStore(globalAttributeKey(), value);
 }
 
 function makeBalanceKey(address){
@@ -64,6 +71,26 @@ function transfer(to, value){
     return true;
 }
 
+function contractTransfer(to, value){
+    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
+    assert(typeof value === 'string', 'Arg-value must be string type.');
+
+    loadGlobalAttribute();
+    assert(sender === globalAttribute.contractOwner, sender + ' has no permission transfer contract balance.');
+    assert(int64Compare(globalAttribute.balance, value) >= 0, 'Balance of contract:' + globalAttribute.balance + ' < transfer value:' + value + '.');
+
+    let toKey = makeBalanceKey(to);
+    let toValue = storageLoad(toKey);
+    toValue = (toValue === false) ? value : int64Plus(toValue, value); 
+    storageStore(toKey, toValue);
+
+    globalAttribute.balance = int64Sub(globalAttribute.balance, value);
+    storeGlobalAttribute();
+
+    tlog('contractTransfer', 'transfer ' + value + ' to ' + to + ' succeed.');
+
+    return true;
+}
 function transferFrom(from, to, value){
     assert(addressCheck(from) === true, 'Arg-from is not valid adress.');
     assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
@@ -94,17 +121,16 @@ function transferFrom(from, to, value){
     return true;
 }
 
-function transferContract(address){
+function transferOwnership(address){
     assert(addressCheck(address) === true, 'Arg-address is not valid adress.');
 
-    getGlobalAttributeFromMetadata();
+    loadGlobalAttribute();
     assert(sender === globalAttribute.contractOwner, sender + ' has no permission modify contract ownership.');
 
     globalAttribute.contractOwner = address;
-    let value = JSON.stringify(globalAttribute);
-    storageStore(globalAttributeKey(), value);
+    storeGlobalAttribute();
 
-    tlog('transferContract', sender + ' transfer contract ownership to ' + address + ' succeed.');
+    tlog('transferOwnership', sender + ' transfer contract ownership to ' + address + ' succeed.');
 }
 
 function name() {
@@ -153,9 +179,9 @@ function init(input_str){
     globalAttribute.decimals = input.params.decimals;
     globalAttribute.totalSupply = int64Mul(input.params.totalSupply, 10 ** globalAttribute.decimals);
     globalAttribute.contractOwner = input.params.contractOwner;
+    globalAttribute.balance = globalAttribute.totalSupply;
 
     storageStore(globalAttributeKey(), JSON.stringify(globalAttribute));
-    storageStore(makeBalanceKey(globalAttribute.contractOwner), globalAttribute.totalSupply);
 }
 
 function main(input_str){
@@ -164,14 +190,17 @@ function main(input_str){
     if(input.method === 'transfer'){
         transfer(input.params.to, input.params.value);
     }
+    else if(input.method === 'contractTransfer'){
+        contractTransfer(input.params.to, input.params.value);
+    }
     else if(input.method === 'transferFrom'){
         transferFrom(input.params.from, input.params.to, input.params.value);
     }
     else if(input.method === 'approve'){
-	    approve(input.params.spender, input.params.value);
+        approve(input.params.spender, input.params.value);
     }
-    else if(input.method === 'transferContract'){
-	    transferContract(input.params.address);
+    else if(input.method === 'transferOwnership'){
+        transferOwnership(input.params.address);
     }
     else{
         throw '<undidentified operation type>';
@@ -179,7 +208,7 @@ function main(input_str){
 }
 
 function query(input_str){
-    getGlobalAttributeFromMetadata();
+    loadGlobalAttribute();
 
     let result = {};
     let input  = JSON.parse(input_str);
