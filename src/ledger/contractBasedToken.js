@@ -1,15 +1,15 @@
 'use strict';
 
-let globalCfg = {};
+let globalAttribute = {};
 
-function globalCfgKey(){
-    return 'globalConfig';
+function globalAttributeKey(){
+    return 'global_attribute';
 }
 
-function getGlobalCfgFromMetadata(){
-    let value = storageLoad(globalCfgKey());
-    assert(value !== false, 'get globalCfg from metadata failed.');
-    globalCfg = JSON.parse(value);
+function getGlobalAttributeFromMetadata(){
+    let value = storageLoad(globalAttributeKey());
+    assert(value !== false, 'Get global attribute from metadata failed.');
+    globalAttribute = JSON.parse(value);
 }
 
 function makeBalanceKey(address){
@@ -97,34 +97,34 @@ function transferFrom(from, to, value){
 function transferContract(address){
     assert(addressCheck(address) === true, 'Arg-address is not valid adress.');
 
-    getGlobalCfgFromMetadata();
-    assert(sender === globalCfg.contractOwner, sender + ' has no permission modify contract ownership.');
+    getGlobalAttributeFromMetadata();
+    assert(sender === globalAttribute.contractOwner, sender + ' has no permission modify contract ownership.');
 
-    globalCfg.contractOwner = address;
-    let cfgStr = JSON.stringify(globalCfg);
-    storageStore(globalCfgKey(), cfgStr);
+    globalAttribute.contractOwner = address;
+    let value = JSON.stringify(globalAttribute);
+    storageStore(globalAttributeKey(), value);
 
     tlog('transferContract', sender + ' transfer contract ownership to ' + address + ' succeed.');
 }
 
 function name() {
-    return globalCfg.name;
+    return globalAttribute.name;
 }
 
 function symbol(){
-    return globalCfg.symbol;
+    return globalAttribute.symbol;
 }
 
 function decimals(){
-    return globalCfg.decimals;
+    return globalAttribute.decimals;
 }
 
 function totalSupply(){
-    return globalCfg.totalSupply;
+    return globalAttribute.totalSupply;
 }
 
 function contractInfo(){
-    return globalCfg;
+    return globalAttribute;
 }
 
 function balanceOf(address){
@@ -148,14 +148,14 @@ function init(input_str){
            typeof input.params.totalSupply === 'string',
            'Args check failed.');
 
-    globalCfg.name = input.params.name;
-    globalCfg.symbol = input.params.symbol;
-    globalCfg.decimals = input.params.decimals;
-    globalCfg.totalSupply = int64Mul(input.params.totalSupply, 10 ** globalCfg.decimals);
-    globalCfg.contractOwner = input.params.contractOwner;
+    globalAttribute.name = input.params.name;
+    globalAttribute.symbol = input.params.symbol;
+    globalAttribute.decimals = input.params.decimals;
+    globalAttribute.totalSupply = int64Mul(input.params.totalSupply, 10 ** globalAttribute.decimals);
+    globalAttribute.contractOwner = input.params.contractOwner;
 
-    storageStore(globalCfgKey(), JSON.stringify(globalCfg));
-    storageStore(makeBalanceKey(globalCfg.contractOwner), globalCfg.totalSupply);
+    storageStore(globalAttributeKey(), JSON.stringify(globalAttribute));
+    storageStore(makeBalanceKey(globalAttribute.contractOwner), globalAttribute.totalSupply);
 }
 
 function main(input_str){
@@ -179,7 +179,7 @@ function main(input_str){
 }
 
 function query(input_str){
-    getGlobalCfgFromMetadata();
+    getGlobalAttributeFromMetadata();
 
     let result = {};
     let input  = JSON.parse(input_str);
