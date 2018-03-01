@@ -386,20 +386,19 @@ namespace bumo {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 		const LedgerConfigure &ledger_config = Configure::Instance().ledger_configure_;
 		if (transaction_env_.ByteSize() >= General::TRANSACTION_LIMIT_SIZE) {
-			LOG_ERROR("Transaction env size(%d) larger than limit(%d)",
-				transaction_env_.ByteSize(),
-				General::TRANSACTION_LIMIT_SIZE);
 			result_.set_code(protocol::ERRCODE_TX_SIZE_TOO_BIG);
+			result_.set_desc(utils::String::Format("Transaction env size(%d) larger than limit(%d)",
+				transaction_env_.ByteSize(),
+				General::TRANSACTION_LIMIT_SIZE));
+			LOG_ERROR("%s",result_.desc().c_str());
 			return false;
 		}
 
-		bool check_valid = true;
 		if (tran.operations_size() == 0) {
-			LOG_ERROR("Operation size is zero");
 			result_.set_code(protocol::ERRCODE_MISSING_OPERATIONS);
 			result_.set_desc("Tx missing operation");
-			check_valid = false;
-			return check_valid;
+			LOG_ERROR("%s", result_.desc().c_str());
+			return false;
 		}
 
 		if (tran.metadata().size() > General::METADATA_MAX_VALUE_SIZE) {
@@ -409,8 +408,7 @@ namespace bumo {
 				General::METADATA_MAX_VALUE_SIZE));
 
 			LOG_ERROR("%s", result_.desc().c_str());
-			check_valid = false;
-			return check_valid;
+			return false;
 		}
 
 		if (tran.ceil_ledger_seq() > 0) {
@@ -429,12 +427,19 @@ namespace bumo {
 					tran.ceil_ledger_seq(), current_ledger_seq));
 
 				LOG_ERROR("%s", result_.desc().c_str());
-				check_valid = false;
-				return check_valid;
+				return false;
 			} 
 		}
+		else if (tran.ceil_ledger_seq() < 0) {
+			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+			//result_.set_desc("Transaction metadata too long");
+			result_.set_desc(utils::String::Format("Limit ledger seq(" FMT_I64 ") < 0",
+				tran.ceil_ledger_seq()));
+			LOG_ERROR("%s", result_.desc().c_str());
+			return false;
+		} 
 
-		check_valid = true;
+		bool check_valid = true; 
 		//判断operation的参数合法性
 		int64_t t8 = utils::Timestamp::HighResolution();
 		for (int i = 0; i < tran.operations_size(); i++) {
