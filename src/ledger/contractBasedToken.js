@@ -4,17 +4,20 @@ let name_ = '';
 let symbol_ = '';
 let decimals_ = 0;
 let totalSupply_ = '';
-const balance_   = 'own_balance';
+const ownBalance_ = 'own_balance';
 
-function generateAllowanceKey(owner, spender){
-    return 'allowance_' + owner + '_to_' + spender;
+function makeBalanceKey(address){
+    return 'balance_' + address;
+}
+function makeAllowanceKey(owner, spender){
+    return 'allow_' + owner + '_to_' + spender;
 }
 
 function approve(spender, value){
     assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
     assert(typeof value === 'string', 'Arg-value must be string type.');
 
-    let key = generateAllowanceKey(sender, spender);
+    let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
 
     return true;
@@ -24,9 +27,9 @@ function allowance(owner, spender){
     assert(addressCheck(owner) === true, 'Arg-owner is not valid adress.');
     assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
 
-    let key = generateAllowanceKey(owner, spender);
+    let key = makeAllowanceKey(owner, spender);
     let value = storageLoad(key);
-    assert(value !== false, 'Get allowance form:' + owner + ' to:' + spender + ' failed.');
+    assert(value !== false, 'Get allowance ' + owner + ' to ' + spender + ' from metadata failed.');
 
     return value;
 }
@@ -35,16 +38,18 @@ function transfer(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
     assert(typeof value === 'string', 'Arg-value must be string type.');
 
-    let balance = storageLoad(balance_);
-    assert(balance !== false, 'get own balance failed.');
-    assert(balance >= value, 'Own balance:' + balance + ' < transfer value:' + value + '.');
+    let senderKey = makeBalanceKey(sender);
+    let senderValue = storageLoad(senderKey);
+    assert(senderValue !== false, 'Get balance of ' + sender + ' from metadata failed.');
+    assert(senderValue >= value, 'Balance:' + senderValue + ' of sender:' + sender + ' < transfer value:' + value + '.');
 
-    let toValue = storageLoad(to);
+    let toKey = makeBalanceKey(to);
+    let toValue = storageLoad(toKey);
     toValue = (toValue === false) ? value : int64Plus(toValue, value); 
-    storageStore(to, toValue);
+    storageStore(toKey, toValue);
 
-    balance = int64Sub(balance, value);
-    storageStore(balance_, balance);
+    senderValue = int64Sub(senderValue, value);
+    storageStore(senderKey, senderValue);
 
     return true;
 }
@@ -54,23 +59,25 @@ function transferFrom(from, to, value){
     assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
     assert(typeof value === 'string', 'Arg-value must be string type.');
 
-    let fromValue = storageLoad(from);
+    let fromKey = makeBalanceKey(from);
+    let fromValue = storageLoad(fromKey);
     assert(fromValue !== false, 'Get value failed, maybe ' + from + ' has no value.');
     assert(fromValue >= value, from + ' balance:' + fromValue + ' < transfer value:' + value + '.');
 
     let allowValue = allowance(from, to);
     assert(allowValue >= value, 'Allowance value:' + allowValue + ' < transfer value:' + value + ' from ' + from + ' to ' + to  + '.');
 
-    let toValue = storageLoad(to);
+    let toKey = makeBalanceKey(to);
+    let toValue = storageLoad(toKey);
     toValue = (toValue === false) ? value : int64Plus(toValue, value); 
-    storageStore(to, toValue);
+    storageStore(toKey, toValue);
 
     fromValue = int64Sub(fromValue, value);
-    storageStore(from, fromValue);
+    storageStore(fromKey, fromValue);
 
-    let key    = generateAllowanceKey(from, to);
-    allowValue = int64Sub(allowance, value);
-    storageStore(key, allowValue);
+    let allowKey = makeAllowanceKey(from, to);
+    allowValue   = int64Sub(allowValue, value);
+    storageStore(allowKey, allowValue);
 
     return true;
 }
@@ -91,8 +98,14 @@ function totalSupply(){
     return totalSupply_;
 }
 
-function balanceOf(){
-    return balance_;
+function balanceOf(address){
+    assert(addressCheck(address) === true, 'Arg-address is not valid address.');
+
+    let key = makeBalanceKey(address);
+    let value = storageLoad(key);
+    assert(value !== false, 'Get balance of ' + address + ' from metadata failed.');
+
+    return value;
 }
 
 function contractInfo(){
@@ -118,7 +131,7 @@ function init(input_str){
     let entire = int64Mul(input.params.totalSupply, unit);
     totalSupply_ = entire;
 
-    storageStore(balance_, totalSupply_);
+    storageStore(ownBalance_, totalSupply_);
 }
 
 function main(input_str){
@@ -156,6 +169,9 @@ function query(input_str){
     }
     else if(input.method === 'contractInfo'){
         result.contractInfo = contractInfo();
+    }
+    else if(input.method === 'balanceOf'){
+        result.balanceOf = balanceOf(input.params.address);
     }
     else if(input.method === 'allowance'){
         result.allowance = allowance(input.params.owner, input.params.spender);
