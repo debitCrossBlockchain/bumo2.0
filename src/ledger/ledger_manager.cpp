@@ -396,6 +396,7 @@ namespace bumo {
 			header->set_version(last_closed_ledger_hdr.version());
 			header->set_tx_count(last_closed_ledger_hdr.tx_count());
 			header->set_account_tree_hash(last_closed_ledger_hdr.account_tree_hash());
+			header->set_fees_hash(last_closed_ledger_hdr.fees_hash());
 
 			std::string validators_hash = HashWrapper::Crypto(new_validator_set.SerializeAsString());
 			header->set_validators_hash(validators_hash);
