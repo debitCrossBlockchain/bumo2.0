@@ -49,7 +49,7 @@ function transfer(to, value){
     let senderKey = makeBalanceKey(sender);
     let senderValue = storageLoad(senderKey);
     assert(senderValue !== false, 'Get balance of ' + sender + ' from metadata failed.');
-    assert(senderValue >= value, 'Balance:' + senderValue + ' of sender:' + sender + ' < transfer value:' + value + '.');
+    assert(int64Compare(senderValue, value) >= 0, 'Balance:' + senderValue + ' of sender:' + sender + ' < transfer value:' + value + '.');
 
     let toKey = makeBalanceKey(to);
     let toValue = storageLoad(toKey);
@@ -72,10 +72,10 @@ function transferFrom(from, to, value){
     let fromKey = makeBalanceKey(from);
     let fromValue = storageLoad(fromKey);
     assert(fromValue !== false, 'Get value failed, maybe ' + from + ' has no value.');
-    assert(fromValue >= value, from + ' balance:' + fromValue + ' < transfer value:' + value + '.');
+    assert(int64Compare(fromValue, value) >= 0, from + ' balance:' + fromValue + ' < transfer value:' + value + '.');
 
     let allowValue = allowance(from, to);
-    assert(allowValue >= value, 'Allowance value:' + allowValue + ' < transfer value:' + value + ' from ' + from + ' to ' + to  + '.');
+    assert(int64Compare(allowValue, value) >= 0, 'Allowance value:' + allowValue + ' < transfer value:' + value + ' from ' + from + ' to ' + to  + '.');
 
     let toKey = makeBalanceKey(to);
     let toValue = storageLoad(toKey);
