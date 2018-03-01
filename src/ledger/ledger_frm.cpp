@@ -262,8 +262,10 @@ namespace bumo {
 		return true;
 	}
 
-	bool LedgerFrm::AllocateFee() {
-		if (total_fee_ == 0 || IsTestMode()) {
+	bool LedgerFrm::AllocateReward() {
+		int64_t block_reward = GetBlockReward(ledger_.header().seq());
+		int64_t total_reward = total_fee_ + block_reward;
+		if (total_reward == 0 || IsTestMode()) {
 			return true;
 		}
 
@@ -286,10 +288,11 @@ namespace bumo {
 			average_allocte = true;
 		}
 
-		int64_t tfee = total_fee_;
+		int64_t left_reward = total_reward;
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = ledger_.header().seq() % set.validators_size();
-		int64_t average_fee = tfee / set.validators_size();
+		int64_t average_fee = total_reward / set.validators_size();
+		LOG_INFO("total reward(" FMT_I64 ") = total fee(" FMT_I64 ") + block reward(" FMT_I64 ") in ledger(" FMT_I64 ")", total_reward, total_fee_, block_reward, ledger_.header().seq());
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
 			if (!environment_->GetEntry(set.validators(i).address(), account)) {
@@ -305,17 +308,17 @@ namespace bumo {
 				fee = average_fee;
 			}
 			else {
-				fee = total_fee_*set.validators(i).pledge_coin_amount() / total_pledge_amount;
+				fee = total_reward*set.validators(i).pledge_coin_amount() / total_pledge_amount;
 			}
-			tfee -= fee;
-			LOG_INFO("Account(%s) allocate fee(" FMT_I64 ") left total(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, tfee, ledger_.header().seq());
+			left_reward -= fee;
+			LOG_INFO("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
 			proto_account.set_balance(proto_account.balance() + fee);
 		}
-		if (tfee > 0) {
+		if (left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
-			proto_account.set_balance(proto_account.balance() + tfee);
-			LOG_INFO("Account(%s) allocate last fee(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), tfee, ledger_.header().seq());
+			proto_account.set_balance(proto_account.balance() + left_reward);
+			LOG_INFO("Account(%s) allocate last reward(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
 		}
 		if (environment_->useAtomMap_)
 			environment_->Commit();

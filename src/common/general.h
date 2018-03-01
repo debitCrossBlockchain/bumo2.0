@@ -101,6 +101,9 @@ namespace bumo {
 
 		const static int PEER_DB_COUNT = 5000;
 
+		const static int64_t REWARD_PERIOD = (5 * 365 * 24 * 60 * 60) / 10;
+		const static int64_t REWARD_INIT_VALUE = 15 * 100000000;
+
 		typedef enum WARNINGCODE_ {
 			WARNING,
 			NOWARNING
@@ -274,6 +277,7 @@ namespace bumo {
 	std::string GetDataSecuretKey();
 	std::string ComposePrefix(const std::string &prefix, const std::string &value);
 	std::string ComposePrefix(const std::string &prefix, int64_t value);
+	int64_t GetBlockReward(const int64_t cur_block_height);
 }
 
 #endif

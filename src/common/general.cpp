@@ -312,4 +312,11 @@ namespace bumo {
 		result += utils::String::ToString(value);
 		return result;
 	}
+
+	int64_t GetBlockReward(const int64_t cur_block_height) {
+		int64_t power_index = cur_block_height / General::REWARD_PERIOD;
+		if (power_index >= 64) 
+			return 0;
+		return General::REWARD_INIT_VALUE >> power_index;
+	}
 }

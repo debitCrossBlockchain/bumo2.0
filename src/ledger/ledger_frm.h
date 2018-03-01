@@ -71,7 +71,7 @@ namespace bumo {
 
 		bool Commit(KVTrie* trie, int64_t& new_count, int64_t& change_count);
 
-		bool AllocateFee();
+		bool AllocateReward();
 		
 		void SetTestMode(bool test_mode);
 		bool IsTestMode();
