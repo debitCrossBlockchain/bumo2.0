@@ -1,10 +1,16 @@
 'use strict';
 
-let name_ = '';
-let symbol_ = '';
-let decimals_ = 0;
-let totalSupply_ = '';
-const ownBalance_ = 'own_balance';
+let globalCfg = {};
+
+function globalCfgKey(){
+    return 'globalConfig';
+}
+
+function getGlobalCfgFromMetadata(){
+    let value = storageLoad(globalCfgKey());
+    assert(value !== false, 'get globalCfg from metadata failed.');
+    globalCfg = JSON.parse(value);
+}
 
 function makeBalanceKey(address){
     return 'balance_' + address;
@@ -19,6 +25,8 @@ function approve(spender, value){
 
     let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
+
+    tlog('approve', sender + ' approve ' + spender + ' ' + value + ' succeed.');
 
     return true;
 }
@@ -51,6 +59,8 @@ function transfer(to, value){
     senderValue = int64Sub(senderValue, value);
     storageStore(senderKey, senderValue);
 
+    tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.');
+
     return true;
 }
 
@@ -79,23 +89,42 @@ function transferFrom(from, to, value){
     allowValue   = int64Sub(allowValue, value);
     storageStore(allowKey, allowValue);
 
+    tlog('transferFrom', sender + ' triggering ' + from + ' transfer ' + value + ' to ' + to + ' succeed.');
+
     return true;
 }
 
+function transferContract(address){
+    assert(addressCheck(address) === true, 'Arg-address is not valid adress.');
+
+    getGlobalCfgFromMetadata();
+    assert(sender === globalCfg.contractOwner, sender + ' has no permission modify contract ownership.');
+
+    globalCfg.contractOwner = address;
+    let cfgStr = JSON.stringify(globalCfg);
+    storageStore(globalCfgKey(), cfgStr);
+
+    tlog('transferContract', sender + ' transfer contract ownership to ' + address + ' succeed.');
+}
+
 function name() {
-    return name_;
+    return globalCfg.name;
 }
 
 function symbol(){
-    return symbol_;
+    return globalCfg.symbol;
 }
 
 function decimals(){
-    return decimals_;
+    return globalCfg.decimals;
 }
 
 function totalSupply(){
-    return totalSupply_;
+    return globalCfg.totalSupply;
+}
+
+function contractInfo(){
+    return globalCfg;
 }
 
 function balanceOf(address){
@@ -108,30 +137,25 @@ function balanceOf(address){
     return value;
 }
 
-function contractInfo(){
-    let result = {};
-
-    result.name = name_;
-    result.symbol = symbol_;
-    result.decimals = decimals_;
-    result.totalSupply = totalSupply_;
-
-    return result;
-}
-
 function init(input_str){
     assert(input_str !== undefined, 'Arg-input_str is undefined.');
     let input = JSON.parse(input_str);
 
-    name_ = input.params.name;
-    symbol_ = input.params.symbol;
-    decimals_ = parseInt(input.params.decimals);
+    assert(addressCheck(input.params.contractOwner) === true &&
+           typeof input.params.name === 'string' &&
+           typeof input.params.symbol === 'string' &&
+           typeof input.params.decimals === 'number' &&
+           typeof input.params.totalSupply === 'string',
+           'Args check failed.');
 
-    let unit = 10 ** decimals_;
-    let entire = int64Mul(input.params.totalSupply, unit);
-    totalSupply_ = entire;
+    globalCfg.name = input.params.name;
+    globalCfg.symbol = input.params.symbol;
+    globalCfg.decimals = input.params.decimals;
+    globalCfg.totalSupply = int64Mul(input.params.totalSupply, 10 ** globalCfg.decimals);
+    globalCfg.contractOwner = input.params.contractOwner;
 
-    storageStore(ownBalance_, totalSupply_);
+    storageStore(globalCfgKey(), JSON.stringify(globalCfg));
+    storageStore(makeBalanceKey(globalCfg.contractOwner), globalCfg.totalSupply);
 }
 
 function main(input_str){
@@ -146,15 +170,19 @@ function main(input_str){
     else if(input.method === 'approve'){
 	    approve(input.params.spender, input.params.value);
     }
+    else if(input.method === 'transferContract'){
+	    transferContract(input.params.address);
+    }
     else{
         throw '<undidentified operation type>';
     }
 }
 
 function query(input_str){
-    let input  = JSON.parse(input_str);
+    getGlobalCfgFromMetadata();
 
     let result = {};
+    let input  = JSON.parse(input_str);
     if(input.method === 'name'){
         result.name = name();
     }
@@ -171,7 +199,7 @@ function query(input_str){
         result.contractInfo = contractInfo();
     }
     else if(input.method === 'balanceOf'){
-        result.balanceOf = balanceOf(input.params.address);
+        result.balance = balanceOf(input.params.address);
     }
     else if(input.method === 'allowance'){
         result.allowance = allowance(input.params.owner, input.params.spender);
