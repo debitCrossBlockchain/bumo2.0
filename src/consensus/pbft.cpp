@@ -940,8 +940,8 @@ namespace bumo {
 			return true;
 		}
 
-		LOG_INFO("Send prepare message, view number(" FMT_I64 "),sequence(" FMT_I64 "), round number(1), value(%s)",
-			pre_prepare.view_number(), pre_prepare.sequence(), notify_->DescConsensusValue(pre_prepare.value()).c_str());
+		LOG_INFO("Send prepare message, view number(" FMT_I64 "), replica id(" FMT_I64 ") sequence(" FMT_I64 "), round number(1), value(%s)",
+			pre_prepare.view_number(), replica_id_, pre_prepare.sequence(), notify_->DescConsensusValue(pre_prepare.value()).c_str());
 		//NewPrepare();
 		PbftEnvPointer prepare_msg = NewPrepare(pre_prepare, 1);
 		if (!SendMessage(prepare_msg)) {
@@ -1278,7 +1278,7 @@ namespace bumo {
 			//saver.SaveValue(PbftDesc::SEQUENCE_NAME, sequence_);
 		}
 
-		LOG_INFO("Replica enter the new view(number:" FMT_I64 ")", new_view.view_number());
+		LOG_INFO("Replica(id: " FMT_I64 ") enter the new view(number:" FMT_I64 ")", replica_id_, new_view.view_number());
 		//enter to new view
 		view_number_ = new_view.view_number();
 		view_active_ = true;
