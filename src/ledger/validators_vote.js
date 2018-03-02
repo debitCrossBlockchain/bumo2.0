@@ -142,6 +142,9 @@ function applyAsValidatorCandidate(){
     let position   = findI0(candidates, sender);
 
     if (position !== false){
+        let comc = int64Compare(payCoinAmount, minSuperadditionAmount);
+        assert(comc === 1 || comc === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
+
         let amountc = int64Plus(candidates[position][1], payCoinAmount);
         candidates.splice(position, 1);
         let newCandidates = insertCandidatesSorted(sender, amountc, candidates);
