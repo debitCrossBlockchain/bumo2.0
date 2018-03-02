@@ -147,11 +147,13 @@ function feeTypeCheck(feeType){
 
 function priceCheck(price){
   assert(typeof price === "string",'price is not string');
+  assert(price[0] !=='-','price is nagertive');
   Object.keys(price).every(
     function(i){
         assert(Number.isInteger(parseInt(price[i])),'price contain NaN char');
     }
   );
+  assert(int64Compare(price,'9223372036854775807')===0 && price==='9223372036854775807' ,'price overflow');
 }
 
 function main(input) {
