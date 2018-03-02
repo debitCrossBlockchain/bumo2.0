@@ -71,7 +71,7 @@ function transfer(to, value){
     return true;
 }
 
-function contractTransfer(to, value){
+function assign(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
     assert(typeof value === 'string', 'Arg-value must be string type.');
 
@@ -87,7 +87,7 @@ function contractTransfer(to, value){
     globalAttribute.balance = int64Sub(globalAttribute.balance, value);
     storeGlobalAttribute();
 
-    tlog('contractTransfer', 'transfer ' + value + ' to ' + to + ' succeed.');
+    tlog('assign', 'transfer ' + value + ' to ' + to + ' succeed.');
 
     return true;
 }
@@ -121,7 +121,7 @@ function transferFrom(from, to, value){
     return true;
 }
 
-function transferOwnership(address){
+function changeOwner(address){
     assert(addressCheck(address) === true, 'Arg-address is not valid adress.');
 
     loadGlobalAttribute();
@@ -130,7 +130,7 @@ function transferOwnership(address){
     globalAttribute.contractOwner = address;
     storeGlobalAttribute();
 
-    tlog('transferOwnership', sender + ' transfer contract ownership to ' + address + ' succeed.');
+    tlog('changeOwner', sender + ' change contract ownership to ' + address + ' succeed.');
 }
 
 function name() {
@@ -190,17 +190,17 @@ function main(input_str){
     if(input.method === 'transfer'){
         transfer(input.params.to, input.params.value);
     }
-    else if(input.method === 'contractTransfer'){
-        contractTransfer(input.params.to, input.params.value);
-    }
     else if(input.method === 'transferFrom'){
         transferFrom(input.params.from, input.params.to, input.params.value);
     }
     else if(input.method === 'approve'){
         approve(input.params.spender, input.params.value);
     }
-    else if(input.method === 'transferOwnership'){
-        transferOwnership(input.params.address);
+    else if(input.method === 'assign'){
+        assign(input.params.to, input.params.value);
+    }
+    else if(input.method === 'changeOwner'){
+        changeOwner(input.params.address);
     }
     else{
         throw '<undidentified operation type>';
