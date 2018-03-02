@@ -43,8 +43,8 @@ namespace bumo {
 		const protocol::OperationIssueAsset& issue_asset = operation.issue_asset();
 
 		if (!bumo::PublicKey::IsAddressValid(source_address)) {
-			result.set_code(protocol::ERRCODE_ASSET_INVALID);
-			result.set_desc(utils::String::Format("Dest address should be a valid account address"));
+			result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+			result.set_desc(utils::String::Format("Source address should be a valid account address"));
 			return result;
 		}
 		//const auto &issue_property = issue_asset.
@@ -53,13 +53,13 @@ namespace bumo {
 		{
 			if (!bumo::PublicKey::IsAddressValid(create_account.dest_address())) {
 				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-				result.set_desc(utils::String::Format("dest account address(%s) invalid", create_account.dest_address().c_str()));
+				result.set_desc(utils::String::Format("Dest account address(%s) invalid", create_account.dest_address().c_str()));
 				break;
 			}
 
 			if (!create_account.has_priv()) {
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc(utils::String::Format("dest account address(%s) has no priv object", create_account.dest_address().c_str()));
+				result.set_desc(utils::String::Format("Dest account address(%s) has no priv object", create_account.dest_address().c_str()));
 				break;
 			} 
 
@@ -215,8 +215,8 @@ namespace bumo {
 			} 
 
 			if (!bumo::PublicKey::IsAddressValid(payment.dest_address())) {
-				result.set_code(protocol::ERRCODE_ASSET_INVALID);
-				result.set_desc(utils::String::Format("dest address should be a valid account address"));
+				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+				result.set_desc(utils::String::Format("Dest address should be a valid account address"));
 				break;
 			}
 			break;
@@ -234,7 +234,7 @@ namespace bumo {
 			trim_code = utils::String::Trim(trim_code);
 			if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE) {
 				result.set_code(protocol::ERRCODE_ASSET_INVALID);
-				result.set_desc(utils::String::Format("asset code length should between (0,64]"));
+				result.set_desc(utils::String::Format("Asset code length should between (0,64]"));
 				break;
 			}
 
@@ -335,7 +335,7 @@ namespace bumo {
 			}
 
 			if (!bumo::PublicKey::IsAddressValid(pay_coin.dest_address())) {
-				result.set_code(protocol::ERRCODE_ASSET_INVALID);
+				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
 				result.set_desc(utils::String::Format("Dest address should be a valid account address"));
 				break;
 			}
