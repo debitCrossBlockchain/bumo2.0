@@ -56,18 +56,33 @@ namespace bumo {
 
 	int32_t LevelDbDriver::Get(const std::string &key, std::string &value) {
 		assert(db_ != NULL);
-		leveldb::Status status = db_->Get(leveldb::ReadOptions(), key, &value);
-		if (status.ok()) {
-			return 1;
+
+		//retry 10s
+		size_t timers = 0;
+		int32_t ret = -1;
+		while (timers < 10) {
+
+			leveldb::Status status = db_->Get(leveldb::ReadOptions(), key, &value);
+			if (status.ok()) {
+				ret = 1;
+				break;
+			}
+			else if (status.IsNotFound()) {
+				ret = 0;
+				break;
+			}
+			else
+			{
+				utils::MutexGuard guard(mutex_);
+				error_desc_ = status.ToString();
+				ret = -1;
+			}
+
+			timers++;
+			utils::Sleep(100);
 		}
-		else if(status.IsNotFound()) {
-			return 0;
-		}
-		else {
-			utils::MutexGuard guard(mutex_);
-			error_desc_ = status.ToString();
-			return -1;
-		}
+
+		return ret;
 	}
 
 	bool LevelDbDriver::Put(const std::string &key, const std::string &value) {
