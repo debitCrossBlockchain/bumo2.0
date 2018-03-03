@@ -887,7 +887,13 @@ namespace bumo {
 				txfrm->environment_->Commit();
 			}
 
-			txfrm->environment_->ClearChangeBuf();
+			/* txfrm->environment_ was created in txfrm->Apply(...) when txfrm->ValidForParameter() == true,
+			   so if txfrm->ValidForParameter() failed, there was no txfrm->environment_,
+			   and txfrm->environment_->ClearChangeBuf() would access nonexistent memory,
+			   so that would be a serious error, and also seriously is that this problem only
+			   exist when operation called by contract, it means only in Dotransaction function,
+			   because there is only one environment in normal operation, txfrm->environment_ is a reference to it*/
+			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
 			back->instructions_.push_back(tx_store);
