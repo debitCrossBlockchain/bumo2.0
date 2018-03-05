@@ -57,7 +57,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;ASIO_STANDALONE;_WEBSOCKETPP_CPP11_STL_;WIN32_LEAN_AND_MEAN;_SHARED_PTR_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src;../../src/3rd/basic/include;../../src/rocksdb/include;../../src/3rd/asio/include;../../src/3rd/asio/include/asio/detail;../../src/3rd/gtest/include;../../src/3rd/websocketpp;../../test/gtest/;../../test/gtest/common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src;../../src/3rd/basic/include;../../src/rocksdb/include;../../src/3rd/asio/include;../../src/3rd/asio/include/asio/detail;../../src/3rd/gtest/include;../../src/3rd/websocketpp;../../test/gtest/;../../test/gtest/common;../../src/ledger;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -95,6 +95,7 @@
     <ClCompile Include="..\..\test\gtest\common\websocket_test.cpp" />
     <ClCompile Include="..\..\test\gtest\common\web_socket_server.cpp" />
     <ClCompile Include="..\..\test\gtest\main.cpp" />
+    <ClCompile Include="..\..\test\gtest\test\get_block_reward_utest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Ed25519-donna.vcxproj">

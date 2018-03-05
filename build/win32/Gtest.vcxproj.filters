@@ -12,8 +12,11 @@
     <Filter Include="common">
       <UniqueIdentifier>{b5f216f9-a163-42ac-96cd-cab428655ee7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="monitor">
-      <UniqueIdentifier>{3cfd8a36-2989-4927-9a57-23ae42cc633a}</UniqueIdentifier>
+    <Filter Include="Bumo">
+      <UniqueIdentifier>{830d54fa-d496-46a1-82f6-2692569c2eaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UTest">
+      <UniqueIdentifier>{9c82649f-da66-405f-a6a5-c9ef05657b74}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -30,10 +33,13 @@
       <Filter>common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\gtest\common\websocket_test.cpp">
-      <Filter>monitor</Filter>
+      <Filter>UTest</Filter>
     </ClCompile>
     <ClCompile Include="..\..\test\gtest\common\web_socket_server.cpp">
-      <Filter>monitor</Filter>
+      <Filter>Bumo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test\gtest\test\get_block_reward_utest.cpp">
+      <Filter>UTest</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -41,7 +47,7 @@
       <Filter>common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\test\gtest\common\web_socket_server.h">
-      <Filter>monitor</Filter>
+      <Filter>Bumo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
