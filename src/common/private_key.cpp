@@ -338,7 +338,12 @@ namespace bumo {
 			PrivateKeyPrefix prefix;
 			std::string raw_pubkey;
 			valid_ = GetKeyElement(encode_private_key, prefix, type_, raw_priv_key_);
-			if (!valid_ || prefix != PRIVATEKEY_PREFIX) {
+			if (!valid_) {
+				return false;
+			}
+
+			if (prefix != PRIVATEKEY_PREFIX) {
+				valid_ = false;
 				return false;
 			}
 
