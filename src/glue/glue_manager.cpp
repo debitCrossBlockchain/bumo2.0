@@ -482,7 +482,7 @@ namespace bumo {
 			//normal block should not exit the upgarde
 			bool new_validator_exist = !upgrade.new_validator().empty();
 			std::string consensus_value_hash = HashWrapper::Crypto(consensus_value.SerializeAsString());
-			if (hardfork_points_.end() == hardfork_points_.find(lcl.consensus_value_hash()) && new_validator_exist) {
+			if (hardfork_points_.end() == hardfork_points_.find(consensus_value_hash) && new_validator_exist) {
 				return Consensus::CHECK_VALUE_MAYVALID;
 			} 
 		}

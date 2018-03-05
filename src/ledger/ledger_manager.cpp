@@ -372,7 +372,8 @@ namespace bumo {
             std::string this_node_address = private_key.GetEncAddress();
 
 			//compose the new ledger
-			protocol::Ledger ledger;
+			LedgerFrm::pointer ledger_frm = std::make_shared<LedgerFrm>();
+			protocol::Ledger &ledger = ledger_frm->ProtoLedger();
 			protocol::LedgerHeader *header = ledger.mutable_header();
 			protocol::ConsensusValue request;
 			protocol::LedgerUpgrade *ledger_upgrade = request.mutable_ledger_upgrade();
@@ -395,14 +396,29 @@ namespace bumo {
 			header->set_consensus_value_hash(consensus_value_hash);
 			header->set_version(last_closed_ledger_hdr.version());
 			header->set_tx_count(last_closed_ledger_hdr.tx_count());
-			header->set_account_tree_hash(last_closed_ledger_hdr.account_tree_hash());
 			header->set_fees_hash(last_closed_ledger_hdr.fees_hash());
 
 			std::string validators_hash = HashWrapper::Crypto(new_validator_set.SerializeAsString());
 			header->set_validators_hash(validators_hash);
 
-			header->set_hash("");
-			header->set_hash(HashWrapper::Crypto(ledger.SerializeAsString()));
+			//calc block reward
+			int32_t tx_time_out_index;
+			protocol::ConsensusValueValidation validation;
+			ledger_frm->Apply(request, NULL, tx_time_out_index, LedgerFrm::APPLY_MODE_PROPOSE, validation);
+			int64_t new_count = 0, change_count = 0;
+			ledger_frm->Commit(LedgerManager::GetInstance()->tree_, new_count, change_count);
+
+			//update account hash
+			LedgerManager::GetInstance()->tree_->UpdateHash();
+			header->set_account_tree_hash(LedgerManager::GetInstance()->tree_->GetRootHash());
+
+			//write account db
+			auto batch_account = LedgerManager::GetInstance()->tree_->batch_;
+			if (!Storage::Instance().account_db()->WriteBatch(*batch_account)) {
+				PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
+			}
+
+			header->set_hash(HashWrapper::Crypto(ledger_frm->ProtoLedger().SerializeAsString()));
 
 			std::shared_ptr<WRITE_BATCH> batch = std::make_shared<WRITE_BATCH>();
 			batch->Put(bumo::General::KEY_LEDGER_SEQ, utils::String::ToString(header->seq()));
