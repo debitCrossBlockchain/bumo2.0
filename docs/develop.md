@@ -2170,6 +2170,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 152               | ERRCODE_CONTRACT_SYNTAX_ERROR          | 合约语法分析失败                                                                             |
 | 153               | ERRCODE_CONTRACT_TOO_MANY_RECURSION    | 合约递归深度超出上限                                                                             |
 | 154               | ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS | 合约产生的交易超出上限                                                                             |
+| 155               | ERRCODE_CONTRACT_EXECUTE_EXPIRED       | 合约执行超时                                                                                |
 
 ## 示例
 
