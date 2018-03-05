@@ -30,6 +30,12 @@ namespace bumo {
 	public:
 		typedef std::shared_ptr <LedgerFrm>	pointer;
 
+		typedef enum tagAPPLY_MODE {
+			APPLY_MODE_PROPOSE = 0,
+			APPLY_MODE_CHECK = 1,
+			APPLY_MODE_FOLLOW = 2
+		} APPLY_MODE;
+
 		LedgerFrm();
 		~LedgerFrm();
 
@@ -41,9 +47,10 @@ namespace bumo {
 
 
 		bool Apply(const protocol::ConsensusValue& request, 
-			LedgerContext *ledger_context, 
-			int64_t tx_time_out, 
-			int32_t &tx_time_out_index);
+			LedgerContext *ledger_context,
+			int32_t &tx_time_out_index,
+			APPLY_MODE propose_mode,
+			protocol::ConsensusValueValidation &proposed_check);
 		bool Cancel();
 
 		// void GetSqlTx(std::string &sqltx, std::string &sql_account_tx);
@@ -66,6 +73,16 @@ namespace bumo {
 		}
 
 		bool CheckValidation ();
+
+		static bool CheckConsValueValidation(const protocol::ConsensusValue& request,
+			APPLY_MODE propose_mode,
+			std::set<int32_t> &expire_txs_status,
+			std::set<int32_t> &droped_txs_status,
+			std::set<int32_t> &error_txs_status);
+		static void SetValidationToProto(std::set<int32_t> expire_txs,
+			std::set<int32_t> droped_txs,
+			std::set<int32_t> error_txs,
+			protocol::ConsensusValueValidation &validation);
 
 		Json::Value ToJson();
 

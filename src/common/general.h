@@ -52,6 +52,9 @@ namespace bumo {
 		const static int CONTRACT_MEMORY_LIMIT = 30 * utils::BYTES_PER_MEGA; //limit memory 30M
 		const static int CONTRACT_STACK_LIMIT = 512 * utils::BYTES_PER_KILO;
 
+		const static int TX_EXECUTE_TIME_OUT = utils::MICRO_UNITS_PER_SEC;
+		const static int BLOCK_EXECUTE_TIME_OUT = 5 * utils::MICRO_UNITS_PER_SEC;
+
 		const static int LAST_TX_HASHS_LIMIT = 100;
 
 		const static size_t BU_DECIMALS = 8;  // 10^8

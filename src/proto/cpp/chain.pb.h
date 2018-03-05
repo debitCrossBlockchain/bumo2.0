@@ -44,6 +44,7 @@ class AccountThreshold;
 class Asset;
 class AssetProperty;
 class ConsensusValue;
+class ConsensusValueValidation;
 class Contract;
 class Ledger;
 class LedgerHeader;
@@ -2752,6 +2753,123 @@ class TransactionEnvSet : public ::google::protobuf::Message /* @@protoc_inserti
 };
 // -------------------------------------------------------------------
 
+class ConsensusValueValidation : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ConsensusValueValidation) */ {
+ public:
+  ConsensusValueValidation();
+  virtual ~ConsensusValueValidation();
+
+  ConsensusValueValidation(const ConsensusValueValidation& from);
+
+  inline ConsensusValueValidation& operator=(const ConsensusValueValidation& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ConsensusValueValidation& default_instance();
+
+  void Swap(ConsensusValueValidation* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ConsensusValueValidation* New() const { return New(NULL); }
+
+  ConsensusValueValidation* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ConsensusValueValidation& from);
+  void MergeFrom(const ConsensusValueValidation& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ConsensusValueValidation* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated int32 expire_tx_ids = 1;
+  int expire_tx_ids_size() const;
+  void clear_expire_tx_ids();
+  static const int kExpireTxIdsFieldNumber = 1;
+  ::google::protobuf::int32 expire_tx_ids(int index) const;
+  void set_expire_tx_ids(int index, ::google::protobuf::int32 value);
+  void add_expire_tx_ids(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      expire_tx_ids() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_expire_tx_ids();
+
+  // repeated int32 error_tx_ids = 2;
+  int error_tx_ids_size() const;
+  void clear_error_tx_ids();
+  static const int kErrorTxIdsFieldNumber = 2;
+  ::google::protobuf::int32 error_tx_ids(int index) const;
+  void set_error_tx_ids(int index, ::google::protobuf::int32 value);
+  void add_error_tx_ids(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      error_tx_ids() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_error_tx_ids();
+
+  // repeated int32 droped_tx_ids = 3;
+  int droped_tx_ids_size() const;
+  void clear_droped_tx_ids();
+  static const int kDropedTxIdsFieldNumber = 3;
+  ::google::protobuf::int32 droped_tx_ids(int index) const;
+  void set_droped_tx_ids(int index, ::google::protobuf::int32 value);
+  void add_droped_tx_ids(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      droped_tx_ids() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_droped_tx_ids();
+
+  // @@protoc_insertion_point(class_scope:protocol.ConsensusValueValidation)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > expire_tx_ids_;
+  mutable int _expire_tx_ids_cached_byte_size_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > error_tx_ids_;
+  mutable int _error_tx_ids_cached_byte_size_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > droped_tx_ids_;
+  mutable int _droped_tx_ids_cached_byte_size_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_chain_2eproto();
+  friend void protobuf_AssignDesc_chain_2eproto();
+  friend void protobuf_ShutdownFile_chain_2eproto();
+
+  void InitAsDefaultInstance();
+  static ConsensusValueValidation* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class ConsensusValue : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ConsensusValue) */ {
  public:
   ConsensusValue();
@@ -2864,6 +2982,15 @@ class ConsensusValue : public ::google::protobuf::Message /* @@protoc_insertion_
   ::protocol::LedgerUpgrade* release_ledger_upgrade();
   void set_allocated_ledger_upgrade(::protocol::LedgerUpgrade* ledger_upgrade);
 
+  // optional .protocol.ConsensusValueValidation validation = 7;
+  bool has_validation() const;
+  void clear_validation();
+  static const int kValidationFieldNumber = 7;
+  const ::protocol::ConsensusValueValidation& validation() const;
+  ::protocol::ConsensusValueValidation* mutable_validation();
+  ::protocol::ConsensusValueValidation* release_validation();
+  void set_allocated_validation(::protocol::ConsensusValueValidation* validation);
+
   // @@protoc_insertion_point(class_scope:protocol.ConsensusValue)
  private:
 
@@ -2875,6 +3002,7 @@ class ConsensusValue : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::int64 ledger_seq_;
   ::google::protobuf::internal::ArenaStringPtr previous_ledger_hash_;
   ::protocol::LedgerUpgrade* ledger_upgrade_;
+  ::protocol::ConsensusValueValidation* validation_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -5790,6 +5918,100 @@ TransactionEnvSet::txs() const {
 
 // -------------------------------------------------------------------
 
+// ConsensusValueValidation
+
+// repeated int32 expire_tx_ids = 1;
+inline int ConsensusValueValidation::expire_tx_ids_size() const {
+  return expire_tx_ids_.size();
+}
+inline void ConsensusValueValidation::clear_expire_tx_ids() {
+  expire_tx_ids_.Clear();
+}
+inline ::google::protobuf::int32 ConsensusValueValidation::expire_tx_ids(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.expire_tx_ids)
+  return expire_tx_ids_.Get(index);
+}
+inline void ConsensusValueValidation::set_expire_tx_ids(int index, ::google::protobuf::int32 value) {
+  expire_tx_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.expire_tx_ids)
+}
+inline void ConsensusValueValidation::add_expire_tx_ids(::google::protobuf::int32 value) {
+  expire_tx_ids_.Add(value);
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.expire_tx_ids)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ConsensusValueValidation::expire_tx_ids() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.expire_tx_ids)
+  return expire_tx_ids_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ConsensusValueValidation::mutable_expire_tx_ids() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.expire_tx_ids)
+  return &expire_tx_ids_;
+}
+
+// repeated int32 error_tx_ids = 2;
+inline int ConsensusValueValidation::error_tx_ids_size() const {
+  return error_tx_ids_.size();
+}
+inline void ConsensusValueValidation::clear_error_tx_ids() {
+  error_tx_ids_.Clear();
+}
+inline ::google::protobuf::int32 ConsensusValueValidation::error_tx_ids(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.error_tx_ids)
+  return error_tx_ids_.Get(index);
+}
+inline void ConsensusValueValidation::set_error_tx_ids(int index, ::google::protobuf::int32 value) {
+  error_tx_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.error_tx_ids)
+}
+inline void ConsensusValueValidation::add_error_tx_ids(::google::protobuf::int32 value) {
+  error_tx_ids_.Add(value);
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.error_tx_ids)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ConsensusValueValidation::error_tx_ids() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.error_tx_ids)
+  return error_tx_ids_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ConsensusValueValidation::mutable_error_tx_ids() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.error_tx_ids)
+  return &error_tx_ids_;
+}
+
+// repeated int32 droped_tx_ids = 3;
+inline int ConsensusValueValidation::droped_tx_ids_size() const {
+  return droped_tx_ids_.size();
+}
+inline void ConsensusValueValidation::clear_droped_tx_ids() {
+  droped_tx_ids_.Clear();
+}
+inline ::google::protobuf::int32 ConsensusValueValidation::droped_tx_ids(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.droped_tx_ids)
+  return droped_tx_ids_.Get(index);
+}
+inline void ConsensusValueValidation::set_droped_tx_ids(int index, ::google::protobuf::int32 value) {
+  droped_tx_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.droped_tx_ids)
+}
+inline void ConsensusValueValidation::add_droped_tx_ids(::google::protobuf::int32 value) {
+  droped_tx_ids_.Add(value);
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.droped_tx_ids)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ConsensusValueValidation::droped_tx_ids() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.droped_tx_ids)
+  return droped_tx_ids_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ConsensusValueValidation::mutable_droped_tx_ids() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.droped_tx_ids)
+  return &droped_tx_ids_;
+}
+
+// -------------------------------------------------------------------
+
 // ConsensusValue
 
 // optional .protocol.TransactionEnvSet txset = 1;
@@ -5982,6 +6204,44 @@ inline void ConsensusValue::set_allocated_ledger_upgrade(::protocol::LedgerUpgra
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.ConsensusValue.ledger_upgrade)
+}
+
+// optional .protocol.ConsensusValueValidation validation = 7;
+inline bool ConsensusValue::has_validation() const {
+  return !_is_default_instance_ && validation_ != NULL;
+}
+inline void ConsensusValue::clear_validation() {
+  if (GetArenaNoVirtual() == NULL && validation_ != NULL) delete validation_;
+  validation_ = NULL;
+}
+inline const ::protocol::ConsensusValueValidation& ConsensusValue::validation() const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValue.validation)
+  return validation_ != NULL ? *validation_ : *default_instance_->validation_;
+}
+inline ::protocol::ConsensusValueValidation* ConsensusValue::mutable_validation() {
+  
+  if (validation_ == NULL) {
+    validation_ = new ::protocol::ConsensusValueValidation;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.ConsensusValue.validation)
+  return validation_;
+}
+inline ::protocol::ConsensusValueValidation* ConsensusValue::release_validation() {
+  // @@protoc_insertion_point(field_release:protocol.ConsensusValue.validation)
+  
+  ::protocol::ConsensusValueValidation* temp = validation_;
+  validation_ = NULL;
+  return temp;
+}
+inline void ConsensusValue::set_allocated_validation(::protocol::ConsensusValueValidation* validation) {
+  delete validation_;
+  validation_ = validation;
+  if (validation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.ConsensusValue.validation)
 }
 
 // -------------------------------------------------------------------
@@ -6379,6 +6639,8 @@ inline void OperationSetMetadata::set_delete_flag(bool value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

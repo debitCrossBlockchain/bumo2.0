@@ -190,22 +190,30 @@ namespace bumo {
 
 		if (contract_step_ > General::CONTRACT_STEP_LIMIT) {
 			error_info = "Step expire";
+			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
+			result_.set_desc(error_info);
 			return true;
 		}
 
 		int64_t now = utils::Timestamp::HighResolution();
 		if (max_end_time_ != 0 && now > max_end_time_) {
 			error_info = "Time expire";
+			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
+			result_.set_desc(error_info);
 			return true;
 		}
 
 		if (contract_memory_usage_ > General::CONTRACT_MEMORY_LIMIT) {
 			error_info = "Memory expire";
+			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
+			result_.set_desc(error_info);
 			return true;
 		}
 
 		if (contract_stack_usage_ > General::CONTRACT_STACK_LIMIT) {
 			error_info = "Stack expire";
+			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
+			result_.set_desc(error_info);
 			return true;
 		}
 
@@ -623,6 +631,11 @@ namespace bumo {
 		}
 
 		return bSucess;
+	}
+
+	void TransactionFrm::ApplyExpireResult() // for sync node
+	{
+		result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
 	}
 }
 

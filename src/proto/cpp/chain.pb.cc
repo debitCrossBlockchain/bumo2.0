@@ -91,6 +91,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* TransactionEnvSet_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   TransactionEnvSet_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ConsensusValueValidation_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ConsensusValueValidation_reflection_ = NULL;
 const ::google::protobuf::Descriptor* ConsensusValue_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ConsensusValue_reflection_ = NULL;
@@ -506,14 +509,32 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(TransactionEnvSet),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, _is_default_instance_));
-  ConsensusValue_descriptor_ = file->message_type(21);
-  static const int ConsensusValue_offsets_[6] = {
+  ConsensusValueValidation_descriptor_ = file->message_type(21);
+  static const int ConsensusValueValidation_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, expire_tx_ids_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, error_tx_ids_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, droped_tx_ids_),
+  };
+  ConsensusValueValidation_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      ConsensusValueValidation_descriptor_,
+      ConsensusValueValidation::default_instance_,
+      ConsensusValueValidation_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(ConsensusValueValidation),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, _is_default_instance_));
+  ConsensusValue_descriptor_ = file->message_type(22);
+  static const int ConsensusValue_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, txset_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, close_time_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, previous_proof_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, ledger_seq_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, previous_ledger_hash_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, ledger_upgrade_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, validation_),
   };
   ConsensusValue_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -526,7 +547,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(ConsensusValue),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, _is_default_instance_));
-  Contract_descriptor_ = file->message_type(22);
+  Contract_descriptor_ = file->message_type(23);
   static const int Contract_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, payload_),
@@ -543,7 +564,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, _is_default_instance_));
   Contract_ContractType_descriptor_ = Contract_descriptor_->enum_type(0);
-  OperationCreateAccount_descriptor_ = file->message_type(23);
+  OperationCreateAccount_descriptor_ = file->message_type(24);
   static const int OperationCreateAccount_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, dest_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, contract_),
@@ -563,7 +584,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(OperationCreateAccount),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, _is_default_instance_));
-  OperationSetMetadata_descriptor_ = file->message_type(24);
+  OperationSetMetadata_descriptor_ = file->message_type(25);
   static const int OperationSetMetadata_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetMetadata, key_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetMetadata, value_),
@@ -640,6 +661,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       TransactionEnvSet_descriptor_, &TransactionEnvSet::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      ConsensusValueValidation_descriptor_, &ConsensusValueValidation::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       ConsensusValue_descriptor_, &ConsensusValue::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Contract_descriptor_, &Contract::default_instance());
@@ -696,6 +719,8 @@ void protobuf_ShutdownFile_chain_2eproto() {
   delete TransactionEnvStore_reflection_;
   delete TransactionEnvSet::default_instance_;
   delete TransactionEnvSet_reflection_;
+  delete ConsensusValueValidation::default_instance_;
+  delete ConsensusValueValidation_reflection_;
   delete ConsensusValue::default_instance_;
   delete ConsensusValue_reflection_;
   delete Contract::default_instance_;
@@ -790,24 +815,28 @@ void protobuf_AddDesc_chain_2eproto() {
     "(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledger_seq\030\004 \001"
     "(\003\022\022\n\nclose_time\030\005 \001(\003\":\n\021TransactionEnv"
     "Set\022%\n\003txs\030\002 \003(\0132\030.protocol.TransactionE"
-    "nv\"\313\001\n\016ConsensusValue\022*\n\005txset\030\001 \001(\0132\033.p"
-    "rotocol.TransactionEnvSet\022\022\n\nclose_time\030"
-    "\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\nledger_"
-    "seq\030\004 \001(\003\022\034\n\024previous_ledger_hash\030\005 \001(\014\022"
-    "/\n\016ledger_upgrade\030\006 \001(\0132\027.protocol.Ledge"
-    "rUpgrade\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037.pro"
-    "tocol.Contract.ContractType\022\017\n\007payload\030\002"
-    " \001(\t\"\036\n\014ContractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n"
-    "\026OperationCreateAccount\022\024\n\014dest_address\030"
-    "\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.protocol.Contr"
-    "act\022(\n\004priv\030\003 \001(\0132\032.protocol.AccountPriv"
-    "ilege\022$\n\tmetadatas\030\004 \003(\0132\021.protocol.KeyP"
-    "air\022\024\n\014init_balance\030\005 \001(\003\022\022\n\ninit_input\030"
-    "\006 \001(\t\"X\n\024OperationSetMetadata\022\013\n\003key\030\001 \001"
-    "(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013de"
-    "lete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n"
-    "\tSIGNATURE\020dB\035\n\033cn.bumo.blockchain.adapt"
-    "er3b\006proto3", 3691);
+    "nv\"^\n\030ConsensusValueValidation\022\025\n\rexpire"
+    "_tx_ids\030\001 \003(\005\022\024\n\014error_tx_ids\030\002 \003(\005\022\025\n\rd"
+    "roped_tx_ids\030\003 \003(\005\"\203\002\n\016ConsensusValue\022*\n"
+    "\005txset\030\001 \001(\0132\033.protocol.TransactionEnvSe"
+    "t\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016previous_proof\030"
+    "\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024previous_le"
+    "dger_hash\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001(\0132"
+    "\027.protocol.LedgerUpgrade\0226\n\nvalidation\030\007"
+    " \001(\0132\".protocol.ConsensusValueValidation"
+    "\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037.protocol.Co"
+    "ntract.ContractType\022\017\n\007payload\030\002 \001(\t\"\036\n\014"
+    "ContractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026Operati"
+    "onCreateAccount\022\024\n\014dest_address\030\001 \001(\t\022$\n"
+    "\010contract\030\002 \001(\0132\022.protocol.Contract\022(\n\004p"
+    "riv\030\003 \001(\0132\032.protocol.AccountPrivilege\022$\n"
+    "\tmetadatas\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014i"
+    "nit_balance\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n"
+    "\024OperationSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005va"
+    "lue\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_fla"
+    "g\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATU"
+    "RE\020dB\035\n\033cn.bumo.blockchain.adapter3b\006pro"
+    "to3", 3843);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -832,6 +861,7 @@ void protobuf_AddDesc_chain_2eproto() {
   TransactionEnv::default_instance_ = new TransactionEnv();
   TransactionEnvStore::default_instance_ = new TransactionEnvStore();
   TransactionEnvSet::default_instance_ = new TransactionEnvSet();
+  ConsensusValueValidation::default_instance_ = new ConsensusValueValidation();
   ConsensusValue::default_instance_ = new ConsensusValue();
   Contract::default_instance_ = new Contract();
   OperationCreateAccount::default_instance_ = new OperationCreateAccount();
@@ -858,6 +888,7 @@ void protobuf_AddDesc_chain_2eproto() {
   TransactionEnv::default_instance_->InitAsDefaultInstance();
   TransactionEnvStore::default_instance_->InitAsDefaultInstance();
   TransactionEnvSet::default_instance_->InitAsDefaultInstance();
+  ConsensusValueValidation::default_instance_->InitAsDefaultInstance();
   ConsensusValue::default_instance_->InitAsDefaultInstance();
   Contract::default_instance_->InitAsDefaultInstance();
   OperationCreateAccount::default_instance_->InitAsDefaultInstance();
@@ -10984,12 +11015,477 @@ TransactionEnvSet::txs() const {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ConsensusValueValidation::kExpireTxIdsFieldNumber;
+const int ConsensusValueValidation::kErrorTxIdsFieldNumber;
+const int ConsensusValueValidation::kDropedTxIdsFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+ConsensusValueValidation::ConsensusValueValidation()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.ConsensusValueValidation)
+}
+
+void ConsensusValueValidation::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+ConsensusValueValidation::ConsensusValueValidation(const ConsensusValueValidation& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.ConsensusValueValidation)
+}
+
+void ConsensusValueValidation::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+}
+
+ConsensusValueValidation::~ConsensusValueValidation() {
+  // @@protoc_insertion_point(destructor:protocol.ConsensusValueValidation)
+  SharedDtor();
+}
+
+void ConsensusValueValidation::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void ConsensusValueValidation::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ConsensusValueValidation::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ConsensusValueValidation_descriptor_;
+}
+
+const ConsensusValueValidation& ConsensusValueValidation::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_chain_2eproto();
+  return *default_instance_;
+}
+
+ConsensusValueValidation* ConsensusValueValidation::default_instance_ = NULL;
+
+ConsensusValueValidation* ConsensusValueValidation::New(::google::protobuf::Arena* arena) const {
+  ConsensusValueValidation* n = new ConsensusValueValidation;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void ConsensusValueValidation::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.ConsensusValueValidation)
+  expire_tx_ids_.Clear();
+  error_tx_ids_.Clear();
+  droped_tx_ids_.Clear();
+}
+
+bool ConsensusValueValidation::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.ConsensusValueValidation)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated int32 expire_tx_ids = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, this->mutable_expire_tx_ids())));
+        } else if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 1, 10, input, this->mutable_expire_tx_ids())));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_error_tx_ids;
+        break;
+      }
+
+      // repeated int32 error_tx_ids = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_error_tx_ids:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, this->mutable_error_tx_ids())));
+        } else if (tag == 16) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 1, 18, input, this->mutable_error_tx_ids())));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(26)) goto parse_droped_tx_ids;
+        break;
+      }
+
+      // repeated int32 droped_tx_ids = 3;
+      case 3: {
+        if (tag == 26) {
+         parse_droped_tx_ids:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, this->mutable_droped_tx_ids())));
+        } else if (tag == 24) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 1, 26, input, this->mutable_droped_tx_ids())));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.ConsensusValueValidation)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.ConsensusValueValidation)
+  return false;
+#undef DO_
+}
+
+void ConsensusValueValidation::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.ConsensusValueValidation)
+  // repeated int32 expire_tx_ids = 1;
+  if (this->expire_tx_ids_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(1, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_expire_tx_ids_cached_byte_size_);
+  }
+  for (int i = 0; i < this->expire_tx_ids_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32NoTag(
+      this->expire_tx_ids(i), output);
+  }
+
+  // repeated int32 error_tx_ids = 2;
+  if (this->error_tx_ids_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(2, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_error_tx_ids_cached_byte_size_);
+  }
+  for (int i = 0; i < this->error_tx_ids_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32NoTag(
+      this->error_tx_ids(i), output);
+  }
+
+  // repeated int32 droped_tx_ids = 3;
+  if (this->droped_tx_ids_size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteTag(3, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
+    output->WriteVarint32(_droped_tx_ids_cached_byte_size_);
+  }
+  for (int i = 0; i < this->droped_tx_ids_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32NoTag(
+      this->droped_tx_ids(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.ConsensusValueValidation)
+}
+
+::google::protobuf::uint8* ConsensusValueValidation::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.ConsensusValueValidation)
+  // repeated int32 expire_tx_ids = 1;
+  if (this->expire_tx_ids_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      1,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+      _expire_tx_ids_cached_byte_size_, target);
+  }
+  for (int i = 0; i < this->expire_tx_ids_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteInt32NoTagToArray(this->expire_tx_ids(i), target);
+  }
+
+  // repeated int32 error_tx_ids = 2;
+  if (this->error_tx_ids_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      2,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+      _error_tx_ids_cached_byte_size_, target);
+  }
+  for (int i = 0; i < this->error_tx_ids_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteInt32NoTagToArray(this->error_tx_ids(i), target);
+  }
+
+  // repeated int32 droped_tx_ids = 3;
+  if (this->droped_tx_ids_size() > 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
+      3,
+      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
+      target);
+    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
+      _droped_tx_ids_cached_byte_size_, target);
+  }
+  for (int i = 0; i < this->droped_tx_ids_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteInt32NoTagToArray(this->droped_tx_ids(i), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.ConsensusValueValidation)
+  return target;
+}
+
+int ConsensusValueValidation::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.ConsensusValueValidation)
+  int total_size = 0;
+
+  // repeated int32 expire_tx_ids = 1;
+  {
+    int data_size = 0;
+    for (int i = 0; i < this->expire_tx_ids_size(); i++) {
+      data_size += ::google::protobuf::internal::WireFormatLite::
+        Int32Size(this->expire_tx_ids(i));
+    }
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
+    }
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _expire_tx_ids_cached_byte_size_ = data_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated int32 error_tx_ids = 2;
+  {
+    int data_size = 0;
+    for (int i = 0; i < this->error_tx_ids_size(); i++) {
+      data_size += ::google::protobuf::internal::WireFormatLite::
+        Int32Size(this->error_tx_ids(i));
+    }
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
+    }
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _error_tx_ids_cached_byte_size_ = data_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  // repeated int32 droped_tx_ids = 3;
+  {
+    int data_size = 0;
+    for (int i = 0; i < this->droped_tx_ids_size(); i++) {
+      data_size += ::google::protobuf::internal::WireFormatLite::
+        Int32Size(this->droped_tx_ids(i));
+    }
+    if (data_size > 0) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
+    }
+    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+    _droped_tx_ids_cached_byte_size_ = data_size;
+    GOOGLE_SAFE_CONCURRENT_WRITES_END();
+    total_size += data_size;
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ConsensusValueValidation::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.ConsensusValueValidation)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const ConsensusValueValidation* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const ConsensusValueValidation>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.ConsensusValueValidation)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.ConsensusValueValidation)
+    MergeFrom(*source);
+  }
+}
+
+void ConsensusValueValidation::MergeFrom(const ConsensusValueValidation& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.ConsensusValueValidation)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  expire_tx_ids_.MergeFrom(from.expire_tx_ids_);
+  error_tx_ids_.MergeFrom(from.error_tx_ids_);
+  droped_tx_ids_.MergeFrom(from.droped_tx_ids_);
+}
+
+void ConsensusValueValidation::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.ConsensusValueValidation)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ConsensusValueValidation::CopyFrom(const ConsensusValueValidation& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.ConsensusValueValidation)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ConsensusValueValidation::IsInitialized() const {
+
+  return true;
+}
+
+void ConsensusValueValidation::Swap(ConsensusValueValidation* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void ConsensusValueValidation::InternalSwap(ConsensusValueValidation* other) {
+  expire_tx_ids_.UnsafeArenaSwap(&other->expire_tx_ids_);
+  error_tx_ids_.UnsafeArenaSwap(&other->error_tx_ids_);
+  droped_tx_ids_.UnsafeArenaSwap(&other->droped_tx_ids_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata ConsensusValueValidation::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ConsensusValueValidation_descriptor_;
+  metadata.reflection = ConsensusValueValidation_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// ConsensusValueValidation
+
+// repeated int32 expire_tx_ids = 1;
+int ConsensusValueValidation::expire_tx_ids_size() const {
+  return expire_tx_ids_.size();
+}
+void ConsensusValueValidation::clear_expire_tx_ids() {
+  expire_tx_ids_.Clear();
+}
+ ::google::protobuf::int32 ConsensusValueValidation::expire_tx_ids(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.expire_tx_ids)
+  return expire_tx_ids_.Get(index);
+}
+ void ConsensusValueValidation::set_expire_tx_ids(int index, ::google::protobuf::int32 value) {
+  expire_tx_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.expire_tx_ids)
+}
+ void ConsensusValueValidation::add_expire_tx_ids(::google::protobuf::int32 value) {
+  expire_tx_ids_.Add(value);
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.expire_tx_ids)
+}
+ const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ConsensusValueValidation::expire_tx_ids() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.expire_tx_ids)
+  return expire_tx_ids_;
+}
+ ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ConsensusValueValidation::mutable_expire_tx_ids() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.expire_tx_ids)
+  return &expire_tx_ids_;
+}
+
+// repeated int32 error_tx_ids = 2;
+int ConsensusValueValidation::error_tx_ids_size() const {
+  return error_tx_ids_.size();
+}
+void ConsensusValueValidation::clear_error_tx_ids() {
+  error_tx_ids_.Clear();
+}
+ ::google::protobuf::int32 ConsensusValueValidation::error_tx_ids(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.error_tx_ids)
+  return error_tx_ids_.Get(index);
+}
+ void ConsensusValueValidation::set_error_tx_ids(int index, ::google::protobuf::int32 value) {
+  error_tx_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.error_tx_ids)
+}
+ void ConsensusValueValidation::add_error_tx_ids(::google::protobuf::int32 value) {
+  error_tx_ids_.Add(value);
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.error_tx_ids)
+}
+ const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ConsensusValueValidation::error_tx_ids() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.error_tx_ids)
+  return error_tx_ids_;
+}
+ ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ConsensusValueValidation::mutable_error_tx_ids() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.error_tx_ids)
+  return &error_tx_ids_;
+}
+
+// repeated int32 droped_tx_ids = 3;
+int ConsensusValueValidation::droped_tx_ids_size() const {
+  return droped_tx_ids_.size();
+}
+void ConsensusValueValidation::clear_droped_tx_ids() {
+  droped_tx_ids_.Clear();
+}
+ ::google::protobuf::int32 ConsensusValueValidation::droped_tx_ids(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.droped_tx_ids)
+  return droped_tx_ids_.Get(index);
+}
+ void ConsensusValueValidation::set_droped_tx_ids(int index, ::google::protobuf::int32 value) {
+  droped_tx_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.droped_tx_ids)
+}
+ void ConsensusValueValidation::add_droped_tx_ids(::google::protobuf::int32 value) {
+  droped_tx_ids_.Add(value);
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.droped_tx_ids)
+}
+ const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ConsensusValueValidation::droped_tx_ids() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.droped_tx_ids)
+  return droped_tx_ids_;
+}
+ ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ConsensusValueValidation::mutable_droped_tx_ids() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.droped_tx_ids)
+  return &droped_tx_ids_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ConsensusValue::kTxsetFieldNumber;
 const int ConsensusValue::kCloseTimeFieldNumber;
 const int ConsensusValue::kPreviousProofFieldNumber;
 const int ConsensusValue::kLedgerSeqFieldNumber;
 const int ConsensusValue::kPreviousLedgerHashFieldNumber;
 const int ConsensusValue::kLedgerUpgradeFieldNumber;
+const int ConsensusValue::kValidationFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ConsensusValue::ConsensusValue()
@@ -11002,6 +11498,7 @@ void ConsensusValue::InitAsDefaultInstance() {
   _is_default_instance_ = true;
   txset_ = const_cast< ::protocol::TransactionEnvSet*>(&::protocol::TransactionEnvSet::default_instance());
   ledger_upgrade_ = const_cast< ::protocol::LedgerUpgrade*>(&::protocol::LedgerUpgrade::default_instance());
+  validation_ = const_cast< ::protocol::ConsensusValueValidation*>(&::protocol::ConsensusValueValidation::default_instance());
 }
 
 ConsensusValue::ConsensusValue(const ConsensusValue& from)
@@ -11022,6 +11519,7 @@ void ConsensusValue::SharedCtor() {
   ledger_seq_ = GOOGLE_LONGLONG(0);
   previous_ledger_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ledger_upgrade_ = NULL;
+  validation_ = NULL;
 }
 
 ConsensusValue::~ConsensusValue() {
@@ -11035,6 +11533,7 @@ void ConsensusValue::SharedDtor() {
   if (this != default_instance_) {
     delete txset_;
     delete ledger_upgrade_;
+    delete validation_;
   }
 }
 
@@ -11073,6 +11572,8 @@ void ConsensusValue::Clear() {
   previous_ledger_hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && ledger_upgrade_ != NULL) delete ledger_upgrade_;
   ledger_upgrade_ = NULL;
+  if (GetArenaNoVirtual() == NULL && validation_ != NULL) delete validation_;
+  validation_ = NULL;
 }
 
 bool ConsensusValue::MergePartialFromCodedStream(
@@ -11162,6 +11663,19 @@ bool ConsensusValue::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(58)) goto parse_validation;
+        break;
+      }
+
+      // optional .protocol.ConsensusValueValidation validation = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_validation:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_validation()));
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -11224,6 +11738,12 @@ void ConsensusValue::SerializeWithCachedSizes(
       6, *this->ledger_upgrade_, output);
   }
 
+  // optional .protocol.ConsensusValueValidation validation = 7;
+  if (this->has_validation()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      7, *this->validation_, output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.ConsensusValue)
 }
 
@@ -11266,6 +11786,13 @@ void ConsensusValue::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         6, *this->ledger_upgrade_, false, target);
+  }
+
+  // optional .protocol.ConsensusValueValidation validation = 7;
+  if (this->has_validation()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        7, *this->validation_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.ConsensusValue)
@@ -11318,6 +11845,13 @@ int ConsensusValue::ByteSize() const {
         *this->ledger_upgrade_);
   }
 
+  // optional .protocol.ConsensusValueValidation validation = 7;
+  if (this->has_validation()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->validation_);
+  }
+
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -11366,6 +11900,9 @@ void ConsensusValue::MergeFrom(const ConsensusValue& from) {
   if (from.has_ledger_upgrade()) {
     mutable_ledger_upgrade()->::protocol::LedgerUpgrade::MergeFrom(from.ledger_upgrade());
   }
+  if (from.has_validation()) {
+    mutable_validation()->::protocol::ConsensusValueValidation::MergeFrom(from.validation());
+  }
 }
 
 void ConsensusValue::CopyFrom(const ::google::protobuf::Message& from) {
@@ -11398,6 +11935,7 @@ void ConsensusValue::InternalSwap(ConsensusValue* other) {
   std::swap(ledger_seq_, other->ledger_seq_);
   previous_ledger_hash_.Swap(&other->previous_ledger_hash_);
   std::swap(ledger_upgrade_, other->ledger_upgrade_);
+  std::swap(validation_, other->validation_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -11603,6 +12141,44 @@ void ConsensusValue::set_allocated_ledger_upgrade(::protocol::LedgerUpgrade* led
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.ConsensusValue.ledger_upgrade)
+}
+
+// optional .protocol.ConsensusValueValidation validation = 7;
+bool ConsensusValue::has_validation() const {
+  return !_is_default_instance_ && validation_ != NULL;
+}
+void ConsensusValue::clear_validation() {
+  if (GetArenaNoVirtual() == NULL && validation_ != NULL) delete validation_;
+  validation_ = NULL;
+}
+const ::protocol::ConsensusValueValidation& ConsensusValue::validation() const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValue.validation)
+  return validation_ != NULL ? *validation_ : *default_instance_->validation_;
+}
+::protocol::ConsensusValueValidation* ConsensusValue::mutable_validation() {
+  
+  if (validation_ == NULL) {
+    validation_ = new ::protocol::ConsensusValueValidation;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.ConsensusValue.validation)
+  return validation_;
+}
+::protocol::ConsensusValueValidation* ConsensusValue::release_validation() {
+  // @@protoc_insertion_point(field_release:protocol.ConsensusValue.validation)
+  
+  ::protocol::ConsensusValueValidation* temp = validation_;
+  validation_ = NULL;
+  return temp;
+}
+void ConsensusValue::set_allocated_validation(::protocol::ConsensusValueValidation* validation) {
+  delete validation_;
+  validation_ = validation;
+  if (validation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.ConsensusValue.validation)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

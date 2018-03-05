@@ -37,20 +37,20 @@ namespace bumo {
 		LedgerContextManager *lpmanager_;
 		int64_t start_time_;
 
+		LedgerFrm::APPLY_MODE apply_mode_;
+
 		Json::Value logs_;
 		Json::Value rets_;
 	public:
 		LedgerContext(
 			LedgerContextManager *lpmanager,
 			const std::string &chash, 
-			const protocol::ConsensusValue &consvalue, 
-			int64_t tx_timeout,
-			PreProcessCallback callback);
+			const protocol::ConsensusValue &consvalue,
+			bool propose);
 
 		LedgerContext(
 			const std::string &chash, 
-			const protocol::ConsensusValue &consvalue, 
-			int64_t tx_timeout);
+			const protocol::ConsensusValue &consvalue);
 
 		//for test
 		LedgerContext(
@@ -60,6 +60,7 @@ namespace bumo {
 			int32_t type,
 			const protocol::ConsensusValue &consensus_value,
 			int64_t timeout);
+
 		~LedgerContext();
 
 		enum ACTION_TYPE{
@@ -70,8 +71,6 @@ namespace bumo {
 		};
 
 		protocol::ConsensusValue consensus_value_;
-		bool sync_;
-		PreProcessCallback callback_;
 		int64_t tx_timeout_;
 
 		LedgerFrm::pointer closing_ledger_;
@@ -80,6 +79,7 @@ namespace bumo {
 		//result
 		bool exe_result_;
 		int32_t timeout_tx_index_;
+		protocol::ConsensusValueValidation consvalue_validation_;
 
 		utils::Mutex lock_;
 
@@ -141,10 +141,11 @@ namespace bumo {
 
 		//<0 : notfound 1: found and success 0: found and failed
 		int32_t CheckComplete(const std::string &chash);
-		bool SyncPreProcess(const protocol::ConsensusValue& consensus_value, int64_t timeout, int32_t &timeout_tx_index);
+		bool SyncPreProcess(const protocol::ConsensusValue& consensus_value, bool propose, bool &block_timeout,
+			protocol::ConsensusValueValidation &validation);
 
 		//<0 : processing 1: found and success 0: found and failed
-		int32_t AsyncPreProcess(const protocol::ConsensusValue& consensus_value, int64_t timeout, PreProcessCallback callback, int32_t &timeout_tx_index);
+//		int32_t AsyncPreProcess(const protocol::ConsensusValue& consensus_value, int64_t timeout, PreProcessCallback callback, int32_t &timeout_tx_index);
 		LedgerFrm::pointer SyncProcess(const protocol::ConsensusValue& consensus_value); //for ledger closing
 	};
 

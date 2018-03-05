@@ -80,6 +80,8 @@ namespace bumo {
 			return transaction_env_;
 		}
 
+		void ApplyExpireResult(); // for sync node
+
 		bool ValidForParameter();
 		
 		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);

@@ -167,54 +167,31 @@ namespace bumo {
 				}
 			}
 
-			int32_t timeout_tx_index = -1;
-			if (LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, 5 * utils::MICRO_UNITS_PER_SEC, timeout_tx_index)) {
-				break;
-			}
+			bool block_time_out = false;
+			protocol::ConsensusValueValidation cons_validation;
+			LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, true, block_time_out, cons_validation);
 
-			if(timeout_tx_index < 0) break;
-
-			const protocol::TransactionEnv &tx_env = txset_raw.txs(timeout_tx_index);
-			TransactionFrm frm(tx_env);
-			LOG_ERROR("Pre processor detect tx(%s) source(%s) nonce(" FMT_I64 ") nostop", 
-				utils::String::Bin4ToHexString(frm.GetContentHash()).c_str(),
-				frm.GetSourceAddress().c_str(),
-				frm.GetNonce());
-
-			//remove the tx from cache
-			std::vector<TransactionFrm::pointer> err_txs;
-			do {
-				utils::MutexGuard guard(lock_);
-				for (TransactionMap::iterator iter = topic_caches_.begin();
-					iter != topic_caches_.end(); iter++) {
-					if (iter->first.GetTopic() == frm.GetSourceAddress() && iter->second->GetNonce() == frm.GetNonce()) {
-						err_txs.push_back(iter->second);
-						topic_caches_.erase(iter);
-						break;
-					}
+			if (block_time_out) {
+				//remove the time out tx
+				//reduct to 1/2
+				protocol::TransactionEnvSet tmp_raw;
+				for (int32_t i = 0; i < txset_raw.txs_size() / 2; i ++) {
+					*tmp_raw.add_txs() = txset_raw.txs(i);
 				}
-			} while (false);
 
-			//notice
-			if (err_txs.size() > 0) {
-				NotifyErrTx(err_txs);
+				txset_raw = tmp_raw;
 			}
 
-			//erase the tx, than continue check
-			protocol::TransactionEnvSet txset_raw_next;
-
-			for (int32_t i = 0; i < txset_raw.txs_size(); i++) {
-				const protocol::TransactionEnv &tmp = txset_raw.txs(i);
-				const protocol::Transaction &tmp_tx = tmp.transaction();
-				if (tmp_tx.source_address() == frm.GetSourceAddress() && tmp_tx.nonce() >= frm.GetNonce()) {
-					continue;
-				} else{
-					*txset_raw_next.add_txs() = tmp;
-				}
+			if (cons_validation.droped_tx_ids_size() > 0 ||
+				cons_validation.error_tx_ids_size() > 0 ||
+				cons_validation.expire_tx_ids_size() > 0 ) {
+				*propose_value.mutable_validation() = cons_validation;
 			}
 
-			txset_raw = txset_raw_next;
+			LOG_INFO("Check validation, validation(%d,%d,%d) ",
+				cons_validation.expire_tx_ids_size(), cons_validation.droped_tx_ids_size(), cons_validation.error_tx_ids_size());
 
+			break;
 		} while (true);
 
 		LOG_INFO("Proposed %d tx(s), lcl hash(%s), removed " FMT_SIZE " tx(s)", propose_value.txset().txs_size(),
@@ -431,10 +408,12 @@ namespace bumo {
 			return check_helper_ret;
 		}
 
-		int32_t timeout_index;
+		bool time_out;
+		protocol::ConsensusValueValidation ignor_cons_validation;
 		if (!LedgerManager::Instance().context_manager_.SyncPreProcess(consensus_value,
-			5 * utils::MICRO_UNITS_PER_SEC,
-			timeout_index)) {
+			false,
+			time_out,
+			ignor_cons_validation)) {
 			LOG_ERROR("Pre process consvalue failed");
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}

@@ -192,6 +192,13 @@ message TransactionEnvSet{
 	repeated TransactionEnv txs = 2;
 }
 
+message ConsensusValueValidation {
+	repeated int32 expire_tx_ids = 1;  //contract execute expired
+	repeated int32 error_tx_ids = 2;
+	repeated int32 droped_tx_ids = 3; 
+	//may contain other check
+}
+
 message ConsensusValue{
 	TransactionEnvSet txset = 1;
 	int64 close_time = 2;
@@ -199,6 +206,7 @@ message ConsensusValue{
 	int64 ledger_seq = 4;
 	bytes previous_ledger_hash = 5;
 	LedgerUpgrade ledger_upgrade = 6;
+	ConsensusValueValidation validation = 7;
 }
 
 message Contract{

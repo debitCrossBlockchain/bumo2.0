@@ -135,10 +135,105 @@ namespace bumo {
 		return true;
 	}
 
+	bool LedgerFrm::CheckConsValueValidation(const protocol::ConsensusValue& request,
+		APPLY_MODE propose_mode,
+		std::set<int32_t> &expire_txs_status,
+		std::set<int32_t> &droped_txs_status,
+		std::set<int32_t> &error_txs_status) {
+		
+		if (propose_mode == APPLY_MODE_PROPOSE) {
+			if (request.has_validation()) {
+				LOG_ERROR("Propose value can't hav validation object, consvalue(seq:" FMT_I64 ")", request.ledger_seq());
+			}
+
+			return !request.has_validation();
+		}
+
+		if (!request.has_validation()) {
+			return true;
+		}
+
+		std::set<int32_t> totol_error;
+		int32_t tx_size = request.txset().txs_size();
+		const protocol::ConsensusValueValidation &validation = request.validation();
+		for (int32_t i = 0; i < validation.expire_tx_ids_size(); i++) {
+			int32_t tid = validation.expire_tx_ids(i);
+			if (tid >= tx_size || tid < 0) {
+				LOG_ERROR("Propose value expire id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
+					tid, tx_size, request.ledger_seq());
+				return false;
+			}
+			expire_txs_status.insert(tid);
+
+			if (totol_error.find(tid) != totol_error.end()){
+				LOG_ERROR("Propose value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
+				return false;
+			}
+
+			totol_error.insert(tid);
+		}
+
+		for (int32_t i = 0; i < validation.droped_tx_ids_size(); i++) {
+			int32_t tid = validation.droped_tx_ids(i);
+			if (tid >= tx_size || tid < 0) {
+				LOG_ERROR("Propose value droped id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
+					tid, tx_size, request.ledger_seq());
+				return false;
+			}
+			droped_txs_status.insert(validation.droped_tx_ids(i));
+
+			if (totol_error.find(tid) != totol_error.end()) {
+				LOG_ERROR("Propose value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
+				return false;
+			}
+			totol_error.insert(tid);
+		}
+
+		for (int32_t i = 0; i < validation.error_tx_ids_size(); i++) {
+			int32_t tid = validation.error_tx_ids(i);
+			if (tid >= tx_size || tid < 0) {
+				LOG_ERROR("Propose value error id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
+					tid, tx_size, request.ledger_seq());
+				return false;
+			}
+			error_txs_status.insert(validation.error_tx_ids(i));
+
+			if (totol_error.find(tid) != totol_error.end()) {
+				LOG_ERROR("Propose value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
+				return false;
+			}
+			totol_error.insert(tid);
+		}
+
+		return true;
+	}
+
+	void LedgerFrm::SetValidationToProto(std::set<int32_t> expire_txs,
+		std::set<int32_t> droped_txs,
+		std::set<int32_t> error_txs,
+		protocol::ConsensusValueValidation &validation) {
+		for (std::set<int32_t>::iterator iter = expire_txs.begin();
+			iter != expire_txs.end();
+			iter++) {
+			validation.add_expire_tx_ids(*iter);
+		}
+		for (std::set<int32_t>::iterator iter = droped_txs.begin();
+			iter != droped_txs.end();
+			iter++) {
+			validation.add_droped_tx_ids(*iter);
+		}
+		for (std::set<int32_t>::iterator iter = error_txs.begin();
+			iter != error_txs.end();
+			iter++) {
+			validation.add_error_tx_ids(*iter);
+		}
+	}
+
 	bool LedgerFrm::Apply(const protocol::ConsensusValue& request,
 		LedgerContext *ledger_context,
-		int64_t tx_time_out,
-		int32_t &tx_time_out_index) {
+		int32_t &tx_time_out_index,
+		APPLY_MODE propose_mode,
+		protocol::ConsensusValueValidation &validation) {
 
 		int64_t start_time = utils::Timestamp::HighResolution();
 		lpledger_context_ = ledger_context;
@@ -149,6 +244,15 @@ namespace bumo {
 		total_real_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
+		//init the txs map
+		std::set<int32_t> expire_txs_check, droped_txs_check, error_txs_check;
+		std::set<int32_t> expire_txs, droped_txs, error_txs;
+		if (!CheckConsValueValidation(request, propose_mode, expire_txs_check, droped_txs_check, error_txs_check)) {
+			LOG_ERROR("Check consensus value validation failed,consvalue(seq:" FMT_I64 ")", request.ledger_seq());
+			return false;
+		}
+
+		std::map<int32_t, int32_t> this_txs_check;
 		for (int i = 0; i < request.txset().txs_size() && enabled_; i++) {
 			auto txproto = request.txset().txs(i);
 			
@@ -156,12 +260,14 @@ namespace bumo {
 
 			if (!tx_frm->ValidForApply(environment_,!IsTestMode())){
 				dropped_tx_frms_.push_back(tx_frm);
+				droped_txs.insert(i); //for check
 				continue;
 			}
 
 			//pay fee
 			if (!tx_frm->PayFee(environment_, total_fee_)) {
 				dropped_tx_frms_.push_back(tx_frm);
+				droped_txs.insert(i);//for check
 				continue;
 			}
 
@@ -170,29 +276,36 @@ namespace bumo {
 			if (environment_->useAtomMap_)
 				environment_->Commit();
 
-			if (tx_time_out > 0 ) {
+			if (propose_mode == APPLY_MODE_PROPOSE ||
+				propose_mode == APPLY_MODE_CHECK) {
 				tx_frm->EnableChecked();
-				tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + tx_time_out);
+				tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 			} 
 
-			bool ret = tx_frm->Apply(this, environment_);
-
-			//caculate byte fee ,do not store when fee not enough 
-			std::string error_info;
-			if (tx_frm->IsExpire(error_info)) { //special treatment, return false
-				LOG_ERROR("transaction(%s) apply failed. %s, %s",
-					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-					error_info.c_str());
-				tx_time_out_index = i;
-				return false;
-			}else {
-				if (!ret ) {
-					LOG_ERROR("transaction(%s) apply failed. %s",
-						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
-					tx_time_out_index = i;
+			if (propose_mode == APPLY_MODE_FOLLOW && expire_txs_check.find(i) != expire_txs_check.end()) {
+				// follow the consensus value and do not apply
+				tx_frm->AddRealFee(tx_frm->GetSelfByteFee());
+				tx_frm->ApplyExpireResult();
+			}
+			else {
+				bool ret = tx_frm->Apply(this, environment_);
+				//caculate byte fee ,do not store when fee not enough 
+				std::string error_info;
+				if (tx_frm->IsExpire(error_info)) {
+					LOG_ERROR("transaction(%s) apply failed. %s, %s",
+						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
+						error_info.c_str());
+					expire_txs.insert(i);//for check
 				}
 				else {
-					tx_frm->environment_->Commit();
+					if (!ret) {
+						LOG_ERROR("transaction(%s) apply failed. %s",
+							utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
+						error_txs.insert(i);//for check
+					}
+					else {
+						tx_frm->environment_->Commit();
+					}
 				}
 			}
 
@@ -201,9 +314,37 @@ namespace bumo {
 			apply_tx_frms_.push_back(tx_frm);			
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
+
+			if ((propose_mode == propose_mode == APPLY_MODE_PROPOSE ||
+				propose_mode == APPLY_MODE_CHECK) &&
+				utils::Timestamp::HighResolution() - start_time > General::BLOCK_EXECUTE_TIME_OUT) {
+				LOG_ERROR("Block apply time timeout(" FMT_I64 ") ", utils::Timestamp::HighResolution() - start_time);
+				return false;
+			} 
 		}
 		AllocateReward();
 		apply_time_ = utils::Timestamp::HighResolution() - start_time;
+
+		if (propose_mode == APPLY_MODE_PROPOSE) {
+			SetValidationToProto(expire_txs, droped_txs, error_txs, validation);
+		}
+		else if (propose_mode == APPLY_MODE_CHECK) {
+			bool ret = (expire_txs == expire_txs_check &&
+				droped_txs == droped_txs_check &&
+				error_txs == error_txs_check);
+			if (!ret) {
+				LOG_ERROR("Check validation failed this size(%d,%d,%d), check size(%d,%d,%d) ",
+					expire_txs.size(), droped_txs.size(), error_txs.size(),
+					expire_txs_check.size(), droped_txs_check.size(), error_txs_check.size());
+			}
+			return ret;
+		}
+
+	//	LOG_INFO("Check validation this size(%d,%d,%d), check size(%d,%d,%d), validation(%d,%d,%d) ",
+	//		expire_txs.size(), droped_txs.size(), error_txs.size(),
+	//		expire_txs_check.size(), droped_txs_check.size(), error_txs_check.size(),
+	//		validation.expire_tx_ids_size(), validation.droped_tx_ids_size(), validation.error_tx_ids_size());
+		//check
 		return true;
 	}
 
