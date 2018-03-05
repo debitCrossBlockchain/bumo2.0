@@ -642,14 +642,26 @@ namespace bumo {
 		// notice applied
 		for (size_t i = 0; i < closing_ledger->apply_tx_frms_.size(); i++) {
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
-			WebSocketServer::Instance().BroadcastChainTxMsg(tx->GetContentHash(), tx->GetSourceAddress(),
-				tx->GetResult(), tx->GetResult().code() == protocol::ERRCODE_SUCCESS ? protocol::ChainTxStatus_TxStatus_COMPLETE : protocol::ChainTxStatus_TxStatus_FAILURE);
+			protocol::TransactionEnvStore applyTxMsg;
+			*applyTxMsg.mutable_transaction_env() = closing_ledger->apply_tx_frms_[i]->GetTransactionEnv();
+			applyTxMsg.set_ledger_seq(closing_ledger->GetProtoHeader().seq());
+			applyTxMsg.set_close_time(closing_ledger->GetProtoHeader().close_time());
+			applyTxMsg.set_error_code(tx->GetResult().code());
+			applyTxMsg.set_error_desc(tx->GetResult().desc());
+			applyTxMsg.set_hash(tx->GetContentHash());
+			WebSocketServer::Instance().BroadcastChainTxMsg(applyTxMsg);
 		}
 		// notice dropped
 		for (size_t i = 0; i < closing_ledger->dropped_tx_frms_.size(); i++) {
 			TransactionFrm::pointer tx = closing_ledger->dropped_tx_frms_[i];
-			WebSocketServer::Instance().BroadcastChainTxMsg(tx->GetContentHash(), tx->GetSourceAddress(),
-				tx->GetResult(), tx->GetResult().code() == protocol::ERRCODE_SUCCESS ? protocol::ChainTxStatus_TxStatus_COMPLETE : protocol::ChainTxStatus_TxStatus_FAILURE);
+			protocol::TransactionEnvStore dropTxMsg;
+			*dropTxMsg.mutable_transaction_env() = closing_ledger->dropped_tx_frms_[i]->GetTransactionEnv();
+			dropTxMsg.set_ledger_seq(closing_ledger->GetProtoHeader().seq());
+			dropTxMsg.set_close_time(closing_ledger->GetProtoHeader().close_time());
+			dropTxMsg.set_error_code(tx->GetResult().code());
+			dropTxMsg.set_error_desc(tx->GetResult().desc());
+			dropTxMsg.set_hash(tx->GetContentHash());
+			WebSocketServer::Instance().BroadcastChainTxMsg(dropTxMsg);
 		}
 
 		// monitor

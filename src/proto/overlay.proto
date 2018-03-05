@@ -102,6 +102,8 @@ enum ChainMessageType {
 	CHAIN_PEER_MESSAGE = 14;
 	CHAIN_SUBMITTRANSACTION = 15;
 	CHAIN_LEDGER_HEADER = 16; //bumo notify the client ledger(protocol::LedgerHeader) when closed
+	CHAIN_SUBSCRIPTION = 17;
+	CHAIN_TX_ENV_STORE = 18;
 }
 
 //register notification events
@@ -125,6 +127,10 @@ message ChainPeerMessage {
 	string src_peer_addr = 1; 
 	repeated string des_peer_addrs = 2; 
 	bytes	data = 3;		
+}
+
+message ChainSubscription{
+	string address = 1;
 }
 
 message ChainTxStatus {

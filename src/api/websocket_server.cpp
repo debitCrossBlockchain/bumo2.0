@@ -32,7 +32,7 @@ namespace bumo {
 		request_methods_[protocol::CHAIN_HELLO] = std::bind(&WebSocketServer::OnChainHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_PEER_MESSAGE] = std::bind(&WebSocketServer::OnChainPeerMessage, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_SUBMITTRANSACTION] = std::bind(&WebSocketServer::OnSubmitTransaction, this, std::placeholders::_1, std::placeholders::_2);
-
+		request_methods_[protocol::CHAIN_SUBSCRIPTION] = std::bind(&WebSocketServer::OnSubscription, this, std::placeholders::_1, std::placeholders::_2);
 		thread_ptr_ = NULL;
 	}
 
@@ -101,6 +101,44 @@ namespace bumo {
 		return true;
 	}
 
+	bool WebSocketServer::FilterByAddress(std::string address, protocol::TransactionEnvStore& txMsg){
+		if (address.empty()){
+			return true;
+		}
+
+		auto trans = txMsg.transaction_env().transaction();
+		if (trans.source_address() == address){
+			return true;
+		}
+
+		unsigned len = trans.operations().size();
+		for (unsigned i = 0; i < len; i++)
+		{
+			auto ope = trans.mutable_operations(i);
+			if (ope->source_address() == address){
+				return true;
+			}
+
+			if (ope->type() == protocol::Operation_Type_CREATE_ACCOUNT){
+				if (ope->create_account().dest_address() == address){
+					return true;
+				}
+			}
+			else if (ope->type() == protocol::Operation_Type_PAY_COIN){
+				if (ope->payment().dest_address() == address){
+					return true;
+				}
+			}
+			else if (ope->type() == protocol::Operation_Type_PAYMENT){
+				if (ope->pay_coin().dest_address() == address){
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	void WebSocketServer::BroadcastMsg(int64_t type, const std::string &data) {
 		utils::MutexGuard guard(conns_list_lock_);
 
@@ -112,17 +150,23 @@ namespace bumo {
 		}
 	}
 
-
-	void WebSocketServer::BroadcastChainTxMsg(const std::string &hash, const std::string &source_address, Result result, protocol::ChainTxStatus_TxStatus status) {
-		protocol::ChainTxStatus cts;
-		cts.set_tx_hash(utils::String::BinToHexString(hash));
-		cts.set_source_address(source_address);
-		cts.set_error_code((protocol::ERRORCODE)result.code());
-		cts.set_error_desc(result.desc());
-		cts.set_status(status);
-		cts.set_timestamp(utils::Timestamp::Now().timestamp());
-		std::string str = cts.SerializeAsString();
+	void WebSocketServer::BroadcastChainTxMsg(protocol::TransactionEnvStore& txMsg) {
+		std::string str = txMsg.SerializeAsString();
 		bumo::WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_TX_STATUS, str);
+		utils::MutexGuard guard(conns_list_lock_);
+
+		for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
+			if (subscriptions_.find(iter->first) == subscriptions_.end()){
+				std::error_code ec;
+				iter->second->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
+			}
+			else{
+				if(FilterByAddress(subscriptions_[iter->first], txMsg)){
+					std::error_code ec;
+					iter->second->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
+				}
+			}
+		}
 	}
 
 	bool WebSocketServer::OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id) {
@@ -165,6 +209,24 @@ namespace bumo {
 			
 		BroadcastMsg(protocol::CHAIN_TX_STATUS, str);
 		
+		return true;
+	}
+
+	bool WebSocketServer::OnSubscription(protocol::WsMessage &message, int64_t conn_id){
+		utils::MutexGuard guard_(conns_list_lock_);
+		Connection *conn = GetConnection(conn_id);
+		if (!conn) {
+			return false;
+		}
+
+		LOG_INFO("Recv chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+		protocol::ChainSubscription subs;
+		if (!subs.ParseFromString(message.data())) {
+			LOG_ERROR("ChainPeerMessage FromString fail");
+			return true;
+		}
+
+		subscriptions_[conn_id] = subs.address();
 		return true;
 	}
 

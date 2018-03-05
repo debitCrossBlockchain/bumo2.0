@@ -476,12 +476,13 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, _is_default_instance_));
   TransactionEnvStore_descriptor_ = file->message_type(19);
-  static const int TransactionEnvStore_offsets_[5] = {
+  static const int TransactionEnvStore_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, transaction_env_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, error_code_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, error_desc_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, ledger_seq_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, close_time_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, hash_),
   };
   TransactionEnvStore_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -809,34 +810,34 @@ void protobuf_AddDesc_chain_2eproto() {
     "CTION\020\001\"\211\001\n\016TransactionEnv\022*\n\013transactio"
     "n\030\001 \001(\0132\025.protocol.Transaction\022\'\n\nsignat"
     "ures\030\002 \003(\0132\023.protocol.Signature\022\"\n\007trigg"
-    "er\030\003 \001(\0132\021.protocol.Trigger\"\230\001\n\023Transact"
+    "er\030\003 \001(\0132\021.protocol.Trigger\"\246\001\n\023Transact"
     "ionEnvStore\0221\n\017transaction_env\030\001 \001(\0132\030.p"
     "rotocol.TransactionEnv\022\022\n\nerror_code\030\002 \001"
     "(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledger_seq\030\004 \001"
-    "(\003\022\022\n\nclose_time\030\005 \001(\003\":\n\021TransactionEnv"
-    "Set\022%\n\003txs\030\002 \003(\0132\030.protocol.TransactionE"
-    "nv\"^\n\030ConsensusValueValidation\022\025\n\rexpire"
-    "_tx_ids\030\001 \003(\005\022\024\n\014error_tx_ids\030\002 \003(\005\022\025\n\rd"
-    "roped_tx_ids\030\003 \003(\005\"\203\002\n\016ConsensusValue\022*\n"
-    "\005txset\030\001 \001(\0132\033.protocol.TransactionEnvSe"
-    "t\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016previous_proof\030"
-    "\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024previous_le"
-    "dger_hash\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001(\0132"
-    "\027.protocol.LedgerUpgrade\0226\n\nvalidation\030\007"
-    " \001(\0132\".protocol.ConsensusValueValidation"
-    "\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037.protocol.Co"
-    "ntract.ContractType\022\017\n\007payload\030\002 \001(\t\"\036\n\014"
-    "ContractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026Operati"
-    "onCreateAccount\022\024\n\014dest_address\030\001 \001(\t\022$\n"
-    "\010contract\030\002 \001(\0132\022.protocol.Contract\022(\n\004p"
-    "riv\030\003 \001(\0132\032.protocol.AccountPrivilege\022$\n"
-    "\tmetadatas\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014i"
-    "nit_balance\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n"
-    "\024OperationSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005va"
-    "lue\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_fla"
-    "g\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATU"
-    "RE\020dB\035\n\033cn.bumo.blockchain.adapter3b\006pro"
-    "to3", 3843);
+    "(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n\004hash\030\006 \001(\014\":\n\021"
+    "TransactionEnvSet\022%\n\003txs\030\002 \003(\0132\030.protoco"
+    "l.TransactionEnv\"^\n\030ConsensusValueValida"
+    "tion\022\025\n\rexpire_tx_ids\030\001 \003(\005\022\024\n\014error_tx_"
+    "ids\030\002 \003(\005\022\025\n\rdroped_tx_ids\030\003 \003(\005\"\203\002\n\016Con"
+    "sensusValue\022*\n\005txset\030\001 \001(\0132\033.protocol.Tr"
+    "ansactionEnvSet\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016p"
+    "revious_proof\030\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022"
+    "\034\n\024previous_ledger_hash\030\005 \001(\014\022/\n\016ledger_"
+    "upgrade\030\006 \001(\0132\027.protocol.LedgerUpgrade\0226"
+    "\n\nvalidation\030\007 \001(\0132\".protocol.ConsensusV"
+    "alueValidation\"j\n\010Contract\022-\n\004type\030\001 \001(\016"
+    "2\037.protocol.Contract.ContractType\022\017\n\007pay"
+    "load\030\002 \001(\t\"\036\n\014ContractType\022\016\n\nJAVASCRIPT"
+    "\020\000\"\316\001\n\026OperationCreateAccount\022\024\n\014dest_ad"
+    "dress\030\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.protocol"
+    ".Contract\022(\n\004priv\030\003 \001(\0132\032.protocol.Accou"
+    "ntPrivilege\022$\n\tmetadatas\030\004 \003(\0132\021.protoco"
+    "l.KeyPair\022\024\n\014init_balance\030\005 \001(\003\022\022\n\ninit_"
+    "input\030\006 \001(\t\"X\n\024OperationSetMetadata\022\013\n\003k"
+    "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003"
+    "\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOW"
+    "N\020\000\022\r\n\tSIGNATURE\020dB\035\n\033cn.bumo.blockchain"
+    ".adapter3b\006proto3", 3857);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -10221,6 +10222,7 @@ const int TransactionEnvStore::kErrorCodeFieldNumber;
 const int TransactionEnvStore::kErrorDescFieldNumber;
 const int TransactionEnvStore::kLedgerSeqFieldNumber;
 const int TransactionEnvStore::kCloseTimeFieldNumber;
+const int TransactionEnvStore::kHashFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 TransactionEnvStore::TransactionEnvStore()
@@ -10251,6 +10253,7 @@ void TransactionEnvStore::SharedCtor() {
   error_desc_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ledger_seq_ = GOOGLE_LONGLONG(0);
   close_time_ = GOOGLE_LONGLONG(0);
+  hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 TransactionEnvStore::~TransactionEnvStore() {
@@ -10260,6 +10263,7 @@ TransactionEnvStore::~TransactionEnvStore() {
 
 void TransactionEnvStore::SharedDtor() {
   error_desc_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
     delete transaction_env_;
   }
@@ -10308,10 +10312,12 @@ void TransactionEnvStore::Clear() {
            ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
 } while (0)
 
-  ZR_(ledger_seq_, error_code_);
+  ZR_(ledger_seq_, close_time_);
   if (GetArenaNoVirtual() == NULL && transaction_env_ != NULL) delete transaction_env_;
   transaction_env_ = NULL;
+  error_code_ = 0;
   error_desc_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 
 #undef ZR_HELPER_
 #undef ZR_
@@ -10398,6 +10404,19 @@ bool TransactionEnvStore::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(50)) goto parse_hash;
+        break;
+      }
+
+      // optional bytes hash = 6;
+      case 6: {
+        if (tag == 50) {
+         parse_hash:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_hash()));
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -10457,6 +10476,12 @@ void TransactionEnvStore::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->close_time(), output);
   }
 
+  // optional bytes hash = 6;
+  if (this->hash().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      6, this->hash(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.TransactionEnvStore)
 }
 
@@ -10494,6 +10519,13 @@ void TransactionEnvStore::SerializeWithCachedSizes(
   // optional int64 close_time = 5;
   if (this->close_time() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->close_time(), target);
+  }
+
+  // optional bytes hash = 6;
+  if (this->hash().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        6, this->hash(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.TransactionEnvStore)
@@ -10537,6 +10569,13 @@ int TransactionEnvStore::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->close_time());
+  }
+
+  // optional bytes hash = 6;
+  if (this->hash().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->hash());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -10583,6 +10622,10 @@ void TransactionEnvStore::MergeFrom(const TransactionEnvStore& from) {
   if (from.close_time() != 0) {
     set_close_time(from.close_time());
   }
+  if (from.hash().size() > 0) {
+
+    hash_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.hash_);
+  }
 }
 
 void TransactionEnvStore::CopyFrom(const ::google::protobuf::Message& from) {
@@ -10614,6 +10657,7 @@ void TransactionEnvStore::InternalSwap(TransactionEnvStore* other) {
   error_desc_.Swap(&other->error_desc_);
   std::swap(ledger_seq_, other->ledger_seq_);
   std::swap(close_time_, other->close_time_);
+  hash_.Swap(&other->hash_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -10751,6 +10795,50 @@ void TransactionEnvStore::clear_close_time() {
   
   close_time_ = value;
   // @@protoc_insertion_point(field_set:protocol.TransactionEnvStore.close_time)
+}
+
+// optional bytes hash = 6;
+void TransactionEnvStore::clear_hash() {
+  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& TransactionEnvStore::hash() const {
+  // @@protoc_insertion_point(field_get:protocol.TransactionEnvStore.hash)
+  return hash_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void TransactionEnvStore::set_hash(const ::std::string& value) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.TransactionEnvStore.hash)
+}
+ void TransactionEnvStore::set_hash(const char* value) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.TransactionEnvStore.hash)
+}
+ void TransactionEnvStore::set_hash(const void* value, size_t size) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.TransactionEnvStore.hash)
+}
+ ::std::string* TransactionEnvStore::mutable_hash() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.TransactionEnvStore.hash)
+  return hash_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* TransactionEnvStore::release_hash() {
+  // @@protoc_insertion_point(field_release:protocol.TransactionEnvStore.hash)
+  
+  return hash_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void TransactionEnvStore::set_allocated_hash(::std::string* hash) {
+  if (hash != NULL) {
+    
+  } else {
+    
+  }
+  hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), hash);
+  // @@protoc_insertion_point(field_set_allocated:protocol.TransactionEnvStore.hash)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

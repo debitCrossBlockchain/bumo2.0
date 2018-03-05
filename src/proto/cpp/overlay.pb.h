@@ -42,6 +42,7 @@ void protobuf_ShutdownFile_overlay_2eproto();
 class ChainHello;
 class ChainPeerMessage;
 class ChainStatus;
+class ChainSubscription;
 class ChainTxStatus;
 class DontHave;
 class EntryList;
@@ -138,12 +139,14 @@ enum ChainMessageType {
   CHAIN_PEER_MESSAGE = 14,
   CHAIN_SUBMITTRANSACTION = 15,
   CHAIN_LEDGER_HEADER = 16,
+  CHAIN_SUBSCRIPTION = 17,
+  CHAIN_TX_ENV_STORE = 18,
   ChainMessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   ChainMessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool ChainMessageType_IsValid(int value);
 const ChainMessageType ChainMessageType_MIN = CHAIN_TYPE_NONE;
-const ChainMessageType ChainMessageType_MAX = CHAIN_LEDGER_HEADER;
+const ChainMessageType ChainMessageType_MAX = CHAIN_TX_ENV_STORE;
 const int ChainMessageType_ARRAYSIZE = ChainMessageType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ChainMessageType_descriptor();
@@ -1463,6 +1466,93 @@ class ChainPeerMessage : public ::google::protobuf::Message /* @@protoc_insertio
 };
 // -------------------------------------------------------------------
 
+class ChainSubscription : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainSubscription) */ {
+ public:
+  ChainSubscription();
+  virtual ~ChainSubscription();
+
+  ChainSubscription(const ChainSubscription& from);
+
+  inline ChainSubscription& operator=(const ChainSubscription& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ChainSubscription& default_instance();
+
+  void Swap(ChainSubscription* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ChainSubscription* New() const { return New(NULL); }
+
+  ChainSubscription* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ChainSubscription& from);
+  void MergeFrom(const ChainSubscription& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ChainSubscription* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string address = 1;
+  void clear_address();
+  static const int kAddressFieldNumber = 1;
+  const ::std::string& address() const;
+  void set_address(const ::std::string& value);
+  void set_address(const char* value);
+  void set_address(const char* value, size_t size);
+  ::std::string* mutable_address();
+  ::std::string* release_address();
+  void set_allocated_address(::std::string* address);
+
+  // @@protoc_insertion_point(class_scope:protocol.ChainSubscription)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr address_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static ChainSubscription* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class ChainTxStatus : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainTxStatus) */ {
  public:
   ChainTxStatus();
@@ -2754,6 +2844,54 @@ inline void ChainPeerMessage::set_allocated_data(::std::string* data) {
 
 // -------------------------------------------------------------------
 
+// ChainSubscription
+
+// optional string address = 1;
+inline void ChainSubscription::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ChainSubscription::address() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainSubscription.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ChainSubscription::set_address(const ::std::string& value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.ChainSubscription.address)
+}
+inline void ChainSubscription::set_address(const char* value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.ChainSubscription.address)
+}
+inline void ChainSubscription::set_address(const char* value, size_t size) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainSubscription.address)
+}
+inline ::std::string* ChainSubscription::mutable_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.ChainSubscription.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ChainSubscription::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.ChainSubscription.address)
+  
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ChainSubscription::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
+    
+  } else {
+    
+  }
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.ChainSubscription.address)
+}
+
+// -------------------------------------------------------------------
+
 // ChainTxStatus
 
 // optional .protocol.ChainTxStatus.TxStatus status = 1;
@@ -2973,6 +3111,8 @@ inline void ChainTxStatus::set_timestamp(::google::protobuf::int64 value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

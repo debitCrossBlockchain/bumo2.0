@@ -2645,6 +2645,17 @@ class TransactionEnvStore : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::int64 close_time() const;
   void set_close_time(::google::protobuf::int64 value);
 
+  // optional bytes hash = 6;
+  void clear_hash();
+  static const int kHashFieldNumber = 6;
+  const ::std::string& hash() const;
+  void set_hash(const ::std::string& value);
+  void set_hash(const char* value);
+  void set_hash(const void* value, size_t size);
+  ::std::string* mutable_hash();
+  ::std::string* release_hash();
+  void set_allocated_hash(::std::string* hash);
+
   // @@protoc_insertion_point(class_scope:protocol.TransactionEnvStore)
  private:
 
@@ -2654,6 +2665,7 @@ class TransactionEnvStore : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::internal::ArenaStringPtr error_desc_;
   ::google::protobuf::int64 ledger_seq_;
   ::google::protobuf::int64 close_time_;
+  ::google::protobuf::internal::ArenaStringPtr hash_;
   ::google::protobuf::int32 error_code_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -5880,6 +5892,50 @@ inline void TransactionEnvStore::set_close_time(::google::protobuf::int64 value)
   
   close_time_ = value;
   // @@protoc_insertion_point(field_set:protocol.TransactionEnvStore.close_time)
+}
+
+// optional bytes hash = 6;
+inline void TransactionEnvStore::clear_hash() {
+  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& TransactionEnvStore::hash() const {
+  // @@protoc_insertion_point(field_get:protocol.TransactionEnvStore.hash)
+  return hash_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransactionEnvStore::set_hash(const ::std::string& value) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.TransactionEnvStore.hash)
+}
+inline void TransactionEnvStore::set_hash(const char* value) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.TransactionEnvStore.hash)
+}
+inline void TransactionEnvStore::set_hash(const void* value, size_t size) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.TransactionEnvStore.hash)
+}
+inline ::std::string* TransactionEnvStore::mutable_hash() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.TransactionEnvStore.hash)
+  return hash_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* TransactionEnvStore::release_hash() {
+  // @@protoc_insertion_point(field_release:protocol.TransactionEnvStore.hash)
+  
+  return hash_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransactionEnvStore::set_allocated_hash(::std::string* hash) {
+  if (hash != NULL) {
+    
+  } else {
+    
+  }
+  hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), hash);
+  // @@protoc_insertion_point(field_set_allocated:protocol.TransactionEnvStore.hash)
 }
 
 // -------------------------------------------------------------------

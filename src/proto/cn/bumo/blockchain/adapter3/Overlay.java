@@ -223,6 +223,14 @@ public final class Overlay {
      * <code>CHAIN_LEDGER_HEADER = 16;</code>
      */
     CHAIN_LEDGER_HEADER(16),
+    /**
+     * <code>CHAIN_SUBSCRIPTION = 17;</code>
+     */
+    CHAIN_SUBSCRIPTION(17),
+    /**
+     * <code>CHAIN_TX_ENV_STORE = 18;</code>
+     */
+    CHAIN_TX_ENV_STORE(18),
     UNRECOGNIZED(-1),
     ;
 
@@ -266,6 +274,14 @@ public final class Overlay {
      * <code>CHAIN_LEDGER_HEADER = 16;</code>
      */
     public static final int CHAIN_LEDGER_HEADER_VALUE = 16;
+    /**
+     * <code>CHAIN_SUBSCRIPTION = 17;</code>
+     */
+    public static final int CHAIN_SUBSCRIPTION_VALUE = 17;
+    /**
+     * <code>CHAIN_TX_ENV_STORE = 18;</code>
+     */
+    public static final int CHAIN_TX_ENV_STORE_VALUE = 18;
 
 
     public final int getNumber() {
@@ -294,6 +310,8 @@ public final class Overlay {
         case 14: return CHAIN_PEER_MESSAGE;
         case 15: return CHAIN_SUBMITTRANSACTION;
         case 16: return CHAIN_LEDGER_HEADER;
+        case 17: return CHAIN_SUBSCRIPTION;
+        case 18: return CHAIN_TX_ENV_STORE;
         default: return null;
       }
     }
@@ -9586,6 +9604,509 @@ public final class Overlay {
 
   }
 
+  public interface ChainSubscriptionOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:protocol.ChainSubscription)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>optional string address = 1;</code>
+     */
+    java.lang.String getAddress();
+    /**
+     * <code>optional string address = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getAddressBytes();
+  }
+  /**
+   * Protobuf type {@code protocol.ChainSubscription}
+   */
+  public  static final class ChainSubscription extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:protocol.ChainSubscription)
+      ChainSubscriptionOrBuilder {
+    // Use ChainSubscription.newBuilder() to construct.
+    private ChainSubscription(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private ChainSubscription() {
+      address_ = "";
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+    }
+    private ChainSubscription(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!input.skipField(tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              address_ = s;
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return cn.bumo.blockchain.adapter3.Overlay.internal_static_protocol_ChainSubscription_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return cn.bumo.blockchain.adapter3.Overlay.internal_static_protocol_ChainSubscription_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              cn.bumo.blockchain.adapter3.Overlay.ChainSubscription.class, cn.bumo.blockchain.adapter3.Overlay.ChainSubscription.Builder.class);
+    }
+
+    public static final int ADDRESS_FIELD_NUMBER = 1;
+    private volatile java.lang.Object address_;
+    /**
+     * <code>optional string address = 1;</code>
+     */
+    public java.lang.String getAddress() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        address_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>optional string address = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getAddressBytes() {
+      java.lang.Object ref = address_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        address_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getAddressBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, address_);
+      }
+    }
+
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getAddressBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, address_);
+      }
+      memoizedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof cn.bumo.blockchain.adapter3.Overlay.ChainSubscription)) {
+        return super.equals(obj);
+      }
+      cn.bumo.blockchain.adapter3.Overlay.ChainSubscription other = (cn.bumo.blockchain.adapter3.Overlay.ChainSubscription) obj;
+
+      boolean result = true;
+      result = result && getAddress()
+          .equals(other.getAddress());
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptorForType().hashCode();
+      hash = (37 * hash) + ADDRESS_FIELD_NUMBER;
+      hash = (53 * hash) + getAddress().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(cn.bumo.blockchain.adapter3.Overlay.ChainSubscription prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code protocol.ChainSubscription}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:protocol.ChainSubscription)
+        cn.bumo.blockchain.adapter3.Overlay.ChainSubscriptionOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return cn.bumo.blockchain.adapter3.Overlay.internal_static_protocol_ChainSubscription_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return cn.bumo.blockchain.adapter3.Overlay.internal_static_protocol_ChainSubscription_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                cn.bumo.blockchain.adapter3.Overlay.ChainSubscription.class, cn.bumo.blockchain.adapter3.Overlay.ChainSubscription.Builder.class);
+      }
+
+      // Construct using cn.bumo.blockchain.adapter3.Overlay.ChainSubscription.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      public Builder clear() {
+        super.clear();
+        address_ = "";
+
+        return this;
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return cn.bumo.blockchain.adapter3.Overlay.internal_static_protocol_ChainSubscription_descriptor;
+      }
+
+      public cn.bumo.blockchain.adapter3.Overlay.ChainSubscription getDefaultInstanceForType() {
+        return cn.bumo.blockchain.adapter3.Overlay.ChainSubscription.getDefaultInstance();
+      }
+
+      public cn.bumo.blockchain.adapter3.Overlay.ChainSubscription build() {
+        cn.bumo.blockchain.adapter3.Overlay.ChainSubscription result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public cn.bumo.blockchain.adapter3.Overlay.ChainSubscription buildPartial() {
+        cn.bumo.blockchain.adapter3.Overlay.ChainSubscription result = new cn.bumo.blockchain.adapter3.Overlay.ChainSubscription(this);
+        result.address_ = address_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof cn.bumo.blockchain.adapter3.Overlay.ChainSubscription) {
+          return mergeFrom((cn.bumo.blockchain.adapter3.Overlay.ChainSubscription)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(cn.bumo.blockchain.adapter3.Overlay.ChainSubscription other) {
+        if (other == cn.bumo.blockchain.adapter3.Overlay.ChainSubscription.getDefaultInstance()) return this;
+        if (!other.getAddress().isEmpty()) {
+          address_ = other.address_;
+          onChanged();
+        }
+        onChanged();
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        cn.bumo.blockchain.adapter3.Overlay.ChainSubscription parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (cn.bumo.blockchain.adapter3.Overlay.ChainSubscription) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object address_ = "";
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public java.lang.String getAddress() {
+        java.lang.Object ref = address_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          address_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getAddressBytes() {
+        java.lang.Object ref = address_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          address_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public Builder setAddress(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        address_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public Builder clearAddress() {
+        
+        address_ = getDefaultInstance().getAddress();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string address = 1;</code>
+       */
+      public Builder setAddressBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        address_ = value;
+        onChanged();
+        return this;
+      }
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return this;
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:protocol.ChainSubscription)
+    }
+
+    // @@protoc_insertion_point(class_scope:protocol.ChainSubscription)
+    private static final cn.bumo.blockchain.adapter3.Overlay.ChainSubscription DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new cn.bumo.blockchain.adapter3.Overlay.ChainSubscription();
+    }
+
+    public static cn.bumo.blockchain.adapter3.Overlay.ChainSubscription getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<ChainSubscription>
+        PARSER = new com.google.protobuf.AbstractParser<ChainSubscription>() {
+      public ChainSubscription parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+          return new ChainSubscription(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<ChainSubscription> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ChainSubscription> getParserForType() {
+      return PARSER;
+    }
+
+    public cn.bumo.blockchain.adapter3.Overlay.ChainSubscription getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   public interface ChainTxStatusOrBuilder extends
       // @@protoc_insertion_point(interface_extends:protocol.ChainTxStatus)
       com.google.protobuf.MessageOrBuilder {
@@ -11133,6 +11654,11 @@ public final class Overlay {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_protocol_ChainPeerMessage_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_protocol_ChainSubscription_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_protocol_ChainSubscription_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_protocol_ChainTxStatus_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -11176,28 +11702,30 @@ public final class Overlay {
       "onitor_version\030\003 \001(\003\022\024\n\014bumo_version\030\004 \001" +
       "(\t\022\021\n\ttimestamp\030\005 \001(\003\"O\n\020ChainPeerMessag" +
       "e\022\025\n\rsrc_peer_addr\030\001 \001(\t\022\026\n\016des_peer_add",
-      "rs\030\002 \003(\t\022\014\n\004data\030\003 \001(\014\"\325\002\n\rChainTxStatus" +
-      "\0220\n\006status\030\001 \001(\0162 .protocol.ChainTxStatu" +
-      "s.TxStatus\022\017\n\007tx_hash\030\002 \001(\t\022\026\n\016source_ad" +
-      "dress\030\003 \001(\t\022\032\n\022source_account_seq\030\004 \001(\003\022" +
-      "\022\n\nledger_seq\030\005 \001(\003\022\027\n\017new_account_seq\030\006" +
-      " \001(\003\022\'\n\nerror_code\030\007 \001(\0162\023.protocol.ERRO" +
-      "RCODE\022\022\n\nerror_desc\030\010 \001(\t\022\021\n\ttimestamp\030\t" +
-      " \001(\003\"P\n\010TxStatus\022\r\n\tUNDEFINED\020\000\022\r\n\tCONFI" +
-      "RMED\020\001\022\013\n\007PENDING\020\002\022\014\n\010COMPLETE\020\003\022\013\n\007FAI" +
-      "LURE\020\004*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERL",
-      "AY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PIN" +
-      "G\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLA" +
-      "Y_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRA" +
-      "NSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022" +
-      "\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSG" +
-      "TYPE_LEDGER_UPGRADE_NOTIFY\020\007*\312\001\n\020ChainMe" +
-      "ssageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_" +
-      "HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PE" +
-      "ER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022C" +
-      "HAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANS",
-      "ACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020B\035\n\033cn." +
-      "bumo.blockchain.adapter3b\006proto3"
+      "rs\030\002 \003(\t\022\014\n\004data\030\003 \001(\014\"$\n\021ChainSubscript" +
+      "ion\022\017\n\007address\030\001 \001(\t\"\325\002\n\rChainTxStatus\0220" +
+      "\n\006status\030\001 \001(\0162 .protocol.ChainTxStatus." +
+      "TxStatus\022\017\n\007tx_hash\030\002 \001(\t\022\026\n\016source_addr" +
+      "ess\030\003 \001(\t\022\032\n\022source_account_seq\030\004 \001(\003\022\022\n" +
+      "\nledger_seq\030\005 \001(\003\022\027\n\017new_account_seq\030\006 \001" +
+      "(\003\022\'\n\nerror_code\030\007 \001(\0162\023.protocol.ERRORC" +
+      "ODE\022\022\n\nerror_desc\030\010 \001(\t\022\021\n\ttimestamp\030\t \001" +
+      "(\003\"P\n\010TxStatus\022\r\n\tUNDEFINED\020\000\022\r\n\tCONFIRM" +
+      "ED\020\001\022\013\n\007PENDING\020\002\022\014\n\010COMPLETE\020\003\022\013\n\007FAILU",
+      "RE\020\004*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERLAY" +
+      "_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING\020" +
+      "\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY_" +
+      "MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRANS" +
+      "ACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030\n" +
+      "\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSGTY" +
+      "PE_LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMess" +
+      "ageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_HE" +
+      "LLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEER" +
+      "_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CHA",
+      "IN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSAC" +
+      "TION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHAIN" +
+      "_SUBSCRIPTION\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022B" +
+      "\035\n\033cn.bumo.blockchain.adapter3b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -11285,8 +11813,14 @@ public final class Overlay {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_ChainPeerMessage_descriptor,
         new java.lang.String[] { "SrcPeerAddr", "DesPeerAddrs", "Data", });
-    internal_static_protocol_ChainTxStatus_descriptor =
+    internal_static_protocol_ChainSubscription_descriptor =
       getDescriptor().getMessageTypes().get(12);
+    internal_static_protocol_ChainSubscription_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_protocol_ChainSubscription_descriptor,
+        new java.lang.String[] { "Address", });
+    internal_static_protocol_ChainTxStatus_descriptor =
+      getDescriptor().getMessageTypes().get(13);
     internal_static_protocol_ChainTxStatus_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_ChainTxStatus_descriptor,
