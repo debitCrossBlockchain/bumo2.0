@@ -153,7 +153,9 @@ function priceCheck(price){
         assert(Number.isInteger(parseInt(price[i])),'price contain NaN char');
     }
   );
-  assert(int64Compare(price,'9223372036854775807')===0 && price==='9223372036854775807' ,'price overflow');
+  if(int64Compare(price, '9223372036854775807') === 0){
+    assert(price === '9223372036854775807', 'price overflow');
+  }
 }
 
 function main(input) {
