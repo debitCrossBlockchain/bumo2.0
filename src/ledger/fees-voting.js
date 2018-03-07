@@ -2,8 +2,7 @@
 const proposalRecordsKey = 'proposalRecordsKey';
 const voteRecordKeyPrefix ='voteRecords_';
 const nonceKey ='nonce';
-//const effectiveProposalInterval =15*1000000*60*60*24;
-const effectiveProposalInterval = 2 * 1000000 * 60;
+const effectiveProposalInterval =15*1000000*60*60*24;
 const thredhold =0.8;
 let proposalRecords = {};
 let validators = {};
