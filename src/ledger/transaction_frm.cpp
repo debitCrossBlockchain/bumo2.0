@@ -548,8 +548,11 @@ namespace bumo {
 	}
 
 	bool TransactionFrm::CheckTimeout(int64_t expire_time) {
-		if (incoming_time_ < expire_time)
+		if (incoming_time_ < expire_time) {
+			LOG_WARN("Trans timeout, source account(%s), transaction hash(%s)", GetSourceAddress().c_str(), 
+				utils::String::Bin4ToHexString(GetContentHash()).c_str());
 			return true;
+		}
 		result_.set_code(protocol::ERRCODE_TX_TIMEOUT);
 		return false;
 	}

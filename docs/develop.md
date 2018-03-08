@@ -33,6 +33,7 @@
         - [控制权的分配](#控制权的分配)
         - [版本化控制](#版本化控制)
         - [合约](#合约)
+            - [语法检测](#语法检测)
             - [内置函数](#内置函数)
             - [内置变量](#内置变量)
             - [异常处理](#异常处理)
@@ -128,7 +129,7 @@ BUMO 区块链提供了websocket和http 两种API接口。您可以在 安装目
 您还可以通过[查询账号](#查询账号)接口查询任意账号
 
 ```text
-HTTP GET host:29333/getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
+HTTP GET host:36002/getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 ```
 
 ## HTTP接口
@@ -1187,10 +1188,11 @@ POST /getTransactionBlob
 下面是一个简单的例子
 
 ```javascript
+"use strict";
 function init(bar)
 {
   /*init whatever you want*/
-
+  return;
 }
 
 function main(input)
@@ -1212,6 +1214,29 @@ function query(input)
 
 系统提供了几个全局函数, 这些函数可以获取区块链的一些信息，也可驱动账号发起所有交易，除了设置门限和权重这两种类型的操作。
 **注意，自定义的函数和变量不要与内置变量和全局函数重名，否则会造成不可控的数据错误。**
+
+#### 语法检测
+
+- ##### 检测工具
+    为了保证合约执行的安全，健壮和一致性，合约的书写需要使用 JSLint 进行语法检测，只有通过 JSLint 检测的代码才可以被执行。
+
+    JSLint 检测工具地址：[JSLint 语法检测工具](http://bumo.chinacloudapp.cn:36002/jslint.html "JSLint 语法检测工具")
+
+- ##### 语法说明
+    JSLint 有详细的语法限制，例如：
+
+    推荐使用 “"use strict";” 严格模式；
+    推荐使用 forEach 替代普通的 for 循环；
+    推荐使用 “===” 代替普通的 “==” 判断相等操作；
+    语句块内推荐使用 "let" 替代 "var"；
+    不允许空的语句块；等等
+
+    更多的语法说明见 JSLint 文档：[JSLint 语法说明](http://bumo.chinacloudapp.cn:36002/help.html "JSLint 语法说明")
+
+- ##### 文本压缩
+	合约文档写好之后，可以使用JSMin工具进行压缩，注意保存原文档，压缩是不可逆的操作。
+    工具路径：bumo/deploy/jsmin/
+    
 
 #### 内置函数
 
@@ -1526,7 +1551,7 @@ function query(input)
 - ##### 本次支付操作的Asset
     payAssetAmount
 
-    为对象类型{"amount": 1000, "asset_property" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
+    为对象类型{"amount": 1000, "property" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
  
 - ##### 当前区块高度
     blockNumber
@@ -1646,7 +1671,7 @@ function query(input)
 
 任意一个拥有网络节点的账户可以通过向验证节点选举账户转移一笔 coin 作为押金，申请成为验证节点候选人。但能否成为候选节点，需经过验证节点投票决定。
 
-- 申请者向验证节点选举账户转移一笔 coin 作为押金（参见[转移BU资产](#转移BU资产)），该押金可通过 ‘[收回押金](#收回押金)’ 操作收回。
+- 申请者向验证节点选举账户转移一笔 coin 作为押金（参见‘[转移BU资产](#转移BU资产)’），该押金可通过 ‘[收回押金](#收回押金)’ 操作收回。
 - ‘转移货币’操作的 input 字段填入 { "method" : "pledgeCoin"}，注意使用转义字符。
 
 >例

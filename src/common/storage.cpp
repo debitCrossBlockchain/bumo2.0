@@ -259,13 +259,14 @@ namespace bumo {
 				bool do_success = false;
 				do {
 					//check the db if opened
-					KeyValueDb *account_db = NewKeyValueDb(db_config);
+					/*KeyValueDb *account_db = NewKeyValueDb(db_config);
 					if (!account_db->Open(db_config.account_db_path_)) {
 						LOG_ERROR("Drop failed, error desc(%s)", account_db->error_desc().c_str());
 						delete account_db;
 						break;
 					}
-					delete account_db;
+					account_db->Close();
+					delete account_db;*/
 
 					if (utils::File::IsExist(db_config.keyvalue_db_path_) && !utils::File::DeleteFolder(db_config.keyvalue_db_path_)) {
 						LOG_ERROR_ERRNO("Delete keyvalue db failed", STD_ERR_CODE, STD_ERR_DESC);

@@ -1745,6 +1745,12 @@ namespace bumo{
 				break;
 			}
 
+			static int64_t system_min_64 = -pow(2, (sizeof(int64_t) * 8 - 1));
+			if (iarg0 <= system_min_64) {
+				error_desc = "Parameter of divisor is min overflow";
+				break;
+			}
+
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
 				args.GetIsolate(), utils::String::ToString(iarg0 / iarg1).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 			return;
