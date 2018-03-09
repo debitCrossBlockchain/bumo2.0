@@ -173,7 +173,7 @@ namespace bumo {
 	}
 
 	void WebSocketServer::BroadcastChainTxMsg(protocol::TransactionEnvStore& tx_msg) {
-		std::string str = txMsg.SerializeAsString();
+		std::string str = tx_msg.SerializeAsString();
 		bumo::WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_TX_STATUS, str);
 		utils::MutexGuard guard(conns_list_lock_);
 
