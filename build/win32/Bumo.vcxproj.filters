@@ -129,6 +129,9 @@
     <ClCompile Include="..\..\src\api\console.cpp">
       <Filter>api</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\glue\transaction_queue.cpp">
+      <Filter>glue</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\api\console.h">
       <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\glue\transaction_queue.h">
+      <Filter>glue</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

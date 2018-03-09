@@ -76,7 +76,8 @@ namespace bumo {
 		for (int32_t i = 0; i < raw_txs_.txs_size(); i++) {
 			const protocol::TransactionEnv &env = raw_txs_.txs(i);
 			TransactionFrm tx(env);
-			if (!tx.CheckValid(-1)) {
+            int64_t nonce = 0;
+            if (!tx.CheckValid(-1, nonce)) {
 				LOG_ERROR("Check txset failed");
 				return false;
 			}

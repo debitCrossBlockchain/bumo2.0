@@ -58,7 +58,7 @@ namespace bumo {
 
 		const protocol::TransactionEnv &GetTransactionEnv() const;
 
-		bool CheckValid(int64_t last_seq);
+        bool CheckValid(int64_t last_seq, int64_t& nonce);
 		bool CheckExpr(const std::string &code, const std::string &log_prefix);
 
 		bool SignerHashPriv(AccountFrm::pointer account_ptr, int32_t type) const;
@@ -106,6 +106,7 @@ namespace bumo {
 		int64_t GetStackUsage();
 		bool IsExpire(std::string &error_info);
 		void EnableChecked();
+        const int64_t GetInComingTime() const;
 
 		uint64_t apply_time_;
 		int64_t ledger_seq_;

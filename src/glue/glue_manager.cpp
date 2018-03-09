@@ -35,6 +35,7 @@ namespace bumo {
 
 	bool GlueManager::Initialize() {
 
+		tx_pool_ = std::make_shared<TransactionQueue>(Configure::Instance().ledger_configure_.queue_limit_, Configure::Instance().ledger_configure_.queue_cache_accout_limit_, Configure::Instance().ledger_configure_.queue_cache_per_account_txs_limit_, Configure::Instance().ledger_configure_.life_time_);
 		process_uptime_ = time(NULL);
 		consensus_ = ConsensusManager::Instance().GetConsensus();
 		consensus_->SetNotify(this);
@@ -90,39 +91,7 @@ namespace bumo {
 
 	bool GlueManager::StartConsensus() {
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
-		//get cached tx, if error then delete it
-		TransactionSetFrm txset;
-		size_t del_size = 0;
-		std::vector<TransactionFrm::pointer> err_txs;
-		do {
-			utils::MutexGuard guard(lock_);
-			std::string skip_address;
-			for (TransactionMap::iterator iter = topic_caches_.begin();
-				iter != topic_caches_.end();) {
-				if (iter->first.GetTopic() == skip_address) {
-					iter++;
-					continue;
-				} else{
-					int32_t ret = txset.Add(iter->second);
-					if (ret < 0) {
-						err_txs.push_back(iter->second);
-						iter = topic_caches_.erase(iter);
-						del_size++;
-					}
-					else if (ret == 0) {
-						skip_address = iter->first.GetTopic();
-						iter++;
-					}
-					else {
-						iter++;
-					}
-				}
-			}
-		} while (false);
 
-		if (err_txs.size() > 0){
-			NotifyErrTx(err_txs);
-		} 
 
 		time_start_consenus_ = utils::Timestamp::HighResolution();
 		if (!consensus_->IsLeader()) {
@@ -142,7 +111,8 @@ namespace bumo {
 		std::string proof;
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof);
 
-		protocol::TransactionEnvSet txset_raw = txset.GetRaw();
+		//protocol::TransactionEnvSet txset_raw = tx_pool_->top.GetRaw();
+		protocol::TransactionEnvSet txset_raw = tx_pool_->TopTransaction(Configure::Instance().ledger_configure_.max_trans_per_ledger_);
 		protocol::ConsensusValue propose_value;
 		do {
 			*propose_value.mutable_txset() = txset_raw;
@@ -194,9 +164,8 @@ namespace bumo {
 			break;
 		} while (true);
 
-		LOG_INFO("Proposed %d tx(s), lcl hash(%s), removed " FMT_SIZE " tx(s)", propose_value.txset().txs_size(),
-			utils::String::Bin4ToHexString(lcl.hash()).c_str(), 
-			del_size);
+		LOG_INFO("Proposed %d tx(s), lcl hash(%s) tx(s)", propose_value.txset().txs_size(),
+			utils::String::Bin4ToHexString(lcl.hash()).c_str());
 		consensus_->Request(propose_value.SerializeAsString());
 		return true;
 	}
@@ -207,17 +176,7 @@ namespace bumo {
 		std::string address = tx->GetSourceAddress();
 
 		do {
-			int64_t max_trans = Configure::Instance().ledger_configure_.max_trans_in_memory_;
-			utils::MutexGuard guard(lock_);
-			if (topic_caches_.size() >= max_trans){
-				err.set_code(protocol::ERRCODE_OUT_OF_TXCACHE);
-				err.set_desc("too much transactions");
-				LOG_ERROR("Too much transactions,transaction hash(%s)", utils::String::Bin4ToHexString(hash_value).c_str());
-				break;
-			}
-
-			TransactionMap::iterator iter = topic_caches_.find(key);
-			if (iter != topic_caches_.end())  {
+			if (tx_pool_->IsExist(tx)){
 				//dont't reply the tx, then break;
 				//err.set_code(protocol::ERRCODE_ALREADY_EXIST);
 				//err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
@@ -226,7 +185,8 @@ namespace bumo {
 			}
 
 			//验证交易有效性
-			if (!tx->CheckValid(/*high_sequence*/ -1)) {
+			int64_t nonce = 0;
+			if (!tx->CheckValid(/*high_sequence*/ -1, nonce)) {
 				err = tx->GetResult();
 				Json::Value js;
 				js["action"] = "apply";
@@ -237,8 +197,7 @@ namespace bumo {
 				break;
 			}
 
-			LOG_INFO("Recv new tx(%s:" FMT_I64 ")", key.GetTopic().c_str(), key.GetSeq());
-			topic_caches_.insert(std::make_pair(key, tx));
+			tx_pool_->Import(tx,nonce);
 
 		} while (false);
 
@@ -254,20 +213,7 @@ namespace bumo {
 		//check the timeout transaction
 
 		std::vector<TransactionFrm::pointer> timeout_txs;
-		do {
-			utils::MutexGuard guard(lock_);
-			for (TransactionMap::iterator iter = topic_caches_.begin(); iter != topic_caches_.end();) {
-				if (iter->second->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT)) {
-					//notify
-					timeout_txs.push_back(iter->second);
-
-					iter = topic_caches_.erase(iter);
-				}
-				else {
-					iter++;
-				}
-			}
-		} while (false);
+		tx_pool_->CheckTimeout(current_time, timeout_txs);
 
 		if (timeout_txs.size() > 0 ){
 			NotifyErrTx(timeout_txs);
@@ -288,6 +234,7 @@ namespace bumo {
 				ret++;
 			}
 		}
+
 
 		return ret;
 	}
@@ -323,7 +270,7 @@ namespace bumo {
 		protocol::ConsensusValue request;
 		request.ParseFromString(value);
 
-		TransactionSetFrm txset_frm(request.txset());
+		//TransactionSetFrm txset_frm(request.txset());
 
 		//temp upgrade the validator, need done by ledger manager
 
@@ -338,10 +285,11 @@ namespace bumo {
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
 
 		//delete the cache 
-		size_t ret1 = RemoveTxset(txset_frm);
+		//size_t ret1 = RemoveTxset(txset_frm);
+		tx_pool_->RemoveTxs(request.txset());
 
 		//start time
-		int64_t next_interval = GetIntervalTime(txset_frm.Size() == 0);
+		int64_t next_interval = GetIntervalTime(request.txset().txs_size() == 0);
 		int64_t next_timestamp = next_interval + req.close_time();
 		int64_t waiting_time = next_timestamp - utils::Timestamp::Now().timestamp();
 		if (waiting_time <= 0)  waiting_time = 1;

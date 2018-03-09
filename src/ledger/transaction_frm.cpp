@@ -224,6 +224,10 @@ namespace bumo {
 		enable_check_ = true;
 	}
 
+    const int64_t TransactionFrm::GetInComingTime() const {
+        return incoming_time_;
+    }
+
 	bool TransactionFrm::PayFee(std::shared_ptr<Environment> environment, int64_t &total_fee) {
 		int64_t fee = GetFee();
 		std::string str_address = transaction_env_.transaction().source_address();
@@ -316,7 +320,7 @@ namespace bumo {
 		return false;
 	}
 
-	bool TransactionFrm::CheckValid(int64_t last_seq) {
+	bool TransactionFrm::CheckValid(int64_t last_seq,int64_t& nonce) {
 		AccountFrm::pointer source_account;
 		if (!Environment::AccountFromDB(GetSourceAddress(), source_account)) {
 			result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
@@ -324,7 +328,8 @@ namespace bumo {
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
-
+        
+        nonce = source_account->GetAccountNonce();
 		int64_t bytes_fee = GetSelfByteFee();
 		int64_t tran_fee = GetFee();
 		if (tran_fee < 0){
@@ -551,9 +556,10 @@ namespace bumo {
 		if (incoming_time_ < expire_time) {
 			LOG_WARN("Trans timeout, source account(%s), transaction hash(%s)", GetSourceAddress().c_str(), 
 				utils::String::Bin4ToHexString(GetContentHash()).c_str());
+			result_.set_code(protocol::ERRCODE_TX_TIMEOUT);
 			return true;
 		}
-		result_.set_code(protocol::ERRCODE_TX_TIMEOUT);
+		
 		return false;
 	}
 

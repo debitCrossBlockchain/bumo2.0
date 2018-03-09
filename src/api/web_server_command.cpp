@@ -136,8 +136,9 @@ namespace bumo {
 					result_item["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 
+                int64_t nonce = 0;
 				TransactionFrm frm(tran_env);
-				if (!frm.CheckValid(-1)){
+				if (!frm.CheckValid(-1,nonce)){
 					result = frm.result_;
 					break;
 				}
@@ -358,8 +359,9 @@ namespace bumo {
 					result_json["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 
+                int64_t nonce;
 				TransactionFrm frm(tran_env);
-				if (!frm.CheckValid(-1)){
+                if (!frm.CheckValid(-1, nonce)){
 					result = frm.result_;
 					break;
 				}

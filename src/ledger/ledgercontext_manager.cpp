@@ -65,7 +65,7 @@ namespace bumo {
 		consensus_value_(consensus_value),
 		lpmanager_(NULL),
 		tx_timeout_(timeout) {
-		LedgerFrm::APPLY_MODE_PROPOSE;
+		apply_mode_ = LedgerFrm::APPLY_MODE_PROPOSE;
 		closing_ledger_ = std::make_shared<LedgerFrm>();
 	}
 	LedgerContext::~LedgerContext() {}

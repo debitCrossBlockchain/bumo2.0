@@ -85,6 +85,10 @@ namespace bumo {
 		uint32_t max_ledger_per_message_;
 		uint32_t max_trans_in_memory_;
 		uint32_t max_apply_ledger_per_round_;
+		uint32_t queue_limit_;
+		uint32_t queue_cache_accout_limit_;
+		uint32_t queue_cache_per_account_txs_limit_;
+		int64_t  life_time_;
 		utils::StringList hardfork_points_;
 		bool use_atom_map_;
 		bool Load(const Json::Value &value);
