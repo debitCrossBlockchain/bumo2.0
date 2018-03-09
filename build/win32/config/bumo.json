@@ -32,7 +32,12 @@
 		"max_ledger_per_message": 30,
 		"max_trans_in_memory": 2000,
 		"max_apply_ledger_per_round": 3,
-		"hardfork_points": []
+		"hardfork_points": [],
+		"tx_pool":{
+			"queue_limit":10240,
+			"queue_cache_accout_limit":10240,
+			"queue_cache_per_account_txs_limit":64
+		}
 	},
 	"genesis" :{
 		"account" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
