@@ -114,10 +114,9 @@ namespace bumo {
 		close_interval_ = 10;
 		use_atom_map_ = true;
 		hash_type_ = 0; // 0 : SHA256, 1 :SM2
-		queue_limit_ = 1024;
-		queue_cache_accout_limit_ = 1024;
+		queue_limit_ = 10240;
+		queue_cache_accout_limit_ = 10240;
 		queue_cache_per_account_txs_limit_ = 64;
-		life_time_ = 60;
 	}
 
 	LedgerConfigure::~LedgerConfigure() {
@@ -138,7 +137,6 @@ namespace bumo {
 		Configure::GetValue(value["tx_pool"], "queue_limit", queue_limit_);
 		Configure::GetValue(value["tx_pool"], "queue_cache_accout_limit", queue_cache_accout_limit_);
 		Configure::GetValue(value["tx_pool"], "queue_cache_per_account_txs_limit", queue_cache_per_account_txs_limit_);
-		Configure::GetValue(value["tx_pool"], "life_time", life_time_);
 
 		if (validation_privatekey_.empty()) {
 			PrivateKey tmp_priv(SIGNTYPE_ED25519);

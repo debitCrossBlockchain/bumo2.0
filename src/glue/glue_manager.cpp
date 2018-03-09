@@ -35,7 +35,7 @@ namespace bumo {
 
 	bool GlueManager::Initialize() {
 
-		tx_pool_ = std::make_shared<TransactionQueue>(Configure::Instance().ledger_configure_.queue_limit_, Configure::Instance().ledger_configure_.queue_cache_accout_limit_, Configure::Instance().ledger_configure_.queue_cache_per_account_txs_limit_, Configure::Instance().ledger_configure_.life_time_);
+		tx_pool_ = std::make_shared<TransactionQueue>(Configure::Instance().ledger_configure_.queue_limit_, Configure::Instance().ledger_configure_.queue_cache_accout_limit_, Configure::Instance().ledger_configure_.queue_cache_per_account_txs_limit_);
 		process_uptime_ = time(NULL);
 		consensus_ = ConsensusManager::Instance().GetConsensus();
 		consensus_->SetNotify(this);
