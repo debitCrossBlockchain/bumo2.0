@@ -32,7 +32,7 @@ namespace bumo {
 		virtual ~WsPeer();
 
 		bool Set(const protocol::ChainSubscribeTx &sub);
-		bool Filter(const protocol::TransactionEnvStore &txMsg);
+		bool Filter(const protocol::TransactionEnvStore &tx_msg);
 	};
 
 	class WebSocketServer :public utils::Singleton<WebSocketServer>,
@@ -72,7 +72,6 @@ namespace bumo {
 
 		uint64_t last_connect_time_;
 		uint64_t connect_interval_;
-		std::map<int64_t, std::set<std::string>> subscriptions_;
 	};
 }
 
