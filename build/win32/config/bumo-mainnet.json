@@ -15,10 +15,10 @@
 		}
 	},
 	"webserver": {
-		"listen_addresses": "0.0.0.0:16002"
+		"listen_addresses": "127.0.0.1:16002"
 	},
 	"wsserver": {
-		"listen_address": "0.0.0.0:16003"
+		"listen_address": "127.0.0.1:16003"
 	},
 	"ledger": {
 		"max_trans_per_ledger": 1000,

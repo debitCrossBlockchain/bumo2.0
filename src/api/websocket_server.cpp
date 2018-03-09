@@ -25,6 +25,66 @@
 #include "websocket_server.h"
 
 namespace bumo {
+	WsPeer::WsPeer(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id) :
+		Connection(server_h, client_h, tls_server_h, tls_client_h, con, uri, id) {
+	}
+
+	WsPeer::~WsPeer() {}
+
+	bool WsPeer::Set(const protocol::ChainSubscribeTx &sub) {
+		if (sub.address_size() > 100) {
+			LOG_ERROR("Subscribe tx size large than 100");
+			return false;
+		}
+
+		tx_filter_address_.clear();
+		for (int32_t i = 0; i < sub.address_size(); i++) {
+			if (!PublicKey::IsAddressValid(sub.address(i))) {
+				LOG_ERROR("Subscribe tx failed, address(%s) not valid", sub.address(i).c_str());
+				return false;
+			} 
+			tx_filter_address_.insert(sub.address(i));
+		}
+
+		return true;
+	}
+
+	bool WsPeer::Filter(const protocol::TransactionEnvStore &tx_msg) {
+		if (tx_filter_address_.empty()) {
+			return true;
+		}
+
+		const protocol::Transaction &trans = tx_msg.transaction_env().transaction();
+		if (tx_filter_address_.find(trans.source_address()) != tx_filter_address_.end()) {
+			return true;
+		}
+
+		for (int32_t i = 0; i < trans.operations_size(); i++) {
+			const protocol::Operation &ope = trans.operations(i);
+			if (!ope.source_address().empty() && tx_filter_address_.find(ope.source_address()) != tx_filter_address_.end()) {
+				return true;
+			}
+
+			if (ope.type() == protocol::Operation_Type_CREATE_ACCOUNT) {
+				if (tx_filter_address_.find(ope.create_account().dest_address()) != tx_filter_address_.end()) {
+					return true;
+				}
+			}
+			else if (ope.type() == protocol::Operation_Type_PAY_COIN) {
+				if (tx_filter_address_.find(ope.payment().dest_address()) != tx_filter_address_.end()) {
+					return true;
+				}
+			}
+			else if (ope.type() == protocol::Operation_Type_PAYMENT) {
+				if (tx_filter_address_.find(ope.pay_coin().dest_address()) != tx_filter_address_.end()) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	WebSocketServer::WebSocketServer() : Network(SslParameter()) {
 		connect_interval_ = 120 * utils::MICRO_UNITS_PER_SEC;
 		last_connect_time_ = 0;
@@ -101,44 +161,6 @@ namespace bumo {
 		return true;
 	}
 
-	bool WebSocketServer::FilterByAddress(std::set<std::string> addresses, protocol::TransactionEnvStore& txMsg){
-		if (addresses.empty()) {
-			return true;
-		}
-
-		auto trans = txMsg.transaction_env().transaction();
-		if (addresses.find(trans.source_address()) != addresses.end()) {
-			return true;
-		}
-
-		unsigned len = trans.operations().size();
-		for (unsigned i = 0; i < len; i++)
-		{
-			auto ope = trans.mutable_operations(i);
-			if (!ope->source_address().empty() && addresses.find(ope->source_address()) != addresses.end()) {
-				return true;
-			}
-
-			if (ope->type() == protocol::Operation_Type_CREATE_ACCOUNT){
-				if (addresses.find(ope->create_account().dest_address()) != addresses.end()) {
-					return true;
-				}
-			}
-			else if (ope->type() == protocol::Operation_Type_PAY_COIN){
-				if (addresses.find(ope->payment().dest_address()) != addresses.end()) {
-					return true;
-				}
-			}
-			else if (ope->type() == protocol::Operation_Type_PAYMENT){
-				if (addresses.find(ope->pay_coin().dest_address()) != addresses.end()) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
 	void WebSocketServer::BroadcastMsg(int64_t type, const std::string &data) {
 		utils::MutexGuard guard(conns_list_lock_);
 
@@ -156,14 +178,15 @@ namespace bumo {
 		utils::MutexGuard guard(conns_list_lock_);
 
 		for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
+			WsPeer *peer = (WsPeer *)iter->second;
 			if (subscriptions_.find(iter->first) == subscriptions_.end()){
 				std::error_code ec;
-				iter->second->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
+				peer->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
 			}
 			else{
-				if(FilterByAddress(subscriptions_[iter->first], txMsg)){
+				if (peer->Filter(txMsg)){
 					std::error_code ec;
-					iter->second->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
+					peer->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
 				}
 			}
 		}
@@ -214,7 +237,7 @@ namespace bumo {
 
 	bool WebSocketServer::OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id){
 		utils::MutexGuard guard_(conns_list_lock_);
-		Connection *conn = GetConnection(conn_id);
+		WsPeer *conn = (WsPeer *)GetConnection(conn_id);
 		if (!conn) {
 			return false;
 		}
@@ -226,16 +249,7 @@ namespace bumo {
 			return true;
 		}
 
-		if (subs.address_size() > 100) {
-			LOG_ERROR("Subscribe tx size large than 100");
-			return false;
-		}
-
-		subscriptions_[conn_id].clear();
-		for (int32_t i = 0; i < subs.address_size(); i++) {
-			subscriptions_[conn_id].insert(subs.address(i));
-		}
-		return true;
+		return conn->Set(subs);
 	}
 
 	void WebSocketServer::GetModuleStatus(Json::Value &data) {
@@ -247,5 +261,11 @@ namespace bumo {
 		for (auto &item : connections_) {
 			item.second->ToJson(peers[peers.size()]);
 		}
+	}
+
+	Connection *WebSocketServer::CreateConnectObject(server *server_h, client *client_,
+		tls_server *tls_server_h, tls_client *tls_client_h,
+		connection_hdl con, const std::string &uri, int64_t id) {
+		return new WsPeer(server_h, client_, tls_server_h, tls_client_h, con, uri, id);
 	}
 }
