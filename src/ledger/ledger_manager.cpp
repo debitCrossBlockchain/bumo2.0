@@ -668,6 +668,7 @@ namespace bumo {
 			WebSocketServer::Instance().BroadcastChainTxMsg(applyTxMsg);
 		}
 		// notice dropped
+		/*
 		for (size_t i = 0; i < closing_ledger->dropped_tx_frms_.size(); i++) {
 			TransactionFrm::pointer tx = closing_ledger->dropped_tx_frms_[i];
 			protocol::TransactionEnvStore dropTxMsg;
@@ -679,6 +680,7 @@ namespace bumo {
 			dropTxMsg.set_hash(tx->GetContentHash());
 			WebSocketServer::Instance().BroadcastChainTxMsg(dropTxMsg);
 		}
+		*/
 
 		// monitor
 		monitor::LedgerStatus ledger_status;

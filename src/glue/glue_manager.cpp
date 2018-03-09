@@ -128,12 +128,10 @@ namespace bumo {
 			protocol::LedgerUpgrade up;
 			if (ledger_upgrade_.GetValid(validator_set, quorum_size + 1, up)) {
 				LOG_INFO("Get valid upgrade value(%s)", Proto2Json(up).toFastString().c_str());
-				*propose_value.mutable_ledger_upgrade() = up;
 
-				if (CheckValueHelper(propose_value, next_close_time) != Consensus::CHECK_VALUE_VALID) {
-					//not propose the upgrade value
+				if (lcl.version() < up.new_ledger_version() && up.new_ledger_version() <= General::LEDGER_VERSION) {
 					LOG_ERROR("Not propose the invalid upgrade value");
-					propose_value.clear_ledger_upgrade();
+					*propose_value.mutable_ledger_upgrade() = up;
 				}
 			}
 
@@ -341,14 +339,6 @@ namespace bumo {
 		if (!consensus_value.ParseFromString(value)) {
 			LOG_ERROR("Parse consensus value failed");
 			return Consensus::CHECK_VALUE_MAYVALID;
-		}
-
-		if (consensus_value.has_ledger_upgrade()) {
-			const protocol::LedgerUpgrade &upgrade = consensus_value.ledger_upgrade();
-			if (upgrade.SerializeAsString() != ledger_upgrade_.GetLocalState().SerializeAsString()) {
-				LOG_ERROR("Check valid failed, ledger upgrade message not match local state");
-				return Consensus::CHECK_VALUE_MAYVALID;
-			}
 		}
 
 		int32_t check_helper_ret = CheckValueHelper(consensus_value, utils::Timestamp::Now().timestamp());

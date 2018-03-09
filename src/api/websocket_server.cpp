@@ -32,7 +32,7 @@ namespace bumo {
 		request_methods_[protocol::CHAIN_HELLO] = std::bind(&WebSocketServer::OnChainHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_PEER_MESSAGE] = std::bind(&WebSocketServer::OnChainPeerMessage, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_SUBMITTRANSACTION] = std::bind(&WebSocketServer::OnSubmitTransaction, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::CHAIN_SUBSCRIPTION] = std::bind(&WebSocketServer::OnSubscription, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::CHAIN_SUBSCRIBE_TX] = std::bind(&WebSocketServer::OnSubscribeTx, this, std::placeholders::_1, std::placeholders::_2);
 		thread_ptr_ = NULL;
 	}
 
@@ -101,13 +101,13 @@ namespace bumo {
 		return true;
 	}
 
-	bool WebSocketServer::FilterByAddress(std::string address, protocol::TransactionEnvStore& txMsg){
-		if (address.empty()){
+	bool WebSocketServer::FilterByAddress(std::set<std::string> addresses, protocol::TransactionEnvStore& txMsg){
+		if (addresses.empty()) {
 			return true;
 		}
 
 		auto trans = txMsg.transaction_env().transaction();
-		if (trans.source_address() == address){
+		if (addresses.find(trans.source_address()) != addresses.end()) {
 			return true;
 		}
 
@@ -115,22 +115,22 @@ namespace bumo {
 		for (unsigned i = 0; i < len; i++)
 		{
 			auto ope = trans.mutable_operations(i);
-			if (ope->source_address() == address){
+			if (!ope->source_address().empty() && addresses.find(ope->source_address()) != addresses.end()) {
 				return true;
 			}
 
 			if (ope->type() == protocol::Operation_Type_CREATE_ACCOUNT){
-				if (ope->create_account().dest_address() == address){
+				if (addresses.find(ope->create_account().dest_address()) != addresses.end()) {
 					return true;
 				}
 			}
 			else if (ope->type() == protocol::Operation_Type_PAY_COIN){
-				if (ope->payment().dest_address() == address){
+				if (addresses.find(ope->payment().dest_address()) != addresses.end()) {
 					return true;
 				}
 			}
 			else if (ope->type() == protocol::Operation_Type_PAYMENT){
-				if (ope->pay_coin().dest_address() == address){
+				if (addresses.find(ope->pay_coin().dest_address()) != addresses.end()) {
 					return true;
 				}
 			}
@@ -212,7 +212,7 @@ namespace bumo {
 		return true;
 	}
 
-	bool WebSocketServer::OnSubscription(protocol::WsMessage &message, int64_t conn_id){
+	bool WebSocketServer::OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id){
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(conn_id);
 		if (!conn) {
@@ -220,13 +220,21 @@ namespace bumo {
 		}
 
 		LOG_INFO("Recv chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
-		protocol::ChainSubscription subs;
+		protocol::ChainSubscribeTx subs;
 		if (!subs.ParseFromString(message.data())) {
 			LOG_ERROR("ChainPeerMessage FromString fail");
 			return true;
 		}
 
-		subscriptions_[conn_id] = subs.address();
+		if (subs.address_size() > 100) {
+			LOG_ERROR("Subscribe tx size large than 100");
+			return false;
+		}
+
+		subscriptions_[conn_id].clear();
+		for (int32_t i = 0; i < subs.address_size(); i++) {
+			subscriptions_[conn_id].insert(subs.address(i));
+		}
 		return true;
 	}
 

@@ -186,6 +186,7 @@ message TransactionEnvStore{
 		string error_desc = 3;
 		int64 ledger_seq = 4;
 		int64 close_time = 5;
+		//for notify
 		bytes hash = 6;
 }
 

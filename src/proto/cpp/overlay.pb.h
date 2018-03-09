@@ -42,7 +42,7 @@ void protobuf_ShutdownFile_overlay_2eproto();
 class ChainHello;
 class ChainPeerMessage;
 class ChainStatus;
-class ChainSubscription;
+class ChainSubscribeTx;
 class ChainTxStatus;
 class DontHave;
 class EntryList;
@@ -139,7 +139,7 @@ enum ChainMessageType {
   CHAIN_PEER_MESSAGE = 14,
   CHAIN_SUBMITTRANSACTION = 15,
   CHAIN_LEDGER_HEADER = 16,
-  CHAIN_SUBSCRIPTION = 17,
+  CHAIN_SUBSCRIBE_TX = 17,
   CHAIN_TX_ENV_STORE = 18,
   ChainMessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   ChainMessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
@@ -1466,32 +1466,32 @@ class ChainPeerMessage : public ::google::protobuf::Message /* @@protoc_insertio
 };
 // -------------------------------------------------------------------
 
-class ChainSubscription : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainSubscription) */ {
+class ChainSubscribeTx : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainSubscribeTx) */ {
  public:
-  ChainSubscription();
-  virtual ~ChainSubscription();
+  ChainSubscribeTx();
+  virtual ~ChainSubscribeTx();
 
-  ChainSubscription(const ChainSubscription& from);
+  ChainSubscribeTx(const ChainSubscribeTx& from);
 
-  inline ChainSubscription& operator=(const ChainSubscription& from) {
+  inline ChainSubscribeTx& operator=(const ChainSubscribeTx& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ChainSubscription& default_instance();
+  static const ChainSubscribeTx& default_instance();
 
-  void Swap(ChainSubscription* other);
+  void Swap(ChainSubscribeTx* other);
 
   // implements Message ----------------------------------------------
 
-  inline ChainSubscription* New() const { return New(NULL); }
+  inline ChainSubscribeTx* New() const { return New(NULL); }
 
-  ChainSubscription* New(::google::protobuf::Arena* arena) const;
+  ChainSubscribeTx* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ChainSubscription& from);
-  void MergeFrom(const ChainSubscription& from);
+  void CopyFrom(const ChainSubscribeTx& from);
+  void MergeFrom(const ChainSubscribeTx& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -1510,7 +1510,7 @@ class ChainSubscription : public ::google::protobuf::Message /* @@protoc_inserti
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(ChainSubscription* other);
+  void InternalSwap(ChainSubscribeTx* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -1526,30 +1526,35 @@ class ChainSubscription : public ::google::protobuf::Message /* @@protoc_inserti
 
   // accessors -------------------------------------------------------
 
-  // optional string address = 1;
+  // repeated string address = 1;
+  int address_size() const;
   void clear_address();
   static const int kAddressFieldNumber = 1;
-  const ::std::string& address() const;
-  void set_address(const ::std::string& value);
-  void set_address(const char* value);
-  void set_address(const char* value, size_t size);
-  ::std::string* mutable_address();
-  ::std::string* release_address();
-  void set_allocated_address(::std::string* address);
+  const ::std::string& address(int index) const;
+  ::std::string* mutable_address(int index);
+  void set_address(int index, const ::std::string& value);
+  void set_address(int index, const char* value);
+  void set_address(int index, const char* value, size_t size);
+  ::std::string* add_address();
+  void add_address(const ::std::string& value);
+  void add_address(const char* value);
+  void add_address(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& address() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_address();
 
-  // @@protoc_insertion_point(class_scope:protocol.ChainSubscription)
+  // @@protoc_insertion_point(class_scope:protocol.ChainSubscribeTx)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::internal::ArenaStringPtr address_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> address_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
   friend void protobuf_ShutdownFile_overlay_2eproto();
 
   void InitAsDefaultInstance();
-  static ChainSubscription* default_instance_;
+  static ChainSubscribeTx* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -2844,50 +2849,61 @@ inline void ChainPeerMessage::set_allocated_data(::std::string* data) {
 
 // -------------------------------------------------------------------
 
-// ChainSubscription
+// ChainSubscribeTx
 
-// optional string address = 1;
-inline void ChainSubscription::clear_address() {
-  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// repeated string address = 1;
+inline int ChainSubscribeTx::address_size() const {
+  return address_.size();
 }
-inline const ::std::string& ChainSubscription::address() const {
-  // @@protoc_insertion_point(field_get:protocol.ChainSubscription.address)
-  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ChainSubscribeTx::clear_address() {
+  address_.Clear();
 }
-inline void ChainSubscription::set_address(const ::std::string& value) {
-  
-  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.ChainSubscription.address)
+inline const ::std::string& ChainSubscribeTx::address(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ChainSubscribeTx.address)
+  return address_.Get(index);
 }
-inline void ChainSubscription::set_address(const char* value) {
-  
-  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.ChainSubscription.address)
+inline ::std::string* ChainSubscribeTx::mutable_address(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.ChainSubscribeTx.address)
+  return address_.Mutable(index);
 }
-inline void ChainSubscription::set_address(const char* value, size_t size) {
-  
-  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.ChainSubscription.address)
+inline void ChainSubscribeTx::set_address(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:protocol.ChainSubscribeTx.address)
+  address_.Mutable(index)->assign(value);
 }
-inline ::std::string* ChainSubscription::mutable_address() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.ChainSubscription.address)
-  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ChainSubscribeTx::set_address(int index, const char* value) {
+  address_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:protocol.ChainSubscribeTx.address)
 }
-inline ::std::string* ChainSubscription::release_address() {
-  // @@protoc_insertion_point(field_release:protocol.ChainSubscription.address)
-  
-  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline void ChainSubscribeTx::set_address(int index, const char* value, size_t size) {
+  address_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainSubscribeTx.address)
 }
-inline void ChainSubscription::set_allocated_address(::std::string* address) {
-  if (address != NULL) {
-    
-  } else {
-    
-  }
-  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
-  // @@protoc_insertion_point(field_set_allocated:protocol.ChainSubscription.address)
+inline ::std::string* ChainSubscribeTx::add_address() {
+  // @@protoc_insertion_point(field_add_mutable:protocol.ChainSubscribeTx.address)
+  return address_.Add();
+}
+inline void ChainSubscribeTx::add_address(const ::std::string& value) {
+  address_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:protocol.ChainSubscribeTx.address)
+}
+inline void ChainSubscribeTx::add_address(const char* value) {
+  address_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:protocol.ChainSubscribeTx.address)
+}
+inline void ChainSubscribeTx::add_address(const char* value, size_t size) {
+  address_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:protocol.ChainSubscribeTx.address)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+ChainSubscribeTx::address() const {
+  // @@protoc_insertion_point(field_list:protocol.ChainSubscribeTx.address)
+  return address_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+ChainSubscribeTx::mutable_address() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ChainSubscribeTx.address)
+  return &address_;
 }
 
 // -------------------------------------------------------------------

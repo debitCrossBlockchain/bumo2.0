@@ -40,8 +40,8 @@ namespace bumo {
 		bool OnChainHello(protocol::WsMessage &message, int64_t conn_id);
 		bool OnChainPeerMessage(protocol::WsMessage &message, int64_t conn_id);
 		bool OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id);
-		bool OnSubscription(protocol::WsMessage &message, int64_t conn_id);
-		bool FilterByAddress(std::string address, protocol::TransactionEnvStore& txMsg);
+		bool OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id);
+		bool FilterByAddress(std::set<std::string> address, protocol::TransactionEnvStore& txMsg);
 
 		void BroadcastMsg(int64_t type, const std::string &data);
 		void BroadcastChainTxMsg(protocol::TransactionEnvStore& txMsg);
@@ -55,7 +55,7 @@ namespace bumo {
 
 		uint64_t last_connect_time_;
 		uint64_t connect_interval_;
-		std::map<int64_t, std::string> subscriptions_;
+		std::map<int64_t, std::set<std::string>> subscriptions_;
 	};
 }
 
