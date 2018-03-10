@@ -511,10 +511,9 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, _is_default_instance_));
   ConsensusValueValidation_descriptor_ = file->message_type(21);
-  static const int ConsensusValueValidation_offsets_[3] = {
+  static const int ConsensusValueValidation_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, expire_tx_ids_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, error_tx_ids_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, droped_tx_ids_),
   };
   ConsensusValueValidation_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -816,28 +815,27 @@ void protobuf_AddDesc_chain_2eproto() {
     "(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledger_seq\030\004 \001"
     "(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n\004hash\030\006 \001(\014\":\n\021"
     "TransactionEnvSet\022%\n\003txs\030\002 \003(\0132\030.protoco"
-    "l.TransactionEnv\"^\n\030ConsensusValueValida"
+    "l.TransactionEnv\"G\n\030ConsensusValueValida"
     "tion\022\025\n\rexpire_tx_ids\030\001 \003(\005\022\024\n\014error_tx_"
-    "ids\030\002 \003(\005\022\025\n\rdroped_tx_ids\030\003 \003(\005\"\203\002\n\016Con"
-    "sensusValue\022*\n\005txset\030\001 \001(\0132\033.protocol.Tr"
-    "ansactionEnvSet\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016p"
-    "revious_proof\030\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022"
-    "\034\n\024previous_ledger_hash\030\005 \001(\014\022/\n\016ledger_"
-    "upgrade\030\006 \001(\0132\027.protocol.LedgerUpgrade\0226"
-    "\n\nvalidation\030\007 \001(\0132\".protocol.ConsensusV"
-    "alueValidation\"j\n\010Contract\022-\n\004type\030\001 \001(\016"
-    "2\037.protocol.Contract.ContractType\022\017\n\007pay"
-    "load\030\002 \001(\t\"\036\n\014ContractType\022\016\n\nJAVASCRIPT"
-    "\020\000\"\316\001\n\026OperationCreateAccount\022\024\n\014dest_ad"
-    "dress\030\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.protocol"
-    ".Contract\022(\n\004priv\030\003 \001(\0132\032.protocol.Accou"
-    "ntPrivilege\022$\n\tmetadatas\030\004 \003(\0132\021.protoco"
-    "l.KeyPair\022\024\n\014init_balance\030\005 \001(\003\022\022\n\ninit_"
-    "input\030\006 \001(\t\"X\n\024OperationSetMetadata\022\013\n\003k"
-    "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003"
-    "\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOW"
-    "N\020\000\022\r\n\tSIGNATURE\020dB\035\n\033cn.bumo.blockchain"
-    ".adapter3b\006proto3", 3857);
+    "ids\030\002 \003(\005\"\203\002\n\016ConsensusValue\022*\n\005txset\030\001 "
+    "\001(\0132\033.protocol.TransactionEnvSet\022\022\n\nclos"
+    "e_time\030\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\n"
+    "ledger_seq\030\004 \001(\003\022\034\n\024previous_ledger_hash"
+    "\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001(\0132\027.protoco"
+    "l.LedgerUpgrade\0226\n\nvalidation\030\007 \001(\0132\".pr"
+    "otocol.ConsensusValueValidation\"j\n\010Contr"
+    "act\022-\n\004type\030\001 \001(\0162\037.protocol.Contract.Co"
+    "ntractType\022\017\n\007payload\030\002 \001(\t\"\036\n\014ContractT"
+    "ype\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026OperationCreateA"
+    "ccount\022\024\n\014dest_address\030\001 \001(\t\022$\n\010contract"
+    "\030\002 \001(\0132\022.protocol.Contract\022(\n\004priv\030\003 \001(\013"
+    "2\032.protocol.AccountPrivilege\022$\n\tmetadata"
+    "s\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014init_balan"
+    "ce\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024Operatio"
+    "nSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t"
+    "\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#"
+    "\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\035\n\033c"
+    "n.bumo.blockchain.adapter3b\006proto3", 3834);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -11105,7 +11103,6 @@ TransactionEnvSet::txs() const {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int ConsensusValueValidation::kExpireTxIdsFieldNumber;
 const int ConsensusValueValidation::kErrorTxIdsFieldNumber;
-const int ConsensusValueValidation::kDropedTxIdsFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ConsensusValueValidation::ConsensusValueValidation()
@@ -11170,7 +11167,6 @@ void ConsensusValueValidation::Clear() {
 // @@protoc_insertion_point(message_clear_start:protocol.ConsensusValueValidation)
   expire_tx_ids_.Clear();
   error_tx_ids_.Clear();
-  droped_tx_ids_.Clear();
 }
 
 bool ConsensusValueValidation::MergePartialFromCodedStream(
@@ -11211,24 +11207,6 @@ bool ConsensusValueValidation::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  1, 18, input, this->mutable_error_tx_ids())));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(26)) goto parse_droped_tx_ids;
-        break;
-      }
-
-      // repeated int32 droped_tx_ids = 3;
-      case 3: {
-        if (tag == 26) {
-         parse_droped_tx_ids:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPackedPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, this->mutable_droped_tx_ids())));
-        } else if (tag == 24) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadRepeatedPrimitiveNoInline<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 1, 26, input, this->mutable_droped_tx_ids())));
         } else {
           goto handle_unusual;
         }
@@ -11280,16 +11258,6 @@ void ConsensusValueValidation::SerializeWithCachedSizes(
       this->error_tx_ids(i), output);
   }
 
-  // repeated int32 droped_tx_ids = 3;
-  if (this->droped_tx_ids_size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteTag(3, ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED, output);
-    output->WriteVarint32(_droped_tx_ids_cached_byte_size_);
-  }
-  for (int i = 0; i < this->droped_tx_ids_size(); i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32NoTag(
-      this->droped_tx_ids(i), output);
-  }
-
   // @@protoc_insertion_point(serialize_end:protocol.ConsensusValueValidation)
 }
 
@@ -11322,20 +11290,6 @@ void ConsensusValueValidation::SerializeWithCachedSizes(
   for (int i = 0; i < this->error_tx_ids_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteInt32NoTagToArray(this->error_tx_ids(i), target);
-  }
-
-  // repeated int32 droped_tx_ids = 3;
-  if (this->droped_tx_ids_size() > 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteTagToArray(
-      3,
-      ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED,
-      target);
-    target = ::google::protobuf::io::CodedOutputStream::WriteVarint32ToArray(
-      _droped_tx_ids_cached_byte_size_, target);
-  }
-  for (int i = 0; i < this->droped_tx_ids_size(); i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteInt32NoTagToArray(this->droped_tx_ids(i), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.ConsensusValueValidation)
@@ -11380,23 +11334,6 @@ int ConsensusValueValidation::ByteSize() const {
     total_size += data_size;
   }
 
-  // repeated int32 droped_tx_ids = 3;
-  {
-    int data_size = 0;
-    for (int i = 0; i < this->droped_tx_ids_size(); i++) {
-      data_size += ::google::protobuf::internal::WireFormatLite::
-        Int32Size(this->droped_tx_ids(i));
-    }
-    if (data_size > 0) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(data_size);
-    }
-    GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-    _droped_tx_ids_cached_byte_size_ = data_size;
-    GOOGLE_SAFE_CONCURRENT_WRITES_END();
-    total_size += data_size;
-  }
-
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -11427,7 +11364,6 @@ void ConsensusValueValidation::MergeFrom(const ConsensusValueValidation& from) {
   }
   expire_tx_ids_.MergeFrom(from.expire_tx_ids_);
   error_tx_ids_.MergeFrom(from.error_tx_ids_);
-  droped_tx_ids_.MergeFrom(from.droped_tx_ids_);
 }
 
 void ConsensusValueValidation::CopyFrom(const ::google::protobuf::Message& from) {
@@ -11456,7 +11392,6 @@ void ConsensusValueValidation::Swap(ConsensusValueValidation* other) {
 void ConsensusValueValidation::InternalSwap(ConsensusValueValidation* other) {
   expire_tx_ids_.UnsafeArenaSwap(&other->expire_tx_ids_);
   error_tx_ids_.UnsafeArenaSwap(&other->error_tx_ids_);
-  droped_tx_ids_.UnsafeArenaSwap(&other->droped_tx_ids_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -11530,36 +11465,6 @@ ConsensusValueValidation::error_tx_ids() const {
 ConsensusValueValidation::mutable_error_tx_ids() {
   // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.error_tx_ids)
   return &error_tx_ids_;
-}
-
-// repeated int32 droped_tx_ids = 3;
-int ConsensusValueValidation::droped_tx_ids_size() const {
-  return droped_tx_ids_.size();
-}
-void ConsensusValueValidation::clear_droped_tx_ids() {
-  droped_tx_ids_.Clear();
-}
- ::google::protobuf::int32 ConsensusValueValidation::droped_tx_ids(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.droped_tx_ids)
-  return droped_tx_ids_.Get(index);
-}
- void ConsensusValueValidation::set_droped_tx_ids(int index, ::google::protobuf::int32 value) {
-  droped_tx_ids_.Set(index, value);
-  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.droped_tx_ids)
-}
- void ConsensusValueValidation::add_droped_tx_ids(::google::protobuf::int32 value) {
-  droped_tx_ids_.Add(value);
-  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.droped_tx_ids)
-}
- const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-ConsensusValueValidation::droped_tx_ids() const {
-  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.droped_tx_ids)
-  return droped_tx_ids_;
-}
- ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-ConsensusValueValidation::mutable_droped_tx_ids() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.droped_tx_ids)
-  return &droped_tx_ids_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

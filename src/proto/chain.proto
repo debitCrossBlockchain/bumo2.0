@@ -197,7 +197,6 @@ message TransactionEnvSet{
 message ConsensusValueValidation {
 	repeated int32 expire_tx_ids = 1;  //contract execute expired
 	repeated int32 error_tx_ids = 2;
-	repeated int32 droped_tx_ids = 3; 
 	//may contain other check
 }
 

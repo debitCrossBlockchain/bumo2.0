@@ -402,9 +402,8 @@ namespace bumo {
 			header->set_validators_hash(validators_hash);
 
 			//calc block reward
-			int32_t tx_time_out_index;
-			protocol::ConsensusValueValidation validation;
-			ledger_frm->Apply(request, NULL, tx_time_out_index, LedgerFrm::APPLY_MODE_PROPOSE, validation);
+			ProposeTxsResult prop_result;
+			ledger_frm->ApplyPropose(request, NULL, prop_result);
 			int64_t new_count = 0, change_count = 0;
 			ledger_frm->Commit(LedgerManager::GetInstance()->tree_, new_count, change_count);
 

@@ -135,11 +135,10 @@ namespace bumo {
 				}
 			}
 
-			bool block_time_out = false;
-			protocol::ConsensusValueValidation cons_validation;
-			LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, true, block_time_out, cons_validation);
+			ProposeTxsResult propose_result;
+			LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, true, propose_result);
 
-			if (block_time_out) {
+			if (propose_result.block_timeout_) {
 				//remove the time out tx
 				//reduct to 1/2
 				protocol::TransactionEnvSet tmp_raw;
@@ -148,16 +147,32 @@ namespace bumo {
 				}
 
 				txset_raw = tmp_raw;
+
+				continue;
 			}
 
-			if (cons_validation.droped_tx_ids_size() > 0 ||
-				cons_validation.error_tx_ids_size() > 0 ||
-				cons_validation.expire_tx_ids_size() > 0 ) {
-				*propose_value.mutable_validation() = cons_validation;
+			//need drop some tx
+			if (propose_result.need_dropped_tx_.size()) {
+				protocol::TransactionEnvSet *txs = propose_value.mutable_txset();
+				txs->clear_txs();
+
+				protocol::TransactionEnvSet tmp_raw;
+				for (int32_t i = 0; i < txset_raw.txs_size(); i++) {
+					if (propose_result.need_dropped_tx_.find(i) != propose_result.need_dropped_tx_.end()) {
+						//remove from the cache
+					} else{
+						*txs->add_txs() = txset_raw.txs(i);
+					}
+				}
+			} 
+
+			if (propose_result.cons_validation_.error_tx_ids_size() > 0 ||
+				propose_result.cons_validation_.expire_tx_ids_size() > 0) {
+				*propose_value.mutable_validation() = propose_result.cons_validation_;
 			}
 
-			LOG_INFO("Check validation, validation(%d,%d,%d) ",
-				cons_validation.expire_tx_ids_size(), cons_validation.droped_tx_ids_size(), cons_validation.error_tx_ids_size());
+			LOG_INFO("Check validation, validation(%d,%d) ",
+				propose_result.cons_validation_.expire_tx_ids_size(), propose_result.cons_validation_.error_tx_ids_size());
 
 			break;
 		} while (true);
@@ -346,11 +361,9 @@ namespace bumo {
 			return check_helper_ret;
 		}
 
-		bool time_out;
-		protocol::ConsensusValueValidation ignor_cons_validation;
+		ProposeTxsResult ignor_cons_validation;
 		if (!LedgerManager::Instance().context_manager_.SyncPreProcess(consensus_value,
 			false,
-			time_out,
 			ignor_cons_validation)) {
 			LOG_ERROR("Pre process consvalue failed");
 			return Consensus::CHECK_VALUE_MAYVALID;
@@ -426,13 +439,13 @@ namespace bumo {
 		}
 
 		//check the txset
-		if (consensus_value.has_txset()) {
-			TransactionSetFrm frm(consensus_value.txset());
-			if (!frm.CheckValid()) {
-				LOG_ERROR("Check valid failed, tx set not valid");
-				return Consensus::CHECK_VALUE_MAYVALID;
-			}
-		}
+// 		if (consensus_value.has_txset()) {
+// 			TransactionSetFrm frm(consensus_value.txset());
+// 			if (!frm.CheckValid()) {
+// 				LOG_ERROR("Check valid failed, tx set not valid");
+// 				return Consensus::CHECK_VALUE_MAYVALID;
+// 			}
+// 		}
 
 		//check the second block
 		if (lcl.seq() == 1 && consensus_value.previous_proof() != "") {

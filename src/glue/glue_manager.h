@@ -37,9 +37,7 @@ namespace bumo {
 		std::map<std::string, int64_t> last_topic_seqs_;
 		TransactionMap topic_caches_;
 		utils::Mutex lock_;
-        std::shared_ptr<TransactionQueue> tx_pool_;
-
-
+		std::shared_ptr<TransactionQueue> tx_pool_;
 
 		int64_t time_start_consenus_;
 		std::shared_ptr<Consensus> consensus_;

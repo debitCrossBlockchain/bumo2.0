@@ -77,9 +77,10 @@ namespace bumo {
 		std::vector<std::shared_ptr<TransactionFrm>> transaction_stack_;
 		
 		//result
-		bool exe_result_;
+		//bool exe_result_;
 		int32_t timeout_tx_index_;
-		protocol::ConsensusValueValidation consvalue_validation_;
+		//protocol::ConsensusValueValidation consvalue_validation_;
+		ProposeTxsResult propose_result_;
 
 		utils::Mutex lock_;
 
@@ -141,8 +142,7 @@ namespace bumo {
 
 		//<0 : notfound 1: found and success 0: found and failed
 		int32_t CheckComplete(const std::string &chash);
-		bool SyncPreProcess(const protocol::ConsensusValue& consensus_value, bool propose, bool &block_timeout,
-			protocol::ConsensusValueValidation &validation);
+		bool SyncPreProcess(const protocol::ConsensusValue& consensus_value, bool propose, ProposeTxsResult &propose_result);
 
 		//<0 : processing 1: found and success 0: found and failed
 //		int32_t AsyncPreProcess(const protocol::ConsensusValue& consensus_value, int64_t timeout, PreProcessCallback callback, int32_t &timeout_tx_index);

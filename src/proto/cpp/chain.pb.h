@@ -2849,18 +2849,6 @@ class ConsensusValueValidation : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
       mutable_error_tx_ids();
 
-  // repeated int32 droped_tx_ids = 3;
-  int droped_tx_ids_size() const;
-  void clear_droped_tx_ids();
-  static const int kDropedTxIdsFieldNumber = 3;
-  ::google::protobuf::int32 droped_tx_ids(int index) const;
-  void set_droped_tx_ids(int index, ::google::protobuf::int32 value);
-  void add_droped_tx_ids(::google::protobuf::int32 value);
-  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-      droped_tx_ids() const;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-      mutable_droped_tx_ids();
-
   // @@protoc_insertion_point(class_scope:protocol.ConsensusValueValidation)
  private:
 
@@ -2870,8 +2858,6 @@ class ConsensusValueValidation : public ::google::protobuf::Message /* @@protoc_
   mutable int _expire_tx_ids_cached_byte_size_;
   ::google::protobuf::RepeatedField< ::google::protobuf::int32 > error_tx_ids_;
   mutable int _error_tx_ids_cached_byte_size_;
-  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > droped_tx_ids_;
-  mutable int _droped_tx_ids_cached_byte_size_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -6034,36 +6020,6 @@ inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
 ConsensusValueValidation::mutable_error_tx_ids() {
   // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.error_tx_ids)
   return &error_tx_ids_;
-}
-
-// repeated int32 droped_tx_ids = 3;
-inline int ConsensusValueValidation::droped_tx_ids_size() const {
-  return droped_tx_ids_.size();
-}
-inline void ConsensusValueValidation::clear_droped_tx_ids() {
-  droped_tx_ids_.Clear();
-}
-inline ::google::protobuf::int32 ConsensusValueValidation::droped_tx_ids(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.droped_tx_ids)
-  return droped_tx_ids_.Get(index);
-}
-inline void ConsensusValueValidation::set_droped_tx_ids(int index, ::google::protobuf::int32 value) {
-  droped_tx_ids_.Set(index, value);
-  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.droped_tx_ids)
-}
-inline void ConsensusValueValidation::add_droped_tx_ids(::google::protobuf::int32 value) {
-  droped_tx_ids_.Add(value);
-  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.droped_tx_ids)
-}
-inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
-ConsensusValueValidation::droped_tx_ids() const {
-  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.droped_tx_ids)
-  return droped_tx_ids_;
-}
-inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
-ConsensusValueValidation::mutable_droped_tx_ids() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.droped_tx_ids)
-  return &droped_tx_ids_;
 }
 
 // -------------------------------------------------------------------

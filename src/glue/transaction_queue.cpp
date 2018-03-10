@@ -395,10 +395,12 @@ namespace bumo {
 			if (RemovePack(tx_frm->GetSourceAddress(), tx_frm->GetNonce())){
 				std::pair<bool, TransactionFrm::pointer> result = Remove(tx_frm->GetSourceAddress(), tx_frm->GetNonce());
 				if (!result.first)
-					LOG_ERROR("Account(%s) transaction(%s) nonce(" FMT_I64 ") is not in queue to remove",tx_frm->GetSourceAddress(), utils::String::Bin4ToHexString(tx_frm->GetContentHash()),tx_frm->GetNonce());
+					LOG_ERROR("Account(%s) transaction(%s) nonce(" FMT_I64 ") is not in queue to remove",tx_frm->GetSourceAddress().c_str(),
+					utils::String::Bin4ToHexString(tx_frm->GetContentHash()).c_str(),tx_frm->GetNonce());
 			}
 			else{
-				LOG_ERROR("Account(%s) transaction(%s) nonce(" FMT_I64 ") is not in queue to remove", tx_frm->GetSourceAddress(), utils::String::Bin4ToHexString(tx_frm->GetContentHash()), tx_frm->GetNonce());
+				LOG_ERROR("Account(%s) transaction(%s) nonce(" FMT_I64 ") is not in queue to remove", 
+					tx_frm->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetNonce());
 			}
 		}
 		return ret;

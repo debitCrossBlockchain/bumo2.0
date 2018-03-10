@@ -392,6 +392,15 @@ namespace bumo {
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
+
+		utils::StringVector vec;
+		vec.push_back(transaction_env_.transaction().source_address());
+		if (!SignerHashPriv(source_account, -1)) {
+			result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
+			result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
+			LOG_ERROR(result_.desc().c_str());
+			return false;
+		}
 		return true;
 	}
 

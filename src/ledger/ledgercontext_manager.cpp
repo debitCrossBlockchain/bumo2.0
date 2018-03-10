@@ -18,7 +18,6 @@
 #include "contract_manager.h"
 
 namespace bumo {
-
 	//for sync process
 	LedgerContext::LedgerContext(const std::string &chash, const protocol::ConsensusValue &consvalue) :
 		type_(AT_NORMAL),
@@ -26,7 +25,6 @@ namespace bumo {
 		hash_(chash),
 		consensus_value_(consvalue),
 		start_time_(-1),
-		exe_result_(false),
 		tx_timeout_(-1),
 		timeout_tx_index_(-1),
 		apply_mode_(LedgerFrm::APPLY_MODE_FOLLOW) {
@@ -41,7 +39,6 @@ namespace bumo {
 		hash_(chash),
 		consensus_value_(consvalue),
 		start_time_(-1),
-		exe_result_(false),
 		timeout_tx_index_(-1){
 		apply_mode_ = propose ? LedgerFrm::APPLY_MODE_PROPOSE : LedgerFrm::APPLY_MODE_CHECK;
 		closing_ledger_ = std::make_shared<LedgerFrm>();
@@ -103,12 +100,20 @@ namespace bumo {
 		//LOG_INFO("set_consensus_value_hash:%s,%s", utils::String::BinToHexString(con_str).c_str(), utils::String::BinToHexString(chash).c_str());
 		header->set_version(LedgerManager::Instance().GetLastClosedLedger().version());
 		LedgerManager::Instance().tree_->time_ = 0;
-		exe_result_ = closing_ledger_->Apply(consensus_value_, this, timeout_tx_index_, apply_mode_, consvalue_validation_);
+		if (apply_mode_ == LedgerFrm::APPLY_MODE_PROPOSE) {
+			propose_result_.exec_result_ = closing_ledger_->ApplyPropose(consensus_value_, this, propose_result_);
+		}
+		else if (apply_mode_ == LedgerFrm::APPLY_MODE_CHECK) {
+			propose_result_.exec_result_ = closing_ledger_->ApplyCheck(consensus_value_, this);
+		}
+		else {
+			propose_result_.exec_result_ = closing_ledger_->ApplyFollow(consensus_value_, this);
+		}
 
 		//async
 		if (lpmanager_) {
 			//move running to complete
-			if (exe_result_) {
+			if (propose_result_.exec_result_) {
 				lpmanager_->MoveRunningToComplete(this);
 			}
 			else { //delete
@@ -133,7 +138,7 @@ namespace bumo {
 			std::shared_ptr<AccountFrm> dest_account = std::make_shared<AccountFrm>(account);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
 				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
-				exe_result_ = false;
+				propose_result_.exec_result_ = false;
 				return false;
 			}
 		}
@@ -154,7 +159,7 @@ namespace bumo {
 			dest_account->SetProtoTxThreshold(1);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
 				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
-				exe_result_ = false;
+				propose_result_.exec_result_ = false;
 				return false;
 			}
 		}
@@ -329,9 +334,8 @@ namespace bumo {
 		consensus_value_.set_close_time(lcl.close_time() + 1);
 
 		closing_ledger_->SetTestMode(true);
-		protocol::ConsensusValueValidation vad_ignore;
-		exe_result_ = closing_ledger_->Apply(consensus_value_, this, timeout_tx_index_, LedgerFrm::APPLY_MODE_PROPOSE, vad_ignore);
-		return exe_result_;
+		propose_result_.exec_result_ = closing_ledger_->ApplyPropose(consensus_value_, this, propose_result_);
+		return propose_result_.exec_result_;
 	}
 
 	LedgerContextManager::LedgerContextManager() {
@@ -349,7 +353,7 @@ namespace bumo {
 			utils::MutexGuard guard(ctxs_lock_);
 			LedgerContextMap::iterator iter = completed_ctxs_.find(chash);
 			if (iter != completed_ctxs_.end()) {
-				return iter->second->exe_result_ ? 1 : 0;
+				return iter->second->propose_result_.exec_result_ ? 1 : 0;
 			}
 		} while (false);
 
@@ -372,46 +376,6 @@ namespace bumo {
 		ledger_context.Do();
 		return ledger_context.closing_ledger_;
 	}
-
-// 	int32_t LedgerContextManager::AsyncPreProcess(const protocol::ConsensusValue& consensus_value,
-// 		int64_t timeout, 
-// 		PreProcessCallback callback,
-// 		int32_t &timeout_tx_index) {
-// 
-// 		std::string con_str = consensus_value.SerializeAsString();
-// 		std::string chash = HashWrapper::Crypto(con_str);
-// 
-// 		int32_t check_complete = CheckComplete(chash);
-// 		if (check_complete > 0) {
-// 			return check_complete;
-// 		}
-// 
-// 		LedgerContext *ledger_context = new LedgerContext(this, chash, consensus_value, utils::MICRO_UNITS_PER_SEC, callback);
-// 		do {
-// 			utils::MutexGuard guard(ctxs_lock_);
-// 			running_ctxs_.insert(std::make_pair(chash, ledger_context));
-// 		} while (false);
-// 
-// 		if (!ledger_context->Start("process-value")) {
-// 			LOG_ERROR_ERRNO("Start process value thread failed, consvalue hash(%s)", utils::String::BinToHexString(chash).c_str(),
-// 				STD_ERR_CODE, STD_ERR_DESC);
-// 			
-// 			utils::MutexGuard guard(ctxs_lock_);
-// 			for (LedgerContextMultiMap::iterator iter = running_ctxs_.begin(); 
-// 				iter != running_ctxs_.end();
-// 				iter++) {
-// 				if (iter->second == ledger_context) {
-// 					running_ctxs_.erase(iter);
-// 					delete ledger_context;
-// 				} 
-// 			}
-// 
-// 			timeout_tx_index = -1;
-// 			return 0;
-// 		}
-// 
-// 		return -1;
-// 	}
 
 	bool LedgerContextManager::SyncTestProcess(LedgerContext::ACTION_TYPE type,
 		TestParameter *parameter, 
@@ -530,12 +494,8 @@ namespace bumo {
 		return true;
 	}
 
-	bool LedgerContextManager::SyncPreProcess(const protocol::ConsensusValue &consensus_value,
-		bool propose,
-		bool &block_timeout,
-		protocol::ConsensusValueValidation &validation) {
+	bool LedgerContextManager::SyncPreProcess(const protocol::ConsensusValue &consensus_value, bool propose, ProposeTxsResult &propose_result) {
 
-		block_timeout = false;
 		std::string con_str = consensus_value.SerializeAsString();
 		std::string chash = HashWrapper::Crypto(con_str);
 
@@ -550,7 +510,7 @@ namespace bumo {
 			LOG_ERROR_ERRNO("Start process value thread failed, consvalue hash(%s)", utils::String::BinToHexString(chash).c_str(), 
 				STD_ERR_CODE, STD_ERR_DESC);
 
-			block_timeout = true;
+			propose_result.block_timeout_ = true;
 			delete ledger_context;
 			return false;
 		}
@@ -559,19 +519,19 @@ namespace bumo {
 		while (ledger_context->IsRunning()) {
 			utils::Sleep(10);
 			if (utils::Timestamp::HighResolution() - time_start > General::BLOCK_EXECUTE_TIME_OUT) {
-				block_timeout = true;
+				propose_result.block_timeout_ = true;
 				break;
 			}
 		}
 
-		if (block_timeout) { //cancel it
+		if (propose_result.block_timeout_) { //cancel it
 			ledger_context->Cancel();
 			LOG_ERROR("Pre execute consvalue time(" FMT_I64 "ms) is out", (utils::Timestamp::HighResolution() - time_start) / utils::MICRO_UNITS_PER_MILLI);
 			return false;
 		}
 
-		validation = ledger_context->consvalue_validation_;
-		return ledger_context->exe_result_;
+		propose_result = ledger_context->propose_result_;
+		return propose_result.exec_result_;
 	}
 
 	void LedgerContextManager::RemoveCompleted(int64_t ledger_seq) {
