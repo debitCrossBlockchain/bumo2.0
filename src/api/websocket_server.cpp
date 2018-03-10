@@ -65,8 +65,7 @@ namespace bumo {
 				return true;
 			}
 
-			switch (ope.type())
-			{
+			switch (ope.type()) {
 			case protocol::Operation_Type_CREATE_ACCOUNT:{
 				if (tx_filter_address_.find(ope.create_account().dest_address()) != tx_filter_address_.end()) {
 					return true;
@@ -85,33 +84,11 @@ namespace bumo {
 				}
 				break;
 			}
-			case protocol::Operation_Type_SET_METADATA:{
-				if (tx_filter_address_.find(ope.set_metadata().dest_address()) != tx_filter_address_.end()) {
-					return true;
-				}
-				break;
-			}
-			case protocol::Operation_Type_SET_THRESHOLD:{
-				if (tx_filter_address_.find(ope.set_threshold().dest_address()) != tx_filter_address_.end()) {
-					return true;
-				}
-				break;
-			}
-			case protocol::Operation_Type_SET_SIGNER_WEIGHT:{
-				if (tx_filter_address_.find(ope.set_signer_weight().dest_address()) != tx_filter_address_.end()) {
-					return true;
-				}
-				break;
-			}
-			case protocol::Operation_Type_LOG:{
-				if (tx_filter_address_.find(ope.log().dest_address()) != tx_filter_address_.end()) {
-					return true;
-				}
-				break;
-			}
+	
 			default:
 				break;
 			}
+		}
 
 		return false;
 	}
