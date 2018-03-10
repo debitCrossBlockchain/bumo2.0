@@ -407,7 +407,7 @@ namespace bumo {
 			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_
 			)
 			) {
-			LOG_WARN("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid", 
+			LOG_WARN("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid. Consensus network time out!", 
 				now, consensus_value.close_time() ,
 				lcl.close_time(), Configure::Instance().ledger_configure_.close_interval_ );
 			return Consensus::CHECK_VALUE_MAYVALID;

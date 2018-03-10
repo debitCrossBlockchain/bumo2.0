@@ -1740,14 +1740,8 @@ namespace bumo{
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
-			if (iarg1 == 0 ) {
-				error_desc = "Parameter of dividend is 0";
-				break;
-			}
-
-			static int64_t system_min_64 = -pow(2, (sizeof(int64_t) * 8 - 1));
-			if (iarg0 <= system_min_64) {
-				error_desc = "Parameter of divisor is min overflow";
+			if (iarg1 <= 0 || iarg0 < 0) {
+				error_desc = "Parameter arg < 0";
 				break;
 			}
 
