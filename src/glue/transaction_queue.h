@@ -35,7 +35,7 @@ namespace bumo {
 		void Import(TransactionFrm::pointer tx,const int64_t& cur_source_nonce);
 		protocol::TransactionEnvSet TopTransaction(uint32_t limit);
 		uint32_t RemoveTxs(const protocol::TransactionEnvSet& set);
-		void TransactionQueue::CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
+		void CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
         bool IsExist(TransactionFrm::pointer tx);
 		//void PrintQueue();
 		//void PrintQueueByAccount();
