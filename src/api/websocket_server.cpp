@@ -236,14 +236,29 @@ namespace bumo {
 			return false;
 		}
 
-		LOG_INFO("Recv chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
-		protocol::ChainSubscribeTx subs;
-		if (!subs.ParseFromString(message.data())) {
-			LOG_ERROR("ChainPeerMessage FromString fail");
-			return true;
-		}
+		protocol::ChainResponse default_response;
+		do {
+			LOG_INFO("Recv chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			protocol::ChainSubscribeTx subs;
+			if (!subs.ParseFromString(message.data())) {
+				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				default_response.set_error_desc("ChainPeerMessage FromString fail");
+				LOG_ERROR("%s", default_response.error_desc().c_str());
+				break;
+			}
 
-		return conn->Set(subs);
+			bool ret = conn->Set(subs);
+			if (!ret) {
+				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				default_response.set_error_desc("ChainPeerMessage FromString fail");
+				LOG_ERROR("%s", default_response.error_desc().c_str());
+				break;
+			} 
+		} while (false);
+
+		std::error_code ec;
+		conn->SendResponse(message, default_response.SerializeAsString(), ec);
+		return default_response.error_code() == protocol::ERRCODE_SUCCESS;
 	}
 
 	void WebSocketServer::GetModuleStatus(Json::Value &data) {

@@ -22,7 +22,7 @@
 
 namespace bumo {
 
-	int64_t const  MAX_LEDGER_TIMESPAN_SECONDS = 60 * utils::MICRO_UNITS_PER_SEC;
+	int64_t const  MAX_LEDGER_TIMESPAN_SECONDS = 20 * utils::MICRO_UNITS_PER_SEC;
 	int64_t const QUEUE_TRANSACTION_TIMEOUT = 60 * utils::MICRO_UNITS_PER_SEC;
 	GlueManager::GlueManager() {
 		time_start_consenus_ = 0;
@@ -199,7 +199,7 @@ namespace bumo {
 
 			//验证交易有效性
 			int64_t nonce = 0;
-			if (!tx->CheckValid(/*high_sequence*/ -1, nonce)) {
+			if (!tx->CheckValid(/*high_sequence*/ -1, true, nonce)) {
 				err = tx->GetResult();
 				Json::Value js;
 				js["action"] = "apply";
@@ -407,7 +407,7 @@ namespace bumo {
 			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_
 			)
 			) {
-			LOG_WARN("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid. Consensus network time out!", 
+			LOG_WARN("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid. Consensus network time error!", 
 				now, consensus_value.close_time() ,
 				lcl.close_time(), Configure::Instance().ledger_configure_.close_interval_ );
 			return Consensus::CHECK_VALUE_MAYVALID;

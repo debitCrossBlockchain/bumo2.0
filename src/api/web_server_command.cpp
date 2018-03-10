@@ -138,7 +138,7 @@ namespace bumo {
 
                 int64_t nonce = 0;
 				TransactionFrm frm(tran_env);
-				if (!frm.CheckValid(-1,nonce)){
+				if (!frm.CheckValid(-1, true, nonce)){
 					result = frm.result_;
 					break;
 				}
@@ -361,7 +361,7 @@ namespace bumo {
 
                 int64_t nonce;
 				TransactionFrm frm(tran_env);
-                if (!frm.CheckValid(-1, nonce)){
+                if (!frm.CheckValid(-1, false, nonce)){
 					result = frm.result_;
 					break;
 				}

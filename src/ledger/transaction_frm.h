@@ -58,7 +58,7 @@ namespace bumo {
 
 		const protocol::TransactionEnv &GetTransactionEnv() const;
 
-        bool CheckValid(int64_t last_seq, int64_t& nonce);
+		bool CheckValid(int64_t last_seq, bool check_priv, int64_t& nonce);
 		bool CheckExpr(const std::string &code, const std::string &log_prefix);
 
 		bool SignerHashPriv(AccountFrm::pointer account_ptr, int32_t type) const;

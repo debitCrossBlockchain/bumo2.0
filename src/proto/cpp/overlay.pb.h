@@ -41,6 +41,7 @@ void protobuf_ShutdownFile_overlay_2eproto();
 
 class ChainHello;
 class ChainPeerMessage;
+class ChainResponse;
 class ChainStatus;
 class ChainSubscribeTx;
 class ChainTxStatus;
@@ -141,12 +142,13 @@ enum ChainMessageType {
   CHAIN_LEDGER_HEADER = 16,
   CHAIN_SUBSCRIBE_TX = 17,
   CHAIN_TX_ENV_STORE = 18,
+  CHAIN_RESPONSE = 19,
   ChainMessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   ChainMessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool ChainMessageType_IsValid(int value);
 const ChainMessageType ChainMessageType_MIN = CHAIN_TYPE_NONE;
-const ChainMessageType ChainMessageType_MAX = CHAIN_TX_ENV_STORE;
+const ChainMessageType ChainMessageType_MAX = CHAIN_RESPONSE;
 const int ChainMessageType_ARRAYSIZE = ChainMessageType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ChainMessageType_descriptor();
@@ -1558,6 +1560,100 @@ class ChainSubscribeTx : public ::google::protobuf::Message /* @@protoc_insertio
 };
 // -------------------------------------------------------------------
 
+class ChainResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainResponse) */ {
+ public:
+  ChainResponse();
+  virtual ~ChainResponse();
+
+  ChainResponse(const ChainResponse& from);
+
+  inline ChainResponse& operator=(const ChainResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ChainResponse& default_instance();
+
+  void Swap(ChainResponse* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ChainResponse* New() const { return New(NULL); }
+
+  ChainResponse* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ChainResponse& from);
+  void MergeFrom(const ChainResponse& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ChainResponse* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 error_code = 1;
+  void clear_error_code();
+  static const int kErrorCodeFieldNumber = 1;
+  ::google::protobuf::int32 error_code() const;
+  void set_error_code(::google::protobuf::int32 value);
+
+  // optional string error_desc = 2;
+  void clear_error_desc();
+  static const int kErrorDescFieldNumber = 2;
+  const ::std::string& error_desc() const;
+  void set_error_desc(const ::std::string& value);
+  void set_error_desc(const char* value);
+  void set_error_desc(const char* value, size_t size);
+  ::std::string* mutable_error_desc();
+  ::std::string* release_error_desc();
+  void set_allocated_error_desc(::std::string* error_desc);
+
+  // @@protoc_insertion_point(class_scope:protocol.ChainResponse)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr error_desc_;
+  ::google::protobuf::int32 error_code_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static ChainResponse* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class ChainTxStatus : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainTxStatus) */ {
  public:
   ChainTxStatus();
@@ -2908,6 +3004,68 @@ ChainSubscribeTx::mutable_address() {
 
 // -------------------------------------------------------------------
 
+// ChainResponse
+
+// optional int32 error_code = 1;
+inline void ChainResponse::clear_error_code() {
+  error_code_ = 0;
+}
+inline ::google::protobuf::int32 ChainResponse::error_code() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainResponse.error_code)
+  return error_code_;
+}
+inline void ChainResponse::set_error_code(::google::protobuf::int32 value) {
+  
+  error_code_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ChainResponse.error_code)
+}
+
+// optional string error_desc = 2;
+inline void ChainResponse::clear_error_desc() {
+  error_desc_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ChainResponse::error_desc() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainResponse.error_desc)
+  return error_desc_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ChainResponse::set_error_desc(const ::std::string& value) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.ChainResponse.error_desc)
+}
+inline void ChainResponse::set_error_desc(const char* value) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.ChainResponse.error_desc)
+}
+inline void ChainResponse::set_error_desc(const char* value, size_t size) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainResponse.error_desc)
+}
+inline ::std::string* ChainResponse::mutable_error_desc() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.ChainResponse.error_desc)
+  return error_desc_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ChainResponse::release_error_desc() {
+  // @@protoc_insertion_point(field_release:protocol.ChainResponse.error_desc)
+  
+  return error_desc_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ChainResponse::set_allocated_error_desc(::std::string* error_desc) {
+  if (error_desc != NULL) {
+    
+  } else {
+    
+  }
+  error_desc_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), error_desc);
+  // @@protoc_insertion_point(field_set_allocated:protocol.ChainResponse.error_desc)
+}
+
+// -------------------------------------------------------------------
+
 // ChainTxStatus
 
 // optional .protocol.ChainTxStatus.TxStatus status = 1;
@@ -3127,6 +3285,8 @@ inline void ChainTxStatus::set_timestamp(::google::protobuf::int64 value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

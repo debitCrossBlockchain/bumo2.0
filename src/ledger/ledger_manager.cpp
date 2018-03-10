@@ -518,8 +518,8 @@ namespace bumo {
 			proof_proto.ParseFromString(proof);
 
 			LOG_ERROR("CheckValueAndProof failed:%s\nproof=%s",
-				Proto2Json(consensus_value).toStyledString().c_str(),
-				Proto2Json(proof_proto).toStyledString().c_str());
+				Proto2Json(consensus_value).toFastString().c_str(),
+				Proto2Json(proof_proto).toFastString().c_str());
 
 			return false;
 		}

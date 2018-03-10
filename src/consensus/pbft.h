@@ -80,10 +80,6 @@ namespace bumo {
 		void ClearNotCommitedInstance();
 
 		void LoadValues();
-		int32_t LoadCheckPoint();
-		bool SaveCheckPoint(ValueSaver &saver);
-		int32_t LoadInstance();
-		bool SaveInstance(ValueSaver &saver);
 		int32_t LoadVcInstance();
 		int32_t LoadValidators();
 		bool SaveValidators(ValueSaver &saver);

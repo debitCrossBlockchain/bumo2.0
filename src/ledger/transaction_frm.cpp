@@ -255,7 +255,7 @@ namespace bumo {
 		return transaction_env_.transaction().nonce();
 	}
 
-	bool TransactionFrm::ValidForApply(std::shared_ptr<Environment> environment,bool check_priv) {
+	bool TransactionFrm::ValidForApply(std::shared_ptr<Environment> environment, bool check_priv) {
 		do {
 			if (!ValidForParameter())
 				break;
@@ -320,7 +320,7 @@ namespace bumo {
 		return false;
 	}
 
-	bool TransactionFrm::CheckValid(int64_t last_seq,int64_t& nonce) {
+	bool TransactionFrm::CheckValid(int64_t last_seq, bool check_priv, int64_t &nonce) {
 		AccountFrm::pointer source_account;
 		if (!Environment::AccountFromDB(GetSourceAddress(), source_account)) {
 			result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
@@ -395,7 +395,7 @@ namespace bumo {
 
 		utils::StringVector vec;
 		vec.push_back(transaction_env_.transaction().source_address());
-		if (!SignerHashPriv(source_account, -1)) {
+		if (check_priv && !SignerHashPriv(source_account, -1)) {
 			result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
 			result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
 			LOG_ERROR(result_.desc().c_str());
