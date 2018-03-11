@@ -228,11 +228,10 @@ namespace bumo {
 		std::set<int32_t> expire_txs, error_txs;
 
 		if (request.has_validation()) {
-			LOG_ERROR("Propose value can't hav validation object, consvalue(seq:" FMT_I64 ")", request.ledger_seq());
+			LOG_ERROR("Propose value can't hav validation object, consvalue seq(" FMT_I64 ")", request.ledger_seq());
 			return false;
 		}
 
-		std::map<int32_t, int32_t> this_txs_check;
 		for (int i = 0; i < request.txset().txs_size() && enabled_; i++) {
 			auto txproto = request.txset().txs(i);
 
@@ -247,7 +246,7 @@ namespace bumo {
 			//pay fee
 			if (!tx_frm->PayFee(environment_, total_fee_)) {
 				dropped_tx_frms_.push_back(tx_frm);
-				proposed_result.need_dropped_tx_.insert(i);//for check
+				proposed_result.need_dropped_tx_.insert(i);//for drop
 				continue;
 			}
 
@@ -265,13 +264,13 @@ namespace bumo {
 				LOG_ERROR("transaction(%s) apply failed. %s, %s",
 					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
 					error_info.c_str());
-				expire_txs.insert(i);//for check
+				expire_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 			}
 			else {
 				if (!ret) {
 					LOG_ERROR("transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
-					error_txs.insert(i);//for check
+					error_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 				}
 				else {
 					tx_frm->environment_->Commit();
@@ -314,24 +313,23 @@ namespace bumo {
 		std::set<int32_t> expire_txs_check,  error_txs_check;
 		std::set<int32_t> expire_txs,  error_txs;
 		if (!CheckConsValueValidation(request, LedgerFrm::APPLY_MODE_CHECK, expire_txs_check,  error_txs_check)) {
-			LOG_ERROR("Check consensus value validation failed,consvalue(seq:" FMT_I64 ")", request.ledger_seq());
+			LOG_ERROR("Check consensus value validation failed,consvalue seq(" FMT_I64 ")", request.ledger_seq());
 			return false;
 		}
 
-		std::map<int32_t, int32_t> this_txs_check;
 		for (int i = 0; i < request.txset().txs_size() && enabled_; i++) {
 			auto txproto = request.txset().txs(i);
 
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
 
 			if (!tx_frm->ValidForApply(environment_, !IsTestMode())) {
-				LOG_ERROR("Check consensus value failed, valid for apply failed", request.ledger_seq());
+				LOG_ERROR("Check consensus value failed, valid for apply failed, seq(" FMT_I64 ")", request.ledger_seq());
 				return false;
 			}
 
 			//pay fee
 			if (!tx_frm->PayFee(environment_, total_fee_)) {
-				LOG_ERROR("Check consensus value failed, pay fee failed", request.ledger_seq());
+				LOG_ERROR("Check consensus value failed, pay fee failed, seq(" FMT_I64 ")", request.ledger_seq());
 				return false;
 			}
 
@@ -401,11 +399,10 @@ namespace bumo {
 		std::set<int32_t> expire_txs_check, error_txs_check;
 		std::set<int32_t> expire_txs, error_txs;
 		if (!CheckConsValueValidation(request, LedgerFrm::APPLY_MODE_CHECK, expire_txs_check, error_txs_check)) {
-			LOG_ERROR("Check consensus value validation failed,consvalue(seq:" FMT_I64 ")", request.ledger_seq());
+			LOG_ERROR("Check consensus value validation failed,consvalue seq(" FMT_I64 ")", request.ledger_seq());
 			return false;
 		}
 
-		std::map<int32_t, int32_t> this_txs_check;
 		for (int i = 0; i < request.txset().txs_size() && enabled_; i++) {
 			auto txproto = request.txset().txs(i);
 			
