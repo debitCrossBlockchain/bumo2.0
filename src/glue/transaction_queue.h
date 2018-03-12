@@ -40,9 +40,6 @@ namespace bumo {
 		void TransactionQueue::CheckTimeoutAndDel(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
 		bool IsExist(TransactionFrm::pointer tx);
 
-
-		void PrintAccountQueue(const std::string& account_address);
-		void Print();
 	private:
 
 		struct PriorityCompare

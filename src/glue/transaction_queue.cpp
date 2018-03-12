@@ -161,7 +161,6 @@ namespace bumo {
 					LOG_TRACE("Remove lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::Bin4ToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(),t->GetNonce());
 				}
 			}
-			Print();
 		}
 	}
 
@@ -305,29 +304,5 @@ namespace bumo {
 
 		return false;
 	}
-
-	void TransactionQueue::PrintAccountQueue(const std::string& account_address){
-		std::string str;
-		str = "queue nonces:";
-		auto account_it1 = queue_by_address_and_nonce_.find(account_address);
-		if (account_it1 != queue_by_address_and_nonce_.end()){
-			for (auto&e : account_it1->second){
-				utils::String::AppendFormat(str, "," FMT_I64,e.first);
-			}
-		}
-		LOG_INFO("Account(%s) %s", account_address.c_str(),str.c_str());
-	}
-
-	void TransactionQueue::Print(){
-
-		LOG_INFO("queue:[");
-		for (auto it = queue_.begin(); it != queue_.end();it++)
-		{
-			LOG_INFO("addr:%s tx:%s nonce:" FMT_I64 " fee:" FMT_I64, (*it)->GetSourceAddress().c_str(), utils::String::Bin4ToHexString((*it)->GetContentHash()).c_str(), (*it)->GetNonce(), (*it)->GetFee());
-		}
-		LOG_INFO("]");
-	}
-
- 
 }
 
