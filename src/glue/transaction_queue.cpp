@@ -280,7 +280,7 @@ namespace bumo {
 
 	void TransactionQueue::CheckTimeoutAndDel(int64_t current_time,std::vector<TransactionFrm::pointer>& timeout_txs){
 		utils::WriteLockGuard g(lock_);
-		while (true){
+		while (!time_queue_.empty()){
 			auto it =time_queue_.begin();
 			if (!(*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
 				break;
