@@ -122,16 +122,17 @@ namespace utils {
 		};
 
 	public:
+		bool key_valid_;
 		AES_KEY key;
 		int BYTES_SIZE = 1024;
-		int KEY_SIZE = 128;
-		unsigned char ckey_[32];
+		std::string ckey_;
 		unsigned char iv_[16];
 		int InitCtr(struct ctr_state *state, const unsigned char iv[16]);
 		void Encrypt(unsigned char *indata, unsigned char *outdata, int bytes_read);
 		void Encrypt(const std::string &indata, std::string &outdata);
+		bool IsValid();
 		//AesCtr();
-		AesCtr(unsigned char* iv, unsigned char* ckey);
+		AesCtr(unsigned char* iv, const std::string &ckey);
 		~AesCtr();
 	};
 

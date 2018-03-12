@@ -428,95 +428,193 @@ void ParseFromProto() {
 int main2(int32_t argc, char** argv);
 int main1(int32_t argc, char** argv);
 
+void TestCtrCase3() {
+
+	//aes 256
+	unsigned char ckey2[32] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
+	unsigned char iv2[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char input2[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char output2[16] = { 0xee, 0x80, 0x11, 0xf0, 0xfc, 0xd9, 0xd8, 0xb9, 0x0e, 0x57, 0xb3, 0xb1, 0xa0, 0xdd, 0x69, 0x39 };
+
+	std::string sinput2;
+	sinput2.assign((char *)input2, 16);
+	std::string soutput2;
+	soutput2.assign((char *)output2, 16);
+	std::string skey2;
+	skey2.assign((char *)ckey2, sizeof(ckey2));
+
+	utils::AesCtr aes2(iv2, skey2);
+	std::string out2;
+	aes2.Encrypt(sinput2, out2);
+	//assert(out2 == soutput2);
+
+	std::string outs2;
+	aes2.Encrypt(out2, outs2);
+	//assert(sinput2 == outs2);
+}
+
+void TestCtrCase4() {
+
+	//aes 256
+	unsigned char ckey2[32] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
+	unsigned char iv2[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char input2[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char output2[16] = { 0xee, 0x80, 0x11, 0xf0, 0xfc, 0xd9, 0xd8, 0xb9, 0x0e, 0x57, 0xb3, 0xb1, 0xa0, 0xdd, 0x69, 0x39 };
+
+	std::string sinput2;
+	sinput2.assign((char *)input2, 16);
+	std::string soutput2;
+	soutput2.assign((char *)output2, sizeof(output2));
+	std::string skey2;
+	skey2.assign((char *)ckey2, sizeof(ckey2));
+
+	utils::AesCtr aes2(iv2, skey2);
+	std::string out2;
+	aes2.Encrypt(sinput2, out2);
+	//assert(out2 == soutput2);
+
+	std::string outs2;
+	aes2.Encrypt(out2, outs2);
+	//assert(sinput2 == outs2);
+}
+
+void TestCtr() {
+
+	//aes 128
+	unsigned char iv1[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char ckey1[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char input1[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char output1[16] = { 0x68, 0x41, 0x38, 0x30, 0x37, 0x66, 0xeb, 0xd8, 0x53, 0x40, 0x2d, 0x33, 0xab, 0x03, 0x01, 0x4d };
+
+	std::string sinput;
+	sinput.assign((char *)input1, 16);
+	std::string soutput1;
+	soutput1.assign((char *)output1, 16);
+	std::string skey1;
+	skey1.assign((char *)ckey1, 16);
+
+	utils::AesCtr aes1(iv1, skey1);
+	std::string out1;
+	aes1.Encrypt(sinput, out1);
+	assert(out1 == soutput1);
+
+	std::string outs1;
+	aes1.Encrypt(out1, outs1);
+	assert(sinput == outs1);
+
+	//aes 128
+	unsigned char ckey2[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11 };
+	unsigned char iv2[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char input2[16] = { 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66 };
+	unsigned char output2[16] = { 0x7f, 0xef, 0x69, 0xd5, 0x12, 0xfb, 0x90, 0x02, 0xc9, 0x96, 0x52, 0xab, 0x9a, 0x0d, 0x0f, 0xc1 };
+
+	std::string sinput2;
+	sinput2.assign((char *)input2, 16);
+	std::string soutput2;
+	soutput2.assign((char *)output2, 16);
+	std::string skey2;
+	skey2.assign((char *)ckey2, 16);
+
+	utils::AesCtr aes2(iv2, skey2);
+	std::string out2;
+	aes2.Encrypt(sinput2, out2);
+	assert(out2 == soutput2);
+
+	std::string outs2;
+	aes2.Encrypt(out2, outs2);
+	assert(sinput2 == outs2);
+
+	TestCtrCase3();
+}
+
 
 
 int main(int32_t argc, char *argv[]){
 
+	protocol::TransactionEnv env;
+	std::string address = env.transaction().source_address();
+
+	printf("%1.16ef", 0.1f * 0.1f);
+	printf("%1.16ef", 0.1f * 0.3f * 0.7f);
+
 	utils::net::Initialize();
 	InitLog();
-
-	uint32_t s1 = std::stoul("4294967295");
-	uint64_t s2 = std::stoull("FFFFFFFFFFFFFFFF", NULL ,16);
-	uint32_t s = utils::String::Stoui("4294967295");
-	uint64_t s3 = utils::String::Stoui64(utils::String::ToString(s2));
-	assert(s == 0xFFFFFFFF);
-
-	assert(utils::String::IsDecNumber("0.01234", 8));
-	assert(utils::String::IsDecNumber("0.012345", 8));
-	assert(utils::String::IsDecNumber("0.0123456", 8));
-	assert(utils::String::IsDecNumber("0.01234567", 8));
-	assert(utils::String::IsDecNumber("10.01234567", 8));
-	assert(utils::String::IsDecNumber(".12345678", 8));
-	assert(!utils::String::IsDecNumber("100.012345678", 8));
-
-	assert(!utils::String::IsDecNumber("12345678.", 8));
-	assert(!utils::String::IsDecNumber("0.0.12345678", 8));
-	assert(!utils::String::IsDecNumber(" 0.012345678", 8));
-	assert(!utils::String::IsDecNumber("0.012345678 ", 8));
-	assert(!utils::String::IsDecNumber("0.012345678", 8));
-	assert(!utils::String::IsDecNumber("00.012345678", 8));
-	assert(!utils::String::IsDecNumber("x00.012345678", 8));
-	assert(!utils::String::IsDecNumber("x00.012345x678", 8));
-	assert(!utils::String::IsDecNumber("a00.012345x678", 8));
-
-	assert(utils::String::MultiplyDecimal("0.01234", 1) == "0.1234");
-	assert(utils::String::MultiplyDecimal("0.01234", 2) == "1.234");
-	assert(utils::String::MultiplyDecimal("0.01234", 3) == "12.34");
-	assert(utils::String::MultiplyDecimal("0.01234", 4) == "123.4");
-	assert(utils::String::MultiplyDecimal("0.01234", 5) == "1234");
-	assert(utils::String::MultiplyDecimal("0.01234", 6) == "12340");
-	assert(utils::String::MultiplyDecimal("0.01234", 7) == "123400");
-
-
-	assert(utils::String::MultiplyDecimal("1110.012345678", 1) == "11100.12345678");
-	assert(utils::String::MultiplyDecimal("1110.012345678", 2) == "111001.2345678");
-	assert(utils::String::MultiplyDecimal("1110.012345678", 3) == "1110012.345678");
-	assert(utils::String::MultiplyDecimal("1110.012345678", 4) == "11100123.45678");
-	assert(utils::String::MultiplyDecimal("1110.012345678", 5) == "111001234.5678");
-	assert(utils::String::MultiplyDecimal("1110.012345678", 6) == "1110012345.678");
-	assert(utils::String::MultiplyDecimal("1110.012345678", 7) == "11100123456.78");
-
-	assert(utils::String::FormatDecimal(100000000, 1) == "10000000");
-	assert(utils::String::FormatDecimal(100000000, 2) == "1000000");
-	assert(utils::String::FormatDecimal(100000000, 3) == "100000");
-	assert(utils::String::FormatDecimal(100000000, 4) == "10000");
-	assert(utils::String::FormatDecimal(100000000, 5) == "1000");
-	assert(utils::String::FormatDecimal(100000000, 6) == "100");
-	assert(utils::String::FormatDecimal(100000000, 7) == "10");
-	assert(utils::String::FormatDecimal(100000000, 8) == "1");
-	assert(utils::String::FormatDecimal(100000000, 9) == "0.1");
-
-	assert(utils::String::FormatDecimal(123456789, 1) == "12345678.9");
-	assert(utils::String::FormatDecimal(123456789, 2) == "1234567.89");
-	assert(utils::String::FormatDecimal(123456789, 3) == "123456.789");
-	assert(utils::String::FormatDecimal(123456789, 4) == "12345.6789");
-	assert(utils::String::FormatDecimal(123456789, 5) == "1234.56789");
-	assert(utils::String::FormatDecimal(123456789, 6) == "123.456789");
-	assert(utils::String::FormatDecimal(123456789, 7) == "12.3456789");
-	assert(utils::String::FormatDecimal(123456789, 8) == "1.23456789");
-	assert(utils::String::FormatDecimal(123456789, 9) == "0.123456789");
-
-	bumo::KeyStore key_store;
-	Json::Value keyss;
-	std::string new_private;
-	bool ret = key_store.Generate("bubi#07150926", keyss, new_private);
-	printf("%s\n", keyss.toFastString().c_str());
-	std::string pk;
-	ret = key_store.From(keyss, "bub", pk);
-	ret = key_store.From(keyss, "bubi", pk);
-	ret = key_store.From(keyss, "bubi#", pk);
-	ret = key_store.From(keyss, "bubi#0", pk);
-	ret = key_store.From(keyss, "bubi#07", pk);
-	ret = key_store.From(keyss, "bubi#071", pk);
-	ret = key_store.From(keyss, "bubi#0715092", pk);
-	ret = key_store.From(keyss, "bubi#07150926", pk);
-
-// 	utils::AesCtr aes;
-// 	std::string out;
-// 	aes.Encrypt("1234abcd3fff", out);
+	TestCtr();
+// 	uint32_t s1 = std::stoul("4294967295");
+// 	uint64_t s2 = std::stoull("FFFFFFFFFFFFFFFF", NULL ,16);
+// 	uint32_t s = utils::String::Stoui("4294967295");
+// 	uint64_t s3 = utils::String::Stoui64(utils::String::ToString(s2));
+// 	assert(s == 0xFFFFFFFF);
 // 
-// 	std::string out1;
-// 	aes.Encrypt(out, out1);
+// 	assert(utils::String::IsDecNumber("0.01234", 8));
+// 	assert(utils::String::IsDecNumber("0.012345", 8));
+// 	assert(utils::String::IsDecNumber("0.0123456", 8));
+// 	assert(utils::String::IsDecNumber("0.01234567", 8));
+// 	assert(utils::String::IsDecNumber("10.01234567", 8));
+// 	assert(utils::String::IsDecNumber(".12345678", 8));
+// 	assert(!utils::String::IsDecNumber("100.012345678", 8));
+// 
+// 	assert(!utils::String::IsDecNumber("12345678.", 8));
+// 	assert(!utils::String::IsDecNumber("0.0.12345678", 8));
+// 	assert(!utils::String::IsDecNumber(" 0.012345678", 8));
+// 	assert(!utils::String::IsDecNumber("0.012345678 ", 8));
+// 	assert(!utils::String::IsDecNumber("0.012345678", 8));
+// 	assert(!utils::String::IsDecNumber("00.012345678", 8));
+// 	assert(!utils::String::IsDecNumber("x00.012345678", 8));
+// 	assert(!utils::String::IsDecNumber("x00.012345x678", 8));
+// 	assert(!utils::String::IsDecNumber("a00.012345x678", 8));
+// 
+// 	assert(utils::String::MultiplyDecimal("0.01234", 1) == "0.1234");
+// 	assert(utils::String::MultiplyDecimal("0.01234", 2) == "1.234");
+// 	assert(utils::String::MultiplyDecimal("0.01234", 3) == "12.34");
+// 	assert(utils::String::MultiplyDecimal("0.01234", 4) == "123.4");
+// 	assert(utils::String::MultiplyDecimal("0.01234", 5) == "1234");
+// 	assert(utils::String::MultiplyDecimal("0.01234", 6) == "12340");
+// 	assert(utils::String::MultiplyDecimal("0.01234", 7) == "123400");
+// 
+// 
+// 	assert(utils::String::MultiplyDecimal("1110.012345678", 1) == "11100.12345678");
+// 	assert(utils::String::MultiplyDecimal("1110.012345678", 2) == "111001.2345678");
+// 	assert(utils::String::MultiplyDecimal("1110.012345678", 3) == "1110012.345678");
+// 	assert(utils::String::MultiplyDecimal("1110.012345678", 4) == "11100123.45678");
+// 	assert(utils::String::MultiplyDecimal("1110.012345678", 5) == "111001234.5678");
+// 	assert(utils::String::MultiplyDecimal("1110.012345678", 6) == "1110012345.678");
+// 	assert(utils::String::MultiplyDecimal("1110.012345678", 7) == "11100123456.78");
+// 
+// 	assert(utils::String::FormatDecimal(100000000, 1) == "10000000");
+// 	assert(utils::String::FormatDecimal(100000000, 2) == "1000000");
+// 	assert(utils::String::FormatDecimal(100000000, 3) == "100000");
+// 	assert(utils::String::FormatDecimal(100000000, 4) == "10000");
+// 	assert(utils::String::FormatDecimal(100000000, 5) == "1000");
+// 	assert(utils::String::FormatDecimal(100000000, 6) == "100");
+// 	assert(utils::String::FormatDecimal(100000000, 7) == "10");
+// 	assert(utils::String::FormatDecimal(100000000, 8) == "1");
+// 	assert(utils::String::FormatDecimal(100000000, 9) == "0.1");
+// 
+// 	assert(utils::String::FormatDecimal(123456789, 1) == "12345678.9");
+// 	assert(utils::String::FormatDecimal(123456789, 2) == "1234567.89");
+// 	assert(utils::String::FormatDecimal(123456789, 3) == "123456.789");
+// 	assert(utils::String::FormatDecimal(123456789, 4) == "12345.6789");
+// 	assert(utils::String::FormatDecimal(123456789, 5) == "1234.56789");
+// 	assert(utils::String::FormatDecimal(123456789, 6) == "123.456789");
+// 	assert(utils::String::FormatDecimal(123456789, 7) == "12.3456789");
+// 	assert(utils::String::FormatDecimal(123456789, 8) == "1.23456789");
+// 	assert(utils::String::FormatDecimal(123456789, 9) == "0.123456789");
+// 
+// 	bumo::KeyStore key_store;
+// 	Json::Value keyss;
+// 	std::string new_private;
+// 	bool ret = key_store.Generate("bubi#07150926", keyss, new_private);
+// 	printf("%s\n", keyss.toFastString().c_str());
+// 	std::string pk;
+// 	ret = key_store.From(keyss, "bub", pk);
+// 	ret = key_store.From(keyss, "bubi", pk);
+// 	ret = key_store.From(keyss, "bubi#", pk);
+// 	ret = key_store.From(keyss, "bubi#0", pk);
+// 	ret = key_store.From(keyss, "bubi#07", pk);
+// 	ret = key_store.From(keyss, "bubi#071", pk);
+// 	ret = key_store.From(keyss, "bubi#0715092", pk);
+// 	ret = key_store.From(keyss, "bubi#07150926", pk);
 
 	//TestSignature();
 	ParseFromProto();

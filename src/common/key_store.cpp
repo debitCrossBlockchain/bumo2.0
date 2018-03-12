@@ -71,18 +71,18 @@ namespace bumo {
 			address = priv_key.GetEncAddress();
 		}
 
-		utils::AesCtr aes((uint8_t *)aes_iv.c_str(), (uint8_t *)dk.c_str());
+		utils::AesCtr aes((uint8_t *)aes_iv.c_str(), dk);
 		
 		std::string cyper_text;
 		aes.Encrypt(new_priv_key, cyper_text);
 
-		key_store["version"] = 1;
+		key_store["version"] = 2;
 		Json::Value &scrypt_params = key_store["scrypt_params"];
 		scrypt_params["n"] = n;
 		scrypt_params["r"] = r;
 		scrypt_params["p"] = p;
 		scrypt_params["salt"] = utils::String::BinToHexString(salt);
-		key_store["aes128ctr_iv"] = utils::String::BinToHexString(aes_iv);
+		key_store["aesctr_iv"] = utils::String::BinToHexString(aes_iv);
 		key_store["cypher_text"] = utils::String::BinToHexString(cyper_text);
 		key_store["address"] = address;
 
@@ -91,13 +91,23 @@ namespace bumo {
 
 	bool KeyStore::From(const Json::Value &key_store, const std::string &password, std::string &priv_key) {
 
+		int32_t version = key_store["version"].asInt();
 		const Json::Value &scrypt_params = key_store["scrypt_params"];
 		uint64_t n = scrypt_params["n"].asUInt64();
 		uint32_t r = scrypt_params["r"].asUInt();
 		uint32_t p = scrypt_params["p"].asUInt();
 		std::string salt = utils::String::HexStringToBin(scrypt_params["salt"].asString());
-
-		std::string aes_iv = utils::String::HexStringToBin(key_store["aes128ctr_iv"].asString());
+	
+		std::string aes_iv;
+		int32_t nkeylen = 16;
+		if (version == 1) {
+			aes_iv = utils::String::HexStringToBin(key_store["aes128ctr_iv"].asString());
+			nkeylen = 16;
+		}
+		else if (version == 2) {
+			aes_iv = utils::String::HexStringToBin(key_store["aesctr_iv"].asString());
+			nkeylen = 32;
+		}
 		std::string cypher_text = utils::String::HexStringToBin(key_store["cypher_text"].asString());
 		std::string address = key_store["address"].asString();
 
@@ -114,7 +124,8 @@ namespace bumo {
 
 		//printf("%s\n", utils::String::BinToHexString(dk).c_str());
 
-		utils::AesCtr aes((uint8_t *)aes_iv.c_str(), (uint8_t *)dk.c_str());
+		dk.resize(nkeylen);
+		utils::AesCtr aes((uint8_t *)aes_iv.c_str(), dk);
 		std::string priv_key_de;
 		aes.Encrypt(cypher_text, priv_key_de);
 		

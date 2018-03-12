@@ -749,7 +749,7 @@ namespace utils {
 		int i = 0;
 		int mod_len = 0;
 
-		AES_set_encrypt_key(ckey_, KEY_SIZE, &key);
+		AES_set_encrypt_key((const unsigned char *)ckey_.c_str(), ckey_.size() * 8, &key);
 
 		if (bytes_read < BYTES_SIZE) {
 			struct ctr_state state;
@@ -785,7 +785,7 @@ namespace utils {
 		outstr.resize(instr.size());
 		outdata = (unsigned char *)outstr.c_str();
 
-		AES_set_encrypt_key(ckey_, KEY_SIZE, &key);
+		AES_set_encrypt_key((const unsigned char *)ckey_.c_str(), ckey_.size() * 8, &key);
 
 		if (instr.size() < BYTES_SIZE) {
 			struct ctr_state state;
@@ -810,6 +810,10 @@ namespace utils {
 		}
 	}
 
+	bool AesCtr::IsValid() {
+		return key_valid_;
+	}
+
 // 	AesCtr::AesCtr() {
 // 		unsigned char temp_iv[8] = { 0x66, 0x61, 0x63, 0x65, 0x73, 0x65, 0x61, 0x00 };
 // 		memcpy(iv_, temp_iv, 8);
@@ -820,9 +824,13 @@ namespace utils {
 // 		memcpy(ckey_, temp_ckey, 32);
 // 	}
 
-	AesCtr::AesCtr(unsigned char* iv, unsigned char* ckey) {
+	AesCtr::AesCtr(unsigned char* iv, const std::string &ckey) {
 		memcpy(iv_, iv, 16);
-		memcpy(ckey_, ckey, 16);
+		ckey_ = ckey;
+
+		key_valid_ = ckey.size() == 16 ||
+			ckey.size() == 24 ||
+			ckey.size() == 32;
 	}
 
 	AesCtr::~AesCtr() {}
