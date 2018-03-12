@@ -26,7 +26,7 @@ clean_3rd:
 	cd src/3rd && make clean_3rd && cd ../../
 
 clean_build:
-	cd build/$(CUR_OS)/; ls |grep -v bumo | xargs rm -rf
+	cd build/$(CUR_OS)/; ls | grep -v bumo | grep -v one_step_pack.sh  | xargs rm -rf
 
 .PHONY:install uninstall
 install:
