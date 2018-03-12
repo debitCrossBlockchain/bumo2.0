@@ -97,7 +97,7 @@ namespace bumo {
 		void Insert(QueueByAddressAndNonce::iterator& account_it,TransactionFrm::pointer const& tx);
 		void Insert(TransactionFrm::pointer const& tx);
 		void TimeQueueInsert(TransactionFrm::pointer const& tx);
-        void RemoveTx(const std::string& account_address, int64_t& nonce);
+		void RemoveTx(const std::string& account_address, int64_t& nonce);
 
 		struct PackReplaceItem
 		{

@@ -40,7 +40,7 @@ namespace bumo {
 
 		if (del_empty && account_it->second.empty()){
 			account_nonce_.erase(account_it->first);
-			queue_by_address_and_nonce_.erase(account_it);            
+			queue_by_address_and_nonce_.erase(account_it);
 		}
 		return std::move(std::make_pair(true, ptr));
 	}
@@ -80,7 +80,7 @@ namespace bumo {
 
 				if (account_it->second.empty()){
 					time_queue_by_address_and_nonce_.erase(account_it);
-					account_nonce_.erase(account_address);
+					//account_nonce_.erase(account_address);
 				}
 
 				return std::move(std::make_pair(true, ptr));
