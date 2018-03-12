@@ -226,7 +226,7 @@ namespace bumo {
 		//check the timeout transaction
 
 		std::vector<TransactionFrm::pointer> timeout_txs;
-		tx_pool_->CheckTimeout(current_time, timeout_txs);
+		tx_pool_->CheckTimeoutAndDel(current_time, timeout_txs);
 
 		if (timeout_txs.size() > 0 ){
 			NotifyErrTx(timeout_txs);

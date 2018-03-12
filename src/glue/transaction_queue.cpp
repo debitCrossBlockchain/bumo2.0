@@ -271,18 +271,19 @@ namespace bumo {
 	void TransactionQueue::CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs){
 		utils::ReadLockGuard g(lock_);
 		for (auto it = time_queue_.begin(); it != time_queue_.end();it++){
-			if ((*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
+			if (!(*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
 				break;
 			timeout_txs.emplace_back(*it);
 		}
 	}
 
-	void TransactionQueue::CheckTimeoutAndDel(int64_t current_time){
+	void TransactionQueue::CheckTimeoutAndDel(int64_t current_time,std::vector<TransactionFrm::pointer>& timeout_txs){
 		utils::WriteLockGuard g(lock_);
 		while (true){
 			auto it =time_queue_.begin();
-			if ((*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
+			if (!(*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
 				break;
+			timeout_txs.emplace_back(*it);
 			RemoveTx(*it);
 		}
 	}
