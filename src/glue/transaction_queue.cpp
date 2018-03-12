@@ -136,6 +136,7 @@ namespace bumo {
 					std::string drop_hash = (*tx_it->second)->GetContentHash();
 					Remove(account_it, tx_it);
 					replace = true;
+					account_txs_size--;
 					if (IsPacked(tx->GetSourceAddress(), tx->GetNonce()))
 						packed_replace = true;
 					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") in queue", drop_hash.c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
@@ -148,7 +149,7 @@ namespace bumo {
 			}
 		}
 
-		if (replace || account_txs_size<account_txs_limit_) {
+		if (replace || account_txs_size < account_txs_limit_) {
 			Insert(tx);
 			if (packed_replace)
 				ReplacePack(tx->GetSourceAddress(), tx->GetNonce(), tx->GetContentHash());
@@ -158,7 +159,7 @@ namespace bumo {
 				TransactionFrm::pointer t = *queue_.rbegin();
 				if (!IsPacked(t->GetSourceAddress(), t->GetNonce())){
 					Remove(t->GetSourceAddress(), t->GetNonce());
-					LOG_TRACE("Remove lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::Bin4ToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(),t->GetNonce());
+					LOG_TRACE("Remove lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::Bin4ToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(), t->GetNonce());
 				}
 			}
 		}
