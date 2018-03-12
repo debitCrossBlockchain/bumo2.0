@@ -73,7 +73,7 @@ namespace bumo {
 			/// Compare transaction by incoming time
 			bool operator()(TransactionFrm::pointer const& first, TransactionFrm::pointer const& second) const
 			{
-				return first->GetInComingTime() > second->GetInComingTime();
+				return first->GetInComingTime() < second->GetInComingTime();
 			}
 		};
 
