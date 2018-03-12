@@ -208,13 +208,14 @@ namespace bumo {
 		size_t ret = 0;
 		for (int i = 0; i < set.txs_size(); i++) {
 			auto txproto = set.txs(i);
-			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
-			RemoveTx(tx_frm);
+			std::string source_address = txproto.transaction().source_address();
+			int64_t nonce = txproto.transaction().nonce();
+			RemoveTx(source_address, nonce);
 
 			//update system account nonce
-			auto it = account_nonce_.find(tx_frm->GetSourceAddress());
-			if (close_ledger && it != account_nonce_.end() && it->second < tx_frm->GetNonce())
-				it->second = tx_frm->GetNonce();
+			auto it = account_nonce_.find(source_address);
+			if (close_ledger && it != account_nonce_.end() && it->second < nonce)
+				it->second = nonce;
 		}
 		return ret;
 	}
@@ -222,18 +223,27 @@ namespace bumo {
 	void TransactionQueue::RemoveTxs(std::vector<TransactionFrm::pointer>& txs, bool close_ledger){
 		utils::WriteLockGuard g(lock_);
 		for (auto it = txs.begin(); it != txs.end(); it++){
-			RemoveTx(*it);
+			std::string source_address = (*it)->GetSourceAddress();
+			int64_t nonce = (*it)->GetNonce();
+
+			RemoveTx(source_address,nonce);
 
 			//update system account nonce
-			auto iter = account_nonce_.find((*it)->GetSourceAddress());
-			if (close_ledger && iter != account_nonce_.end() && iter->second < (*it)->GetNonce())
-				iter->second = (*it)->GetNonce();
+			auto iter = account_nonce_.find(source_address);
+			if (close_ledger && iter != account_nonce_.end() && iter->second < nonce)
+				iter->second = nonce;
 		}
 	}
 
-	void TransactionQueue::RemoveTx(TransactionFrm::pointer tx){
-		RemovePack(tx->GetSourceAddress(), tx->GetNonce());
-		std::pair<bool, TransactionFrm::pointer> result = Remove(tx->GetSourceAddress(), tx->GetNonce());
+	void TransactionQueue::SafeRemoveTx(const std::string& account_address, int64_t& nonce){
+		utils::WriteLockGuard g(lock_);
+		RemovePack(account_address, nonce);
+		std::pair<bool, TransactionFrm::pointer> result = Remove(account_address, nonce);
+	}
+
+	void TransactionQueue::RemoveTx(const std::string& account_address,int64_t& nonce){
+		RemovePack(account_address, nonce);
+		std::pair<bool, TransactionFrm::pointer> result = Remove(account_address, nonce);
 	}
 
 	std::string TransactionQueue::PackKey(const std::string& account_address, const int64_t& nonce){
@@ -285,7 +295,9 @@ namespace bumo {
 			if (!(*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
 				break;
 			timeout_txs.emplace_back(*it);
-			RemoveTx(*it);
+			std::string account_address = (*it)->GetSourceAddress();
+			int64_t nonce = (*it)->GetNonce();
+			RemoveTx(account_address, nonce);
 		}
 	}
 

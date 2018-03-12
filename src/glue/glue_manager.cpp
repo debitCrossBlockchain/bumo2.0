@@ -160,10 +160,12 @@ namespace bumo {
 				for (int32_t i = 0; i < txset_raw.txs_size(); i++) {
 					if (propose_result.need_dropped_tx_.find(i) != propose_result.need_dropped_tx_.end()) {
 						//remove from the cache
+						*tmp_raw.add_txs() = txset_raw.txs(i);
 					} else{
 						*txs->add_txs() = txset_raw.txs(i);
 					}
 				}
+				tx_pool_->RemoveTxs(tmp_raw);
 			} 
 
 			if (propose_result.cons_validation_.error_tx_ids_size() > 0 ||

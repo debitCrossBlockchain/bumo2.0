@@ -39,6 +39,7 @@ namespace bumo {
 		void TransactionQueue::CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
 		void TransactionQueue::CheckTimeoutAndDel(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
 		bool IsExist(TransactionFrm::pointer tx);
+		void SafeRemoveTx(const std::string& account_address, int64_t& nonce);
 
 	private:
 
@@ -96,8 +97,7 @@ namespace bumo {
 		void Insert(QueueByAddressAndNonce::iterator& account_it,TransactionFrm::pointer const& tx);
 		void Insert(TransactionFrm::pointer const& tx);
 		void TimeQueueInsert(TransactionFrm::pointer const& tx);
-		void MoveToQueue(TransactionFrm::pointer const& tx,uint8_t off = 1);
-		void RemoveTx(TransactionFrm::pointer tx);
+        void RemoveTx(const std::string& account_address, int64_t& nonce);
 
 		struct PackReplaceItem
 		{
