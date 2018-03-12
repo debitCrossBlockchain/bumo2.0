@@ -81,7 +81,7 @@ namespace bumo {
 		using TimeQueue = std::multiset<TransactionFrm::pointer, TimePriorityCompare>;
 		TimeQueue time_queue_;
 		using TimeQueueByNonce = std::map<int64_t, TimeQueue::iterator>;
-		using TimeQueueByAddressAndNonce = std::unordered_map<std::string, QueueByNonce>;
+		using TimeQueueByAddressAndNonce = std::unordered_map<std::string, TimeQueueByNonce>;
 		TimeQueueByAddressAndNonce time_queue_by_address_and_nonce_;
 
 		//Maximum number of transaction per account
