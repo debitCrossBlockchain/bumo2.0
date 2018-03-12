@@ -18,102 +18,30 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace bumo {
 
-    int64_t const CACHE_QUEUE_TRANSACTION_TIMEOUT = 60 * utils::MICRO_UNITS_PER_SEC;
+    int64_t const QUEUE_TRANSACTION_TIMEOUT = 60 * utils::MICRO_UNITS_PER_SEC;
 
-	TransactionQueue::TransactionQueue(uint32_t queue_limit, uint32_t qc_account_slots_limit, uint32_t qc_account_txs_limit)
+    TransactionQueue::TransactionQueue(uint32_t queue_limit, uint32_t account_txs_limit)
 		: queue_(PriorityCompare{ *this }),
 		queue_limit_(queue_limit),
-		qc_account_slots_limit_(qc_account_slots_limit),
-		qc_account_txs_limit_(qc_account_txs_limit)
+        account_txs_limit_(account_txs_limit)
 	{
 	}
 
 	TransactionQueue::~TransactionQueue(){}
 
-	int TransactionQueue::EnqueueCache(TransactionFrm::pointer tx, int64_t next_nonce, bool append_to_queue){
-		int ret = 0;
-		auto account_it = qc_by_address_and_nonce_.find(tx->GetSourceAddress());
-
-		if (account_it != qc_by_address_and_nonce_.end()){
-			auto tx_it = account_it->second.find(tx->GetNonce());
-			if (tx_it == account_it->second.end()){
-				if (account_it->second.size() < qc_account_txs_limit_){
-					InsertCache(tx);
-					ret = 2;
-					LOG_TRACE("Transaction(%s) is inserted into cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-				}
-				else{
-					int64_t max_nonce = account_it->second.rbegin()->first;
-					TransactionFrm::pointer max_nonce_tx = *account_it->second.rbegin()->second;
-					if (tx->GetNonce() > max_nonce){
-						ret = 0;
-						LOG_TRACE("Discard insertion of transaction(%s) because of account txs limit in cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-					}
-					else{
-						LOG_TRACE("replace transaction(%s) nonce(" FMT_I64 ") by transaction(%s)  nonce(" FMT_I64 ") because of account txs limit in cache",
-							utils::String::Bin4ToHexString(max_nonce_tx->GetContentHash()).c_str(), max_nonce,
-							utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce());
-						//delete
-						RemoveCache(account_it, max_nonce,false);
-						//insert
-						InsertCache(account_it, tx);
-						ret = 2;
-					}
-				}
-			}
-			else{
-				if (tx->GetFee() > (*tx_it->second)->GetFee()){
-					//replace
-					LOG_TRACE("Transaction(%s) replace transaction(%s) into cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), utils::String::Bin4ToHexString((*tx_it->second)->GetContentHash()).c_str());
-					RemoveCache(account_it, tx_it,false);
-					InsertCache(account_it, tx);
-					ret = 1;
-					
-				}
-				else{
-					ret = 0;
-					LOG_TRACE("Discard replacment of transaction(%s) because of lower fee in cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-				}
-			}
-
-			//append to queue
-			int64_t min_nonce = account_it->second.begin()->first;
-			if (append_to_queue && queue_.size() < queue_limit_ && min_nonce == next_nonce){
-				TransactionFrm::pointer t = *account_it->second.begin()->second;
-				MoveToQueue(t,0);
-			}
-		}
-		else{
-			if (qc_by_address_and_nonce_.size() < qc_account_slots_limit_){
-				InsertCache(tx);
-				ret = 2;
-				LOG_INFO("Transaction(%s) of new account(%s) is inserted in cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str());
-			}
-			else{
-				ret = 0;
-				LOG_WARN("Discard insertion of transaction(%s) of new account(%s) because of accout slots full in cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str());
-			}
-		}
-		return ret;
-	}
-
-	int64_t TransactionQueue::GetCahceMinNonce(const std::string& account_address){
-		int64_t min_nonce = -1;
-		auto account_it = qc_by_address_and_nonce_.find(account_address);
-		if (account_it != qc_by_address_and_nonce_.end()){
-			min_nonce = (*account_it->second.begin()->second)->GetNonce();
-		}
-		return min_nonce;
-	}
-
+	
 	std::pair<bool, TransactionFrm::pointer> TransactionQueue::Remove(QueueByAddressAndNonce::iterator& account_it, QueueByNonce::iterator& tx_it, bool del_empty){
 		TransactionFrm::pointer ptr = nullptr;
 		ptr = *tx_it->second;
 		queue_.erase(tx_it->second);
-		account_it->second.erase(tx_it);
+        account_it->second.erase(tx_it);
 
-		if (del_empty && account_it->second.empty())
-			queue_by_address_and_nonce_.erase(account_it);
+        TimeQueueRemove(ptr->GetSourceAddress(),ptr->GetNonce());
+
+        if (del_empty && account_it->second.empty()){
+            account_nonce_.erase(account_it->first);
+            queue_by_address_and_nonce_.erase(account_it);            
+        }
 		return std::move(std::make_pair(true, ptr));
 	}
 	
@@ -128,220 +56,124 @@ namespace bumo {
 				queue_.erase(tx_it->second);
 				account_it->second.erase(tx_it);
 
-				if (account_it->second.empty())
-					queue_by_address_and_nonce_.erase(account_it);
+                TimeQueueRemove(account_address, nonce);
+
+                if (account_it->second.empty()){
+                    queue_by_address_and_nonce_.erase(account_it);
+                    account_nonce_.erase(account_address);
+                }
 				return std::move(std::make_pair(true, ptr));
 			}
 		}
 		return std::move(std::make_pair(false, ptr));
 	}
+
+    std::pair<bool, TransactionFrm::pointer> TransactionQueue::TimeQueueRemove(const std::string& account_address, const int64_t& nonce){
+        TransactionFrm::pointer ptr = nullptr;
+        auto account_it = time_queue_by_address_and_nonce_.find(account_address);
+        if (account_it != time_queue_by_address_and_nonce_.end()){
+            auto tx_it = account_it->second.find(nonce);
+            if (tx_it != account_it->second.end()){
+                ptr = *tx_it->second;
+                time_queue_.erase(tx_it->second);
+                account_it->second.erase(tx_it);
+
+                if (account_it->second.empty()){
+                    time_queue_by_address_and_nonce_.erase(account_it);
+                    account_nonce_.erase(account_address);
+                }
+
+                return std::move(std::make_pair(true, ptr));
+            }
+        }
+        return std::move(std::make_pair(false, ptr));
+    }
 
 
 	void TransactionQueue::Insert(TransactionFrm::pointer const& tx){
-   
 		// Insert into queue
 		auto inserted = queue_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tx->GetNonce(), PriorityQueue::iterator()));
 		PriorityQueue::iterator iter = queue_.emplace(tx);
-		inserted.first->second = iter;
-
-		// Move following transactions from cache to queue
-		if (queue_.size() < queue_limit_)
-			MoveToQueue(tx);
+        inserted.first->second = iter;
+        TimeQueueInsert(tx);
 	}
 
+    void TransactionQueue::Insert(QueueByAddressAndNonce::iterator& account_it, TransactionFrm::pointer const& tx){
+        auto inserted = account_it->second.insert(std::make_pair(tx->GetNonce(), PriorityQueue::iterator()));
+        PriorityQueue::iterator iter = queue_.emplace(tx);
+        inserted.first->second = iter;
+        TimeQueueInsert(tx);
+    }
 
-	std::pair<bool, TransactionFrm::pointer> TransactionQueue::RemoveCache(const std::string& account_address, const int64_t& nonce, bool del_empty){
-		TransactionFrm::pointer ptr = nullptr;
-		auto account_it = qc_by_address_and_nonce_.find(account_address);
-		if (account_it != qc_by_address_and_nonce_.end()){
-			auto tx_it = account_it->second.find(nonce);
-			if (tx_it != account_it->second.end()){
-				ptr = *tx_it->second;
-				queue_cache_.erase(tx_it->second);
-				account_it->second.erase(tx_it);                
 
-				if (del_empty &&account_it->second.empty())
-					qc_by_address_and_nonce_.erase(account_it);
-				return std::move(std::make_pair(true, ptr));
-			}
-		}
-		return std::move(std::make_pair(false, ptr));
-	}
+    void TransactionQueue::TimeQueueInsert(TransactionFrm::pointer const& tx){
+        auto inserted = time_queue_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tx->GetNonce(), TimeQueue::iterator()));
+        PriorityQueue::iterator iter = time_queue_.emplace(tx);
+        inserted.first->second = iter;
+    }
 
-	std::pair<bool, TransactionFrm::pointer> TransactionQueue::RemoveCache(CacheByAddressAndNonce::iterator& account_it, CacheByNonce::iterator& tx_it, bool del_empty){
-		TransactionFrm::pointer ptr = nullptr;
-		ptr = *tx_it->second;
-		queue_cache_.erase(tx_it->second);
-		account_it->second.erase(tx_it);
 
-		if (del_empty && account_it->second.empty())
-			qc_by_address_and_nonce_.erase(account_it);
-		return std::move(std::make_pair(true, ptr));
-	}
 
-	std::pair<bool, TransactionFrm::pointer> TransactionQueue::RemoveCache(CacheByAddressAndNonce::iterator& account_it, const int64_t& nonce, bool del_empty){
-		TransactionFrm::pointer ptr = nullptr;
-		auto tx_it = account_it->second.find(nonce);
-		if (tx_it != account_it->second.end()){
-			ptr = *tx_it->second;
-			queue_cache_.erase(tx_it->second);
-			account_it->second.erase(tx_it);
+    void TransactionQueue::Import(TransactionFrm::pointer tx, const int64_t& cur_source_nonce){
+        utils::WriteLockGuard g(lock_);
+        bool replace = false;
+        uint32_t account_txs_size = 0;
+        bool packed_replace = false;
 
-			if (del_empty && account_it->second.empty())
-				qc_by_address_and_nonce_.erase(account_it);
-			return std::move(std::make_pair(true, ptr));
-		}
-		return std::move(std::make_pair(false, ptr));
-	}
+        account_nonce_[tx->GetSourceAddress()] = cur_source_nonce;
 
-	void TransactionQueue::InsertCache(TransactionFrm::pointer const& tx){
-		auto inserted = qc_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tx->GetNonce(), PriorityQueue::iterator()));
-		PriorityQueue::iterator iter = queue_cache_.emplace(tx);
-		inserted.first->second = iter;
-	}
+        LOG_TRACE("Import account(%s) transaction(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ")", tx->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
+        auto account_it = queue_by_address_and_nonce_.find(tx->GetSourceAddress());
+        if (account_it != queue_by_address_and_nonce_.end()){
 
-	void TransactionQueue::InsertCache(CacheByAddressAndNonce::iterator& account_it, TransactionFrm::pointer const& tx){
-		auto inserted = account_it->second.insert(std::make_pair(tx->GetNonce(), PriorityQueue::iterator()));
-		PriorityQueue::iterator iter = queue_cache_.emplace(tx);
-		inserted.first->second = iter;
-	}
+            account_txs_size = account_it->second.size();
 
-	void TransactionQueue::MoveToQueue(TransactionFrm::pointer const& tx,uint8_t off ){
-		auto account_it = qc_by_address_and_nonce_.find(tx->GetSourceAddress());
-		if (account_it != qc_by_address_and_nonce_.end()){
-			int64_t nonce = tx->GetNonce() + off;
-			auto from_it = account_it->second.find(nonce);
-			if (from_it != account_it->second.end()){
-				auto tx_it = from_it;
-				
-				while (tx_it != account_it->second.end() && (*tx_it->second)->GetNonce() == nonce && queue_.size() < queue_limit_){
-					TransactionFrm::pointer tran = *tx_it->second;
-					//add to queue
-					auto inserted = queue_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tran->GetNonce(), PriorityQueue::iterator()));
-					PriorityQueue::iterator iter = queue_.emplace(tran);
-					inserted.first->second = iter;
+            auto tx_it = account_it->second.find(tx->GetNonce());
+            if (tx_it != account_it->second.end()){
 
-					queue_cache_.erase(tx_it->second);
-					++tx_it;
-					++nonce;
-				}
-				//delete from cache
-				account_it->second.erase(from_it, tx_it);
-				if (account_it->second.empty())
-					qc_by_address_and_nonce_.erase(tx->GetSourceAddress());
-			}
-		}
+                if (tx->GetFee() > (*tx_it->second)->GetFee()){
+                    //remove transaction for replace ,and after insert
+                    std::string drop_hash = (*tx_it->second)->GetContentHash();
+                    Remove(account_it, tx_it);
+                    replace = true;
+                    if (IsPacked(tx->GetSourceAddress(), tx->GetNonce()))
+                        packed_replace = true;
+                    LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") in queue", drop_hash.c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+                }
+                else{
+                    //Discard new transaction
+                    LOG_TRACE("Discard transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), (*tx_it->second)->GetFee(), tx->GetNonce());
+                    return;
+                }
+            }
+        }
 
-	}
-	
-	void TransactionQueue::Import(TransactionFrm::pointer tx, const int64_t& cur_source_nonce){
-		bool insert_queue = false;
-		bool packed_replace = false;
-		int64_t next_nonce = -1;
+        if (replace || account_txs_size<account_txs_limit_) {
+            Insert(tx);
+            if (packed_replace)
+                ReplacePack(tx->GetSourceAddress(), tx->GetNonce(), tx->GetContentHash());
 
-		utils::WriteLockGuard g(lock_);
-		LOG_TRACE("Import account(%s) transaction(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ")", tx->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
-		auto account_it = queue_by_address_and_nonce_.find(tx->GetSourceAddress());
-		if (account_it != queue_by_address_and_nonce_.end()){
-			auto tx_it = account_it->second.find(tx->GetNonce());
-			if (tx_it != account_it->second.end()){
-
-				if (tx->GetFee() > (*tx_it->second)->GetFee()){
-					//remove transaction for replace ,and after insert
-					std::string drop_hash = (*tx_it->second)->GetContentHash();
-					Remove(account_it, tx_it);
-					insert_queue = true;
-					if (IsPacked(tx->GetSourceAddress(), tx->GetNonce()))
-						packed_replace = true;
-					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) in queue", drop_hash.c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-				}
-				else{
-					//Discard new transaction
-					LOG_TRACE("Discard transaction(%s),fee(" FMT_I64 ") is lower than fee(" FMT_I64 ") of transaction(%s) in queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetFee(), (*tx_it->second)->GetFee(), utils::String::Bin4ToHexString((*tx_it->second)->GetContentHash()).c_str());
-					return;
-				}
-			}
-			else{
-				
-				int64_t pending_max_nonce = account_it->second.rbegin()->first;
-				int64_t min_nonce = GetCahceMinNonce(tx->GetSourceAddress());
-				if (tx->GetNonce() == pending_max_nonce + 1) {
-					if (min_nonce == tx->GetNonce()){
-						insert_queue = false;
-						next_nonce = pending_max_nonce + 1;
-						LOG_TRACE("Transaction(%s) will be insert into cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-					}
-					else{
-						insert_queue = true;
-						LOG_TRACE("Transaction(%s) will be insert into queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-					}
-				}
-				else if (tx->GetNonce() > pending_max_nonce + 1) {
-					insert_queue = false;
-					next_nonce = pending_max_nonce + 1;
-					LOG_TRACE("Transaction(%s) will be insert into cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-				}
-				else {
-					PROCESS_EXIT("Logic error,tx(%s) nonce(" FMT_I64 ") pending_max_nonce(" FMT_I64 ")", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), pending_max_nonce);
-				}
-			}
-		}
-		else{
-			int64_t min_nonce = GetCahceMinNonce(tx->GetSourceAddress());
-			if (tx->GetNonce() == cur_source_nonce + 1 ) {
-				if (min_nonce == tx->GetNonce()){
-					insert_queue = false;
-					next_nonce = cur_source_nonce + 1;
-					LOG_TRACE("Transaction(%s) will be insert into cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-				}
-				else{
-					insert_queue = true;
-					LOG_TRACE("Transaction(%s) will be insert into queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-				}
-			}
-			else if (tx->GetNonce() > cur_source_nonce + 1){
-				insert_queue = false;
-				next_nonce = cur_source_nonce + 1;
-				LOG_TRACE("Transaction(%s) will be insert into cache", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str());
-			}
-			else {
-				PROCESS_EXIT("Logic error,tx(%s) nonce(" FMT_I64 ") cur_source_nonce(" FMT_I64 ")", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), cur_source_nonce);
-			}
-		}
-
-		if (insert_queue){
-			Insert(tx);
-			if (packed_replace){
-				ReplacePack(tx->GetSourceAddress(), tx->GetNonce(), tx->GetContentHash());
-			}
-		}
-		else
-			EnqueueCache(tx, next_nonce, true);
-
-		//todo...
-		while (queue_.size() > queue_limit_){
-			TransactionFrm::pointer t = *queue_.rbegin();
-			if (!IsPacked(t->GetSourceAddress(),t->GetNonce())){
-				Remove(t->GetSourceAddress(), t->GetNonce());
-				EnqueueCache(t);
-			}
-			else{
-				break;
-			}
-		}
-	}
+            //todo...
+            while (queue_.size() > queue_limit_){
+                TransactionFrm::pointer t = *queue_.rbegin();
+                if (!IsPacked(t->GetSourceAddress(), t->GetNonce())){
+                    Remove(t->GetSourceAddress(), t->GetNonce());
+                    LOG_TRACE("Remove lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::Bin4ToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(),t->GetNonce());
+                }
+            }
+            Print();
+        }
+    }
 
 	protocol::TransactionEnvSet TransactionQueue::TopTransaction(uint32_t limit){
 		protocol::TransactionEnvSet set;
 		std::unordered_map<std::string, int64_t> topic_seqs;
-		std::vector<TransactionFrm::pointer> invalid_txs;
 		utils::WriteLockGuard g(lock_);
 		uint64_t i = 0;
 		for (auto t = queue_.begin(); set.txs().size() < limit && t != queue_.end(); ++t) {
 			const TransactionFrm::pointer& tx = *t;
-			if (set.ByteSize() + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE){
+			if (set.ByteSize() + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE)
 				break;
-			}
 			
 			int64_t last_seq = 0;
 			do {
@@ -351,25 +183,16 @@ namespace bumo {
 					last_seq = this_iter->second;
 					break;
 				}
+                
+                last_seq = account_nonce_[tx->GetSourceAddress()];
 
-				//find global cache
-				AccountFrm::pointer account;
-				if (Environment::AccountFromDB(tx->GetSourceAddress(), account)) {
-					last_seq = account->GetAccountNonce();
-				}
 			} while (false);
 
-			if (tx->GetNonce() > last_seq + 1) {
-				LOG_FATAL("The tx seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1,queue logic error", tx->GetNonce(), last_seq);
-				invalid_txs.emplace_back(tx);
-				continue;
-			}
+            if (tx->GetNonce() > last_seq + 1) {
+                LOG_ERROR("The tx seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1", tx->GetNonce(), last_seq);
+                break;
+            }
 
-			if (tx->GetNonce() <= last_seq) {
-				LOG_ERROR("The tx seq(" FMT_I64 ") is less or equal of last seq(" FMT_I64 "), remove it", tx->GetNonce(), last_seq);
-				invalid_txs.emplace_back(tx);
-				continue;
-			}
 			topic_seqs[tx->GetSourceAddress()] = tx->GetNonce();
 
 			*set.add_txs() = tx->GetProtoTxEnv();
@@ -378,33 +201,39 @@ namespace bumo {
 			i++;
 			LOG_TRACE("top:" FMT_I64 " addr:%s, tx:%s, nonce:" FMT_I64 ", fee:" FMT_I64, i, tx->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
 		}
-		
-		//delete invalid transaction from queue
-		for (auto it = invalid_txs.begin(); it != invalid_txs.end();it++){
-			Remove((*it)->GetSourceAddress(), (*it)->GetNonce());
-		}
 		return std::move(set);
 	}
 
-	uint32_t TransactionQueue::RemoveTxs(const protocol::TransactionEnvSet& set){
+    uint32_t TransactionQueue::RemoveTxs(const protocol::TransactionEnvSet& set, bool close_ledger){
 		utils::WriteLockGuard g(lock_);
 		size_t ret = 0;
 		for (int i = 0; i < set.txs_size(); i++) {
 			auto txproto = set.txs(i);
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
-			if (RemovePack(tx_frm->GetSourceAddress(), tx_frm->GetNonce())){
-				std::pair<bool, TransactionFrm::pointer> result = Remove(tx_frm->GetSourceAddress(), tx_frm->GetNonce());
-				if (!result.first)
-					LOG_ERROR("Account(%s) transaction(%s) nonce(" FMT_I64 ") is not in queue to remove",tx_frm->GetSourceAddress().c_str(),
-					utils::String::Bin4ToHexString(tx_frm->GetContentHash()).c_str(),tx_frm->GetNonce());
-			}
-			else{
-				LOG_ERROR("Account(%s) transaction(%s) nonce(" FMT_I64 ") is not in queue to remove", 
-					tx_frm->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetNonce());
-			}
+            RemoveTx(tx_frm);
+
+            auto it =account_nonce_.find(tx_frm->GetSourceAddress());
+            if (close_ledger && it != account_nonce_.end() && it->second<tx_frm->GetNonce())
+                it->second = tx_frm->GetNonce();
 		}
 		return ret;
 	}
+
+    void TransactionQueue::RemoveTxs(std::vector<TransactionFrm::pointer>& txs, bool close_ledger){
+        utils::WriteLockGuard g(lock_);
+        for (auto it = txs.begin(); it != txs.end(); it++){
+            RemoveTx(*it);
+
+            auto iter = account_nonce_.find((*it)->GetSourceAddress());
+            if (close_ledger && iter != account_nonce_.end() && iter->second<(*it)->GetNonce())
+                iter->second = (*it)->GetNonce();
+        }
+    }
+
+    void TransactionQueue::RemoveTx(TransactionFrm::pointer tx){
+        RemovePack(tx->GetSourceAddress(), tx->GetNonce());
+        std::pair<bool, TransactionFrm::pointer> result = Remove(tx->GetSourceAddress(), tx->GetNonce());
+    }
 
 	std::string TransactionQueue::PackKey(const std::string& account_address, const int64_t& nonce){
 		return account_address + std::to_string(nonce);
@@ -440,22 +269,30 @@ namespace bumo {
 	
 
 	void TransactionQueue::CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs){
-		utils::WriteLockGuard g(lock_);
-        while (!queue_cache_.empty()){
-			TransactionFrm::pointer tx = *queue_cache_.begin();
-            if (!tx->CheckTimeout(current_time - CACHE_QUEUE_TRANSACTION_TIMEOUT))
-				break;
-			RemoveCache(tx->GetSourceAddress(),tx->GetNonce());
-			timeout_txs.emplace_back(tx);
+        utils::ReadLockGuard g(lock_);
+        for (auto it = time_queue_.begin(); it != time_queue_.end();it++){
+            if ((*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
+                break;
+            timeout_txs.emplace_back(*it);
 		}
 	}
 
+    void TransactionQueue::CheckTimeoutAndDel(int64_t current_time){
+        utils::WriteLockGuard g(lock_);
+        while (true){
+            auto it =time_queue_.begin();
+            if ((*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
+                break;
+            RemoveTx(*it);
+        }
+    }
+
 	bool TransactionQueue::IsExist(TransactionFrm::pointer tx){
-        utils::ReadLockGuard g(lock_);
-		auto account_it = queue_by_address_and_nonce_.find(tx->GetSourceAddress());
-		if (account_it != queue_by_address_and_nonce_.end()){
-			auto tx_it = account_it->second.find(tx->GetNonce());
-			if (tx_it != account_it->second.end()){
+		utils::ReadLockGuard g(lock_);
+		auto account_it1 = queue_by_address_and_nonce_.find(tx->GetSourceAddress());
+		if (account_it1 != queue_by_address_and_nonce_.end()){
+			auto tx_it = account_it1->second.find(tx->GetNonce());
+			if (tx_it != account_it1->second.end()){
 				TransactionFrm::pointer t = *tx_it->second;
 				if (t->GetContentHash() == t->GetContentHash()){
 					return true;
@@ -463,47 +300,31 @@ namespace bumo {
 			}
 		}
 
-		account_it = qc_by_address_and_nonce_.find(tx->GetSourceAddress());
-		if (account_it != qc_by_address_and_nonce_.end()){
-			auto tx_it = account_it->second.find(tx->GetNonce());
-			if (tx_it != account_it->second.end()){
-				TransactionFrm::pointer t = *tx_it->second;
-				if (t->GetContentHash() == t->GetContentHash()){
-					return true;
-				}
-			}
-		}
 		return false;
 	}
 
-	/*
-	void TransactionQueue::PrintQueue(){
-		LOG_INFO("==========================PrintQueue===========================");
-		for (auto& e:queue_){
-			LOG_INFO("addr:%s, tx:%s, nonce:" FMT_I64 ", fee:" FMT_I64,
-			(*e).GetSourceAddress().c_str(),utils::String::Bin4ToHexString((*e).GetContentHash()).c_str(),(*e).GetNonce(),(*e).GetFee());
-		}
-		LOG_INFO("===============================================================\n");
-	}
-	void TransactionQueue::PrintQueueByAccount(){
-		LOG_INFO("==========================PrintQueueByAccount===========================");
-		for (auto& e:queue_by_address_and_nonce_){
-			for (auto &i:e.second){
-				LOG_INFO("addr:%s, tx:%s, nonce:" FMT_I64 ", fee:" FMT_I64,
-					(*i.second)->GetSourceAddress().c_str(), utils::String::Bin4ToHexString((*i.second)->GetContentHash()).c_str(), (*i.second)->GetNonce(), (*i.second)->GetFee() );
+	void TransactionQueue::PrintAccountQueue(const std::string& account_address){
+		std::string str;
+		str = "queue nonces:";
+		auto account_it1 = queue_by_address_and_nonce_.find(account_address);
+		if (account_it1 != queue_by_address_and_nonce_.end()){
+			for (auto&e : account_it1->second){
+				utils::String::AppendFormat(str, "," FMT_I64,e.first);
 			}
 		}
-		LOG_INFO("=======================================================================\n");
+		LOG_INFO("Account(%s) %s", account_address.c_str(),str.c_str());
 	}
-	void TransactionQueue::PrintCache(){
-		LOG_INFO("==========================PrintCache===========================");
-		for (auto& e : qc_by_address_and_nonce_){
-			for (auto &i : e.second){
-				LOG_INFO("addr:%s, tx:%s, nonce:" FMT_I64 ", fee:" FMT_I64,
-				(*i.second)->GetSourceAddress().c_str() ,utils::String::Bin4ToHexString((*i.second)->GetContentHash()).c_str() ,(*i.second)->GetNonce() ,(*i.second)->GetFee());
-			}
-		}
-		LOG_INFO("=============================================================\n");
-	}*/
+
+    void TransactionQueue::Print(){
+
+        LOG_INFO("queue:[");
+        for (auto it = queue_.begin(); it != queue_.end();it++)
+        {
+            LOG_INFO("addr:%s tx:%s nonce:" FMT_I64 " fee:" FMT_I64, (*it)->GetSourceAddress().c_str(), utils::String::Bin4ToHexString((*it)->GetContentHash()).c_str(), (*it)->GetNonce(), (*it)->GetFee());
+        }
+        LOG_INFO("]");
+    }
+
+ 
 }
 

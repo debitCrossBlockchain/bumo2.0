@@ -29,17 +29,20 @@ namespace bumo {
 
 	class TransactionQueue{
 	public:
-		TransactionQueue(uint32_t queue_limit, uint32_t qc_account_slots_limit, uint32_t qc_account_txs_limit);
+        TransactionQueue(uint32_t queue_limit, uint32_t account_txs_limit);
 		~TransactionQueue();
 
 		void Import(TransactionFrm::pointer tx,const int64_t& cur_source_nonce);
 		protocol::TransactionEnvSet TopTransaction(uint32_t limit);
-		uint32_t RemoveTxs(const protocol::TransactionEnvSet& set);
-		void CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
-        bool IsExist(TransactionFrm::pointer tx);
-		//void PrintQueue();
-		//void PrintQueueByAccount();
-		//void PrintCache();
+        uint32_t RemoveTxs(const protocol::TransactionEnvSet& set, bool close_ledger = false);
+        void RemoveTxs(std::vector<TransactionFrm::pointer>& txs, bool close_ledger = false);
+		void TransactionQueue::CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
+        void TransactionQueue::CheckTimeoutAndDel(int64_t current_time);
+		bool IsExist(TransactionFrm::pointer tx);
+
+
+		void PrintAccountQueue(const std::string& account_address);
+        void Print();
 	private:
 
 		struct PriorityCompare
@@ -48,21 +51,13 @@ namespace bumo {
 			/// Compare transaction by nonce height and fee.
 			bool operator()(TransactionFrm::pointer const& first, TransactionFrm::pointer const& second) const
 			{
-				uint64_t const& height1 = first->GetNonce() - transaction_queue_.queue_by_address_and_nonce_[first->GetSourceAddress()].begin()->first;
-				uint64_t const& height2 = second->GetNonce() - transaction_queue_.queue_by_address_and_nonce_[second->GetSourceAddress()].begin()->first;
+                int64_t const& height1 = first->GetNonce() - transaction_queue_.account_nonce_[first->GetSourceAddress()];
+                int64_t const& height2 = second->GetNonce() - transaction_queue_.account_nonce_[second->GetSourceAddress()];
 				return height1 < height2 || (height1 == height2 && first->GetFee() > second->GetFee());
 			}
 		};
 
-		struct CachePriorityCompare
-		{
-			/// Compare transaction by incoming time
-			bool operator()(TransactionFrm::pointer const& first, TransactionFrm::pointer const& second) const
-			{
-				return (first->GetInComingTime() > second->GetInComingTime());
-			}
-		};        
-	   
+		
 
 		using PriorityQueue = std::multiset<TransactionFrm::pointer, PriorityCompare>;
 		PriorityQueue queue_;
@@ -72,36 +67,40 @@ namespace bumo {
 		using QueueByAddressAndNonce = std::unordered_map<std::string, QueueByNonce>;
 		QueueByAddressAndNonce queue_by_address_and_nonce_;
 
-		using CachePriorityQueue = std::multiset<TransactionFrm::pointer, CachePriorityCompare>;
-		CachePriorityQueue queue_cache_;
 
-		using CacheByNonce = std::map<int64_t, CachePriorityQueue::iterator>;
-		using CacheByAddressAndNonce = std::unordered_map<std::string, CacheByNonce>;
-		CacheByAddressAndNonce qc_by_address_and_nonce_;
-		//Maximum number of all account
-		uint32_t qc_account_slots_limit_;
+        //record account system nonce
+        std::unordered_map<std::string, int64_t> account_nonce_;
+
+        struct TimePriorityCompare
+        {
+            /// Compare transaction by incoming time
+            bool operator()(TransactionFrm::pointer const& first, TransactionFrm::pointer const& second) const
+            {
+                return first->GetInComingTime() > second->GetInComingTime();
+            }
+        };
+
+        //time order
+        using TimeQueue = std::multiset<TransactionFrm::pointer, TimePriorityCompare>;
+        TimeQueue time_queue_;
+        using TimeQueueByNonce = std::map<int64_t, TimeQueue::iterator>;
+        using TimeQueueByAddressAndNonce = std::unordered_map<std::string, QueueByNonce>;
+        TimeQueueByAddressAndNonce time_queue_by_address_and_nonce_;
+
 		//Maximum number of transaction per account
-		uint32_t qc_account_txs_limit_;      
-		// life time in queue cache
-		uint64_t life_time_;
+		uint32_t account_txs_limit_;
 
-		/*
-		return: 0 discard ; 1 replace ; 2 insert 
-		*/
-		int EnqueueCache(TransactionFrm::pointer tx, int64_t next_nonce = -1, bool append_to_queue = false);
-		
+        uint32_t queue_cache_limit_;
+
 
 		std::pair<bool, TransactionFrm::pointer> Remove(const std::string& account_address,const int64_t& nonce);
+        std::pair<bool, TransactionFrm::pointer> TimeQueueRemove(const std::string& account_address, const int64_t& nonce);
 		std::pair<bool, TransactionFrm::pointer> Remove(QueueByAddressAndNonce::iterator& account_it, QueueByNonce::iterator& tx_it, bool del_empty = true);
-		void Insert(TransactionFrm::pointer const& tx);
+        void Insert(QueueByAddressAndNonce::iterator& account_it,TransactionFrm::pointer const& tx);
+        void Insert(TransactionFrm::pointer const& tx);
+        void TimeQueueInsert(TransactionFrm::pointer const& tx);
 		void MoveToQueue(TransactionFrm::pointer const& tx,uint8_t off = 1);
-
-		int64_t GetCahceMinNonce(const std::string& account_address);
-		void InsertCache(TransactionFrm::pointer const& tx);
-		void InsertCache(CacheByAddressAndNonce::iterator& account_it, TransactionFrm::pointer const& tx);
-		std::pair<bool, TransactionFrm::pointer> RemoveCache(const std::string& account_address, const int64_t& nonce, bool del_empty = true);
-		std::pair<bool, TransactionFrm::pointer> RemoveCache(CacheByAddressAndNonce::iterator& account_it, const int64_t& nonce, bool del_empty = true);
-		std::pair<bool, TransactionFrm::pointer> RemoveCache(CacheByAddressAndNonce::iterator& account_it, CacheByNonce::iterator& tx_it, bool del_empty = true);
+        void RemoveTx(TransactionFrm::pointer tx);
 
 		struct PackReplaceItem
 		{

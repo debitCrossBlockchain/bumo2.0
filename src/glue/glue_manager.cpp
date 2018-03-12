@@ -35,7 +35,7 @@ namespace bumo {
 
 	bool GlueManager::Initialize() {
 
-		tx_pool_ = std::make_shared<TransactionQueue>(Configure::Instance().ledger_configure_.queue_limit_, Configure::Instance().ledger_configure_.queue_cache_accout_limit_, Configure::Instance().ledger_configure_.queue_cache_per_account_txs_limit_);
+		tx_pool_ = std::make_shared<TransactionQueue>(Configure::Instance().ledger_configure_.queue_limit_,  Configure::Instance().ledger_configure_.queue_per_account_txs_limit_);
 		process_uptime_ = time(NULL);
 		consensus_ = ConsensusManager::Instance().GetConsensus();
 		consensus_->SetNotify(this);
@@ -91,7 +91,7 @@ namespace bumo {
 
 	bool GlueManager::StartConsensus() {
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
-
+		protocol::TransactionEnvSet txset_raw = tx_pool_->TopTransaction(Configure::Instance().ledger_configure_.max_trans_per_ledger_);
 
 		time_start_consenus_ = utils::Timestamp::HighResolution();
 		if (!consensus_->IsLeader()) {
@@ -112,7 +112,7 @@ namespace bumo {
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof);
 
 		//protocol::TransactionEnvSet txset_raw = tx_pool_->top.GetRaw();
-		protocol::TransactionEnvSet txset_raw = tx_pool_->TopTransaction(Configure::Instance().ledger_configure_.max_trans_per_ledger_);
+		
 		protocol::ConsensusValue propose_value;
 		do {
 			*propose_value.mutable_txset() = txset_raw;
@@ -299,7 +299,7 @@ namespace bumo {
 
 		//delete the cache 
 		//size_t ret1 = RemoveTxset(txset_frm);
-		tx_pool_->RemoveTxs(request.txset());
+		tx_pool_->RemoveTxs(request.txset(),true);
 
 		//start time
 		int64_t next_interval = GetIntervalTime(request.txset().txs_size() == 0);

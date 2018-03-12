@@ -115,8 +115,7 @@ namespace bumo {
 		use_atom_map_ = true;
 		hash_type_ = 0; // 0 : SHA256, 1 :SM2
 		queue_limit_ = 10240;
-		queue_cache_accout_limit_ = 10240;
-		queue_cache_per_account_txs_limit_ = 64;
+        uint32_t queue_per_account_txs_limit_=64;
 	}
 
 	LedgerConfigure::~LedgerConfigure() {
@@ -135,8 +134,7 @@ namespace bumo {
 		Configure::GetValue(value, "use_atom_map", use_atom_map_);
 
 		Configure::GetValue(value["tx_pool"], "queue_limit", queue_limit_);
-		Configure::GetValue(value["tx_pool"], "queue_cache_accout_limit", queue_cache_accout_limit_);
-		Configure::GetValue(value["tx_pool"], "queue_cache_per_account_txs_limit", queue_cache_per_account_txs_limit_);
+        Configure::GetValue(value["tx_pool"], "queue_per_account_txs_limit", queue_per_account_txs_limit_);
 
 		if (validation_privatekey_.empty()) {
 			PrivateKey tmp_priv(SIGNTYPE_ED25519);
