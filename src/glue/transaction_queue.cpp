@@ -212,8 +212,9 @@ namespace bumo {
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
 			RemoveTx(tx_frm);
 
-			auto it =account_nonce_.find(tx_frm->GetSourceAddress());
-			if (close_ledger && it != account_nonce_.end() && it->second<tx_frm->GetNonce())
+			//update system account nonce
+			auto it = account_nonce_.find(tx_frm->GetSourceAddress());
+			if (close_ledger && it != account_nonce_.end() && it->second < tx_frm->GetNonce())
 				it->second = tx_frm->GetNonce();
 		}
 		return ret;
@@ -224,8 +225,9 @@ namespace bumo {
 		for (auto it = txs.begin(); it != txs.end(); it++){
 			RemoveTx(*it);
 
+			//update system account nonce
 			auto iter = account_nonce_.find((*it)->GetSourceAddress());
-			if (close_ledger && iter != account_nonce_.end() && iter->second<(*it)->GetNonce())
+			if (close_ledger && iter != account_nonce_.end() && iter->second < (*it)->GetNonce())
 				iter->second = (*it)->GetNonce();
 		}
 	}
