@@ -232,7 +232,8 @@ namespace bumo {
 
 			std::string trim_code = issue_asset.code();
 			trim_code = utils::String::Trim(trim_code);
-			if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE) {
+			if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE ||
+				trim_code.size() != issue_asset.code().size()) {
 				result.set_code(protocol::ERRCODE_ASSET_INVALID);
 				result.set_desc(utils::String::Format("Asset code length should between (0,64]"));
 				break;
