@@ -115,7 +115,7 @@ namespace bumo {
 		use_atom_map_ = true;
 		hash_type_ = 0; // 0 : SHA256, 1 :SM2
 		queue_limit_ = 10240;
-		uint32_t queue_per_account_txs_limit_ = 64;
+		queue_per_account_txs_limit_ = 64;
 	}
 
 	LedgerConfigure::~LedgerConfigure() {
