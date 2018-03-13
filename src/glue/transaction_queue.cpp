@@ -75,8 +75,9 @@ namespace bumo {
 		inserted.first->second.second = right;
 	}
 
-	void TransactionQueue::Import(TransactionFrm::pointer tx, const int64_t& cur_source_nonce){
+	bool TransactionQueue::Import(TransactionFrm::pointer tx, const int64_t& cur_source_nonce,Result &result){
 		utils::WriteLockGuard g(lock_);
+		bool inserted = false;
 		bool replace = false;
 		uint32_t account_txs_size = 0;
 
@@ -101,22 +102,43 @@ namespace bumo {
 				}
 				else{
 					//Discard new transaction
-					LOG_TRACE("Discard transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
-					return;
+					std::string error_desc = utils::String::Format("Discard transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+					LOG_ERROR("%s", error_desc.c_str());
+					result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
+					result.set_desc(error_desc);
+					return inserted;
 				}
 			}
 		}
 
 		if (replace || account_txs_size < account_txs_limit_) {
 			Insert(tx);	
-
+			inserted = true;
 			//todo...
-			while (queue_.size() > queue_limit_){
+			while (queue_.size() > queue_limit_) {
 				TransactionFrm::pointer t = *queue_.rbegin();
 				Remove(t->GetSourceAddress(), t->GetNonce());
-				LOG_TRACE("Discard lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::Bin4ToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(), t->GetNonce());
+
+				std::string error_desc = utils::String::Format("Discard lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::Bin4ToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(), t->GetNonce());
+				LOG_TRACE("%s", error_desc.c_str());
+				if (t->GetContentHash() == tx->GetContentHash()){
+					result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
+					result.set_desc(error_desc);
+					LOG_ERROR("%s", error_desc.c_str());
+					inserted = false;
+				}
 			}
 		}
+
+		if (account_txs_size >= account_txs_limit_){
+			inserted = false;
+			std::string error_desc = utils::String::Format(" transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") exceed txs limit of per account in queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+			result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
+			result.set_desc(error_desc);
+			LOG_ERROR("%s", error_desc.c_str());
+		}
+
+		return inserted;
 	}
 
 	protocol::TransactionEnvSet TransactionQueue::TopTransaction(uint32_t limit){

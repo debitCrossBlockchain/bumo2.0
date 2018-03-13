@@ -212,7 +212,10 @@ namespace bumo {
 				break;
 			}
 
-			tx_pool_->Import(tx,nonce);
+			if (!tx_pool_->Import(tx, nonce, err)) {
+				LOG_ERROR("source address(%s) tx hash(%s) insert tx queue failed",
+					address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
+			}
 
 		} while (false);
 

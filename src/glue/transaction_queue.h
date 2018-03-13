@@ -32,7 +32,7 @@ namespace bumo {
 		TransactionQueue(uint32_t queue_limit, uint32_t account_txs_limit);
 		~TransactionQueue();
 
-		void Import(TransactionFrm::pointer tx,const int64_t& cur_source_nonce);
+		bool Import(TransactionFrm::pointer tx, const int64_t& cur_source_nonce, Result &result);
 		protocol::TransactionEnvSet TopTransaction(uint32_t limit);
 		uint32_t RemoveTxs(const protocol::TransactionEnvSet& set, bool close_ledger = false);
 		void RemoveTxs(std::vector<TransactionFrm::pointer>& txs, bool close_ledger = false);
