@@ -641,16 +641,10 @@ namespace bumo {
 			return NULL;
 		}
 
-		//get last sequence, and insert the middle instance to map
-		int64_t last_seq = sequence - 1;
-		PbftInstanceMap::const_reverse_iterator iter = instances_.rbegin();
-		if (iter != instances_.rend()) {
-			last_seq = iter->first.sequence_;
-		}
 
-		for (int64_t tmp_seq = last_seq + 1; tmp_seq <= sequence && last_exe_seq_ < tmp_seq; tmp_seq++) {
-			PbftInstanceIndex index(view_number, tmp_seq);
-			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, tmp_seq);
+		if (sequence > last_exe_seq_) {
+			PbftInstanceIndex index(view_number, sequence);
+			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, sequence);
 			instances_.insert(std::make_pair(index, PbftInstance()));
 		}
 
@@ -663,10 +657,6 @@ namespace bumo {
 
 		PbftInstance &instace = instances_[index];
 		instace.msg_buf_[pbft.type()].push_back(env);
-
-		//ValueSaver saver;
-		//SaveInstance(saver);
-		//saver.Commit();
 
 		return &instace;
 	}
