@@ -165,8 +165,8 @@ namespace bumo {
 			auto txproto = set.txs(i);
 			std::string source_address = txproto.transaction().source_address();
 			int64_t nonce = txproto.transaction().nonce();
-			Remove(source_address, nonce);
-
+			std::pair<bool, TransactionFrm::pointer> result = Remove(source_address, nonce);
+			if (result.first) ++ret;
 			//update system account nonce
 			auto it = account_nonce_.find(source_address);
 			if (close_ledger && it != account_nonce_.end() && it->second < nonce)
@@ -182,7 +182,6 @@ namespace bumo {
 			int64_t nonce = (*it)->GetNonce();
 
 			Remove(source_address, nonce);
-
 			//update system account nonce
 			auto iter = account_nonce_.find(source_address);
 			if (close_ledger && iter != account_nonce_.end() && iter->second < nonce)
