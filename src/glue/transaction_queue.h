@@ -40,7 +40,7 @@ namespace bumo {
 		void CheckTimeoutAndDel(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
 		bool IsExist(TransactionFrm::pointer tx);
 		void SafeRemoveTx(const std::string& account_address, int64_t& nonce);
-
+		size_t Size();
 	private:
 
 		struct PriorityCompare

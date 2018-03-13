@@ -34,8 +34,6 @@ namespace bumo {
 
 		friend class TransactionSetFrm;
 
-		std::map<std::string, int64_t> last_topic_seqs_;
-		TransactionMap topic_caches_;
 		utils::Mutex lock_;
 		std::shared_ptr<TransactionQueue> tx_pool_;
 
@@ -71,7 +69,6 @@ namespace bumo {
 		bool StartConsensus(); //start to trigger consensus
 		bool CreateTableIfNotExist(); //create the db
 		std::string CalculateTxTreeHash(const std::vector<TransactionFrm::pointer> &tx_array);
-		size_t RemoveTxset(const TransactionSetFrm &set);
 		//const LedgerHeaderLiteFrmPtr GetLastLedger() const { return last_ledger_; };
 		int64_t GetIntervalTime(bool empty_block);
 

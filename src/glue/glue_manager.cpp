@@ -212,10 +212,7 @@ namespace bumo {
 				break;
 			}
 
-			if (!tx_pool_->Import(tx, nonce, err)) {
-				LOG_ERROR("source address(%s) tx hash(%s) insert tx queue failed",
-					address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
-			}
+			tx_pool_->Import(tx,nonce);
 
 		} while (false);
 
@@ -240,22 +237,6 @@ namespace bumo {
 		ledger_upgrade_.OnTimer(current_time);
 	}
 
-	size_t GlueManager::RemoveTxset(const TransactionSetFrm &set) {
-		utils::MutexGuard guard(lock_);
-		size_t ret = 0;
-		for (int32_t i = 0; i < set.GetRaw().txs_size(); i++) {
-			TransactionFrm tx(set.GetRaw().txs(i));
-
-			TransactionMap::iterator iter = topic_caches_.find(TopicKey(tx.GetSourceAddress(), tx.GetNonce()));
-			if (iter != topic_caches_.end()) {
-				topic_caches_.erase(iter);
-				ret++;
-			}
-		}
-
-
-		return ret;
-	}
 
 	void GlueManager::NotifyErrTx(std::vector<TransactionFrm::pointer> &txs) {
 		for (std::vector<TransactionFrm::pointer>::iterator iter = txs.begin();
@@ -443,15 +424,6 @@ namespace bumo {
 			} 
 		}
 
-		//check the txset
-// 		if (consensus_value.has_txset()) {
-// 			TransactionSetFrm frm(consensus_value.txset());
-// 			if (!frm.CheckValid()) {
-// 				LOG_ERROR("Check valid failed, tx set not valid");
-// 				return Consensus::CHECK_VALUE_MAYVALID;
-// 			}
-// 		}
-
 		//check the second block
 		if (lcl.seq() == 1 && consensus_value.previous_proof() != "") {
 			LOG_ERROR("Check value failed, the second consensus value's prevous proof filed must be empty");
@@ -498,9 +470,7 @@ namespace bumo {
 
 	void GlueManager::GetModuleStatus(Json::Value &data) {
 		data["name"] = "glue_manager";
-
-        data["transaction_size"] = (Json::UInt64)topic_caches_.size();
-		data["cache_topic_size"] = (Json::UInt64)last_topic_seqs_.size();
+		data["transaction_size"] = tx_pool_->Size();
 
 		Json::Value &system_json = data["system"];
 		utils::Timestamp time_stamp(utils::GetStartupTime() * utils::MICRO_UNITS_PER_SEC);
@@ -535,8 +505,7 @@ namespace bumo {
 	}
 
 	size_t GlueManager::GetTransactionCacheSize() {
-		utils::MutexGuard guard(lock_);
-		return topic_caches_.size();
+		return tx_pool_->Size();
 	}
 
 }

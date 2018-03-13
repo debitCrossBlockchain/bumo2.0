@@ -657,14 +657,20 @@ namespace bumo {
 		// notice applied
 		for (size_t i = 0; i < closing_ledger->apply_tx_frms_.size(); i++) {
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
-			protocol::TransactionEnvStore applyTxMsg;
-			*applyTxMsg.mutable_transaction_env() = closing_ledger->apply_tx_frms_[i]->GetTransactionEnv();
-			applyTxMsg.set_ledger_seq(closing_ledger->GetProtoHeader().seq());
-			applyTxMsg.set_close_time(closing_ledger->GetProtoHeader().close_time());
-			applyTxMsg.set_error_code(tx->GetResult().code());
-			applyTxMsg.set_error_desc(tx->GetResult().desc());
-			applyTxMsg.set_hash(tx->GetContentHash());
-			WebSocketServer::Instance().BroadcastChainTxMsg(applyTxMsg);
+			protocol::TransactionEnvStore apply_tx_msg;
+			*apply_tx_msg.mutable_transaction_env() = closing_ledger->apply_tx_frms_[i]->GetTransactionEnv();
+			apply_tx_msg.set_ledger_seq(closing_ledger->GetProtoHeader().seq());
+			apply_tx_msg.set_close_time(closing_ledger->GetProtoHeader().close_time());
+			apply_tx_msg.set_error_code(tx->GetResult().code());
+			apply_tx_msg.set_error_desc(tx->GetResult().desc());
+			apply_tx_msg.set_hash(tx->GetContentHash());
+			WebSocketServer::Instance().BroadcastChainTxMsg(apply_tx_msg);
+
+			if (tx->GetResult().code() == protocol::ERRCODE_SUCCESS)
+				for (size_t j = 0; j < tx->instructions_.size(); j++) {
+					const protocol::TransactionEnvStore &env_sto = tx->instructions_.at(j);
+					WebSocketServer::Instance().BroadcastChainTxMsg(env_sto);
+				}
 		}
 		// notice dropped
 		/*

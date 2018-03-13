@@ -93,10 +93,11 @@ namespace bumo {
 			//a transaction success so the transactions trigger by it can store
 			if (ptr->GetResult().code() == protocol::ERRCODE_SUCCESS)
 				for (size_t j = 0; j < ptr->instructions_.size(); j++){
-					protocol::TransactionEnvStore env_sto = ptr->instructions_.at(j);
+					protocol::TransactionEnvStore &env_sto = ptr->instructions_[j];
 					env_sto.set_ledger_seq(ledger_.header().seq());
 					env_sto.set_close_time(ledger_.header().close_time());
 					std::string hash = HashWrapper::Crypto(env_sto.transaction_env().transaction().SerializeAsString());
+					env_sto.set_hash(hash);
 					batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, hash), env_sto.SerializeAsString());
 					list.add_entry(hash);
 				}

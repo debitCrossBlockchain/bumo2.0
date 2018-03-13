@@ -255,5 +255,10 @@ namespace bumo {
 
 		return false;
 	}
+
+	size_t TransactionQueue::Size() {
+		utils::ReadLockGuard g(lock_);
+		return queue_.size();
+	}
 }
 

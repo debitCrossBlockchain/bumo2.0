@@ -80,6 +80,10 @@ namespace bumo {
 			return transaction_env_;
 		}
 
+		std::string &GetFullData() {
+			return full_data_;
+		}
+
 		void ApplyExpireResult(); // for sync node
 
 		bool ValidForParameter();

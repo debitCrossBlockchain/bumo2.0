@@ -180,15 +180,14 @@ namespace bumo {
 		}
 	}
 
-	void WebSocketServer::BroadcastChainTxMsg(protocol::TransactionEnvStore& tx_msg) {
-		std::string str = tx_msg.SerializeAsString();
-		bumo::WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_TX_STATUS, str);
+	void WebSocketServer::BroadcastChainTxMsg(const protocol::TransactionEnvStore& tx_msg) {
 		utils::MutexGuard guard(conns_list_lock_);
 
 		for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
 			WsPeer *peer = (WsPeer *)iter->second;
 			if (peer->Filter(tx_msg)) {
 				std::error_code ec;
+				std::string str = tx_msg.SerializeAsString();
 				peer->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
 			}
 		}

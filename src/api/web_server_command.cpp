@@ -136,19 +136,13 @@ namespace bumo {
 					result_item["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 
-                int64_t nonce = 0;
-				TransactionFrm frm(tran_env);
-				if (!frm.CheckValid(-1, true, nonce)){
-					result = frm.result_;
-					break;
-				}
-
 			} while (false);
 
+			TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
+			GlueManager::Instance().OnTransaction(ptr, result);
+
 			if (result.code() == protocol::ERRCODE_SUCCESS) {
-				TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-				GlueManager::Instance().OnTransaction(ptr, result);
-				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
+				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, ptr->GetFullData());
 				if (result.code() == protocol::ERRCODE_SUCCESS) success_count++;
 			}
 			result_item["error_code"] = result.code();

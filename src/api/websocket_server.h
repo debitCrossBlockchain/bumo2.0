@@ -57,7 +57,7 @@ namespace bumo {
 		bool OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id);
 
 		void BroadcastMsg(int64_t type, const std::string &data);
-		void BroadcastChainTxMsg(protocol::TransactionEnvStore& txMsg);
+		void BroadcastChainTxMsg(const protocol::TransactionEnvStore& txMsg);
 
 		virtual Connection *CreateConnectObject(server *server_h, client *client_,
 			tls_server *tls_server_h, tls_client *tls_client_h,
