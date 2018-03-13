@@ -97,26 +97,7 @@ namespace bumo {
 		void Insert(QueueByAddressAndNonce::iterator& account_it,TransactionFrm::pointer const& tx);
 		void Insert(TransactionFrm::pointer const& tx);
 		void TimeQueueInsert(TransactionFrm::pointer const& tx);
-		void RemoveTx(const std::string& account_address, int64_t& nonce);
 
-		struct PackReplaceItem
-		{
-			PackReplaceItem(){}
-			PackReplaceItem(const std::string& replaced_hash) :replaced_hash_(replaced_hash_){}
-			PackReplaceItem(const PackReplaceItem& item){
-				replaced_hash_ = item.replaced_hash_;
-			}
-			std::string replaced_hash_;
-			bool IsReplace(){ return !replaced_hash_.empty(); }
-			void Replace(const std::string& hash){ replaced_hash_ = hash; }
-		};
-		//key:account_address+nonce ,value
-		std::unordered_map<std::string, PackReplaceItem> packed_txs_;
-		std::string PackKey(const std::string& account_address, const int64_t& nonce);
-		void InsertPack(const std::string& account_address, const int64_t& nonce);
-		void ReplacePack(const std::string& account_address, const int64_t& nonce, const std::string& replace_hash);
-		bool IsPacked(const std::string& account_address, const int64_t& nonce);
-		bool RemovePack(const std::string& account_address, const int64_t& nonce);
 		utils::ReadWriteLock lock_;
 	};
 }

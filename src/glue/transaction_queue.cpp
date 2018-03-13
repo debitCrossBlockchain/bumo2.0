@@ -118,7 +118,6 @@ namespace bumo {
 		utils::WriteLockGuard g(lock_);
 		bool replace = false;
 		uint32_t account_txs_size = 0;
-		bool packed_replace = false;
 
 		account_nonce_[tx->GetSourceAddress()] = cur_source_nonce;
 
@@ -137,30 +136,24 @@ namespace bumo {
 					Remove(account_it, tx_it);
 					replace = true;
 					account_txs_size--;
-					if (IsPacked(tx->GetSourceAddress(), tx->GetNonce()))
-						packed_replace = true;
 					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") in queue", drop_hash.c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
 				}
 				else{
 					//Discard new transaction
-					LOG_TRACE("Discard transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), (*tx_it->second)->GetFee(), tx->GetNonce());
+					LOG_TRACE("Discard transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
 					return;
 				}
 			}
 		}
 
 		if (replace || account_txs_size < account_txs_limit_) {
-			Insert(tx);
-			if (packed_replace)
-				ReplacePack(tx->GetSourceAddress(), tx->GetNonce(), tx->GetContentHash());
+			Insert(tx);	
 
 			//todo...
 			while (queue_.size() > queue_limit_){
 				TransactionFrm::pointer t = *queue_.rbegin();
-				if (!IsPacked(t->GetSourceAddress(), t->GetNonce())){
-					Remove(t->GetSourceAddress(), t->GetNonce());
-					LOG_TRACE("Remove lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::Bin4ToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(), t->GetNonce());
-				}
+				Remove(t->GetSourceAddress(), t->GetNonce());
+				LOG_TRACE("Discard lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::Bin4ToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(), t->GetNonce());
 			}
 		}
 	}
@@ -188,9 +181,6 @@ namespace bumo {
 
 			} while (false);
 
-			if (IsPacked(tx->GetSourceAddress(), tx->GetNonce()))
-				continue;
-
 			if (tx->GetNonce() > last_seq + 1) {
 				LOG_ERROR("The tx seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1", tx->GetNonce(), last_seq);
 				break;
@@ -199,7 +189,6 @@ namespace bumo {
 			topic_seqs[tx->GetSourceAddress()] = tx->GetNonce();
 
 			*set.add_txs() = tx->GetProtoTxEnv();
-			InsertPack(tx->GetSourceAddress(), tx->GetNonce());
 
 			i++;
 			LOG_TRACE("top:" FMT_I64 " addr:%s, tx:%s, nonce:" FMT_I64 ", fee:" FMT_I64, i, tx->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
@@ -214,7 +203,7 @@ namespace bumo {
 			auto txproto = set.txs(i);
 			std::string source_address = txproto.transaction().source_address();
 			int64_t nonce = txproto.transaction().nonce();
-			RemoveTx(source_address, nonce);
+			Remove(source_address, nonce);
 
 			//update system account nonce
 			auto it = account_nonce_.find(source_address);
@@ -230,7 +219,7 @@ namespace bumo {
 			std::string source_address = (*it)->GetSourceAddress();
 			int64_t nonce = (*it)->GetNonce();
 
-			RemoveTx(source_address,nonce);
+			Remove(source_address, nonce);
 
 			//update system account nonce
 			auto iter = account_nonce_.find(source_address);
@@ -241,47 +230,10 @@ namespace bumo {
 
 	void TransactionQueue::SafeRemoveTx(const std::string& account_address, int64_t& nonce){
 		utils::WriteLockGuard g(lock_);
-		RemovePack(account_address, nonce);
 		std::pair<bool, TransactionFrm::pointer> result = Remove(account_address, nonce);
 	}
 
-	void TransactionQueue::RemoveTx(const std::string& account_address,int64_t& nonce){
-		RemovePack(account_address, nonce);
-		std::pair<bool, TransactionFrm::pointer> result = Remove(account_address, nonce);
-	}
 
-	std::string TransactionQueue::PackKey(const std::string& account_address, const int64_t& nonce){
-		return account_address + std::to_string(nonce);
-	}
-
-	void TransactionQueue::InsertPack(const std::string& account_address, const int64_t& nonce){
-		packed_txs_[PackKey(account_address,nonce)] = PackReplaceItem();
-	}
-
-	void TransactionQueue::ReplacePack(const std::string& account_address, const int64_t& nonce, const std::string& replace_hash){
-		auto it = packed_txs_.find(PackKey(account_address, nonce));
-		if (it != packed_txs_.end()){
-			it->second.Replace(replace_hash);
-		}
-	}
-
-	bool TransactionQueue::IsPacked(const std::string& account_address, const int64_t& nonce){
-		auto it = packed_txs_.find(PackKey(account_address, nonce));
-		if (it != packed_txs_.end()){
-			return true;
-		}
-		return false;
-	}
-
-	bool TransactionQueue::RemovePack(const std::string& account_address, const int64_t& nonce){
-		auto it = packed_txs_.find(PackKey(account_address, nonce));
-		if (it != packed_txs_.end()){
-			packed_txs_.erase(it);
-			return true;
-		}
-		return false;
-	}
-	
 
 	void TransactionQueue::CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs){
 		utils::ReadLockGuard g(lock_);
@@ -301,7 +253,7 @@ namespace bumo {
 			timeout_txs.emplace_back(*it);
 			std::string account_address = (*it)->GetSourceAddress();
 			int64_t nonce = (*it)->GetNonce();
-			RemoveTx(account_address, nonce);
+			Remove(account_address, nonce);
 		}
 	}
 
