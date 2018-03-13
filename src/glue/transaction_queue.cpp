@@ -188,6 +188,9 @@ namespace bumo {
 
 			} while (false);
 
+			if (IsPacked(tx->GetSourceAddress(), tx->GetNonce()))
+				continue;
+
 			if (tx->GetNonce() > last_seq + 1) {
 				LOG_ERROR("The tx seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1", tx->GetNonce(), last_seq);
 				break;
