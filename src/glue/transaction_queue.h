@@ -36,8 +36,8 @@ namespace bumo {
 		protocol::TransactionEnvSet TopTransaction(uint32_t limit);
 		uint32_t RemoveTxs(const protocol::TransactionEnvSet& set, bool close_ledger = false);
 		void RemoveTxs(std::vector<TransactionFrm::pointer>& txs, bool close_ledger = false);
-		void TransactionQueue::CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
-		void TransactionQueue::CheckTimeoutAndDel(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
+		void CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
+		void CheckTimeoutAndDel(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
 		bool IsExist(TransactionFrm::pointer tx);
 		void SafeRemoveTx(const std::string& account_address, int64_t& nonce);
 
