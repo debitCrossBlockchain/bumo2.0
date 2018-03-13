@@ -32,11 +32,10 @@ namespace bumo {
 	
 	std::pair<bool, TransactionFrm::pointer> TransactionQueue::Remove(QueueByAddressAndNonce::iterator& account_it, QueueByNonce::iterator& tx_it, bool del_empty){
 		TransactionFrm::pointer ptr = nullptr;
-		ptr = *tx_it->second;
-		queue_.erase(tx_it->second);
+		ptr = *tx_it->second.first;
+		queue_.erase(tx_it->second.first);
+		time_queue_.erase(tx_it->second.second);
 		account_it->second.erase(tx_it);
-
-		TimeQueueRemove(ptr->GetSourceAddress(),ptr->GetNonce());
 
 		if (del_empty && account_it->second.empty()){
 			account_nonce_.erase(account_it->first);
@@ -52,11 +51,10 @@ namespace bumo {
 		if (account_it != queue_by_address_and_nonce_.end()){
 			auto tx_it = account_it->second.find(nonce);
 			if (tx_it != account_it->second.end()){
-				ptr = *tx_it->second;
-				queue_.erase(tx_it->second);
+				ptr = *tx_it->second.first;
+				queue_.erase(tx_it->second.first);
+				time_queue_.erase(tx_it->second.second);
 				account_it->second.erase(tx_it);
-
-				TimeQueueRemove(account_address, nonce);
 
 				if (account_it->second.empty()){
 					queue_by_address_and_nonce_.erase(account_it);
@@ -67,52 +65,15 @@ namespace bumo {
 		}
 		return std::move(std::make_pair(false, ptr));
 	}
-
-	std::pair<bool, TransactionFrm::pointer> TransactionQueue::TimeQueueRemove(const std::string& account_address, const int64_t& nonce){
-		TransactionFrm::pointer ptr = nullptr;
-		auto account_it = time_queue_by_address_and_nonce_.find(account_address);
-		if (account_it != time_queue_by_address_and_nonce_.end()){
-			auto tx_it = account_it->second.find(nonce);
-			if (tx_it != account_it->second.end()){
-				ptr = *tx_it->second;
-				time_queue_.erase(tx_it->second);
-				account_it->second.erase(tx_it);
-
-				if (account_it->second.empty()){
-					time_queue_by_address_and_nonce_.erase(account_it);
-					//account_nonce_.erase(account_address);
-				}
-
-				return std::move(std::make_pair(true, ptr));
-			}
-		}
-		return std::move(std::make_pair(false, ptr));
-	}
-
-
+	
 	void TransactionQueue::Insert(TransactionFrm::pointer const& tx){
 		// Insert into queue
-		auto inserted = queue_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tx->GetNonce(), PriorityQueue::iterator()));
-		PriorityQueue::iterator iter = queue_.emplace(tx);
-		inserted.first->second = iter;
-		TimeQueueInsert(tx);
+		auto inserted = queue_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tx->GetNonce(), std::make_pair(PriorityQueue::iterator(), TimeQueue::iterator())));
+		PriorityQueue::iterator left = queue_.emplace(tx);
+		TimeQueue::iterator right = time_queue_.emplace(tx);
+		inserted.first->second.first = left;
+		inserted.first->second.second = right;
 	}
-
-	void TransactionQueue::Insert(QueueByAddressAndNonce::iterator& account_it, TransactionFrm::pointer const& tx){
-		auto inserted = account_it->second.insert(std::make_pair(tx->GetNonce(), PriorityQueue::iterator()));
-		PriorityQueue::iterator iter = queue_.emplace(tx);
-		inserted.first->second = iter;
-		TimeQueueInsert(tx);
-	}
-
-
-	void TransactionQueue::TimeQueueInsert(TransactionFrm::pointer const& tx){
-		auto inserted = time_queue_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tx->GetNonce(), TimeQueue::iterator()));
-		TimeQueue::iterator iter = time_queue_.emplace(tx);
-		inserted.first->second = iter;
-	}
-
-
 
 	void TransactionQueue::Import(TransactionFrm::pointer tx, const int64_t& cur_source_nonce){
 		utils::WriteLockGuard g(lock_);
@@ -123,20 +84,20 @@ namespace bumo {
 
 		LOG_TRACE("Import account(%s) transaction(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ")", tx->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
 		auto account_it = queue_by_address_and_nonce_.find(tx->GetSourceAddress());
-		if (account_it != queue_by_address_and_nonce_.end()){
+		if (account_it != queue_by_address_and_nonce_.end()) {
 
 			account_txs_size = account_it->second.size();
 
 			auto tx_it = account_it->second.find(tx->GetNonce());
 			if (tx_it != account_it->second.end()){
 
-				if (tx->GetFee() > (*tx_it->second)->GetFee()){
+				if (tx->GetFee() > (*tx_it->second.first)->GetFee()) {
 					//remove transaction for replace ,and after insert
-					std::string drop_hash = (*tx_it->second)->GetContentHash();
+					std::string drop_hash = (*tx_it->second.first)->GetContentHash();
 					Remove(account_it, tx_it);
 					replace = true;
 					account_txs_size--;
-					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") in queue", drop_hash.c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") in queue", utils::String::Bin4ToHexString(drop_hash).c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
 				}
 				else{
 					//Discard new transaction
@@ -182,7 +143,7 @@ namespace bumo {
 			} while (false);
 
 			if (tx->GetNonce() > last_seq + 1) {
-				LOG_ERROR("The tx seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1", tx->GetNonce(), last_seq);
+				LOG_ERROR("Account(%s) tx(%s) seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1",tx->GetSourceAddress().c_str(),utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), last_seq);
 				break;
 			}
 
@@ -193,6 +154,7 @@ namespace bumo {
 			i++;
 			LOG_TRACE("top:" FMT_I64 " addr:%s, tx:%s, nonce:" FMT_I64 ", fee:" FMT_I64, i, tx->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
 		}
+
 		return std::move(set);
 	}
 
@@ -263,7 +225,7 @@ namespace bumo {
 		if (account_it1 != queue_by_address_and_nonce_.end()){
 			auto tx_it = account_it1->second.find(tx->GetNonce());
 			if (tx_it != account_it1->second.end()){
-				TransactionFrm::pointer t = *tx_it->second;
+				TransactionFrm::pointer t = *tx_it->second.first;
 				if (t->GetContentHash() == t->GetContentHash()){
 					return true;
 				}

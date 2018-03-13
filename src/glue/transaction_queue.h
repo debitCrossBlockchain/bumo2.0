@@ -55,19 +55,9 @@ namespace bumo {
 			}
 		};
 
-		
-
 		using PriorityQueue = std::multiset<TransactionFrm::pointer, PriorityCompare>;
 		PriorityQueue queue_;
-		uint32_t queue_limit_;
 
-		using QueueByNonce = std::map<int64_t, PriorityQueue::iterator>;
-		using QueueByAddressAndNonce = std::unordered_map<std::string, QueueByNonce>;
-		QueueByAddressAndNonce queue_by_address_and_nonce_;
-
-
-		//record account system nonce
-		std::unordered_map<std::string, int64_t> account_nonce_;
 
 		struct TimePriorityCompare
 		{
@@ -81,10 +71,17 @@ namespace bumo {
 		//time order
 		using TimeQueue = std::multiset<TransactionFrm::pointer, TimePriorityCompare>;
 		TimeQueue time_queue_;
-		using TimeQueueByNonce = std::map<int64_t, TimeQueue::iterator>;
-		using TimeQueueByAddressAndNonce = std::unordered_map<std::string, TimeQueueByNonce>;
-		TimeQueueByAddressAndNonce time_queue_by_address_and_nonce_;
 
+		using QueueIterPair = std::pair<PriorityQueue::iterator, TimeQueue::iterator>;
+		using QueueByNonce = std::map<int64_t, QueueIterPair>;
+		using QueueByAddressAndNonce = std::unordered_map<std::string, QueueByNonce>;
+		QueueByAddressAndNonce queue_by_address_and_nonce_;
+
+
+		//record account system nonce
+		std::unordered_map<std::string, int64_t> account_nonce_;
+
+		uint32_t queue_limit_;
 		//Maximum number of transaction per account
 		uint32_t account_txs_limit_;
 
@@ -92,9 +89,7 @@ namespace bumo {
 
 
 		std::pair<bool, TransactionFrm::pointer> Remove(const std::string& account_address,const int64_t& nonce);
-		std::pair<bool, TransactionFrm::pointer> TimeQueueRemove(const std::string& account_address, const int64_t& nonce);
 		std::pair<bool, TransactionFrm::pointer> Remove(QueueByAddressAndNonce::iterator& account_it, QueueByNonce::iterator& tx_it, bool del_empty = true);
-		void Insert(QueueByAddressAndNonce::iterator& account_it,TransactionFrm::pointer const& tx);
 		void Insert(TransactionFrm::pointer const& tx);
 		void TimeQueueInsert(TransactionFrm::pointer const& tx);
 
