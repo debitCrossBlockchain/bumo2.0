@@ -108,7 +108,7 @@ namespace bumo {
 
 	void TransactionQueue::TimeQueueInsert(TransactionFrm::pointer const& tx){
 		auto inserted = time_queue_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tx->GetNonce(), TimeQueue::iterator()));
-		PriorityQueue::iterator iter = time_queue_.emplace(tx);
+		TimeQueue::iterator iter = time_queue_.emplace(tx);
 		inserted.first->second = iter;
 	}
 
