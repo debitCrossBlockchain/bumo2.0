@@ -287,7 +287,7 @@ const jslint = (function JSLint() {
 //do not use these key. 2018-01-23
 //"DataView", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", 
 // "Generator", "GeneratorFunction", "Intl", "Promise", "Proxy", "Reflect", "System", 
-//"URIError", "WeakMap", "WeakSet"
+//"URIError", "WeakMap", "WeakSet", "Math"
 
     const standard = [
 // These are the globals that are provided by the language standard.
@@ -295,12 +295,12 @@ const jslint = (function JSLint() {
         "Boolean", 
         "Error",
         "EvalError",
-        "JSON", "Map", "Math", "Number", "Object", "parseInt", "parseFloat",
+        "JSON", "Map", "Number", "Object", "parseInt", "parseFloat",
         "RangeError", "ReferenceError", "RegExp",
         "Set", "String", "Symbol", "SyntaxError", "TypeError"
     ];
 	
-    const useable_standard = ["print", "log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "internal_check_time", "int64Plus", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "doTransaction", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "payCoinAmount", "payAssetAmount", "blockTimestamp", "blockNumber", "addressCheck", "tlog"];
+    const useable_standard = ["print", "log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "int64Plus", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "doTransaction", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "thisPayCoinAmount", "thisPayAsset", "blockTimestamp", "blockNumber", "addressCheck", "tlog"];
 	
     const do_not_use_internal_func = ["internal_check_time", "internal_hello_test"];
 
@@ -5036,6 +5036,7 @@ function callJslint(js_value, global_string) {
 	var option_array = Object.create(null);
 	option_array["single"] = true;
 	option_array["white"] = true;
+	option_array["for"] = true;
 	var rx_separator = /[\s,;'"]+/;
 	var pre_defined = (global_string === "") ? undefined : global_string.split(rx_separator);
 	var data = jslint(js_value, option_array, pre_defined); 
