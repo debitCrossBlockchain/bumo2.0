@@ -402,6 +402,19 @@ GET /getTransactionCache?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d
 }
 ```
 
+如果没有查到交易则返回
+
+```json
+{
+  "error_code": 4,
+  "result":
+  {
+    "total_count": 0,
+    "transactions": []
+  }
+}
+```
+
 ### 查询区块头
 
 ```text
