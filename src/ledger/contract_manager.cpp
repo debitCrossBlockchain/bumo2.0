@@ -126,8 +126,8 @@ namespace bumo{
 	const std::string V8Contract::trigger_tx_name_ = "trigger";
 	const std::string V8Contract::trigger_tx_index_name_ = "triggerIndex";
 	const std::string V8Contract::this_header_name_ = "consensusValue";
-	const std::string V8Contract::pay_coin_amount_name_ = "payCoinAmount";
-	const std::string V8Contract::pay_asset_amount_name_ = "payAssetAmount";
+	const std::string V8Contract::pay_coin_amount_name_ = "thisPayCoinAmount";
+	const std::string V8Contract::pay_asset_amount_name_ = "thisPayAsset";
 	const std::string V8Contract::block_timestamp_name_ = "blockTimestamp";
 	const std::string V8Contract::block_number_name_ = "blockNumber";
 	utils::Mutex V8Contract::isolate_to_contract_mutex_;

@@ -1546,10 +1546,10 @@ function query(input)
     ```
 
 - ##### 本次支付操作的 BU coin
-    payCoinAmount
+    thisPayCoinAmount
 
 - ##### 本次支付操作的Asset
-    payAssetAmount
+    thisPayAsset
 
     为对象类型{"amount": 1000, "property" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
  
