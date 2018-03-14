@@ -14,6 +14,7 @@
         - [生成账号-测试用](#生成账号-测试用)
         - [查询账号](#查询账号)
         - [查询交易](#查询交易)
+        - [查询缓存队列交易](#查询缓存队列交易)
         - [查询区块头](#查询区块头)
         - [提交交易](#提交交易)
         - [序列化交易](#序列化交易)
@@ -337,6 +338,67 @@ GET /getTransactionHistory?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc3592
     "total_count": 0,
     "transactions": []
   }
+}
+```
+
+### 查询缓存队列交易
+
+```text
+GET /getTransactionCache?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d425d0fe644e698&limit=100
+```
+
+| 参数       | 描述                     |
+| :--------- | ------------------------ |
+| hash       | 用交易的唯一标识hash查询 |
+| limit      | 查询交易队列前N个正在处理的交易 |
+上述两个参数产生的约束条件是逻辑或的关系，如果您同时指定两个参数，系统将hash查询
+
+返回示例
+```json
+{
+    "error_code": 0,
+    "result": {
+        "total_count": 1,
+        "transactions": [
+            {
+                "hash": "a336c8f4b49c8b2c5a6c68543368ed3b450b6138a9f878892cf982ffb6fe234e",
+                "incoming_time": 1521013029435154,
+                "signatures": [
+                    {
+                        "public_key": "b001882b9d1b5e7019f163d001c85194cface61e294483710f5e66ef40a4d387f5fcb0166f4f",
+                        "sign_data": "c5885144ffccb0b434b494271258e846c30a4551036e483822ee2b57400576e9e700e8960eb424764d033a2e73af6e6a2bfa5da390f71161732e13beee206107"
+                    }
+                ],
+                "status": "processing",
+                "transaction": {
+                    "fee": 100000,
+                    "nonce": 2,
+                    "operations": [
+                        {
+                            "create_account": {
+                                "dest_address": "buQWufKdVicxRAqmQs6m1Z9QuFZG2W7LMsi2",
+                                "init_balance": 300000,
+                                "metadatas": [
+                                    {
+                                        "key": "key",
+                                        "value": "bubinuo"
+                                    }
+                                ],
+                                "priv": {
+                                    "master_weight": 1,
+                                    "thresholds": {
+                                        "tx_threshold": 2
+                                    }
+                                }
+                            },
+                            "type": 1
+                        }
+                    ],
+                    "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB"
+                }
+            }
+        ]
+    }
 }
 ```
 
