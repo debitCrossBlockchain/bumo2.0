@@ -11,6 +11,7 @@
         - [交易执行的基本过程](#交易执行的基本过程)
         - [试一试](#试一试)
     - [HTTP接口](#http接口)
+        - [生成账号-测试用](#生成账号-测试用)
         - [查询账号](#查询账号)
         - [查询交易](#查询交易)
         - [查询区块头](#查询区块头)
@@ -133,6 +134,29 @@ HTTP GET host:36002/getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 ```
 
 ## HTTP接口
+
+### 生成账号-测试用
+
+```text
+HTTP GET /createAccount
+```
+
+功能：该接口只为方便测试使用，**请勿在生产环境使用该接口（生产环境下请用SDK或者命令行生成）**，因为调用该接口后，如果节点服务器作恶会导致账户私钥泄露。
+
+返回内容
+
+```json
+{
+  "error_code" : 0,
+  "result" : {
+          "address": "buQd4TBqSbHw3EoLMnSmH4SJFMkHUtEQbUvz",        //账户地址
+          "private_key": "privbzYwbUSCwQZq7eXgu4C9cpqrQD4enXY49V7qUrifc6fCtiPmBhWA",  //账户私钥
+          "public_key": "b0016558bd75fe20d6f7953cef0a95509d11d73652b70f183c72ede25711778dfc0039ea73f3",  //账户公钥
+          "public_key_raw": "6558bd75fe20d6f7953cef0a95509d11d73652b70f183c72ede25711778dfc00"       //公钥排除前缀和后缀后的数据
+  }
+}
+
+```
 
 ### 查询账号
 
