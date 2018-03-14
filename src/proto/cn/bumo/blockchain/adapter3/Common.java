@@ -171,6 +171,10 @@ public final class Common {
      * <code>ERRCODE_CONTRACT_EXECUTE_EXPIRED = 155;</code>
      */
     ERRCODE_CONTRACT_EXECUTE_EXPIRED(155),
+    /**
+     * <code>ERRCODE_TX_INSERT_QUEUE_FAIL = 160;</code>
+     */
+    ERRCODE_TX_INSERT_QUEUE_FAIL(160),
     UNRECOGNIZED(-1),
     ;
 
@@ -326,6 +330,10 @@ public final class Common {
      * <code>ERRCODE_CONTRACT_EXECUTE_EXPIRED = 155;</code>
      */
     public static final int ERRCODE_CONTRACT_EXECUTE_EXPIRED_VALUE = 155;
+    /**
+     * <code>ERRCODE_TX_INSERT_QUEUE_FAIL = 160;</code>
+     */
+    public static final int ERRCODE_TX_INSERT_QUEUE_FAIL_VALUE = 160;
 
 
     public final int getNumber() {
@@ -380,6 +388,7 @@ public final class Common {
         case 153: return ERRCODE_CONTRACT_TOO_MANY_RECURSION;
         case 154: return ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS;
         case 155: return ERRCODE_CONTRACT_EXECUTE_EXPIRED;
+        case 160: return ERRCODE_TX_INSERT_QUEUE_FAIL;
         default: return null;
       }
     }
@@ -3915,7 +3924,7 @@ public final class Common {
       "\"J\n\tWsMessage\022\014\n\004type\030\001 \001(\003\022\017\n\007request\030\002" +
       " \001(\010\022\020\n\010sequence\030\003 \001(\003\022\014\n\004data\030\004 \001(\014\"\025\n\004" +
       "Ping\022\r\n\005nonce\030\001 \001(\003\"\025\n\004Pong\022\r\n\005nonce\030\001 \001" +
-      "(\003*\327\010\n\tERRORCODE\022\023\n\017ERRCODE_SUCCESS\020\000\022\032\n" +
+      "(\003*\372\010\n\tERRORCODE\022\023\n\017ERRCODE_SUCCESS\020\000\022\032\n" +
       "\026ERRCODE_INTERNAL_ERROR\020\001\022\035\n\031ERRCODE_INV",
       "ALID_PARAMETER\020\002\022\031\n\025ERRCODE_ALREADY_EXIS" +
       "T\020\003\022\025\n\021ERRCODE_NOT_EXIST\020\004\022\026\n\022ERRCODE_TX" +
@@ -3942,8 +3951,9 @@ public final class Common {
       "RCODE_CONTRACT_SYNTAX_ERROR\020\230\001\022(\n#ERRCOD" +
       "E_CONTRACT_TOO_MANY_RECURSION\020\231\001\022+\n&ERRC" +
       "ODE_CONTRACT_TOO_MANY_TRANSACTIONS\020\232\001\022%\n" +
-      " ERRCODE_CONTRACT_EXECUTE_EXPIRED\020\233\001B\035\n\033" +
-      "cn.bumo.blockchain.adapter3b\006proto3"
+      " ERRCODE_CONTRACT_EXECUTE_EXPIRED\020\233\001\022!\n\034" +
+      "ERRCODE_TX_INSERT_QUEUE_FAIL\020\240\001B\035\n\033cn.bu" +
+      "mo.blockchain.adapter3b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
