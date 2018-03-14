@@ -391,7 +391,7 @@ namespace bumo {
 
 			if (!hash.empty()){
 				TransactionFrm::pointer tx=nullptr;
-				if (GlueManager::Instance().QueryTransactionCache(hash, tx) && tx != nullptr){
+				if (GlueManager::Instance().QueryTransactionCache(utils::String::HexStringToBin(hash), tx) && tx != nullptr) {
 					result["total_count"] = 1;
 					txs_arr.emplace_back(tx);
 				}
@@ -409,6 +409,8 @@ namespace bumo {
 					txs_arr.reserve(limit);
 					GlueManager::Instance().QueryTransactionCache(limit, txs_arr);
 					result["total_count"] = txs_arr.size();
+					if (txs_arr.size()==0)
+						error_code = protocol::ERRCODE_NOT_EXIST;
 				}
 			}
 
