@@ -371,6 +371,62 @@ namespace bumo {
 		reply = reply_json.toFastString();
 	}
 
+	void WebServer::GetTransactionCache(const http::server::request &request, std::string &reply) {
+		WebServerConfigure &web_config = Configure::Instance().webserver_configure_;
+		
+		std::string hash = request.GetParamValue("hash");
+		std::string limit_str = request.GetParamValue("limit");
+
+		int32_t error_code = protocol::ERRCODE_SUCCESS;
+		Json::Value reply_json = Json::Value(Json::objectValue);
+
+		Json::Value &result = reply_json["result"];
+		Json::Value &txs = result["transactions"];
+		txs = Json::Value(Json::arrayValue);
+		result["total_count"] = 0;
+
+		do 
+		{
+			std::vector<TransactionFrm::pointer> txs_arr;
+
+			if (!hash.empty()){
+				TransactionFrm::pointer tx=nullptr;
+				if (GlueManager::Instance().QueryTransactionCache(hash, tx) && tx != nullptr){
+					result["total_count"] = 1;
+					txs_arr.emplace_back(tx);
+				}
+				else{
+					error_code = protocol::ERRCODE_NOT_EXIST;
+				}
+			}
+			else{
+				uint32_t limit = web_config.query_limit_;
+				if (!limit_str.empty()){
+					int32_t limit_int = utils::String::Stoi(limit_str);
+					if (limit_int <= 0) limit_int = 1000;
+					limit = MIN(limit_int, web_config.query_limit_);
+
+					txs_arr.reserve(limit);
+					GlueManager::Instance().QueryTransactionCache(limit, txs_arr);
+					result["total_count"] = txs_arr.size();
+				}
+			}
+
+			for (auto t : txs_arr){
+				Json::Value m;
+				t->CacheTxToJson(m);
+				txs[txs.size()] = m;
+			}
+
+		} while (false);
+
+		reply_json["error_code"] = error_code;
+		if (error_code == protocol::ERRCODE_NOT_EXIST){
+			reply_json["error_desc"] = "query result not exist";
+		}
+		reply = reply_json.toFastString();
+
+	}
 
 	void WebServer::GetContractTx(const http::server::request &request, std::string &reply) {
 		WebServerConfigure &web_config = Configure::Instance().webserver_configure_;

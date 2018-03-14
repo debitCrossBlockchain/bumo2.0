@@ -51,7 +51,8 @@ namespace bumo {
 		std::string GetContentData() const;
 		std::string GetFullHash() const;
 
-		void ToJson(Json::Value &json);
+		void ToJson(Json::Value &result);
+		void CacheTxToJson(Json::Value &result);
 
 		std::string GetSourceAddress() const;
 		int64_t GetNonce() const;
@@ -110,7 +111,7 @@ namespace bumo {
 		int64_t GetStackUsage();
 		bool IsExpire(std::string &error_info);
 		void EnableChecked();
-        const int64_t GetInComingTime() const;
+		const int64_t GetInComingTime() const;
 
 		uint64_t apply_time_;
 		int64_t ledger_seq_;

@@ -79,6 +79,13 @@ namespace bumo {
 		result["hash"] = utils::String::BinToHexString(hash_);
 	}
 
+	void TransactionFrm::CacheTxToJson(Json::Value &result){
+		result = Proto2Json(transaction_env_);
+		result["incoming_time"] = incoming_time_;
+		result["status"] = "processing";
+		result["hash"] = utils::String::BinToHexString(hash_);
+	}
+
 	void TransactionFrm::Initialize() {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 		data_ = tran.SerializeAsString();

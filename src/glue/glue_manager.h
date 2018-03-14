@@ -88,6 +88,8 @@ namespace bumo {
 		bool CheckValueAndProof( const std::string &consensus_value, const std::string &proof);
 		int32_t CheckValueHelper(const protocol::ConsensusValue &consensus_value, int64_t now);
 		size_t GetTransactionCacheSize();
+		void QueryTransactionCache(const uint32_t& num, std::vector<TransactionFrm::pointer>& txs);
+		bool QueryTransactionCache(const std::string& hash, TransactionFrm::pointer& tx);
 
 		virtual void OnTimer(int64_t current_time) override;
 		virtual void OnSlowTimer(int64_t current_time) override {};

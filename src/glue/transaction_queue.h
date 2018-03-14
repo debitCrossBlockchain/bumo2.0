@@ -38,9 +38,13 @@ namespace bumo {
 		void RemoveTxs(std::vector<TransactionFrm::pointer>& txs, bool close_ledger = false);
 		void CheckTimeout(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
 		void CheckTimeoutAndDel(int64_t current_time, std::vector<TransactionFrm::pointer>& timeout_txs);
-		bool IsExist(TransactionFrm::pointer tx);
-		void SafeRemoveTx(const std::string& account_address, int64_t& nonce);
+		bool IsExist(const TransactionFrm::pointer& tx);
+		bool IsExist(const std::string& hash);
+		void SafeRemoveTx(const std::string& account_address, const int64_t& nonce);
 		size_t Size();
+
+		void Query(const uint32_t& num,std::vector<TransactionFrm::pointer>& txs);
+		bool Query(const std::string& hash,TransactionFrm::pointer& tx);
 	private:
 
 		struct PriorityCompare
@@ -77,7 +81,7 @@ namespace bumo {
 		using QueueByAddressAndNonce = std::unordered_map<std::string, QueueByNonce>;
 		QueueByAddressAndNonce queue_by_address_and_nonce_;
 
-
+		std::unordered_map<std::string, TransactionFrm::pointer> queue_by_hash_;
 		//record account system nonce
 		std::unordered_map<std::string, int64_t> account_nonce_;
 
@@ -85,13 +89,9 @@ namespace bumo {
 		//Maximum number of transaction per account
 		uint32_t account_txs_limit_;
 
-		uint32_t queue_cache_limit_;
-
-
 		std::pair<bool, TransactionFrm::pointer> Remove(const std::string& account_address,const int64_t& nonce);
 		std::pair<bool, TransactionFrm::pointer> Remove(QueueByAddressAndNonce::iterator& account_it, QueueByNonce::iterator& tx_it, bool del_empty = true);
 		void Insert(TransactionFrm::pointer const& tx);
-		void TimeQueueInsert(TransactionFrm::pointer const& tx);
 
 		utils::ReadWriteLock lock_;
 	};

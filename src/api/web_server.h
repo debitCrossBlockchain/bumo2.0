@@ -55,6 +55,7 @@ namespace bumo {
 		void UpdateLogLevel(const http::server::request &request, std::string &reply);
 
 		void GetTransactionHistory(const http::server::request &request, std::string &reply);
+		void GetTransactionCache(const http::server::request &request, std::string &reply);
 		void GetContractTx(const http::server::request &request, std::string &reply);
 
 		//void GetRecord(const http::server::request &request, std::string &reply);

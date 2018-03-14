@@ -88,6 +88,7 @@ namespace bumo {
 
 		server_ptr_->addRoute("getTransactionBlob", std::bind(&WebServer::GetTransactionBlob, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getTransactionHistory", std::bind(&WebServer::GetTransactionHistory, this, std::placeholders::_1, std::placeholders::_2));
+		server_ptr_->addRoute("getTransactionCache", std::bind(&WebServer::GetTransactionCache, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getContractTx", std::bind(&WebServer::GetContractTx, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getStatus", std::bind(&WebServer::GetStatus, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getLedger", std::bind(&WebServer::GetLedger, this, std::placeholders::_1, std::placeholders::_2));

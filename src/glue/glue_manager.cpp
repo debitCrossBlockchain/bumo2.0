@@ -191,7 +191,7 @@ namespace bumo {
 		std::string address = tx->GetSourceAddress();
 
 		do {
-			if (tx_pool_->IsExist(tx)){
+			if (tx_pool_->IsExist(tx->GetContentHash())){
 				//dont't reply the tx, then break;
 				//err.set_code(protocol::ERRCODE_ALREADY_EXIST);
 				//err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
@@ -509,6 +509,14 @@ namespace bumo {
 
 	size_t GlueManager::GetTransactionCacheSize() {
 		return tx_pool_->Size();
+	}
+
+	void GlueManager::QueryTransactionCache(const uint32_t& num, std::vector<TransactionFrm::pointer>& txs){
+		tx_pool_->Query(num,txs);
+	}
+
+	bool GlueManager::QueryTransactionCache(const std::string& hash, TransactionFrm::pointer& tx){
+		return tx_pool_->Query(hash, tx);
 	}
 
 }

@@ -36,6 +36,7 @@ namespace bumo {
 		queue_.erase(tx_it->second.first);
 		time_queue_.erase(tx_it->second.second);
 		account_it->second.erase(tx_it);
+		queue_by_hash_.erase(ptr->GetContentHash());
 
 		if (del_empty && account_it->second.empty()){
 			account_nonce_.erase(account_it->first);
@@ -55,6 +56,7 @@ namespace bumo {
 				queue_.erase(tx_it->second.first);
 				time_queue_.erase(tx_it->second.second);
 				account_it->second.erase(tx_it);
+				queue_by_hash_.erase(ptr->GetContentHash());
 
 				if (account_it->second.empty()){
 					queue_by_address_and_nonce_.erase(account_it);
@@ -73,6 +75,7 @@ namespace bumo {
 		TimeQueue::iterator right = time_queue_.emplace(tx);
 		inserted.first->second.first = left;
 		inserted.first->second.second = right;
+		queue_by_hash_[tx->GetContentHash()]=tx;
 	}
 
 	bool TransactionQueue::Import(TransactionFrm::pointer tx, const int64_t& cur_source_nonce,Result &result){
@@ -145,7 +148,7 @@ namespace bumo {
 		protocol::TransactionEnvSet set;
 		std::unordered_map<std::string, int64_t> topic_seqs;
 		utils::WriteLockGuard g(lock_);
-		uint64_t i = 0;
+		uint32_t i = 0;
 		for (auto t = queue_.begin(); set.txs().size() < limit && t != queue_.end(); ++t) {
 			const TransactionFrm::pointer& tx = *t;
 			if (set.ByteSize() + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE)
@@ -165,7 +168,7 @@ namespace bumo {
 			} while (false);
 
 			if (tx->GetNonce() > last_seq + 1) {
-				LOG_ERROR("Account(%s) tx(%s) seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1",tx->GetSourceAddress().c_str(),utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), last_seq);
+				//LOG_ERROR("Account(%s) tx(%s) seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1",tx->GetSourceAddress().c_str(),utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), last_seq);
 				break;
 			}
 
@@ -174,7 +177,7 @@ namespace bumo {
 			*set.add_txs() = tx->GetProtoTxEnv();
 
 			i++;
-			LOG_TRACE("top:" FMT_I64 " addr:%s, tx:%s, nonce:" FMT_I64 ", fee:" FMT_I64, i, tx->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
+			LOG_TRACE("top:(%u) addr:(%s), tx:(%s), nonce:(" FMT_I64 "), fee:(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::Bin4ToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
 		}
 
 		return std::move(set);
@@ -211,7 +214,7 @@ namespace bumo {
 		}
 	}
 
-	void TransactionQueue::SafeRemoveTx(const std::string& account_address, int64_t& nonce){
+	void TransactionQueue::SafeRemoveTx(const std::string& account_address, const int64_t& nonce) {
 		utils::WriteLockGuard g(lock_);
 		std::pair<bool, TransactionFrm::pointer> result = Remove(account_address, nonce);
 	}
@@ -240,14 +243,14 @@ namespace bumo {
 		}
 	}
 
-	bool TransactionQueue::IsExist(TransactionFrm::pointer tx){
+	bool TransactionQueue::IsExist(const TransactionFrm::pointer& tx){
 		utils::ReadLockGuard g(lock_);
 		auto account_it1 = queue_by_address_and_nonce_.find(tx->GetSourceAddress());
 		if (account_it1 != queue_by_address_and_nonce_.end()){
 			auto tx_it = account_it1->second.find(tx->GetNonce());
 			if (tx_it != account_it1->second.end()){
 				TransactionFrm::pointer t = *tx_it->second.first;
-				if (t->GetContentHash() == t->GetContentHash()){
+				if (t->GetContentHash() == tx->GetContentHash()){
 					return true;
 				}
 			}
@@ -256,9 +259,38 @@ namespace bumo {
 		return false;
 	}
 
+	bool TransactionQueue::IsExist(const std::string& hash){
+		utils::ReadLockGuard g(lock_);
+		auto it = queue_by_hash_.find(hash);
+		if (it != queue_by_hash_.end()){
+			return true;
+		}
+		return false;
+	}
+
 	size_t TransactionQueue::Size() {
 		utils::ReadLockGuard g(lock_);
 		return queue_.size();
+	}
+
+	void TransactionQueue::Query(const uint32_t& num, std::vector<TransactionFrm::pointer>& txs){
+		utils::ReadLockGuard g(lock_);
+		uint32_t count = 0;
+
+		for (auto it = queue_.begin(); it != queue_.end() && count < num; it++) {
+			txs.push_back(*it);
+			count++;
+		}
+	}
+
+	bool TransactionQueue::Query(const std::string& hash, TransactionFrm::pointer& tx){
+		utils::ReadLockGuard g(lock_);
+		auto it = queue_by_hash_.find(hash);
+		if (it != queue_by_hash_.end()){
+			tx = it->second;
+			return true;
+		}
+		return false;
 	}
 }
 
