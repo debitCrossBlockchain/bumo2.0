@@ -1839,8 +1839,8 @@ namespace bumo {
 				const protocol::PbftEnv &env = pbft_proof.commits(0);
 				const protocol::Pbft &pbft = env.pbft();
 				const protocol::PbftCommit &commit = pbft.commit();
-				if (commit.view_number() > view_number_) {
-					new_view_number = commit.view_number();
+				if (commit.view_number() >= view_number_) {
+					new_view_number = commit.view_number() + 1;
 				}
 				if (commit.sequence() > last_exe_seq_){
 					new_seq = commit.sequence();
