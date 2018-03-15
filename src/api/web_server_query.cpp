@@ -390,8 +390,8 @@ namespace bumo {
 			std::vector<TransactionFrm::pointer> txs_arr;
 
 			if (!hash.empty()){
-				TransactionFrm::pointer tx=nullptr;
-				if (GlueManager::Instance().QueryTransactionCache(utils::String::HexStringToBin(hash), tx) && tx != nullptr) {
+				TransactionFrm::pointer tx;
+				if (GlueManager::Instance().QueryTransactionCache(utils::String::HexStringToBin(hash), tx)) {
 					result["total_count"] = 1;
 					txs_arr.emplace_back(tx);
 				}
@@ -402,15 +402,16 @@ namespace bumo {
 			else{
 				uint32_t limit = web_config.query_limit_;
 				if (!limit_str.empty()){
-					int32_t limit_int = utils::String::Stoi(limit_str);
+					uint32_t limit_int = utils::String::Stoui(limit_str);
 					if (limit_int <= 0) limit_int = 1000;
 					limit = MIN(limit_int, web_config.query_limit_);
+				}
 
-					txs_arr.reserve(limit);
-					GlueManager::Instance().QueryTransactionCache(limit, txs_arr);
-					result["total_count"] = txs_arr.size();
-					if (txs_arr.size()==0)
-						error_code = protocol::ERRCODE_NOT_EXIST;
+				txs_arr.reserve(limit);
+				GlueManager::Instance().QueryTransactionCache(limit, txs_arr);
+				result["total_count"] = txs_arr.size();
+				if (txs_arr.size() == 0) {
+					error_code = protocol::ERRCODE_NOT_EXIST;
 				}
 			}
 
