@@ -60,13 +60,13 @@ function init(bar)
 
 function main(input) 
 {
-    print(input);
+    log(input);
 
     //for statement
     let i;
     for (i = 0; i < 5; i += 1) 
     {
-        print(i);
+        log(i);
     }
 
     //while statement
@@ -74,28 +74,28 @@ function main(input)
     while (b !== 0) 
     {
         b -= 1;
-        print(b);
+        log(b);
     }
 
     //if statement
     let compare = 1;
     if(compare === 1)
     {
-        print("it is one");
+        log("it is one");
     }
     else if(compare === 2)
     {
-        print("it is two");
+        log("it is two");
     }
     else
     {
-        print("it is other");
+        log("it is other");
     }
 
     //if statement
     if(compare !== 2)
     {
-        print("no, different");
+        log("no, different");
     }
 
     //switch statement
@@ -103,31 +103,31 @@ function main(input)
     switch(sw_value)
     {
     case 1:
-        print("switch 1");
+        log("switch 1");
         break;
     default:
-        print("default");
+        log("default");
     }
 
     //Number
     let my_num = Number(111);
-    print(my_num);
+    log(my_num);
 
     //String
     let my_str = String(111);
-    print(my_str);
+    log(my_str);
 
     //Boolean
     let my_bool = Boolean(111);
-    print(my_bool);
+    log(my_bool);
 
     //Array
     let str_array = ["red","black"]; 
-    print(str_array);
+    log(str_array);
 
     //Array
     let num_array = [1,2,3,4];
-    print(num_array);
+    log(num_array);
 }
 ```
 
