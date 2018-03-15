@@ -65,7 +65,7 @@ function voteFee(proposalId) {
   proposalRecords[proposalId].voteCount +=1;
   proposalRecordBody[accountId] = 1;
 
-  if(proposalRecords[proposalId].voteCount >= Object.keys(validators).length*votePassRate) {
+  if(proposalRecords[proposalId].voteCount >= parseInt(Object.keys(validators).length*votePassRate)) {
     let output = {};
     output[proposalRecords[proposalId].feeType] = proposalRecords[proposalId].price;
     delete proposalRecords[proposalId];
@@ -98,9 +98,9 @@ function proposalFee(feeType,price) {
         delete proposalRecords[proposalId];
         let key =voteRecordKeyPrefix + proposalId;
         storageDel(key); 
-        proposalRecords[newProposalId] = {'accountId':accountId,'proposalId':newProposalId,'feeType':feeType,'price':price,'voteCount':0,'expireTime':blockTimestamp+effectiveProposalInterval };               
+        proposalRecords[newProposalId] = {'accountId':accountId,'proposalId':newProposalId,'feeType':feeType,'price':price,'voteCount':1,'expireTime':blockTimestamp+effectiveProposalInterval };               
         storageStore(proposalRecordsKey,JSON.stringify(proposalRecords));
-        storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({}));
+        storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({accountId:1}));
         return false;
       }
       else{
@@ -110,9 +110,9 @@ function proposalFee(feeType,price) {
   );
 
   if (!exist) {
-    proposalRecords[newProposalId] = { 'accountId': accountId, 'proposalId': newProposalId, 'feeType': feeType, 'price': price, 'voteCount': 0,'expireTime':blockTimestamp+effectiveProposalInterval };
+    proposalRecords[newProposalId] = { 'accountId': accountId, 'proposalId': newProposalId, 'feeType': feeType, 'price': price, 'voteCount': 1,'expireTime':blockTimestamp+effectiveProposalInterval };
     storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
-    storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({}));
+    storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({accountId:1}));
   }  
 
   storageStore(nonceKey,nonce.toString());
@@ -137,24 +137,6 @@ function queryProposal() {
   return result;
 }
 
-function feeTypeCheck(feeType){
-  assert(Number.isInteger(feeType) && feeType>0 && feeType<10,'feeType error');
-}
-
-
-function priceCheck(price){
-  assert(typeof price === "string",'price is not string');
-  assert(price[0] !=='-','price is nagertive');
-  Object.keys(price).every(
-    function(i){
-        assert(Number.isInteger(parseInt(price[i])),'price contain NaN char');
-    }
-  );
-  if(int64Compare(price, '9223372036854775807') === 0){
-    assert(price === '9223372036854775807', 'price overflow');
-  }
-}
-
 function main(input) {
   let para = JSON.parse(input);
   if (para.method === 'voteFee') {
@@ -163,8 +145,8 @@ function main(input) {
   }
   else if (para.method === 'proposalFee') {
     assert(para.params.feeType !==undefined && para.params.price !==undefined,'params feeType price undefined');
-    feeTypeCheck(para.params.feeType);
-    priceCheck(para.params.price);
+    assert(Number.isInteger(para.params.feeType) && para.params.feeType>0 && para.params.feeType<10,'feeType error');
+    assert(Number.isSafeInteger(para.params.price) && para.params.price>=0,'price should be int type and price>=0');
     proposalFee(para.params.feeType,para.params.price);
   }
   else {

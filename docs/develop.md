@@ -2104,7 +2104,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
             {
                 "result": {
                     "type": "string",
-                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\":{\"accountId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\",\"feeType\":1,\"price\":\"5\",\"voteCount\":0,\"time\":1517470155872949}}"
+                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\":{\"accountId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\",\"feeType\":1,\"price\":5,\"voteCount\":0,\"time\":1517470155872949}}"
                 }
             }
         ],
@@ -2189,7 +2189,7 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
   "method":"proposalFee",
     "params":{
         "feeType": 1, //费用种类
-        "price": "5"    //费用价格
+        "price": 5    //费用int且大于等于0
     }
 }
 ```
@@ -2202,7 +2202,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
        "dest_address" :"buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
        "amount":0,
-        "input":"{\"method\":\"proposalFee\",\"params\":{\"feeType\":1,\"price\":\"5\"}}";
+        "input":"{\"method\":\"proposalFee\",\"params\":{\"feeType\":1,\"price\":5}}";
     }
 }
 ```
