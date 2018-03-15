@@ -403,7 +403,7 @@ namespace bumo {
 				uint32_t limit = web_config.query_limit_;
 				if (!limit_str.empty()){
 					uint32_t limit_int = utils::String::Stoui(limit_str);
-					if (limit_int <= 0) limit_int = 1000;
+					if (limit_int == 0) limit_int = 1000;
 					limit = MIN(limit_int, web_config.query_limit_);
 				}
 
