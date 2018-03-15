@@ -106,7 +106,6 @@
     <ClCompile Include="..\..\test\testlib\test_ed25519.cpp" />
     <ClCompile Include="..\..\test\testlib\test_json.cpp" />
     <ClCompile Include="..\..\test\testlib\test_leveldbwin.cpp" />
-    <ClCompile Include="..\..\test\testlib\test_reward.cpp" />
     <ClCompile Include="..\..\test\testlib\test_sm3.cpp" />
     <ClCompile Include="..\..\test\testlib\test_sqlite.cpp" />
     <ClCompile Include="..\..\test\testlib\test_v8_terminate.cpp" />
