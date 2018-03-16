@@ -211,7 +211,7 @@ function voteForApplicant(applicant){
 
     assert(applicantData[ballotVar].includes(sender) !== true, sender + ' has voted.');
     applicantData[ballotVar].push(sender);
-    if(Object.keys(applicantData[ballotVar]).length / validators.length < votePassRate){
+    if(Object.keys(applicantData[ballotVar]).length < parseInt(validators.length * votePassRate)){
         setMetaData(applicantKey, applicantData);
         return true;
     }
@@ -282,7 +282,7 @@ function abolishValidator(malicious, proof){
     newProposal[reasonVar]      = proof;
     newProposal[proposerVar]    = sender;
     newProposal[expiredTimeVar] = blockTimestamp + effectiveVoteInterval;
-    newProposal[ballotVar]      = [];
+    newProposal[ballotVar]      = [sender];
 
     setMetaData(abolishKey, newProposal);
     return true;
@@ -324,7 +324,7 @@ function voteAbolishValidator(malicious){
     
     assert(abolishProposal[ballotVar].includes(sender) !== true, sender + ' has voted.');
     abolishProposal[ballotVar].push(sender);
-    if(Object.keys(abolishProposal[ballotVar]).length / validators.length < votePassRate){
+    if(Object.keys(abolishProposal[ballotVar]).length < parseInt(validators.length * votePassRate)){
         setMetaData(abolishKey, abolishProposal);
         return true;
     }
