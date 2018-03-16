@@ -147,6 +147,7 @@ namespace bumo {
 	protocol::TransactionEnvSet TransactionQueue::TopTransaction(uint32_t limit){
 		protocol::TransactionEnvSet set;
 		std::unordered_map<std::string, int64_t> topic_seqs;
+		std::unordered_map<std::string, int64_t> break_nonce_accounts;
 		utils::WriteLockGuard g(lock_);
 		uint32_t i = 0;
 		for (auto t = queue_.begin(); set.txs().size() < limit && t != queue_.end(); ++t) {
@@ -154,30 +155,35 @@ namespace bumo {
 			if (set.ByteSize() + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE)
 				break;
 			
-			int64_t last_seq = 0;
-			do {
-				//find this cache
-				auto this_iter = topic_seqs.find(tx->GetSourceAddress());
-				if (this_iter != topic_seqs.end()) {
-					last_seq = this_iter->second;
-					break;
+			if (break_nonce_accounts.find(tx->GetSourceAddress()) == break_nonce_accounts.end()) {
+
+				int64_t last_seq = 0;
+				do {
+					//find this cache
+					auto this_iter = topic_seqs.find(tx->GetSourceAddress());
+					if (this_iter != topic_seqs.end()) {
+						last_seq = this_iter->second;
+						break;
+					}
+
+					last_seq = account_nonce_[tx->GetSourceAddress()];
+
+				} while (false);
+
+				if (tx->GetNonce() > last_seq + 1) {
+					//LOG_ERROR("Account(%s) tx(%s) seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1",tx->GetSourceAddress().c_str(),utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), last_seq);
+					//break;
+					break_nonce_accounts[tx->GetSourceAddress()] = last_seq + 1;
+					continue;
 				}
-				
-				last_seq = account_nonce_[tx->GetSourceAddress()];
 
-			} while (false);
+				topic_seqs[tx->GetSourceAddress()] = tx->GetNonce();
 
-			if (tx->GetNonce() > last_seq + 1) {
-				//LOG_ERROR("Account(%s) tx(%s) seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1",tx->GetSourceAddress().c_str(),utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), last_seq);
-				break;
+				*set.add_txs() = tx->GetProtoTxEnv();
+
+				i++;
+				LOG_TRACE("top:(%u) addr:(%s), tx:(%s), nonce:(" FMT_I64 "), fee:(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
 			}
-
-			topic_seqs[tx->GetSourceAddress()] = tx->GetNonce();
-
-			*set.add_txs() = tx->GetProtoTxEnv();
-
-			i++;
-			LOG_TRACE("top:(%u) addr:(%s), tx:(%s), nonce:(" FMT_I64 "), fee:(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
 		}
 
 		return std::move(set);
