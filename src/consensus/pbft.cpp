@@ -622,7 +622,7 @@ namespace bumo {
 
 			if (!in_water) LOG_TRACE("The message(type:%s) sequence(" FMT_I64 ") is not in water mark(" FMT_I64 ", " FMT_I64"), desc(%s)", PbftDesc::GetMessageTypeDesc(pbft.type()),
 				sequence, last_exe_seq_, last_exe_seq_ + ckp_interval_, PbftDesc::GetPbft(pbft).c_str());
-			if (!same_view)	LOG_ERROR("The message(type:%s) view number(" FMT_I64 ") != this view number(" FMT_I64 "), desc(%s)", PbftDesc::GetMessageTypeDesc(pbft.type()),
+			if (!same_view)	LOG_TRACE("The message(type:%s) view number(" FMT_I64 ") != this view number(" FMT_I64 "), desc(%s)", PbftDesc::GetMessageTypeDesc(pbft.type()),
 				view_number, view_number_, PbftDesc::GetPbft(pbft).c_str());
 			if (sequence > last_exe_seq_) {
 				if (pbft.type() == protocol::PBFT_TYPE_COMMIT) {

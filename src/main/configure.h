@@ -26,6 +26,7 @@ namespace bumo {
 		~P2pNetwork();
 
 		size_t target_peer_connection_;
+		size_t max_connection_;
 		int64_t connect_timeout_;
 		int64_t heartbeat_interval_;
 		int32_t listen_port_;

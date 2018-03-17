@@ -703,7 +703,7 @@ namespace bumo {
 
 		do {
 			utils::MutexGuard guard(gmutex_);
-			LOG_INFO("OnRequestLedgers pid(" FMT_I64 "),[" FMT_I64 ", " FMT_I64 "]", peer_id, message.begin(), message.end());
+			LOG_TRACE("OnRequestLedgers pid(" FMT_I64 "),[" FMT_I64 ", " FMT_I64 "]", peer_id, message.begin(), message.end());
 			if (message.end() - message.begin() + 1 > 5) {
 				LOG_ERROR("Only 5 blocks can be requested at a time while try to (" FMT_I64 ")", message.end() - message.begin());
 				return;
@@ -749,7 +749,7 @@ namespace bumo {
 			ws->set_data(ledgers.SerializeAsString());
 			ws->set_type(protocol::OVERLAY_MSGTYPE_LEDGERS);
 			ws->set_request(false);
-			LOG_INFO("Send ledgers[" FMT_I64 "," FMT_I64 "] to(" FMT_I64 ")", message.begin(), message.end(), peer_id);
+			LOG_TRACE("Send ledgers[" FMT_I64 "," FMT_I64 "] to(" FMT_I64 ")", message.begin(), message.end(), peer_id);
 			PeerManager::Instance().ConsensusNetwork().SendMsgToPeer(peer_id, ws);
 		}
 	}

@@ -234,7 +234,7 @@ namespace bumo {
 		}
 
 		for (int i = 0; i < request.txset().txs_size() && enabled_; i++) {
-			auto txproto = request.txset().txs(i);
+			const protocol::TransactionEnv &txproto = request.txset().txs(i);
 
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
 
@@ -580,14 +580,14 @@ namespace bumo {
 				fee = total_reward*set.validators(i).pledge_coin_amount() / total_pledge_amount;
 			}
 			left_reward -= fee;
-			LOG_INFO("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, left_reward, ledger_.header().seq());
+			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
 			proto_account.set_balance(proto_account.balance() + fee);
 		}
 		if (left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
 			proto_account.set_balance(proto_account.balance() + left_reward);
-			LOG_INFO("Account(%s) allocate last reward(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
+			LOG_TRACE("Account(%s) allocate last reward(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
 		}
 		if (environment_->useAtomMap_)
 			environment_->Commit();

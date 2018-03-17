@@ -331,7 +331,7 @@ namespace bumo {
 
 	bool PeerNetwork::OnConnectOpen(Connection *conn) { 
 		const P2pNetwork &p2p_configure = Configure::Instance().p2p_configure_.consensus_network_configure_;
-		size_t total_connection = 2000;
+		size_t total_connection = p2p_configure.max_connection_;
 		if (connections_.size() < total_connection) {
 			if (!conn->InBound()) {
 				Peer *peer = (Peer *)conn;
