@@ -142,10 +142,10 @@ function applyAsValidatorCandidate(){
     let position   = findI0(candidates, sender);
 
     if (position !== false){
-        let comc = int64Compare(payCoinAmount, minSuperadditionAmount);
+        let comc = int64Compare(thisPayCoinAmount, minSuperadditionAmount);
         assert(comc === 1 || comc === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
-        let amountc = int64Plus(candidates[position][1], payCoinAmount);
+        let amountc = int64Plus(candidates[position][1], thisPayCoinAmount);
         candidates.splice(position, 1);
         let newCandidates = insertCandidatesSorted(sender, amountc, candidates);
         setMetaData(candidatesVar, newCandidates);
@@ -159,17 +159,17 @@ function applyAsValidatorCandidate(){
         let applicantKey = applicantVar + sender;
         let applicantStr = storageLoad(applicantKey);
         if(applicantStr !== false){
-            let coms = int64Compare(payCoinAmount, minSuperadditionAmount);
+            let coms = int64Compare(thisPayCoinAmount, minSuperadditionAmount);
             assert(coms === 1 || coms === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
             applicant = JSON.parse(applicantStr); 
-            let amountp = int64Plus(applicant[pledgeAmountVar], payCoinAmount);
+            let amountp = int64Plus(applicant[pledgeAmountVar], thisPayCoinAmount);
             applicant[pledgeAmountVar] = amountp;
        }
        else{
-            let comp = int64Compare(payCoinAmount, minPledgeAmount);
+            let comp = int64Compare(thisPayCoinAmount, minPledgeAmount);
             assert(comp === 1 || comp === 0, 'Pledge coin amount must more than ' + minPledgeAmount);
-            applicant[pledgeAmountVar] = payCoinAmount;
+            applicant[pledgeAmountVar] = thisPayCoinAmount;
             applicant[ballotVar] = [];
        }
 
