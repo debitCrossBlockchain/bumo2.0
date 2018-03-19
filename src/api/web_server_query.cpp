@@ -409,7 +409,7 @@ namespace bumo {
 
 				txs_arr.reserve(limit);
 				GlueManager::Instance().QueryTransactionCache(limit, txs_arr);
-				result["total_count"] = txs_arr.size();
+				result["total_count"] = (Json::UInt64)txs_arr.size();
 				if (txs_arr.size() == 0) {
 					error_code = protocol::ERRCODE_NOT_EXIST;
 				}
