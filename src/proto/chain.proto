@@ -14,15 +14,32 @@ message Account{
 	int64 balance = 7;
 }
 
-message AssetProperty{
+message AssetKey{
 	 string issuer = 1;
 	 string code = 2;
+	 int32 type = 3;		//0:not limited ammount  1:limited ammount
 }
 
+//payment
 message Asset{
-	 AssetProperty   property = 1;
-	 int64			 amount = 2;
+	 AssetKey	key = 1;
+	 int64		amount = 2;
 }
+
+message AssetProperty{
+	int32 decimal = 1;
+	string description = 2;
+	int64 max_supply = 3;
+	int64 issued_amount = 4;
+}
+
+message AssetStore{
+	AssetKey key = 1; //required
+	int64 amount = 2;
+	//AssetProperty property = 3;
+}
+
+
 
 message LedgerHeader
 {
@@ -70,8 +87,10 @@ message AccountThreshold{
 }
 
 message OperationIssueAsset{
-		string code = 1;
-		int64 amount = 2;
+	string code = 1;
+	int64 amount = 2;
+	int32 type = 3;
+	AssetProperty property = 4;
 }
 
 message OperationPayCoin{
