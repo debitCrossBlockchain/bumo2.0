@@ -53,6 +53,13 @@ namespace bumo {
 
 		std::string issuer = request.GetParamValue("issuer");
 		std::string code = request.GetParamValue("code");
+		std::string asset_type_str = request.GetParamValue("type");
+		int32_t asset_type = 0;
+		if (!asset_type_str.empty()){
+			char* p;
+			asset_type = strtol(asset_type_str.c_str(), &p, 10);
+			if (*p) asset_type = 0;
+		}
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		AccountFrm::pointer acc = NULL;
@@ -85,16 +92,17 @@ namespace bumo {
 
 			Json::Value& jsonassets = result["assets"];
 			if (!issuer.empty() && !code.empty()) {
-				protocol::AssetProperty p;
+				protocol::AssetKey p;
 				p.set_issuer(issuer);
 				p.set_code(code);
-				protocol::Asset asset;
+				p.set_type(asset_type);
+				protocol::AssetStore asset;
 				if (acc->GetAsset(p, asset)) {
 					jsonassets[(Json::UInt)0] = Proto2Json(asset);
 				}
 			}
 			else {
-				std::vector<protocol::Asset> assets;
+				std::vector<protocol::AssetStore> assets;
 				acc->GetAllAssets(assets);
 				for (size_t i = 0; i < assets.size(); i++) {
 					jsonassets[i] = Proto2Json(assets[i]);
@@ -166,6 +174,13 @@ namespace bumo {
 
 		std::string issuer = request.GetParamValue("issuer");
 		std::string code = request.GetParamValue("code");
+		std::string asset_type_str = request.GetParamValue("type");
+		int32_t asset_type = 0;
+		if (!asset_type_str.empty()){
+			char* p;
+			asset_type = strtol(asset_type_str.c_str(), &p, 10);
+			if (*p) asset_type = 0;
+		}
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		AccountFrm::pointer acc = NULL;
@@ -180,17 +195,18 @@ namespace bumo {
 		}
 		else {
 
-			if (!issuer.empty() && !code.empty()) {
-				protocol::AssetProperty p;
+			if (!issuer.empty() && !code.empty() ) {
+				protocol::AssetKey p;
 				p.set_issuer(issuer);
 				p.set_code(code);
-				protocol::Asset asset;
+				p.set_type(asset_type);
+				protocol::AssetStore asset;
 				if (acc->GetAsset(p, asset)) {
 					result["asset"] = Proto2Json(asset);
 				}
 			}
 			else {
-				std::vector<protocol::Asset> assets;
+				std::vector<protocol::AssetStore> assets;
 				acc->GetAllAssets(assets);
 				for (size_t i = 0; i < assets.size(); i++) {
 					result[i] = Proto2Json(assets[i]);
@@ -409,7 +425,7 @@ namespace bumo {
 
 				txs_arr.reserve(limit);
 				GlueManager::Instance().QueryTransactionCache(limit, txs_arr);
-				result["total_count"] = (Json::UInt64)txs_arr.size();
+				result["total_count"] = txs_arr.size();
 				if (txs_arr.size() == 0) {
 					error_code = protocol::ERRCODE_NOT_EXIST;
 				}

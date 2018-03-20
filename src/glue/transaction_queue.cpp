@@ -171,8 +171,6 @@ namespace bumo {
 				} while (false);
 
 				if (tx->GetNonce() > last_seq + 1) {
-					//LOG_ERROR("Account(%s) tx(%s) seq(" FMT_I64 ") is large than last seq(" FMT_I64 ") + 1",tx->GetSourceAddress().c_str(),utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), last_seq);
-					//break;
 					break_nonce_accounts[tx->GetSourceAddress()] = last_seq + 1;
 					continue;
 				}

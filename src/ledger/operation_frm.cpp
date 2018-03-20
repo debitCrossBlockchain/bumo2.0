@@ -193,7 +193,7 @@ namespace bumo {
 					break;
 				}
 
-				std::string trim_code = payment.asset().property().code();
+				std::string trim_code = payment.asset().key().code();
 				//utils::String::Trim(trim_code);
 				if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE) {
 					result.set_code(protocol::ERRCODE_ASSET_INVALID);
@@ -201,7 +201,7 @@ namespace bumo {
 					break;
 				}
 
-				if (!bumo::PublicKey::IsAddressValid(payment.asset().property().issuer())) {
+				if (!bumo::PublicKey::IsAddressValid(payment.asset().key().issuer())) {
 					result.set_code(protocol::ERRCODE_ASSET_INVALID);
 					result.set_desc(utils::String::Format("asset issuer should be a valid account address"));
 					break;
@@ -236,6 +236,12 @@ namespace bumo {
 				trim_code.size() != issue_asset.code().size()) {
 				result.set_code(protocol::ERRCODE_ASSET_INVALID);
 				result.set_desc(utils::String::Format("Asset code length should between (0,64]"));
+				break;
+			}
+
+			if (issue_asset.type() != 0){
+				result.set_code(protocol::ERRCODE_ASSET_INVALID);
+				result.set_desc(utils::String::Format("Asset type now must be zero"));
 				break;
 			}
 
@@ -536,26 +542,35 @@ namespace bumo {
 		const protocol::OperationIssueAsset& ope = operation_.issue_asset();
 		do {
 
-			protocol::Asset asset_e ;
-			protocol::AssetProperty ap;
-			ap.set_issuer(source_account_->GetAccountAddress());
-			ap.set_code(ope.code());
-			if (!source_account_->GetAsset(ap, asset_e)) {
-				protocol::Asset asset;
-				asset.mutable_property()->CopyFrom(ap);
+			protocol::AssetStore asset_e;
+			protocol::AssetKey key;
+			key.set_issuer(source_account_->GetAccountAddress());
+			key.set_code(ope.code());
+			key.set_type(ope.type());
+			if (!source_account_->GetAsset(key, asset_e)) {
+				protocol::AssetStore asset;
+				asset.mutable_key()->CopyFrom(key);
 				asset.set_amount(ope.amount());
+				//asset.mutable_property()->CopyFrom(ope.property());
 				source_account_->SetAsset(asset);
 			}
 			else {
-				int64_t amount = asset_e.amount() + ope.amount();
-				if (amount < asset_e.amount() || amount < ope.amount())
-				{
-					result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
-					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s) overflow(" FMT_I64 " " FMT_I64 ")", ap.issuer().c_str(), ap.code().c_str(), asset_e.amount(), ope.amount()));
+				if (ope.type() == 0) {
+					int64_t amount = asset_e.amount() + ope.amount();
+					if (amount < asset_e.amount() || amount < ope.amount())
+					{
+						result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
+						result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), ope.amount()));
+						break;
+					}
+					asset_e.set_amount(amount);
+					source_account_->SetAsset(asset_e);
+				}
+				else {
+					result_.set_code(protocol::ERRCODE_ASSET_INVALID);
+					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) repeat issue", key.issuer().c_str(), key.code().c_str(), key.type()));
 					break;
 				}
-				asset_e.set_amount(amount);
-				source_account_->SetAsset(asset_e);
 			}
 
 		} while (false);
@@ -573,38 +588,50 @@ namespace bumo {
 			}
 
 			if (payment.has_asset()){
-				protocol::Asset asset_e;
-				protocol::AssetProperty ap = payment.asset().property();
-				if (!source_account_->GetAsset(ap, asset_e)) {
+				protocol::AssetStore asset_e;
+				protocol::AssetKey key = payment.asset().key();
+				if (!source_account_->GetAsset(key, asset_e)) {
 					result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_LOW_RESERVE);
-					result_.set_desc(utils::String::Format("asset(%s:%s) low reserve", ap.issuer().c_str(), ap.code().c_str()));
+					result_.set_desc(utils::String::Format("asset(%s:%s:%d) low reserve", key.issuer().c_str(), key.code().c_str(), key.type()));
 					break;
 				}
 
+				if (payment.asset().key().type() == 0){
 
-				int64_t sender_amount = asset_e.amount() - payment.asset().amount();
-				if (sender_amount < 0) {
-					result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_LOW_RESERVE);
-					result_.set_desc(utils::String::Format("asset(%s:%s) low reserve", ap.issuer().c_str(), ap.code().c_str()));
-					break;
-				}
-				asset_e.set_amount(sender_amount);
-				source_account_->SetAsset(asset_e);
-
-				protocol::Asset dest_asset_ptr;
-				if (!dest_account->GetAsset(ap, dest_asset_ptr)) {
-					dest_account->SetAsset(payment.asset());
-				}
-				else {
-					int64_t receiver_amount = dest_asset_ptr.amount() + payment.asset().amount();
-					if (receiver_amount < dest_asset_ptr.amount() || receiver_amount < payment.asset().amount())
-					{
-						result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
-						result_.set_desc(utils::String::Format("Payment asset(%s:%s) overflow(" FMT_I64 " " FMT_I64 ")", ap.issuer().c_str(), ap.code().c_str(), dest_asset_ptr.amount(), payment.asset().amount()));
+					int64_t sender_amount = asset_e.amount() - payment.asset().amount();
+					if (sender_amount < 0) {
+						result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_LOW_RESERVE);
+						result_.set_desc(utils::String::Format("asset(%s:%s:%d) low reserve", key.issuer().c_str(), key.code().c_str(), key.type()));
 						break;
 					}
-					dest_asset_ptr.set_amount(receiver_amount);
-					dest_account->SetAsset(dest_asset_ptr);
+					asset_e.set_amount(sender_amount);
+					source_account_->SetAsset(asset_e);
+
+					protocol::AssetStore dest_asset;
+					if (!dest_account->GetAsset(key, dest_asset)) {
+						dest_asset.mutable_key()->CopyFrom(key);
+						dest_asset.set_amount(payment.asset().amount());
+						dest_account->SetAsset(dest_asset);
+					}
+					else {
+						int64_t receiver_amount = dest_asset.amount() + payment.asset().amount();
+						if (receiver_amount < dest_asset.amount() || receiver_amount < payment.asset().amount())
+						{
+							result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
+							result_.set_desc(utils::String::Format("Payment asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), dest_asset.amount(), payment.asset().amount()));
+							break;
+						}
+						dest_asset.set_amount(receiver_amount);
+						dest_account->SetAsset(dest_asset);
+					}
+				}
+				else{
+					/*if (source_account_->GetAccountAddress() == payment.asset().key().issuer()){
+					}
+					else if (dest_account->GetAccountAddress() == payment.asset().key().issuer()){
+					}
+					else{
+					}*/
 				}
 			}
 			

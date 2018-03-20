@@ -231,9 +231,9 @@ namespace bumo {
 		enable_check_ = true;
 	}
 
-    const int64_t TransactionFrm::GetInComingTime() const {
-        return incoming_time_;
-    }
+	const int64_t TransactionFrm::GetInComingTime() const {
+		return incoming_time_;
+	}
 
 	bool TransactionFrm::PayFee(std::shared_ptr<Environment> environment, int64_t &total_fee) {
 		int64_t fee = GetFee();
@@ -625,7 +625,7 @@ namespace bumo {
 
 			if (!bool_contract && !ledger_->IsTestMode()) {
 				if (!opt->CheckSignature(environment_)) {
-					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::Bin4ToHexString(GetContentHash()).c_str());
+					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::BinToHexString(GetContentHash()).c_str());
 					result_ = opt->GetResult();
 					bSucess = false;
 					break;

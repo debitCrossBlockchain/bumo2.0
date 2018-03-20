@@ -177,7 +177,7 @@ namespace bumo {
 		result = bumo::Proto2Json(account_info_);
 	}
 
-	void AccountFrm::GetAllAssets(std::vector<protocol::Asset>& assets){
+	void AccountFrm::GetAllAssets(std::vector<protocol::AssetStore>& assets){
 		KVTrie trie;
 		auto batch = std::make_shared<WRITE_BATCH>();
 		std::string prefix = ComposePrefix(General::ASSET_PREFIX, DecodeAddress(account_info_.address()));
@@ -185,7 +185,7 @@ namespace bumo {
 		std::vector<std::string> values;
 		trie.GetAll("", values);
 		for (size_t i = 0; i < values.size(); i++){
-			protocol::Asset asset;
+			protocol::AssetStore asset;
 			asset.ParseFromString(values[i]);
 			assets.push_back(asset);
 		}
@@ -205,9 +205,9 @@ namespace bumo {
 		}
 	}
 
-	bool AccountFrm::GetAsset(const protocol::AssetProperty &asset_property, protocol::Asset& asset){
+	bool AccountFrm::GetAsset(const protocol::AssetKey &asset_key, protocol::AssetStore& asset){
 		//LOG_INFO("%p GetAsset", this);
-		auto it = assets_.find(asset_property);
+		auto it = assets_.find(asset_key);
 		if (it != assets_.end()){
 			if (it->second.action_ == utils::DEL){
 				return false;
@@ -221,29 +221,29 @@ namespace bumo {
 		KVTrie trie;
 		trie.Init(Storage::Instance().account_db(), batch, asset_prefix, 1);
 
-		auto asset_key = asset_property.SerializeAsString();
+		auto asset_key_str = asset_key.SerializeAsString();
 		std::string buff;
 	
-		if (!trie.Get(asset_key, buff)){
+		if (!trie.Get(asset_key_str, buff)){
 			return false;
 		}
 
-		DataCache<protocol::Asset> Rec;
+		DataCache<protocol::AssetStore> Rec;
 		Rec.action_ = utils::MOD;
 		
 		if (!asset.ParseFromString(buff)){
 			PROCESS_EXIT("fatal error,Asset ParseFromString fail, data may damaged");
 		}
 		Rec.data_.CopyFrom(asset);
-		assets_.insert({ asset_property, Rec });
+		assets_.insert({ asset_key, Rec });
 		return true;
 	}
 
-	void AccountFrm::SetAsset(const protocol::Asset& data_ptr){
-		DataCache<protocol::Asset> Rec;
+	void AccountFrm::SetAsset(const protocol::AssetStore& data_ptr){
+		DataCache<protocol::AssetStore> Rec;
 		Rec.action_ = utils::ADD;
 		Rec.data_.CopyFrom(data_ptr);
-		assets_[data_ptr.property()] = Rec;
+		assets_[data_ptr.key()] = Rec;
 	}
 
 	//
@@ -313,12 +313,12 @@ namespace bumo {
 			case utils::ChangeAction::ADD:
 			case utils::ChangeAction::MOD:
 				if (asset.amount() == 0)
-					trie_asset.Delete(asset.property().SerializeAsString());
+					trie_asset.Delete(asset.key().SerializeAsString());
 				else
-					trie_asset.Set(asset.property().SerializeAsString(), asset.SerializeAsString());
+					trie_asset.Set(asset.key().SerializeAsString(), asset.SerializeAsString());
 				break;
 			case utils::ChangeAction::DEL:
-				trie_asset.Delete(asset.property().SerializeAsString());
+				trie_asset.Delete(asset.key().SerializeAsString());
 				break;
 
 			default:

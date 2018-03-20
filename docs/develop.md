@@ -171,7 +171,7 @@ HTTP GET /getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3&key=hello&code
 | :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | address      | 账号地址， 必填                                                                                                                                         |
 | key          | 账号的 metadata 中指定的key的值，如果不填写，那么返回结果中含有所有的metadata                                                                           |
-| code, issuer | 资产代码,资产发行商。这两个变量要么同时填写，要么同时不填写。若不填写，返回的结果中包含所有的资产。若填写，返回的结果中只显示由code和issuer指定的资产。 |
+| code, issuer,type | 资产代码,资产发行商。这两个变量要么同时填写，要么同时不填写。若不填写，返回的结果中包含所有的资产。若填写，返回的结果中只显示由code和issuer,type指定的资产。目前type只能是0，可以不用填写 |
 
 返回内容
 
@@ -183,14 +183,14 @@ HTTP GET /getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3&key=hello&code
     "assets" : [//该账号的所有资产
       {
         "amount" : 1400,
-        "property" :
+        "key" :
         {
           "code" : "CNY",
           "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
         }
       }, {
         "amount" : 1000,
-        "property" :
+        "key" :
         {
           "code" : "USD",
           "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
@@ -974,7 +974,8 @@ POST /getTransactionBlob
       "type": 2,
       "issue_asset": {
         "amount": 1000,
-        "code": "CNY"
+        "code": "CNY",
+        "type": 0 //目前只能填0 或者不填
       }
     }
     ```
@@ -984,6 +985,7 @@ POST /getTransactionBlob
     {
         string code = 1;
         int64 amount = 2;
+        int32 type = 3;
     }
     ```
     - code:要发行的资产代码，长度范围[1, 64]
@@ -1014,9 +1016,10 @@ POST /getTransactionBlob
       "payment": {
         "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
         "asset": {
-          "property": {
+          "key": {
             "issuer": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-            "code": "CNY"
+            "code": "CNY",
+            "type": 0 //目前只能填0 或者不填
           },
           "amount": 100
         },
@@ -1039,14 +1042,15 @@ POST /getTransactionBlob
     ```text
     message Asset
     {
-         AssetProperty property = 1; //资产属性
-         int64 amount = 2; //数量
+         AssetKey key = 1; //资产属性
+         int64 amount = 2; //数量         
     }
 
-    message AssetProperty
+    message AssetKey
     {
          string issuer = 1; //资产发行方
          string code = 2; //资产代码
+         int32 type = 3;   //资产类型
     }
     ```
     - input: 本次转移触发接收方的合约，合约的执行入参就是input

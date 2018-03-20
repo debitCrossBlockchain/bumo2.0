@@ -276,12 +276,12 @@ namespace bumo{
 			v8::String::NewFromUtf8(isolate_, pay_coin_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			coin_amount);
 
-		if (parameter_.pay_asset_amount_.has_property()) {
+		if (parameter_.pay_asset_amount_.has_key()) {
 			v8::Local<v8::Object> v8_asset = v8::Object::New(isolate_);
 			v8::Local<v8::Object> v8_asset_property = v8::Object::New(isolate_);
-			const protocol::AssetProperty &asspro = parameter_.pay_asset_amount_.property();
-			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "issuer"), v8::String::NewFromUtf8(isolate_, asspro.issuer().c_str()));
-			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "code"), v8::String::NewFromUtf8(isolate_, asspro.code().c_str()));
+			const protocol::AssetKey &asset_key = parameter_.pay_asset_amount_.key();
+			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "issuer"), v8::String::NewFromUtf8(isolate_, asset_key.issuer().c_str()));
+			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "code"), v8::String::NewFromUtf8(isolate_, asset_key.code().c_str()));
 			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "amount"), v8::String::NewFromUtf8(isolate_, utils::String::ToString(parameter_.pay_asset_amount_.amount()).c_str()));
 			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "property"), v8_asset_property);
 
@@ -1010,12 +1010,12 @@ namespace bumo{
 				break;
 			}
 
-			protocol::AssetProperty ass_property;
+			protocol::AssetKey asset_key;
 			v8::Local<v8::Object> v8_asset_property = args[1]->ToObject();
 			v8::Local<v8::Value> v8_issue = v8_asset_property->Get(v8::String::NewFromUtf8(args.GetIsolate(), "issuer"));
 			v8::Local<v8::Value> v8_code = v8_asset_property->Get(v8::String::NewFromUtf8(args.GetIsolate(), "code"));
-			ass_property.set_issuer(ToCString(v8::String::Utf8Value(v8_issue)));
-			ass_property.set_code(ToCString(v8::String::Utf8Value(v8_code)));
+			asset_key.set_issuer(ToCString(v8::String::Utf8Value(v8_issue)));
+			asset_key.set_code(ToCString(v8::String::Utf8Value(v8_code)));
 
 			bumo::AccountFrm::pointer account_frm = nullptr;
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
@@ -1039,8 +1039,8 @@ namespace bumo{
 				}
 			}
 
-			protocol::Asset asset;
-			if (!account_frm->GetAsset(ass_property, asset)) {
+			protocol::AssetStore asset;
+			if (!account_frm->GetAsset(asset_key, asset)) {
 				break;
 			}
 
