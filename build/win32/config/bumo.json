@@ -1,56 +1,45 @@
 {
-	"db": {
-		"account_path": "data/account.db",
-		"ledger_path": "data/ledger.db",
-		"keyvalue_path": "data/keyvalue.db"
-	},
-	"monitor": {
-		"id": "",
-		"center": "127.0.0.1:19336",
-		"disk_path": "/,/mnt/",
-		"enabled" : false
-	},
-	"p2p": {
-		"network_id": 30000,
-		"consensus_network": {
-			"heartbeat_interval": 60,
-			"listen_port": 36001,
-			"target_peer_connection": 10,
-			"known_peers": ["bumo.chinacloudapp.cn:36001"]
-		}
-	},
-	"webserver": {
-		"listen_addresses": "0.0.0.0:36002"
-	},
-	"wsserver": {
-		"listen_address": "0.0.0.0:36003"
-	},
-	"ledger": {
-		"validation_address1": "buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g",
-		"validation_private_key1": "01ab35a14935d51faf48f51c3bfd1e0478e83d21d378f3bc92332dbbee5b180b9e122475517da2651227ce4a8bb37e2621c4611a889a8d7e45679efe881d56f2",
-		"max_trans_per_ledger": 1000,
-		"max_ledger_per_message": 30,
-		"max_trans_in_memory": 2000,
-		"max_apply_ledger_per_round": 3,
-		"hardfork_points": [],
-		"tx_pool":{
-			"queue_limit":10240,
-			"queue_per_account_txs_limit":64
-		}
-	},
-	"genesis" :{
-		"account" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
-		"fees": {"base_reserve":100000000, "byte_fee" :100},
-		"validators": [
-			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
-		]
-	},
-	"logger": {
-		"path": "log/bumo.log",
-		"dest": "FILE|STDOUT|STDERR",
-		"level": "TRACE|INFO|WARNING|ERROR|FATAL",
-		"time_capacity": 1,
-		"size_capacity": 10,
-		"expire_days": 10
-	}
+    "db": {
+        "account_path": "data/account.db",
+        "ledger_path": "data/ledger.db",
+        "keyvalue_path": "data/keyvalue.db"
+    },
+    "p2p": {
+        "network_id": 30000,
+        "consensus_network": {
+            "heartbeat_interval": 60,
+            "listen_port": 36001,
+            "target_peer_connection": 50,
+            "known_peers": ["bumo.chinacloudapp.cn:36001"]
+        }
+    },
+    "webserver": {
+        "listen_addresses": "0.0.0.0:36002"
+    },
+    "wsserver": {
+        "listen_address": "0.0.0.0:36003"
+    },
+    "ledger": {
+        "max_trans_per_ledger": 1000,
+        "max_ledger_per_message": 50,
+        "max_trans_in_memory": 2000,
+        "max_apply_ledger_per_round": 5,
+        "hardfork_points": []
+    },
+    "genesis": {
+        "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+        "fees": {
+            "base_reserve": 10000000,
+            "byte_fee": 1000
+        },
+        "validators": ["buQmKvHXJZYDdx4wWap3aQ27miWZnneti22f", "buQoWvx4YZtShfJKAJ9EPK7j3VY3o9ejyXyF", "buQjprDac98CemsqXgGC9dKegoLDAdpSGSMJ", "buQYoyrr5XhTsS8Jx9K6itvBCfopntCNSQqG"]
+    },
+    "logger": {
+        "path": "log/bumo.log",
+        "dest": "FILE|STDOUT|STDERR",
+        "level": "INFO|WARNING|ERROR|FATAL",
+        "time_capacity": 1,
+        "size_capacity": 10,
+        "expire_days": 10
+    }
 }

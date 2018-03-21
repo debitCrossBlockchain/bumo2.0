@@ -17,10 +17,15 @@ sudo apt-get install libssl-dev
 sudo apt-get install cmake
 sudo apt-get install libbz2-dev
 sudo apt-get install python
+sudo apt-get install unzip
 ```
 - 编译
 ```bash
 cd bumo
+
+##首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库
+./build/install-build-deps-linux.sh
+
 make
 ```
 
@@ -47,6 +52,8 @@ brew install m4
 
  ```
 bash
+##首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库
+./build/install-build-deps-mac.sh
 cd bumo
 make
 cp src/3rd/v8_target/mac/*.bin bin/
@@ -59,6 +66,7 @@ cp src/3rd/v8_target/mac/*.dat bin/
 ### Windows
 - 安装 Visual Studio Ulimate 2013
 - 打开 bumochain\build\win32\Bumo.vs12.sln, 使用 VS 自带编译器编译即可。生成的可执行文件在bumo\build\win32\dbin 目录下。
+- 首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库 .\build\install-build-deps-win32.bat
 
 ## __部署__
 Windows 部署与 Linux 下部署基本类似，本示例以 Linux 为准。
