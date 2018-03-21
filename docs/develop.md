@@ -2206,7 +2206,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     "pay_coin" : {
        "dest_address" :"buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
        "amount":0,
-        "input":"{\"method\":\"proposalFee\",\"params\":{\"feeType\":1,\"price\":5}}";
+        "input":"{\"method\":\"proposalFee\",\"params\":{\"feeType\":1,\"price\":5}}"
     }
 }
 ```
