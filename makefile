@@ -19,7 +19,7 @@ all:
 clean_all:clean clean_build clean_3rd
 
 clean:
-	if [ -d ./lib ]; then rm -rf bin/* && cd lib/ && ls | grep -v http |grep -v ed25519 | xargs rm -rf; fi
+	if [ -d ./lib ]; then rm -rf bin/bumo && rm -rf bin/bumod && && cd lib/ && ls | grep -v http |grep -v ed25519 | xargs rm -rf; fi
 
 clean_3rd:
 	cd src/3rd && make clean_3rd && cd ../../
