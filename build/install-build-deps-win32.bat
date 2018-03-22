@@ -9,6 +9,9 @@ rd /s /Q ".\win\"
 
 .\unzip.exe -u win.zip
 
+mkdir bin
+mkdir dbin
+
 copy ".\win\*" ".\dbin\"
 copy ".\win\*" ".\bin\"
 
