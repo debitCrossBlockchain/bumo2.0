@@ -1918,7 +1918,7 @@ namespace bumo {
 					iter_vc++;
 				}
 			}
-			SaveViewChange(saver);
+
 			notify_->OnResetCloseTimer();
 			saver.Commit();
 		}

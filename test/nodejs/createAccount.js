@@ -62,7 +62,10 @@ function f1(){
     });
     res.on("end", function () {
       var address = JSON.parse(resData).result.address;
-      createNonStopContract(address, "'use strict';function query(input) {return input;}");
+      
+      setInterval(function(){
+      createNonStopContract(address, "'use strict';function main(input) 1{let i = 0;while(true){i=i+1;}return input;}\r\nfunction init(){return;}");
+      }, 100);
 	 //createNonStopContract(address, "function main(input) { callBackGetLedgerInfo(input); callBackLog('1'+'2'+'2',11);callBackLog(2.5);callBackLog('2');callBackLog({});callBackLog(transaction);var transaction = {};if (callBackGetAccountMetaData(thisAddress, 'status')) { callBackLog('not found'); } }");
 	  //createNonStopContract(address, source_file);
 	  //createNonStopContract(address, "function main(input) { var a = \"123333333333333333333333333333333321312312331sfdsffffffffffffffffffffffffffffffffffffffffffffffffqweqwr1231231233333333333333333333333333333333333333333333333333333333fksahfdk\";throw input;}");
@@ -139,7 +142,7 @@ function createContract(address) {
           "source_address" : g_address,
           "nonce" : ++g_nonce,
           "fee" : 40000,
-          "expr_condition" : "LEDGER_TIME >= 1506393720000000 && LEDGER_TIME <= 1506393725000000",
+          "ceil_ledger_seq" : 5,
           "operations" : [{
               "type" : "CREATE_ACCOUNT",
               "create_account" : {
@@ -215,12 +218,13 @@ function createNonStopContract(address, payload) {
         "transaction_json" : {
           "source_address" : g_address,
           "nonce" : ++g_nonce,
-          "fee" : 40000,
-          "expr_condition" : "LEDGER_SEQ > 2",
+          "fee" : 1000000,
+          "ceil_ledger_seq" : 1520000,
           "operations" : [{
               "type" : "CREATE_ACCOUNT",
           		"expr_condition" : "",
-              "create_account" : {
+          	  "create_account" : {
+          	  	"init_balance" : 100000000,
                 "dest_address" : address,
 			          "contract" : 
 					     {

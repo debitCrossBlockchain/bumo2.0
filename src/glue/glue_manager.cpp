@@ -293,17 +293,27 @@ namespace bumo {
 		//start time
 		int64_t next_interval = GetIntervalTime(request.txset().txs_size() == 0);
 		int64_t next_timestamp = next_interval + req.close_time();
-		int64_t waiting_time = next_timestamp - utils::Timestamp::Now().timestamp();
-		if (waiting_time <= 0)  waiting_time = 1;
-		start_consensus_timer_ = utils::Timer::Instance().AddTimer(waiting_time, 0, [this](int64_t data) {
-			StartConsensus();
+		int64_t seq = req.ledger_seq();
+		Global::Instance().GetIoService().post([next_timestamp, time_use, seq, this]() {
+			int64_t waiting_time = next_timestamp - utils::Timestamp::Now().timestamp();
+			if (waiting_time <= 0)  waiting_time = 1;
+
+			if (consensus_->IsLeader()) {
+				start_consensus_timer_ = utils::Timer::Instance().AddTimer(waiting_time, 0, [this](int64_t data) {
+					StartConsensus();
+				});
+
+				LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to start next consensus",
+					seq, (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), (int64_t)(waiting_time / utils::MILLI_UNITS_PER_SEC));
+			}
+			else {
+				LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to check next consensus",
+					seq, (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), (int64_t)(waiting_time / utils::MILLI_UNITS_PER_SEC));
+			}
+
 		});
 
 		StartLedgerCloseTimer();
-
-		LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to start next consensus",
-			req.ledger_seq(), (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), (int64_t)(waiting_time / utils::MILLI_UNITS_PER_SEC));
-
 		protocol::LedgerHeader lcl1 = LedgerManager::Instance().GetLastClosedLedger();
 		return lcl1.hash();
 	}

@@ -432,22 +432,13 @@ namespace bumo {
 			}
 			else {
 				bool ret = tx_frm->Apply(this, environment_);
-				//caculate byte fee ,do not store when fee not enough 
-				std::string error_info;
-				if (tx_frm->IsExpire(error_info)) {
-					LOG_ERROR("transaction(%s) apply failed. %s, %s",
-						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-						error_info.c_str());
-				}
-				else {
-					if (!ret) {
+				if (!ret) {
 						LOG_ERROR("transaction(%s) apply failed. %s",
 							utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
 						error_txs.insert(i);//for check
-					}
-					else {
+				}
+				else {
 						tx_frm->environment_->Commit();
-					}
 				}
 			}
 

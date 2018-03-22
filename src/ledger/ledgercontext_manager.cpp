@@ -374,7 +374,13 @@ namespace bumo {
 		LOG_TRACE("Syn processing the consensus value, ledger seq(" FMT_I64 ")", consensus_value.ledger_seq());
 		LedgerContext ledger_context(chash, consensus_value);
 		ledger_context.Do();
-		return ledger_context.closing_ledger_;
+		if (ledger_context.propose_result_.exec_result_) {
+			return ledger_context.closing_ledger_;
+		}
+		else {
+			LOG_ERROR("Syn process failed");
+			return NULL;
+		}
 	}
 
 	bool LedgerContextManager::SyncTestProcess(LedgerContext::ACTION_TYPE type,
