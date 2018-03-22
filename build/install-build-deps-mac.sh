@@ -6,3 +6,7 @@ unzip mac.zip
 rm -rf ../../src/3rd/v8_target/mac/ 
 mv -f mac ../../src/3rd/v8_target/mac/ 
 rm -rf mac.zip 
+mkdir -p ../../bin/
+
+cp ../../src/3rd/v8_target/mac/*.bin ../../bin/
+cp ../../src/3rd/v8_target/mac/*.dat ../../bin/

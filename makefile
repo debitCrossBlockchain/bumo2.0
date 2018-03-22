@@ -5,7 +5,6 @@ LC_OS_NAME = $(shell echo $(OS_NAME) | tr '[A-Z]' '[a-z]')
 MAKE_PLATFORM = pwd
 ifeq ($(LC_OS_NAME), darwin)
 	CUR_OS = mac
-	MAKE_PLATFORM=cat src/3rd/v8_target/mac-v8.tar.gz.* | tar -zxv -d src/3rd/v8_target/
 else
 	CUR_OS = linux
 endif

@@ -35,10 +35,22 @@ v=${version:7:7}
 make bumo_version=$v
 
 cd bin/
+mkdir bumochain
+mkdir bumochain/config
+mkdir bumochain/data
+mkdir bumochain/jslib
+mkdir bumochain/bin
+mkdir bumochain/log
+cp ../build/win32/jslib/jslint.js bumochain/jslib/
+cp ../build/win32/config/bumo-publicnet.json bumochain/config/bumo.json
+cp bumo bumochain/bin/
+cp ../src/3rd/v8_target/linux/*.bin bumochain/bin/
+cp ../src/3rd/v8_target/linux/*.dat bumochain/bin/
 
-tar czvf bumo-$DATE.tar.gz bumo
+tar czvf bumochain-$DATE.tar.gz bumochain/
+rm bumochain/ -rf
 
-
+echo "build ok...."
 
 
 
