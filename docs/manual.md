@@ -21,11 +21,10 @@ sudo apt-get install unzip
 ```
 - 编译
 ```bash
-cd bumo
-
 ##首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库
-./build/install-build-deps-linux.sh
-
+cd bumo/build/
+./install-build-deps-linux.sh
+cd ../
 make
 ```
 
@@ -45,6 +44,7 @@ brew install libtool
 brew install cmake
 brew install python
 brew install m4
+brew install wget
 ```
 
 - 编译 
@@ -53,11 +53,10 @@ brew install m4
  ```
 bash
 ##首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库
-./build/install-build-deps-mac.sh
-cd bumo
+cd bumo/build/
+./install-build-deps-mac.sh
+cd ../
 make
-cp src/3rd/v8_target/mac/*.bin bin/
-cp src/3rd/v8_target/mac/*.dat bin/
 ```
 
 生成的编译临时目录:bumo/bulid/mac/
@@ -66,7 +65,7 @@ cp src/3rd/v8_target/mac/*.dat bin/
 ### Windows
 - 安装 Visual Studio Ulimate 2013
 - 打开 bumochain\build\win32\Bumo.vs12.sln, 使用 VS 自带编译器编译即可。生成的可执行文件在bumo\build\win32\dbin 目录下。
-- 首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库 .\build\install-build-deps-win32.bat
+- 首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库，进入 build目录，双击执行 install-build-deps-win32.bat 脚本。
 
 ## __部署__
 Windows 部署与 Linux 下部署基本类似，本示例以 Linux 为准。
