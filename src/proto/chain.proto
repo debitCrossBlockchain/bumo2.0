@@ -14,15 +14,32 @@ message Account{
 	int64 balance = 7;
 }
 
-message AssetProperty{
+message AssetKey{
 	 string issuer = 1;
 	 string code = 2;
+	 int32 type = 3;		//0:not limited ammount  1:limited ammount
 }
 
+//payment
 message Asset{
-	 AssetProperty   property = 1;
-	 int64			 amount = 2;
+	 AssetKey	key = 1;
+	 int64		amount = 2;
 }
+
+message AssetProperty{
+	int32 decimal = 1;
+	string description = 2;
+	int64 max_supply = 3;
+	int64 issued_amount = 4;
+}
+
+message AssetStore{
+	AssetKey key = 1; //required
+	int64 amount = 2;
+	//AssetProperty property = 3;
+}
+
+
 
 message LedgerHeader
 {
@@ -70,8 +87,10 @@ message AccountThreshold{
 }
 
 message OperationIssueAsset{
-		string code = 1;
-		int64 amount = 2;
+	string code = 1;
+	int64 amount = 2;
+	int32 type = 3;
+	AssetProperty property = 4;
 }
 
 message OperationPayCoin{
@@ -106,17 +125,16 @@ message Operation {
 	Type type = 1;
 	string source_address = 2;
 	bytes metadata	= 3;
-	string expr_condition = 4;
 
 	//
-	OperationCreateAccount		create_account 	   = 5;
-	OperationIssueAsset			issue_asset 	   = 6;
-	OperationPayment			payment 		   = 7;
-	OperationSetMetadata		set_metadata	   = 9;
-	OperationSetSignerWeight	set_signer_weight  = 10;
-	OperationSetThreshold		set_threshold 	   = 11;
-	OperationPayCoin			pay_coin           = 12;
-	OperationLog				log				   = 13;
+	OperationCreateAccount		create_account 	   = 4;
+	OperationIssueAsset			issue_asset 	   = 5;
+	OperationPayment			payment 		   = 6;
+	OperationSetMetadata		set_metadata	   = 7;
+	OperationSetSignerWeight	set_signer_weight  = 8;
+	OperationSetThreshold		set_threshold 	   = 9;
+	OperationPayCoin			pay_coin           = 10;
+	OperationLog				log				   = 11;
 }
 
 message OperationSetThreshold{
@@ -133,14 +151,15 @@ message Transaction {
 		string source_address = 1;
 
 		int64 nonce = 2;
+		
+		int64  fee = 3;
 
-		string expr_condition = 3;
-
-		repeated Operation operations = 4;
-
+		int64 ceil_ledger_seq = 4;
+		
 		bytes metadata = 5;
 
-		int64  fee = 6;
+		repeated Operation operations = 6;
+
 }
 
 message Signer {
@@ -175,9 +194,7 @@ enum Limit{
 
 message TransactionEnv {
 	Transaction transaction = 1;
-
 	repeated Signature signatures 	= 2;
-
 	Trigger trigger = 3;
 }
 
@@ -188,10 +205,18 @@ message TransactionEnvStore{
 		string error_desc = 3;
 		int64 ledger_seq = 4;
 		int64 close_time = 5;
+		//for notify
+		bytes hash = 6;
 }
 
 message TransactionEnvSet{
 	repeated TransactionEnv txs = 2;
+}
+
+message ConsensusValueValidation {
+	repeated int32 expire_tx_ids = 1;  //contract execute expired
+	repeated int32 error_tx_ids = 2;
+	//may contain other check
 }
 
 message ConsensusValue{
@@ -201,6 +226,7 @@ message ConsensusValue{
 	int64 ledger_seq = 4;
 	bytes previous_ledger_hash = 5;
 	LedgerUpgrade ledger_upgrade = 6;
+	ConsensusValueValidation validation = 7;
 }
 
 message Contract{
@@ -208,8 +234,7 @@ message Contract{
 		JAVASCRIPT = 0;
 	}
 	ContractType type = 1; //合约类型
-	string payload = 2;		//合约内容,js 代码
-	string init_input = 3;
+	string payload = 2;	   //合约内容,js 代码
 }
 
 //创建账户
@@ -219,6 +244,7 @@ message OperationCreateAccount{
 	AccountPrivilege priv = 3;
 	repeated KeyPair metadatas = 4;	
 	int64	init_balance = 5;
+	string  init_input = 6;
 }
 
 

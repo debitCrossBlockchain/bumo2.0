@@ -43,8 +43,8 @@ namespace bumo {
 		const protocol::OperationIssueAsset& issue_asset = operation.issue_asset();
 
 		if (!bumo::PublicKey::IsAddressValid(source_address)) {
-			result.set_code(protocol::ERRCODE_ASSET_INVALID);
-			result.set_desc(utils::String::Format("Dest address should be a valid account address"));
+			result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+			result.set_desc(utils::String::Format("Source address should be a valid account address"));
 			return result;
 		}
 		//const auto &issue_property = issue_asset.
@@ -53,13 +53,13 @@ namespace bumo {
 		{
 			if (!bumo::PublicKey::IsAddressValid(create_account.dest_address())) {
 				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-				result.set_desc(utils::String::Format("dest account address(%s) invalid", create_account.dest_address().c_str()));
+				result.set_desc(utils::String::Format("Dest account address(%s) invalid", create_account.dest_address().c_str()));
 				break;
 			}
 
 			if (!create_account.has_priv()) {
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc(utils::String::Format("dest account address(%s) has no priv object", create_account.dest_address().c_str()));
+				result.set_desc(utils::String::Format("Dest account address(%s) has no priv object", create_account.dest_address().c_str()));
 				break;
 			} 
 
@@ -145,17 +145,32 @@ namespace bumo {
 				duplicate_type.insert(type_thresholds.type());
 			}
 
-			///////////////////////////////////////////////////
+			//if it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
 			if (create_account.contract().payload() != ""){
-				std::string err_msg;
-				std::string src = create_account.contract().payload();
+ 				if (create_account.contract().payload().size() > General::CONTRACT_CODE_LIMIT) {
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("Contract payload size(" FMT_SIZE ") > limit(%d)",
+						create_account.contract().payload().size(), General::CONTRACT_CODE_LIMIT));
+					break;
+				}
 
+				if (!(priv.master_weight() == 0 &&
+					priv.signers_size() == 0 &&
+					threshold.tx_threshold() == 1 &&
+					threshold.type_thresholds_size() == 0 
+					)) {
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("Contract account 'priv' config must be({master_weight:0, thresholds:{tx_threshold:1}})"));
+					break;
+				}
+				
+				std::string src = create_account.contract().payload();
 				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, src);
 			}
 
 			for (int32_t i = 0; i < create_account.metadatas_size(); i++){
 				const auto kp = create_account.metadatas(i);
-				if (kp.key().size() > General::METADATA_KEY_MAXSIZE){
+				if (kp.key().size() == 0 || kp.key().size() > General::METADATA_KEY_MAXSIZE) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 					result.set_desc(utils::String::Format("Length of the key should be between [1, %d]. key=%s,key.length=%d",
 						General::METADATA_KEY_MAXSIZE, kp.key().c_str(), kp.key().length()));
@@ -178,7 +193,7 @@ namespace bumo {
 					break;
 				}
 
-				std::string trim_code = payment.asset().property().code();
+				std::string trim_code = payment.asset().key().code();
 				//utils::String::Trim(trim_code);
 				if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE) {
 					result.set_code(protocol::ERRCODE_ASSET_INVALID);
@@ -186,7 +201,7 @@ namespace bumo {
 					break;
 				}
 
-				if (!bumo::PublicKey::IsAddressValid(payment.asset().property().issuer())) {
+				if (!bumo::PublicKey::IsAddressValid(payment.asset().key().issuer())) {
 					result.set_code(protocol::ERRCODE_ASSET_INVALID);
 					result.set_desc(utils::String::Format("asset issuer should be a valid account address"));
 					break;
@@ -200,8 +215,8 @@ namespace bumo {
 			} 
 
 			if (!bumo::PublicKey::IsAddressValid(payment.dest_address())) {
-				result.set_code(protocol::ERRCODE_ASSET_INVALID);
-				result.set_desc(utils::String::Format("dest address should be a valid account address"));
+				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+				result.set_desc(utils::String::Format("Dest address should be a valid account address"));
 				break;
 			}
 			break;
@@ -217,9 +232,16 @@ namespace bumo {
 
 			std::string trim_code = issue_asset.code();
 			trim_code = utils::String::Trim(trim_code);
-			if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE) {
+			if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE ||
+				trim_code.size() != issue_asset.code().size()) {
 				result.set_code(protocol::ERRCODE_ASSET_INVALID);
-				result.set_desc(utils::String::Format("asset code length should between (0,64]"));
+				result.set_desc(utils::String::Format("Asset code length should between (0,64]"));
+				break;
+			}
+
+			if (issue_asset.type() != 0){
+				result.set_code(protocol::ERRCODE_ASSET_INVALID);
+				result.set_desc(utils::String::Format("Asset type now must be zero"));
 				break;
 			}
 
@@ -320,7 +342,7 @@ namespace bumo {
 			}
 
 			if (!bumo::PublicKey::IsAddressValid(pay_coin.dest_address())) {
-				result.set_code(protocol::ERRCODE_ASSET_INVALID);
+				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
 				result.set_desc(utils::String::Format("Dest address should be a valid account address"));
 				break;
 			}
@@ -448,15 +470,18 @@ namespace bumo {
 
 			int64_t base_reserve = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
 			if (createaccount.init_balance() < base_reserve) {
-				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc("Dest address balance is low");
-				LOG_ERROR("Dest address balance is low");
+				result_.set_code(protocol::ERRCODE_ACCOUNT_INIT_LOW_RESERVE);
+				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") not enough for base_reserve (" FMT_I64 ")", createaccount.init_balance(), base_reserve);
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
 			if (source_account_->GetAccountBalance() - base_reserve < createaccount.init_balance()) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc("Source address balance is low");
-				LOG_ERROR("Source address(%s) balance is low", source_account_->GetAccountAddress().c_str());
+				std::string error_desc = utils::String::Format("Source account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for init balance(" FMT_I64 ")", 
+				source_account_->GetAccountAddress().c_str(),source_account_->GetAccountBalance(), base_reserve, createaccount.init_balance());
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
 			source_account_->AddBalance(-1 * createaccount.init_balance());
@@ -495,7 +520,7 @@ namespace bumo {
 
 				ContractParameter parameter;
 				parameter.code_ = javascript;
-				parameter.input_ = createaccount.contract().init_input();
+				parameter.input_ = createaccount.init_input();
 				parameter.this_address_ = createaccount.dest_address();
 				parameter.sender_ = source_account_->GetAccountAddress();
 				parameter.ope_index_ = index_;
@@ -517,26 +542,35 @@ namespace bumo {
 		const protocol::OperationIssueAsset& ope = operation_.issue_asset();
 		do {
 
-			protocol::Asset asset_e ;
-			protocol::AssetProperty ap;
-			ap.set_issuer(source_account_->GetAccountAddress());
-			ap.set_code(ope.code());
-			if (!source_account_->GetAsset(ap, asset_e)) {
-				protocol::Asset asset;
-				asset.mutable_property()->CopyFrom(ap);
+			protocol::AssetStore asset_e;
+			protocol::AssetKey key;
+			key.set_issuer(source_account_->GetAccountAddress());
+			key.set_code(ope.code());
+			key.set_type(ope.type());
+			if (!source_account_->GetAsset(key, asset_e)) {
+				protocol::AssetStore asset;
+				asset.mutable_key()->CopyFrom(key);
 				asset.set_amount(ope.amount());
+				//asset.mutable_property()->CopyFrom(ope.property());
 				source_account_->SetAsset(asset);
 			}
 			else {
-				int64_t amount = asset_e.amount() + ope.amount();
-				if (amount < asset_e.amount() || amount < ope.amount())
-				{
-					result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
-					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s) overflow(" FMT_I64 " " FMT_I64 ")", ap.issuer().c_str(), ap.code().c_str(), asset_e.amount(), ope.amount()));
+				if (ope.type() == 0) {
+					int64_t amount = asset_e.amount() + ope.amount();
+					if (amount < asset_e.amount() || amount < ope.amount())
+					{
+						result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
+						result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), ope.amount()));
+						break;
+					}
+					asset_e.set_amount(amount);
+					source_account_->SetAsset(asset_e);
+				}
+				else {
+					result_.set_code(protocol::ERRCODE_ASSET_INVALID);
+					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) repeat issue", key.issuer().c_str(), key.code().c_str(), key.type()));
 					break;
 				}
-				asset_e.set_amount(amount);
-				source_account_->SetAsset(asset_e);
 			}
 
 		} while (false);
@@ -554,38 +588,50 @@ namespace bumo {
 			}
 
 			if (payment.has_asset()){
-				protocol::Asset asset_e;
-				protocol::AssetProperty ap = payment.asset().property();
-				if (!source_account_->GetAsset(ap, asset_e)) {
+				protocol::AssetStore asset_e;
+				protocol::AssetKey key = payment.asset().key();
+				if (!source_account_->GetAsset(key, asset_e)) {
 					result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_LOW_RESERVE);
-					result_.set_desc(utils::String::Format("asset(%s:%s) low reserve", ap.issuer().c_str(), ap.code().c_str()));
+					result_.set_desc(utils::String::Format("asset(%s:%s:%d) low reserve", key.issuer().c_str(), key.code().c_str(), key.type()));
 					break;
 				}
 
+				if (payment.asset().key().type() == 0){
 
-				int64_t sender_amount = asset_e.amount() - payment.asset().amount();
-				if (sender_amount < 0) {
-					result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_LOW_RESERVE);
-					result_.set_desc(utils::String::Format("asset(%s:%s) low reserve", ap.issuer().c_str(), ap.code().c_str()));
-					break;
-				}
-				asset_e.set_amount(sender_amount);
-				source_account_->SetAsset(asset_e);
-
-				protocol::Asset dest_asset_ptr;
-				if (!dest_account->GetAsset(ap, dest_asset_ptr)) {
-					dest_account->SetAsset(payment.asset());
-				}
-				else {
-					int64_t receiver_amount = dest_asset_ptr.amount() + payment.asset().amount();
-					if (receiver_amount < dest_asset_ptr.amount() || receiver_amount < payment.asset().amount())
-					{
-						result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
-						result_.set_desc(utils::String::Format("Payment asset(%s:%s) overflow(" FMT_I64 " " FMT_I64 ")", ap.issuer().c_str(), ap.code().c_str(), dest_asset_ptr.amount(), payment.asset().amount()));
+					int64_t sender_amount = asset_e.amount() - payment.asset().amount();
+					if (sender_amount < 0) {
+						result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_LOW_RESERVE);
+						result_.set_desc(utils::String::Format("asset(%s:%s:%d) low reserve", key.issuer().c_str(), key.code().c_str(), key.type()));
 						break;
 					}
-					dest_asset_ptr.set_amount(receiver_amount);
-					dest_account->SetAsset(dest_asset_ptr);
+					asset_e.set_amount(sender_amount);
+					source_account_->SetAsset(asset_e);
+
+					protocol::AssetStore dest_asset;
+					if (!dest_account->GetAsset(key, dest_asset)) {
+						dest_asset.mutable_key()->CopyFrom(key);
+						dest_asset.set_amount(payment.asset().amount());
+						dest_account->SetAsset(dest_asset);
+					}
+					else {
+						int64_t receiver_amount = dest_asset.amount() + payment.asset().amount();
+						if (receiver_amount < dest_asset.amount() || receiver_amount < payment.asset().amount())
+						{
+							result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
+							result_.set_desc(utils::String::Format("Payment asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), dest_asset.amount(), payment.asset().amount()));
+							break;
+						}
+						dest_asset.set_amount(receiver_amount);
+						dest_account->SetAsset(dest_asset);
+					}
+				}
+				else{
+					/*if (source_account_->GetAccountAddress() == payment.asset().key().issuer()){
+					}
+					else if (dest_account->GetAccountAddress() == payment.asset().key().issuer()){
+					}
+					else{
+					}*/
 				}
 			}
 			
@@ -712,18 +758,19 @@ namespace bumo {
 			protocol::Account& proto_source_account = source_account_->GetProtoAccount();
 			if (proto_source_account.balance() < ope.amount() + reserve_coin) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc(utils::String::Format("Account(%s) balance(" FMT_I64 ") not enough to pay (" FMT_I64 ")",
-					address.c_str(),
+				result_.set_desc(utils::String::Format("Account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for pay (" FMT_I64 ") ",
+					proto_source_account.address().c_str(),
 					proto_source_account.balance(),
-					ope.amount()
+					reserve_coin,
+					ope.amount()					
 					));
 				break;
 			}
 
 			if (!environment->GetEntry(address, dest_account_ptr)) {
 				if (ope.amount() < reserve_coin) {
-					result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-					result_.set_desc(utils::String::Format("Account(%s) init balance(" FMT_I64 ") not enough, reserve(" FMT_I64 ")",
+					result_.set_code(protocol::ERRCODE_ACCOUNT_INIT_LOW_RESERVE);
+					result_.set_desc(utils::String::Format("Account(%s) init balance(" FMT_I64 ") not enough for reserve(" FMT_I64 ")",
 						address.c_str(),
 						ope.amount(),
 						reserve_coin

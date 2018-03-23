@@ -13,8 +13,10 @@
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIN32
+#ifdef OS_LINUX
 #include <sys/prctl.h>
+#elif defined OS_MAC
+#include <semaphore.h>
 #endif
 
 #include "strings.h"
@@ -64,7 +66,8 @@ bool utils::Thread::Start(std::string name) {
 #ifdef WIN32
 	handle_ = ::CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadProc, (LPVOID)this, 0, (LPDWORD)&thread_id_);
 	result = (NULL != handle_);
-#else
+
+#elif defined OS_LINUX
 	pthread_attr_t object_attr;
 	pthread_attr_init(&object_attr);
 	pthread_attr_setdetachstate(&object_attr, PTHREAD_CREATE_DETACHED);
@@ -72,6 +75,15 @@ bool utils::Thread::Start(std::string name) {
 	ret = pthread_create(&handle_, &object_attr, threadProc, (void *)this);
 	result = (0 == ret);
 	thread_id_ = handle_;
+	pthread_attr_destroy(&object_attr);
+#elif defined OS_MAC
+	pthread_attr_t object_attr;
+	pthread_attr_init(&object_attr);
+	pthread_attr_setdetachstate(&object_attr, PTHREAD_CREATE_DETACHED);
+
+	ret = pthread_create(&handle_, &object_attr, threadProc, (void *)this);
+	result = (0 == ret);
+	thread_id_ = (size_t)handle_;
 	pthread_attr_destroy(&object_attr);
 #endif
 	if (!result) {
@@ -106,8 +118,12 @@ bool utils::Thread::Terminate() {
 	if (0 == ::TerminateThread(handle_, 0)) {
 		result = false;
 	}
-#else
+#elif defined OS_LINUX
 	if (0 != pthread_cancel(thread_id_)) {
+		result = false;
+	}
+#elif defined OS_MAC
+	if (0 != pthread_cancel((pthread_t)thread_id_)) {
 		result = false;
 	}
 #endif
@@ -141,8 +157,11 @@ bool utils::Thread::SetCurrentThreadName(std::string name) {
 #ifdef WIN32
 	//not supported
 	return true;
-#else
+#elif defined OS_LINUX
 	return 0 == prctl(PR_SET_NAME, name.c_str(), 0, 0, 0);
+#elif defined OS_MAC
+	pthread_setname_np(name.c_str());
+    return true;
 #endif //WIN32
 }
 
@@ -258,7 +277,7 @@ bool utils::Semaphore::Wait(uint32_t millisecond) {
 	else {
 		return false;
 	}
-#else
+#elif defined OS_LINUX
 	int32_t ret = 0;
 
 	if (kInfinite == millisecond) {
@@ -275,6 +294,18 @@ bool utils::Semaphore::Wait(uint32_t millisecond) {
 	}
 
 	return -1 != ret;
+#elif defined OS_MAC
+	int32_t ret = 0;
+
+	if (kInfinite == millisecond) {
+		ret = sem_wait(&sem_);
+	}
+	else {
+		//waring, mac 10.13 has no sem_timedwait?
+		usleep(1000 * millisecond);
+	}
+
+	return true;
 #endif
 }
 

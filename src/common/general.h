@@ -32,8 +32,8 @@ namespace bumo {
 		const static uint32_t MONITOR_VERSION;
 		const static char *BUMO_VERSION;
 
-		const static int CONSENSUS_PORT = 9333;
-		const static int WEBSERVER_PORT = 19333;
+		const static int CONSENSUS_PORT = 16001;
+		const static int WEBSERVER_PORT = 16002;
 
 		const static int METADATA_KEY_MAXSIZE = 1024;
 		const static int METADATA_MAX_VALUE_SIZE = 256 * utils::BYTES_PER_KILO;
@@ -47,11 +47,17 @@ namespace bumo {
 		//at most 512 transaction can be created when a contract executed
 		const static int CONTRACT_TRANSACTION_LIMIT = 512;
 
-		const static int CONTRACT_STEP_LIMIT = 10240;
-		const static int CONTRACT_MEMORY_LIMIT = 30 *1024 * 1024; //limit memory 30M
-		const static int CONTRACT_STACK_LIMIT = 512 * 1024;
+		const static int CONTRACT_CODE_LIMIT = 256 * utils::BYTES_PER_KILO;
+		const static int CONTRACT_STEP_LIMIT = 10 * utils::BYTES_PER_KILO;
+		const static int CONTRACT_MEMORY_LIMIT = 30 * utils::BYTES_PER_MEGA; //limit memory 30M
+		const static int CONTRACT_STACK_LIMIT = 512 * utils::BYTES_PER_KILO;
+
+		const static int TX_EXECUTE_TIME_OUT = utils::MICRO_UNITS_PER_SEC;
+		const static int BLOCK_EXECUTE_TIME_OUT = 5 * utils::MICRO_UNITS_PER_SEC;
 
 		const static int LAST_TX_HASHS_LIMIT = 100;
+
+		const static size_t BU_DECIMALS = 8;  // 10^8
 
 		const static char *DEFAULT_KEYVALUE_DB_PATH;
 		const static char *DEFAULT_ACCOUNT_DB_PATH;
@@ -87,11 +93,19 @@ namespace bumo {
 
 		const static char *CHECK_TIME_FUNCTION;
 
+		const static char *CONTRACT_VALIDATOR_ADDRESS;
+		const static char *CONTRACT_FEE_ADDRESS;
+
 		const static int32_t TRANSACTION_LIMIT_SIZE;
 		const static int32_t TXSET_LIMIT_SIZE;
 
 		const static int TRANSACTION_LOG_TOPIC_MAXSIZE = 128;
 		const static int TRANSACTION_LOG_DATA_MAXSIZE = 1024;
+
+		const static int PEER_DB_COUNT = 5000;
+
+		const static int64_t REWARD_PERIOD = (5 * 365 * 24 * 60 * 60) / 10;
+		const static int64_t REWARD_INIT_VALUE = 15 * 100000000;
 
 		typedef enum WARNINGCODE_ {
 			WARNING,
@@ -266,6 +280,7 @@ namespace bumo {
 	std::string GetDataSecuretKey();
 	std::string ComposePrefix(const std::string &prefix, const std::string &value);
 	std::string ComposePrefix(const std::string &prefix, int64_t value);
+	int64_t GetBlockReward(const int64_t cur_block_height);
 }
 
 #endif

@@ -34,7 +34,6 @@ namespace bumo {
 		std::string GetSerializeString() const;
 		int32_t Size() const;
 		const protocol::TransactionEnvSet &GetRaw() const;
-		bool CheckValid() const;
 	};
 	typedef std::map<int64_t, TransactionFrm::pointer> TransactionFrmMap;
 

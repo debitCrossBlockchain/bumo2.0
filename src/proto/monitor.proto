@@ -1,6 +1,6 @@
 syntax = "proto3";
 package monitor;
-option java_package = "cn.bubi.blockchain.adapter3";
+option java_package = "cn.bumo.blockchain.adapter3";
 
 import "chain.proto";
 
@@ -8,7 +8,7 @@ enum MONITOR_MESSAGE_TYPE{
 	MONITOR_MSGTYPE_NONE = 0;
 	MONITOR_MSGTYPE_HELLO = 30;
 	MONITOR_MSGTYPE_REGISTER = 31;
-	MONITOR_MSGTYPE_BUBI = 32;
+	MONITOR_MSGTYPE_BUMO = 32;
 	MONITOR_MSGTYPE_LEDGER = 33;
 	MONITOR_MSGTYPE_SYSTEM = 34;
 	MONITOR_MSGTYPE_ALERT = 35;
@@ -48,7 +48,7 @@ message PeerManager {
 	repeated Peer peer = 2;
 }
 
-message BubiStatus {
+message BumoStatus {
 	GlueManager glue_manager = 1;
 	PeerManager peer_manager = 2;
 }

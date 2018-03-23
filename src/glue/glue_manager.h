@@ -22,6 +22,7 @@
 #include <overlay/peer.h>
 #include <consensus/consensus_manager.h>
 #include "transaction_set.h"
+#include "transaction_queue.h"
 #include "ledger_upgrade.h"
 
 namespace bumo {
@@ -33,9 +34,8 @@ namespace bumo {
 
 		friend class TransactionSetFrm;
 
-		std::map<std::string, int64_t> last_topic_seqs_;
-		TransactionMap topic_caches_;
 		utils::Mutex lock_;
+		std::shared_ptr<TransactionQueue> tx_pool_;
 
 		int64_t time_start_consenus_;
 		std::shared_ptr<Consensus> consensus_;
@@ -69,7 +69,6 @@ namespace bumo {
 		bool StartConsensus(); //start to trigger consensus
 		bool CreateTableIfNotExist(); //create the db
 		std::string CalculateTxTreeHash(const std::vector<TransactionFrm::pointer> &tx_array);
-		size_t RemoveTxset(const TransactionSetFrm &set);
 		//const LedgerHeaderLiteFrmPtr GetLastLedger() const { return last_ledger_; };
 		int64_t GetIntervalTime(bool empty_block);
 
@@ -89,6 +88,8 @@ namespace bumo {
 		bool CheckValueAndProof( const std::string &consensus_value, const std::string &proof);
 		int32_t CheckValueHelper(const protocol::ConsensusValue &consensus_value, int64_t now);
 		size_t GetTransactionCacheSize();
+		void QueryTransactionCache(const uint32_t& num, std::vector<TransactionFrm::pointer>& txs);
+		bool QueryTransactionCache(const std::string& hash, TransactionFrm::pointer& tx);
 
 		virtual void OnTimer(int64_t current_time) override;
 		virtual void OnSlowTimer(int64_t current_time) override {};

@@ -24,7 +24,8 @@
 namespace bumo {
 
 	P2pNetwork::P2pNetwork() :
-		target_peer_connection_(50),
+		target_peer_connection_(10),
+		max_connection_(2000),
 		connect_timeout_(5),// second
 		heartbeat_interval_(1800) {// second
 			listen_port_ = General::CONSENSUS_PORT;
@@ -52,9 +53,14 @@ namespace bumo {
 	}
 
 	bool P2pNetwork::Load(const Json::Value &value) {
-		int32_t temp;
+		int32_t temp = (int32_t)target_peer_connection_;
 		Configure::GetValue(value, "target_peer_connection", temp);
 		target_peer_connection_ = temp;
+
+		temp = (int32_t)max_connection_;
+		Configure::GetValue(value, "max_connection", temp);
+		max_connection_ = temp;
+
 		Configure::GetValue(value, "known_peers", known_peer_list_);
 		Configure::GetValue(value, "connect_timeout", connect_timeout_);
 		Configure::GetValue(value, "heartbeat_interval", heartbeat_interval_);
@@ -71,20 +77,17 @@ namespace bumo {
 		std::string address;
 		Configure::GetValue(value, "listen_address", address);
 		listen_address_ = utils::InetAddress(address);
-		Configure::GetValue(value, "listen_tx_status", listen_tx_status_);
 
 		return true;
 	}
 
 	WsServerConfigure::WsServerConfigure() {
-		listen_tx_status_ = false;
 	}
 
 	WebServerConfigure::WebServerConfigure() {
 		ssl_enable_ = false;
 		query_limit_ = 1000;
 		multiquery_limit_ = 100;
-		remote_authorized_ = false;
 		thread_count_ = 0;
 	}
 
@@ -102,7 +105,6 @@ namespace bumo {
 		ConfigureBase::GetValue(value, "ssl_enable", ssl_enable_);
 		ConfigureBase::GetValue(value, "query_limit", query_limit_);
 		ConfigureBase::GetValue(value, "multiquery_limit", multiquery_limit_);
-		ConfigureBase::GetValue(value, "remote_authorized", remote_authorized_);
 		ConfigureBase::GetValue(value, "thread_count", thread_count_);
 		
 		if (ssl_enable_)
@@ -111,31 +113,63 @@ namespace bumo {
 	}
 
 	LedgerConfigure::LedgerConfigure() {
-		max_trans_per_ledger_ = 10000;
-		max_trans_in_memory_ = 100000;
-		max_ledger_per_message_ = 5;
-		max_apply_ledger_per_round_ = 3;
-		test_model_ = false;
-		memset(&fees_, 0, sizeof(fees_));
+		max_trans_per_ledger_ = 2000;
+		max_trans_in_memory_ = 50000;
+		max_ledger_per_message_ = 20;
+		max_apply_ledger_per_round_ = 5;
+		close_interval_ = 10;
+		use_atom_map_ = true;
+		hash_type_ = 0; // 0 : SHA256, 1 :SM2
+		queue_limit_ = 10240;
+		queue_per_account_txs_limit_ = 64;
 	}
 
-	LedgerConfigure::~LedgerConfigure() {}
+	LedgerConfigure::~LedgerConfigure() {
+	}
 
 	bool LedgerConfigure::Load(const Json::Value &value) {
-		//Configure::GetValue(value, "byte_fee", byte_fee_);
-		//Configure::GetValue(value, "base_reserve", base_reserve_);
+		//Configure::GetValue(value, "close_interval", close_interval_);
+		Configure::GetValue(value, "validation_type", validation_type_);
+		Configure::GetValue(value, "validation_private_key", validation_privatekey_);
 		Configure::GetValue(value, "hash_type", hash_type_);
 		Configure::GetValue(value, "max_trans_per_ledger", max_trans_per_ledger_);
 		Configure::GetValue(value, "max_ledger_per_message", max_ledger_per_message_);
 		Configure::GetValue(value, "max_apply_ledger_per_round", max_apply_ledger_per_round_);
 		Configure::GetValue(value, "max_trans_in_memory", max_trans_in_memory_);
-		Configure::GetValue(value, "test_model", test_model_);
-		Configure::GetValue(value, "genesis_account", genesis_account_);
-		Configure::GetValue(value, "validators_vote_account", validators_vote_account_);
-		//Configure::GetValue(value, "audit_account", audit_account_);
 		Configure::GetValue(value, "hardfork_points", hardfork_points_);
 		Configure::GetValue(value, "use_atom_map", use_atom_map_);
-		Configure::GetValue(value, "fees_vote_account", fees_vote_account_);
+
+		Configure::GetValue(value["tx_pool"], "queue_limit", queue_limit_);
+        Configure::GetValue(value["tx_pool"], "queue_per_account_txs_limit", queue_per_account_txs_limit_);
+
+		if (validation_privatekey_.empty()) {
+			PrivateKey tmp_priv(SIGNTYPE_ED25519);
+			validation_privatekey_ = tmp_priv.GetEncPrivateKey();
+		}
+		else {
+			validation_privatekey_ = utils::Aes::HexDecrypto(validation_privatekey_, GetDataSecuretKey());
+		}
+		close_interval_ = close_interval_ * utils::MICRO_UNITS_PER_SEC; //micro second
+
+		if (max_apply_ledger_per_round_ == 0
+			|| max_trans_in_memory_ / max_apply_ledger_per_round_ == 0) {
+			return false;
+		}
+		return true;
+	}
+
+	GenesisConfigure::GenesisConfigure() {
+		memset(&fees_, 0, sizeof(fees_));
+	}
+
+	GenesisConfigure::~GenesisConfigure() {}
+
+	bool GenesisConfigure::Load(const Json::Value &value) {
+		Configure::GetValue(value, "validators", validators_);
+		Configure::GetValue(value, "account", account_);
+		if (validators_.empty()) {
+			return false;
+		}
 
 		//for fee
 		Configure::GetValue(value["fees"], "byte_fee", fees_.byte_fee_);
@@ -147,39 +181,6 @@ namespace bumo {
 		Configure::GetValue(value["fees"], "set_sigure_weight_fee", fees_.set_sigure_weight_fee_);
 		Configure::GetValue(value["fees"], "set_threshold_fee", fees_.set_threshold_fee_);
 		Configure::GetValue(value["fees"], "pay_coin_fee", fees_.pay_coin_fee_);
-
-		if (max_apply_ledger_per_round_ == 0
-			|| max_trans_in_memory_ / max_apply_ledger_per_round_ == 0) {
-			return false;
-		}
-		return true;
-	}
-
-	ValidationConfigure::ValidationConfigure() {
-		close_interval_ = 10;
-		is_validator_ = false;
-	}
-
-	ValidationConfigure::~ValidationConfigure() {}
-
-	bool ValidationConfigure::Load(const Json::Value &value) {
-
-		Configure::GetValue(value, "type", type_);
-		Configure::GetValue(value, "is_validator", is_validator_);
-		Configure::GetValue(value, "node_private_key", node_privatekey_);
-		Configure::GetValue(value, "validators", validators_);
-		//Configure::GetValue(value, "close_interval", close_interval_);
-		if (validators_.empty()) {
-			return false;
-		}
-		if (node_privatekey_.empty()) {
-			PrivateKey tmp_priv(SIGNTYPE_ED25519);
-			node_privatekey_ = tmp_priv.GetEncPrivateKey();
-		}
-		else {
-			node_privatekey_ = utils::Aes::HexDecrypto(node_privatekey_, GetDataSecuretKey());
-		}
-		close_interval_ = close_interval_ * utils::MICRO_UNITS_PER_SEC; //micro second
 		return true;
 	}
 
@@ -209,7 +210,7 @@ namespace bumo {
 			!values.isMember("logger") ||
 			!values.isMember("p2p") ||
 			!values.isMember("ledger") ||
-			!values.isMember("validation")) {
+			!values.isMember("genesis")) {
 			LOG_STD_ERR("Some configuration not exist");
 			return false;
 		}
@@ -219,7 +220,7 @@ namespace bumo {
 		p2p_configure_.Load(values["p2p"]);
 		webserver_configure_.Load(values["webserver"]);
 		ledger_configure_.Load(values["ledger"]);
-		validation_configure_.Load(values["validation"]);
+		genesis_configure_.Load(values["genesis"]);
 		wsserver_configure_.Load(values["wsserver"]);
 		monitor_configure_.Load(values["monitor"]);
 		return true;

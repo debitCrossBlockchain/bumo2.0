@@ -88,6 +88,7 @@ namespace bumo {
 
 		server_ptr_->addRoute("getTransactionBlob", std::bind(&WebServer::GetTransactionBlob, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getTransactionHistory", std::bind(&WebServer::GetTransactionHistory, this, std::placeholders::_1, std::placeholders::_2));
+		server_ptr_->addRoute("getTransactionCache", std::bind(&WebServer::GetTransactionCache, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getContractTx", std::bind(&WebServer::GetContractTx, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getStatus", std::bind(&WebServer::GetStatus, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getLedger", std::bind(&WebServer::GetLedger, this, std::placeholders::_1, std::placeholders::_2));
@@ -97,7 +98,6 @@ namespace bumo {
 		server_ptr_->addRoute("getAddress", std::bind(&WebServer::GetAddress, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getTransactionFromBlob", std::bind(&WebServer::GetTransactionFromBlob, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getPeerNodeAddress", std::bind(&WebServer::GetPeerNodeAddress, this, std::placeholders::_1, std::placeholders::_2));
-		server_ptr_->addRoute("getExprResult", std::bind(&WebServer::GetExprResult, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getLedgerValidators", std::bind(&WebServer::GetLedgerValidators, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getPeerAddresses", std::bind(&WebServer::GetPeerAddresses, this, std::placeholders::_1, std::placeholders::_2));
 		
@@ -218,7 +218,7 @@ namespace bumo {
 		data["start_request_count"] = server_ptr_->start_count_;
 		data["end_request_count"] = server_ptr_->end_count_;
 		data["expire_request_count"] = server_ptr_->expire_count_;
-		data["thread_count"] = thread_count_;
+		data["thread_count"] = (Json::Int64)thread_count_;
 	}
 
 	uint16_t WebServer::GetListenPort(){

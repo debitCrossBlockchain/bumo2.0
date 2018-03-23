@@ -41,7 +41,9 @@ void protobuf_ShutdownFile_overlay_2eproto();
 
 class ChainHello;
 class ChainPeerMessage;
+class ChainResponse;
 class ChainStatus;
+class ChainSubscribeTx;
 class ChainTxStatus;
 class DontHave;
 class EntryList;
@@ -138,12 +140,15 @@ enum ChainMessageType {
   CHAIN_PEER_MESSAGE = 14,
   CHAIN_SUBMITTRANSACTION = 15,
   CHAIN_LEDGER_HEADER = 16,
+  CHAIN_SUBSCRIBE_TX = 17,
+  CHAIN_TX_ENV_STORE = 18,
+  CHAIN_RESPONSE = 19,
   ChainMessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   ChainMessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool ChainMessageType_IsValid(int value);
 const ChainMessageType ChainMessageType_MIN = CHAIN_TYPE_NONE;
-const ChainMessageType ChainMessageType_MAX = CHAIN_LEDGER_HEADER;
+const ChainMessageType ChainMessageType_MAX = CHAIN_RESPONSE;
 const int ChainMessageType_ARRAYSIZE = ChainMessageType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ChainMessageType_descriptor();
@@ -236,16 +241,16 @@ class Hello : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::int64 overlay_version() const;
   void set_overlay_version(::google::protobuf::int64 value);
 
-  // optional string BUMO_VERSION = 4;
-  void clear_BUMO_VERSION();
-  static const int kBubiVersionFieldNumber = 4;
-  const ::std::string& BUMO_VERSION() const;
-  void set_BUMO_VERSION(const ::std::string& value);
-  void set_BUMO_VERSION(const char* value);
-  void set_BUMO_VERSION(const char* value, size_t size);
-  ::std::string* mutable_BUMO_VERSION();
-  ::std::string* release_BUMO_VERSION();
-  void set_allocated_BUMO_VERSION(::std::string* BUMO_VERSION);
+  // optional string bumo_version = 4;
+  void clear_bumo_version();
+  static const int kBumoVersionFieldNumber = 4;
+  const ::std::string& bumo_version() const;
+  void set_bumo_version(const ::std::string& value);
+  void set_bumo_version(const char* value);
+  void set_bumo_version(const char* value, size_t size);
+  ::std::string* mutable_bumo_version();
+  ::std::string* release_bumo_version();
+  void set_allocated_bumo_version(::std::string* bumo_version);
 
   // optional int64 listening_port = 5;
   void clear_listening_port();
@@ -283,7 +288,7 @@ class Hello : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::int64 network_id_;
   ::google::protobuf::int64 ledger_version_;
   ::google::protobuf::int64 overlay_version_;
-  ::google::protobuf::internal::ArenaStringPtr BUMO_VERSION_;
+  ::google::protobuf::internal::ArenaStringPtr bumo_version_;
   ::google::protobuf::int64 listening_port_;
   ::google::protobuf::internal::ArenaStringPtr node_address_;
   ::google::protobuf::internal::ArenaStringPtr node_rand_;
@@ -1310,16 +1315,16 @@ class ChainStatus : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::int64 monitor_version() const;
   void set_monitor_version(::google::protobuf::int64 value);
 
-  // optional string BUMO_VERSION = 4;
-  void clear_BUMO_VERSION();
-  static const int kBubiVersionFieldNumber = 4;
-  const ::std::string& BUMO_VERSION() const;
-  void set_BUMO_VERSION(const ::std::string& value);
-  void set_BUMO_VERSION(const char* value);
-  void set_BUMO_VERSION(const char* value, size_t size);
-  ::std::string* mutable_BUMO_VERSION();
-  ::std::string* release_BUMO_VERSION();
-  void set_allocated_BUMO_VERSION(::std::string* BUMO_VERSION);
+  // optional string bumo_version = 4;
+  void clear_bumo_version();
+  static const int kBumoVersionFieldNumber = 4;
+  const ::std::string& bumo_version() const;
+  void set_bumo_version(const ::std::string& value);
+  void set_bumo_version(const char* value);
+  void set_bumo_version(const char* value, size_t size);
+  ::std::string* mutable_bumo_version();
+  ::std::string* release_bumo_version();
+  void set_allocated_bumo_version(::std::string* bumo_version);
 
   // optional int64 timestamp = 5;
   void clear_timestamp();
@@ -1335,7 +1340,7 @@ class ChainStatus : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::internal::ArenaStringPtr self_addr_;
   ::google::protobuf::int64 ledger_version_;
   ::google::protobuf::int64 monitor_version_;
-  ::google::protobuf::internal::ArenaStringPtr BUMO_VERSION_;
+  ::google::protobuf::internal::ArenaStringPtr bumo_version_;
   ::google::protobuf::int64 timestamp_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
@@ -1460,6 +1465,192 @@ class ChainPeerMessage : public ::google::protobuf::Message /* @@protoc_insertio
 
   void InitAsDefaultInstance();
   static ChainPeerMessage* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ChainSubscribeTx : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainSubscribeTx) */ {
+ public:
+  ChainSubscribeTx();
+  virtual ~ChainSubscribeTx();
+
+  ChainSubscribeTx(const ChainSubscribeTx& from);
+
+  inline ChainSubscribeTx& operator=(const ChainSubscribeTx& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ChainSubscribeTx& default_instance();
+
+  void Swap(ChainSubscribeTx* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ChainSubscribeTx* New() const { return New(NULL); }
+
+  ChainSubscribeTx* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ChainSubscribeTx& from);
+  void MergeFrom(const ChainSubscribeTx& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ChainSubscribeTx* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated string address = 1;
+  int address_size() const;
+  void clear_address();
+  static const int kAddressFieldNumber = 1;
+  const ::std::string& address(int index) const;
+  ::std::string* mutable_address(int index);
+  void set_address(int index, const ::std::string& value);
+  void set_address(int index, const char* value);
+  void set_address(int index, const char* value, size_t size);
+  ::std::string* add_address();
+  void add_address(const ::std::string& value);
+  void add_address(const char* value);
+  void add_address(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& address() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_address();
+
+  // @@protoc_insertion_point(class_scope:protocol.ChainSubscribeTx)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> address_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static ChainSubscribeTx* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ChainResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainResponse) */ {
+ public:
+  ChainResponse();
+  virtual ~ChainResponse();
+
+  ChainResponse(const ChainResponse& from);
+
+  inline ChainResponse& operator=(const ChainResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ChainResponse& default_instance();
+
+  void Swap(ChainResponse* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ChainResponse* New() const { return New(NULL); }
+
+  ChainResponse* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ChainResponse& from);
+  void MergeFrom(const ChainResponse& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ChainResponse* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 error_code = 1;
+  void clear_error_code();
+  static const int kErrorCodeFieldNumber = 1;
+  ::google::protobuf::int32 error_code() const;
+  void set_error_code(::google::protobuf::int32 value);
+
+  // optional string error_desc = 2;
+  void clear_error_desc();
+  static const int kErrorDescFieldNumber = 2;
+  const ::std::string& error_desc() const;
+  void set_error_desc(const ::std::string& value);
+  void set_error_desc(const char* value);
+  void set_error_desc(const char* value, size_t size);
+  ::std::string* mutable_error_desc();
+  ::std::string* release_error_desc();
+  void set_allocated_error_desc(::std::string* error_desc);
+
+  // @@protoc_insertion_point(class_scope:protocol.ChainResponse)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr error_desc_;
+  ::google::protobuf::int32 error_code_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static ChainResponse* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1696,48 +1887,48 @@ inline void Hello::set_overlay_version(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.Hello.overlay_version)
 }
 
-// optional string BUMO_VERSION = 4;
-inline void Hello::clear_BUMO_VERSION() {
-  BUMO_VERSION_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional string bumo_version = 4;
+inline void Hello::clear_bumo_version() {
+  bumo_version_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& Hello::BUMO_VERSION() const {
-  // @@protoc_insertion_point(field_get:protocol.Hello.BUMO_VERSION)
-  return BUMO_VERSION_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline const ::std::string& Hello::bumo_version() const {
+  // @@protoc_insertion_point(field_get:protocol.Hello.bumo_version)
+  return bumo_version_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Hello::set_BUMO_VERSION(const ::std::string& value) {
+inline void Hello::set_bumo_version(const ::std::string& value) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Hello.BUMO_VERSION)
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Hello.bumo_version)
 }
-inline void Hello::set_BUMO_VERSION(const char* value) {
+inline void Hello::set_bumo_version(const char* value) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Hello.BUMO_VERSION)
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Hello.bumo_version)
 }
-inline void Hello::set_BUMO_VERSION(const char* value, size_t size) {
+inline void Hello::set_bumo_version(const char* value, size_t size) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Hello.BUMO_VERSION)
+  // @@protoc_insertion_point(field_set_pointer:protocol.Hello.bumo_version)
 }
-inline ::std::string* Hello::mutable_BUMO_VERSION() {
+inline ::std::string* Hello::mutable_bumo_version() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.Hello.BUMO_VERSION)
-  return BUMO_VERSION_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:protocol.Hello.bumo_version)
+  return bumo_version_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* Hello::release_BUMO_VERSION() {
-  // @@protoc_insertion_point(field_release:protocol.Hello.BUMO_VERSION)
+inline ::std::string* Hello::release_bumo_version() {
+  // @@protoc_insertion_point(field_release:protocol.Hello.bumo_version)
   
-  return BUMO_VERSION_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return bumo_version_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Hello::set_allocated_BUMO_VERSION(::std::string* BUMO_VERSION) {
-  if (BUMO_VERSION != NULL) {
+inline void Hello::set_allocated_bumo_version(::std::string* bumo_version) {
+  if (bumo_version != NULL) {
     
   } else {
     
   }
-  BUMO_VERSION_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), BUMO_VERSION);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Hello.BUMO_VERSION)
+  bumo_version_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), bumo_version);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Hello.bumo_version)
 }
 
 // optional int64 listening_port = 5;
@@ -2547,48 +2738,48 @@ inline void ChainStatus::set_monitor_version(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.ChainStatus.monitor_version)
 }
 
-// optional string BUMO_VERSION = 4;
-inline void ChainStatus::clear_BUMO_VERSION() {
-  BUMO_VERSION_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional string bumo_version = 4;
+inline void ChainStatus::clear_bumo_version() {
+  bumo_version_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& ChainStatus::BUMO_VERSION() const {
-  // @@protoc_insertion_point(field_get:protocol.ChainStatus.BUMO_VERSION)
-  return BUMO_VERSION_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline const ::std::string& ChainStatus::bumo_version() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainStatus.bumo_version)
+  return bumo_version_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ChainStatus::set_BUMO_VERSION(const ::std::string& value) {
+inline void ChainStatus::set_bumo_version(const ::std::string& value) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.ChainStatus.BUMO_VERSION)
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.ChainStatus.bumo_version)
 }
-inline void ChainStatus::set_BUMO_VERSION(const char* value) {
+inline void ChainStatus::set_bumo_version(const char* value) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.ChainStatus.BUMO_VERSION)
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.ChainStatus.bumo_version)
 }
-inline void ChainStatus::set_BUMO_VERSION(const char* value, size_t size) {
+inline void ChainStatus::set_bumo_version(const char* value, size_t size) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.ChainStatus.BUMO_VERSION)
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainStatus.bumo_version)
 }
-inline ::std::string* ChainStatus::mutable_BUMO_VERSION() {
+inline ::std::string* ChainStatus::mutable_bumo_version() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.ChainStatus.BUMO_VERSION)
-  return BUMO_VERSION_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:protocol.ChainStatus.bumo_version)
+  return bumo_version_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* ChainStatus::release_BUMO_VERSION() {
-  // @@protoc_insertion_point(field_release:protocol.ChainStatus.BUMO_VERSION)
+inline ::std::string* ChainStatus::release_bumo_version() {
+  // @@protoc_insertion_point(field_release:protocol.ChainStatus.bumo_version)
   
-  return BUMO_VERSION_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return bumo_version_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ChainStatus::set_allocated_BUMO_VERSION(::std::string* BUMO_VERSION) {
-  if (BUMO_VERSION != NULL) {
+inline void ChainStatus::set_allocated_bumo_version(::std::string* bumo_version) {
+  if (bumo_version != NULL) {
     
   } else {
     
   }
-  BUMO_VERSION_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), BUMO_VERSION);
-  // @@protoc_insertion_point(field_set_allocated:protocol.ChainStatus.BUMO_VERSION)
+  bumo_version_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), bumo_version);
+  // @@protoc_insertion_point(field_set_allocated:protocol.ChainStatus.bumo_version)
 }
 
 // optional int64 timestamp = 5;
@@ -2750,6 +2941,127 @@ inline void ChainPeerMessage::set_allocated_data(::std::string* data) {
   }
   data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
   // @@protoc_insertion_point(field_set_allocated:protocol.ChainPeerMessage.data)
+}
+
+// -------------------------------------------------------------------
+
+// ChainSubscribeTx
+
+// repeated string address = 1;
+inline int ChainSubscribeTx::address_size() const {
+  return address_.size();
+}
+inline void ChainSubscribeTx::clear_address() {
+  address_.Clear();
+}
+inline const ::std::string& ChainSubscribeTx::address(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ChainSubscribeTx.address)
+  return address_.Get(index);
+}
+inline ::std::string* ChainSubscribeTx::mutable_address(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.ChainSubscribeTx.address)
+  return address_.Mutable(index);
+}
+inline void ChainSubscribeTx::set_address(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:protocol.ChainSubscribeTx.address)
+  address_.Mutable(index)->assign(value);
+}
+inline void ChainSubscribeTx::set_address(int index, const char* value) {
+  address_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:protocol.ChainSubscribeTx.address)
+}
+inline void ChainSubscribeTx::set_address(int index, const char* value, size_t size) {
+  address_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainSubscribeTx.address)
+}
+inline ::std::string* ChainSubscribeTx::add_address() {
+  // @@protoc_insertion_point(field_add_mutable:protocol.ChainSubscribeTx.address)
+  return address_.Add();
+}
+inline void ChainSubscribeTx::add_address(const ::std::string& value) {
+  address_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:protocol.ChainSubscribeTx.address)
+}
+inline void ChainSubscribeTx::add_address(const char* value) {
+  address_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:protocol.ChainSubscribeTx.address)
+}
+inline void ChainSubscribeTx::add_address(const char* value, size_t size) {
+  address_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:protocol.ChainSubscribeTx.address)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+ChainSubscribeTx::address() const {
+  // @@protoc_insertion_point(field_list:protocol.ChainSubscribeTx.address)
+  return address_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+ChainSubscribeTx::mutable_address() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ChainSubscribeTx.address)
+  return &address_;
+}
+
+// -------------------------------------------------------------------
+
+// ChainResponse
+
+// optional int32 error_code = 1;
+inline void ChainResponse::clear_error_code() {
+  error_code_ = 0;
+}
+inline ::google::protobuf::int32 ChainResponse::error_code() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainResponse.error_code)
+  return error_code_;
+}
+inline void ChainResponse::set_error_code(::google::protobuf::int32 value) {
+  
+  error_code_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ChainResponse.error_code)
+}
+
+// optional string error_desc = 2;
+inline void ChainResponse::clear_error_desc() {
+  error_desc_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ChainResponse::error_desc() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainResponse.error_desc)
+  return error_desc_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ChainResponse::set_error_desc(const ::std::string& value) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.ChainResponse.error_desc)
+}
+inline void ChainResponse::set_error_desc(const char* value) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.ChainResponse.error_desc)
+}
+inline void ChainResponse::set_error_desc(const char* value, size_t size) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainResponse.error_desc)
+}
+inline ::std::string* ChainResponse::mutable_error_desc() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.ChainResponse.error_desc)
+  return error_desc_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ChainResponse::release_error_desc() {
+  // @@protoc_insertion_point(field_release:protocol.ChainResponse.error_desc)
+  
+  return error_desc_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ChainResponse::set_allocated_error_desc(::std::string* error_desc) {
+  if (error_desc != NULL) {
+    
+  } else {
+    
+  }
+  error_desc_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), error_desc);
+  // @@protoc_insertion_point(field_set_allocated:protocol.ChainResponse.error_desc)
 }
 
 // -------------------------------------------------------------------
@@ -2973,6 +3285,10 @@ inline void ChainTxStatus::set_timestamp(::google::protobuf::int64 value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

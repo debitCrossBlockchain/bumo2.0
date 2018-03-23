@@ -34,7 +34,7 @@ namespace bumo {
 
 		std::shared_ptr<Consensus> consensus_;
 	public:
-		bool Initialize(const ValidationConfigure &config);
+		bool Initialize(const std::string &validation_type);
 		bool Exit();
 		std::shared_ptr<Consensus> GetConsensus();
 

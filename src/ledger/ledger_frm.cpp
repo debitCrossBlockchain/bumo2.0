@@ -25,7 +25,21 @@
 #include "contract_manager.h"
 
 namespace bumo {
+
 #define COUNT_PER_PARTITION 1000000
+
+	ProposeTxsResult::ProposeTxsResult() :
+		block_timeout_(false),
+		exec_result_(false) {}
+
+	ProposeTxsResult::~ProposeTxsResult() {}
+
+	void ProposeTxsResult::SetApply(ProposeTxsResult &result) {
+		exec_result_ = result.exec_result_;
+		cons_validation_ = result.cons_validation_;
+		need_dropped_tx_ = result.need_dropped_tx_;
+	}
+
 	LedgerFrm::LedgerFrm() {
 		lpledger_context_ = NULL;
 		enabled_ = false;
@@ -35,7 +49,6 @@ namespace bumo {
 		is_test_mode_ = false;
 	}
 
-	
 	LedgerFrm::~LedgerFrm() {
 	}
 
@@ -80,10 +93,11 @@ namespace bumo {
 			//a transaction success so the transactions trigger by it can store
 			if (ptr->GetResult().code() == protocol::ERRCODE_SUCCESS)
 				for (size_t j = 0; j < ptr->instructions_.size(); j++){
-					protocol::TransactionEnvStore env_sto = ptr->instructions_.at(j);
+					protocol::TransactionEnvStore &env_sto = ptr->instructions_[j];
 					env_sto.set_ledger_seq(ledger_.header().seq());
 					env_sto.set_close_time(ledger_.header().close_time());
 					std::string hash = HashWrapper::Crypto(env_sto.transaction_env().transaction().SerializeAsString());
+					env_sto.set_hash(hash);
 					batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, hash), env_sto.SerializeAsString());
 					list.add_entry(hash);
 				}
@@ -135,10 +149,243 @@ namespace bumo {
 		return true;
 	}
 
-	bool LedgerFrm::Apply(const protocol::ConsensusValue& request,
+	bool LedgerFrm::CheckConsValueValidation(const protocol::ConsensusValue& request,
+		APPLY_MODE propose_mode,
+		std::set<int32_t> &expire_txs_status,
+		std::set<int32_t> &error_txs_status) {
+		
+		if (!request.has_validation()) {
+			return true;
+		}
+
+		std::set<int32_t> totol_error;
+		int32_t tx_size = request.txset().txs_size();
+		const protocol::ConsensusValueValidation &validation = request.validation();
+		for (int32_t i = 0; i < validation.expire_tx_ids_size(); i++) {
+			int32_t tid = validation.expire_tx_ids(i);
+			if (tid >= tx_size || tid < 0) {
+				LOG_ERROR("Propose value expire id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
+					tid, tx_size, request.ledger_seq());
+				return false;
+			}
+			expire_txs_status.insert(tid);
+
+			if (totol_error.find(tid) != totol_error.end()){
+				LOG_ERROR("Propose value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
+				return false;
+			}
+
+			totol_error.insert(tid);
+		}
+
+		for (int32_t i = 0; i < validation.error_tx_ids_size(); i++) {
+			int32_t tid = validation.error_tx_ids(i);
+			if (tid >= tx_size || tid < 0) {
+				LOG_ERROR("Propose value error id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
+					tid, tx_size, request.ledger_seq());
+				return false;
+			}
+			error_txs_status.insert(validation.error_tx_ids(i));
+
+			if (totol_error.find(tid) != totol_error.end()) {
+				LOG_ERROR("Propose value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
+				return false;
+			}
+			totol_error.insert(tid);
+		}
+
+		return true;
+	}
+
+	void LedgerFrm::SetValidationToProto(std::set<int32_t> expire_txs,
+		std::set<int32_t> error_txs,
+		protocol::ConsensusValueValidation &validation) {
+		for (std::set<int32_t>::iterator iter = expire_txs.begin();
+			iter != expire_txs.end();
+			iter++) {
+			validation.add_expire_tx_ids(*iter);
+		}
+		for (std::set<int32_t>::iterator iter = error_txs.begin();
+			iter != error_txs.end();
+			iter++) {
+			validation.add_error_tx_ids(*iter);
+		}
+	}
+
+	bool LedgerFrm::ApplyPropose(const protocol::ConsensusValue& request,
 		LedgerContext *ledger_context,
-		int64_t tx_time_out,
-		int32_t &tx_time_out_index) {
+		ProposeTxsResult &proposed_result) {
+
+		int64_t start_time = utils::Timestamp::HighResolution();
+		lpledger_context_ = ledger_context;
+		enabled_ = true;
+		value_ = std::make_shared<protocol::ConsensusValue>(request);
+		uint32_t success_count = 0;
+		total_fee_ = 0;
+		total_real_fee_ = 0;
+		environment_ = std::make_shared<Environment>(nullptr);
+
+		//init the txs map
+		std::set<int32_t> expire_txs, error_txs;
+
+		if (request.has_validation()) {
+			LOG_ERROR("Propose value can't hav validation object, consvalue seq(" FMT_I64 ")", request.ledger_seq());
+			return false;
+		}
+
+		for (int i = 0; i < request.txset().txs_size() && enabled_; i++) {
+			const protocol::TransactionEnv &txproto = request.txset().txs(i);
+
+			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
+
+			if (!tx_frm->ValidForApply(environment_, !IsTestMode())) {
+				dropped_tx_frms_.push_back(tx_frm);
+				proposed_result.need_dropped_tx_.insert(i); //for drop
+				continue;
+			}
+
+			//pay fee
+			if (!tx_frm->PayFee(environment_, total_fee_)) {
+				dropped_tx_frms_.push_back(tx_frm);
+				proposed_result.need_dropped_tx_.insert(i);//for drop
+				continue;
+			}
+
+			ledger_context->transaction_stack_.push_back(tx_frm);
+			tx_frm->NonceIncrease(this, environment_);
+			if (environment_->useAtomMap_) environment_->Commit();
+
+			tx_frm->EnableChecked();
+			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
+			
+			bool ret = tx_frm->Apply(this, environment_);
+			//caculate byte fee ,do not store when fee not enough 
+			std::string error_info;
+			if (tx_frm->IsExpire(error_info)) {
+				LOG_ERROR("transaction(%s) apply failed. %s, %s",
+					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
+					error_info.c_str());
+				expire_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
+			}
+			else {
+				if (!ret) {
+					LOG_ERROR("transaction(%s) apply failed. %s",
+						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
+					error_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
+				}
+				else {
+					tx_frm->environment_->Commit();
+				}
+			}
+
+			environment_->ClearChangeBuf();
+			total_real_fee_ += tx_frm->GetRealFee();
+			apply_tx_frms_.push_back(tx_frm);
+			ledger_.add_transaction_envs()->CopyFrom(txproto);
+			ledger_context->transaction_stack_.pop_back();
+
+			if ( utils::Timestamp::HighResolution() - start_time > General::BLOCK_EXECUTE_TIME_OUT) {
+				LOG_ERROR("Block apply time timeout(" FMT_I64 ") ", utils::Timestamp::HighResolution() - start_time);
+				return false;
+			}
+		}
+
+		AllocateReward();
+
+		SetValidationToProto(expire_txs, error_txs, proposed_result.cons_validation_);
+
+		apply_time_ = utils::Timestamp::HighResolution() - start_time;
+		return true;
+	}
+
+	bool LedgerFrm::ApplyCheck(const protocol::ConsensusValue& request,
+		LedgerContext *ledger_context) {
+
+		int64_t start_time = utils::Timestamp::HighResolution();
+		lpledger_context_ = ledger_context;
+		enabled_ = true;
+		value_ = std::make_shared<protocol::ConsensusValue>(request);
+		uint32_t success_count = 0;
+		total_fee_ = 0;
+		total_real_fee_ = 0;
+		environment_ = std::make_shared<Environment>(nullptr);
+
+		//init the txs map
+		std::set<int32_t> expire_txs_check,  error_txs_check;
+		std::set<int32_t> expire_txs,  error_txs;
+		if (!CheckConsValueValidation(request, LedgerFrm::APPLY_MODE_CHECK, expire_txs_check,  error_txs_check)) {
+			LOG_ERROR("Check consensus value validation failed,consvalue seq(" FMT_I64 ")", request.ledger_seq());
+			return false;
+		}
+
+		for (int i = 0; i < request.txset().txs_size() && enabled_; i++) {
+			auto txproto = request.txset().txs(i);
+
+			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
+
+			if (!tx_frm->ValidForApply(environment_, !IsTestMode())) {
+				LOG_ERROR("Check consensus value failed, valid for apply failed, seq(" FMT_I64 ")", request.ledger_seq());
+				return false;
+			}
+
+			//pay fee
+			if (!tx_frm->PayFee(environment_, total_fee_)) {
+				LOG_ERROR("Check consensus value failed, pay fee failed, seq(" FMT_I64 ")", request.ledger_seq());
+				return false;
+			}
+
+			ledger_context->transaction_stack_.push_back(tx_frm);
+			tx_frm->NonceIncrease(this, environment_);
+			if (environment_->useAtomMap_) environment_->Commit();
+
+			tx_frm->EnableChecked();
+			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
+
+			bool ret = tx_frm->Apply(this, environment_);
+			//caculate byte fee ,do not store when fee not enough 
+			std::string error_info;
+			if (tx_frm->IsExpire(error_info)) {
+				LOG_ERROR("transaction(%s) apply failed. %s, %s",
+					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
+					error_info.c_str());
+				expire_txs.insert(i);//for check
+			}
+			else {
+				if (!ret) {
+					LOG_ERROR("transaction(%s) apply failed. %s",
+						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
+					error_txs.insert(i);//for check
+				}
+				else {
+					tx_frm->environment_->Commit();
+				}
+			}
+
+			environment_->ClearChangeBuf();
+			total_real_fee_ += tx_frm->GetRealFee();
+			apply_tx_frms_.push_back(tx_frm);
+			ledger_.add_transaction_envs()->CopyFrom(txproto);
+			ledger_context->transaction_stack_.pop_back();
+
+			if (utils::Timestamp::HighResolution() - start_time > General::BLOCK_EXECUTE_TIME_OUT) {
+				LOG_ERROR("Block apply time timeout(" FMT_I64 ") ", utils::Timestamp::HighResolution() - start_time);
+				return false;
+			}
+		}
+		AllocateReward();
+		apply_time_ = utils::Timestamp::HighResolution() - start_time;
+
+		bool ret = (expire_txs == expire_txs_check && error_txs == error_txs_check);
+		if (!ret) {
+			LOG_ERROR("Check validation failed this size(%d,%d), check size(%d,%d) ",
+				expire_txs.size(), error_txs.size(),
+				expire_txs_check.size(), error_txs_check.size());
+		}
+		return ret;
+	}
+
+	bool LedgerFrm::ApplyFollow(const protocol::ConsensusValue& request,
+		LedgerContext *ledger_context) {
 
 		int64_t start_time = utils::Timestamp::HighResolution();
 		lpledger_context_ = ledger_context;
@@ -149,69 +396,75 @@ namespace bumo {
 		total_real_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
+		//init the txs map
+		std::set<int32_t> expire_txs_check, error_txs_check;
+		std::set<int32_t> expire_txs, error_txs;
+		if (!CheckConsValueValidation(request, LedgerFrm::APPLY_MODE_CHECK, expire_txs_check, error_txs_check)) {
+			LOG_ERROR("Check consensus value validation failed,consvalue seq(" FMT_I64 ")", request.ledger_seq());
+			return false;
+		}
+
 		for (int i = 0; i < request.txset().txs_size() && enabled_; i++) {
 			auto txproto = request.txset().txs(i);
 			
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
 
 			if (!tx_frm->ValidForApply(environment_,!IsTestMode())){
-				dropped_tx_frms_.push_back(tx_frm);
+				LOG_WARN("Should not go hear");
 				continue;
 			}
 
 			//pay fee
 			if (!tx_frm->PayFee(environment_, total_fee_)) {
-				dropped_tx_frms_.push_back(tx_frm);
+				LOG_WARN("Should not go hear");
 				continue;
 			}
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
-			if (environment_->useAtomMap_)
-				environment_->Commit();
+			if (environment_->useAtomMap_) environment_->Commit();
 
-			if (tx_time_out > 0 ) {
-				tx_frm->EnableChecked();
-				tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + tx_time_out);
-			} 
 
-			bool ret = tx_frm->Apply(this, environment_);
-
-			//caculate byte fee ,do not store when fee not enough 
-			std::string error_info;
-			if (tx_frm->IsExpire(error_info)) { //special treatment, return false
-				LOG_ERROR("transaction(%s) apply failed. %s, %s",
-					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-					error_info.c_str());
-				tx_time_out_index = i;
-				return false;
-			} if (tx_frm->GetContractStep() > General::CONTRACT_STEP_LIMIT) {
-				LOG_ERROR("transaction(%s) apply failed. %s, step(%d > %d)",
-					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-					tx_frm->GetContractStep(), General::CONTRACT_STEP_LIMIT);
-				tx_time_out_index = i;
-				return false;
+			if ( expire_txs_check.find(i) != expire_txs_check.end()) {
+				// follow the consensus value and do not apply
+				tx_frm->AddRealFee(tx_frm->GetSelfByteFee());
+				tx_frm->ApplyExpireResult();
 			}
-			 else {
-				if (!ret ) {
-					LOG_ERROR("transaction(%s) apply failed. %s",
-						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
-					tx_time_out_index = i;
+			else {
+				bool ret = tx_frm->Apply(this, environment_);
+				if (!ret) {
+						LOG_ERROR("transaction(%s) apply failed. %s",
+							utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
+						error_txs.insert(i);//for check
 				}
 				else {
-					tx_frm->environment_->Commit();
+						tx_frm->environment_->Commit();
 				}
 			}
 
-			tx_frm->environment_->ClearChangeBuf();
+			environment_->ClearChangeBuf();
 			total_real_fee_ += tx_frm->GetRealFee();
 			apply_tx_frms_.push_back(tx_frm);			
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
+
 		}
-		AllocateFee();
+		AllocateReward();
 		apply_time_ = utils::Timestamp::HighResolution() - start_time;
+
+		if (!(expire_txs == expire_txs_check &&
+			error_txs == error_txs_check)) {
+			LOG_ERROR("Should not go hear, check validation failed this size(%d,%d), check size(%d,%d) ",
+				expire_txs.size(), error_txs.size(),
+				expire_txs_check.size(), error_txs_check.size());
+		}
 		return true;
+
+	//	LOG_INFO("Check validation this size(%d,%d,%d), check size(%d,%d,%d), validation(%d,%d,%d) ",
+	//		expire_txs.size(), droped_txs.size(), error_txs.size(),
+	//		expire_txs_check.size(), droped_txs_check.size(), error_txs_check.size(),
+	//		validation.expire_tx_ids_size(), validation.droped_tx_ids_size(), validation.error_tx_ids_size());
+		//check
 	}
 
 	bool LedgerFrm::CheckValidation() {
@@ -269,8 +522,10 @@ namespace bumo {
 		return true;
 	}
 
-	bool LedgerFrm::AllocateFee() {
-		if (total_fee_ == 0 || IsTestMode()) {
+	bool LedgerFrm::AllocateReward() {
+		int64_t block_reward = GetBlockReward(ledger_.header().seq());
+		int64_t total_reward = total_fee_ + block_reward;
+		if (total_reward == 0 || IsTestMode()) {
 			return true;
 		}
 
@@ -293,14 +548,16 @@ namespace bumo {
 			average_allocte = true;
 		}
 
-		int64_t tfee = total_fee_;
+		int64_t left_reward = total_reward;
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = ledger_.header().seq() % set.validators_size();
-		int64_t average_fee = tfee / set.validators_size();
+		int64_t average_fee = total_reward / set.validators_size();
+		LOG_INFO("total reward(" FMT_I64 ") = total fee(" FMT_I64 ") + block reward(" FMT_I64 ") in ledger(" FMT_I64 ")", total_reward, total_fee_, block_reward, ledger_.header().seq());
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
 			if (!environment_->GetEntry(set.validators(i).address(), account)) {
-				account = CreatBookKeeperAccount(set.validators(i).address());
+				account = AccountFrm::CreatAccountFrm(set.validators(i).address(), 0);
+				environment_->AddEntry(account->GetAccountAddress(), account);
 			}
 			if (random_index == i) {
 				random_account = account;
@@ -311,30 +568,21 @@ namespace bumo {
 				fee = average_fee;
 			}
 			else {
-				fee = tfee*set.validators(i).pledge_coin_amount() / total_pledge_amount;;
+				fee = total_reward*set.validators(i).pledge_coin_amount() / total_pledge_amount;
 			}
-			tfee -= fee;
+			left_reward -= fee;
+			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
 			proto_account.set_balance(proto_account.balance() + fee);
 		}
-		if (tfee > 0) {
+		if (left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
-			proto_account.set_balance(proto_account.balance() + tfee);
+			proto_account.set_balance(proto_account.balance() + left_reward);
+			LOG_TRACE("Account(%s) allocate last reward(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
 		}
+		if (environment_->useAtomMap_)
+			environment_->Commit();
 		return true;
-	}
-
-	AccountFrm::pointer LedgerFrm::CreatBookKeeperAccount(const std::string& account_address) {
-		protocol::Account acc;
-		acc.set_address(account_address);
-		acc.set_nonce(0);
-		acc.set_balance(0);
-		AccountFrm::pointer acc_frm = std::make_shared<AccountFrm>(acc);
-		acc_frm->SetProtoMasterWeight(1);
-		acc_frm->SetProtoTxThreshold(1);
-		environment_->AddEntry(acc_frm->GetAccountAddress(), acc_frm);
-		LOG_INFO("Add bookeeper account(%s)", account_address.c_str());
-		return acc_frm;
 	}
 
 	void LedgerFrm::SetTestMode(bool test_mode){

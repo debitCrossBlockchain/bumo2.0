@@ -74,105 +74,6 @@ namespace bumo {
 		DelValue(PbftDesc::VIEW_CHANGE_NAME);
 	}
 
-	int32_t Pbft::LoadInstance() {
-		do {
-			std::string str_instance;
-			int32_t ret = LoadValue(PbftDesc::INSTANCE_NAME, str_instance);
-			if (ret <= 0) {
-				LOG_INFO("Load instances nothing");
-				return ret;
-			}
-			else if (ret == 0) {
-				return ret;
-			}
-
-			Json::Value json_instance;
-			if (!json_instance.fromString(str_instance)) {
-				LOG_ERROR("Parse loaded instances failed, string instances(%s)", str_instance.c_str());
-				return -1;
-			}
-
-			for (uint32_t i = 0; i < json_instance.size(); i++) {
-				const Json::Value &item = json_instance[i];
-
-				PbftInstanceIndex index(item["view_number"].asInt64(), item["sequence"].asInt64());
-				PbftInstance &instance = instances_[index];
-
-				//for stable tag
-				instance.phase_ = (PbftInstancePhase)item["phase"].asUInt();
-				instance.phase_item_ = item["phase_item"].asUInt();
-
-				//for message buffer
-				const Json::Value &msg_buffer_json = item["msg_buffer"];
-				for (uint32_t m = 0; m < msg_buffer_json.size(); m++) {
-					PbftPhaseVector pv;
-					const Json::Value &msg_item_json = msg_buffer_json[m];
-					for (uint32_t n = 0; n < msg_item_json.size(); n++) {
-						protocol::PbftEnv env;
-						if (!env.ParseFromString(utils::String::HexStringToBin(msg_item_json[n].asString()))) {
-							LOG_ERROR("Consensus load instance, parse message buffer string failed");
-							continue;
-						}
-						pv.push_back(env);
-					}
-					instance.msg_buf_[m] = pv;
-				}
-
-				//for pre-prepare message
-				if (item.isMember("pre_prepare_msg") && !item["pre_prepare_msg"].asString().empty()) {
-					if (!instance.pre_prepare_msg_.ParseFromString(utils::String::HexStringToBin(item["pre_prepare_msg"].asString()))) {
-						LOG_ERROR("Consensus load instance, parse pre-prepare message string failed");
-					}
-				}
-
-				//for tags
-				instance.start_time_ = item["start_time"].asInt64();
-				instance.end_time_ = item["end_time"].asInt64();
-				instance.last_propose_time_ = item["last_propose_time"].asInt64();
-				instance.have_send_viewchange_ = item["have_send_viewchange"].asBool();
-				instance.pre_prepare_round_ = item["pre_prepare_round"].asUInt();
-				//instance.check_value_result_ = item["check_value_result"].asInt(); should check again
-				instance.last_commit_send_time_ = item["last_commit_send_time"].asInt64();
-
-				if (instance.end_time_ == 0) {
-					instance.start_time_ = utils::Timestamp::HighResolution();
-				}
-
-				//for pre-prepare
-				if (!instance.pre_prepare_.ParseFromString(utils::String::HexStringToBin(item["pre_prepare"].asString()))) {
-					LOG_ERROR("Consensus load instance, parse pre-prepare string failed");
-				}
-				//for prepare
-				const Json::Value &prepares = item["prepares"];
-				for (Json::ValueConstIterator iter = prepares.begin(); iter != prepares.end(); iter++) {
-					std::string key = iter.memberName();
-					std::string prepare_str = utils::String::HexStringToBin(prepares[key].asString());
-					protocol::PbftPrepare ppre;
-					if (!ppre.ParseFromString(prepare_str)) {
-						LOG_ERROR("Consensus load instance, parse prepare string failed");
-						continue;
-					}
-					instance.prepares_.insert(std::make_pair(utils::String::Stoi64(key), ppre));
-				}
-				//for commit
-				const Json::Value &commits = item["commits"];
-				for (Json::ValueConstIterator iter = commits.begin(); iter != commits.end(); iter++) {
-					std::string key = iter.memberName();
-					std::string value = utils::String::HexStringToBin(commits[key].asString());
-					protocol::PbftCommit commit;
-					if (!commit.ParseFromString(value)) {
-						LOG_ERROR("Consensus load instance, parse commit string failed");
-						continue;
-					}
-					instance.commits_.insert(std::make_pair(utils::String::Stoi64(key), commit));
-				}
-
-			}
-		} while (false);
-
-		return 1;
-	}
-
 	int32_t Pbft::LoadVcInstance() {
 		do {
 			std::string str_instance;
@@ -264,13 +165,10 @@ namespace bumo {
 
 			int64_t counter = 0;
 			protocol::ValidatorSet proto_validators;
-			for (auto it = json_instance.begin(); it != json_instance.end(); it++){
-				std::string address = it.memberName();
-				int64_t amount      = json_instance[it.memberName()].asInt64();
-
+			for (uint32_t i = 0; i < json_instance.size(); i++) {
 				auto validator = proto_validators.add_validators();
-				validator->set_address(address);
-				validator->set_pledge_coin_amount(amount);
+				validator->set_address(json_instance[i].asString());
+				validator->set_pledge_coin_amount(0);
 			}
 
 			Consensus::UpdateValidators(proto_validators);
@@ -283,9 +181,7 @@ namespace bumo {
 		Json::Value total = Json::Value(Json::arrayValue);
 		std::vector<std::string> vec_validators;
 		vec_validators.resize(validators_.size());
-		for (std::map<std::string, int64_t>::iterator iter = validators_.begin();
-			iter != validators_.end();
-			iter++) {
+		for (auto iter = validators_.begin(); iter != validators_.end(); iter++) {
 			vec_validators[(uint32_t)iter->second] = iter->first;
 		}
 
@@ -332,60 +228,6 @@ namespace bumo {
 		}
 
 		saver.SaveValue(PbftDesc::VIEW_CHANGE_NAME, total.toFastString());
-
-		return true;
-	}
-
-	bool Pbft::SaveInstance(ValueSaver &saver) {
-		Json::Value total = Json::Value(Json::arrayValue);
-		for (PbftInstanceMap::const_iterator iter = instances_.begin(); iter != instances_.end(); iter++) {
-			const PbftInstanceIndex &index = iter->first;
-			const PbftInstance &instance = iter->second;
-			Json::Value &item = total[total.size()];
-			item["sequence"] = index.sequence_;
-			item["view_number"] = index.view_number_;
-
-			//for tags
-			item["phase"] = instance.phase_;
-			item["phase_item"] = instance.phase_item_;
-			item["start_time"] = instance.start_time_;
-			item["end_time"] = instance.end_time_;
-			item["last_propose_time"] = instance.last_propose_time_;
-			item["have_send_viewchange"] = instance.have_send_viewchange_;
-			item["pre_prepare_round"] = instance.pre_prepare_round_;
-			item["check_value_result"] = instance.check_value_result_;
-			item["last_commit_send_time"] = instance.last_commit_send_time_;
-
-			//for message buffer
-			Json::Value &msg_buffer_json = item["msg_buffer"];
-			for (PbftPhaseVector2::const_iterator iter_msg = instance.msg_buf_.begin(); iter_msg != instance.msg_buf_.end(); iter_msg++) {
-				Json::Value &msg_buffer_item_json = msg_buffer_json[msg_buffer_json.size()];
-				const PbftPhaseVector &pitem = *iter_msg;
-				for (PbftPhaseVector::const_iterator iter_item = pitem.begin(); iter_item != pitem.end(); iter_item++) {
-					msg_buffer_item_json[msg_buffer_item_json.size()] = utils::String::BinToHexString(iter_item->SerializeAsString());
-				}
-			}
-
-			//for pre-prepare message
-			if (instance.pre_prepare_msg_.has_pbft()) item["pre_prepare_msg"] = utils::String::BinToHexString(instance.pre_prepare_msg_.SerializeAsString());
-
-			//for pre-prepare
-			item["pre_prepare"] = utils::String::BinToHexString(instance.pre_prepare_.SerializeAsString());
-
-			//for prepare
-			Json::Value &prepares = item["prepares"];
-			for (PbftPrepareMap::const_iterator iter = instance.prepares_.begin(); iter != instance.prepares_.end(); iter++) {
-				prepares[utils::String::ToString(iter->first)] = utils::String::BinToHexString(iter->second.SerializeAsString());
-			}
-
-			//for commit
-			Json::Value &commmits = item["commits"];
-			for (PbftCommitMap::const_iterator iter = instance.commits_.begin(); iter != instance.commits_.end(); iter++) {
-				commmits[utils::String::ToString(iter->first)] = utils::String::BinToHexString(iter->second.SerializeAsString());
-			}
-		}
-
-		saver.SaveValue(PbftDesc::INSTANCE_NAME, total.toFastString());
 
 		return true;
 	}
@@ -780,7 +622,7 @@ namespace bumo {
 
 			if (!in_water) LOG_TRACE("The message(type:%s) sequence(" FMT_I64 ") is not in water mark(" FMT_I64 ", " FMT_I64"), desc(%s)", PbftDesc::GetMessageTypeDesc(pbft.type()),
 				sequence, last_exe_seq_, last_exe_seq_ + ckp_interval_, PbftDesc::GetPbft(pbft).c_str());
-			if (!same_view)	LOG_ERROR("The message(type:%s) view number(" FMT_I64 ") != this view number(" FMT_I64 "), desc(%s)", PbftDesc::GetMessageTypeDesc(pbft.type()),
+			if (!same_view)	LOG_TRACE("The message(type:%s) view number(" FMT_I64 ") != this view number(" FMT_I64 "), desc(%s)", PbftDesc::GetMessageTypeDesc(pbft.type()),
 				view_number, view_number_, PbftDesc::GetPbft(pbft).c_str());
 			if (sequence > last_exe_seq_) {
 				if (pbft.type() == protocol::PBFT_TYPE_COMMIT) {
@@ -799,16 +641,10 @@ namespace bumo {
 			return NULL;
 		}
 
-		//get last sequence, and insert the middle instance to map
-		int64_t last_seq = sequence - 1;
-		PbftInstanceMap::const_reverse_iterator iter = instances_.rbegin();
-		if (iter != instances_.rend()) {
-			last_seq = iter->first.sequence_;
-		}
 
-		for (int64_t tmp_seq = last_seq + 1; tmp_seq <= sequence && last_exe_seq_ < tmp_seq; tmp_seq++) {
-			PbftInstanceIndex index(view_number, tmp_seq);
-			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, tmp_seq);
+		if (sequence > last_exe_seq_) {
+			PbftInstanceIndex index(view_number, sequence);
+			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, sequence);
 			instances_.insert(std::make_pair(index, PbftInstance()));
 		}
 
@@ -821,10 +657,6 @@ namespace bumo {
 
 		PbftInstance &instace = instances_[index];
 		instace.msg_buf_[pbft.type()].push_back(env);
-
-		//ValueSaver saver;
-		//SaveInstance(saver);
-		//saver.Commit();
 
 		return &instace;
 	}
@@ -945,8 +777,8 @@ namespace bumo {
 			return true;
 		}
 
-		LOG_INFO("Send prepare message, view number(" FMT_I64 "),sequence(" FMT_I64 "), round number(1), value(%s)",
-			pre_prepare.view_number(), pre_prepare.sequence(), notify_->DescConsensusValue(pre_prepare.value()).c_str());
+		LOG_INFO("Send prepare message, view number(" FMT_I64 "), replica id(" FMT_I64 ") sequence(" FMT_I64 "), round number(1), value(%s)",
+			pre_prepare.view_number(), replica_id_, pre_prepare.sequence(), notify_->DescConsensusValue(pre_prepare.value()).c_str());
 		//NewPrepare();
 		PbftEnvPointer prepare_msg = NewPrepare(pre_prepare, 1);
 		if (!SendMessage(prepare_msg)) {
@@ -958,7 +790,6 @@ namespace bumo {
 	}
 
 	bool Pbft::OnPrepare(const protocol::Pbft &pbft, PbftInstance &pinstance) {
-		LOG_INFO("Receive prepare");
 		const protocol::PbftPrepare &prepare = pbft.prepare();
 		if (CompareValue(pinstance.pre_prepare_.value_digest(), prepare.value_digest()) != 0) {
 			LOG_ERROR("The message prepare value(%s) != this pre-prepare value(%s) , desc(%s)",
@@ -1235,7 +1066,7 @@ namespace bumo {
 
 			std::map<int64_t, protocol::PbftEnv>::iterator iter = pre_prepares.find(pre_prepare.replica_id());
 			if (iter == pre_prepares.end()) {
-				LOG_ERROR("The new view message(number:" FMT_I64 ")', check the computed pre-prepare message failed",
+				LOG_ERROR("The new view message(number:" FMT_I64 "), check the computed pre-prepare message failed",
 					new_view.view_number());
 				compare_ret = false;
 				break;
@@ -1247,7 +1078,7 @@ namespace bumo {
 				pre_prepare_comp.view_number() != pre_prepare.view_number() ||
 				pre_prepare_comp.replica_id() != pre_prepare.replica_id() ||
 				CompareValue(pre_prepare_comp.value(), pre_prepare.value()) != 0) {
-				LOG_ERROR("The new view message(number:" FMT_I64 ")', check the computed pre-prepare message failed",
+				LOG_ERROR("The new view message(number:" FMT_I64 "), check the computed pre-prepare message failed",
 					new_view.view_number());
 				compare_ret = false;
 				break;
@@ -1284,7 +1115,7 @@ namespace bumo {
 			//saver.SaveValue(PbftDesc::SEQUENCE_NAME, sequence_);
 		}
 
-		LOG_INFO("Replica enter the new view(number:" FMT_I64 ")", new_view.view_number());
+		LOG_INFO("Replica(id: " FMT_I64 ") enter the new view(number:" FMT_I64 ")", replica_id_, new_view.view_number());
 		//enter to new view
 		view_number_ = new_view.view_number();
 		view_active_ = true;
@@ -1576,7 +1407,7 @@ namespace bumo {
 
 			//delete the older check point
 			for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end();) {
-				if (iter->first.sequence_ <= index.sequence_ - ckp_interval_) {
+				if (iter->first.sequence_ <= index.sequence_ - ckp_interval_ / 2) {
 					instances_.erase(iter++);
 				} 
 				else {
@@ -1668,7 +1499,7 @@ namespace bumo {
 
 		protocol::PbftViewChange *pviewchange = pbft->mutable_view_change();
 		pviewchange->set_view_number(view_number);
-		pviewchange->set_sequence(0);
+		pviewchange->set_sequence(last_exe_seq_);
 		pviewchange->set_replica_id(replica_id_);
 		//add prepared msg large than lastest checkpoint's sequence
 		for (PbftInstanceMap::iterator iter_instance = instances_.begin();
@@ -1880,8 +1711,10 @@ namespace bumo {
 		data["view_number"] = view_number_;
 		data["ckp_interval"] = ckp_interval_;
 		data["last_exe_seq"] = last_exe_seq_;
-		data["fault_number"] = fault_number_;
+		data["fault_number"] = (Json::Int64)fault_number_;
 		data["view_active"] = view_active_;
+		data["is_leader"] = (replica_id_ == view_number_ % validators_.size());
+		data["validator_address"] = replica_id_ >= 0 ? private_key_.GetEncAddress() : "none";
 		Json::Value &instances = data["instances"];
 		for (PbftInstanceMap::const_iterator iter = instances_.begin(); iter != instances_.end(); iter++) {
 			const PbftInstance &instance = iter->second;
@@ -1890,7 +1723,7 @@ namespace bumo {
 			item["vn"] = index.view_number_;
 			item["seq"] = index.sequence_;
 			item["phase"] = GetPhaseDesc(instance.phase_);
-			item["phase_item"] = instance.phase_item_;
+			item["phase_item"] = (Json::UInt64)instance.phase_item_;
 			item["pre_prepare"] = PbftDesc::GetPrePrepare(instance.pre_prepare_);
 
 			Json::Value &prepares = item["prepares"];
@@ -1911,7 +1744,7 @@ namespace bumo {
 			item["start_time"] = utils::Timestamp(instance.start_time_).ToFormatString(true);
 			item["end_time"] = utils::Timestamp(instance.end_time_).ToFormatString(true);
 			item["last_propose_time"] = utils::Timestamp(instance.last_propose_time_).ToFormatString(true);
-			item["have_send_viewchange"] = instance.have_send_viewchange_ ? "true" : " false";
+			item["have_send_viewchange"] = instance.have_send_viewchange_;
 			item["pre_prepare_round"] = instance.pre_prepare_round_;
 		}
 
@@ -1923,7 +1756,7 @@ namespace bumo {
 			item["start_time"] = utils::Timestamp(vc_instance.start_time_).ToFormatString(true);
 			item["last_propose_time"] = utils::Timestamp(vc_instance.last_propose_time_).ToFormatString(true);
 			item["end_time"] = utils::Timestamp(vc_instance.end_time_).ToFormatString(true);
-			item["newview_init"] = vc_instance.newview_.IsInitialized();
+			item["newview_init"] = vc_instance.newview_.has_pbft();
 
 			Json::Value &vc = item["viewchange"];
 			for (PbftViewChangeMap::const_iterator iter_vc = vc_instance.viewchanges_.begin(); iter_vc != vc_instance.viewchanges_.end(); iter_vc++) {
@@ -1939,7 +1772,7 @@ namespace bumo {
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			validators[validators.size()] = set.validators(i).address();
 		}
-		data["quorum_size"] = quorum_size;
+		data["quorum_size"] = (Json::UInt64)quorum_size;
 	}
 
 	int32_t Pbft::IsLeader() {
@@ -2006,8 +1839,8 @@ namespace bumo {
 				const protocol::PbftEnv &env = pbft_proof.commits(0);
 				const protocol::Pbft &pbft = env.pbft();
 				const protocol::PbftCommit &commit = pbft.commit();
-				if (commit.view_number() > view_number_) {
-					new_view_number = commit.view_number();
+				if (commit.view_number() >= view_number_) {
+					new_view_number = commit.view_number() + 1;
 				}
 				if (commit.sequence() > last_exe_seq_){
 					new_seq = commit.sequence();
@@ -2085,7 +1918,7 @@ namespace bumo {
 					iter_vc++;
 				}
 			}
-			SaveViewChange(saver);
+
 			notify_->OnResetCloseTimer();
 			saver.Commit();
 		}

@@ -25,6 +25,7 @@
 #include <glue/glue_manager.h>
 #include <api/web_server.h>
 #include <api/websocket_server.h>
+#include <api/console.h>
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
 #include "configure.h"
@@ -42,6 +43,7 @@ int main(int argc, char *argv[]){
 	bumo::Global::InitInstance();
 	bumo::SlowTimer::InitInstance();
 	utils::Logger::InitInstance();
+	bumo::Console::InitInstance();
 	bumo::PeerManager::InitInstance();
 	bumo::LedgerManager::InitInstance();
 	bumo::ConsensusManager::InitInstance();
@@ -60,8 +62,16 @@ int main(int argc, char *argv[]){
 		utils::ObjectExit object_exit;
 		bumo::InstallSignal();
 
+		if (arg.console_){
+			arg.log_dest_ = utils::LOG_DEST_FILE; //cancel the std output
+			bumo::Console &console = bumo::Console::Instance();
+			console.Initialize();
+			object_exit.Push(std::bind(&bumo::Console::Exit, &console));
+		}
+
 		srand((uint32_t)time(NULL));
 		bumo::StatusModule::modules_status_ = new Json::Value;
+#ifndef OS_MAC
 		utils::Daemon &daemon = utils::Daemon::Instance();
 		if (!bumo::g_enable_ || !daemon.Initialize((int32_t)1234))
 		{
@@ -69,6 +79,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&utils::Daemon::Exit, &daemon));
+#endif
 
 		bumo::Configure &config = bumo::Configure::Instance();
 		std::string config_path = bumo::General::CONFIG_FILE;
@@ -85,11 +96,12 @@ int main(int argc, char *argv[]){
 		if (!utils::File::IsAbsolute(log_path)){
 			log_path = utils::String::Format("%s/%s", utils::File::GetBinHome().c_str(), log_path.c_str());
 		}
-		bumo::LoggerConfigure logger_config = bumo::Configure::Instance().logger_configure_;
+		const bumo::LoggerConfigure &logger_config = bumo::Configure::Instance().logger_configure_;
 		utils::Logger &logger = utils::Logger::Instance();
 		logger.SetCapacity(logger_config.time_capacity_, logger_config.size_capacity_);
 		logger.SetExpireDays(logger_config.expire_days_);
-		if (!bumo::g_enable_ || !logger.Initialize((utils::LogDest)logger_config.dest_, (utils::LogLevel)logger_config.level_, log_path, true)){
+		if (!bumo::g_enable_ || !logger.Initialize((utils::LogDest)(arg.log_dest_ >= 0 ? arg.log_dest_ : logger_config.dest_),
+			(utils::LogLevel)logger_config.level_, log_path, true)){
 			LOG_STD_ERR("Initialize logger failed");
 			break;
 		}
@@ -131,6 +143,11 @@ int main(int argc, char *argv[]){
 		} 
 
 		if (arg.create_hardfork_) {
+			bumo::LedgerManager &ledgermanger = bumo::LedgerManager::Instance();
+			if (!ledgermanger.Initialize()) {
+				LOG_ERROR("legder manger init error!!!");
+				return -1;
+			}
 			bumo::LedgerManager::CreateHardforkLedger();
 			return 1;
 		}
@@ -145,7 +162,7 @@ int main(int argc, char *argv[]){
 
 		//consensus manager must be initialized before ledger manager and glue manager
 		bumo::ConsensusManager &consensus_manager = bumo::ConsensusManager::Instance();
-		if (!bumo::g_enable_ || !consensus_manager.Initialize(bumo::Configure::Instance().validation_configure_)) {
+		if (!bumo::g_enable_ || !consensus_manager.Initialize(bumo::Configure::Instance().ledger_configure_.validation_type_)) {
 			LOG_ERROR("Initialize consensus manager failed");
 			break;
 		}
@@ -218,6 +235,8 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::ContractManager::Exit, &contract_manager));
 		LOG_INFO("Initialize contract manager successful");
 
+		bumo::g_ready_ = true;
+
 		RunLoop();
 
 		LOG_INFO("Process begin quit...");
@@ -243,7 +262,7 @@ int main(int argc, char *argv[]){
 }
 
 void RunLoop(){
-	int64_t check_module_interval = 2 * utils::MICRO_UNITS_PER_SEC;
+	int64_t check_module_interval = 5 * utils::MICRO_UNITS_PER_SEC;
 	int64_t last_check_module = 0;
 	while (bumo::g_enable_){
 		int64_t current_time = utils::Timestamp::HighResolution();

@@ -24,11 +24,31 @@
 #include "proto/cpp/consensus.pb.h"
 
 namespace bumo {
+
+	class ProposeTxsResult {
+	public:
+		ProposeTxsResult();
+		~ProposeTxsResult();
+
+		bool block_timeout_;
+		bool exec_result_;
+		protocol::ConsensusValueValidation cons_validation_;
+		std::set<int32_t> need_dropped_tx_;
+
+		void SetApply(ProposeTxsResult &result);
+	};
+
 	class AccountEntry;
 	class LedgerContext;
 	class LedgerFrm {
 	public:
 		typedef std::shared_ptr <LedgerFrm>	pointer;
+
+		typedef enum tagAPPLY_MODE {
+			APPLY_MODE_PROPOSE = 0,
+			APPLY_MODE_CHECK = 1,
+			APPLY_MODE_FOLLOW = 2
+		} APPLY_MODE;
 
 		LedgerFrm();
 		~LedgerFrm();
@@ -40,10 +60,16 @@ namespace bumo {
 		protocol::Ledger &ProtoLedger();
 
 
-		bool Apply(const protocol::ConsensusValue& request, 
-			LedgerContext *ledger_context, 
-			int64_t tx_time_out, 
-			int32_t &tx_time_out_index);
+		bool ApplyFollow(const protocol::ConsensusValue& request, 
+			LedgerContext *ledger_context);
+
+		bool ApplyPropose(const protocol::ConsensusValue& request,
+			LedgerContext *ledger_context,
+			ProposeTxsResult &proposed_result);
+
+		bool ApplyCheck(const protocol::ConsensusValue& request,
+			LedgerContext *ledger_context);
+
 		bool Cancel();
 
 		// void GetSqlTx(std::string &sqltx, std::string &sql_account_tx);
@@ -67,12 +93,19 @@ namespace bumo {
 
 		bool CheckValidation ();
 
+		static bool CheckConsValueValidation(const protocol::ConsensusValue& request,
+			APPLY_MODE propose_mode,
+			std::set<int32_t> &expire_txs_status,
+			std::set<int32_t> &error_txs_status);
+		static void SetValidationToProto(std::set<int32_t> expire_txs,
+			std::set<int32_t> error_txs,
+			protocol::ConsensusValueValidation &validation);
+
 		Json::Value ToJson();
 
 		bool Commit(KVTrie* trie, int64_t& new_count, int64_t& change_count);
 
-		bool AllocateFee();
-		AccountFrm::pointer CreatBookKeeperAccount(const std::string& account_address);
+		bool AllocateReward();
 		
 		void SetTestMode(bool test_mode);
 		bool IsTestMode();

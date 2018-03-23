@@ -10,7 +10,7 @@
 
 #include "server.hpp"
 #include <stdexcept>
-#ifndef WIN32
+#ifdef OS_LINUX
 #include <sys/prctl.h>
 #endif
 
@@ -41,10 +41,14 @@ void io_service_pool::run()
   {
 	  io_service_ptr cur_ptr = io_services_[i];
 	  std::shared_ptr<asio::thread> thread(new asio::thread([this, cur_ptr, i](){
-#ifndef WIN32
+#ifdef OS_LINUX
           char name[16] = { 0 };
           sprintf(name, "http-%d", int(i));
           prctl(PR_SET_NAME, name, 0, 0, 0);
+#elif defined OS_MAC
+		  char name[16] = { 0 };
+		  sprintf(name, "http-%d", int(i));
+		  pthread_setname_np(name);
 #endif //WIN32
 		  cur_ptr->run();
 	  }));

@@ -50,7 +50,7 @@ namespace bumo {
 	void Monitor::SetBubiInfo(const protocol::ChainStatus &hello) {
 		monitor_version_ = hello.monitor_version();
 		bubi_ledger_version_ = hello.ledger_version();
-		BUMO_VERSION_ = hello.BUMO_VERSION();
+		bumo_version_ = hello.bumo_version();
 		bubi_node_address_ = hello.self_addr();
 	}
 
@@ -58,7 +58,7 @@ namespace bumo {
 		protocol::ChainStatus hello;
 		hello.set_monitor_version(bumo::General::MONITOR_VERSION);
 		hello.set_ledger_version(bumo::General::LEDGER_VERSION);
-		hello.set_BUMO_VERSION(bumo::General::BUMO_VERSION);
+		hello.set_bumo_version(bumo::General::BUMO_VERSION);
 		hello.set_self_addr(node_address);
 
 		return SendRequest(protocol::CHAIN_HELLO, hello.SerializeAsString(), ec);

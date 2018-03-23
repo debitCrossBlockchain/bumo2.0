@@ -8536,11 +8536,11 @@ public final class Consensus {
     /**
      * <code>optional .protocol.Signature signature = 2;</code>
      */
-    cn.bubi.blockchain.adapter3.Common.Signature getSignature();
+    cn.bumo.blockchain.adapter3.Common.Signature getSignature();
     /**
      * <code>optional .protocol.Signature signature = 2;</code>
      */
-    cn.bubi.blockchain.adapter3.Common.SignatureOrBuilder getSignatureOrBuilder();
+    cn.bumo.blockchain.adapter3.Common.SignatureOrBuilder getSignatureOrBuilder();
   }
   /**
    * Protobuf type {@code protocol.PbftEnv}
@@ -8595,11 +8595,11 @@ public final class Consensus {
               break;
             }
             case 18: {
-              cn.bubi.blockchain.adapter3.Common.Signature.Builder subBuilder = null;
+              cn.bumo.blockchain.adapter3.Common.Signature.Builder subBuilder = null;
               if (signature_ != null) {
                 subBuilder = signature_.toBuilder();
               }
-              signature_ = input.readMessage(cn.bubi.blockchain.adapter3.Common.Signature.parser(), extensionRegistry);
+              signature_ = input.readMessage(cn.bumo.blockchain.adapter3.Common.Signature.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(signature_);
                 signature_ = subBuilder.buildPartial();
@@ -8652,7 +8652,7 @@ public final class Consensus {
     }
 
     public static final int SIGNATURE_FIELD_NUMBER = 2;
-    private cn.bubi.blockchain.adapter3.Common.Signature signature_;
+    private cn.bumo.blockchain.adapter3.Common.Signature signature_;
     /**
      * <code>optional .protocol.Signature signature = 2;</code>
      */
@@ -8662,13 +8662,13 @@ public final class Consensus {
     /**
      * <code>optional .protocol.Signature signature = 2;</code>
      */
-    public cn.bubi.blockchain.adapter3.Common.Signature getSignature() {
-      return signature_ == null ? cn.bubi.blockchain.adapter3.Common.Signature.getDefaultInstance() : signature_;
+    public cn.bumo.blockchain.adapter3.Common.Signature getSignature() {
+      return signature_ == null ? cn.bumo.blockchain.adapter3.Common.Signature.getDefaultInstance() : signature_;
     }
     /**
      * <code>optional .protocol.Signature signature = 2;</code>
      */
-    public cn.bubi.blockchain.adapter3.Common.SignatureOrBuilder getSignatureOrBuilder() {
+    public cn.bumo.blockchain.adapter3.Common.SignatureOrBuilder getSignatureOrBuilder() {
       return getSignature();
     }
 
@@ -9101,9 +9101,9 @@ public final class Consensus {
         return pbftBuilder_;
       }
 
-      private cn.bubi.blockchain.adapter3.Common.Signature signature_ = null;
+      private cn.bumo.blockchain.adapter3.Common.Signature signature_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
-          cn.bubi.blockchain.adapter3.Common.Signature, cn.bubi.blockchain.adapter3.Common.Signature.Builder, cn.bubi.blockchain.adapter3.Common.SignatureOrBuilder> signatureBuilder_;
+          cn.bumo.blockchain.adapter3.Common.Signature, cn.bumo.blockchain.adapter3.Common.Signature.Builder, cn.bumo.blockchain.adapter3.Common.SignatureOrBuilder> signatureBuilder_;
       /**
        * <code>optional .protocol.Signature signature = 2;</code>
        */
@@ -9113,9 +9113,9 @@ public final class Consensus {
       /**
        * <code>optional .protocol.Signature signature = 2;</code>
        */
-      public cn.bubi.blockchain.adapter3.Common.Signature getSignature() {
+      public cn.bumo.blockchain.adapter3.Common.Signature getSignature() {
         if (signatureBuilder_ == null) {
-          return signature_ == null ? cn.bubi.blockchain.adapter3.Common.Signature.getDefaultInstance() : signature_;
+          return signature_ == null ? cn.bumo.blockchain.adapter3.Common.Signature.getDefaultInstance() : signature_;
         } else {
           return signatureBuilder_.getMessage();
         }
@@ -9123,7 +9123,7 @@ public final class Consensus {
       /**
        * <code>optional .protocol.Signature signature = 2;</code>
        */
-      public Builder setSignature(cn.bubi.blockchain.adapter3.Common.Signature value) {
+      public Builder setSignature(cn.bumo.blockchain.adapter3.Common.Signature value) {
         if (signatureBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -9140,7 +9140,7 @@ public final class Consensus {
        * <code>optional .protocol.Signature signature = 2;</code>
        */
       public Builder setSignature(
-          cn.bubi.blockchain.adapter3.Common.Signature.Builder builderForValue) {
+          cn.bumo.blockchain.adapter3.Common.Signature.Builder builderForValue) {
         if (signatureBuilder_ == null) {
           signature_ = builderForValue.build();
           onChanged();
@@ -9153,11 +9153,11 @@ public final class Consensus {
       /**
        * <code>optional .protocol.Signature signature = 2;</code>
        */
-      public Builder mergeSignature(cn.bubi.blockchain.adapter3.Common.Signature value) {
+      public Builder mergeSignature(cn.bumo.blockchain.adapter3.Common.Signature value) {
         if (signatureBuilder_ == null) {
           if (signature_ != null) {
             signature_ =
-              cn.bubi.blockchain.adapter3.Common.Signature.newBuilder(signature_).mergeFrom(value).buildPartial();
+              cn.bumo.blockchain.adapter3.Common.Signature.newBuilder(signature_).mergeFrom(value).buildPartial();
           } else {
             signature_ = value;
           }
@@ -9185,7 +9185,7 @@ public final class Consensus {
       /**
        * <code>optional .protocol.Signature signature = 2;</code>
        */
-      public cn.bubi.blockchain.adapter3.Common.Signature.Builder getSignatureBuilder() {
+      public cn.bumo.blockchain.adapter3.Common.Signature.Builder getSignatureBuilder() {
         
         onChanged();
         return getSignatureFieldBuilder().getBuilder();
@@ -9193,23 +9193,23 @@ public final class Consensus {
       /**
        * <code>optional .protocol.Signature signature = 2;</code>
        */
-      public cn.bubi.blockchain.adapter3.Common.SignatureOrBuilder getSignatureOrBuilder() {
+      public cn.bumo.blockchain.adapter3.Common.SignatureOrBuilder getSignatureOrBuilder() {
         if (signatureBuilder_ != null) {
           return signatureBuilder_.getMessageOrBuilder();
         } else {
           return signature_ == null ?
-              cn.bubi.blockchain.adapter3.Common.Signature.getDefaultInstance() : signature_;
+              cn.bumo.blockchain.adapter3.Common.Signature.getDefaultInstance() : signature_;
         }
       }
       /**
        * <code>optional .protocol.Signature signature = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          cn.bubi.blockchain.adapter3.Common.Signature, cn.bubi.blockchain.adapter3.Common.Signature.Builder, cn.bubi.blockchain.adapter3.Common.SignatureOrBuilder> 
+          cn.bumo.blockchain.adapter3.Common.Signature, cn.bumo.blockchain.adapter3.Common.Signature.Builder, cn.bumo.blockchain.adapter3.Common.SignatureOrBuilder> 
           getSignatureFieldBuilder() {
         if (signatureBuilder_ == null) {
           signatureBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              cn.bubi.blockchain.adapter3.Common.Signature, cn.bubi.blockchain.adapter3.Common.Signature.Builder, cn.bubi.blockchain.adapter3.Common.SignatureOrBuilder>(
+              cn.bumo.blockchain.adapter3.Common.Signature, cn.bumo.blockchain.adapter3.Common.Signature.Builder, cn.bumo.blockchain.adapter3.Common.SignatureOrBuilder>(
                   getSignature(),
                   getParentForChildren(),
                   isClean());
@@ -12554,7 +12554,7 @@ public final class Consensus {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          cn.bubi.blockchain.adapter3.Common.getDescriptor(),
+          cn.bumo.blockchain.adapter3.Common.getDescriptor(),
         }, assigner);
     internal_static_protocol_PbftPrePrepare_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -12634,7 +12634,7 @@ public final class Consensus {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_FeeConfig_descriptor,
         new java.lang.String[] { "ByteFee", "BaseReserve", "CreateAccountFee", "IssueAssetFee", "PayFee", "SetMetadataFee", "SetSigureWeightFee", "SetThresholdFee", "PayCoinFee", });
-    cn.bubi.blockchain.adapter3.Common.getDescriptor();
+    cn.bumo.blockchain.adapter3.Common.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

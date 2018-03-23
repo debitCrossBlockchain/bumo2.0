@@ -15,11 +15,25 @@
 
 #include "system.h"
 
-#ifdef WIN32
-#else
+#ifdef OS_LINUX
 #include <mntent.h>
-#endif // WIN32
-
+#elif defined OS_MAC
+#include <sys/statvfs.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <uuid/uuid.h>
+#include <time.h>
+#include <errno.h>
+#include <sys/sysctl.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <net/if_dl.h>
+#include <ifaddrs.h>
+#include <sys/param.h>
+#include <sys/ucred.h>
+#include <sys/mount.h>
+#endif 
 
 namespace utils{
 	SystemProcessor::SystemProcessor() {
@@ -137,7 +151,7 @@ namespace utils{
 			}
 			free(pBuffer);
 		}
-#else
+#elif defined OS_LINUX
 		File proce_file;
 
 		if (!proce_file.Open("/proc/stat", File::FILE_M_READ))
@@ -176,6 +190,8 @@ namespace utils{
 			processor_.core_count_++;
 		}
 		proce_file.Close();
+#elif defined OS_MAC
+		//how to get freebsd cpu info. //sysctl hw.model hw.machine hw.ncpu ?
 #endif
 		if (nold_processer.system_time_ > 0) {
 			int64_t totalTime1 = nold_processer.GetTotalTime();
@@ -206,7 +222,7 @@ namespace utils{
 		disk.total_bytes_ = total.QuadPart;
 		disk.free_bytes_ = free.QuadPart;
 		disk.available_bytes_ = available.QuadPart;
-#else
+#elif defined OS_LINUX
 		struct statfs ndisk_stat;
 
 		if (statfs(path.c_str(), &ndisk_stat) != 0) {
@@ -214,6 +230,18 @@ namespace utils{
 		}
 
 		disk.total_bytes_ = (uint64_t)(ndisk_stat.f_blocks) * (uint64_t)(ndisk_stat.f_frsize);
+		disk.available_bytes_ = (uint64_t)(ndisk_stat.f_bavail) * (uint64_t)(ndisk_stat.f_bsize);
+		// default as root
+		disk.free_bytes_ = disk.available_bytes_;
+#elif defined OS_MAC
+		struct statvfs ndisk_stat;
+		struct passwd *pw = getpwuid(getuid());
+		if ( NULL == pw || 0 != statvfs(pw->pw_dir, &ndisk_stat) )
+		{
+			return false;
+		}
+
+		disk.total_bytes_ = (uint64_t)(ndisk_stat.f_blocks) * (uint64_t)(ndisk_stat.f_bsize);
 		disk.available_bytes_ = (uint64_t)(ndisk_stat.f_bavail) * (uint64_t)(ndisk_stat.f_bsize);
 		// default as root
 		disk.free_bytes_ = disk.available_bytes_;
@@ -237,7 +265,7 @@ namespace utils{
 		memory.available_bytes_ = status.ullTotalPhys - status.ullAvailPhys;
 		memory.cached_bytes_ = 0;
 		memory.buffers_bytes_ = 0;
-#else
+#elif defined OS_LINUX
 		File proc_file;
 
 		if (!proc_file.Open("/proc/meminfo", File::FILE_M_READ)) {
@@ -268,6 +296,11 @@ namespace utils{
 		proc_file.Close();
 
 		memory.available_bytes_ = memory.free_bytes_ + memory.buffers_bytes_ + memory.cached_bytes_;
+#elif defined OS_MAC
+		uint64_t total_size;
+		size_t size = sizeof(total_size);
+		sysctlbyname("hw.memsize", &total_size, &size, NULL, 0);
+		memory.total_bytes_ = total_size;
 #endif
 		if (memory.total_bytes_ > memory.available_bytes_) {
 			memory.usage_percent_ = double(memory.total_bytes_ - memory.available_bytes_) / double(memory.total_bytes_) * (double)100.0;
@@ -288,12 +321,21 @@ namespace utils{
 			return 0;
 		}
 		startup_time = time_now - (time_t)(count.QuadPart / freq.QuadPart);
-#else
+#elif defined OS_LINUX
 		struct sysinfo info;
 
 		memset(&info, 0, sizeof(info));
 		sysinfo(&info);
 		startup_time = time_now - (time_t)info.uptime;
+#elif defined OS_MAC
+		struct timeval boottime;
+		size_t len = sizeof(boottime);
+		int mib[2] = { CTL_KERN, KERN_BOOTTIME };
+		if( sysctl(mib, 2, &boottime, &len, NULL, 0) < 0 )
+		{
+			return 0;
+		}
+		startup_time = boottime.tv_sec;
 #endif
 		return startup_time;
 
@@ -305,8 +347,12 @@ namespace utils{
 		SYSTEM_INFO nSystemInfo;
 		GetSystemInfo(&nSystemInfo);
 		core_count = nSystemInfo.dwNumberOfProcessors;
-#else
+#elif defined OS_LINUX
 		core_count = get_nprocs();
+#elif defined OS_MAC
+		int count;
+		size_t size = sizeof(count);
+		return sysctlbyname("hw.ncpu", &count, &size, NULL, 0) ? 0 : count;
 #endif
 		return core_count;
 	}
@@ -445,7 +491,7 @@ namespace utils{
 				pinfo = pinfo->Next;
 			}
 		} while (false);
-#else
+#elif defined OS_LINUX
 		int fd;
 		do {
 			int interfaceNum = 0;
@@ -478,6 +524,22 @@ namespace utils{
 			}
 		} while (false);
 		close(fd);
+#elif defined OS_MAC
+		struct ifaddrs *ifap, *ifaptr;
+		unsigned char *ptr;
+		if (getifaddrs(&ifap) == 0) {
+			for (ifaptr = ifap; ifaptr != NULL; ifaptr = (ifaptr)->ifa_next) {
+				char ac_mac[32] = { 0 };
+				if (((ifaptr)->ifa_addr)->sa_family == AF_LINK) {
+					ptr = (unsigned char *)LLADDR((struct sockaddr_dl *)(ifaptr)->ifa_addr);
+					snprintf(ac_mac, sizeof(ac_mac), "%02x:%02x:%02x:%02x:%02x:%02x",
+						*ptr, *(ptr + 1), *(ptr + 2), *(ptr + 3), *(ptr + 4), *(ptr + 5));
+					macs.push_back(std::string(ac_mac));
+					memset(ac_mac, 0, sizeof(ac_mac));
+				}
+			}
+			freeifaddrs(ifap);
+		}
 #endif
 		std::list<std::string>::iterator iter;
 		for (iter = macs.begin(); iter != macs.end(); iter++) {
@@ -807,7 +869,7 @@ namespace utils{
 			nPartitionList.push_back(nPartition);
 			total_bytes += nPartition.total_bytes_;
 		}
-#else
+#elif defined OS_LINUX
 		FILE* mount_table;
 		struct mntent *mount_entry;
 		struct statfs s;
@@ -817,7 +879,6 @@ namespace utils{
 		mount_table = NULL;
 		mount_table = setmntent("/etc/mtab", "r");
 		if (!mount_table) {
-			fprintf(stderr, "set mount entry error\n");
 			return false;
 		}
 		PhysicalPartition nPartition;
@@ -836,7 +897,6 @@ namespace utils{
 			device = mount_entry->mnt_fsname;
 			mount_point = mount_entry->mnt_dir;
 			if (statfs(mount_point, &s) != 0)  {
-				fprintf(stderr, "statfs failed!\n");
 				continue;
 			}
 			if ((s.f_blocks > 0) || !mount_table )  {
@@ -861,6 +921,32 @@ namespace utils{
 				nPartitionList.push_back(nPartition);
 				total_bytes += nPartition.total_bytes_;
 			}
+		}
+#elif defined OS_MAC
+		struct statfs* mounts;
+		int num_mounts = getmntinfo(&mounts, MNT_WAIT);
+		if (num_mounts < 0) {
+			return false;
+		}
+
+		for (int i = 0; i < num_mounts; i++) {
+			struct statfs &s = mounts[i];
+			unsigned blocks_used = s.f_blocks - s.f_bfree;
+			unsigned blocks_percent_used = 0;
+			if (blocks_used + s.f_bavail) {
+				blocks_percent_used = (blocks_used * 100ULL
+					+ (blocks_used + s.f_bavail) / 2
+					) / (blocks_used + s.f_bavail);
+			}
+			PhysicalPartition nPartition;
+			nPartition.total_bytes_ = s.f_blocks * s.f_bsize;
+			nPartition.free_bytes_ = s.f_bfree * s.f_bsize;
+			nPartition.available_bytes_ = s.f_bavail * s.f_bsize;
+			nPartition.describe_ = s.f_fstypename;
+			nPartition.usage_percent_ = blocks_percent_used;
+
+			nPartitionList.push_back(nPartition);
+			total_bytes += nPartition.total_bytes_;
 		}
 #endif // WIN32
 

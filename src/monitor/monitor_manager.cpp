@@ -32,7 +32,7 @@ namespace bumo {
 
 		request_methods_[monitor::MONITOR_MSGTYPE_HELLO] = std::bind(&MonitorManager::OnMonitorHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[monitor::MONITOR_MSGTYPE_REGISTER] = std::bind(&MonitorManager::OnMonitorRegister, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[monitor::MONITOR_MSGTYPE_BUBI] = std::bind(&MonitorManager::OnBubiStatus, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[monitor::MONITOR_MSGTYPE_BUMO] = std::bind(&MonitorManager::OnBumoStatus, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[monitor::MONITOR_MSGTYPE_LEDGER] = std::bind(&MonitorManager::OnLedgerStatus, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[monitor::MONITOR_MSGTYPE_SYSTEM] = std::bind(&MonitorManager::OnSystemStatus, this, std::placeholders::_1, std::placeholders::_2);
 
@@ -165,14 +165,14 @@ namespace bumo {
 		return bret;
 	}
 
-	bool MonitorManager::OnBubiStatus(protocol::WsMessage &message, int64_t conn_id) {
-		monitor::BubiStatus bubi_status;
-		GetBubiStatus(bubi_status);
+	bool MonitorManager::OnBumoStatus(protocol::WsMessage &message, int64_t conn_id) {
+		monitor::BumoStatus bumo_status;
+		GetBumoStatus(bumo_status);
 
 		bool bret = true;
 		std::error_code ignore_ec;
 		Connection *monitor = GetConnection(conn_id);
-		if (NULL == monitor || !monitor->SendResponse(message, bubi_status.SerializeAsString(), ignore_ec)) {
+		if (NULL == monitor || !monitor->SendResponse(message, bumo_status.SerializeAsString(), ignore_ec)) {
 			bret = false;
 			LOG_ERROR("Send bubi status from ip(%s) failed (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
@@ -285,17 +285,17 @@ namespace bumo {
 		}
 	}
 
-	bool MonitorManager::GetBubiStatus(monitor::BubiStatus &bubi_status) {
+	bool MonitorManager::GetBumoStatus(monitor::BumoStatus &bumo_status) {
 		time_t process_uptime = GlueManager::Instance().GetProcessUptime();
 		utils::Timestamp time_stamp(utils::GetStartupTime() * utils::MICRO_UNITS_PER_SEC);
 		utils::Timestamp process_time_stamp(process_uptime * utils::MICRO_UNITS_PER_SEC);
 
-		monitor::GlueManager *glue_manager = bubi_status.mutable_glue_manager();
+		monitor::GlueManager *glue_manager = bumo_status.mutable_glue_manager();
 		glue_manager->set_system_uptime(time_stamp.ToFormatString(false));
 		glue_manager->set_process_uptime(process_time_stamp.ToFormatString(false));
 		glue_manager->set_system_current_time(utils::Timestamp::Now().ToFormatString(false));
 
-		monitor::PeerManager *peer_manager = bubi_status.mutable_peer_manager();
+		monitor::PeerManager *peer_manager = bumo_status.mutable_peer_manager();
 		peer_manager->set_peer_id(PeerManager::Instance().GetPeerNodeAddress());
 
 		Json::Value connections;

@@ -1,0 +1,77 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          bumo
+# Short-Description: bumod server
+# Description:      block-chain based server 
+#
+#
+### END INIT INFO
+
+# Quick start-stop-daemon example, derived from Debian /etc/init.d/ssh
+set -e
+
+# Must be a valid filename
+NAME=bumod
+PIDFILE=/var/run/$NAME.pid
+install_dir=/usr/local/bumochain
+script_dir=${install_dir}/scripts
+#This is the command to be run, give the full pathname
+DAEMON=${install_dir}/bin/bumod
+DAEMON_WATCH=${install_dir}/scripts/bumo
+DAEMON_OPTS="--exec $DAEMON_WATCH start --log ${install_dir}/log/daemon.log"
+
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+
+start(){
+		$DAEMON_WATCH start
+        echo "Starting "$NAME "..."
+		$script_dir/start-stop-daemon --start --oknodo --background  --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+        echo "."
+}
+
+stop(){
+        echo "Stopping "$NAME "..."
+		$script_dir/start-stop-daemon --stop --oknodo --pidfile $PIDFILE
+        echo "."
+		$DAEMON_WATCH stop
+}
+
+status(){
+	var=$(ps -ef|grep -w ${install_dir}/bin/bumod |grep -v grep | wc -l);	
+	if [ $var != 0 ];
+	then
+	echo "bumod is running";
+	else
+	echo "bumod is not running";
+	fi
+	
+	var=$(ps -ef|grep -w ${install_dir}/bin/bumo |grep -v grep | wc -l);	
+	if [ $var != 0 ];
+	then
+	echo "bumo is running";
+	else
+	echo "bumo is not running";
+	fi
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+		stop 
+		sleep 2
+		start
+	;;
+  status)
+	status
+	;;
+  *)
+	echo "Usage: "$1" {start|stop|restart|status}"
+	exit 1
+esac
+
+exit 0

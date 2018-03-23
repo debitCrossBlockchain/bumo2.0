@@ -53,7 +53,34 @@ namespace bumo
 				data_ = &standby_; //avoid manual memory management
 		}
 
+		AtomMap(const AtomMap& other)
+		{
+			Copy(other);
+		}
+
+		AtomMap& operator=(const AtomMap& other)
+		{
+			actionBuf_.clear();
+			standby_.clear();
+			data_ = nullptr;
+
+			Copy(other);
+
+			return *this;
+		}
+
 	private:
+		void Copy(const AtomMap& other)
+		{
+			for (auto kvAct : other.actionBuf_)
+				actionBuf_[kvAct.first] = ActValue(std::make_shared<VALUE>(*(kvAct.second.value_)), kvAct.second.type_);
+
+			for (auto kvData : *(other.data_))
+				standby_[kvData.first] = ActValue(std::make_shared<VALUE>(*(kvData.second.value_)), kvData.second.type_);
+
+			data_ = &standby_;
+		}
+
 		void SetValue(const KEY& key, const pointer& val)
 		{
 			actionBuf_[key] = ActValue(val, MOD);

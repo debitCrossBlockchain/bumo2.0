@@ -26,6 +26,8 @@ namespace bumo {
 
 		bool help_modle_;
 		bool drop_db_;
+		int32_t log_dest_;
+		bool console_;
 
 		bool peer_addr_;
 		bool clear_peer_addresses_;
@@ -41,6 +43,7 @@ namespace bumo {
 	};
 
 	extern bool g_enable_;
+	extern bool g_ready_;
 
 	void InstallSignal();
 }

@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\api\console.cpp" />
     <ClCompile Include="..\..\src\api\websocket_server.cpp" />
     <ClCompile Include="..\..\src\api\web_server.cpp" />
     <ClCompile Include="..\..\src\api\web_server_command.cpp" />
@@ -19,6 +20,7 @@
     <ClCompile Include="..\..\src\api\web_server_update.cpp" />
     <ClCompile Include="..\..\src\glue\ledger_upgrade.cpp" />
     <ClCompile Include="..\..\src\glue\transaction_set.cpp" />
+    <ClCompile Include="..\..\src\glue\transaction_queue.cpp" />
     <ClCompile Include="..\..\src\ledger\contract_manager.cpp" />
     <ClCompile Include="..\..\src\ledger\environment.cpp" />
     <ClCompile Include="..\..\src\ledger\kv_trie.cpp" />
@@ -47,9 +49,11 @@
     <ClCompile Include="..\..\src\overlay\peer_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\api\console.h" />
     <ClInclude Include="..\..\src\api\websocket_server.h" />
     <ClInclude Include="..\..\src\api\web_server.h" />
     <ClInclude Include="..\..\src\glue\ledger_upgrade.h" />
+    <ClInclude Include="..\..\src\glue\transaction_queue.h" />
     <ClInclude Include="..\..\src\glue\transaction_set.h" />
     <ClInclude Include="..\..\src\ledger\contract_manager.h" />
     <ClInclude Include="..\..\src\ledger\environment.h" />
@@ -100,7 +104,6 @@
     <None Include="..\..\src\glue\Makefile.am" />
     <None Include="..\..\configure.ac" />
     <None Include="..\..\src\ledger\Makefile.am" />
-    <None Include="..\..\src\main\Makefile.am" />
     <None Include="..\..\src\proto\common.proto" />
     <None Include="..\..\src\proto\consensus.proto" />
     <None Include="..\..\src\proto\chain.proto" />
@@ -161,7 +164,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>leveldb_d.lib;json_d.lib;sqlite3_d.lib;iphlpapi.lib;libprotobuf_d.lib;libeay32.lib;ssleay32.lib;pcre_d.lib;winmm.lib;gdi32.lib;v8.lib;icui18n.lib;v8_libplatform.lib;icuuc.lib;v8_libbase.lib</AdditionalDependencies>
+      <AdditionalDependencies>leveldb_d.lib;json_d.lib;sqlite3_d.lib;iphlpapi.lib;libprotobuf_d.lib;libeay32.lib;ssleay32.lib;pcre_d.lib;winmm.lib;gdi32.lib;v8.lib;icui18n.lib;v8_libplatform.lib;icuuc.lib;v8_libbase.lib;libscrypt.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../src/3rd/basic/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <StackReserveSize>5000000</StackReserveSize>
     </Link>
@@ -182,7 +185,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../src/3rd/basic/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>leveldb.lib;json.lib;sqlite3.lib;iphlpapi.lib;libprotobuf.lib;libeay32.lib;ssleay32.lib;pcre.lib;icui18n.lib;icuuc.lib;winmm.lib;gdi32.lib;v8.lib;v8_libplatform.lib;v8_libbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>leveldb.lib;json.lib;sqlite3.lib;iphlpapi.lib;libprotobuf.lib;libeay32.lib;ssleay32.lib;pcre.lib;icui18n.lib;icuuc.lib;winmm.lib;gdi32.lib;v8.lib;v8_libplatform.lib;v8_libbase.lib;libscrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

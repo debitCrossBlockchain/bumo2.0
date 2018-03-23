@@ -41,7 +41,7 @@ namespace bumo {
 		bool cert_is_valid_;
 
 		//Peer cach list
-		Json::Value db_peer_cache_;
+		protocol::Peers db_peer_cache_;
 
 		//peers infomation received
 		utils::Mutex peer_lock_;
@@ -55,6 +55,7 @@ namespace bumo {
 		std::string peer_node_address_;
 		std::string node_rand_;
 		int64_t network_id_;
+		int32_t total_peers_count_;
 
 		std::error_code last_ec_;
 
@@ -62,6 +63,7 @@ namespace bumo {
 
  		bool ResolveSeeds(const utils::StringList &address_list, int32_t rank);
 		bool ConnectToPeers(size_t max);
+		void CleanNotActivePeers();
 		bool LoadSeed();
 		bool LoadHardcode();
 
@@ -96,7 +98,6 @@ namespace bumo {
 		bool Initialize(const std::string &node_address);
 		bool Exit();
 
-		Json::Value GetPeersCache();
 		void AddReceivedPeers(const utils::StringMap &item);
 		void BroadcastMsg(int64_t type, const std::string &data);
 		bool ReceiveBroadcastMsg(int64_t type, const std::string &data, int64_t peer_id);

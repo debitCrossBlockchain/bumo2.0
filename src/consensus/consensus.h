@@ -32,7 +32,6 @@ namespace bumo {
 
 		virtual std::string OnValueCommited(int64_t request_seq, const std::string &value, const std::string &proof, bool calculate_total) = 0;
 		virtual void OnViewChanged() = 0;
-		//virtual int32_t AsyncCheckValue(const std::string &value, CheckValueFunction check_func) = 0;
 		virtual int32_t CheckValue(const std::string &value) = 0;
 		virtual void SendConsensusMessage(const std::string &message) = 0;
 		virtual std::string FetchNullMsg() = 0;
@@ -57,7 +56,6 @@ namespace bumo {
 		IConsensusNotify *notify_;
 
 		int32_t CheckValue(const std::string &value);
-		int32_t AsyncCheckValue(const std::string &value, CheckValueFunction check_func);
 		bool SendMessage(const std::string &message);
 		std::string OnValueCommited(int64_t request_seq, const std::string &value, const std::string &proof, bool calculate_total);
 		void OnViewChanged();

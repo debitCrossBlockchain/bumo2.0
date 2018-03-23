@@ -1,0 +1,45 @@
+{
+	"db": {
+		"account_path": "data/account.db",
+		"ledger_path": "data/ledger.db",
+		"keyvalue_path": "data/keyvalue.db"
+	},
+
+	"p2p": {
+		"network_id": 10000,
+		"consensus_network": {
+			"heartbeat_interval": 60,
+			"listen_port": 16001,
+			"target_peer_connection": 50,
+			"known_peers": ["bumo.chinacloudapp.cn:16001"]
+		}
+	},
+	"webserver": {
+		"listen_addresses": "127.0.0.1:16002"
+	},
+	"wsserver": {
+		"listen_address": "127.0.0.1:16003"
+	},
+	"ledger": {
+		"max_trans_per_ledger": 1000,
+		"max_ledger_per_message": 5,
+		"max_trans_in_memory": 2000,
+		"max_apply_ledger_per_round": 3,
+		"hardfork_points": []
+	},
+	"genesis" :{
+		"account" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+		"fees": {"base_reserve":100000000, "byte_fee" :100, "issue_asset_fee" : 1000000000},
+		"validators": [
+			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
+		]
+	},
+	"logger": {
+		"path": "log/bumo.log",
+		"dest": "FILE|STDOUT|STDERR",
+		"level": "TRACE|INFO|WARNING|ERROR|FATAL",
+		"time_capacity": 1,
+		"size_capacity": 10,
+		"expire_days": 10
+	}
+}

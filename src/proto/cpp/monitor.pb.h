@@ -39,7 +39,7 @@ void protobuf_AssignDesc_monitor_2eproto();
 void protobuf_ShutdownFile_monitor_2eproto();
 
 class AlertStatus;
-class BubiStatus;
+class BumoStatus;
 class CPU;
 class GlueManager;
 class Hello;
@@ -56,7 +56,7 @@ enum MONITOR_MESSAGE_TYPE {
   MONITOR_MSGTYPE_NONE = 0,
   MONITOR_MSGTYPE_HELLO = 30,
   MONITOR_MSGTYPE_REGISTER = 31,
-  MONITOR_MSGTYPE_BUBI = 32,
+  MONITOR_MSGTYPE_BUMO = 32,
   MONITOR_MSGTYPE_LEDGER = 33,
   MONITOR_MSGTYPE_SYSTEM = 34,
   MONITOR_MSGTYPE_ALERT = 35,
@@ -616,32 +616,32 @@ class PeerManager : public ::google::protobuf::Message /* @@protoc_insertion_poi
 };
 // -------------------------------------------------------------------
 
-class BubiStatus : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:monitor.BubiStatus) */ {
+class BumoStatus : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:monitor.BumoStatus) */ {
  public:
-  BubiStatus();
-  virtual ~BubiStatus();
+  BumoStatus();
+  virtual ~BumoStatus();
 
-  BubiStatus(const BubiStatus& from);
+  BumoStatus(const BumoStatus& from);
 
-  inline BubiStatus& operator=(const BubiStatus& from) {
+  inline BumoStatus& operator=(const BumoStatus& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const BubiStatus& default_instance();
+  static const BumoStatus& default_instance();
 
-  void Swap(BubiStatus* other);
+  void Swap(BumoStatus* other);
 
   // implements Message ----------------------------------------------
 
-  inline BubiStatus* New() const { return New(NULL); }
+  inline BumoStatus* New() const { return New(NULL); }
 
-  BubiStatus* New(::google::protobuf::Arena* arena) const;
+  BumoStatus* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const BubiStatus& from);
-  void MergeFrom(const BubiStatus& from);
+  void CopyFrom(const BumoStatus& from);
+  void MergeFrom(const BumoStatus& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -660,7 +660,7 @@ class BubiStatus : public ::google::protobuf::Message /* @@protoc_insertion_poin
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(BubiStatus* other);
+  void InternalSwap(BumoStatus* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -694,7 +694,7 @@ class BubiStatus : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::monitor::PeerManager* release_peer_manager();
   void set_allocated_peer_manager(::monitor::PeerManager* peer_manager);
 
-  // @@protoc_insertion_point(class_scope:monitor.BubiStatus)
+  // @@protoc_insertion_point(class_scope:monitor.BumoStatus)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -707,7 +707,7 @@ class BubiStatus : public ::google::protobuf::Message /* @@protoc_insertion_poin
   friend void protobuf_ShutdownFile_monitor_2eproto();
 
   void InitAsDefaultInstance();
-  static BubiStatus* default_instance_;
+  static BumoStatus* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1943,36 +1943,36 @@ PeerManager::peer() const {
 
 // -------------------------------------------------------------------
 
-// BubiStatus
+// BumoStatus
 
 // optional .monitor.GlueManager glue_manager = 1;
-inline bool BubiStatus::has_glue_manager() const {
+inline bool BumoStatus::has_glue_manager() const {
   return !_is_default_instance_ && glue_manager_ != NULL;
 }
-inline void BubiStatus::clear_glue_manager() {
+inline void BumoStatus::clear_glue_manager() {
   if (GetArenaNoVirtual() == NULL && glue_manager_ != NULL) delete glue_manager_;
   glue_manager_ = NULL;
 }
-inline const ::monitor::GlueManager& BubiStatus::glue_manager() const {
-  // @@protoc_insertion_point(field_get:monitor.BubiStatus.glue_manager)
+inline const ::monitor::GlueManager& BumoStatus::glue_manager() const {
+  // @@protoc_insertion_point(field_get:monitor.BumoStatus.glue_manager)
   return glue_manager_ != NULL ? *glue_manager_ : *default_instance_->glue_manager_;
 }
-inline ::monitor::GlueManager* BubiStatus::mutable_glue_manager() {
+inline ::monitor::GlueManager* BumoStatus::mutable_glue_manager() {
   
   if (glue_manager_ == NULL) {
     glue_manager_ = new ::monitor::GlueManager;
   }
-  // @@protoc_insertion_point(field_mutable:monitor.BubiStatus.glue_manager)
+  // @@protoc_insertion_point(field_mutable:monitor.BumoStatus.glue_manager)
   return glue_manager_;
 }
-inline ::monitor::GlueManager* BubiStatus::release_glue_manager() {
-  // @@protoc_insertion_point(field_release:monitor.BubiStatus.glue_manager)
+inline ::monitor::GlueManager* BumoStatus::release_glue_manager() {
+  // @@protoc_insertion_point(field_release:monitor.BumoStatus.glue_manager)
   
   ::monitor::GlueManager* temp = glue_manager_;
   glue_manager_ = NULL;
   return temp;
 }
-inline void BubiStatus::set_allocated_glue_manager(::monitor::GlueManager* glue_manager) {
+inline void BumoStatus::set_allocated_glue_manager(::monitor::GlueManager* glue_manager) {
   delete glue_manager_;
   glue_manager_ = glue_manager;
   if (glue_manager) {
@@ -1980,37 +1980,37 @@ inline void BubiStatus::set_allocated_glue_manager(::monitor::GlueManager* glue_
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:monitor.BubiStatus.glue_manager)
+  // @@protoc_insertion_point(field_set_allocated:monitor.BumoStatus.glue_manager)
 }
 
 // optional .monitor.PeerManager peer_manager = 2;
-inline bool BubiStatus::has_peer_manager() const {
+inline bool BumoStatus::has_peer_manager() const {
   return !_is_default_instance_ && peer_manager_ != NULL;
 }
-inline void BubiStatus::clear_peer_manager() {
+inline void BumoStatus::clear_peer_manager() {
   if (GetArenaNoVirtual() == NULL && peer_manager_ != NULL) delete peer_manager_;
   peer_manager_ = NULL;
 }
-inline const ::monitor::PeerManager& BubiStatus::peer_manager() const {
-  // @@protoc_insertion_point(field_get:monitor.BubiStatus.peer_manager)
+inline const ::monitor::PeerManager& BumoStatus::peer_manager() const {
+  // @@protoc_insertion_point(field_get:monitor.BumoStatus.peer_manager)
   return peer_manager_ != NULL ? *peer_manager_ : *default_instance_->peer_manager_;
 }
-inline ::monitor::PeerManager* BubiStatus::mutable_peer_manager() {
+inline ::monitor::PeerManager* BumoStatus::mutable_peer_manager() {
   
   if (peer_manager_ == NULL) {
     peer_manager_ = new ::monitor::PeerManager;
   }
-  // @@protoc_insertion_point(field_mutable:monitor.BubiStatus.peer_manager)
+  // @@protoc_insertion_point(field_mutable:monitor.BumoStatus.peer_manager)
   return peer_manager_;
 }
-inline ::monitor::PeerManager* BubiStatus::release_peer_manager() {
-  // @@protoc_insertion_point(field_release:monitor.BubiStatus.peer_manager)
+inline ::monitor::PeerManager* BumoStatus::release_peer_manager() {
+  // @@protoc_insertion_point(field_release:monitor.BumoStatus.peer_manager)
   
   ::monitor::PeerManager* temp = peer_manager_;
   peer_manager_ = NULL;
   return temp;
 }
-inline void BubiStatus::set_allocated_peer_manager(::monitor::PeerManager* peer_manager) {
+inline void BumoStatus::set_allocated_peer_manager(::monitor::PeerManager* peer_manager) {
   delete peer_manager_;
   peer_manager_ = peer_manager;
   if (peer_manager) {
@@ -2018,7 +2018,7 @@ inline void BubiStatus::set_allocated_peer_manager(::monitor::PeerManager* peer_
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:monitor.BubiStatus.peer_manager)
+  // @@protoc_insertion_point(field_set_allocated:monitor.BumoStatus.peer_manager)
 }
 
 // -------------------------------------------------------------------

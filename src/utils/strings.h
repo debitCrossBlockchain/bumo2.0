@@ -35,7 +35,7 @@ namespace utils {
 	public:
 		static const int kMaxStringLen = 1024 * 1024;
 
-		static int is_number(const std::string& str) {
+		static int IsNumber(const std::string& str) {
 			int base = 10;
 			const char * ptr;
 			int type = 0;
@@ -98,49 +98,93 @@ namespace utils {
 
 		/// @brief 转换成int类型
 		static int Stoi(const std::string &str) {
-			return (0 == str.length()) ? 0 : atoi(str.c_str());
+			if (0 == str.length()) {
+				return 0;
+			}
+			return atoi(str.c_str());
 		}
-
+		
 		/// @brief 转换成unsigned int
 		static unsigned int Stoui(const std::string &str) {
-			return (0 == str.length()) ? 0 : static_cast<unsigned int>(atoi(str.c_str()));
+			if (0 == str.length()) {
+				return 0;
+			}
+			size_t used_digits = 0;
+			uint32_t value = 0;
+			for (int i = 0; i < (int)str.size(); i++) {
+				char item_value = str[i];
+				if (item_value >= '0' && item_value <= '9') {
+					value *= 10;
+					value += (uint32_t)(item_value - '0');
+					used_digits++;
+				}
+				else if (!IsSpace(item_value) || used_digits > 0) {
+					break;
+				}
+			}
+
+			return value;
 		}
 
 		/// @brief 转换成int64类型
 		static int64_t Stoi64(const std::string &str) {
+			if (0 == str.length()) {
+				return 0;
+			}
 			int64_t v = 0;
 #ifdef WIN32
-			sscanf_s(str.c_str(), "%I64d", &v);
+			v = _atoi64(str.c_str());
 #else
-			sscanf(str.c_str(), "%ld", &v);
+			v = atoll(str.c_str());
 #endif
 			return v;
 		}
 
 		/// @brief转换成uint64类型
 		static int64_t Stoui64(const std::string &str) {
-			int64_t v = 0;
-#ifdef WIN32
-			sscanf_s(str.c_str(), FMT_I64, &v);
-#else
-			sscanf(str.c_str(), FMT_I64, &v);
-#endif
-			return v;
+			if (0 == str.length()) {
+				return 0L;
+			}
+
+			size_t used_digits = 0;
+			uint64_t value = 0;
+			for (int i = 0; i < (int)str.size(); i++) {
+				char item_value = str[i];
+				if (item_value >= '0' && item_value <= '9') {
+					value *= 10;
+					value += (uint64_t)(item_value - '0');
+					used_digits++;
+				}
+				else if (!IsSpace(item_value) || used_digits > 0) {
+					break;
+				}
+			}
+
+			return value;
 		}
 
 		/// @brief 转换成long
 		static long Stol(const std::string &str) {
-			return (0 == str.length()) ? 0L : atol(str.c_str());
+			if (0 == str.length()) {
+				return 0L;
+			} 
+			return atol(str.c_str());
 		}
 
 		/// @brief 转换成float
 		static float Stof(const std::string &str) {
-			return (0 == str.length()) ? 0.0f : static_cast<float>(atof(str.c_str()));
+			if (0 == str.length()) {
+				return 0.0F;
+			}
+			return static_cast<float>(atof(str.c_str()));
 		}
 
 		/// @brief 转换成double
 		static double Stod(const std::string &str) {
-			return (0 == str.length()) ? 0.0 : atof(str.c_str());
+			if (0 == str.length()) {
+				return 0.0;
+			}
+			return atof(str.c_str());
 		}
 
 		/// @brief 转换成bool
@@ -189,6 +233,16 @@ namespace utils {
 			_snprintf(buf, sizeof(buf), FMT_I64, val);
 #else
 			snprintf(buf, sizeof(buf), FMT_I64, val);
+#endif
+			return buf;
+		}
+
+		static std::string ToString(const uint64_t val) {
+			char buf[32] = { 0 };
+#ifdef WIN32    
+			_snprintf(buf, sizeof(buf), FMT_U64, val);
+#else
+			snprintf(buf, sizeof(buf), FMT_U64, val);
 #endif
 			return buf;
 		}
@@ -636,6 +690,35 @@ namespace utils {
 			return nLocalTimestamp;
 		}
 
+		/*
+		assert(FormatDecimal(123456789, 1) == "12345678.9");
+		assert(FormatDecimal(123456789, 2) == "1234567.89");
+		*/
+		template <typename VALUE_TYPE>
+		static std::string FormatDecimal(VALUE_TYPE number, size_t decimal) {
+			std::string result = utils::String::ToString(number);
+			if (decimal >= result.size()) result.insert(0, decimal - result.size() + 1, '0');
+
+			std::string result_decimal;
+			bool zero_not_show = true;
+			for (size_t i = 0; i < result.size(); i++) {
+				size_t rev_index = result.size() - i - 1;
+				if (result[rev_index] != '0') zero_not_show = false;
+				if (i < decimal) {
+					if (result[rev_index] != '0' || !zero_not_show) result_decimal.push_back(result[rev_index]);
+				}
+				else if (i == decimal) {
+					if (result_decimal.size() > 0) result_decimal.push_back('.');
+					result_decimal.push_back(result[rev_index]);
+				}
+				else {
+					result_decimal.push_back(result[rev_index]);
+				}
+			}
+			std::reverse(result_decimal.begin(), result_decimal.end());
+			return result_decimal;
+		}
+
 		static StringVector Strtok(const std::string &str, char separator) {
 			size_t pos = 0;
 			size_t newPos = 0;
@@ -657,6 +740,87 @@ namespace utils {
 				}
 			}
 			return arr;
+		}
+
+
+		static std::string MultiplyDecimal(std::string value, size_t decimals) {
+			size_t dot_pos = value.find(".");
+			if (dot_pos == std::string::npos) {
+				value.insert(value.end(), decimals, '0');
+			}
+			else{
+				size_t right = value.size() - dot_pos - 1;
+				if (right <= decimals) {
+					value.erase(value.find("."), 1);
+					value.insert(value.end(), decimals - right, '0');
+				}
+				else {
+					value.erase(dot_pos, 1);
+					value.insert(dot_pos + decimals, 1, '.');
+				}			
+			}
+
+			size_t i = 0;
+			for (; i < value.size(); i++) {
+				if (value[i] != '0') {
+					break;
+				}
+			}
+
+			if (value[i] == '.') {
+				i--;
+			}
+
+			value.erase(0, i);
+
+			return value;
+		}
+
+		static bool IsDecNumber(const std::string &value, size_t decimal) {
+			if (value.empty()) {
+				return false;
+			}
+
+			if (value[value.size() - 1] == '.') {
+				return false;
+			}
+
+			bool ret = true;
+			size_t count_zero = 0;
+			bool continue_zero = true;
+			size_t dot_pos = std::string::npos;
+			for (size_t i = 0; i < value.size(); i++) {
+				if (!IS_DIGIT(value[i]) && value[i] != '.') {
+					return false;
+				}
+
+				if (continue_zero && value[i] == '0') {
+					count_zero++;
+				}
+				else {
+					continue_zero = false;
+				}
+
+				if (value[i] == '.') {
+					if (dot_pos == std::string::npos) {
+						dot_pos = i;
+					}
+					else {
+						return false;
+					}
+				}
+			}
+
+			if (count_zero > 2 ||
+				(count_zero == 1 && dot_pos != 1)
+				) {  //00123 or 01223, except 0.123 or .123
+				return false;
+			}
+			if ((dot_pos != std::string::npos) && (value.size() - dot_pos - 1 > decimal)) {
+				return false;
+			}
+
+			return ret;
 		}
 
 		template <typename VALUE_TYPE>

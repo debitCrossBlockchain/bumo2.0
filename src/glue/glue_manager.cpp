@@ -22,8 +22,8 @@
 
 namespace bumo {
 
-	int64_t const  MAX_LEDGER_TIMESPAN_SECONDS = 60 * utils::MICRO_UNITS_PER_SEC;
-	int64_t const QUEUE_TRANSACTION_TIMEOUT = 90 * utils::MICRO_UNITS_PER_SEC;
+	int64_t const  MAX_LEDGER_TIMESPAN_SECONDS = 20 * utils::MICRO_UNITS_PER_SEC;
+	int64_t const QUEUE_TRANSACTION_TIMEOUT = 60 * utils::MICRO_UNITS_PER_SEC;
 	GlueManager::GlueManager() {
 		time_start_consenus_ = 0;
 		ledgerclose_check_timer_ = 0;
@@ -35,6 +35,7 @@ namespace bumo {
 
 	bool GlueManager::Initialize() {
 
+		tx_pool_ = std::make_shared<TransactionQueue>(Configure::Instance().ledger_configure_.queue_limit_,  Configure::Instance().ledger_configure_.queue_per_account_txs_limit_);
 		process_uptime_ = time(NULL);
 		consensus_ = ConsensusManager::Instance().GetConsensus();
 		consensus_->SetNotify(this);
@@ -90,43 +91,11 @@ namespace bumo {
 
 	bool GlueManager::StartConsensus() {
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
-		//get cached tx, if error then delete it
-		TransactionSetFrm txset;
-		size_t del_size = 0;
-		std::vector<TransactionFrm::pointer> err_txs;
-		do {
-			utils::MutexGuard guard(lock_);
-			std::string skip_address;
-			for (TransactionMap::iterator iter = topic_caches_.begin();
-				iter != topic_caches_.end();) {
-				if (iter->first.GetTopic() == skip_address) {
-					iter++;
-					continue;
-				} else{
-					int32_t ret = txset.Add(iter->second);
-					if (ret < 0) {
-						err_txs.push_back(iter->second);
-						iter = topic_caches_.erase(iter);
-						del_size++;
-					}
-					else if (ret == 0) {
-						skip_address = iter->first.GetTopic();
-						iter++;
-					}
-					else {
-						iter++;
-					}
-				}
-			}
-		} while (false);
-
-		if (err_txs.size() > 0){
-			NotifyErrTx(err_txs);
-		} 
+		protocol::TransactionEnvSet txset_raw = tx_pool_->TopTransaction(Configure::Instance().ledger_configure_.max_trans_per_ledger_);
 
 		time_start_consenus_ = utils::Timestamp::HighResolution();
 		if (!consensus_->IsLeader()) {
-			LOG_INFO("Start consensus process, but it not leader, just waiting");
+			LOG_INFO("Start consensus process, but it is not leader, just waiting");
 			return true;
 		} 
 		else {
@@ -134,15 +103,16 @@ namespace bumo {
 		}
 
 		int64_t next_close_time = utils::Timestamp::Now().timestamp();
-		if (next_close_time < lcl.close_time() + Configure::Instance().validation_configure_.close_interval_) {
-			next_close_time = lcl.close_time() + Configure::Instance().validation_configure_.close_interval_;
+		if (next_close_time < lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_) {
+			next_close_time = lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_;
 		}
 
 		//get previous block proof
 		std::string proof;
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof);
 
-		protocol::TransactionEnvSet txset_raw = txset.GetRaw();
+		//protocol::TransactionEnvSet txset_raw = tx_pool_->top.GetRaw();
+		
 		protocol::ConsensusValue propose_value;
 		do {
 			*propose_value.mutable_txset() = txset_raw;
@@ -158,68 +128,59 @@ namespace bumo {
 			protocol::LedgerUpgrade up;
 			if (ledger_upgrade_.GetValid(validator_set, quorum_size + 1, up)) {
 				LOG_INFO("Get valid upgrade value(%s)", Proto2Json(up).toFastString().c_str());
-				*propose_value.mutable_ledger_upgrade() = up;
 
-				if (CheckValueHelper(propose_value, next_close_time) != Consensus::CHECK_VALUE_VALID) {
-					//not propose the upgrade value
+				if (lcl.version() < up.new_ledger_version() && up.new_ledger_version() <= General::LEDGER_VERSION) {
 					LOG_ERROR("Not propose the invalid upgrade value");
-					propose_value.clear_ledger_upgrade();
+					*propose_value.mutable_ledger_upgrade() = up;
 				}
 			}
 
-			int32_t timeout_tx_index = -1;
-			if (LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, 5 * utils::MICRO_UNITS_PER_SEC, timeout_tx_index)) {
-				break;
+			ProposeTxsResult propose_result;
+			LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, true, propose_result);
+
+			if (propose_result.block_timeout_) {
+				//remove the time out tx
+				//reduct to 1/2
+				protocol::TransactionEnvSet tmp_raw;
+				for (int32_t i = 0; i < txset_raw.txs_size() / 2; i ++) {
+					*tmp_raw.add_txs() = txset_raw.txs(i);
+				}
+
+				txset_raw = tmp_raw;
+
+				continue;
 			}
 
-			if(timeout_tx_index < 0) break;
+			//need drop some tx
+			if (propose_result.need_dropped_tx_.size()) {
+				protocol::TransactionEnvSet *txs = propose_value.mutable_txset();
+				txs->clear_txs();
 
-			const protocol::TransactionEnv &tx_env = txset_raw.txs(timeout_tx_index);
-			TransactionFrm frm(tx_env);
-			LOG_ERROR("Pre processor detect tx(%s) source(%s) nonce(" FMT_I64 ") nostop", 
-				utils::String::Bin4ToHexString(frm.GetContentHash()).c_str(),
-				frm.GetSourceAddress().c_str(),
-				frm.GetNonce());
-
-			//remove the tx from cache
-			std::vector<TransactionFrm::pointer> err_txs;
-			do {
-				utils::MutexGuard guard(lock_);
-				for (TransactionMap::iterator iter = topic_caches_.begin();
-					iter != topic_caches_.end(); iter++) {
-					if (iter->first.GetTopic() == frm.GetSourceAddress() && iter->second->GetNonce() == frm.GetNonce()) {
-						err_txs.push_back(iter->second);
-						topic_caches_.erase(iter);
-						break;
+				protocol::TransactionEnvSet tmp_raw;
+				for (int32_t i = 0; i < txset_raw.txs_size(); i++) {
+					if (propose_result.need_dropped_tx_.find(i) != propose_result.need_dropped_tx_.end()) {
+						//remove from the cache
+						*tmp_raw.add_txs() = txset_raw.txs(i);
+					} else{
+						*txs->add_txs() = txset_raw.txs(i);
 					}
 				}
-			} while (false);
+				tx_pool_->RemoveTxs(tmp_raw);
+			} 
 
-			//notice
-			if (err_txs.size() > 0) {
-				NotifyErrTx(err_txs);
+			if (propose_result.cons_validation_.error_tx_ids_size() > 0 ||
+				propose_result.cons_validation_.expire_tx_ids_size() > 0) {
+				*propose_value.mutable_validation() = propose_result.cons_validation_;
 			}
 
-			//erase the tx, than continue check
-			protocol::TransactionEnvSet txset_raw_next;
+			LOG_INFO("Check validation, validation(%d,%d) ",
+				propose_result.cons_validation_.expire_tx_ids_size(), propose_result.cons_validation_.error_tx_ids_size());
 
-			for (int32_t i = 0; i < txset_raw.txs_size(); i++) {
-				const protocol::TransactionEnv &tmp = txset_raw.txs(i);
-				const protocol::Transaction &tmp_tx = tmp.transaction();
-				if (tmp_tx.source_address() == frm.GetSourceAddress() && tmp_tx.nonce() >= frm.GetNonce()) {
-					continue;
-				} else{
-					*txset_raw_next.add_txs() = tmp;
-				}
-			}
-
-			txset_raw = txset_raw_next;
-
+			break;
 		} while (true);
 
-		LOG_INFO("Proposed %d tx(s), lcl hash(%s), removed " FMT_SIZE " tx(s)", propose_value.txset().txs_size(),
-			utils::String::Bin4ToHexString(lcl.hash()).c_str(), 
-			del_size);
+		LOG_INFO("Proposed %d tx(s), lcl hash(%s) tx(s)", propose_value.txset().txs_size(),
+			utils::String::Bin4ToHexString(lcl.hash()).c_str());
 		consensus_->Request(propose_value.SerializeAsString());
 		return true;
 	}
@@ -230,25 +191,17 @@ namespace bumo {
 		std::string address = tx->GetSourceAddress();
 
 		do {
-			int64_t max_trans = Configure::Instance().ledger_configure_.max_trans_in_memory_;
-			utils::MutexGuard guard(lock_);
-			if (topic_caches_.size() >= max_trans){
-				err.set_code(protocol::ERRCODE_OUT_OF_TXCACHE);
-				err.set_desc("too much transactions");
-				LOG_ERROR("Too much transactions,transaction hash(%s)", utils::String::Bin4ToHexString(hash_value).c_str());
-				break;
-			}
-
-			TransactionMap::iterator iter = topic_caches_.find(key);
-			if (iter != topic_caches_.end())  {
-				err.set_code(protocol::ERRCODE_ALREADY_EXIST);
-				err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
-				LOG_ERROR("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
+			if (tx_pool_->IsExist(tx->GetContentHash())){
+				//dont't reply the tx, then break;
+				//err.set_code(protocol::ERRCODE_ALREADY_EXIST);
+				//err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
+				LOG_INFO("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
 				break;
 			}
 
 			//验证交易有效性
-			if (!tx->CheckValid(/*high_sequence*/ -1)) {
+			int64_t nonce = 0;
+			if (!tx->CheckValid(/*high_sequence*/ -1, true, nonce)) {
 				err = tx->GetResult();
 				Json::Value js;
 				js["action"] = "apply";
@@ -259,15 +212,14 @@ namespace bumo {
 				break;
 			}
 
-			LOG_INFO("Recv new tx(%s:" FMT_I64 ")", key.GetTopic().c_str(), key.GetSeq());
-			topic_caches_.insert(std::make_pair(key, tx));
+			if (!tx_pool_->Import(tx, nonce, err)) {
+				LOG_ERROR("source address(%s) tx hash(%s) insert tx queue failed",
+					address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
+			}
 
 		} while (false);
 
-		if (err.code() != protocol::ERRCODE_ALREADY_EXIST) {
-			WebSocketServer::Instance().BroadcastChainTxMsg(hash_value, address, err, err.code() == protocol::ERRCODE_SUCCESS ?
-				protocol::ChainTxStatus_TxStatus_PENDING : protocol::ChainTxStatus_TxStatus_FAILURE);
-		}
+
 		return err.code() == protocol::ERRCODE_SUCCESS;
 	}
 
@@ -279,20 +231,7 @@ namespace bumo {
 		//check the timeout transaction
 
 		std::vector<TransactionFrm::pointer> timeout_txs;
-		do {
-			utils::MutexGuard guard(lock_);
-			for (TransactionMap::iterator iter = topic_caches_.begin(); iter != topic_caches_.end();) {
-				if (iter->second->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT)) {
-					//notify
-					timeout_txs.push_back(iter->second);
-
-					iter = topic_caches_.erase(iter);
-				}
-				else {
-					iter++;
-				}
-			}
-		} while (false);
+		tx_pool_->CheckTimeoutAndDel(current_time, timeout_txs);
 
 		if (timeout_txs.size() > 0 ){
 			NotifyErrTx(timeout_txs);
@@ -301,30 +240,15 @@ namespace bumo {
 		ledger_upgrade_.OnTimer(current_time);
 	}
 
-	size_t GlueManager::RemoveTxset(const TransactionSetFrm &set) {
-		utils::MutexGuard guard(lock_);
-		size_t ret = 0;
-		for (int32_t i = 0; i < set.GetRaw().txs_size(); i++) {
-			TransactionFrm tx(set.GetRaw().txs(i));
-
-			TransactionMap::iterator iter = topic_caches_.find(TopicKey(tx.GetSourceAddress(), tx.GetNonce()));
-			if (iter != topic_caches_.end()) {
-				topic_caches_.erase(iter);
-				ret++;
-			}
-		}
-
-		return ret;
-	}
 
 	void GlueManager::NotifyErrTx(std::vector<TransactionFrm::pointer> &txs) {
 		for (std::vector<TransactionFrm::pointer>::iterator iter = txs.begin();
 			iter != txs.end();
 			iter++) {
 
-			TransactionFrm::pointer tx = *iter;
-			WebSocketServer::Instance().BroadcastChainTxMsg(tx->GetContentHash(), tx->GetSourceAddress(), 
-				tx->GetResult(), tx->GetResult().code() == protocol::ERRCODE_SUCCESS ? protocol::ChainTxStatus_TxStatus_COMPLETE : protocol::ChainTxStatus_TxStatus_FAILURE);
+//			TransactionFrm::pointer tx = *iter;
+//			WebSocketServer::Instance().BroadcastChainTxMsg(tx->GetContentHash(), tx->GetSourceAddress(), 
+//				tx->GetResult(), tx->GetResult().code() == protocol::ERRCODE_SUCCESS ? protocol::ChainTxStatus_TxStatus_COMPLETE : protocol::ChainTxStatus_TxStatus_FAILURE);
 		}
 	}
 
@@ -348,7 +272,7 @@ namespace bumo {
 		protocol::ConsensusValue request;
 		request.ParseFromString(value);
 
-		TransactionSetFrm txset_frm(request.txset());
+		//TransactionSetFrm txset_frm(request.txset());
 
 		//temp upgrade the validator, need done by ledger manager
 
@@ -363,21 +287,33 @@ namespace bumo {
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
 
 		//delete the cache 
-		size_t ret1 = RemoveTxset(txset_frm);
+		//size_t ret1 = RemoveTxset(txset_frm);
+		tx_pool_->RemoveTxs(request.txset(),true);
 
 		//start time
-		int64_t next_interval = GetIntervalTime(txset_frm.Size() == 0);
-		int64_t waiting_time = next_interval - (utils::Timestamp::HighResolution() - time_start_consenus_);
-		if (waiting_time <= 0)  waiting_time = 1;
-		start_consensus_timer_ = utils::Timer::Instance().AddTimer(waiting_time, 0, [this](int64_t data) {
-			StartConsensus();
+		int64_t next_interval = GetIntervalTime(request.txset().txs_size() == 0);
+		int64_t next_timestamp = next_interval + req.close_time();
+		int64_t seq = req.ledger_seq();
+		Global::Instance().GetIoService().post([next_timestamp, time_use, seq, this]() {
+			int64_t waiting_time = next_timestamp - utils::Timestamp::Now().timestamp();
+			if (waiting_time <= 0)  waiting_time = 1;
+
+			if (consensus_->IsLeader()) {
+				start_consensus_timer_ = utils::Timer::Instance().AddTimer(waiting_time, 0, [this](int64_t data) {
+					StartConsensus();
+				});
+
+				LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to start next consensus",
+					seq, (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), (int64_t)(waiting_time / utils::MILLI_UNITS_PER_SEC));
+			}
+			else {
+				LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to check next consensus",
+					seq, (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), (int64_t)(waiting_time / utils::MILLI_UNITS_PER_SEC));
+			}
+
 		});
 
 		StartLedgerCloseTimer();
-
-		LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to start next consensus",
-			req.ledger_seq(), (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), (int64_t)(waiting_time / utils::MILLI_UNITS_PER_SEC));
-
 		protocol::LedgerHeader lcl1 = LedgerManager::Instance().GetLastClosedLedger();
 		return lcl1.hash();
 	}
@@ -407,7 +343,7 @@ namespace bumo {
 		//if it exist in hardfork point, we ignore the proof
 		std::string consensus_value_hash = HashWrapper::Crypto(consensus_value);
 		std::set<std::string>::const_iterator iter = hardfork_points_.find(consensus_value_hash);
-		return CheckValueHelper(proto_value, utils::MAX_INT64) == Consensus::CHECK_VALUE_VALID &&
+		return CheckValueHelper(proto_value, -1) == Consensus::CHECK_VALUE_VALID &&   //-1 not check time
 			(consensus_->CheckProof(set, HashWrapper::Crypto(consensus_value), proof)
 			|| iter != hardfork_points_.end());
 	}
@@ -419,23 +355,15 @@ namespace bumo {
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		if (consensus_value.has_ledger_upgrade()) {
-			const protocol::LedgerUpgrade &upgrade = consensus_value.ledger_upgrade();
-			if (upgrade.SerializeAsString() != ledger_upgrade_.GetLocalState().SerializeAsString()) {
-				LOG_ERROR("Check valid failed, ledger upgrade message not match local state");
-				return Consensus::CHECK_VALUE_MAYVALID;
-			}
-		}
-
 		int32_t check_helper_ret = CheckValueHelper(consensus_value, utils::Timestamp::Now().timestamp());
 		if (check_helper_ret > 0) {
 			return check_helper_ret;
 		}
 
-		int32_t timeout_index;
+		ProposeTxsResult ignor_cons_validation;
 		if (!LedgerManager::Instance().context_manager_.SyncPreProcess(consensus_value,
-			5 * utils::MICRO_UNITS_PER_SEC,
-			timeout_index)) {
+			false,
+			ignor_cons_validation)) {
 			LOG_ERROR("Pre process consvalue failed");
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
@@ -470,14 +398,17 @@ namespace bumo {
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		//not too closed
-		if (!(
-			now > consensus_value.close_time() && 
-			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().validation_configure_.close_interval_)
+		//not too closed, can tolerate 1 second 
+		if (now != -1 && 
+			!(
+			now > (consensus_value.close_time() - utils::MICRO_UNITS_PER_SEC)
+			&& 
+			consensus_value.close_time() >= lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_
+			)
 			) {
-			LOG_ERROR("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid", 
-				now / utils::MICRO_UNITS_PER_SEC, consensus_value.close_time() / utils::MICRO_UNITS_PER_SEC,
-				lcl.close_time(), Configure::Instance().validation_configure_.close_interval_ / utils::MICRO_UNITS_PER_SEC);
+			LOG_WARN("Now time(" FMT_I64 ") > Close time(" FMT_I64 ") > (lcl time(" FMT_I64 ") + interval(" FMT_I64")) Not valid. Consensus network time error!", 
+				now, consensus_value.close_time() ,
+				lcl.close_time(), Configure::Instance().ledger_configure_.close_interval_ );
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
@@ -501,18 +432,9 @@ namespace bumo {
 			//normal block should not exit the upgarde
 			bool new_validator_exist = !upgrade.new_validator().empty();
 			std::string consensus_value_hash = HashWrapper::Crypto(consensus_value.SerializeAsString());
-			if (hardfork_points_.end() == hardfork_points_.find(lcl.consensus_value_hash()) && new_validator_exist) {
+			if (hardfork_points_.end() == hardfork_points_.find(consensus_value_hash) && new_validator_exist) {
 				return Consensus::CHECK_VALUE_MAYVALID;
 			} 
-		}
-
-		//check the txset
-		if (consensus_value.has_txset()) {
-			TransactionSetFrm frm(consensus_value.txset());
-			if (!frm.CheckValid()) {
-				LOG_ERROR("Check valid failed, tx set not valid");
-				return Consensus::CHECK_VALUE_MAYVALID;
-			}
 		}
 
 		//check the second block
@@ -561,9 +483,7 @@ namespace bumo {
 
 	void GlueManager::GetModuleStatus(Json::Value &data) {
 		data["name"] = "glue_manager";
-
-		data["transaction_size"] = topic_caches_.size();
-		data["cache_topic_size"] = last_topic_seqs_.size();
+		data["transaction_size"] = (Json::UInt64)tx_pool_->Size();
 
 		Json::Value &system_json = data["system"];
 		utils::Timestamp time_stamp(utils::GetStartupTime() * utils::MICRO_UNITS_PER_SEC);
@@ -576,7 +496,7 @@ namespace bumo {
 	}
 
 	int64_t GlueManager::GetIntervalTime(bool empty_block) {
-		return Configure::Instance().validation_configure_.close_interval_;
+		return Configure::Instance().ledger_configure_.close_interval_;
 	}
 
 	void GlueManager::OnResetCloseTimer() {
@@ -598,8 +518,15 @@ namespace bumo {
 	}
 
 	size_t GlueManager::GetTransactionCacheSize() {
-		utils::MutexGuard guard(lock_);
-		return topic_caches_.size();
+		return tx_pool_->Size();
+	}
+
+	void GlueManager::QueryTransactionCache(const uint32_t& num, std::vector<TransactionFrm::pointer>& txs){
+		tx_pool_->Query(num,txs);
+	}
+
+	bool GlueManager::QueryTransactionCache(const std::string& hash, TransactionFrm::pointer& tx){
+		return tx_pool_->Query(hash, tx);
 	}
 
 }

@@ -27,7 +27,7 @@
 namespace bumo {
 
 	struct AssetSort {
-		bool operator() (const protocol::AssetProperty& a, const protocol::AssetProperty& b)const{
+		bool operator() (const protocol::AssetKey& a, const protocol::AssetKey& b)const{
 			return a.SerializeAsString() < b.SerializeAsString();
 		}
 	};
@@ -53,7 +53,7 @@ namespace bumo {
 
 		void ToJson(Json::Value &result);
 
-		void GetAllAssets(std::vector<protocol::Asset>& assets);
+		void GetAllAssets(std::vector<protocol::AssetStore>& assets);
 
 		void GetAllMetaData(std::vector<protocol::KeyPair>& metadata);
 
@@ -62,9 +62,9 @@ namespace bumo {
 
 		std::string GetAccountAddress()const;
 
-		bool GetAsset(const protocol::AssetProperty &_property, protocol::Asset& result);
+		bool GetAsset(const protocol::AssetKey &asset_key, protocol::AssetStore& result);
 
-		void SetAsset(const protocol::Asset& result);
+		void SetAsset(const protocol::AssetStore& result);
 
 		bool GetMetaData(const std::string& binkey, protocol::KeyPair& result);
 
@@ -108,6 +108,7 @@ namespace bumo {
 		void NonceIncrease();
 		int64_t GetAccountBalance() const;
 		bool AddBalance(int64_t amount);
+		static AccountFrm::pointer CreatAccountFrm(const std::string& account_address, int64_t balance);
 	public:
 
 		template <class T>
@@ -116,7 +117,7 @@ namespace bumo {
 			T data_;
 		};
 
-		std::map<protocol::AssetProperty, DataCache<protocol::Asset>, AssetSort> assets_;
+		std::map<protocol::AssetKey, DataCache<protocol::AssetStore>, AssetSort> assets_;
 		std::map<std::string, DataCache<protocol::KeyPair>> metadata_;
 	private:
 		protocol::Account	account_info_;

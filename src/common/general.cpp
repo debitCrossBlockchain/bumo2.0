@@ -60,7 +60,7 @@ namespace bumo {
 	const char *General::KEY_LEDGER_SEQ = "max_seq";
 	const char *General::KEY_GENE_ACCOUNT = "genesis_account";
 	const char *General::VALIDATORS = "validators";
-	const char *General::PEERS_TABLE = "peers";
+	const char *General::PEERS_TABLE = "peers_table";
 	const char *General::LAST_TX_HASHS = "last_tx_hashs";
 	const char *General::LAST_PROOF = "last_proof";
 
@@ -77,6 +77,14 @@ namespace bumo {
 
 	const char *General::CHECK_TIME_FUNCTION = "internal_check_time";
 
+	//bumo::PublicKey pub_key;
+	//pub_key.Init("1");
+	//std::string account1 = pub_key.GetEncAddress(); "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ"
+	//pub_key.Init("2");
+	//std::string account2 = pub_key.GetEncAddress();"buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe"
+
+	const char *General::CONTRACT_VALIDATOR_ADDRESS = "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ";
+	const char *General::CONTRACT_FEE_ADDRESS = "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe";
 
 	const int32_t General::TRANSACTION_LIMIT_SIZE = utils::BYTES_PER_MEGA;
 	const int32_t General::TXSET_LIMIT_SIZE = 32 * utils::BYTES_PER_MEGA;
@@ -303,5 +311,12 @@ namespace bumo {
 		result += "_";
 		result += utils::String::ToString(value);
 		return result;
+	}
+
+	int64_t GetBlockReward(const int64_t cur_block_height) {
+		int64_t power_index = cur_block_height / General::REWARD_PERIOD;
+		if (power_index >= 64) 
+			return 0;
+		return General::REWARD_INIT_VALUE >> power_index;
 	}
 }

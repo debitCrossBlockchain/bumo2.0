@@ -14,4 +14,5 @@ add_library(${LIB_BUMO_UTILS} ${UTILS_SRC})
 target_compile_options(${LIB_BUMO_UTILS}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE
+    PUBLIC -D${OS_NAME}
 )

@@ -51,14 +51,15 @@ namespace bumo {
 		std::string GetContentData() const;
 		std::string GetFullHash() const;
 
-		void ToJson(Json::Value &json);
+		void ToJson(Json::Value &result);
+		void CacheTxToJson(Json::Value &result);
 
 		std::string GetSourceAddress() const;
 		int64_t GetNonce() const;
 
 		const protocol::TransactionEnv &GetTransactionEnv() const;
 
-		bool CheckValid(int64_t last_seq);
+		bool CheckValid(int64_t last_seq, bool check_priv, int64_t& nonce);
 		bool CheckExpr(const std::string &code, const std::string &log_prefix);
 
 		bool SignerHashPriv(AccountFrm::pointer account_ptr, int32_t type) const;
@@ -79,6 +80,12 @@ namespace bumo {
 		protocol::TransactionEnv &GetProtoTxEnv() {
 			return transaction_env_;
 		}
+
+		std::string &GetFullData() {
+			return full_data_;
+		}
+
+		void ApplyExpireResult(); // for sync node
 
 		bool ValidForParameter();
 		
@@ -104,6 +111,7 @@ namespace bumo {
 		int64_t GetStackUsage();
 		bool IsExpire(std::string &error_info);
 		void EnableChecked();
+		const int64_t GetInComingTime() const;
 
 		uint64_t apply_time_;
 		int64_t ledger_seq_;

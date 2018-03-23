@@ -57,7 +57,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OutputFile>$(OutDir)\test.exe</OutputFile>
-      <AdditionalDependencies>leveldb_d.lib;json_d.lib;sqlite3_d.lib;iphlpapi.lib;libprotobuf_d.lib;libeay32.lib;ssleay32.lib;pcre_d.lib;winmm.lib;gdi32.lib;grpc_d.lib;gpr_d.lib;grpc++_d.lib;zlib1.lib;v8.lib;icui18n.lib;v8_libplatform.lib;icuuc.lib;v8_libbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>leveldb_d.lib;json_d.lib;sqlite3_d.lib;iphlpapi.lib;libprotobuf_d.lib;libeay32.lib;ssleay32.lib;pcre_d.lib;winmm.lib;gdi32.lib;grpc_d.lib;gpr_d.lib;grpc++_d.lib;zlib1.lib;v8.lib;icui18n.lib;v8_libplatform.lib;icuuc.lib;v8_libbase.lib;libscrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../src/3rd/basic/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
@@ -71,14 +71,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../../src/3rd/asio/include;../../src;../../src/3rd/basic/include;../../src/3rd/rocksdb/include;../../src/3rd/websocketpp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src/3rd/asio/include;../../src;../../src/3rd/basic/include;../../src/3rd/rocksdb/include;../../src/3rd/websocketpp;../../src/3rd/basic/include/v8</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WIN32_WINNT=0x600;WIN32;ASIO_STANDALONE;_SCL_SECURE_NO_WARNINGS;_WEBSOCKETPP_CPP11_STL_;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>leveldb.lib;json.lib;sqlite3.lib;iphlpapi.lib;libprotobuf.lib;libeay32.lib;ssleay32.lib;grpc.lib;grpc++.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>leveldb.lib;json.lib;sqlite3.lib;iphlpapi.lib;libprotobuf.lib;libeay32.lib;ssleay32.lib;v8.lib;icui18n.lib;v8_libplatform.lib;icuuc.lib;v8_libbase.lib;libscrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../src/3rd/basic/lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -100,11 +100,7 @@
     <ClCompile Include="..\..\src\proto\cpp\chain.pb.cc" />
     <ClCompile Include="..\..\src\proto\cpp\common.pb.cc" />
     <ClCompile Include="..\..\src\proto\cpp\consensus.pb.cc" />
-    <ClCompile Include="..\..\src\proto\cpp\helloworld.grpc.pb.cc" />
-    <ClCompile Include="..\..\src\proto\cpp\helloworld.pb.cc" />
     <ClCompile Include="..\..\test\testlib\channel.cpp" />
-    <ClCompile Include="..\..\test\testlib\greeter_client.cc" />
-    <ClCompile Include="..\..\test\testlib\greeter_server.cc" />
     <ClCompile Include="..\..\test\testlib\test.cpp" />
     <ClCompile Include="..\..\test\testlib\testbubikey.cpp" />
     <ClCompile Include="..\..\test\testlib\test_ed25519.cpp" />
@@ -118,8 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\proto\cpp\common.pb.h" />
-    <ClInclude Include="..\..\src\proto\cpp\helloworld.grpc.pb.h" />
-    <ClInclude Include="..\..\src\proto\cpp\helloworld.pb.h" />
     <ClInclude Include="..\..\test\testlib\channel.h" />
     <ClInclude Include="..\..\test\testlib\test.h" />
     <ClInclude Include="..\..\test\testlib\test_v8_terminate.h" />

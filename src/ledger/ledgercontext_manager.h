@@ -37,20 +37,20 @@ namespace bumo {
 		LedgerContextManager *lpmanager_;
 		int64_t start_time_;
 
+		LedgerFrm::APPLY_MODE apply_mode_;
+
 		Json::Value logs_;
 		Json::Value rets_;
 	public:
 		LedgerContext(
 			LedgerContextManager *lpmanager,
 			const std::string &chash, 
-			const protocol::ConsensusValue &consvalue, 
-			int64_t tx_timeout,
-			PreProcessCallback callback);
+			const protocol::ConsensusValue &consvalue,
+			bool propose);
 
 		LedgerContext(
 			const std::string &chash, 
-			const protocol::ConsensusValue &consvalue, 
-			int64_t tx_timeout);
+			const protocol::ConsensusValue &consvalue);
 
 		//for test
 		LedgerContext(
@@ -60,6 +60,7 @@ namespace bumo {
 			int32_t type,
 			const protocol::ConsensusValue &consensus_value,
 			int64_t timeout);
+
 		~LedgerContext();
 
 		enum ACTION_TYPE{
@@ -70,16 +71,16 @@ namespace bumo {
 		};
 
 		protocol::ConsensusValue consensus_value_;
-		bool sync_;
-		PreProcessCallback callback_;
 		int64_t tx_timeout_;
 
 		LedgerFrm::pointer closing_ledger_;
 		std::vector<std::shared_ptr<TransactionFrm>> transaction_stack_;
 		
 		//result
-		bool exe_result_;
+		//bool exe_result_;
 		int32_t timeout_tx_index_;
+		//protocol::ConsensusValueValidation consvalue_validation_;
+		ProposeTxsResult propose_result_;
 
 		utils::Mutex lock_;
 
@@ -105,15 +106,18 @@ namespace bumo {
 
 		void PushLog();
 		std::shared_ptr<TransactionFrm> GetBottomTx();
+		std::shared_ptr<TransactionFrm> GetTopTx();
 	};
 
 	typedef std::multimap<std::string, LedgerContext *> LedgerContextMultiMap;
+	typedef std::multimap<int64_t, LedgerContext *> LedgerContextTimeMultiMap;
 	typedef std::map<std::string, LedgerContext *> LedgerContextMap;
 	class LedgerContextManager :
 		public bumo::TimerNotify {
 		utils::Mutex ctxs_lock_;
 		LedgerContextMultiMap running_ctxs_;
 		LedgerContextMap completed_ctxs_;
+		LedgerContextTimeMultiMap delete_ctxs_;
 	public:
 		LedgerContextManager();
 		~LedgerContextManager();
@@ -122,6 +126,7 @@ namespace bumo {
 		virtual void OnTimer(int64_t current_time);
 		virtual void OnSlowTimer(int64_t current_time);
 		void MoveRunningToComplete(LedgerContext *ledger_context);
+		void MoveRunningToDelete(LedgerContext *ledger_context);
 		void RemoveCompleted(int64_t ledger_seq);
 		void GetModuleStatus(Json::Value &data);
 
@@ -137,10 +142,10 @@ namespace bumo {
 
 		//<0 : notfound 1: found and success 0: found and failed
 		int32_t CheckComplete(const std::string &chash);
-		bool SyncPreProcess(const protocol::ConsensusValue& consensus_value, int64_t timeout, int32_t &timeout_tx_index);
+		bool SyncPreProcess(const protocol::ConsensusValue& consensus_value, bool propose, ProposeTxsResult &propose_result);
 
 		//<0 : processing 1: found and success 0: found and failed
-		int32_t AsyncPreProcess(const protocol::ConsensusValue& consensus_value, int64_t timeout, PreProcessCallback callback, int32_t &timeout_tx_index);
+//		int32_t AsyncPreProcess(const protocol::ConsensusValue& consensus_value, int64_t timeout, PreProcessCallback callback, int32_t &timeout_tx_index);
 		LedgerFrm::pointer SyncProcess(const protocol::ConsensusValue& consensus_value); //for ledger closing
 	};
 

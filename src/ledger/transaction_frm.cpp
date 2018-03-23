@@ -79,6 +79,13 @@ namespace bumo {
 		result["hash"] = utils::String::BinToHexString(hash_);
 	}
 
+	void TransactionFrm::CacheTxToJson(Json::Value &result){
+		result = Proto2Json(transaction_env_);
+		result["incoming_time"] = incoming_time_;
+		result["status"] = "processing";
+		result["hash"] = utils::String::BinToHexString(hash_);
+	}
+
 	void TransactionFrm::Initialize() {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 		data_ = tran.SerializeAsString();
@@ -190,22 +197,30 @@ namespace bumo {
 
 		if (contract_step_ > General::CONTRACT_STEP_LIMIT) {
 			error_info = "Step expire";
+			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
+			result_.set_desc(error_info);
 			return true;
 		}
 
 		int64_t now = utils::Timestamp::HighResolution();
 		if (max_end_time_ != 0 && now > max_end_time_) {
 			error_info = "Time expire";
+			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
+			result_.set_desc(error_info);
 			return true;
 		}
 
 		if (contract_memory_usage_ > General::CONTRACT_MEMORY_LIMIT) {
 			error_info = "Memory expire";
+			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
+			result_.set_desc(error_info);
 			return true;
 		}
 
 		if (contract_stack_usage_ > General::CONTRACT_STACK_LIMIT) {
 			error_info = "Stack expire";
+			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
+			result_.set_desc(error_info);
 			return true;
 		}
 
@@ -214,6 +229,10 @@ namespace bumo {
 
 	void TransactionFrm::EnableChecked() {
 		enable_check_ = true;
+	}
+
+	const int64_t TransactionFrm::GetInComingTime() const {
+		return incoming_time_;
 	}
 
 	bool TransactionFrm::PayFee(std::shared_ptr<Environment> environment, int64_t &total_fee) {
@@ -243,7 +262,7 @@ namespace bumo {
 		return transaction_env_.transaction().nonce();
 	}
 
-	bool TransactionFrm::ValidForApply(std::shared_ptr<Environment> environment,bool check_priv) {
+	bool TransactionFrm::ValidForApply(std::shared_ptr<Environment> environment, bool check_priv) {
 		do {
 			if (!ValidForParameter())
 				break;
@@ -283,7 +302,7 @@ namespace bumo {
 			if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 				if (tran_fee < bytes_fee) {
 					std::string error_desc = utils::String::Format(
-						"Transaction(%s) fee(" FMT_I64 ")< bytes_fee(" FMT_I64 ") not enought",
+						"Transaction(%s) fee(" FMT_I64 ") not enought for self byte fee(" FMT_I64 ") ",
 						utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 					result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
@@ -294,7 +313,7 @@ namespace bumo {
 
 				if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 					std::string error_desc = utils::String::Format(
-						"Account(%s) reserve balance not enough for transaction fee and base reserve:" FMT_I64 " - " FMT_I64 " < " FMT_I64,
+						"Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base_reserve(" FMT_I64 ")",
 						str_address.c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().GetCurFeeConfig().base_reserve());
 					result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
 					result_.set_desc(error_desc);
@@ -308,7 +327,7 @@ namespace bumo {
 		return false;
 	}
 
-	bool TransactionFrm::CheckValid(int64_t last_seq) {
+	bool TransactionFrm::CheckValid(int64_t last_seq, bool check_priv, int64_t &nonce) {
 		AccountFrm::pointer source_account;
 		if (!Environment::AccountFromDB(GetSourceAddress(), source_account)) {
 			result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
@@ -316,7 +335,8 @@ namespace bumo {
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
-
+        
+        nonce = source_account->GetAccountNonce();
 		int64_t bytes_fee = GetSelfByteFee();
 		int64_t tran_fee = GetFee();
 		if (tran_fee < 0){
@@ -328,7 +348,7 @@ namespace bumo {
 		if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
 			if (tran_fee < bytes_fee) {
 				std::string error_desc = utils::String::Format(
-					"Transaction(%s) fee(" FMT_I64 " < " FMT_I64 ") not enought",
+					"Transaction(%s) fee(" FMT_I64 ") not enough for self byte fee(" FMT_I64 ") ",
 					utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
 
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
@@ -339,9 +359,10 @@ namespace bumo {
 
 			if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc("source account balance is not enough");
-				LOG_ERROR("Account(%s) reserve ballance not enough for transaction fee and base reserve:" FMT_I64 "- " FMT_I64 " < " FMT_I64 ",last transaction hash(%s)",
+				std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 "),last transaction hash(%s)",
 					GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
 				return false;
 			}
 		}
@@ -378,6 +399,15 @@ namespace bumo {
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
+
+		utils::StringVector vec;
+		vec.push_back(transaction_env_.transaction().source_address());
+		if (check_priv && !SignerHashPriv(source_account, -1)) {
+			result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
+			result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
+			LOG_ERROR(result_.desc().c_str());
+			return false;
+		}
 		return true;
 	}
 
@@ -385,20 +415,19 @@ namespace bumo {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 		const LedgerConfigure &ledger_config = Configure::Instance().ledger_configure_;
 		if (transaction_env_.ByteSize() >= General::TRANSACTION_LIMIT_SIZE) {
-			LOG_ERROR("Transaction env size(%d) larger than limit(%d)",
-				transaction_env_.ByteSize(),
-				General::TRANSACTION_LIMIT_SIZE);
 			result_.set_code(protocol::ERRCODE_TX_SIZE_TOO_BIG);
+			result_.set_desc(utils::String::Format("Transaction env size(%d) larger than limit(%d)",
+				transaction_env_.ByteSize(),
+				General::TRANSACTION_LIMIT_SIZE));
+			LOG_ERROR("%s",result_.desc().c_str());
 			return false;
 		}
 
-		bool check_valid = true;
 		if (tran.operations_size() == 0) {
-			LOG_ERROR("Operation size is zero");
 			result_.set_code(protocol::ERRCODE_MISSING_OPERATIONS);
 			result_.set_desc("Tx missing operation");
-			check_valid = false;
-			return check_valid;
+			LOG_ERROR("%s", result_.desc().c_str());
+			return false;
 		}
 
 		if (tran.metadata().size() > General::METADATA_MAX_VALUE_SIZE) {
@@ -408,18 +437,38 @@ namespace bumo {
 				General::METADATA_MAX_VALUE_SIZE));
 
 			LOG_ERROR("%s", result_.desc().c_str());
-			check_valid = false;
-			return check_valid;
+			return false;
 		}
 
-		if (tran.expr_condition().size() > 0 &&
-			!CheckExpr(tran.expr_condition(), utils::String::Format("Transaction(%s) ",
-			utils::String::Bin4ToHexString(hash_).c_str()))) {
-			check_valid = false;
-			return check_valid;
-		}
+		if (tran.ceil_ledger_seq() > 0) {
+			int64_t current_ledger_seq = 0;
+			if (ledger_) {
+				current_ledger_seq = ledger_->lpledger_context_->consensus_value_.ledger_seq();
+			}
+			else {
+				current_ledger_seq = LedgerManager::Instance().GetLastClosedLedger().seq() + 1;
+			}
 
-		check_valid = true;
+			if (tran.ceil_ledger_seq() < current_ledger_seq) {
+				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+				//result_.set_desc("Transaction metadata too long");
+				result_.set_desc(utils::String::Format("Limit ledger seq(" FMT_I64 ") < seq(" FMT_I64 ")",
+					tran.ceil_ledger_seq(), current_ledger_seq));
+
+				LOG_ERROR("%s", result_.desc().c_str());
+				return false;
+			} 
+		}
+		else if (tran.ceil_ledger_seq() < 0) {
+			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+			//result_.set_desc("Transaction metadata too long");
+			result_.set_desc(utils::String::Format("Limit ledger seq(" FMT_I64 ") < 0",
+				tran.ceil_ledger_seq()));
+			LOG_ERROR("%s", result_.desc().c_str());
+			return false;
+		} 
+
+		bool check_valid = true; 
 		//判断operation的参数合法性
 		int64_t t8 = utils::Timestamp::HighResolution();
 		for (int i = 0; i < tran.operations_size(); i++) {
@@ -444,13 +493,6 @@ namespace bumo {
 				}
 			}
 
-			if (ope.expr_condition().size() > 0 &&
-				!CheckExpr(ope.expr_condition(), utils::String::Format("Transaction(%s)'s Operation(id:%d) ",
-				utils::String::Bin4ToHexString(hash_).c_str(), i))) {
-				check_valid = false;
-				break;
-			}
-
 			result_ = OperationFrm::CheckValid(ope, ope_source);
 
 			if (result_.code() != protocol::ERRCODE_SUCCESS) {
@@ -459,40 +501,6 @@ namespace bumo {
 			}
 		}
 		return check_valid;
-	}
-
-	bool TransactionFrm::CheckExpr(const std::string &code, const std::string &log_prefix) {
-		do {
-			if (code.size() > General::EXPRCONDITION_MAXSIZE || code.size() == 0) {
-				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result_.set_desc(utils::String::AppendFormat(code, "expression condition is too long or zero"));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			protocol::ConsensusValue cons_null;
-			ExprCondition expr(code, NULL, cons_null);
-			utils::ExprValue value;
-			result_ = expr.Parse(value);
-
-			if (result_.code() != 0) {
-				result_.set_code(protocol::ERRCODE_EXPR_CONDITION_SYNTAX_ERROR);
-				result_.set_desc(utils::String::AppendFormat(log_prefix, "parse expression failed(%s)", result_.desc().c_str()));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			if (value.type_ != utils::ExprValue::UNSURE && !value.IsSuccess()) {
-				result_.set_code(protocol::ERRCODE_EXPR_CONDITION_RESULT_FALSE);
-				result_.set_desc(utils::String::AppendFormat(log_prefix, "expression result predict false(%s)", value.Print().c_str()));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			return true;
-		} while (false);
-
-		return false;
 	}
 
 	bool TransactionFrm::SignerHashPriv(AccountFrm::pointer account_ptr, int32_t type) const {
@@ -540,7 +548,7 @@ namespace bumo {
 			return protocol::ERRCODE_INTERNAL_ERROR;
 		}
 		else if (res == 0) {
-			LOG_ERROR("Tx(%s) not exist", utils::String::BinToHexString(hash).c_str());
+			LOG_TRACE("Tx(%s) not exist", utils::String::BinToHexString(hash).c_str());
 			return protocol::ERRCODE_NOT_EXIST;
 		}
 
@@ -561,35 +569,13 @@ namespace bumo {
 	}
 
 	bool TransactionFrm::CheckTimeout(int64_t expire_time) {
-		if (incoming_time_ < expire_time)
+		if (incoming_time_ < expire_time) {
+			LOG_WARN("Trans timeout, source account(%s), transaction hash(%s)", GetSourceAddress().c_str(), 
+				utils::String::Bin4ToHexString(GetContentHash()).c_str());
+			result_.set_code(protocol::ERRCODE_TX_TIMEOUT);
 			return true;
-		result_.set_code(protocol::ERRCODE_TX_TIMEOUT);
-		return false;
-	}
-
-	bool TransactionFrm::ApplyExpr(const std::string &code, const std::string &log_prefix) {
-		do {
-			ExprCondition expr(code, environment_, ledger_->lpledger_context_->consensus_value_);
-			utils::ExprValue value;
-			result_ = expr.Eval(value);
-
-			if (result_.code() != 0) {
-				result_.set_code(protocol::ERRCODE_EXPR_CONDITION_SYNTAX_ERROR);
-				result_.set_desc(utils::String::AppendFormat(log_prefix, "parse expression failed(%s)", result_.desc().c_str()));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			if (!value.IsSuccess()) {
-				result_.set_code(protocol::ERRCODE_EXPR_CONDITION_RESULT_FALSE);
-				result_.set_desc(utils::String::AppendFormat(log_prefix, "expression result false(%s)", value.Print().c_str()));
-				LOG_ERROR("%s", result_.desc().c_str());
-				break;
-			}
-
-			return true;
-		} while (false);
-
+		}
+		
 		return false;
 	}
 
@@ -614,20 +600,15 @@ namespace bumo {
 
 		bool bSucess = true;
 		const protocol::Transaction &tran = transaction_env_.transaction();
-		//check the expression
-		if (tran.expr_condition().size() > 0 &&
-			!ApplyExpr(tran.expr_condition(), utils::String::Format("Transaction(%s) ",
-			utils::String::Bin4ToHexString(hash_).c_str()))) {
-			bSucess = false;
-			return bSucess;
-		}
 
 		std::shared_ptr<TransactionFrm> bottom_tx = ledger_frm->lpledger_context_->GetBottomTx();
 		bottom_tx->AddRealFee(GetSelfByteFee());
 		if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
 			result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-			LOG_ERROR("Transaction(%s) Fee not enough",
-				utils::String::BinToHexString(hash_).c_str());
+			std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 "),Transaction(%s) self byte fee(" FMT_I64 ")",
+				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), GetSelfByteFee());
+			result_.set_desc(error_desc);
+			LOG_ERROR("%s", error_desc.c_str());
 			bSucess = false;
 			return bSucess;
 		}
@@ -644,19 +625,11 @@ namespace bumo {
 
 			if (!bool_contract && !ledger_->IsTestMode()) {
 				if (!opt->CheckSignature(environment_)) {
-					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::Bin4ToHexString(GetContentHash()).c_str());
+					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::BinToHexString(GetContentHash()).c_str());
 					result_ = opt->GetResult();
 					bSucess = false;
 					break;
 				}
-			}
-
-			//check the expression
-			if (ope.expr_condition().size() > 0 &&
-				!ApplyExpr(ope.expr_condition(), utils::String::Format("Transaction(%s)'s Operation(id:%d) ",
-				utils::String::Bin4ToHexString(hash_).c_str(), processing_operation_))) {
-				bSucess = false;
-				break;
 			}
 
 			//opt->SourceRelationTx();
@@ -673,14 +646,21 @@ namespace bumo {
 			bottom_tx->AddRealFee(opt->GetOpeFee());
 			if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-				LOG_ERROR("Transaction(%s) operation(%d) Fee not enough",
-					utils::String::BinToHexString(hash_).c_str(), processing_operation_);
+				std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 "), Transaction(%s) operation(%d) fee(" FMT_I64 ")",
+					utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), processing_operation_, opt->GetOpeFee());
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
 				bSucess = false;
 				break;
 			}
 		}
 
 		return bSucess;
+	}
+
+	void TransactionFrm::ApplyExpireResult() // for sync node
+	{
+		result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
 	}
 }
 

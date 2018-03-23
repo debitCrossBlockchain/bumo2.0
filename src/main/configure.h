@@ -26,6 +26,7 @@ namespace bumo {
 		~P2pNetwork();
 
 		size_t target_peer_connection_;
+		size_t max_connection_;
 		int64_t connect_timeout_;
 		int64_t heartbeat_interval_;
 		int32_t listen_port_;
@@ -51,7 +52,6 @@ namespace bumo {
 		~WsServerConfigure();
 
 		utils::InetAddress listen_address_;
-		bool listen_tx_status_;
 
 		bool Load(const Json::Value &value);
 	};
@@ -68,7 +68,6 @@ namespace bumo {
 		bool ssl_enable_;
 		uint32_t query_limit_;
 		uint32_t multiquery_limit_;
-		bool remote_authorized_;
 		SSLConfigure ssl_configure_;
 		uint32_t thread_count_;
 		bool Load(const Json::Value &value);
@@ -79,7 +78,27 @@ namespace bumo {
 		LedgerConfigure();
 		~LedgerConfigure();
 
-		struct FeeConfigure{
+		std::string validation_type_;
+		int64_t close_interval_;
+		std::string validation_privatekey_;
+		uint32_t hash_type_;
+		uint32_t max_trans_per_ledger_;
+		uint32_t max_ledger_per_message_;
+		uint32_t max_trans_in_memory_;
+		uint32_t max_apply_ledger_per_round_;
+		uint32_t queue_limit_;
+		uint32_t queue_per_account_txs_limit_;
+		utils::StringList hardfork_points_;
+		bool use_atom_map_;
+		bool Load(const Json::Value &value);
+	};
+
+	class GenesisConfigure {
+	public:
+		GenesisConfigure();
+		~GenesisConfigure();
+
+		struct FeeConfigure {
 			int64_t byte_fee_;
 			int64_t base_reserve_;
 			int64_t create_account_fee_;
@@ -91,30 +110,9 @@ namespace bumo {
 			int64_t pay_coin_fee_;
 		};
 		FeeConfigure fees_;
-		uint32_t hash_type_;
-		uint32_t max_trans_per_ledger_;
-		uint32_t max_ledger_per_message_;
-		uint32_t max_trans_in_memory_;
-		uint32_t max_apply_ledger_per_round_;
-		bool test_model_;
-		std::string genesis_account_;
-		std::string fees_vote_account_;
-		std::string validators_vote_account_;
-		utils::StringList hardfork_points_;
-		bool use_atom_map_;
-		bool Load(const Json::Value &value);
-	};
 
-	class ValidationConfigure {
-	public:
-		ValidationConfigure();
-		~ValidationConfigure();
-
-		std::string type_;
-		bool is_validator_;
-		std::string node_privatekey_;
+		std::string account_;
 		utils::StringList validators_;
-		int64_t close_interval_;
 		bool Load(const Json::Value &value);
 	};
 
@@ -144,10 +142,9 @@ namespace bumo {
 		
 		P2pConfigure p2p_configure_;
 		LedgerConfigure ledger_configure_;
-		ValidationConfigure validation_configure_;
+		GenesisConfigure genesis_configure_;
 
 		MonitorConfigure monitor_configure_;
-		//MqServerConfigure		mqserver_configure_;
 
 		virtual bool LoadFromJson(const Json::Value &values);
 	};

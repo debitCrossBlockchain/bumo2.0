@@ -126,6 +126,12 @@
     <ClCompile Include="..\..\src\ledger\ledgercontext_manager.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\api\console.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\glue\transaction_queue.cpp">
+      <Filter>glue</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -218,13 +224,16 @@
     <ClInclude Include="..\..\src\api\websocket_server.h">
       <Filter>api</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\api\console.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\glue\transaction_queue.h">
+      <Filter>glue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\ledger\Makefile.am">
       <Filter>ledger</Filter>
-    </None>
-    <None Include="..\..\src\main\Makefile.am">
-      <Filter>main</Filter>
     </None>
     <None Include="..\..\configure.ac" />
     <None Include="..\..\src\overlay\Makefile.am">

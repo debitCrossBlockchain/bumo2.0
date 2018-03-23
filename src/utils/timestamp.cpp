@@ -15,6 +15,11 @@
 #include "utils.h"
 #include "timestamp.h"
 
+#ifdef OS_MAC
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+
 utils::Timestamp::Timestamp()
 	: timestamp_(0) {}
 
@@ -98,6 +103,16 @@ int64_t utils::Timestamp::HighResolution() {
 	QueryPerformanceCounter(&nTicks);
 	//int64 nUpTime = nFreq.QuadPart > 0 ? nTicks.QuadPart * utils::MICRO_UNITS_PER_SEC / nFreq.QuadPart : 0;
 	uptime = nFreq.QuadPart > 0 ? (int64_t)(double(nTicks.QuadPart) / double(nFreq.QuadPart) * double(utils::MICRO_UNITS_PER_SEC)) : 0;
+#elif defined OS_MAC
+	struct timespec nTime = { 0, 0 };
+	clock_serv_t cclock;
+	mach_timespec_t mts;
+	host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+	clock_get_time(cclock, &mts);
+	mach_port_deallocate(mach_task_self(), cclock);
+	nTime.tv_sec = mts.tv_sec;
+	nTime.tv_nsec = mts.tv_nsec;
+	uptime = (int64_t)(nTime.tv_sec) * utils::MICRO_UNITS_PER_SEC + (int64_t)(nTime.tv_nsec) / utils::NANO_UNITS_PER_MICRO;
 #else
 	struct timespec nTime = { 0, 0 };
 	clock_gettime(CLOCK_MONOTONIC, &nTime);

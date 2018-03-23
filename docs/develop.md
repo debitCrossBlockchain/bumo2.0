@@ -2,20 +2,24 @@
 
 <!-- TOC -->
 
-- [BUMO 区块链开发文档](#BUMO 区块链开发文档)
+- [BUMO区块链开发文档](#BUMO区块链开发文档)
     - [基础知识](#基础知识)
         - [了解protocol buffer3](#了解protocol-buffer3)
         - [protocol buffer 3和json](#protocol-buffer-3和json)
         - [websocket和http](#websocket和http)
+        - [端口配置](#端口配置)
         - [交易执行的基本过程](#交易执行的基本过程)
         - [试一试](#试一试)
     - [HTTP接口](#http接口)
+        - [生成账号-测试用](#生成账号-测试用)
         - [查询账号](#查询账号)
         - [查询交易](#查询交易)
+        - [查询缓存队列交易](#查询缓存队列交易)
         - [查询区块头](#查询区块头)
         - [提交交易](#提交交易)
         - [序列化交易](#序列化交易)
         - [调试合约](#调试合约)
+        - [评估费用](#评估费用)
     - [定义交易](#定义交易)
         - [交易的基本结构](#交易的基本结构)
         - [操作](#操作)
@@ -26,12 +30,12 @@
             - [设置metadata](#设置metadata)
             - [设置权重](#设置权重)
             - [设置门限](#设置门限)
-            - [转移BU资产](#转移BU资产)
+            - [转移bu资产](#转移bu资产)
     - [高级功能](#高级功能)
         - [控制权的分配](#控制权的分配)
         - [版本化控制](#版本化控制)
-        - [表达式](#表达式)
         - [合约](#合约)
+            - [语法说明](#语法说明)
             - [内置函数](#内置函数)
             - [内置变量](#内置变量)
             - [异常处理](#异常处理)
@@ -39,7 +43,6 @@
             - [创建选举合约账户](#创建选举合约账户)
             - [申请成为验证节点候选人](#申请成为验证节点候选人)
             - [对验证节点候选人申请者投票](#对验证节点候选人申请者投票)
-            - [审核验证节点候选人](#审核验证节点候选人)
             - [收回押金](#收回押金)
             - [废止恶意节点](#废止恶意节点)
             - [取消废止恶意节点](#取消废止恶意节点)
@@ -75,14 +78,22 @@ BUMO 区块链提供了websocket和http 两种API接口。您可以在 安装目
 ```json
     "webserver":
     {
-        "listen_addresses": "0.0.0.0:29333",
-        "remote_authorized": false
+        "listen_addresses": "0.0.0.0:36002"
     },
     "wsserver":
     {
-        "listen_address": "0.0.0.0:7053"
+        "listen_address": "0.0.0.0:36003"
     }
 ```
+
+### 端口配置
+
+| 网络类型        | 网络ID（network_id）|WebServer |P2P  | WebSocket |
+| :------------- | -------|--------- |-----|-----------|
+| mainnet        | 10000|16002 |16001 |16003
+| testnet | 20000|26002 | 26001 | 26003
+| 内测版本 | 30000 | 36002 | 36001 | 36003 
+
 
 ### 交易执行的基本过程
 
@@ -95,7 +106,7 @@ BUMO 区块链提供了websocket和http 两种API接口。您可以在 安装目
 ### 试一试
 
 如果您的区块链刚刚部署完成，那么目前区块链系统中只有创世账号。您可以通过http接口查询创世账号
-`HTTP GET host:29333/getGenesisAccount`
+`HTTP GET host:36002/getGenesisAccount`
 您会得到类似这样的返回内容
 
 ```json
@@ -120,10 +131,33 @@ BUMO 区块链提供了websocket和http 两种API接口。您可以在 安装目
 您还可以通过[查询账号](#查询账号)接口查询任意账号
 
 ```text
-HTTP GET host:29333/getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
+HTTP GET host:36002/getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 ```
 
 ## HTTP接口
+
+### 生成账号-测试用
+
+```text
+HTTP GET /createAccount
+```
+
+功能：该接口只为方便测试使用，**请勿在生产环境使用该接口（生产环境下请用SDK或者命令行生成）**，因为调用该接口后，如果节点服务器作恶会导致账户私钥泄露。
+
+返回内容
+
+```json
+{
+  "error_code" : 0,
+  "result" : {
+          "address": "buQd4TBqSbHw3EoLMnSmH4SJFMkHUtEQbUvz",        //账户地址
+          "private_key": "privbzYwbUSCwQZq7eXgu4C9cpqrQD4enXY49V7qUrifc6fCtiPmBhWA",  //账户私钥
+          "public_key": "b0016558bd75fe20d6f7953cef0a95509d11d73652b70f183c72ede25711778dfc0039ea73f3",  //账户公钥
+          "public_key_raw": "6558bd75fe20d6f7953cef0a95509d11d73652b70f183c72ede25711778dfc00"       //公钥排除前缀和后缀后的数据
+  }
+}
+
+```
 
 ### 查询账号
 
@@ -137,7 +171,7 @@ HTTP GET /getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3&key=hello&code
 | :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | address      | 账号地址， 必填                                                                                                                                         |
 | key          | 账号的 metadata 中指定的key的值，如果不填写，那么返回结果中含有所有的metadata                                                                           |
-| code, issuer | 资产代码,资产发行商。这两个变量要么同时填写，要么同时不填写。若不填写，返回的结果中包含所有的资产。若填写，返回的结果中只显示由code和issuer指定的资产。 |
+| code, issuer,type | 资产代码,资产发行商。这两个变量要么同时填写，要么同时不填写。若不填写，返回的结果中包含所有的资产。若填写，返回的结果中只显示由code和issuer,type指定的资产。目前type只能是0，可以不用填写 |
 
 返回内容
 
@@ -149,14 +183,14 @@ HTTP GET /getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3&key=hello&code
     "assets" : [//该账号的所有资产
       {
         "amount" : 1400,
-        "property" :
+        "key" :
         {
           "code" : "CNY",
           "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
         }
       }, {
         "amount" : 1000,
-        "property" :
+        "key" :
         {
           "code" : "USD",
           "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
@@ -307,6 +341,80 @@ GET /getTransactionHistory?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc3592
 }
 ```
 
+### 查询缓存队列交易
+
+```text
+GET /getTransactionCache?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d425d0fe644e698&limit=100
+```
+
+| 参数       | 描述                     |
+| :--------- | ------------------------ |
+| hash       | 用交易的唯一标识hash查询 |
+| limit      | 查询交易队列前N个正在处理的交易 |
+上述两个参数产生的约束条件是逻辑或的关系，如果您同时指定两个参数，系统将hash查询
+
+返回示例
+```json
+{
+    "error_code": 0,
+    "result": {
+        "total_count": 1,
+        "transactions": [
+            {
+                "hash": "a336c8f4b49c8b2c5a6c68543368ed3b450b6138a9f878892cf982ffb6fe234e",
+                "incoming_time": 1521013029435154,
+                "signatures": [
+                    {
+                        "public_key": "b001882b9d1b5e7019f163d001c85194cface61e294483710f5e66ef40a4d387f5fcb0166f4f",
+                        "sign_data": "c5885144ffccb0b434b494271258e846c30a4551036e483822ee2b57400576e9e700e8960eb424764d033a2e73af6e6a2bfa5da390f71161732e13beee206107"
+                    }
+                ],
+                "status": "processing",
+                "transaction": {
+                    "fee": 100000,
+                    "nonce": 2,
+                    "operations": [
+                        {
+                            "create_account": {
+                                "dest_address": "buQWufKdVicxRAqmQs6m1Z9QuFZG2W7LMsi2",
+                                "init_balance": 300000,
+                                "metadatas": [
+                                    {
+                                        "key": "key",
+                                        "value": "bubinuo"
+                                    }
+                                ],
+                                "priv": {
+                                    "master_weight": 1,
+                                    "thresholds": {
+                                        "tx_threshold": 2
+                                    }
+                                }
+                            },
+                            "type": 1
+                        }
+                    ],
+                    "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB"
+                }
+            }
+        ]
+    }
+}
+```
+
+如果没有查到交易则返回
+
+```json
+{
+  "error_code": 4,
+  "result":
+  {
+    "total_count": 0,
+    "transactions": []
+  }
+}
+```
+
 ### 查询区块头
 
 ```text
@@ -409,7 +517,6 @@ POST /submitTransaction
 | sign_data        | 签名数据， 16进制格式。其值为对transaction_blob进行签名(动词)得到的签名数据。__注意，签名时要先将transaction_blob转成字节流再签名，不要对16进制字符串直接签名__ |
 | public_key       | 公钥， 16进制格式。|
 
->#### 当您提交交易后, 您提交的那个节点会给该交易加1个签名，证明是该节点将这个交易扩散到区块链网络中的。您查询交易时，会发现交易多了1条签名，这个签名就是节点添加的。
 
 ### 序列化交易
 
@@ -418,9 +525,9 @@ POST /submitTransaction
 | 参数           | 描述                                                                                                    |
 | :------------- | ------------------------------------------------------------------------------------------------------- |
 | source_address | 必填，交易的发起方账号地址                                                                              |
-| nonce          | 必填，交易序号，必须等于发起方账号的nonce+1。您可以通过[查询账号](#查询账号)返回的结果中得到账号的nonce |
-| expr_condition | 表达式字段, 可选                                                                                        |
-| metadata       | 可选, 用户自定义交易的备注数据, 必须为16进制表示                                                        |
+| nonce          | 必填，交易序号，必须等于发起方账号的nonce+1。您可以通过[查询账号](#查询账号)返回的结果中得到账号的nonce      |
+| ceil_ledger_seq| 区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效，如果为0，则不判断。                 |
+| metadata       | 可选, 用户自定义交易的备注数据, 必须为16进制表示                                                         |
 
 关于operations中的数据格式，参照[操作](#操作)下面各种不同的操作的**json格式**
 
@@ -432,7 +539,8 @@ POST /getTransactionBlob
 {
     "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
     "nonce":2, //nonce值
-    "expr_condition":"", //可选，表达式。参见高级功能:表达式
+    "ceil_ledger_seq": 0, //可选
+    "fee":1000, //交易支付的费用
     "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
     "operations":[
     {
@@ -466,6 +574,7 @@ POST /getTransactionBlob
 {
   "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
   "nonce": 1,
+  "fee": 1000000,
   "operations": [{
       "type": 1,
       "create_account": {
@@ -504,6 +613,10 @@ POST /getTransactionBlob
 }
 ```
 ### 调试合约
+```text
+   POST /testContract
+```
+- post内容如下
 ```http
 {
   "code" : "\"use strict\";log(undefined);function query() { return 1; }",
@@ -552,6 +665,75 @@ POST /getTransactionBlob
 }
 ```
 
+### 评估费用
+```text
+   POST /testTransaction
+```
+- post内容如下
+```json
+{
+  "items": [
+    {
+      "transaction_json": {
+        "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB",
+        "nonce": 6,
+        "fee":0,
+        "operations": [
+          {
+            "type": 7,
+            "pay_coin": {
+              "dest_address": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw",
+              "amount": 10000
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+  评估费用不改变账号余额基础上进行的评估，交易中涉及的原账号和目标账号都必须在系统中存在，创建账号的目标地址除外。
+  - source_address：模拟交易的原地址。
+  - nonce : 在原账号基础上加1。
+  - fee : 费用填0系统会自动填写一个大概费用来进行交易，计算出实际费用，如果费用不足，交易终止；非0不填写费用字段，直接交易计算出实际费用，如果费用不足，交易终止。
+  - operations : 可以是任何一种操作类型。
+
+  - 返回值如下：
+
+```json
+{
+    "error_code": 0,
+    "error_desc": "",
+    "result": {
+        "hash": "63109579662d7165ee3c4de0a00932d8b721651101d3255e2326de10eea6de15",
+        "logs": null,
+        "query_rets": null,
+        "real_fee": 1000,
+        "stat": null,
+        "txs": [
+            {
+                "transaction_env": {
+                    "transaction": {
+                        "fee": 99999999974939995,
+                        "nonce": 6,
+                        "operations": [
+                            {
+                                "pay_coin": {
+                                    "amount": 10000,
+                                    "dest_address": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw"
+                                },
+                                "type": 7
+                            }
+                        ],
+                        "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB"
+                    }
+                }
+            }
+        ]
+    }
+}
+```
+
 ## 定义交易
 
 ### 交易的基本结构
@@ -561,7 +743,8 @@ POST /getTransactionBlob
   {
       "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
       "nonce":2, //nonce值
-      "expr_condition":"", //可选，表达式。参见高级功能:表达式
+      "fee" : 1000000, //愿为交易花费的手续费
+      "ceil_ledger_seq": 100, //可选，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效
       "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
       "operations":[
       {
@@ -584,10 +767,10 @@ POST /getTransactionBlob
       };
       string source_address = 1;
       int64 nonce = 2;
-      string expr_condition = 3;
-      repeated Operation operations = 4;
+      int64 fee = 3;
+      int64 ceil_ledger_seq = 4;
       bytes metadata = 5;
-      int64  fee = 6;
+      repeated Operation operations = 6;
   }
   ```
 
@@ -595,7 +778,7 @@ POST /getTransactionBlob
 
   - source_address: 交易源账号，即交易发起方的账号。当这笔交易成功后，交易源账号的nonce字段会自动加1。账号中的nonce意义是本账号作为交易源执行过的交易数量。
   - nonce:其值必须等于交易源账号的当前nonce+1，这是为了防止重放攻击而设计的。如何查询一个账号的nonce可参考[查询账号](#查询账号)。若查询账号没有显示nonce值，说明账号的当前nonce是0.
-  - expr_condition:针对本交易的表达式，高级功能。详见[表达式](#表达式)
+  - ceil_ledger_seq:针对本交易的区块高度限制条件，高级功能。
   - operations:操作列表。本交易的有效负载，即本交易想要做什么事情。见[操作](#操作)
   - metadata:用户自定义字段，可以不填写，备注用。
 
@@ -617,22 +800,20 @@ POST /getTransactionBlob
       Type type = 1;
       string source_address = 2;
       bytes metadata = 3;
-      string expr_condition = 4;
 
-      OperationCreateAccount create_account = 5;
-      OperationIssueAsset issue_asset = 6;
-      OperationPayment payment = 7;
-      OperationSetMetadata set_metadata = 9;
-      OperationSetSignerWeight set_signer_weight = 10;
-      OperationSetThreshold set_threshold = 11;
-      OperationPayCoin pay_coin = 12;
+      OperationCreateAccount create_account = 4;
+      OperationIssueAsset issue_asset = 5;
+      OperationPayment payment = 6;
+      OperationSetMetadata set_metadata = 7;
+      OperationSetSignerWeight set_signer_weight = 8;
+      OperationSetThreshold set_threshold = 9;
+      OperationPayCoin pay_coin = 10;
   }
   ```
 
   - type: 操作类型的枚举。如其值为ISSUE_ASSET（发行资产），那么本操作中的issue_asset字段就会被使用；如果其值为PAYMENT，那么本操作中payment字段就会被使用……详见[操作码](#操作码)
   - source_address:操作源，即本操作针对哪个账号生效。若不填写，则默认本操作源等于本操作源。
   - metadata:本操作的备注，用户自定义，可以不填写
-  - expr_condition:针对本操作的表达式，若您用不着这个功能，可以不填写。详见[表达式](#表达式)
 
 ### 操作
 
@@ -655,12 +836,15 @@ POST /getTransactionBlob
 |dest_address |  账号的地址
 |contract|  如果不填写，那么这是一个普通的账号。如果填写，那么这是一个合约账号
 | priv|  该账号的权限信息
+|init_balance | 初始化账户 BU 值 
+|init_input | 给合约传初始化参数
 
 - 功能
   在区块链上创建一个新的账号
 - 成功条件
   - 各项参数合法
   - 要创建的账号不存在
+- **注意：如果目标为合约账户，则priv配置必须符合 {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}**
 - json格式
 
 
@@ -672,6 +856,8 @@ POST /getTransactionBlob
         "contract": {
           "payload": "function main(input) { /*do what ever you want*/ }"
         },
+        "init_balance": 100000,  //give the init_balance to this account
+        "init_input" : "",  // if create contract , then init with this input
         "metadatas": [{
             "key": "111",
             "value": "hello 111!",
@@ -715,6 +901,7 @@ POST /getTransactionBlob
       AccountPrivilege priv = 3;
       repeated KeyPair metadatas = 4;
       int64    init_balance = 5;
+      string  init_input = 6;
   }
   ```
 
@@ -749,7 +936,7 @@ POST /getTransactionBlob
             int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
             repeated OperationTypeThreshold type_thresholds = 2; //如果这个设置，则操作门限以这个为准
         }
-        ```
+      ```
 
     若你想创建一个不受其他账号控制的账号。将priv.master_weight设置为1，将`priv.thresholds.tx_threshold`设为1即可。若您想创建一个受其他账号控制的账号，参见[控制权的分配](#控制权的分配)
 
@@ -765,7 +952,8 @@ POST /getTransactionBlob
     ```
 
     这是一个版本化的键值对数据库，如果您不需要，可以不填写这部分。
-  - init_balance:暂时未启用
+  - init_balance: 给创建的账户初始化的 BU 数。
+  - init_input:  如果被创建的账户是合约账户，则传参执行初始化合约操作。
 
 #### 发行资产
 
@@ -786,7 +974,8 @@ POST /getTransactionBlob
       "type": 2,
       "issue_asset": {
         "amount": 1000,
-        "code": "CNY"
+        "code": "CNY",
+        "type": 0 //目前只能填0 或者不填
       }
     }
     ```
@@ -796,6 +985,7 @@ POST /getTransactionBlob
     {
         string code = 1;
         int64 amount = 2;
+        int32 type = 3;
     }
     ```
     - code:要发行的资产代码，长度范围[1, 64]
@@ -826,13 +1016,14 @@ POST /getTransactionBlob
       "payment": {
         "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
         "asset": {
-          "property": {
+          "key": {
             "issuer": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-            "code": "CNY"
+            "code": "CNY",
+            "type": 0 //目前只能填0 或者不填
           },
-          "amount": 100,
-          "input": "{\"bar\":\"foo\"}"
-        }
+          "amount": 100
+        },
+        "input": "{\"bar\":\"foo\"}"
       }
     }
   ```
@@ -842,9 +1033,7 @@ POST /getTransactionBlob
     message OperationPayment
     {
         string dest_address = 1;
-
         Asset asset = 2;
-
         string input = 3;
     }
     ```
@@ -853,14 +1042,15 @@ POST /getTransactionBlob
     ```text
     message Asset
     {
-         AssetProperty property = 1; //资产属性
-         int64 amount = 2; //数量
+         AssetKey key = 1; //资产属性
+         int64 amount = 2; //数量         
     }
 
-    message AssetProperty
+    message AssetKey
     {
          string issuer = 1; //资产发行方
          string code = 2; //资产代码
+         int32 type = 3;   //资产类型
     }
     ```
     - input: 本次转移触发接收方的合约，合约的执行入参就是input
@@ -868,8 +1058,8 @@ POST /getTransactionBlob
 #### 设置metadata
 |参数|描述
 |:--- | --- 
-| set_metadata.key  |required，length:(0, 256]
-| set_metadata.value  |optional，length:(0, 1048576]
+| set_metadata.key  |required，length:(0, 1024]
+| set_metadata.value  |optional，length:[0, 256K]
 | set_metadata.version |optional，default 0, 0：不限制版本，>0 : 当前 value 的版本必须为该值， <0 : 非法
 
 - 功能
@@ -899,7 +1089,7 @@ POST /getTransactionBlob
     }
     ```
     - key: 主键，账号内唯一。长度范围[1,1024]
-    - value: 值。长度范围[0,1M]
+    - value: 值。长度范围[0,256K]
     - version: 版本号，可以不填写。若您想使用这个高级功能，参见[版本化控制](#版本化控制)
 
 #### 设置权重
@@ -998,7 +1188,7 @@ POST /getTransactionBlob
   }
   ```
 
-  #### 转移BU资产
+#### 转移bu资产
 
 |参数|描述
 |:--- | --- 
@@ -1018,7 +1208,7 @@ POST /getTransactionBlob
     {
       "type": 7,
       "pay_coin": {
-        "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
+          "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
           "amount": 100,
           "input": "{\"bar\":\"foo\"}"
         }
@@ -1031,9 +1221,7 @@ POST /getTransactionBlob
     message OperationPayCoin
     {
         string dest_address = 1;
-
         int64 amount = 2;
-
         string input = 3;
     }
     ```
@@ -1097,57 +1285,42 @@ POST /getTransactionBlob
 
 每一个账号的metadata都是一个版本化的小型数据库。版本化的特点是可以避免修改冲突的问题。
 
-### 表达式
-
-该表达式字段，用于自定义交易有效规则，比如设置交易在某个账户的master_weight 大于 100 有效，则填:
-
-```JavaScript
-jsonpath(account("buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"), ".priv.master_weight") > 100
-```
-
-表达式可用的函数
-
-| 参数                            | 描述                                 |
-| :------------------------------ | ------------------------------------ |
-| account(address)                | 获取账户信息, 返回 json 序列化字符串 |
-| jsonpath(json_string, path)     | 获取json对象的属性值                 |
-| LEDGER_SEQ                      | 内置变量，代表最新的区块高度         |
-| LEDGER_TIME                     | 内置变量，代表最新的区块生成时间     |
-| `( )` `=`                       | 嵌套括号，函数调用如sqrt(x)          |
-| `*` `/`                         | 乘法、除法                           |
-| `+` `-`                         | 加法、减法                           |
-| `<` `<=`  `>`  `>=`  `==`  `!=` | 比较运算                             |
-| `&&`                            | 与 运算                              |
-| \|\|                              | 或运算                               |
-| ,                               | 逗号运算                             |
-
->例: Alice发起了一笔交易，她想要使这笔交易在5秒内有效。她发现当前时间戳(微秒)是 `1506393720000000`，5秒之后也就是 `1506393725000000`。那么她就可以在交易中的`expr_condition`字段写上下面这句`LEDGER_TIME >= 1506393720000000 && LEDGER_TIME <= 1506393725000000`这句话的意思是，该交易只在时间范围`[1506393720000000, 1506393725000000]`内有效。过段时间之后，Alice发现当前时间已经超过1506393725000000，那么Alice就可以断定这笔交易要么已经被处理，要么已经彻底失效。
-
 ### 合约
 
 合约是一段JavaScript代码,标准(ECMAScript as specified in ECMA-262)。合约的初始化函数是init, 执行的入口函数是main函数，您写的合约代码中必须有init和main函数的定义。该函数的入参是字符串input，是调用该合约的时候指定的。
 下面是一个简单的例子
 
 ```javascript
+"use strict";
 function init(bar)
 {
   /*init whatever you want*/
-
+  return;
 }
+
 function main(input)
 {
-  var para = JSON.parse(input);
+  let para = JSON.parse(input);
   if (para.do_foo)
   {
-    var x = {
+    let x = {
       'hello' : 'world'
     };
   }
 }
+
+function query(input)
+{ 
+  return input;
+}
 ```
 
-系统提供了几个全局函数, 这些函数可以获取区块链的一些信息，也可驱动账号发起交易
+系统提供了几个全局函数, 这些函数可以获取区块链的一些信息，也可驱动账号发起所有交易，除了设置门限和权重这两种类型的操作。
 **注意，自定义的函数和变量不要与内置变量和全局函数重名，否则会造成不可控的数据错误。**
+
+#### 语法说明
+
+参考文档：[智能合约语法说明](../src/web/jslint/ContractRules.md)
 
 #### 内置函数
 
@@ -1161,7 +1334,7 @@ function main(input)
 
     例如
     ```javascript
-    var balance = getBalance('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
+    let balance = getBalance('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
     balance 具有如下格式
      '9999111100000'
@@ -1172,10 +1345,10 @@ function main(input)
   `storageStore(metadata_key, metadata_value);`
   - metadata_key: metadata的key
   ```javascript
-  var ret = storageStore('abc', 'values');
+  storageStore('abc', 'values');
   /*
-    bar 的值是如下的格式
-    true
+    参数字符串格式
+    执行成功或者失败抛异常
   */
 
   ```
@@ -1184,10 +1357,11 @@ function main(input)
   `storageLoad(metadata_key);`
   - metadata_key: metadata的key
   ```javascript
-  var value = storageLoad('abc');
+  let value = storageLoad('abc');
   /*
     value 的值是如下的格式
     'values'
+    失败返回false
   */
 
   ```
@@ -1197,10 +1371,10 @@ function main(input)
   `storageDel(metadata_key);`
   - metadata_key: metadata的key
   ```javascript
-  var ret  = storageDel('abc');
+  storageDel('abc');
   /*
-    ret 的值是如下的格式
-    true
+    参数字符串格式
+    执行成功或者失败抛异常
   */
 
   ```
@@ -1215,21 +1389,17 @@ function main(input)
 
     例如
     ```javascript
-    var asset_property =
+    let asset_property =
     {
       'issuer' : 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY',
       'code' : 'CNY'
     };
-    var bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_property);
+    let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_property);
 
     /*
-    {
-      "amount": 1,
-      "property": {
-        "code": "CNY",
-        "issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY"
-      }
-    }
+     1
+
+    失败返回false
     */
     ```
 
@@ -1240,9 +1410,10 @@ function main(input)
 
     例如
     ```javascript
-    var ledger = getBlockHash(4);
+    let ledger = getBlockHash(4);
     /*
     'c2f6892eb934d56076a49f8b01aeb3f635df3d51aaed04ca521da3494451afb3'
+    失败返回false
     */
 
     ```
@@ -1255,9 +1426,10 @@ function main(input)
 
     例如
     ```javascript
-    var ret = int64Plus('12345678912345', 1);
+    let ret = int64Plus('12345678912345', 1);
     /*
-    '12345678912346'
+    成功：'12345678912346'
+    失败：抛异常
     */
 
     ```
@@ -1270,9 +1442,10 @@ function main(input)
 
     例如
     ```javascript
-    var ret = int64Sub('12345678912345', 1);
+    let ret = int64Sub('12345678912345', 1);
     /*
-    '123456789123464'
+    成功：'123456789123464'
+    失败：抛异常
     */
 
     ```
@@ -1285,9 +1458,10 @@ function main(input)
 
     例如
     ```javascript
-    var ret = int64Mul('12345678912345', 2);
+    let ret = int64Mul('12345678912345', 2);
     /*
-    '24691357824690'
+    成功：'24691357824690'
+    失败：抛异常
     */
 
     ```
@@ -1300,9 +1474,10 @@ function main(input)
 
     例如
     ```javascript
-    var ret = int64Div('12345678912345', 2);
+    let ret = int64Div('12345678912345', 2);
     /*
-    '6172839456172'
+    成功：'6172839456172'
+    失败：抛异常
     */
 
     ```
@@ -1315,28 +1490,46 @@ function main(input)
 
     例如
     ```javascript
-    var ret = int64Mod('12345678912345', 2);
+    let ret = int64Mod('12345678912345', 2);
     /*
-    '1'
+    成功：'1'
+    失败：抛异常
     */
 
     ```
 
  - ##### 64位比较
-    - 返回值 1：左值大于右值，0：等于，-1 ：小于
     `int64Compare(left_value, right_value);`
+
+    - 返回值 1：左值大于右值，0：等于，-1 ：小于
     - left_value: 左值
     - right_value：右值
 
     例如
     ```javascript
-    var ret = int64Compare('12345678912345', 2);
+    let ret = int64Compare('12345678912345', 2);
     /*
-    1
+    成功：1
+    失败：抛异常
     */
 
     ```
       
+ - ##### 变换单位
+    `toSatoshi(value);`
+
+    - 返回值: 乘以 10^8
+    - value: 左值
+
+    例如
+    ```javascript
+    let ret = toSatoshi('12345678912');
+    /*
+    '1234567891200000000'
+    */
+
+    ```
+
 - ##### 输出日志
 
     `log(info);`
@@ -1344,9 +1537,23 @@ function main(input)
 
     例如
     ```javascript
-    var account = log('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
+    let ret = log('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
-  buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY
+     成功不返回,失败返回false
+    */
+    ```
+- #### 输出交易日志
+
+    `tlog(topic,args...);`
+     - tlog会产生一笔交易写在区块上
+     - topic: 日志主题，必须为字符串类型,参数长度(0,128]
+     - args...: 最多可以包含5个参数，参数类型可以是字符串、数值或者布尔类型,每个参数长度(0,1024]
+
+    例如
+    ```javascript
+    tlog('transfer',sender +' transfer 1000',true);
+    /*
+     成功不返回,失败抛异常
     */
     ```
 
@@ -1362,7 +1569,7 @@ function main(input)
 
     例如
     ```javascript
-    var transaction =
+    let transaction =
     {
       'operations' :
       [
@@ -1377,8 +1584,8 @@ function main(input)
       ]
     };
 
-    var result = callBackDoOperation(transaction);
-    /*result 为true或false*/
+    doTransaction(JSON.stringify(transaction));
+    /*失败抛异常*/
     ```
 
 - ##### 转账
@@ -1390,8 +1597,8 @@ function main(input)
 
     例如
     ```javascript
-    var ret = payCoin("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "10000", "{}");
- /*result 为true或false*/
+    payCoin("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "10000", "{}");
+    /*失败抛异常*/
     ```
 
 - ##### 断言
@@ -1402,8 +1609,8 @@ function main(input)
 
     例如
     ```javascript
-    var ret = assert(1===1, "Not valid");
- /*失败时抛出异常*/
+    assert(1===1, "Not valid");
+    /*失败抛异常*/
     ```
 
 #### 内置变量
@@ -1416,19 +1623,19 @@ function main(input)
     例如账号x发起了一笔交易调用合约Y，本次执行过程中，thisAddress的值就是Y合约账号的地址。
 
     ```text
-    var bar = thisAddress;
+    let bar = thisAddress;
     /*
     bar的值是Y合约的账号地址。
     */
     ```
 
 - ##### 本次支付操作的 BU coin
-    payCoinAmount
+    thisPayCoinAmount
 
 - ##### 本次支付操作的Asset
-    payAssetAmount
+    thisPayAsset
 
-    为对象类型{"amount": 1000, "asset_property" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
+    为对象类型{"amount": 1000, "property" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
  
 - ##### 当前区块高度
     blockNumber
@@ -1443,7 +1650,7 @@ function main(input)
     例如某账号发起了一笔交易，该交易中有个操作是调用合约Y（该操作的source_address是x），那么合约Y执行过程中，sender的值就是x账号的地址。
 
     ```javascript
-    var bar = sender;
+    let bar = sender;
     /*
     那么bar的值是x的账号地址。
     */
@@ -1457,7 +1664,7 @@ function main(input)
     例如某账号A发起了一笔交易tx0，tx0中第0（从0开始计数）个操作是给某个合约账户转移资产(调用合约), 那么```triggerIndex```的值就是0。
 
     ```javascript
-    var bar = triggerIndex;
+    let bar = triggerIndex;
     /* bar 是一个非负整数*/
     ```
 
@@ -1472,12 +1679,12 @@ function main(input)
   >例: Bob的合约是这么写的
   ```javascript
   function main(inputStr) {
-    var recvAsset = trigger.transaction.operations[triggerIndex].payment.asset;
+    let recvAsset = trigger.transaction.operations[triggerIndex].payment.asset;
 
     if (recvAsset.property.code != 'CNY' || recvAsset.property.issuer != 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY') {
       throw '不支持的资产类型';
     }
-    var tx = {
+    let tx = {
       'operations': [{
           'type': 3,
           'payment': {
@@ -1494,66 +1701,26 @@ function main(input)
       ]
     };
 
-    var bSuccess = doTransaction(tx);
-    if (!bSuccess) {
-      throw 'IOU卖完了';
-    }
+    doTransaction(JSON.stringify(tx));
+
   }
   ```
   这段合约的功能就是，Bob以1：1的价格收`buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY`发行的`CNY`,售卖自己的IOU借条(I owe you )。Alice向Bob转移一笔资产，触发了Bob的合约，如果此时Bob的IOU已经卖完，那么会执行到`throw 'IOU卖完了';`这一步。未捕获的异常会导致JavaScript代码执行出错，那么本次合约执行失败。Alice转给Bob的资产会自动回退到Alice的账户中，同时，Alice的这笔交易执行状态为失败，错误代码为`151`。
 
 - 执行交易失败
-  合约中可以执行多个交易，每个交易本身具有事物性。
-  >例
-
-  ```JavaScript
-  var tx1 = {
-    "operations":[
-      {
-        "type": 2,
-        "issue_asset": {
-          "amount": 1000,
-          "code": "CNY"
-        }
-      }
-    ]
-  };
-  var ret1 = doTransaction(tx1);
-
-  var tx2 = {
-    'operations':[
-      {
-        "type": 1,
-        "create_account": {
-          "dest_address": "buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg",
-          "priv": {
-            "master_weight": 10,
-            "thresholds": {
-              "tx_threshold": 7
-            }
-          }
-        }
-      }
-    ]
-  };
-
-  var ret2 = doTransaction(tx2);
-  ```
-
-  如果tx1执行成功了，tx2执行失败了，那么tx2不会生效，tx1会生效。您如果需要保证事务性，请将两个交易合并起来。
+  <font color=red>合约中可以执行多个交易，只要有一个交易失败，就会抛出异常，导致整个交易失败</font>
 
 ### 验证者节点选举
 
 #### 创建选举合约账户
-
 验证节点选举账户创建成功后，才可以进行后续的操作, 且该账户是全局唯一的, 不能重复创建。
 
-- 创建一个合约账户（参见[创建账号](#创建账号)），账户的地址必须是配置文件 config\bumo.json 中 validators_vote_account  字段设定的地址。
+- 创建一个合约账户（参见[创建账号](#创建账号)），账户的地址必须是buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ。
 
 >例
 
 ```
-"validators_vote_account": "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+"validators_vote_account": "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
 ```
 
 - 将 src\ledger\validators_vote.js 文件中的源码全部拷贝作为账户中 payload 字段的值。
@@ -1574,8 +1741,8 @@ function main(input)
    let validatorSetSize       = 100;
    let votePassRate           = 0.8;
    let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
-   let minPledgeAmount        = 100000000;
-   let minSuperadditionAmount = 1000000;
+   let minPledgeAmount        = 100 * 100000000;
+   let minSuperadditionAmount = 100 * 100000000;
 ```
  
  - validatorSetSize 指定网络内验证节点的个数；
@@ -1588,7 +1755,7 @@ function main(input)
 
 任意一个拥有网络节点的账户可以通过向验证节点选举账户转移一笔 coin 作为押金，申请成为验证节点候选人。但能否成为候选节点，需经过验证节点投票决定。
 
-- 申请者向验证节点选举账户转移一笔 coin 作为押金（参见[转移BU资产](#转移BU资产)），该押金可通过 ‘[收回押金](#收回押金)’ 操作收回。
+- 申请者向验证节点选举账户转移一笔 coin 作为押金（参见‘[转移bu资产](#转移bu资产)’），该押金可通过 ‘[收回押金](#收回押金)’ 操作收回。
 - ‘转移货币’操作的 input 字段填入 { "method" : "pledgeCoin"}，注意使用转义字符。
 
 >例
@@ -1596,7 +1763,7 @@ function main(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :100000,
     "input":
     "{\"method\":\"pledgeCoin\"}"
@@ -1610,17 +1777,17 @@ function main(input)
 
 #### 对验证节点候选人申请者投票
 
-验证节点对申请者投票通过后，则该节点成为验证节点候选人。如果投票有效期内未通过，则自动退回全部押金。
+验证节点对申请者投票通过后，则该节点成为验证节点候选人。如果投票有效期内未通过，可以[收回押金](#收回押金)。
 
 - 向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
-- ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method":"voteForApplicant", "params":{ "address":"填入申请者地址" } }，注意使用转义字符。
+- ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method" : "voteForApplicant", "params" : { "address" : "填入申请者地址" } }，注意使用转义字符。
 
 >例
 
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":
     "{ 
@@ -1647,7 +1814,7 @@ function main(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":"{\"method\":\"takebackCoin\"}"
   }
@@ -1657,7 +1824,7 @@ function main(input)
 
 #### 废止恶意节点
 
-如果某验证节点发现有另一个验证节点为恶意节点，或者不再适合作为验证节点，可以申请废止该恶意节点。发起‘废止恶意节点’操作后，需要所有验证节点投票决定是否执行废止操作。
+如果某验证节点发现有另一个验证节点为恶意节点，或者不再适合作为验证节点，可以申请废止该恶意节点。发起‘废止恶意节点’提案后，需要所有验证节点投票决定是否执行废止操作。
 
 - 废止者向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
 - ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method" : "abolishValidator",  "params" : { "address" : "此处填入恶意验证节点地址", "proof" : "此处填入废止该验证节点的原因"} }，注意使用转义字符。
@@ -1667,7 +1834,7 @@ function main(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":
     "{
@@ -1684,7 +1851,6 @@ function main(input)
 注意：申请废止者和被废止者必须都是验证者节点。
 
 #### 取消废止恶意节点
-
 如果发起废止操作的验证节点后来发现被废止节点并非恶意节点，可以取消废止操作。但如果该废止操作已经被其他验证节点投票通过，则无法取消。
 
 - 废止者向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
@@ -1695,7 +1861,7 @@ function main(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":
     "{ 
@@ -1711,7 +1877,7 @@ function main(input)
 注意：只有申请废止者才可以取消，其他节点和验证者节点无权取消。
 
 #### 对废止恶意节点投票
-投票通过后，恶意节点将被废止。恶意节点被废止后，选举账户只将该节点 90% 的押金退回原账户，10% 的押金将被罚没，且平均分给剩余其他所有验证节点作为押金。
+投票通过后，恶意节点将被废止。恶意节点被废止后，选举账户只将该节点 90% 的押金退回原账户，10% 的押金将被罚没，且平均分给剩余其他所有验证节点作为押金, 取模的余数奖励给股权最高的验证节点。
 
 - 验证节点向选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
 - ‘转移资产’或‘转移货币’操作的 input 字段填入 { "method" : "voteForAbolish", "params" : { "address" : "此处填入被投票的恶意验证节点地址" } }，注意使用转移字符。
@@ -1721,7 +1887,7 @@ function main(input)
 ```
   "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
+    "dest_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "amount" :0,
     "input":
     "{
@@ -1738,21 +1904,19 @@ function main(input)
 
 #### 查询功能
 
-用户通过向查询接口提供指定参数，可以查看相关信息。
-
-- 用户向验证节点选举账户转移任意一笔资产或者一笔数额为 0 的 coin。
-- ‘转移资产’或‘转移货币’操作的 input 字段填入  { "method" : "查询方法", "params" : { "查询参数" } }，注意使用转移字符。
+用户通过向查询接口（即 query 接口）提供指定参数，可以查看相关信息, 调用查询接口当前只能通过 testContract, contract_address 字段填入验证者候选节点选举账户地址。
 
 ##### 查询当前验证节点集合
 
 >例
 
 ```
-  "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
-    "amount" :0,
-    "input": "{\"method\":\"getValidators\"}"
+    "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
+    "code" : "",
+    "input" : "{\"method\": \"getValidators\"}",
+    "exe_or_query" : false,
+    "source_address" : ""
   }
 ```
 
@@ -1761,57 +1925,63 @@ function main(input)
 >例
 
 ```
-  "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
-    "amount" :0,
-    "input": "{\"method\":\"getCandidates\"}"
+    "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
+    "code" : "",
+    "input" : "{\"method\": \"getCandidates\"}",
+    "exe_or_query" : false,
+    "source_address" : ""
   }
 ```
 
-##### 查询指定的验证节点候选人申请提案信息；
+##### 查询指定的候选节点申请者提案信息
+input 中的 address 字段填入申请者地址。
 
 >例
 
 ```
-  "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
-    "amount" :0,
-    "input":
+    "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
+    "code" : "",
+    "input" :
     "{
-       \"method\":\"getApplicantProposal\",
+      \"method\": \"getApplicantProposal\",
       \"params\":
       {
          \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
-    }"
+    }",
+    "exe_or_query" : false,
+    "source_address" : ""
   }
 ```
 
-##### 查询指定的废止恶意节点提案的信息；
+##### 查询指定的废止恶意节点提案的信息
+input 中的 address 字段填入指定的恶意节点地址。
 
 >例
 
 ```
-  "pay_coin" :
   {
-    "dest_address" : "buQoR4qiEEEB1LQkeQCcpFQLqBEzKYjTXftY",
-    "amount" :0,
-    "input":
+    "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
+    "code" : "",
+    "input" :
     "{
-       \"method\":\"getAbolishProposal\",
+      \"method\": \"getAbolishProposal\",
       \"params\":
       {
          \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
-    }"
+    }",
+    "exe_or_query" : false,
+    "source_address" : ""
   }
 ```
 
 ### 费用选举合约
 
-此合约为交易费用标准制定合约，每项费用标准由共识节点提出议案，所有共识节点投票选举，获胜的议案作为新的费用收取标准，在下一个区块实施，当提案提出后超过100个区块，提案作废。
+此合约为交易费用标准制定合约，每项费用标准由共识节点提出议案，所有共识节点投票选举，获胜的议案作为新的费用收取标准，在下一个区块实施，当提案提出后超过15天仍未胜出，提案作废。
+此合约地址：buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe
 
 #### 费用结构
 
@@ -1903,7 +2073,7 @@ GET /getLedger?seq=xxxx&with_fee=true
 
 ```json
 {
-    "method":"queryEnroll",
+    "method":"queryProposal",
     "params":""
 }
 ```
@@ -1912,9 +2082,9 @@ json格式需转换成字符串形式填写到testContract接口结构
 
 ```json
 {
-    "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+    "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
-    "input" : "{\"method\":\"queryEnroll\",\"param\":\"\"}"},
+    "input" : "{\"method\":\"queryProposal\",\"params\":\"\"}",
     "exe_or_query" : false,
     "source_address" : "",
     "fee":100000
@@ -1932,22 +2102,21 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
     "error_desc": "",
     "result": {
         "logs": {
-            "0-buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1": null
+            "0-buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe": null
         },
         "query_rets": [
             {
                 "result": {
                     "type": "string",
-                    "value": "{\"xx1\":{\"accountID\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enrollID\":\"xx1\",\"feeType\":1,\"price\":\"5\"}}"
+                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\":{\"accountId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\",\"feeType\":1,\"price\":5,\"voteCount\":0,\"time\":1517470155872949}}"
                 }
             }
         ],
         "real_fee": 0,
         "stat": {
-            "apply_time": 4596,
-            "memory_usage": 1330128,
-            "stack_usage": -440,
-            "step": 20
+            "apply_time": 11342,
+            "memory_usage": 1325072,
+            "step": 16
         },
         "txs": null
     }
@@ -1962,9 +2131,9 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 ```json
 {
-    "method":"queryVoting",
+    "method":"queryVote",
     "params":{
-      "enrollID": "xxxx"
+      "proposalId": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1"
     }
 }
 ```
@@ -1973,9 +2142,9 @@ json格式需转换成字符串形式填写到testContract接口结构
 
 ```json
 {
-    "contract_address" : "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+    "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
-    "input" :"{\"method\":\"queryVoting\",\"params\":{\"enrollID\":\"xxxx\"}}"},
+    "input" :"{\"method\":\"queryVote\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}",
     "exe_or_query" : false,
     "source_address" : "",
     "fee":100000
@@ -1993,22 +2162,21 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
     "error_desc": "",
     "result": {
         "logs": {
-            "0-buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1": null
+            "0-buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe": null
         },
         "query_rets": [
             {
                 "result": {
                     "type": "string",
-                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\":{\"accountID\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\",\"enrollID\":\"xx1\",\"voteID\":\"yy1\"}}"
+                    "value": "{\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw\":1}"
                 }
             }
         ],
         "real_fee": 0,
         "stat": {
-            "apply_time": 4490,
-            "memory_usage": 1335584,
-            "stack_usage": -424,
-            "step": 29
+            "apply_time": 18020,
+            "memory_usage": 1326456,
+            "step": 19
         },
         "txs": null
     }
@@ -2018,16 +2186,14 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 #### 费用提案
 
-通过发送转移资产交易或者付币交易来给合约发起费用提案。合约入参input参数json格式
+通过发送转移资产交易或者付币交易来给合约发起费用提案。合约入参input参数json格式。一个账户只能发起一类费用提案，如果再次发起提案，会销毁上次提案及相关投票。
 
 ```json
 {
-  "method":"enrollFee",
+  "method":"proposalFee",
     "params":{
-        "accountID": "buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg",
-        "enrollID": "xxxx",
         "feeType": 1, //费用种类
-        "price": "5"    //费用价格
+        "price": 5    //费用int且大于等于0
     }
 }
 ```
@@ -2038,9 +2204,9 @@ json格式需转换成字符串形式填写到paycoin接口结构
 {
     "type" : "PAY_COIN",
     "pay_coin" : {
-       "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+       "dest_address" :"buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
        "amount":0,
-        "input":"{\"method\":\"enrollFee\",\"params\":{\"accountID\":\"buQts6DfT5KavtV94JgZy75H9piwmb7KoUWg\",\"enrollID\":\"xxxx\",\"feeType\":1,\"price\":\"5\"}}";
+        "input":"{\"method\":\"proposalFee\",\"params\":{\"feeType\":1,\"price\":5}}"
     }
 }
 ```
@@ -2051,11 +2217,9 @@ json格式需转换成字符串形式填写到paycoin接口结构
 
 ```json
 {
-  "method":"doVoting",
+  "method":"voteFee",
   "params":{
-      "accountID": "buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
-      "enrollID": "xxxx",
-      "voteID": "yyyy"
+      "proposalId": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1"
    }
 }
 ```
@@ -2066,9 +2230,9 @@ json格式需转换成字符串形式填写到paycoin接口结构
 {
    "type" : "PAY_COIN",
     "pay_coin" : {
-        "dest_address" :"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1",
+        "dest_address" :"buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
         "amount":0,
-        "input":"{\"method\":\"doVoting\",\"params\":{\"accountID\":\"buQebeTXVPA8mTt2fmBi51GifPbsqDPPURK1\",\"enrollID\":\"xxxx\",\"voteID\":yyyy}}"
+        "input":"{\"method\":\"voteFee\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}"
     }
 }
 ```
@@ -2104,16 +2268,23 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 103               | ERRCODE_ACCOUNT_NOT_EXIST              | 账户不存在                                                                                   |
 | 104               | ERRCODE_ACCOUNT_ASSET_LOW_RESERVE      | 支付操作，资产余额不足                                                                       |
 | 105               | ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE | 资产数量过大，超出了int64的范围                                                              |
+| 106               | ERRCODE_ACCOUNT_INIT_LOW_RESERVE       | 创建账号初始化资金不足                                                                       |
+| 111               | ERRCODE_FEE_NOT_ENOUGH                 | 费用不足                                                                                     |
 | 114               | ERRCODE_OUT_OF_TXCACHE                 | TX 缓存队列已满                                                                              |
 | 120               | ERRCODE_WEIGHT_NOT_VALID               | 权重值不在有效范围内                                                                         |
 | 121               | ERRCODE_THRESHOLD_NOT_VALID            | 门限值不在有效范围内                                                                         |
 | 144               | ERRCODE_INVALID_DATAVERSION            | metadata的version版本号不与已有的匹配（一个版本化的数据库）                                  |
+| 146               | ERRCODE_TX_SIZE_TOO_BIG                | 交易数据超出上限                                  |
 | 151               | ERRCODE_CONTRACT_EXECUTE_FAIL          | 合约执行失败                                                                                 |
 | 152               | ERRCODE_CONTRACT_SYNTAX_ERROR          | 合约语法分析失败                                                                             |
+| 153               | ERRCODE_CONTRACT_TOO_MANY_RECURSION    | 合约递归深度超出上限                                                                             |
+| 154               | ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS | 合约产生的交易超出上限                                                                             |
+| 155               | ERRCODE_CONTRACT_EXECUTE_EXPIRED       | 合约执行超时                                                          
+| 160               | ERRCODE_TX_INSERT_QUEUE_FAIL           | 插入交易缓存队列失败
 
 ## 示例
 
-下面我们用`a002d8345b89dc34a57574eb497635ff125a3799fe77b6`发起一笔交易，这笔交易只有1个操作:创建一个账号。
+下面我们用`buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3`发起一笔交易，这笔交易只有1个操作:创建一个账号。
 
 1. 组装交易，将交易序列化
 
@@ -2125,6 +2296,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
     {
       "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
       "nonce": 1,
+      "fee":1000,
       "operations": [{
           "type": 1,
           "create_account": {
@@ -2135,10 +2307,8 @@ json格式需转换成字符串形式填写到paycoin接口结构
               }
             ],
             "priv": {
-              "master_weight": 10,
-              "signers": [],
               "thresholds": {
-                "tx_threshold": 7
+                "tx_threshold": 1
               }
             },
             "contract": {

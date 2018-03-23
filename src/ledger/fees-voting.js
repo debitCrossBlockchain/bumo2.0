@@ -1,267 +1,171 @@
 'use strict';
-const voteRecordsKey = 'voteRecordsKey';
-const enrollRecordsKey = 'enrollRecordsKey';
-const statisticRecordsKey = 'statisticRecordsKey';
-const victorsRecordsKey = 'victorsRecordsKey';
-const voteRecordsDetailKeyPrefix ='voteRecords_';
-let enrollRecords = {};
-let voteRecords = {};
-let statisticRecords = [];
-let validators = [];
+const proposalRecordsKey = 'proposalRecordsKey';
+const voteRecordKeyPrefix ='voteRecords_';
+const nonceKey ='nonce';
+const effectiveProposalInterval =15*1000000*60*60*24;
+const votePassRate =0.8;
+let proposalRecords = {};
+let validators = {};
 
-
-function storageSet(key, value) {
-  let result = storageStore(key,JSON.stringify(value));
-  assert(result !== false,'Storage set faild');
-}
-
-function storageDelete(key) {
-  let result = storageDel(key);
-  assert(result !== false,'Storage del faild');
-}
 
 function loadValidators() {
   let result = getValidators();
   assert(result !== false,'getValidators failed');
   validators = result;
+  assert(Object.keys(validators).length !==0,'validators is empty');
 }
 
-function loadVoteRecords() {
-  let result = storageLoad(voteRecordsKey);
-  if (result === false) {
-    return false;
-  } 
-  voteRecords = JSON.parse(result);
-  return true;
-}
-function loadEnrollRecords() {
-  let result = storageLoad(enrollRecordsKey);
+
+function loadProposalRecords() {
+  let result = storageLoad(proposalRecordsKey);
   if (result === false) {
     return false;
   }
-  enrollRecords = JSON.parse(result);
+  proposalRecords = JSON.parse(result);
   return true;
 }
 
-function enrollExist(enrollID) {
-  let exist = false;
-  Object.keys(enrollRecords).every(
-    function (key) {
-      if (enrollRecords[key].enrollID === enrollID) {
-        exist = true;
+function isValidator(accountId){
+  let found =false;
+  validators.every(
+    function(item){
+      if(item[0] ===accountId) {
+        found =true;
         return false;
-      } else {
-        return true;
-      }
-    }
-  );
-  return exist;
-}
-
-function accountEnrolled(enroll) {
-  let enrolled = false;
-  Object.keys(enrollRecords).every(
-    function(key){
-      if(enrollRecords[key].accountID === enroll.accountID){
-        enrolled  = true;
-        return false;
-      }
-      else{
-        return true;
-      }        
-    }
-  );
-  return enrolled;
-}
-
-function delEnroll(accountID, enrollID) {
-  log('delEnroll accountID:'+ accountID +' enrollID:'+enrollID);
-  let be_del = false;
-  if (enrollRecords[enrollID]) {
-    if (enrollRecords[enrollID].accountID === accountID) {
-      be_del = true;
-      delete enrollRecords[enrollID];
-      delete voteRecords[enrollID];
-      let key=voteRecordsDetailKeyPrefix+enrollID;
-      storageDelete(key);
-      storageSet(voteRecordsKey,voteRecords);
-      storageSet(enrollRecordsKey, enrollRecords);
-    }
-  }
-  return be_del;
-}
-
-function doVoting(accountID,enrollID,voteID) {
-
-  if(loadEnrollRecords() === false){
-    throw 'enroll records not exist';
-  }
-  if (!enrollExist(enrollID)) {
-    throw 'Vote enroll(' + enrollID + ') not exist';
-  }
-
-  loadVoteRecords();
-  let key = voteRecordsDetailKeyPrefix + enrollID;
-  let voteRecordBody;
-  if (voteRecords[enrollID]) {
-    let result = storageLoad(key);
-    assert(result !== false,'voteRecords exist key(' + enrollID + ') ,but not exist body');
-    voteRecordBody = JSON.parse(result);
-    assert (voteRecordBody[accountID] !==null ,'Account(' + accountID + ') have voted the enroll(' + enrollID + ')');
-
-    voteRecords[enrollID] = voteRecords[enrollID] + 1;
-    voteRecordBody[accountID] = {'accountID':accountID,'enrollID':enrollID,'voteID':voteID };
-    storageSet(key, voteRecordBody);
-  } else {
-    voteRecords[enrollID] = 1;
-    voteRecordBody = {};
-    voteRecordBody[accountID] =  {'accountID':accountID,'enrollID':enrollID,'voteID':voteID };
-    storageSet(key, voteRecordBody);
-  }
-
-  storageSet(voteRecordsKey, voteRecords);
-  return true;
-}
-
-
-function enrollFee(accountID,enrollID,feeType,price) {
-
-  loadEnrollRecords();
-  let exist =false;
-  Object.keys(enrollRecords).every(
-    function(key){
-      if(enrollRecords[key].accountID === accountID){
-        exist =true;
-        delEnroll(enrollRecords[key].accountID,enrollRecords[key].enrollID);
-        enrollRecords[enrollID] = {'accountID':accountID,'enrollID':enrollID,'feeType':feeType,'price':price};
-        storageSet(enrollRecordsKey, enrollRecords);
-        return false;
-      }
-      else{
-        return true;
-      }        
-    }
-  );
-
-  if(!exist){
-    enrollRecords[enrollID] = {'accountID':accountID,'enrollID':enrollID,'feeType':feeType,'price':price};
-    storageSet(enrollRecordsKey, enrollRecords);
-  }
-  loadVoteRecords();   
-  return true;
-}
-
-
-function voteStatistic() {
-  loadValidators();
-  let thredhold = Math.floor((validators.length * 2 / 3) + 1);
-  let victorsRecordsTmp = [];
-  let statisticRecordsTmp = [];
-  let output = {};
-
-  Object.keys(voteRecords).every(
-    function (enrollID) {
-      let enroll = enrollRecords[enrollID];
-      if (!validators.includes(enrollRecords[enrollID].accountID)) { return true; }
-
-      if (statisticRecordsTmp[enroll.feeType]) {
-        let s = statisticRecordsTmp[enroll.feeType].statistic;
-        if (s[enrollID]) {
-          s[enrollID].count = voteRecords[enrollID];
-
-          if (s[enrollID].count >= thredhold) {
-            victorsRecordsTmp[enroll.feeType] = { 'feeType': enroll.feeType, 'enrollID': enrollID, 'count': s[enrollID].count, 'price': enroll.price };
-            output[enroll.feeType] = enroll.price;
-          }
-        }
-      }
-      else {
-        let statistic = {};
-        statistic[enrollID] = { 'enrollID': enrollID, 'price': enrollRecords[enrollID].price, 'count': voteRecords[enrollID] };
-        statisticRecordsTmp[enroll.feeType] = { 'feeType': enroll.feeType, 'statistic': statistic };
-
-        if (statistic[enrollID].count >= thredhold) {
-          victorsRecordsTmp[enroll.feeType] = { 'feeType': enroll.feeType, 'enrollID': enrollID, 'count': statistic[enrollID].count, 'price': enroll.price };
-          output[enroll.feeType] = enroll.price;
-        }
       }
       return true;
     }
   );
-
-  statisticRecords = statisticRecordsTmp;
-  storageSet(statisticRecordsKey, statisticRecords);
-
-  if (victorsRecordsTmp.length > 0) {
-    storageSet(victorsRecordsKey, victorsRecordsTmp);
-
-    victorsRecordsTmp.every(
-      function (item) {
-        let k = item.enrollID;
-        assert(k === enrollRecords[k].enrollID, 'enroll_records key(' + k + ') != enrollID(' + enrollRecords[k].enrollID + ')');
-        delEnroll(enrollRecords[k].accountID, enrollRecords[k].enrollID);
-        return true;
-      }
-    );
-
-    configFee(JSON.stringify(output));
-  }
+  assert(found,accountId +' is not validator');
 }
 
-function queryVoting(enrollID) {
-  loadVoteRecords();
-  assert(voteRecords[enrollID] !==null,'vote_records not exist key(' + enrollID + ') vote');
-  let key =voteRecordsDetailKeyPrefix+enrollID;
+function voteFee(proposalId) {
+  let accountId =sender;
+  loadValidators();
+  isValidator(accountId);
+  if(loadProposalRecords() === false){
+    throw 'proposal records not exist';
+  }
+  assert(proposalRecords.hasOwnProperty(proposalId),'Vote proposal(' + proposalId + ') not exist');
+
+  let key = voteRecordKeyPrefix + proposalId;
+  if(blockTimestamp>proposalRecords[proposalId].expireTime){
+    delete proposalRecords[proposalId];
+    storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
+    storageDel(key);     
+    return false;  
+  }
+  
+  let proposalRecordBody = {};
   let result = storageLoad(key);
-  assert(result !== false,'vote_records not exist key(' + enrollID + ') vote');
+  assert(result !== false,'proposalId('+proposalId+') not exist voteRecords');
+  proposalRecordBody = JSON.parse(result);
+  assert(!proposalRecordBody.hasOwnProperty(accountId),'Account(' + accountId + ') have voted the proposal(' + proposalId + ')'); 
+  
+  proposalRecords[proposalId].voteCount +=1;
+  proposalRecordBody[accountId] = 1;
+
+  if(proposalRecords[proposalId].voteCount >= parseInt(Object.keys(validators).length*votePassRate)) {
+    let output = {};
+    output[proposalRecords[proposalId].feeType] = proposalRecords[proposalId].price;
+    delete proposalRecords[proposalId];
+    storageDel(key);   
+    configFee(JSON.stringify(output));
+  }
+  else {
+    storageStore(key,JSON.stringify(proposalRecordBody));
+  }  
+  storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
+  return true;
+}
+
+function proposalFee(feeType,price) {
+  let accountId =sender;
+  loadValidators();
+  isValidator(accountId);
+
+  let result =storageLoad(nonceKey);
+  assert(result !==false,'load nonce failed');
+  let nonce = parseInt(result);
+  nonce+=1;
+  let newProposalId =accountId + nonce;
+  loadProposalRecords();
+  let exist =false;
+  Object.keys(proposalRecords).every(
+    function(proposalId){
+      if(proposalRecords[proposalId].accountId === accountId) {
+        exist =true;
+        delete proposalRecords[proposalId];
+        let key =voteRecordKeyPrefix + proposalId;
+        storageDel(key); 
+        proposalRecords[newProposalId] = {'accountId':accountId,'proposalId':newProposalId,'feeType':feeType,'price':price,'voteCount':1,'expireTime':blockTimestamp+effectiveProposalInterval };               
+        storageStore(proposalRecordsKey,JSON.stringify(proposalRecords));
+        storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({accountId:1}));
+        return false;
+      }
+      else{
+        return true;
+      }        
+    }
+  );
+
+  if (!exist) {
+    proposalRecords[newProposalId] = { 'accountId': accountId, 'proposalId': newProposalId, 'feeType': feeType, 'price': price, 'voteCount': 1,'expireTime':blockTimestamp+effectiveProposalInterval };
+    storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
+    storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({accountId:1}));
+  }  
+
+  storageStore(nonceKey,nonce.toString());
+}
+
+function queryVote(proposalId) {
+  let key =voteRecordKeyPrefix+proposalId;
+  let result = storageLoad(key);
+  //assert(result !== false,'vote records of proposal(' +proposalId +')not exist');
+  if(result === false){
+    result ='vote records of proposal(' +proposalId +')not exist';
+  }
   return result;
 }
 
-function queryEnroll() {
-  
-  let result = storageLoad(enrollRecordsKey);
-  assert(result !== false,'queryEnroll error');
+function queryProposal() {  
+  let result = storageLoad(proposalRecordsKey);
+  //assert(result !== false,'proposal not exist');
+  if(result === false){
+    result ='proposal not exist';
+  }
   return result;
 }
 
 function main(input) {
-  assert(input !== '','main input is empty');
-
   let para = JSON.parse(input);
-  assert(para.method !==undefined ,'para.method undefined');
-  if (para.method === 'doVoting') {
-    assert(para.params !==undefined ,'para.params undefined');
-    assert(para.params.accountID !==undefined || para.params.enrollID !==undefined || para.params.voteID !==undefined,'params accountID enrollID voteID undefined');
-    doVoting(para.params.accountID,para.params.enrollID,para.params.voteID);
-    voteStatistic();
+  if (para.method === 'voteFee') {
+    assert(para.params.proposalId !==undefined,'params proposalId undefined');
+    voteFee(para.params.proposalId);
   }
-  else if (para.method === 'enrollFee') {
-    assert(para.params !==undefined ,'para.params undefined');
-    assert(para.params.accountID !==undefined || para.params.enrollID !==undefined || para.params.feeType !==undefined|| para.params.price !==undefined,'params  accountID enrollID feeType price undefined');
-    enrollFee(para.params.accountID,para.params.enrollID,para.params.feeType,para.params.price);
+  else if (para.method === 'proposalFee') {
+    assert(para.params.feeType !==undefined && para.params.price !==undefined,'params feeType price undefined');
+    assert(Number.isInteger(para.params.feeType) && para.params.feeType>0 && para.params.feeType<10,'feeType error');
+    assert(Number.isSafeInteger(para.params.price) && para.params.price>=0,'price should be int type and price>=0');
+    proposalFee(para.params.feeType,para.params.price);
   }
   else {
     throw 'main input para error';
   }
 }
 
-
 function query(input) {
-  assert(input !== '','query input is empty');
-
   let para = JSON.parse(input);
-  assert(para.method !==undefined ,'para.method undefined');
-  if (para.method === 'queryVoting') {    
-    assert(para.params !==undefined ,'para.params undefined');
-    assert(para.params.enrollID !==undefined ,'params.enrollID undefined');
-    return queryVoting(para.params.enrollID);
+  if (para.method === 'queryVote') {    
+    assert(para.params.proposalId !==undefined ,'params.proposalId undefined');
+    return queryVote(para.params.proposalId);
   }
-  else if (para.method === 'queryEnroll') {
-    return queryEnroll();
+  else if (para.method === 'queryProposal') {
+    return queryProposal();
   }
   else {
     throw 'query input para error';
   }
 }
 
-function init(){ return true; }
+function init(){ storageStore(nonceKey,'0');}

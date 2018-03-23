@@ -24,7 +24,7 @@ namespace bumo {
 		notify_(NULL),
 		is_validator_(false),
 		replica_id_(-1),
-		private_key_(Configure::Instance().validation_configure_.node_privatekey_) {}
+		private_key_(Configure::Instance().ledger_configure_.validation_privatekey_) {}
 
 	Consensus::~Consensus() {}
 
@@ -134,11 +134,6 @@ namespace bumo {
 		notify_->OnViewChanged();
 	}
 
-	int32_t Consensus::AsyncCheckValue(const std::string &value, CheckValueFunction check_func) {
-		//return notify_->AsyncCheckValue(value, check_func);
-		return false;
-	}
-
 	int32_t Consensus::CheckValue(const std::string &value) {
 		return notify_->CheckValue(value);
 	}
@@ -209,11 +204,11 @@ namespace bumo {
 	void ValueSaver::SaveValue(const std::string &name, const std::string &value) {
 		writes.Put(utils::String::Format("%s_%s", bumo::General::CONSENSUS_PREFIX, name.c_str()), value);
 		write_size++;
-		LOG_INFO("Set %s of size(" FMT_SIZE ")", name.c_str(), value.size());
+		LOG_TRACE("Set %s of size(" FMT_SIZE ")", name.c_str(), value.size());
 	}
 
 	void ValueSaver::SaveValue(const std::string &name, int64_t value) {
-		LOG_INFO("Set %s to value(" FMT_I64 ") ", name.c_str(), value);
+		LOG_TRACE("Set %s to value(" FMT_I64 ") ", name.c_str(), value);
 		SaveValue(name, utils::String::ToString(value));
 	}
 

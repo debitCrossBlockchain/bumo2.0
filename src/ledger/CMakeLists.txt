@@ -13,4 +13,5 @@ target_compile_options(${LIB_BUMO_LEDGER}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE
     PUBLIC -D_WEBSOCKETPP_CPP11_STL_
+    PUBLIC -D${OS_NAME}
 )

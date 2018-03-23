@@ -53,6 +53,13 @@ namespace bumo {
 
 		std::string issuer = request.GetParamValue("issuer");
 		std::string code = request.GetParamValue("code");
+		std::string asset_type_str = request.GetParamValue("type");
+		int32_t asset_type = 0;
+		if (!asset_type_str.empty()){
+			char* p;
+			asset_type = strtol(asset_type_str.c_str(), &p, 10);
+			if (*p) asset_type = 0;
+		}
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		AccountFrm::pointer acc = NULL;
@@ -85,16 +92,17 @@ namespace bumo {
 
 			Json::Value& jsonassets = result["assets"];
 			if (!issuer.empty() && !code.empty()) {
-				protocol::AssetProperty p;
+				protocol::AssetKey p;
 				p.set_issuer(issuer);
 				p.set_code(code);
-				protocol::Asset asset;
+				p.set_type(asset_type);
+				protocol::AssetStore asset;
 				if (acc->GetAsset(p, asset)) {
 					jsonassets[(Json::UInt)0] = Proto2Json(asset);
 				}
 			}
 			else {
-				std::vector<protocol::Asset> assets;
+				std::vector<protocol::AssetStore> assets;
 				acc->GetAllAssets(assets);
 				for (size_t i = 0; i < assets.size(); i++) {
 					jsonassets[i] = Proto2Json(assets[i]);
@@ -166,6 +174,13 @@ namespace bumo {
 
 		std::string issuer = request.GetParamValue("issuer");
 		std::string code = request.GetParamValue("code");
+		std::string asset_type_str = request.GetParamValue("type");
+		int32_t asset_type = 0;
+		if (!asset_type_str.empty()){
+			char* p;
+			asset_type = strtol(asset_type_str.c_str(), &p, 10);
+			if (*p) asset_type = 0;
+		}
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		AccountFrm::pointer acc = NULL;
@@ -180,17 +195,18 @@ namespace bumo {
 		}
 		else {
 
-			if (!issuer.empty() && !code.empty()) {
-				protocol::AssetProperty p;
+			if (!issuer.empty() && !code.empty() ) {
+				protocol::AssetKey p;
 				p.set_issuer(issuer);
 				p.set_code(code);
-				protocol::Asset asset;
+				p.set_type(asset_type);
+				protocol::AssetStore asset;
 				if (acc->GetAsset(p, asset)) {
 					result["asset"] = Proto2Json(asset);
 				}
 			}
 			else {
-				std::vector<protocol::Asset> assets;
+				std::vector<protocol::AssetStore> assets;
 				acc->GetAllAssets(assets);
 				for (size_t i = 0; i < assets.size(); i++) {
 					result[i] = Proto2Json(assets[i]);
@@ -285,31 +301,6 @@ namespace bumo {
 		reply = reply_json.toStyledString();
 	}
 
-	void WebServer::GetExprResult(const http::server::request &request, std::string &reply) {
-		Result result;
-		Json::Value reply_json = Json::Value(Json::objectValue);
-		Json::Value &js_result = reply_json["result"];
-
-		std::string parse = request.GetParamValue("parse");
-		do {
-			protocol::ConsensusValue cons_null;
-			ExprCondition parser(request.body, NULL, cons_null);
-			utils::ExprValue value;
-			if (parse == "true") {
-				result = parser.Parse(value);
-			}
-			else {
-				result = parser.Eval(value);
-				js_result["value"] = value.Print();
-			}
-
-		} while (false);
-
-		reply_json["error_code"] = result.code();
-		reply_json["error_desc"] = result.desc();
-		reply = reply_json.toStyledString();
-	}
-
 	void WebServer::GetTransactionHistory(const http::server::request &request, std::string &reply) {
 		WebServerConfigure &web_config = Configure::Instance().webserver_configure_;
 		bumo::KeyValueDb *db = bumo::Storage::Instance().ledger_db();
@@ -390,9 +381,71 @@ namespace bumo {
 		} while (false);
 
 		reply_json["error_code"] = error_code;
+		if (error_code == protocol::ERRCODE_NOT_EXIST){
+			reply_json["error_desc"] = "query result not exist";
+		}
 		reply = reply_json.toFastString();
 	}
 
+	void WebServer::GetTransactionCache(const http::server::request &request, std::string &reply) {
+		WebServerConfigure &web_config = Configure::Instance().webserver_configure_;
+		
+		std::string hash = request.GetParamValue("hash");
+		std::string limit_str = request.GetParamValue("limit");
+
+		int32_t error_code = protocol::ERRCODE_SUCCESS;
+		Json::Value reply_json = Json::Value(Json::objectValue);
+
+		Json::Value &result = reply_json["result"];
+		Json::Value &txs = result["transactions"];
+		txs = Json::Value(Json::arrayValue);
+		result["total_count"] = 0;
+
+		do 
+		{
+			std::vector<TransactionFrm::pointer> txs_arr;
+
+			if (!hash.empty()){
+				TransactionFrm::pointer tx;
+				if (GlueManager::Instance().QueryTransactionCache(utils::String::HexStringToBin(hash), tx)) {
+					result["total_count"] = 1;
+					txs_arr.emplace_back(tx);
+				}
+				else{
+					error_code = protocol::ERRCODE_NOT_EXIST;
+				}
+			}
+			else{
+				uint32_t limit = web_config.query_limit_;
+				if (!limit_str.empty()){
+					uint32_t limit_int = utils::String::Stoui(limit_str);
+					if (limit_int == 0) limit_int = 1000;
+					limit = MIN(limit_int, web_config.query_limit_);
+				}
+
+				txs_arr.reserve(limit);
+				GlueManager::Instance().QueryTransactionCache(limit, txs_arr);
+				result["total_count"] = (Json::UInt64)txs_arr.size();
+				if (txs_arr.size() == 0) {
+					error_code = protocol::ERRCODE_NOT_EXIST;
+				}
+			}
+
+			for (auto t : txs_arr){
+				Json::Value m;
+				t->CacheTxToJson(m);
+				txs[txs.size()] = m;
+			}
+
+		} while (false);
+
+		reply_json["error_code"] = error_code;
+		if (error_code == protocol::ERRCODE_NOT_EXIST){
+			reply_json["error_desc"] = "query result not exist";
+		}
+		reply = reply_json.toFastString();
+
+	}
 
 	void WebServer::GetContractTx(const http::server::request &request, std::string &reply) {
 		WebServerConfigure &web_config = Configure::Instance().webserver_configure_;
@@ -422,7 +475,7 @@ namespace bumo {
 		txs = Json::Value(Json::arrayValue);
 		do {
 			if (start_str.empty()) start_str = "0";
-			if (!utils::String::is_number(start_str) == 1) {
+			if (!utils::String::IsNumber(start_str) == 1) {
 				error_code = protocol::ERRCODE_INVALID_PARAMETER;
 				break;
 			}
@@ -430,7 +483,7 @@ namespace bumo {
 
 
 			if (limit_str.empty()) limit_str = "20";
-			if (!utils::String::is_number(limit_str) == 1) {
+			if (!utils::String::IsNumber(limit_str) == 1) {
 				error_code = protocol::ERRCODE_INVALID_PARAMETER;
 				break;
 			}
@@ -638,25 +691,6 @@ namespace bumo {
 	}
 
 	void WebServer::GetPeerNodeAddress(const http::server::request &request, std::string &reply) {
-		std::string token = request.GetParamValue("token");
-		if (token != "bubiokqwer") {
-			reply = "Access is not valid";
-			return;
-		}
-
-		bumo::PrivateKey priv_key(bumo::Configure::Instance().p2p_configure_.node_private_key_);
-		if (priv_key.IsValid()) {
-            reply = utils::String::Format("%s", priv_key.GetEncAddress().c_str());
-		}
-		else {
-			reply = "address not exist";
-		}
-	}
-
-	static bool AssetAmountSorter(std::pair < std::string, int64_t> const& ac1, std::pair < std::string, int64_t> const& ac2) {
-		// need to use the hash of whole tx here since multiple txs could have
-		// the same Contents
-		return ac1.second > ac2.second;
 	}
 
 	void WebServer::GetPeerAddresses(const http::server::request &request, std::string &reply) {
@@ -689,7 +723,7 @@ namespace bumo {
 		} while (false);
 
 		reply_json["error_code"] = error_code;
-		reply = reply_json.toStyledString();
+		reply = reply_json.toFastString();
 	}
 
 	void WebServer::ContractQuery(const http::server::request &request, std::string &reply) {

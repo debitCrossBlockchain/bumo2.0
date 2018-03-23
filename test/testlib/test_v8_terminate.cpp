@@ -14,7 +14,7 @@ std::string ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch) {
 	if (message.IsEmpty()) {
 		// V8 didn't provide any extra information about this error; just
 		// print the exception.
-		sprintf(str_error, "%s", exception_string);
+		//sprintf_(str_error, "%s", exception_string);
 		error_msg.append(str_error);
 	}
 	else {
@@ -23,14 +23,14 @@ std::string ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch) {
 		v8::Local<v8::Context> context(isolate->GetCurrentContext());
 		const char* filename_string = ToCString(filename);
 		int linenum = message->GetLineNumber(context).FromJust();
-		sprintf(str_error, "%s:%i: %s", filename_string, linenum, exception_string);
+		//sprintf(str_error, "%s:%i: %s", filename_string, linenum, exception_string);
 		error_msg.append(str_error);
 		// Print line of source code.
 		v8::String::Utf8Value sourceline(
 			message->GetSourceLine(context).ToLocalChecked());
 		const char* sourceline_string = ToCString(sourceline);
 
-		sprintf(str_error, "%s", sourceline_string);
+		//sprintf(str_error, "%s", sourceline_string);
 		error_msg.append(str_error);
 		// Print wavy underline (GetUnderline is deprecated).
 		int start = message->GetStartColumn(context).FromJust();
@@ -48,7 +48,7 @@ std::string ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch) {
 			v8::Local<v8::String>::Cast(stack_trace_string)->Length() > 0) {
 			v8::String::Utf8Value stack_trace(stack_trace_string);
 			const char* stack_trace_string = ToCString(stack_trace);
-			sprintf(str_error, "%s", stack_trace_string);
+//			sprintf(str_error, "%s", stack_trace_string);
 			error_msg.append(str_error);
 		}
 	}

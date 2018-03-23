@@ -56,18 +56,33 @@ namespace bumo {
 
 	int32_t LevelDbDriver::Get(const std::string &key, std::string &value) {
 		assert(db_ != NULL);
-		leveldb::Status status = db_->Get(leveldb::ReadOptions(), key, &value);
-		if (status.ok()) {
-			return 1;
+
+		//retry 10s
+		size_t timers = 0;
+		int32_t ret = -1;
+		while (timers < 10) {
+
+			leveldb::Status status = db_->Get(leveldb::ReadOptions(), key, &value);
+			if (status.ok()) {
+				ret = 1;
+				break;
+			}
+			else if (status.IsNotFound()) {
+				ret = 0;
+				break;
+			}
+			else
+			{
+				utils::MutexGuard guard(mutex_);
+				error_desc_ = status.ToString();
+				ret = -1;
+			}
+
+			timers++;
+			utils::Sleep(100);
 		}
-		else if(status.IsNotFound()) {
-			return 0;
-		}
-		else {
-			utils::MutexGuard guard(mutex_);
-			error_desc_ = status.ToString();
-			return -1;
-		}
+
+		return ret;
 	}
 
 	bool LevelDbDriver::Put(const std::string &key, const std::string &value) {
@@ -244,13 +259,14 @@ namespace bumo {
 				bool do_success = false;
 				do {
 					//check the db if opened
-					KeyValueDb *account_db = NewKeyValueDb(db_config);
+					/*KeyValueDb *account_db = NewKeyValueDb(db_config);
 					if (!account_db->Open(db_config.account_db_path_)) {
+						LOG_ERROR("Drop failed, error desc(%s)", account_db->error_desc().c_str());
 						delete account_db;
-						LOG_ERROR("Database in used, drop failed");
 						break;
 					}
-					delete account_db;
+					account_db->Close();
+					delete account_db;*/
 
 					if (utils::File::IsExist(db_config.keyvalue_db_path_) && !utils::File::DeleteFolder(db_config.keyvalue_db_path_)) {
 						LOG_ERROR_ERRNO("Delete keyvalue db failed", STD_ERR_CODE, STD_ERR_DESC);

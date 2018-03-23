@@ -5,12 +5,27 @@ add_compile_options(-g -O2)
 add_definitions(-DSVNVERSION=\"${SVNVERSION}\")
 message(STATUS "-DSVNVERSION="${SVNVERSION})
 
+set( V8_LIB_PATH "linux")
+set( OS_NAME "OS_LINUX")
+IF (CMAKE_SYSTEM_NAME MATCHES "Linux")  
+    MESSAGE(STATUS "current platform: Linux ")  
+	set( OS_NAME "OS_LINUX")
+	set(BUMO_LINKER_FLAGS "-Wl,-dy -lpthread -lrt -ldl")
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")  
+    MESSAGE(STATUS "current platform: Darwin")  
+	set( OS_NAME "OS_MAC")
+	set(BUMO_LINKER_FLAGS "-Wl, -lpthread -ldl")
+	set( V8_LIB_PATH "mac")
+ELSE ()  
+    MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")  
+ENDIF ()  
+
 set(BUMOCHAIN bumochain)
 set(BUMO_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(BUMO_ROOT_DIR ${BUMO_SRC_DIR}/..)
 set(LIBRARY_OUTPUT_PATH ${BUMO_ROOT_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${BUMO_ROOT_DIR}/bin)
-set(BUMO_LINKER_FLAGS "-Wl,-dy -lpthread -lrt -ldl")
+
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
 set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
 
@@ -30,6 +45,7 @@ include_directories(
     ${BUMO_SRC_DIR}/3rd/asio/include
     ${BUMO_SRC_DIR}/3rd/openssl/include
     ${BUMO_SRC_DIR}/3rd/http
+    ${BUMO_SRC_DIR}/3rd/libscrypt
 )
 
 link_directories(
@@ -39,13 +55,15 @@ link_directories(
     ${BUMO_SRC_DIR}/3rd/jsoncpp/libs
     ${BUMO_SRC_DIR}/3rd/openssl
     ${BUMO_SRC_DIR}/3rd/zlib-1.2.8
+    ${BUMO_SRC_DIR}/3rd/libscrypt
     ${BUMO_SRC_DIR}/3rd/bzip2-1.0.6
     ${BUMO_SRC_DIR}/3rd/basic/lib
     ${BUMO_SRC_DIR}/3rd/curl/lib/.libs/
+    ${BUMO_SRC_DIR}/3rd/v8_target/${V8_LIB_PATH}/
     ${LIBRARY_OUTPUT_PATH}
 )
 
-set(BUMO_DEPENDS_LIBS protobuf rocksdb pcreposix pcrecpp pcre json ssl crypto z bz2)
+set(BUMO_DEPENDS_LIBS protobuf rocksdb pcreposix pcrecpp pcre json ssl crypto z bz2 scrypt)
 
 add_subdirectory(3rd/http)
 add_subdirectory(3rd/ed25519-donna)

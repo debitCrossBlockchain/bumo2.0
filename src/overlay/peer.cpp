@@ -50,24 +50,14 @@ namespace bumo {
 		return active_time_ > 0;
 	}
 
-	bool Peer::SendPeers(const Json::Value &db_peers, std::error_code &ec) {
-
-		protocol::Peers peers;
-		for (size_t i = 0; i < db_peers.size(); i++) {
-			const Json::Value &item = db_peers[i];
-			protocol::Peer *peerp = peers.add_peers();
-			peerp->set_ip(item["ip"].asCString());
-			peerp->set_port(item["port"].asInt());
-			peerp->set_num_failures(item["num_failures"].asInt());
-		}
-
-		return SendRequest(protocol::OVERLAY_MSGTYPE_PEERS, peers.SerializeAsString(), ec);
+	bool Peer::SendPeers(const protocol::Peers &db_peers, std::error_code &ec) {
+		return SendRequest(protocol::OVERLAY_MSGTYPE_PEERS, db_peers.SerializeAsString(), ec);
 	}
 
 	void Peer::SetPeerInfo(const protocol::Hello &hello) {
 		peer_overlay_version_ = hello.overlay_version();
 		peer_ledger_version_ = hello.ledger_version();
-		peer_version_ = hello.BUMO_VERSION();
+		peer_version_ = hello.bumo_version();
 		peer_listen_port_ = hello.listening_port();
 		peer_node_address_ = hello.node_address();
 	}
@@ -82,7 +72,7 @@ namespace bumo {
 		hello.set_ledger_version(General::LEDGER_VERSION);
 		hello.set_overlay_version(General::OVERLAY_VERSION);
 		hello.set_listening_port(listen_port);
-		hello.set_BUMO_VERSION(General::BUMO_VERSION);
+		hello.set_bumo_version(General::BUMO_VERSION);
 		hello.set_node_address(node_address);
 		hello.set_node_rand(node_rand);
 		hello.set_network_id(network_id);

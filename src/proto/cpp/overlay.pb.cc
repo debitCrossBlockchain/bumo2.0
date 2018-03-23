@@ -58,6 +58,12 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* ChainPeerMessage_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ChainPeerMessage_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ChainSubscribeTx_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ChainSubscribeTx_reflection_ = NULL;
+const ::google::protobuf::Descriptor* ChainResponse_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  ChainResponse_reflection_ = NULL;
 const ::google::protobuf::Descriptor* ChainTxStatus_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ChainTxStatus_reflection_ = NULL;
@@ -80,7 +86,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, network_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, ledger_version_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, overlay_version_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, BUMO_VERSION_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, bumo_version_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, listening_port_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, node_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, node_rand_),
@@ -252,7 +258,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainStatus, self_addr_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainStatus, ledger_version_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainStatus, monitor_version_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainStatus, BUMO_VERSION_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainStatus, bumo_version_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainStatus, timestamp_),
   };
   ChainStatus_reflection_ =
@@ -283,7 +289,38 @@ void protobuf_AssignDesc_overlay_2eproto() {
       sizeof(ChainPeerMessage),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainPeerMessage, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainPeerMessage, _is_default_instance_));
-  ChainTxStatus_descriptor_ = file->message_type(12);
+  ChainSubscribeTx_descriptor_ = file->message_type(12);
+  static const int ChainSubscribeTx_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainSubscribeTx, address_),
+  };
+  ChainSubscribeTx_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      ChainSubscribeTx_descriptor_,
+      ChainSubscribeTx::default_instance_,
+      ChainSubscribeTx_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(ChainSubscribeTx),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainSubscribeTx, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainSubscribeTx, _is_default_instance_));
+  ChainResponse_descriptor_ = file->message_type(13);
+  static const int ChainResponse_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainResponse, error_code_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainResponse, error_desc_),
+  };
+  ChainResponse_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      ChainResponse_descriptor_,
+      ChainResponse::default_instance_,
+      ChainResponse_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(ChainResponse),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainResponse, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainResponse, _is_default_instance_));
+  ChainTxStatus_descriptor_ = file->message_type(14);
   static const int ChainTxStatus_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainTxStatus, status_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainTxStatus, tx_hash_),
@@ -347,6 +384,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       ChainPeerMessage_descriptor_, &ChainPeerMessage::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      ChainSubscribeTx_descriptor_, &ChainSubscribeTx::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      ChainResponse_descriptor_, &ChainResponse::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       ChainTxStatus_descriptor_, &ChainTxStatus::default_instance());
 }
 
@@ -377,6 +418,10 @@ void protobuf_ShutdownFile_overlay_2eproto() {
   delete ChainStatus_reflection_;
   delete ChainPeerMessage::default_instance_;
   delete ChainPeerMessage_reflection_;
+  delete ChainSubscribeTx::default_instance_;
+  delete ChainSubscribeTx_reflection_;
+  delete ChainResponse::default_instance_;
+  delete ChainResponse_reflection_;
   delete ChainTxStatus::default_instance_;
   delete ChainTxStatus_reflection_;
 }
@@ -394,7 +439,7 @@ void protobuf_AddDesc_overlay_2eproto() {
     "\n\roverlay.proto\022\010protocol\032\014common.proto\032"
     "\013chain.proto\"\243\001\n\005Hello\022\022\n\nnetwork_id\030\001 \001"
     "(\003\022\026\n\016ledger_version\030\002 \001(\003\022\027\n\017overlay_ve"
-    "rsion\030\003 \001(\003\022\024\n\014BUMO_VERSION\030\004 \001(\t\022\026\n\016lis"
+    "rsion\030\003 \001(\003\022\024\n\014bumo_version\030\004 \001(\t\022\026\n\016lis"
     "tening_port\030\005 \001(\003\022\024\n\014node_address\030\006 \001(\t\022"
     "\021\n\tnode_rand\030\007 \001(\t\"L\n\rHelloResponse\022\'\n\ne"
     "rror_code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\n"
@@ -418,31 +463,35 @@ void protobuf_AddDesc_overlay_2eproto() {
     "list\030\001 \003(\0162\032.protocol.ChainMessageType\022\021"
     "\n\ttimestamp\030\002 \001(\003\"z\n\013ChainStatus\022\021\n\tself"
     "_addr\030\001 \001(\t\022\026\n\016ledger_version\030\002 \001(\003\022\027\n\017m"
-    "onitor_version\030\003 \001(\003\022\024\n\014BUMO_VERSION\030\004 \001"
+    "onitor_version\030\003 \001(\003\022\024\n\014bumo_version\030\004 \001"
     "(\t\022\021\n\ttimestamp\030\005 \001(\003\"O\n\020ChainPeerMessag"
     "e\022\025\n\rsrc_peer_addr\030\001 \001(\t\022\026\n\016des_peer_add"
-    "rs\030\002 \003(\t\022\014\n\004data\030\003 \001(\014\"\325\002\n\rChainTxStatus"
-    "\0220\n\006status\030\001 \001(\0162 .protocol.ChainTxStatu"
-    "s.TxStatus\022\017\n\007tx_hash\030\002 \001(\t\022\026\n\016source_ad"
-    "dress\030\003 \001(\t\022\032\n\022source_account_seq\030\004 \001(\003\022"
-    "\022\n\nledger_seq\030\005 \001(\003\022\027\n\017new_account_seq\030\006"
-    " \001(\003\022\'\n\nerror_code\030\007 \001(\0162\023.protocol.ERRO"
-    "RCODE\022\022\n\nerror_desc\030\010 \001(\t\022\021\n\ttimestamp\030\t"
-    " \001(\003\"P\n\010TxStatus\022\r\n\tUNDEFINED\020\000\022\r\n\tCONFI"
-    "RMED\020\001\022\013\n\007PENDING\020\002\022\014\n\010COMPLETE\020\003\022\013\n\007FAI"
-    "LURE\020\004*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERL"
-    "AY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PIN"
-    "G\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLA"
-    "Y_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRA"
-    "NSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022"
-    "\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSG"
-    "TYPE_LEDGER_UPGRADE_NOTIFY\020\007*\312\001\n\020ChainMe"
-    "ssageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_"
-    "HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PE"
-    "ER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022C"
-    "HAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANS"
-    "ACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020B\035\n\033cn."
-    "bubi.blockchain.adapter3b\006proto3", 2072);
+    "rs\030\002 \003(\t\022\014\n\004data\030\003 \001(\014\"#\n\020ChainSubscribe"
+    "Tx\022\017\n\007address\030\001 \003(\t\"7\n\rChainResponse\022\022\n\n"
+    "error_code\030\001 \001(\005\022\022\n\nerror_desc\030\002 \001(\t\"\325\002\n"
+    "\rChainTxStatus\0220\n\006status\030\001 \001(\0162 .protoco"
+    "l.ChainTxStatus.TxStatus\022\017\n\007tx_hash\030\002 \001("
+    "\t\022\026\n\016source_address\030\003 \001(\t\022\032\n\022source_acco"
+    "unt_seq\030\004 \001(\003\022\022\n\nledger_seq\030\005 \001(\003\022\027\n\017new"
+    "_account_seq\030\006 \001(\003\022\'\n\nerror_code\030\007 \001(\0162\023"
+    ".protocol.ERRORCODE\022\022\n\nerror_desc\030\010 \001(\t\022"
+    "\021\n\ttimestamp\030\t \001(\003\"P\n\010TxStatus\022\r\n\tUNDEFI"
+    "NED\020\000\022\r\n\tCONFIRMED\020\001\022\013\n\007PENDING\020\002\022\014\n\010COM"
+    "PLETE\020\003\022\013\n\007FAILURE\020\004*\203\002\n\024OVERLAY_MESSAGE"
+    "_TYPE\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERL"
+    "AY_MSGTYPE_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HEL"
+    "LO\020\002\022\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERL"
+    "AY_MSGTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSGT"
+    "YPE_LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022"
+    ")\n%OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY"
+    "\020\007*\216\002\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_NO"
+    "NE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS"
+    "\020\013\022\025\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_"
+    "OFFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHA"
+    "IN_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_H"
+    "EADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN"
+    "_TX_ENV_STORE\020\022\022\022\n\016CHAIN_RESPONSE\020\023B\035\n\033c"
+    "n.bumo.blockchain.adapter3b\006proto3", 2234);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -457,6 +506,8 @@ void protobuf_AddDesc_overlay_2eproto() {
   ChainHello::default_instance_ = new ChainHello();
   ChainStatus::default_instance_ = new ChainStatus();
   ChainPeerMessage::default_instance_ = new ChainPeerMessage();
+  ChainSubscribeTx::default_instance_ = new ChainSubscribeTx();
+  ChainResponse::default_instance_ = new ChainResponse();
   ChainTxStatus::default_instance_ = new ChainTxStatus();
   Hello::default_instance_->InitAsDefaultInstance();
   HelloResponse::default_instance_->InitAsDefaultInstance();
@@ -470,6 +521,8 @@ void protobuf_AddDesc_overlay_2eproto() {
   ChainHello::default_instance_->InitAsDefaultInstance();
   ChainStatus::default_instance_->InitAsDefaultInstance();
   ChainPeerMessage::default_instance_->InitAsDefaultInstance();
+  ChainSubscribeTx::default_instance_->InitAsDefaultInstance();
+  ChainResponse::default_instance_->InitAsDefaultInstance();
   ChainTxStatus::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_overlay_2eproto);
 }
@@ -514,6 +567,9 @@ bool ChainMessageType_IsValid(int value) {
     case 14:
     case 15:
     case 16:
+    case 17:
+    case 18:
+    case 19:
       return true;
     default:
       return false;
@@ -527,7 +583,7 @@ bool ChainMessageType_IsValid(int value) {
 const int Hello::kNetworkIdFieldNumber;
 const int Hello::kLedgerVersionFieldNumber;
 const int Hello::kOverlayVersionFieldNumber;
-const int Hello::kBubiVersionFieldNumber;
+const int Hello::kBumoVersionFieldNumber;
 const int Hello::kListeningPortFieldNumber;
 const int Hello::kNodeAddressFieldNumber;
 const int Hello::kNodeRandFieldNumber;
@@ -558,7 +614,7 @@ void Hello::SharedCtor() {
   network_id_ = GOOGLE_LONGLONG(0);
   ledger_version_ = GOOGLE_LONGLONG(0);
   overlay_version_ = GOOGLE_LONGLONG(0);
-  BUMO_VERSION_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  bumo_version_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   listening_port_ = GOOGLE_LONGLONG(0);
   node_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   node_rand_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -570,7 +626,7 @@ Hello::~Hello() {
 }
 
 void Hello::SharedDtor() {
-  BUMO_VERSION_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  bumo_version_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   node_address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   node_rand_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
@@ -621,7 +677,7 @@ void Hello::Clear() {
 } while (0)
 
   ZR_(network_id_, overlay_version_);
-  BUMO_VERSION_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  bumo_version_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   listening_port_ = GOOGLE_LONGLONG(0);
   node_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   node_rand_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -681,20 +737,20 @@ bool Hello::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_BUMO_VERSION;
+        if (input->ExpectTag(34)) goto parse_bumo_version;
         break;
       }
 
-      // optional string BUMO_VERSION = 4;
+      // optional string bumo_version = 4;
       case 4: {
         if (tag == 34) {
-         parse_BUMO_VERSION:
+         parse_bumo_version:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_BUMO_VERSION()));
+                input, this->mutable_bumo_version()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->BUMO_VERSION().data(), this->BUMO_VERSION().length(),
+            this->bumo_version().data(), this->bumo_version().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.Hello.BUMO_VERSION"));
+            "protocol.Hello.bumo_version"));
         } else {
           goto handle_unusual;
         }
@@ -790,14 +846,14 @@ void Hello::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->overlay_version(), output);
   }
 
-  // optional string BUMO_VERSION = 4;
-  if (this->BUMO_VERSION().size() > 0) {
+  // optional string bumo_version = 4;
+  if (this->bumo_version().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->BUMO_VERSION().data(), this->BUMO_VERSION().length(),
+      this->bumo_version().data(), this->bumo_version().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.Hello.BUMO_VERSION");
+      "protocol.Hello.bumo_version");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->BUMO_VERSION(), output);
+      4, this->bumo_version(), output);
   }
 
   // optional int64 listening_port = 5;
@@ -846,15 +902,15 @@ void Hello::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->overlay_version(), target);
   }
 
-  // optional string BUMO_VERSION = 4;
-  if (this->BUMO_VERSION().size() > 0) {
+  // optional string bumo_version = 4;
+  if (this->bumo_version().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->BUMO_VERSION().data(), this->BUMO_VERSION().length(),
+      this->bumo_version().data(), this->bumo_version().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.Hello.BUMO_VERSION");
+      "protocol.Hello.bumo_version");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->BUMO_VERSION(), target);
+        4, this->bumo_version(), target);
   }
 
   // optional int64 listening_port = 5;
@@ -913,11 +969,11 @@ int Hello::ByteSize() const {
         this->overlay_version());
   }
 
-  // optional string BUMO_VERSION = 4;
-  if (this->BUMO_VERSION().size() > 0) {
+  // optional string bumo_version = 4;
+  if (this->bumo_version().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->BUMO_VERSION());
+        this->bumo_version());
   }
 
   // optional int64 listening_port = 5;
@@ -978,9 +1034,9 @@ void Hello::MergeFrom(const Hello& from) {
   if (from.overlay_version() != 0) {
     set_overlay_version(from.overlay_version());
   }
-  if (from.BUMO_VERSION().size() > 0) {
+  if (from.bumo_version().size() > 0) {
 
-    BUMO_VERSION_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.BUMO_VERSION_);
+    bumo_version_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.bumo_version_);
   }
   if (from.listening_port() != 0) {
     set_listening_port(from.listening_port());
@@ -1022,7 +1078,7 @@ void Hello::InternalSwap(Hello* other) {
   std::swap(network_id_, other->network_id_);
   std::swap(ledger_version_, other->ledger_version_);
   std::swap(overlay_version_, other->overlay_version_);
-  BUMO_VERSION_.Swap(&other->BUMO_VERSION_);
+  bumo_version_.Swap(&other->bumo_version_);
   std::swap(listening_port_, other->listening_port_);
   node_address_.Swap(&other->node_address_);
   node_rand_.Swap(&other->node_rand_);
@@ -1083,48 +1139,48 @@ void Hello::clear_overlay_version() {
   // @@protoc_insertion_point(field_set:protocol.Hello.overlay_version)
 }
 
-// optional string BUMO_VERSION = 4;
-void Hello::clear_BUMO_VERSION() {
-  BUMO_VERSION_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional string bumo_version = 4;
+void Hello::clear_bumo_version() {
+  bumo_version_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& Hello::BUMO_VERSION() const {
-  // @@protoc_insertion_point(field_get:protocol.Hello.BUMO_VERSION)
-  return BUMO_VERSION_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+ const ::std::string& Hello::bumo_version() const {
+  // @@protoc_insertion_point(field_get:protocol.Hello.bumo_version)
+  return bumo_version_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void Hello::set_BUMO_VERSION(const ::std::string& value) {
+ void Hello::set_bumo_version(const ::std::string& value) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Hello.BUMO_VERSION)
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Hello.bumo_version)
 }
- void Hello::set_BUMO_VERSION(const char* value) {
+ void Hello::set_bumo_version(const char* value) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Hello.BUMO_VERSION)
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Hello.bumo_version)
 }
- void Hello::set_BUMO_VERSION(const char* value, size_t size) {
+ void Hello::set_bumo_version(const char* value, size_t size) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Hello.BUMO_VERSION)
+  // @@protoc_insertion_point(field_set_pointer:protocol.Hello.bumo_version)
 }
- ::std::string* Hello::mutable_BUMO_VERSION() {
+ ::std::string* Hello::mutable_bumo_version() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.Hello.BUMO_VERSION)
-  return BUMO_VERSION_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:protocol.Hello.bumo_version)
+  return bumo_version_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* Hello::release_BUMO_VERSION() {
-  // @@protoc_insertion_point(field_release:protocol.Hello.BUMO_VERSION)
+ ::std::string* Hello::release_bumo_version() {
+  // @@protoc_insertion_point(field_release:protocol.Hello.bumo_version)
   
-  return BUMO_VERSION_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return bumo_version_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void Hello::set_allocated_BUMO_VERSION(::std::string* BUMO_VERSION) {
-  if (BUMO_VERSION != NULL) {
+ void Hello::set_allocated_bumo_version(::std::string* bumo_version) {
+  if (bumo_version != NULL) {
     
   } else {
     
   }
-  BUMO_VERSION_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), BUMO_VERSION);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Hello.BUMO_VERSION)
+  bumo_version_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), bumo_version);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Hello.bumo_version)
 }
 
 // optional int64 listening_port = 5;
@@ -4588,7 +4644,7 @@ void ChainHello::clear_timestamp() {
 const int ChainStatus::kSelfAddrFieldNumber;
 const int ChainStatus::kLedgerVersionFieldNumber;
 const int ChainStatus::kMonitorVersionFieldNumber;
-const int ChainStatus::kBubiVersionFieldNumber;
+const int ChainStatus::kBumoVersionFieldNumber;
 const int ChainStatus::kTimestampFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -4617,7 +4673,7 @@ void ChainStatus::SharedCtor() {
   self_addr_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ledger_version_ = GOOGLE_LONGLONG(0);
   monitor_version_ = GOOGLE_LONGLONG(0);
-  BUMO_VERSION_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  bumo_version_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   timestamp_ = GOOGLE_LONGLONG(0);
 }
 
@@ -4628,7 +4684,7 @@ ChainStatus::~ChainStatus() {
 
 void ChainStatus::SharedDtor() {
   self_addr_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  BUMO_VERSION_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  bumo_version_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
 }
@@ -4678,7 +4734,7 @@ void ChainStatus::Clear() {
 
   ZR_(ledger_version_, monitor_version_);
   self_addr_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  BUMO_VERSION_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  bumo_version_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   timestamp_ = GOOGLE_LONGLONG(0);
 
 #undef ZR_HELPER_
@@ -4738,20 +4794,20 @@ bool ChainStatus::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_BUMO_VERSION;
+        if (input->ExpectTag(34)) goto parse_bumo_version;
         break;
       }
 
-      // optional string BUMO_VERSION = 4;
+      // optional string bumo_version = 4;
       case 4: {
         if (tag == 34) {
-         parse_BUMO_VERSION:
+         parse_bumo_version:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_BUMO_VERSION()));
+                input, this->mutable_bumo_version()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->BUMO_VERSION().data(), this->BUMO_VERSION().length(),
+            this->bumo_version().data(), this->bumo_version().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.ChainStatus.BUMO_VERSION"));
+            "protocol.ChainStatus.bumo_version"));
         } else {
           goto handle_unusual;
         }
@@ -4818,14 +4874,14 @@ void ChainStatus::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->monitor_version(), output);
   }
 
-  // optional string BUMO_VERSION = 4;
-  if (this->BUMO_VERSION().size() > 0) {
+  // optional string bumo_version = 4;
+  if (this->bumo_version().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->BUMO_VERSION().data(), this->BUMO_VERSION().length(),
+      this->bumo_version().data(), this->bumo_version().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.ChainStatus.BUMO_VERSION");
+      "protocol.ChainStatus.bumo_version");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->BUMO_VERSION(), output);
+      4, this->bumo_version(), output);
   }
 
   // optional int64 timestamp = 5;
@@ -4860,15 +4916,15 @@ void ChainStatus::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->monitor_version(), target);
   }
 
-  // optional string BUMO_VERSION = 4;
-  if (this->BUMO_VERSION().size() > 0) {
+  // optional string bumo_version = 4;
+  if (this->bumo_version().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->BUMO_VERSION().data(), this->BUMO_VERSION().length(),
+      this->bumo_version().data(), this->bumo_version().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.ChainStatus.BUMO_VERSION");
+      "protocol.ChainStatus.bumo_version");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->BUMO_VERSION(), target);
+        4, this->bumo_version(), target);
   }
 
   // optional int64 timestamp = 5;
@@ -4905,11 +4961,11 @@ int ChainStatus::ByteSize() const {
         this->monitor_version());
   }
 
-  // optional string BUMO_VERSION = 4;
-  if (this->BUMO_VERSION().size() > 0) {
+  // optional string bumo_version = 4;
+  if (this->bumo_version().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->BUMO_VERSION());
+        this->bumo_version());
   }
 
   // optional int64 timestamp = 5;
@@ -4957,9 +5013,9 @@ void ChainStatus::MergeFrom(const ChainStatus& from) {
   if (from.monitor_version() != 0) {
     set_monitor_version(from.monitor_version());
   }
-  if (from.BUMO_VERSION().size() > 0) {
+  if (from.bumo_version().size() > 0) {
 
-    BUMO_VERSION_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.BUMO_VERSION_);
+    bumo_version_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.bumo_version_);
   }
   if (from.timestamp() != 0) {
     set_timestamp(from.timestamp());
@@ -4993,7 +5049,7 @@ void ChainStatus::InternalSwap(ChainStatus* other) {
   self_addr_.Swap(&other->self_addr_);
   std::swap(ledger_version_, other->ledger_version_);
   std::swap(monitor_version_, other->monitor_version_);
-  BUMO_VERSION_.Swap(&other->BUMO_VERSION_);
+  bumo_version_.Swap(&other->bumo_version_);
   std::swap(timestamp_, other->timestamp_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -5082,48 +5138,48 @@ void ChainStatus::clear_monitor_version() {
   // @@protoc_insertion_point(field_set:protocol.ChainStatus.monitor_version)
 }
 
-// optional string BUMO_VERSION = 4;
-void ChainStatus::clear_BUMO_VERSION() {
-  BUMO_VERSION_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional string bumo_version = 4;
+void ChainStatus::clear_bumo_version() {
+  bumo_version_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& ChainStatus::BUMO_VERSION() const {
-  // @@protoc_insertion_point(field_get:protocol.ChainStatus.BUMO_VERSION)
-  return BUMO_VERSION_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+ const ::std::string& ChainStatus::bumo_version() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainStatus.bumo_version)
+  return bumo_version_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void ChainStatus::set_BUMO_VERSION(const ::std::string& value) {
+ void ChainStatus::set_bumo_version(const ::std::string& value) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.ChainStatus.BUMO_VERSION)
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.ChainStatus.bumo_version)
 }
- void ChainStatus::set_BUMO_VERSION(const char* value) {
+ void ChainStatus::set_bumo_version(const char* value) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.ChainStatus.BUMO_VERSION)
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.ChainStatus.bumo_version)
 }
- void ChainStatus::set_BUMO_VERSION(const char* value, size_t size) {
+ void ChainStatus::set_bumo_version(const char* value, size_t size) {
   
-  BUMO_VERSION_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  bumo_version_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.ChainStatus.BUMO_VERSION)
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainStatus.bumo_version)
 }
- ::std::string* ChainStatus::mutable_BUMO_VERSION() {
+ ::std::string* ChainStatus::mutable_bumo_version() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.ChainStatus.BUMO_VERSION)
-  return BUMO_VERSION_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:protocol.ChainStatus.bumo_version)
+  return bumo_version_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* ChainStatus::release_BUMO_VERSION() {
-  // @@protoc_insertion_point(field_release:protocol.ChainStatus.BUMO_VERSION)
+ ::std::string* ChainStatus::release_bumo_version() {
+  // @@protoc_insertion_point(field_release:protocol.ChainStatus.bumo_version)
   
-  return BUMO_VERSION_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return bumo_version_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void ChainStatus::set_allocated_BUMO_VERSION(::std::string* BUMO_VERSION) {
-  if (BUMO_VERSION != NULL) {
+ void ChainStatus::set_allocated_bumo_version(::std::string* bumo_version) {
+  if (bumo_version != NULL) {
     
   } else {
     
   }
-  BUMO_VERSION_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), BUMO_VERSION);
-  // @@protoc_insertion_point(field_set_allocated:protocol.ChainStatus.BUMO_VERSION)
+  bumo_version_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), bumo_version);
+  // @@protoc_insertion_point(field_set_allocated:protocol.ChainStatus.bumo_version)
 }
 
 // optional int64 timestamp = 5;
@@ -5613,6 +5669,635 @@ void ChainPeerMessage::clear_data() {
   }
   data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
   // @@protoc_insertion_point(field_set_allocated:protocol.ChainPeerMessage.data)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ChainSubscribeTx::kAddressFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+ChainSubscribeTx::ChainSubscribeTx()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.ChainSubscribeTx)
+}
+
+void ChainSubscribeTx::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+ChainSubscribeTx::ChainSubscribeTx(const ChainSubscribeTx& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.ChainSubscribeTx)
+}
+
+void ChainSubscribeTx::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+}
+
+ChainSubscribeTx::~ChainSubscribeTx() {
+  // @@protoc_insertion_point(destructor:protocol.ChainSubscribeTx)
+  SharedDtor();
+}
+
+void ChainSubscribeTx::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void ChainSubscribeTx::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ChainSubscribeTx::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ChainSubscribeTx_descriptor_;
+}
+
+const ChainSubscribeTx& ChainSubscribeTx::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_overlay_2eproto();
+  return *default_instance_;
+}
+
+ChainSubscribeTx* ChainSubscribeTx::default_instance_ = NULL;
+
+ChainSubscribeTx* ChainSubscribeTx::New(::google::protobuf::Arena* arena) const {
+  ChainSubscribeTx* n = new ChainSubscribeTx;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void ChainSubscribeTx::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.ChainSubscribeTx)
+  address_.Clear();
+}
+
+bool ChainSubscribeTx::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.ChainSubscribeTx)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated string address = 1;
+      case 1: {
+        if (tag == 10) {
+         parse_address:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_address()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->address(this->address_size() - 1).data(),
+            this->address(this->address_size() - 1).length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "protocol.ChainSubscribeTx.address"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(10)) goto parse_address;
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.ChainSubscribeTx)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.ChainSubscribeTx)
+  return false;
+#undef DO_
+}
+
+void ChainSubscribeTx::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.ChainSubscribeTx)
+  // repeated string address = 1;
+  for (int i = 0; i < this->address_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->address(i).data(), this->address(i).length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.ChainSubscribeTx.address");
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->address(i), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.ChainSubscribeTx)
+}
+
+::google::protobuf::uint8* ChainSubscribeTx::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.ChainSubscribeTx)
+  // repeated string address = 1;
+  for (int i = 0; i < this->address_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->address(i).data(), this->address(i).length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.ChainSubscribeTx.address");
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(1, this->address(i), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.ChainSubscribeTx)
+  return target;
+}
+
+int ChainSubscribeTx::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.ChainSubscribeTx)
+  int total_size = 0;
+
+  // repeated string address = 1;
+  total_size += 1 * this->address_size();
+  for (int i = 0; i < this->address_size(); i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->address(i));
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ChainSubscribeTx::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.ChainSubscribeTx)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const ChainSubscribeTx* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const ChainSubscribeTx>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.ChainSubscribeTx)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.ChainSubscribeTx)
+    MergeFrom(*source);
+  }
+}
+
+void ChainSubscribeTx::MergeFrom(const ChainSubscribeTx& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.ChainSubscribeTx)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  address_.MergeFrom(from.address_);
+}
+
+void ChainSubscribeTx::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.ChainSubscribeTx)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ChainSubscribeTx::CopyFrom(const ChainSubscribeTx& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.ChainSubscribeTx)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ChainSubscribeTx::IsInitialized() const {
+
+  return true;
+}
+
+void ChainSubscribeTx::Swap(ChainSubscribeTx* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void ChainSubscribeTx::InternalSwap(ChainSubscribeTx* other) {
+  address_.UnsafeArenaSwap(&other->address_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata ChainSubscribeTx::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ChainSubscribeTx_descriptor_;
+  metadata.reflection = ChainSubscribeTx_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// ChainSubscribeTx
+
+// repeated string address = 1;
+int ChainSubscribeTx::address_size() const {
+  return address_.size();
+}
+void ChainSubscribeTx::clear_address() {
+  address_.Clear();
+}
+ const ::std::string& ChainSubscribeTx::address(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ChainSubscribeTx.address)
+  return address_.Get(index);
+}
+ ::std::string* ChainSubscribeTx::mutable_address(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.ChainSubscribeTx.address)
+  return address_.Mutable(index);
+}
+ void ChainSubscribeTx::set_address(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:protocol.ChainSubscribeTx.address)
+  address_.Mutable(index)->assign(value);
+}
+ void ChainSubscribeTx::set_address(int index, const char* value) {
+  address_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:protocol.ChainSubscribeTx.address)
+}
+ void ChainSubscribeTx::set_address(int index, const char* value, size_t size) {
+  address_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainSubscribeTx.address)
+}
+ ::std::string* ChainSubscribeTx::add_address() {
+  // @@protoc_insertion_point(field_add_mutable:protocol.ChainSubscribeTx.address)
+  return address_.Add();
+}
+ void ChainSubscribeTx::add_address(const ::std::string& value) {
+  address_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:protocol.ChainSubscribeTx.address)
+}
+ void ChainSubscribeTx::add_address(const char* value) {
+  address_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:protocol.ChainSubscribeTx.address)
+}
+ void ChainSubscribeTx::add_address(const char* value, size_t size) {
+  address_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:protocol.ChainSubscribeTx.address)
+}
+ const ::google::protobuf::RepeatedPtrField< ::std::string>&
+ChainSubscribeTx::address() const {
+  // @@protoc_insertion_point(field_list:protocol.ChainSubscribeTx.address)
+  return address_;
+}
+ ::google::protobuf::RepeatedPtrField< ::std::string>*
+ChainSubscribeTx::mutable_address() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ChainSubscribeTx.address)
+  return &address_;
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int ChainResponse::kErrorCodeFieldNumber;
+const int ChainResponse::kErrorDescFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+ChainResponse::ChainResponse()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.ChainResponse)
+}
+
+void ChainResponse::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+ChainResponse::ChainResponse(const ChainResponse& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.ChainResponse)
+}
+
+void ChainResponse::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  error_code_ = 0;
+  error_desc_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+ChainResponse::~ChainResponse() {
+  // @@protoc_insertion_point(destructor:protocol.ChainResponse)
+  SharedDtor();
+}
+
+void ChainResponse::SharedDtor() {
+  error_desc_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void ChainResponse::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* ChainResponse::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return ChainResponse_descriptor_;
+}
+
+const ChainResponse& ChainResponse::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_overlay_2eproto();
+  return *default_instance_;
+}
+
+ChainResponse* ChainResponse::default_instance_ = NULL;
+
+ChainResponse* ChainResponse::New(::google::protobuf::Arena* arena) const {
+  ChainResponse* n = new ChainResponse;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void ChainResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.ChainResponse)
+  error_code_ = 0;
+  error_desc_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+bool ChainResponse::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.ChainResponse)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 error_code = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &error_code_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_error_desc;
+        break;
+      }
+
+      // optional string error_desc = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_error_desc:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_error_desc()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->error_desc().data(), this->error_desc().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "protocol.ChainResponse.error_desc"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.ChainResponse)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.ChainResponse)
+  return false;
+#undef DO_
+}
+
+void ChainResponse::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.ChainResponse)
+  // optional int32 error_code = 1;
+  if (this->error_code() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->error_code(), output);
+  }
+
+  // optional string error_desc = 2;
+  if (this->error_desc().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->error_desc().data(), this->error_desc().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.ChainResponse.error_desc");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      2, this->error_desc(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.ChainResponse)
+}
+
+::google::protobuf::uint8* ChainResponse::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.ChainResponse)
+  // optional int32 error_code = 1;
+  if (this->error_code() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->error_code(), target);
+  }
+
+  // optional string error_desc = 2;
+  if (this->error_desc().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->error_desc().data(), this->error_desc().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.ChainResponse.error_desc");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->error_desc(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.ChainResponse)
+  return target;
+}
+
+int ChainResponse::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.ChainResponse)
+  int total_size = 0;
+
+  // optional int32 error_code = 1;
+  if (this->error_code() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->error_code());
+  }
+
+  // optional string error_desc = 2;
+  if (this->error_desc().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->error_desc());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void ChainResponse::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.ChainResponse)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const ChainResponse* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const ChainResponse>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.ChainResponse)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.ChainResponse)
+    MergeFrom(*source);
+  }
+}
+
+void ChainResponse::MergeFrom(const ChainResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.ChainResponse)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.error_code() != 0) {
+    set_error_code(from.error_code());
+  }
+  if (from.error_desc().size() > 0) {
+
+    error_desc_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.error_desc_);
+  }
+}
+
+void ChainResponse::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.ChainResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void ChainResponse::CopyFrom(const ChainResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.ChainResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool ChainResponse::IsInitialized() const {
+
+  return true;
+}
+
+void ChainResponse::Swap(ChainResponse* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void ChainResponse::InternalSwap(ChainResponse* other) {
+  std::swap(error_code_, other->error_code_);
+  error_desc_.Swap(&other->error_desc_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata ChainResponse::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = ChainResponse_descriptor_;
+  metadata.reflection = ChainResponse_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// ChainResponse
+
+// optional int32 error_code = 1;
+void ChainResponse::clear_error_code() {
+  error_code_ = 0;
+}
+ ::google::protobuf::int32 ChainResponse::error_code() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainResponse.error_code)
+  return error_code_;
+}
+ void ChainResponse::set_error_code(::google::protobuf::int32 value) {
+  
+  error_code_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ChainResponse.error_code)
+}
+
+// optional string error_desc = 2;
+void ChainResponse::clear_error_desc() {
+  error_desc_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& ChainResponse::error_desc() const {
+  // @@protoc_insertion_point(field_get:protocol.ChainResponse.error_desc)
+  return error_desc_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void ChainResponse::set_error_desc(const ::std::string& value) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.ChainResponse.error_desc)
+}
+ void ChainResponse::set_error_desc(const char* value) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.ChainResponse.error_desc)
+}
+ void ChainResponse::set_error_desc(const char* value, size_t size) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.ChainResponse.error_desc)
+}
+ ::std::string* ChainResponse::mutable_error_desc() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.ChainResponse.error_desc)
+  return error_desc_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* ChainResponse::release_error_desc() {
+  // @@protoc_insertion_point(field_release:protocol.ChainResponse.error_desc)
+  
+  return error_desc_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void ChainResponse::set_allocated_error_desc(::std::string* error_desc) {
+  if (error_desc != NULL) {
+    
+  } else {
+    
+  }
+  error_desc_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), error_desc);
+  // @@protoc_insertion_point(field_set_allocated:protocol.ChainResponse.error_desc)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

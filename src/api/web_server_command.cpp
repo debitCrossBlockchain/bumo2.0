@@ -123,7 +123,7 @@ namespace bumo {
 						PrivateKey privateKey(private_key);
 						if (!privateKey.IsValid()) {
 							result.set_code(protocol::ERRCODE_INVALID_PRIKEY);
-							result.set_desc("signature failed");
+							result.set_desc("Private key format error");
 							break;
 						}
 
@@ -136,18 +136,13 @@ namespace bumo {
 					result_item["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 
-				TransactionFrm frm(tran_env);
-				if (!frm.CheckValid(-1)){
-					result = frm.result_;
-					break;
-				}
-
 			} while (false);
 
+			TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
+			GlueManager::Instance().OnTransaction(ptr, result);
+
 			if (result.code() == protocol::ERRCODE_SUCCESS) {
-				TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-				GlueManager::Instance().OnTransaction(ptr, result);
-				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
+				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, ptr->GetFullData());
 				if (result.code() == protocol::ERRCODE_SUCCESS) success_count++;
 			}
 			result_item["error_code"] = result.code();
@@ -293,7 +288,7 @@ namespace bumo {
 		if (json_items.size() > 1) {			
 			LOG_ERROR("Test transaction too much(%d)", json_items.size());
 			Json::Value reply_json;
-			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_TX_SIZE_TOO_BIG;
+			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
 			reply_json["results"][Json::UInt(0)]["error_desc"] = "Test transaction too much,just can test only one transaction";
 			reply_json["success_count"] = Json::UInt(0);
 			reply = reply_json.toStyledString();
@@ -358,8 +353,9 @@ namespace bumo {
 					result_json["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 
+                int64_t nonce;
 				TransactionFrm frm(tran_env);
-				if (!frm.CheckValid(-1)){
+                if (!frm.CheckValid(-1, false, nonce)){
 					result = frm.result_;
 					break;
 				}
@@ -413,8 +409,11 @@ namespace bumo {
 				auto type = ope.type();
 				opt->OptFee(type);
 				total_opt_fee += opt->GetOpeFee();
-				if (type == protocol::Operation_Type_PAY_COIN){
+				if (type == protocol::Operation_Type_PAY_COIN) {
 					pay_amount += ope.pay_coin().amount();
+				}
+				if (type == protocol::Operation_Type_CREATE_ACCOUNT) {
+					pay_amount += ope.create_account().init_balance();
 				}
 			}
 		}

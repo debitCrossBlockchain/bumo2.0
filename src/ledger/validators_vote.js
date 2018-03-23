@@ -46,8 +46,8 @@ function getObjectMetaData(key){
 
     let data = storageLoad(key);
     assert(data !== false, 'Get ' + key + ' from metadata failed.');
-    let value = JSON.parse(data);
 
+    let value = JSON.parse(data);
     return value;
 }
 
@@ -56,12 +56,12 @@ function setMetaData(key, value)
     assert(typeof key === 'string', 'Args type error. key must be a string.');
 
     if(value === undefined){
-        assert(false !== storageDel(key), 'Delete (' + key + ') from metadata failed.');
+        storageDel(key);
         log('Delete (' + key + ') from metadata succeed.');
     }
     else{
         let strVal = JSON.stringify(value);
-        assert(false !== storageStore(key, strVal), 'Set key(' + key + '), value(' + strVal + ') in metadata failed.');
+        storageStore(key, strVal);
         log('Set key(' + key + '), value(' + strVal + ') in metadata succeed.');
     }
 }
@@ -71,7 +71,7 @@ function transferCoin(dest, amount)
     assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string.');
     if(amount === '0'){ return true; }
 
-    assert(false !== payCoin(dest, amount), 'Pay coin( ' + amount + ') to dest account(' + dest + ') failed.');
+    payCoin(dest, amount);
     log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
 }
 
@@ -94,7 +94,7 @@ function findI0(arr, key){
     }
 }
 
-function insertcandidatesSorted(applicant, amount, candidates){
+function insertCandidatesSorted(applicant, amount, candidates){
     assert(typeof applicant === 'string' && typeof amount === 'string' && typeof candidates === 'object', 'args error, arg-applicant and arg-amount must be string, arg-candidates must be arrary.');
 
     if(candidates.length >= (validatorSetSize * 2)){
@@ -102,24 +102,37 @@ function insertcandidatesSorted(applicant, amount, candidates){
         return false;
     }
 
-    let i = 0;
-    while((int64Compare(amount, candidates[i][1]) === -1) && i < candidates.length){ i += 1; }
-
-    if(amount === candidates[i][1]){
-        while(applicant > candidates[i][0] && i < candidates.length){ i += 1; }
+    if(candidates.length === 0){
+        candidates.push([applicant, amount]);
+        return candidates;
     }
 
-    let element = [applicant, amount];
-    candidates.splice(i, 0, element);
+    let i = 0;
+    while(i < candidates.length){
+        if(int64Compare(amount, candidates[i][1]) >= 0){ break; }
+        i += 1;
+    }
 
+    if(i >= candidates.length){
+        candidates.splice(i, 0, [applicant, amount]);
+        return candidates;
+    }
+
+    if(amount === candidates[i][1]){
+        while(i < candidates.length){
+            if(applicant <= candidates[i][0] || int64Compare(amount, candidates[i][1]) > 0){ break; }
+            i += 1;
+        }
+    }
+
+    candidates.splice(i, 0, [applicant, amount]);
     return candidates;
 }
 
 function setValidatorsFromCandidate(candidates){
     let validators    = candidates.slice(0, validatorSetSize);
     let validatorsStr = JSON.stringify(validators);
-    let result        = setValidators(validatorsStr);
-    assert(result !== false, 'Set validator sets failed.');
+    setValidators(validatorsStr);
     log('Set new validator sets(' + validatorsStr + ') succeed.');
     return true;
 }
@@ -129,11 +142,12 @@ function applyAsValidatorCandidate(){
     let position   = findI0(candidates, sender);
 
     if (position !== false){
-        let candidateAmount = int64Plus(candidates[position][1], payCoinAmount);
-        assert(candidateAmount !== false, 'callBack int64Plus failed.');
+        let comc = int64Compare(thisPayCoinAmount, minSuperadditionAmount);
+        assert(comc === 1 || comc === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
+        let amountc = int64Plus(candidates[position][1], thisPayCoinAmount);
         candidates.splice(position, 1);
-        let newCandidates = insertcandidatesSorted(sender, candidateAmount, candidates);
+        let newCandidates = insertCandidatesSorted(sender, amountc, candidates);
         setMetaData(candidatesVar, newCandidates);
 
         if(findI0(newCandidates, sender) < validatorSetSize){
@@ -145,19 +159,17 @@ function applyAsValidatorCandidate(){
         let applicantKey = applicantVar + sender;
         let applicantStr = storageLoad(applicantKey);
         if(applicantStr !== false){
-            let additionCompare = int64Compare(payCoinAmount, minSuperadditionAmount);
-            assert(additionCompare === 1 || additionCompare === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
+            let coms = int64Compare(thisPayCoinAmount, minSuperadditionAmount);
+            assert(coms === 1 || coms === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
             applicant = JSON.parse(applicantStr); 
-            let applicantAmount = int64Plus(applicant[pledgeAmountVar], payCoinAmount);
-            assert(applicantAmount !== false, 'callBack int64Plus failed.');
-
-            applicant[pledgeAmountVar] = applicantAmount;
+            let amountp = int64Plus(applicant[pledgeAmountVar], thisPayCoinAmount);
+            applicant[pledgeAmountVar] = amountp;
        }
        else{
-            let pledgeCompare = int64Compare(payCoinAmount, minPledgeAmount);
-            assert(pledgeCompare === 1 || pledgeCompare === 0, 'Pledge coin amount must more than ' + minPledgeAmount);
-            applicant[pledgeAmountVar] = payCoinAmount;
+            let comp = int64Compare(thisPayCoinAmount, minPledgeAmount);
+            assert(comp === 1 || comp === 0, 'Pledge coin amount must more than ' + minPledgeAmount);
+            applicant[pledgeAmountVar] = thisPayCoinAmount;
             applicant[ballotVar] = [];
        }
 
@@ -170,7 +182,7 @@ function applyAsValidatorCandidate(){
 }
 
 function voteForApplicant(applicant){
-    assert(typeof applicant === 'string', 'Args type error, it must be an object.'); 
+    assert(addressCheck(applicant) === true, 'Arg-applicant is not valid adress.');
 
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
@@ -199,12 +211,12 @@ function voteForApplicant(applicant){
 
     assert(applicantData[ballotVar].includes(sender) !== true, sender + ' has voted.');
     applicantData[ballotVar].push(sender);
-    if(Object.keys(applicantData[ballotVar]).length / validators.length < votePassRate){
+    if(Object.keys(applicantData[ballotVar]).length < parseInt(validators.length * votePassRate)){
         setMetaData(applicantKey, applicantData);
         return true;
     }
 
-    let newCandidates = insertcandidatesSorted(applicant, applicantData[pledgeAmountVar], candidates);
+    let newCandidates = insertCandidatesSorted(applicant, applicantData[pledgeAmountVar], candidates);
     setMetaData(candidatesVar, newCandidates);
     setMetaData(applicantKey);
 
@@ -226,8 +238,9 @@ function takebackAllPledgeCoin(){
     }
 
     let candidates = getObjectMetaData(candidatesVar);
-    let position   = findI0(candidates, sender);
+    let position = findI0(candidates, sender);
     if(position !== false){
+        assert(candidates.length > 1, 'The number of validators must > 1.');
         transferCoin(sender, candidates[position][1]);
         candidates.splice(position, 1);
         setMetaData(candidatesVar, candidates);
@@ -240,7 +253,8 @@ function takebackAllPledgeCoin(){
 }
 
 function abolishValidator(malicious, proof){
-    assert((typeof malicious === 'string') && (typeof proof === 'string'), 'Args type error, the two of them must be string.'); 
+    assert(addressCheck(malicious) === true, 'Arg-malicious is not valid adress.');
+    assert(typeof proof === 'string', 'Args type error, arg-proof must be string.'); 
 
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
@@ -268,28 +282,29 @@ function abolishValidator(malicious, proof){
     newProposal[reasonVar]      = proof;
     newProposal[proposerVar]    = sender;
     newProposal[expiredTimeVar] = blockTimestamp + effectiveVoteInterval;
-    newProposal[ballotVar]      = [];
+    newProposal[ballotVar]      = [sender];
 
     setMetaData(abolishKey, newProposal);
     return true;
 }
 
 function quitAbolishValidator(malicious){
-    assert(typeof malicious === 'string', 'Args type error, the malicious must be string.'); 
+    assert(addressCheck(malicious) === true, 'Arg-malicious is not valid adress.');
 
     let abolishKey = abolishVar + malicious;
     let abolishProposal = getObjectMetaData(abolishKey);
-    assert(sender === abolishProposal[proposerVar], sender + 'is not proposer, has no permission to quit the abolishProposal.');
+    assert(sender === abolishProposal[proposerVar], sender + ' is not proposer, has no permission to quit the abolishProposal.');
 
     setMetaData(abolishKey);
     return true;
 }
 
 function voteAbolishValidator(malicious){
-    assert(typeof malicious === 'string', 'Args type error, the malicious must be string.'); 
+    assert(addressCheck(malicious) === true, 'Arg-malicious is not valid adress.');
 
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
+    assert(validators.length > 1, 'The number of validators must > 1.');
     assert(findI0(validators, sender) !== false, sender + ' has no permission to vote.'); 
     assert(findI0(validators, malicious) !== false, malicious + ' is not validator.'); 
 
@@ -309,25 +324,30 @@ function voteAbolishValidator(malicious){
     
     assert(abolishProposal[ballotVar].includes(sender) !== true, sender + ' has voted.');
     abolishProposal[ballotVar].push(sender);
-    if(Object.keys(abolishProposal[ballotVar]).length / validators.length < votePassRate){
+    if(Object.keys(abolishProposal[ballotVar]).length < parseInt(validators.length * votePassRate)){
         setMetaData(abolishKey, abolishProposal);
         return true;
     }
 
     let candidates = getObjectMetaData(candidatesVar);
-    let position = findI0(candidates, malicious);
-    let forfeit  = candidates[position][1] / 10;
-    let leftCoin = candidates[position][1] - forfeit;
+    let position   = findI0(candidates, malicious); /*step here, logic promising position !== false*/
+    let forfeit    = int64Div(candidates[position][1], 10);
+    let leftCoin   = int64Sub(candidates[position][1], forfeit);
 
     transferCoin(malicious, leftCoin);
     setMetaData(abolishKey);
     candidates.splice(position, 1);
 
-    let i = 0;
     let leftValidatorsCnt = validators.length - 1;
-    let average = forfeit / leftValidatorsCnt;
+    let award   = int64Mod(forfeit, leftValidatorsCnt);
+    let average = int64Div(forfeit, leftValidatorsCnt);
+    if(award !== '0'){
+        candidates[0][1] = int64Plus(candidates[0][1], award);
+    }
+
+    let i = 0;
     while(i < leftValidatorsCnt){
-        candidates[i][1] += average;
+        candidates[i][1] = int64Plus(candidates[i][1], average);
         i += 1;
     }
 
@@ -392,8 +412,8 @@ function init(){
 
     let initCandidates = validators.sort(by(1, byString(0)));
     let candidateStr   = JSON.stringify(initCandidates);
-    assert(storageStore(candidatesVar, candidateStr) !== false, 'Store candidates failed.');
-    assert(setValidators(candidateStr) !== false, 'Set validators failed.');
+    storageStore(candidatesVar, candidateStr);
+    setValidators(candidateStr);
 
     return true;
 }

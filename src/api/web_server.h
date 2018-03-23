@@ -55,6 +55,7 @@ namespace bumo {
 		void UpdateLogLevel(const http::server::request &request, std::string &reply);
 
 		void GetTransactionHistory(const http::server::request &request, std::string &reply);
+		void GetTransactionCache(const http::server::request &request, std::string &reply);
 		void GetContractTx(const http::server::request &request, std::string &reply);
 
 		//void GetRecord(const http::server::request &request, std::string &reply);
@@ -65,7 +66,6 @@ namespace bumo {
 		void GetAddress(const http::server::request &request, std::string &reply);
 		void GetPeerNodeAddress(const http::server::request &request, std::string &reply);
 		void GetTransactionFromBlob(const http::server::request &request, std::string &reply);
-		void GetExprResult(const http::server::request &request, std::string &reply);
 		void GetPeerAddresses(const http::server::request &request, std::string &reply);
 
 		void GetConsensusInfo(const http::server::request &request, std::string &reply);

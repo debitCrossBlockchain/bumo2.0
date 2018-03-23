@@ -196,6 +196,11 @@ bool utils::Logger::Initialize(utils::LogDest log_dest, utils::LogLevel log_leve
 	log_level_ = log_level;
 	log_dest_ = log_dest;
 
+	std::string  file_dir = utils::File::GetUpLevelPath(file_name);
+	if (!utils::File::IsExist(file_dir)) {
+		utils::File::CreateDir(file_dir);
+	} 
+
 	if (log_dest & LOG_DEST_FILE && !file_name.empty()) {
 		std::string out_file_name = file_name + "-out";
 		std::string err_file_name = file_name + "-err";
@@ -306,13 +311,13 @@ int utils::Logger::LogStub(utils::LogLevel log_Level,
 			fmt, ap);
 	}
 
-	if (log_Level <= LOG_LEVEL_WARN && log_dest_ & LOG_DEST_OUT) {
+	if (log_Level < LOG_LEVEL_WARN && log_dest_ & LOG_DEST_OUT) {
 		log_writers_[LOG_DEST_OUT_ID].Write(this, log_Level, time_string.c_str(),
 			file_name.c_str(), funcName, lineNum,
 			fmt, ap);
 	}
 
-	if (log_Level > LOG_LEVEL_WARN && log_dest_ & LOG_DEST_ERR) {
+	if (log_Level >= LOG_LEVEL_WARN && log_dest_ & LOG_DEST_ERR) {
 		log_writers_[LOG_DEST_ERR_ID].Write(this, log_Level, time_string.c_str(),
 			file_name.c_str(), funcName, lineNum,
 			fmt, ap);

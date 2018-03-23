@@ -40,6 +40,7 @@ namespace bumo{
 			for (auto it = parent_->entries_.begin(); it != parent_->entries_.end(); it++){
 				entries_[it->first] = std::make_shared<AccountFrm>(it->second);
 			}
+			settings_ = parent->settings_;
 		}
 	}
 
@@ -63,20 +64,21 @@ namespace bumo{
 	}
 
 	bool Environment::Commit(){
-		if (useAtomMap_)
-		{
-			settings_.Commit();
-			return AtomMap<std::string, AccountFrm>::Commit();
+		if (useAtomMap_){
+			return settings_.Commit() && AtomMap<std::string, AccountFrm>::Commit();
 		}
 
 		parent_->entries_ = entries_;
+		parent_->settings_ = settings_;
 		return true;
 	}
 
 	void Environment::ClearChangeBuf()
 	{
-		settings_.ClearChangeBuf();
-		AtomMap<std::string, AccountFrm>::ClearChangeBuf();
+		if (useAtomMap_){
+			settings_.ClearChangeBuf();
+			AtomMap<std::string, AccountFrm>::ClearChangeBuf();
+		}
 	}
 
 	bool Environment::AddEntry(const std::string& key, AccountFrm::pointer frm){
@@ -123,14 +125,14 @@ namespace bumo{
 		std::shared_ptr<Json::Value> fees;
 		settings_.Get(feesKey, fees);
 
-		if (fees){
+		if (!fees){
+			fees = std::make_shared<Json::Value>(feeConfig);
+			settings_.Set(feesKey, fees);
+		}
+		else{
 			for (auto it = feeConfig.begin(); it != feeConfig.end(); it++) {
 				(*fees)[it.memberName()] = feeConfig[it.memberName()];
 			}
-		}
-		else{
-			fees = std::make_shared<Json::Value>(feeConfig);
-			settings_.Set(feesKey, fees);
 		}
 
 		return true;

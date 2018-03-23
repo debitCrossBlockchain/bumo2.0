@@ -87,6 +87,7 @@
     <ClCompile Include="..\..\src\common\daemon.cpp" />
     <ClCompile Include="..\..\src\common\data_secret_key.cpp" />
     <ClCompile Include="..\..\src\common\general.cpp" />
+    <ClCompile Include="..\..\src\common\key_store.cpp" />
     <ClCompile Include="..\..\src\common\network.cpp" />
     <ClCompile Include="..\..\src\common\pb2json.cpp" />
     <ClCompile Include="..\..\src\common\private_key.cpp" />
@@ -97,13 +98,11 @@
     <ClInclude Include="..\..\src\common\configure_base.h" />
     <ClInclude Include="..\..\src\common\daemon.h" />
     <ClInclude Include="..\..\src\common\general.h" />
+    <ClInclude Include="..\..\src\common\key_store.h" />
     <ClInclude Include="..\..\src\common\network.h" />
     <ClInclude Include="..\..\src\common\pb2json.h" />
     <ClInclude Include="..\..\src\common\private_key.h" />
     <ClInclude Include="..\..\src\common\storage.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\src\common\Makefile.am" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

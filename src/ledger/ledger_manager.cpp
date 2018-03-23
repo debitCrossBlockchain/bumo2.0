@@ -129,7 +129,6 @@ namespace bumo {
 			PROCESS_EXIT("consensus ledger version:%d,software ledger version:%d", lclheader.version(), General::LEDGER_VERSION);
 		}
 
-		ExprCondition::RegisterFunctions();
 		TimerNotify::RegisterModule(this);
 		StatusModule::RegisterModule(this);
 		return true;
@@ -248,18 +247,27 @@ namespace bumo {
 
 	bool LedgerManager::CreateGenesisAccount() {
 		LOG_INFO("There is no ledger exist,then create a init ledger");
+
 		//set global hash caculate
-		statistics_["account_count"] = 1;
-		protocol::Account acc;
-		acc.set_address(Configure::Instance().ledger_configure_.genesis_account_);
-		acc.set_nonce(0);
-		acc.set_balance(100000000000000000);
+		int32_t account_count = 0;
+		//create account of genesis
+		AccountFrm::pointer acc_frm =AccountFrm::CreatAccountFrm(Configure::Instance().genesis_configure_.account_, 100000000000000000);
+		tree_->Set(DecodeAddress(acc_frm->GetAccountAddress()), acc_frm->Serializer());
+		account_count++;
 
-		AccountFrm::pointer acc_frm = std::make_shared<AccountFrm>(acc);
-		acc_frm->SetProtoMasterWeight(1);
-		acc_frm->SetProtoTxThreshold(1);
+		//load validators config,create account of validators
+		const utils::StringList &list = Configure::Instance().genesis_configure_.validators_;
+		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
+			auto validator = validators_.add_validators();
+			validator->set_address(*iter);
+			validator->set_pledge_coin_amount(0);
 
-        tree_->Set(DecodeAddress(acc.address()), acc_frm->Serializer());
+			AccountFrm::pointer acc_frm = AccountFrm::CreatAccountFrm(*iter, 0);
+			tree_->Set(DecodeAddress(acc_frm->GetAccountAddress()), acc_frm->Serializer());
+			account_count++;
+		}
+		statistics_["account_count"] = account_count;
+
 		tree_->UpdateHash();
 		protocol::Ledger ledger;
 		protocol::LedgerHeader *header = ledger.mutable_header();
@@ -277,28 +285,21 @@ namespace bumo {
 		header->set_account_tree_hash(tree_->GetRootHash());
 
 		//for validators
-		const utils::StringList &list = Configure::Instance().validation_configure_.validators_;
-		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
-			//validators_.add_validators(*iter);
-			auto validator = validators_.add_validators();
-			validator->set_address(*iter);
-			validator->set_pledge_coin_amount(0);
-		}
 		std::string validators_hash = HashWrapper::Crypto(validators_.SerializeAsString());
 		header->set_validators_hash(validators_hash);
 
 		//for fee
-		fees_.set_byte_fee(Configure::Instance().ledger_configure_.fees_.byte_fee_);
-		fees_.set_base_reserve(Configure::Instance().ledger_configure_.fees_.base_reserve_);
-		fees_.set_create_account_fee(Configure::Instance().ledger_configure_.fees_.create_account_fee_);
-		fees_.set_pay_fee(Configure::Instance().ledger_configure_.fees_.pay_fee_);
-		fees_.set_issue_asset_fee(Configure::Instance().ledger_configure_.fees_.issue_asset_fee_);
-		fees_.set_set_metadata_fee(Configure::Instance().ledger_configure_.fees_.set_metadata_fee_);
-		fees_.set_set_sigure_weight_fee(Configure::Instance().ledger_configure_.fees_.set_sigure_weight_fee_);
-		fees_.set_set_threshold_fee(Configure::Instance().ledger_configure_.fees_.set_threshold_fee_);
-		fees_.set_pay_coin_fee(Configure::Instance().ledger_configure_.fees_.pay_coin_fee_);
+		fees_.set_byte_fee(Configure::Instance().genesis_configure_.fees_.byte_fee_);
+		fees_.set_base_reserve(Configure::Instance().genesis_configure_.fees_.base_reserve_);
+		fees_.set_create_account_fee(Configure::Instance().genesis_configure_.fees_.create_account_fee_);
+		fees_.set_pay_fee(Configure::Instance().genesis_configure_.fees_.pay_fee_);
+		fees_.set_issue_asset_fee(Configure::Instance().genesis_configure_.fees_.issue_asset_fee_);
+		fees_.set_set_metadata_fee(Configure::Instance().genesis_configure_.fees_.set_metadata_fee_);
+		fees_.set_set_sigure_weight_fee(Configure::Instance().genesis_configure_.fees_.set_sigure_weight_fee_);
+		fees_.set_set_threshold_fee(Configure::Instance().genesis_configure_.fees_.set_threshold_fee_);
+		fees_.set_pay_coin_fee(Configure::Instance().genesis_configure_.fees_.pay_coin_fee_);
 		std::string fees_hash = HashWrapper::Crypto(fees_.SerializeAsString());
-		header->set_fees_hash(HashWrapper::Crypto(fees_.SerializeAsString()));
+		header->set_fees_hash(fees_hash);
 
 		header->set_hash("");
 		header->set_hash(HashWrapper::Crypto(ledger.SerializeAsString()));
@@ -307,7 +308,7 @@ namespace bumo {
 		last_closed_ledger_->ProtoLedger().CopyFrom(ledger);
 		auto batch = tree_->batch_;
 		batch->Put(bumo::General::KEY_LEDGER_SEQ, "1");
-		batch->Put(bumo::General::KEY_GENE_ACCOUNT, Configure::Instance().ledger_configure_.genesis_account_);
+		batch->Put(bumo::General::KEY_GENE_ACCOUNT, Configure::Instance().genesis_configure_.account_);
 		ValidatorsSet(batch, validators_);
 		FeesConfigSet(batch, fees_);
 
@@ -367,11 +368,12 @@ namespace bumo {
 			account_db->Get(General::LAST_PROOF, str_proof);
 
 			//this validator 
-			PrivateKey private_key(Configure::Instance().validation_configure_.node_privatekey_);
+			PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
             std::string this_node_address = private_key.GetEncAddress();
 
 			//compose the new ledger
-			protocol::Ledger ledger;
+			LedgerFrm::pointer ledger_frm = std::make_shared<LedgerFrm>();
+			protocol::Ledger &ledger = ledger_frm->ProtoLedger();
 			protocol::LedgerHeader *header = ledger.mutable_header();
 			protocol::ConsensusValue request;
 			protocol::LedgerUpgrade *ledger_upgrade = request.mutable_ledger_upgrade();
@@ -383,7 +385,7 @@ namespace bumo {
 			validator->set_pledge_coin_amount(0);
 
 			request.set_previous_ledger_hash(last_closed_ledger_hdr.hash());
-			request.set_close_time(last_closed_ledger_hdr.close_time() + Configure::Instance().validation_configure_.close_interval_);
+			request.set_close_time(last_closed_ledger_hdr.close_time() + Configure::Instance().ledger_configure_.close_interval_);
 			request.set_ledger_seq(last_closed_ledger_hdr.seq() + 1);
 			request.set_previous_proof(str_proof);
 			std::string consensus_value_hash = HashWrapper::Crypto(request.SerializeAsString());
@@ -394,13 +396,28 @@ namespace bumo {
 			header->set_consensus_value_hash(consensus_value_hash);
 			header->set_version(last_closed_ledger_hdr.version());
 			header->set_tx_count(last_closed_ledger_hdr.tx_count());
-			header->set_account_tree_hash(last_closed_ledger_hdr.account_tree_hash());
+			header->set_fees_hash(last_closed_ledger_hdr.fees_hash());
 
 			std::string validators_hash = HashWrapper::Crypto(new_validator_set.SerializeAsString());
 			header->set_validators_hash(validators_hash);
 
-			header->set_hash("");
-			header->set_hash(HashWrapper::Crypto(ledger.SerializeAsString()));
+			//calc block reward
+			ProposeTxsResult prop_result;
+			ledger_frm->ApplyPropose(request, NULL, prop_result);
+			int64_t new_count = 0, change_count = 0;
+			ledger_frm->Commit(LedgerManager::GetInstance()->tree_, new_count, change_count);
+
+			//update account hash
+			LedgerManager::GetInstance()->tree_->UpdateHash();
+			header->set_account_tree_hash(LedgerManager::GetInstance()->tree_->GetRootHash());
+
+			//write account db
+			auto batch_account = LedgerManager::GetInstance()->tree_->batch_;
+			if (!Storage::Instance().account_db()->WriteBatch(*batch_account)) {
+				PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
+			}
+
+			header->set_hash(HashWrapper::Crypto(ledger_frm->ProtoLedger().SerializeAsString()));
 
 			std::shared_ptr<WRITE_BATCH> batch = std::make_shared<WRITE_BATCH>();
 			batch->Put(bumo::General::KEY_LEDGER_SEQ, utils::String::ToString(header->seq()));
@@ -501,8 +518,8 @@ namespace bumo {
 			proof_proto.ParseFromString(proof);
 
 			LOG_ERROR("CheckValueAndProof failed:%s\nproof=%s",
-				Proto2Json(consensus_value).toStyledString().c_str(),
-				Proto2Json(proof_proto).toStyledString().c_str());
+				Proto2Json(consensus_value).toFastString().c_str(),
+				Proto2Json(proof_proto).toFastString().c_str());
 
 			return false;
 		}
@@ -510,6 +527,9 @@ namespace bumo {
 		std::string con_str = consensus_value.SerializeAsString();
 		std::string chash = HashWrapper::Crypto(con_str);
 		LedgerFrm::pointer closing_ledger = context_manager_.SyncProcess(consensus_value);
+		if (closing_ledger == NULL){
+			return false;
+		} 
 
 		protocol::Ledger& ledger = closing_ledger->ProtoLedger();
 		auto header = ledger.mutable_header();
@@ -640,15 +660,35 @@ namespace bumo {
 		// notice applied
 		for (size_t i = 0; i < closing_ledger->apply_tx_frms_.size(); i++) {
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
-			WebSocketServer::Instance().BroadcastChainTxMsg(tx->GetContentHash(), tx->GetSourceAddress(),
-				tx->GetResult(), tx->GetResult().code() == protocol::ERRCODE_SUCCESS ? protocol::ChainTxStatus_TxStatus_COMPLETE : protocol::ChainTxStatus_TxStatus_FAILURE);
+			protocol::TransactionEnvStore apply_tx_msg;
+			*apply_tx_msg.mutable_transaction_env() = closing_ledger->apply_tx_frms_[i]->GetTransactionEnv();
+			apply_tx_msg.set_ledger_seq(closing_ledger->GetProtoHeader().seq());
+			apply_tx_msg.set_close_time(closing_ledger->GetProtoHeader().close_time());
+			apply_tx_msg.set_error_code(tx->GetResult().code());
+			apply_tx_msg.set_error_desc(tx->GetResult().desc());
+			apply_tx_msg.set_hash(tx->GetContentHash());
+			WebSocketServer::Instance().BroadcastChainTxMsg(apply_tx_msg);
+
+			if (tx->GetResult().code() == protocol::ERRCODE_SUCCESS)
+				for (size_t j = 0; j < tx->instructions_.size(); j++) {
+					const protocol::TransactionEnvStore &env_sto = tx->instructions_.at(j);
+					WebSocketServer::Instance().BroadcastChainTxMsg(env_sto);
+				}
 		}
 		// notice dropped
+		/*
 		for (size_t i = 0; i < closing_ledger->dropped_tx_frms_.size(); i++) {
 			TransactionFrm::pointer tx = closing_ledger->dropped_tx_frms_[i];
-			WebSocketServer::Instance().BroadcastChainTxMsg(tx->GetContentHash(), tx->GetSourceAddress(),
-				tx->GetResult(), tx->GetResult().code() == protocol::ERRCODE_SUCCESS ? protocol::ChainTxStatus_TxStatus_COMPLETE : protocol::ChainTxStatus_TxStatus_FAILURE);
+			protocol::TransactionEnvStore dropTxMsg;
+			*dropTxMsg.mutable_transaction_env() = closing_ledger->dropped_tx_frms_[i]->GetTransactionEnv();
+			dropTxMsg.set_ledger_seq(closing_ledger->GetProtoHeader().seq());
+			dropTxMsg.set_close_time(closing_ledger->GetProtoHeader().close_time());
+			dropTxMsg.set_error_code(tx->GetResult().code());
+			dropTxMsg.set_error_desc(tx->GetResult().desc());
+			dropTxMsg.set_hash(tx->GetContentHash());
+			WebSocketServer::Instance().BroadcastChainTxMsg(dropTxMsg);
 		}
+		*/
 
 		// monitor
 		monitor::LedgerStatus ledger_status;
@@ -666,7 +706,7 @@ namespace bumo {
 
 		do {
 			utils::MutexGuard guard(gmutex_);
-			LOG_INFO("OnRequestLedgers pid(" FMT_I64 "),[" FMT_I64 ", " FMT_I64 "]", peer_id, message.begin(), message.end());
+			LOG_TRACE("OnRequestLedgers pid(" FMT_I64 "),[" FMT_I64 ", " FMT_I64 "]", peer_id, message.begin(), message.end());
 			if (message.end() - message.begin() + 1 > 5) {
 				LOG_ERROR("Only 5 blocks can be requested at a time while try to (" FMT_I64 ")", message.end() - message.begin());
 				return;
@@ -712,7 +752,7 @@ namespace bumo {
 			ws->set_data(ledgers.SerializeAsString());
 			ws->set_type(protocol::OVERLAY_MSGTYPE_LEDGERS);
 			ws->set_request(false);
-			LOG_INFO("Send ledgers[" FMT_I64 "," FMT_I64 "] to(" FMT_I64 ")", message.begin(), message.end(), peer_id);
+			LOG_TRACE("Send ledgers[" FMT_I64 "," FMT_I64 "] to(" FMT_I64 ")", message.begin(), message.end(), peer_id);
 			PeerManager::Instance().ConsensusNetwork().SendMsgToPeer(peer_id, ws);
 		}
 	}
@@ -805,135 +845,6 @@ namespace bumo {
 		PeerManager::Instance().ConsensusNetwork().SendRequest(pid, protocol::OVERLAY_MSGTYPE_LEDGERS, gl.SerializeAsString());
 	}
 
-	ExprCondition::ExprCondition(const std::string & program, std::shared_ptr<Environment> env , const protocol::ConsensusValue &cons_value) :
-		utils::ExprParser(program),
-		environment_(env),
-		cons_value_(cons_value){}
-	ExprCondition::~ExprCondition() {}
-
-	void ExprCondition::RegisterFunctions() {
-		//utils::OneCommonArgumentFunctions["ledger"] = DoLedger;
-		utils::OneCommonArgumentFunctions["account"] = DoAccount;
-		utils::TwoCommonArgumentFunctions["jsonpath"] = DoJsonPath;
-	}
-
-	const utils::ExprValue ExprCondition::DoAccount(const utils::ExprValue &arg, utils::ExprParser *parser) {
-		if (!arg.IsString()) {
-			throw std::runtime_error("account's parameter is not a string");
-		}
-
-		std::shared_ptr<Environment> env = ((ExprCondition *)parser)->GetEnviroment();
-		AccountFrm::pointer acc = NULL;
-		Json::Value result;
-		if (env && env->GetEntry(arg.String(), acc)) {
-			acc->ToJson(result);
-		}
-		else if (Environment::AccountFromDB(arg.String(), acc)) {
-			acc->ToJson(result);
-		}
-		else{
-			throw std::runtime_error(utils::String::Format("Account(%s) not exist", arg.String().c_str()));
-		}
-
-		return result.toFastString();
-	}
-
-	const utils::ExprValue ExprCondition::DoLedger(const utils::ExprValue &arg, utils::ExprParser *parser) {
-		int64_t ledger_seq;
-		if (arg.IsNumber()) {
-			ledger_seq = (int64_t)arg.Number();
-		}
-		else if (arg.IsInteger64()) {
-			ledger_seq = arg.Integer64();
-		}
-		else if (arg.IsString()) {
-			ledger_seq = utils::String::Stoi64(arg.String());
-		}
-		else {
-			throw std::runtime_error(utils::String::Format("Ledger's parameter type(%s) is not supported", utils::ExprValue::GetTypeDesc(arg.type_).c_str()));
-		}
-
-		LedgerFrm frm;
-		Json::Value result;
-		if (!frm.LoadFromDb(ledger_seq)) {
-			throw std::runtime_error(utils::String::Format("Ledger(seq:" FMT_I64 ") not exist", ledger_seq));
-		}
-		else {
-			result = frm.ToJson();
-		}
-
-		return result.toFastString();
-	}
-
-	const utils::ExprValue ExprCondition::DoJsonPath(const utils::ExprValue &arg1, const utils::ExprValue &arg2, utils::ExprParser *parser) {
-		if (!arg1.IsString() || !arg2.IsString()) {
-			throw std::runtime_error("Json's parameter is not a string");
-		}
-
-		Json::Value from;
-		if (!from.fromString(arg1.String())) {
-			throw std::runtime_error("Json's arg1 can not be parsed");
-		}
-
-		Json::Value default_value(0);
-		Json::Path path(arg2.String());
-		Json::Value v = path.resolve(from, default_value);
-		if (v.isNumeric()) {
-			if (v.isDouble()) {
-				return v.asDouble();
-			}
-			else {
-				return v.asInt64();
-			}
-		}
-		else if (v.isString()) {
-			return v.asString();
-		}
-		else {
-			throw std::runtime_error("Json's result type is not supported");
-		}
-	}
-
-	Result ExprCondition::Eval(utils::ExprValue &value) {
-		Result ret;
-		try {
-			if (cons_value_.ledger_seq() == 0) {
-				symbols_["LEDGER_SEQ"] = LedgerManager::Instance().GetLastClosedLedger().seq();
-				symbols_["LEDGER_TIME"] = (int64_t)LedgerManager::Instance().GetLastClosedLedger().close_time();
-			}
-			else {
-				symbols_["LEDGER_SEQ"] = cons_value_.ledger_seq();
-				symbols_["LEDGER_TIME"] = cons_value_.close_time();
-			}
-			value = Evaluate();
-		}
-		catch (std::exception & e) {
-			ret.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-			ret.set_desc(e.what());
-		}
-
-		return ret;
-	}
-
-	Result ExprCondition::Parse(utils::ExprValue &value) {
-		Result ret;
-		try {
-			symbols_["LEDGER_SEQ"] = utils::ExprValue(utils::ExprValue::UNSURE);
-			symbols_["LEDGER_TIME"] = utils::ExprValue(utils::ExprValue::UNSURE);
-			value = utils::ExprParser::Parse();
-		}
-		catch (std::exception & e) {
-			ret.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-			ret.set_desc(e.what());
-		}
-
-		return ret;
-	}
-
-	std::shared_ptr<Environment> ExprCondition::GetEnviroment() {
-		return environment_;
-	}
-
 	Result LedgerManager::DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context) {
 
 		Result result;
@@ -950,6 +861,7 @@ namespace bumo {
 		do {
 			if (ledger_context->transaction_stack_.size() > General::CONTRACT_MAX_RECURSIVE_DEPTH) {
 				txfrm->result_.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_RECURSION);
+				txfrm->result_.set_desc("Too many recursion ");
 				//add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
@@ -987,7 +899,8 @@ namespace bumo {
 				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
 				if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
 					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-					LOG_ERROR("Transaction(%s) Fee not enough", utils::String::BinToHexString(txfrm->GetContentHash()).c_str());
+					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 ") ,Transaction(%s) self byte fee(" FMT_I64 ")",
+						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
 				}
 			}
 
@@ -1012,13 +925,19 @@ namespace bumo {
 				txfrm->environment_->Commit();
 			}
 
-			txfrm->environment_->ClearChangeBuf();
+			/* txfrm->environment_ was created in txfrm->Apply(...) when txfrm->ValidForParameter() == true,
+			   so if txfrm->ValidForParameter() failed, there was no txfrm->environment_,
+			   and txfrm->environment_->ClearChangeBuf() would access nonexistent memory,
+			   so that would be a serious error, and also seriously is that this problem only
+			   exist when operation called by contract, it means only in Dotransaction function,
+			   because there is only one environment in normal operation, txfrm->environment_ is a reference to it*/
+			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
-			result.set_code(txfrm->GetResult().code() == protocol::ERRCODE_SUCCESS? 0:-1);
+			result = txfrm->GetResult();
 			return result;
 		} while (false);
 
@@ -1032,7 +951,7 @@ namespace bumo {
 		trigger->mutable_transaction()->set_index(back->processing_operation_);
 		back->instructions_.push_back(tx_store);
 		
-		result.set_code(-1);
+		result = txfrm->GetResult();
 		return result;
 	}
 }

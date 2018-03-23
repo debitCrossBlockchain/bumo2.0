@@ -49,54 +49,6 @@
 
 namespace utils {
 
-	// returns a number from 0 up to, but excluding x
-	const int64_t getrandom(const int64_t x){
-		if (x <= 0)
-			return 0;
-
-		// r will be between 0 and 1 (but below 1 as we are dividing by RAND_MAX+1)
-		double r = static_cast<double> (std::rand() % RAND_MAX) / (static_cast<double> (RAND_MAX)+1.0);
-		return (int64_t)floor(r * x);
-
-	}   // end of getrandom
-
-	const int64_t roll(const int64_t howmany, const int64_t die){
-		int64_t count;
-		int64_t total = 0;
-
-		for (count = 0; count < howmany; ++count)
-			total += getrandom(die) + 1;
-
-		return total;
-
-	} // end of roll
-
-
-	// returns true if a x% probability exists
-	// eg. percent (80) will be true 80% of the time
-	const bool percent(const int prob)
-	{
-		if (prob <= 0)
-			return false;
-		if (prob >= 100)
-			return true;
-
-		return getrandom(100) > (100 - prob);
-
-	}
-
-	static int initRandom()
-	{
-		srand((int)time(NULL));
-#ifndef WIN32
-		srand48(time(NULL));
-#endif
-		return 0;
-	}
-
-	// initialise random number generator
-	static int someNumber = initRandom();
-
 	/*
 
 	Expression-evaluator
@@ -143,7 +95,7 @@ namespace utils {
 
 	You can use predefined functions, see below for examples of writing your own.
 
-	42 + sqrt (64)
+	42 + int (64.1)
 
 
 	Comparisons
@@ -188,17 +140,6 @@ namespace utils {
 		return (int)arg;   // drop fractional part
 	}
 
-	double DoRandom(double arg){
-		return (double)getrandom(static_cast <int> (arg));  // random number in range 0 to arg
-	}
-
-	double DoPercent(double arg){
-		if (percent(static_cast <int> (arg)))  // true x% of the time
-			return 1.0;
-		else
-			return 0.0;
-	}
-
 	const ExprValue DoMin(const ExprValue &arg1, const ExprValue &arg2){
 		return (arg1 < arg2 ? arg1 : arg2);
 	}
@@ -208,26 +149,11 @@ namespace utils {
 		return (arg1 > arg2 ? arg1 : arg2);
 	}
 
-	const ExprValue DoFmod(const ExprValue &arg1, const ExprValue &arg2){
-		if (arg1.type_ != ExprValue::NUMBER || arg2.type_ != ExprValue::NUMBER)
-			throw std::runtime_error("Type is not number");
-
-		if (arg2.d_value_ == 0.0)
-			throw std::runtime_error("Divide by zero in mod");
-
-		return fmod(arg1.d_value_, arg2.d_value_);
-	}
 
 	const ExprValue DoPow(const ExprValue &arg1, const ExprValue &arg2){
 		if (arg1.type_ != ExprValue::NUMBER || arg2.type_ != ExprValue::NUMBER)
 			throw std::runtime_error("Type is not number");
 		return pow(arg1.d_value_, arg2.d_value_);
-	}
-
-	const ExprValue DoRoll(const ExprValue &arg1, const ExprValue &arg2){
-		if (arg1.type_ != ExprValue::NUMBER || arg2.type_ != ExprValue::NUMBER)
-			throw std::runtime_error("Type is not number");
-		return roll(static_cast <int64_t> (arg1.d_value_), static_cast <int64_t> (arg2.d_value_));
 	}
 
 	const ExprValue DoIf(const ExprValue &arg1, const ExprValue &arg2, const ExprValue &arg3){
@@ -252,31 +178,7 @@ namespace utils {
 #define STD_FUNCTION(arg) OneArgumentFunctions [#arg] = arg
 
 	static int LoadOneArgumentFunctions(){
-		OneArgumentFunctions["abs"] = fabs;
-		STD_FUNCTION(acos);
-		STD_FUNCTION(asin);
-		STD_FUNCTION(atan);
-#ifndef WIN32   // doesn't seem to exist under Visual C++ 6
-		STD_FUNCTION(atanh);
-#endif
-		STD_FUNCTION(ceil);
-		STD_FUNCTION(cos);
-		STD_FUNCTION(cosh);
-		STD_FUNCTION(exp);
-		STD_FUNCTION(exp);
-		STD_FUNCTION(floor);
-		STD_FUNCTION(log);
-		STD_FUNCTION(log10);
-		STD_FUNCTION(sin);
-		STD_FUNCTION(sinh);
-		STD_FUNCTION(sqrt);
-		STD_FUNCTION(tan);
-		STD_FUNCTION(tanh);
-
 		OneArgumentFunctions["int"] = DoInt;
-		OneArgumentFunctions["rand"] = DoRandom;
-		OneArgumentFunctions["rand"] = DoRandom;
-		OneArgumentFunctions["percent"] = DoPercent;
 		return 0;
 	} // end of LoadOneArgumentFunctions
 
@@ -287,9 +189,7 @@ namespace utils {
 	static int LoadTwoArgumentFunctions(){
 		TwoArgumentFunctions["min"] = DoMin;
 		TwoArgumentFunctions["max"] = DoMax;
-		TwoArgumentFunctions["mod"] = DoFmod;
 		TwoArgumentFunctions["pow"] = DoPow;     //   x to the power y
-		TwoArgumentFunctions["roll"] = DoRoll;   // dice roll
 		return 0;
 	} // end of LoadTwoArgumentFunctions
 

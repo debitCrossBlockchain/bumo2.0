@@ -42,8 +42,11 @@ class Account;
 class AccountPrivilege;
 class AccountThreshold;
 class Asset;
+class AssetKey;
 class AssetProperty;
+class AssetStore;
 class ConsensusValue;
+class ConsensusValueValidation;
 class Contract;
 class Ledger;
 class LedgerHeader;
@@ -344,32 +347,32 @@ class Account : public ::google::protobuf::Message /* @@protoc_insertion_point(c
 };
 // -------------------------------------------------------------------
 
-class AssetProperty : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.AssetProperty) */ {
+class AssetKey : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.AssetKey) */ {
  public:
-  AssetProperty();
-  virtual ~AssetProperty();
+  AssetKey();
+  virtual ~AssetKey();
 
-  AssetProperty(const AssetProperty& from);
+  AssetKey(const AssetKey& from);
 
-  inline AssetProperty& operator=(const AssetProperty& from) {
+  inline AssetKey& operator=(const AssetKey& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const AssetProperty& default_instance();
+  static const AssetKey& default_instance();
 
-  void Swap(AssetProperty* other);
+  void Swap(AssetKey* other);
 
   // implements Message ----------------------------------------------
 
-  inline AssetProperty* New() const { return New(NULL); }
+  inline AssetKey* New() const { return New(NULL); }
 
-  AssetProperty* New(::google::protobuf::Arena* arena) const;
+  AssetKey* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AssetProperty& from);
-  void MergeFrom(const AssetProperty& from);
+  void CopyFrom(const AssetKey& from);
+  void MergeFrom(const AssetKey& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -388,7 +391,7 @@ class AssetProperty : public ::google::protobuf::Message /* @@protoc_insertion_p
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(AssetProperty* other);
+  void InternalSwap(AssetKey* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -426,20 +429,27 @@ class AssetProperty : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::std::string* release_code();
   void set_allocated_code(::std::string* code);
 
-  // @@protoc_insertion_point(class_scope:protocol.AssetProperty)
+  // optional int32 type = 3;
+  void clear_type();
+  static const int kTypeFieldNumber = 3;
+  ::google::protobuf::int32 type() const;
+  void set_type(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.AssetKey)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr issuer_;
   ::google::protobuf::internal::ArenaStringPtr code_;
+  ::google::protobuf::int32 type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
   friend void protobuf_ShutdownFile_chain_2eproto();
 
   void InitAsDefaultInstance();
-  static AssetProperty* default_instance_;
+  static AssetKey* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -503,14 +513,14 @@ class Asset : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   // accessors -------------------------------------------------------
 
-  // optional .protocol.AssetProperty property = 1;
-  bool has_property() const;
-  void clear_property();
-  static const int kPropertyFieldNumber = 1;
-  const ::protocol::AssetProperty& property() const;
-  ::protocol::AssetProperty* mutable_property();
-  ::protocol::AssetProperty* release_property();
-  void set_allocated_property(::protocol::AssetProperty* property);
+  // optional .protocol.AssetKey key = 1;
+  bool has_key() const;
+  void clear_key();
+  static const int kKeyFieldNumber = 1;
+  const ::protocol::AssetKey& key() const;
+  ::protocol::AssetKey* mutable_key();
+  ::protocol::AssetKey* release_key();
+  void set_allocated_key(::protocol::AssetKey* key);
 
   // optional int64 amount = 2;
   void clear_amount();
@@ -523,7 +533,7 @@ class Asset : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::protocol::AssetProperty* property_;
+  ::protocol::AssetKey* key_;
   ::google::protobuf::int64 amount_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -532,6 +542,206 @@ class Asset : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   void InitAsDefaultInstance();
   static Asset* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AssetProperty : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.AssetProperty) */ {
+ public:
+  AssetProperty();
+  virtual ~AssetProperty();
+
+  AssetProperty(const AssetProperty& from);
+
+  inline AssetProperty& operator=(const AssetProperty& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AssetProperty& default_instance();
+
+  void Swap(AssetProperty* other);
+
+  // implements Message ----------------------------------------------
+
+  inline AssetProperty* New() const { return New(NULL); }
+
+  AssetProperty* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AssetProperty& from);
+  void MergeFrom(const AssetProperty& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(AssetProperty* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 decimal = 1;
+  void clear_decimal();
+  static const int kDecimalFieldNumber = 1;
+  ::google::protobuf::int32 decimal() const;
+  void set_decimal(::google::protobuf::int32 value);
+
+  // optional string description = 2;
+  void clear_description();
+  static const int kDescriptionFieldNumber = 2;
+  const ::std::string& description() const;
+  void set_description(const ::std::string& value);
+  void set_description(const char* value);
+  void set_description(const char* value, size_t size);
+  ::std::string* mutable_description();
+  ::std::string* release_description();
+  void set_allocated_description(::std::string* description);
+
+  // optional int64 max_supply = 3;
+  void clear_max_supply();
+  static const int kMaxSupplyFieldNumber = 3;
+  ::google::protobuf::int64 max_supply() const;
+  void set_max_supply(::google::protobuf::int64 value);
+
+  // optional int64 issued_amount = 4;
+  void clear_issued_amount();
+  static const int kIssuedAmountFieldNumber = 4;
+  ::google::protobuf::int64 issued_amount() const;
+  void set_issued_amount(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.AssetProperty)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr description_;
+  ::google::protobuf::int64 max_supply_;
+  ::google::protobuf::int64 issued_amount_;
+  ::google::protobuf::int32 decimal_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_chain_2eproto();
+  friend void protobuf_AssignDesc_chain_2eproto();
+  friend void protobuf_ShutdownFile_chain_2eproto();
+
+  void InitAsDefaultInstance();
+  static AssetProperty* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AssetStore : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.AssetStore) */ {
+ public:
+  AssetStore();
+  virtual ~AssetStore();
+
+  AssetStore(const AssetStore& from);
+
+  inline AssetStore& operator=(const AssetStore& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AssetStore& default_instance();
+
+  void Swap(AssetStore* other);
+
+  // implements Message ----------------------------------------------
+
+  inline AssetStore* New() const { return New(NULL); }
+
+  AssetStore* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AssetStore& from);
+  void MergeFrom(const AssetStore& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(AssetStore* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .protocol.AssetKey key = 1;
+  bool has_key() const;
+  void clear_key();
+  static const int kKeyFieldNumber = 1;
+  const ::protocol::AssetKey& key() const;
+  ::protocol::AssetKey* mutable_key();
+  ::protocol::AssetKey* release_key();
+  void set_allocated_key(::protocol::AssetKey* key);
+
+  // optional int64 amount = 2;
+  void clear_amount();
+  static const int kAmountFieldNumber = 2;
+  ::google::protobuf::int64 amount() const;
+  void set_amount(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.AssetStore)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::protocol::AssetKey* key_;
+  ::google::protobuf::int64 amount_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_chain_2eproto();
+  friend void protobuf_AssignDesc_chain_2eproto();
+  friend void protobuf_ShutdownFile_chain_2eproto();
+
+  void InitAsDefaultInstance();
+  static AssetStore* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -1295,6 +1505,21 @@ class OperationIssueAsset : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::int64 amount() const;
   void set_amount(::google::protobuf::int64 value);
 
+  // optional int32 type = 3;
+  void clear_type();
+  static const int kTypeFieldNumber = 3;
+  ::google::protobuf::int32 type() const;
+  void set_type(::google::protobuf::int32 value);
+
+  // optional .protocol.AssetProperty property = 4;
+  bool has_property() const;
+  void clear_property();
+  static const int kPropertyFieldNumber = 4;
+  const ::protocol::AssetProperty& property() const;
+  ::protocol::AssetProperty* mutable_property();
+  ::protocol::AssetProperty* release_property();
+  void set_allocated_property(::protocol::AssetProperty* property);
+
   // @@protoc_insertion_point(class_scope:protocol.OperationIssueAsset)
  private:
 
@@ -1302,6 +1527,8 @@ class OperationIssueAsset : public ::google::protobuf::Message /* @@protoc_inser
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr code_;
   ::google::protobuf::int64 amount_;
+  ::protocol::AssetProperty* property_;
+  ::google::protobuf::int32 type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -1745,84 +1972,73 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::std::string* release_metadata();
   void set_allocated_metadata(::std::string* metadata);
 
-  // optional string expr_condition = 4;
-  void clear_expr_condition();
-  static const int kExprConditionFieldNumber = 4;
-  const ::std::string& expr_condition() const;
-  void set_expr_condition(const ::std::string& value);
-  void set_expr_condition(const char* value);
-  void set_expr_condition(const char* value, size_t size);
-  ::std::string* mutable_expr_condition();
-  ::std::string* release_expr_condition();
-  void set_allocated_expr_condition(::std::string* expr_condition);
-
-  // optional .protocol.OperationCreateAccount create_account = 5;
+  // optional .protocol.OperationCreateAccount create_account = 4;
   bool has_create_account() const;
   void clear_create_account();
-  static const int kCreateAccountFieldNumber = 5;
+  static const int kCreateAccountFieldNumber = 4;
   const ::protocol::OperationCreateAccount& create_account() const;
   ::protocol::OperationCreateAccount* mutable_create_account();
   ::protocol::OperationCreateAccount* release_create_account();
   void set_allocated_create_account(::protocol::OperationCreateAccount* create_account);
 
-  // optional .protocol.OperationIssueAsset issue_asset = 6;
+  // optional .protocol.OperationIssueAsset issue_asset = 5;
   bool has_issue_asset() const;
   void clear_issue_asset();
-  static const int kIssueAssetFieldNumber = 6;
+  static const int kIssueAssetFieldNumber = 5;
   const ::protocol::OperationIssueAsset& issue_asset() const;
   ::protocol::OperationIssueAsset* mutable_issue_asset();
   ::protocol::OperationIssueAsset* release_issue_asset();
   void set_allocated_issue_asset(::protocol::OperationIssueAsset* issue_asset);
 
-  // optional .protocol.OperationPayment payment = 7;
+  // optional .protocol.OperationPayment payment = 6;
   bool has_payment() const;
   void clear_payment();
-  static const int kPaymentFieldNumber = 7;
+  static const int kPaymentFieldNumber = 6;
   const ::protocol::OperationPayment& payment() const;
   ::protocol::OperationPayment* mutable_payment();
   ::protocol::OperationPayment* release_payment();
   void set_allocated_payment(::protocol::OperationPayment* payment);
 
-  // optional .protocol.OperationSetMetadata set_metadata = 9;
+  // optional .protocol.OperationSetMetadata set_metadata = 7;
   bool has_set_metadata() const;
   void clear_set_metadata();
-  static const int kSetMetadataFieldNumber = 9;
+  static const int kSetMetadataFieldNumber = 7;
   const ::protocol::OperationSetMetadata& set_metadata() const;
   ::protocol::OperationSetMetadata* mutable_set_metadata();
   ::protocol::OperationSetMetadata* release_set_metadata();
   void set_allocated_set_metadata(::protocol::OperationSetMetadata* set_metadata);
 
-  // optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
+  // optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
   bool has_set_signer_weight() const;
   void clear_set_signer_weight();
-  static const int kSetSignerWeightFieldNumber = 10;
+  static const int kSetSignerWeightFieldNumber = 8;
   const ::protocol::OperationSetSignerWeight& set_signer_weight() const;
   ::protocol::OperationSetSignerWeight* mutable_set_signer_weight();
   ::protocol::OperationSetSignerWeight* release_set_signer_weight();
   void set_allocated_set_signer_weight(::protocol::OperationSetSignerWeight* set_signer_weight);
 
-  // optional .protocol.OperationSetThreshold set_threshold = 11;
+  // optional .protocol.OperationSetThreshold set_threshold = 9;
   bool has_set_threshold() const;
   void clear_set_threshold();
-  static const int kSetThresholdFieldNumber = 11;
+  static const int kSetThresholdFieldNumber = 9;
   const ::protocol::OperationSetThreshold& set_threshold() const;
   ::protocol::OperationSetThreshold* mutable_set_threshold();
   ::protocol::OperationSetThreshold* release_set_threshold();
   void set_allocated_set_threshold(::protocol::OperationSetThreshold* set_threshold);
 
-  // optional .protocol.OperationPayCoin pay_coin = 12;
+  // optional .protocol.OperationPayCoin pay_coin = 10;
   bool has_pay_coin() const;
   void clear_pay_coin();
-  static const int kPayCoinFieldNumber = 12;
+  static const int kPayCoinFieldNumber = 10;
   const ::protocol::OperationPayCoin& pay_coin() const;
   ::protocol::OperationPayCoin* mutable_pay_coin();
   ::protocol::OperationPayCoin* release_pay_coin();
   void set_allocated_pay_coin(::protocol::OperationPayCoin* pay_coin);
 
-  // optional .protocol.OperationLog log = 13;
+  // optional .protocol.OperationLog log = 11;
   bool has_log() const;
   void clear_log();
-  static const int kLogFieldNumber = 13;
+  static const int kLogFieldNumber = 11;
   const ::protocol::OperationLog& log() const;
   ::protocol::OperationLog* mutable_log();
   ::protocol::OperationLog* release_log();
@@ -1835,7 +2051,6 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr source_address_;
   ::google::protobuf::internal::ArenaStringPtr metadata_;
-  ::google::protobuf::internal::ArenaStringPtr expr_condition_;
   ::protocol::OperationCreateAccount* create_account_;
   ::protocol::OperationIssueAsset* issue_asset_;
   ::protocol::OperationPayment* payment_;
@@ -2053,28 +2268,17 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::int64 nonce() const;
   void set_nonce(::google::protobuf::int64 value);
 
-  // optional string expr_condition = 3;
-  void clear_expr_condition();
-  static const int kExprConditionFieldNumber = 3;
-  const ::std::string& expr_condition() const;
-  void set_expr_condition(const ::std::string& value);
-  void set_expr_condition(const char* value);
-  void set_expr_condition(const char* value, size_t size);
-  ::std::string* mutable_expr_condition();
-  ::std::string* release_expr_condition();
-  void set_allocated_expr_condition(::std::string* expr_condition);
+  // optional int64 fee = 3;
+  void clear_fee();
+  static const int kFeeFieldNumber = 3;
+  ::google::protobuf::int64 fee() const;
+  void set_fee(::google::protobuf::int64 value);
 
-  // repeated .protocol.Operation operations = 4;
-  int operations_size() const;
-  void clear_operations();
-  static const int kOperationsFieldNumber = 4;
-  const ::protocol::Operation& operations(int index) const;
-  ::protocol::Operation* mutable_operations(int index);
-  ::protocol::Operation* add_operations();
-  ::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
-      mutable_operations();
-  const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
-      operations() const;
+  // optional int64 ceil_ledger_seq = 4;
+  void clear_ceil_ledger_seq();
+  static const int kCeilLedgerSeqFieldNumber = 4;
+  ::google::protobuf::int64 ceil_ledger_seq() const;
+  void set_ceil_ledger_seq(::google::protobuf::int64 value);
 
   // optional bytes metadata = 5;
   void clear_metadata();
@@ -2087,11 +2291,17 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_metadata();
   void set_allocated_metadata(::std::string* metadata);
 
-  // optional int64 fee = 6;
-  void clear_fee();
-  static const int kFeeFieldNumber = 6;
-  ::google::protobuf::int64 fee() const;
-  void set_fee(::google::protobuf::int64 value);
+  // repeated .protocol.Operation operations = 6;
+  int operations_size() const;
+  void clear_operations();
+  static const int kOperationsFieldNumber = 6;
+  const ::protocol::Operation& operations(int index) const;
+  ::protocol::Operation* mutable_operations(int index);
+  ::protocol::Operation* add_operations();
+  ::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
+      mutable_operations();
+  const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
+      operations() const;
 
   // @@protoc_insertion_point(class_scope:protocol.Transaction)
  private:
@@ -2100,10 +2310,10 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr source_address_;
   ::google::protobuf::int64 nonce_;
-  ::google::protobuf::internal::ArenaStringPtr expr_condition_;
-  ::google::protobuf::RepeatedPtrField< ::protocol::Operation > operations_;
-  ::google::protobuf::internal::ArenaStringPtr metadata_;
   ::google::protobuf::int64 fee_;
+  ::google::protobuf::int64 ceil_ledger_seq_;
+  ::google::protobuf::internal::ArenaStringPtr metadata_;
+  ::google::protobuf::RepeatedPtrField< ::protocol::Operation > operations_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -2661,6 +2871,17 @@ class TransactionEnvStore : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::int64 close_time() const;
   void set_close_time(::google::protobuf::int64 value);
 
+  // optional bytes hash = 6;
+  void clear_hash();
+  static const int kHashFieldNumber = 6;
+  const ::std::string& hash() const;
+  void set_hash(const ::std::string& value);
+  void set_hash(const char* value);
+  void set_hash(const void* value, size_t size);
+  ::std::string* mutable_hash();
+  ::std::string* release_hash();
+  void set_allocated_hash(::std::string* hash);
+
   // @@protoc_insertion_point(class_scope:protocol.TransactionEnvStore)
  private:
 
@@ -2670,6 +2891,7 @@ class TransactionEnvStore : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::internal::ArenaStringPtr error_desc_;
   ::google::protobuf::int64 ledger_seq_;
   ::google::protobuf::int64 close_time_;
+  ::google::protobuf::internal::ArenaStringPtr hash_;
   ::google::protobuf::int32 error_code_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -2766,6 +2988,109 @@ class TransactionEnvSet : public ::google::protobuf::Message /* @@protoc_inserti
 
   void InitAsDefaultInstance();
   static TransactionEnvSet* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ConsensusValueValidation : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ConsensusValueValidation) */ {
+ public:
+  ConsensusValueValidation();
+  virtual ~ConsensusValueValidation();
+
+  ConsensusValueValidation(const ConsensusValueValidation& from);
+
+  inline ConsensusValueValidation& operator=(const ConsensusValueValidation& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ConsensusValueValidation& default_instance();
+
+  void Swap(ConsensusValueValidation* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ConsensusValueValidation* New() const { return New(NULL); }
+
+  ConsensusValueValidation* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ConsensusValueValidation& from);
+  void MergeFrom(const ConsensusValueValidation& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ConsensusValueValidation* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated int32 expire_tx_ids = 1;
+  int expire_tx_ids_size() const;
+  void clear_expire_tx_ids();
+  static const int kExpireTxIdsFieldNumber = 1;
+  ::google::protobuf::int32 expire_tx_ids(int index) const;
+  void set_expire_tx_ids(int index, ::google::protobuf::int32 value);
+  void add_expire_tx_ids(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      expire_tx_ids() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_expire_tx_ids();
+
+  // repeated int32 error_tx_ids = 2;
+  int error_tx_ids_size() const;
+  void clear_error_tx_ids();
+  static const int kErrorTxIdsFieldNumber = 2;
+  ::google::protobuf::int32 error_tx_ids(int index) const;
+  void set_error_tx_ids(int index, ::google::protobuf::int32 value);
+  void add_error_tx_ids(::google::protobuf::int32 value);
+  const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+      error_tx_ids() const;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+      mutable_error_tx_ids();
+
+  // @@protoc_insertion_point(class_scope:protocol.ConsensusValueValidation)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > expire_tx_ids_;
+  mutable int _expire_tx_ids_cached_byte_size_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::int32 > error_tx_ids_;
+  mutable int _error_tx_ids_cached_byte_size_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_chain_2eproto();
+  friend void protobuf_AssignDesc_chain_2eproto();
+  friend void protobuf_ShutdownFile_chain_2eproto();
+
+  void InitAsDefaultInstance();
+  static ConsensusValueValidation* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -2881,6 +3206,15 @@ class ConsensusValue : public ::google::protobuf::Message /* @@protoc_insertion_
   ::protocol::LedgerUpgrade* release_ledger_upgrade();
   void set_allocated_ledger_upgrade(::protocol::LedgerUpgrade* ledger_upgrade);
 
+  // optional .protocol.ConsensusValueValidation validation = 7;
+  bool has_validation() const;
+  void clear_validation();
+  static const int kValidationFieldNumber = 7;
+  const ::protocol::ConsensusValueValidation& validation() const;
+  ::protocol::ConsensusValueValidation* mutable_validation();
+  ::protocol::ConsensusValueValidation* release_validation();
+  void set_allocated_validation(::protocol::ConsensusValueValidation* validation);
+
   // @@protoc_insertion_point(class_scope:protocol.ConsensusValue)
  private:
 
@@ -2892,6 +3226,7 @@ class ConsensusValue : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::int64 ledger_seq_;
   ::google::protobuf::internal::ArenaStringPtr previous_ledger_hash_;
   ::protocol::LedgerUpgrade* ledger_upgrade_;
+  ::protocol::ConsensusValueValidation* validation_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -3003,24 +3338,12 @@ class Contract : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_payload();
   void set_allocated_payload(::std::string* payload);
 
-  // optional string init_input = 3;
-  void clear_init_input();
-  static const int kInitInputFieldNumber = 3;
-  const ::std::string& init_input() const;
-  void set_init_input(const ::std::string& value);
-  void set_init_input(const char* value);
-  void set_init_input(const char* value, size_t size);
-  ::std::string* mutable_init_input();
-  ::std::string* release_init_input();
-  void set_allocated_init_input(::std::string* init_input);
-
   // @@protoc_insertion_point(class_scope:protocol.Contract)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr payload_;
-  ::google::protobuf::internal::ArenaStringPtr init_input_;
   int type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -3139,6 +3462,17 @@ class OperationCreateAccount : public ::google::protobuf::Message /* @@protoc_in
   ::google::protobuf::int64 init_balance() const;
   void set_init_balance(::google::protobuf::int64 value);
 
+  // optional string init_input = 6;
+  void clear_init_input();
+  static const int kInitInputFieldNumber = 6;
+  const ::std::string& init_input() const;
+  void set_init_input(const ::std::string& value);
+  void set_init_input(const char* value);
+  void set_init_input(const char* value, size_t size);
+  ::std::string* mutable_init_input();
+  ::std::string* release_init_input();
+  void set_allocated_init_input(::std::string* init_input);
+
   // @@protoc_insertion_point(class_scope:protocol.OperationCreateAccount)
  private:
 
@@ -3149,6 +3483,7 @@ class OperationCreateAccount : public ::google::protobuf::Message /* @@protoc_in
   ::protocol::AccountPrivilege* priv_;
   ::google::protobuf::RepeatedPtrField< ::protocol::KeyPair > metadatas_;
   ::google::protobuf::int64 init_balance_;
+  ::google::protobuf::internal::ArenaStringPtr init_input_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -3516,136 +3851,150 @@ inline void Account::set_balance(::google::protobuf::int64 value) {
 
 // -------------------------------------------------------------------
 
-// AssetProperty
+// AssetKey
 
 // optional string issuer = 1;
-inline void AssetProperty::clear_issuer() {
+inline void AssetKey::clear_issuer() {
   issuer_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& AssetProperty::issuer() const {
-  // @@protoc_insertion_point(field_get:protocol.AssetProperty.issuer)
+inline const ::std::string& AssetKey::issuer() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetKey.issuer)
   return issuer_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void AssetProperty::set_issuer(const ::std::string& value) {
+inline void AssetKey::set_issuer(const ::std::string& value) {
   
   issuer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.AssetProperty.issuer)
+  // @@protoc_insertion_point(field_set:protocol.AssetKey.issuer)
 }
-inline void AssetProperty::set_issuer(const char* value) {
+inline void AssetKey::set_issuer(const char* value) {
   
   issuer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.AssetProperty.issuer)
+  // @@protoc_insertion_point(field_set_char:protocol.AssetKey.issuer)
 }
-inline void AssetProperty::set_issuer(const char* value, size_t size) {
+inline void AssetKey::set_issuer(const char* value, size_t size) {
   
   issuer_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.AssetProperty.issuer)
+  // @@protoc_insertion_point(field_set_pointer:protocol.AssetKey.issuer)
 }
-inline ::std::string* AssetProperty::mutable_issuer() {
+inline ::std::string* AssetKey::mutable_issuer() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.AssetProperty.issuer)
+  // @@protoc_insertion_point(field_mutable:protocol.AssetKey.issuer)
   return issuer_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* AssetProperty::release_issuer() {
-  // @@protoc_insertion_point(field_release:protocol.AssetProperty.issuer)
+inline ::std::string* AssetKey::release_issuer() {
+  // @@protoc_insertion_point(field_release:protocol.AssetKey.issuer)
   
   return issuer_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void AssetProperty::set_allocated_issuer(::std::string* issuer) {
+inline void AssetKey::set_allocated_issuer(::std::string* issuer) {
   if (issuer != NULL) {
     
   } else {
     
   }
   issuer_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), issuer);
-  // @@protoc_insertion_point(field_set_allocated:protocol.AssetProperty.issuer)
+  // @@protoc_insertion_point(field_set_allocated:protocol.AssetKey.issuer)
 }
 
 // optional string code = 2;
-inline void AssetProperty::clear_code() {
+inline void AssetKey::clear_code() {
   code_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& AssetProperty::code() const {
-  // @@protoc_insertion_point(field_get:protocol.AssetProperty.code)
+inline const ::std::string& AssetKey::code() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetKey.code)
   return code_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void AssetProperty::set_code(const ::std::string& value) {
+inline void AssetKey::set_code(const ::std::string& value) {
   
   code_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.AssetProperty.code)
+  // @@protoc_insertion_point(field_set:protocol.AssetKey.code)
 }
-inline void AssetProperty::set_code(const char* value) {
+inline void AssetKey::set_code(const char* value) {
   
   code_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.AssetProperty.code)
+  // @@protoc_insertion_point(field_set_char:protocol.AssetKey.code)
 }
-inline void AssetProperty::set_code(const char* value, size_t size) {
+inline void AssetKey::set_code(const char* value, size_t size) {
   
   code_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.AssetProperty.code)
+  // @@protoc_insertion_point(field_set_pointer:protocol.AssetKey.code)
 }
-inline ::std::string* AssetProperty::mutable_code() {
+inline ::std::string* AssetKey::mutable_code() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.AssetProperty.code)
+  // @@protoc_insertion_point(field_mutable:protocol.AssetKey.code)
   return code_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* AssetProperty::release_code() {
-  // @@protoc_insertion_point(field_release:protocol.AssetProperty.code)
+inline ::std::string* AssetKey::release_code() {
+  // @@protoc_insertion_point(field_release:protocol.AssetKey.code)
   
   return code_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void AssetProperty::set_allocated_code(::std::string* code) {
+inline void AssetKey::set_allocated_code(::std::string* code) {
   if (code != NULL) {
     
   } else {
     
   }
   code_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), code);
-  // @@protoc_insertion_point(field_set_allocated:protocol.AssetProperty.code)
+  // @@protoc_insertion_point(field_set_allocated:protocol.AssetKey.code)
+}
+
+// optional int32 type = 3;
+inline void AssetKey::clear_type() {
+  type_ = 0;
+}
+inline ::google::protobuf::int32 AssetKey::type() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetKey.type)
+  return type_;
+}
+inline void AssetKey::set_type(::google::protobuf::int32 value) {
+  
+  type_ = value;
+  // @@protoc_insertion_point(field_set:protocol.AssetKey.type)
 }
 
 // -------------------------------------------------------------------
 
 // Asset
 
-// optional .protocol.AssetProperty property = 1;
-inline bool Asset::has_property() const {
-  return !_is_default_instance_ && property_ != NULL;
+// optional .protocol.AssetKey key = 1;
+inline bool Asset::has_key() const {
+  return !_is_default_instance_ && key_ != NULL;
 }
-inline void Asset::clear_property() {
-  if (GetArenaNoVirtual() == NULL && property_ != NULL) delete property_;
-  property_ = NULL;
+inline void Asset::clear_key() {
+  if (GetArenaNoVirtual() == NULL && key_ != NULL) delete key_;
+  key_ = NULL;
 }
-inline const ::protocol::AssetProperty& Asset::property() const {
-  // @@protoc_insertion_point(field_get:protocol.Asset.property)
-  return property_ != NULL ? *property_ : *default_instance_->property_;
+inline const ::protocol::AssetKey& Asset::key() const {
+  // @@protoc_insertion_point(field_get:protocol.Asset.key)
+  return key_ != NULL ? *key_ : *default_instance_->key_;
 }
-inline ::protocol::AssetProperty* Asset::mutable_property() {
+inline ::protocol::AssetKey* Asset::mutable_key() {
   
-  if (property_ == NULL) {
-    property_ = new ::protocol::AssetProperty;
+  if (key_ == NULL) {
+    key_ = new ::protocol::AssetKey;
   }
-  // @@protoc_insertion_point(field_mutable:protocol.Asset.property)
-  return property_;
+  // @@protoc_insertion_point(field_mutable:protocol.Asset.key)
+  return key_;
 }
-inline ::protocol::AssetProperty* Asset::release_property() {
-  // @@protoc_insertion_point(field_release:protocol.Asset.property)
+inline ::protocol::AssetKey* Asset::release_key() {
+  // @@protoc_insertion_point(field_release:protocol.Asset.key)
   
-  ::protocol::AssetProperty* temp = property_;
-  property_ = NULL;
+  ::protocol::AssetKey* temp = key_;
+  key_ = NULL;
   return temp;
 }
-inline void Asset::set_allocated_property(::protocol::AssetProperty* property) {
-  delete property_;
-  property_ = property;
-  if (property) {
+inline void Asset::set_allocated_key(::protocol::AssetKey* key) {
+  delete key_;
+  key_ = key;
+  if (key) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.Asset.property)
+  // @@protoc_insertion_point(field_set_allocated:protocol.Asset.key)
 }
 
 // optional int64 amount = 2;
@@ -3660,6 +4009,152 @@ inline void Asset::set_amount(::google::protobuf::int64 value) {
   
   amount_ = value;
   // @@protoc_insertion_point(field_set:protocol.Asset.amount)
+}
+
+// -------------------------------------------------------------------
+
+// AssetProperty
+
+// optional int32 decimal = 1;
+inline void AssetProperty::clear_decimal() {
+  decimal_ = 0;
+}
+inline ::google::protobuf::int32 AssetProperty::decimal() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetProperty.decimal)
+  return decimal_;
+}
+inline void AssetProperty::set_decimal(::google::protobuf::int32 value) {
+  
+  decimal_ = value;
+  // @@protoc_insertion_point(field_set:protocol.AssetProperty.decimal)
+}
+
+// optional string description = 2;
+inline void AssetProperty::clear_description() {
+  description_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& AssetProperty::description() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetProperty.description)
+  return description_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void AssetProperty::set_description(const ::std::string& value) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.AssetProperty.description)
+}
+inline void AssetProperty::set_description(const char* value) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.AssetProperty.description)
+}
+inline void AssetProperty::set_description(const char* value, size_t size) {
+  
+  description_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.AssetProperty.description)
+}
+inline ::std::string* AssetProperty::mutable_description() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.AssetProperty.description)
+  return description_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* AssetProperty::release_description() {
+  // @@protoc_insertion_point(field_release:protocol.AssetProperty.description)
+  
+  return description_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void AssetProperty::set_allocated_description(::std::string* description) {
+  if (description != NULL) {
+    
+  } else {
+    
+  }
+  description_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), description);
+  // @@protoc_insertion_point(field_set_allocated:protocol.AssetProperty.description)
+}
+
+// optional int64 max_supply = 3;
+inline void AssetProperty::clear_max_supply() {
+  max_supply_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 AssetProperty::max_supply() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetProperty.max_supply)
+  return max_supply_;
+}
+inline void AssetProperty::set_max_supply(::google::protobuf::int64 value) {
+  
+  max_supply_ = value;
+  // @@protoc_insertion_point(field_set:protocol.AssetProperty.max_supply)
+}
+
+// optional int64 issued_amount = 4;
+inline void AssetProperty::clear_issued_amount() {
+  issued_amount_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 AssetProperty::issued_amount() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetProperty.issued_amount)
+  return issued_amount_;
+}
+inline void AssetProperty::set_issued_amount(::google::protobuf::int64 value) {
+  
+  issued_amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.AssetProperty.issued_amount)
+}
+
+// -------------------------------------------------------------------
+
+// AssetStore
+
+// optional .protocol.AssetKey key = 1;
+inline bool AssetStore::has_key() const {
+  return !_is_default_instance_ && key_ != NULL;
+}
+inline void AssetStore::clear_key() {
+  if (GetArenaNoVirtual() == NULL && key_ != NULL) delete key_;
+  key_ = NULL;
+}
+inline const ::protocol::AssetKey& AssetStore::key() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetStore.key)
+  return key_ != NULL ? *key_ : *default_instance_->key_;
+}
+inline ::protocol::AssetKey* AssetStore::mutable_key() {
+  
+  if (key_ == NULL) {
+    key_ = new ::protocol::AssetKey;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.AssetStore.key)
+  return key_;
+}
+inline ::protocol::AssetKey* AssetStore::release_key() {
+  // @@protoc_insertion_point(field_release:protocol.AssetStore.key)
+  
+  ::protocol::AssetKey* temp = key_;
+  key_ = NULL;
+  return temp;
+}
+inline void AssetStore::set_allocated_key(::protocol::AssetKey* key) {
+  delete key_;
+  key_ = key;
+  if (key) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.AssetStore.key)
+}
+
+// optional int64 amount = 2;
+inline void AssetStore::clear_amount() {
+  amount_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 AssetStore::amount() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetStore.amount)
+  return amount_;
+}
+inline void AssetStore::set_amount(::google::protobuf::int64 value) {
+  
+  amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.AssetStore.amount)
 }
 
 // -------------------------------------------------------------------
@@ -4460,6 +4955,58 @@ inline void OperationIssueAsset::set_amount(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.OperationIssueAsset.amount)
 }
 
+// optional int32 type = 3;
+inline void OperationIssueAsset::clear_type() {
+  type_ = 0;
+}
+inline ::google::protobuf::int32 OperationIssueAsset::type() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationIssueAsset.type)
+  return type_;
+}
+inline void OperationIssueAsset::set_type(::google::protobuf::int32 value) {
+  
+  type_ = value;
+  // @@protoc_insertion_point(field_set:protocol.OperationIssueAsset.type)
+}
+
+// optional .protocol.AssetProperty property = 4;
+inline bool OperationIssueAsset::has_property() const {
+  return !_is_default_instance_ && property_ != NULL;
+}
+inline void OperationIssueAsset::clear_property() {
+  if (GetArenaNoVirtual() == NULL && property_ != NULL) delete property_;
+  property_ = NULL;
+}
+inline const ::protocol::AssetProperty& OperationIssueAsset::property() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationIssueAsset.property)
+  return property_ != NULL ? *property_ : *default_instance_->property_;
+}
+inline ::protocol::AssetProperty* OperationIssueAsset::mutable_property() {
+  
+  if (property_ == NULL) {
+    property_ = new ::protocol::AssetProperty;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.OperationIssueAsset.property)
+  return property_;
+}
+inline ::protocol::AssetProperty* OperationIssueAsset::release_property() {
+  // @@protoc_insertion_point(field_release:protocol.OperationIssueAsset.property)
+  
+  ::protocol::AssetProperty* temp = property_;
+  property_ = NULL;
+  return temp;
+}
+inline void OperationIssueAsset::set_allocated_property(::protocol::AssetProperty* property) {
+  delete property_;
+  property_ = property;
+  if (property) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationIssueAsset.property)
+}
+
 // -------------------------------------------------------------------
 
 // OperationPayCoin
@@ -4823,51 +5370,7 @@ inline void Operation::set_allocated_metadata(::std::string* metadata) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.metadata)
 }
 
-// optional string expr_condition = 4;
-inline void Operation::clear_expr_condition() {
-  expr_condition_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& Operation::expr_condition() const {
-  // @@protoc_insertion_point(field_get:protocol.Operation.expr_condition)
-  return expr_condition_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Operation::set_expr_condition(const ::std::string& value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Operation.expr_condition)
-}
-inline void Operation::set_expr_condition(const char* value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Operation.expr_condition)
-}
-inline void Operation::set_expr_condition(const char* value, size_t size) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Operation.expr_condition)
-}
-inline ::std::string* Operation::mutable_expr_condition() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.Operation.expr_condition)
-  return expr_condition_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Operation::release_expr_condition() {
-  // @@protoc_insertion_point(field_release:protocol.Operation.expr_condition)
-  
-  return expr_condition_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Operation::set_allocated_expr_condition(::std::string* expr_condition) {
-  if (expr_condition != NULL) {
-    
-  } else {
-    
-  }
-  expr_condition_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), expr_condition);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.expr_condition)
-}
-
-// optional .protocol.OperationCreateAccount create_account = 5;
+// optional .protocol.OperationCreateAccount create_account = 4;
 inline bool Operation::has_create_account() const {
   return !_is_default_instance_ && create_account_ != NULL;
 }
@@ -4905,7 +5408,7 @@ inline void Operation::set_allocated_create_account(::protocol::OperationCreateA
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.create_account)
 }
 
-// optional .protocol.OperationIssueAsset issue_asset = 6;
+// optional .protocol.OperationIssueAsset issue_asset = 5;
 inline bool Operation::has_issue_asset() const {
   return !_is_default_instance_ && issue_asset_ != NULL;
 }
@@ -4943,7 +5446,7 @@ inline void Operation::set_allocated_issue_asset(::protocol::OperationIssueAsset
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.issue_asset)
 }
 
-// optional .protocol.OperationPayment payment = 7;
+// optional .protocol.OperationPayment payment = 6;
 inline bool Operation::has_payment() const {
   return !_is_default_instance_ && payment_ != NULL;
 }
@@ -4981,7 +5484,7 @@ inline void Operation::set_allocated_payment(::protocol::OperationPayment* payme
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.payment)
 }
 
-// optional .protocol.OperationSetMetadata set_metadata = 9;
+// optional .protocol.OperationSetMetadata set_metadata = 7;
 inline bool Operation::has_set_metadata() const {
   return !_is_default_instance_ && set_metadata_ != NULL;
 }
@@ -5019,7 +5522,7 @@ inline void Operation::set_allocated_set_metadata(::protocol::OperationSetMetada
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_metadata)
 }
 
-// optional .protocol.OperationSetSignerWeight set_signer_weight = 10;
+// optional .protocol.OperationSetSignerWeight set_signer_weight = 8;
 inline bool Operation::has_set_signer_weight() const {
   return !_is_default_instance_ && set_signer_weight_ != NULL;
 }
@@ -5057,7 +5560,7 @@ inline void Operation::set_allocated_set_signer_weight(::protocol::OperationSetS
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_signer_weight)
 }
 
-// optional .protocol.OperationSetThreshold set_threshold = 11;
+// optional .protocol.OperationSetThreshold set_threshold = 9;
 inline bool Operation::has_set_threshold() const {
   return !_is_default_instance_ && set_threshold_ != NULL;
 }
@@ -5095,7 +5598,7 @@ inline void Operation::set_allocated_set_threshold(::protocol::OperationSetThres
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_threshold)
 }
 
-// optional .protocol.OperationPayCoin pay_coin = 12;
+// optional .protocol.OperationPayCoin pay_coin = 10;
 inline bool Operation::has_pay_coin() const {
   return !_is_default_instance_ && pay_coin_ != NULL;
 }
@@ -5133,7 +5636,7 @@ inline void Operation::set_allocated_pay_coin(::protocol::OperationPayCoin* pay_
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.pay_coin)
 }
 
-// optional .protocol.OperationLog log = 13;
+// optional .protocol.OperationLog log = 11;
 inline bool Operation::has_log() const {
   return !_is_default_instance_ && log_ != NULL;
 }
@@ -5281,78 +5784,32 @@ inline void Transaction::set_nonce(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.Transaction.nonce)
 }
 
-// optional string expr_condition = 3;
-inline void Transaction::clear_expr_condition() {
-  expr_condition_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional int64 fee = 3;
+inline void Transaction::clear_fee() {
+  fee_ = GOOGLE_LONGLONG(0);
 }
-inline const ::std::string& Transaction::expr_condition() const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.expr_condition)
-  return expr_condition_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline ::google::protobuf::int64 Transaction::fee() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.fee)
+  return fee_;
 }
-inline void Transaction::set_expr_condition(const ::std::string& value) {
+inline void Transaction::set_fee(::google::protobuf::int64 value) {
   
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Transaction.expr_condition)
-}
-inline void Transaction::set_expr_condition(const char* value) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Transaction.expr_condition)
-}
-inline void Transaction::set_expr_condition(const char* value, size_t size) {
-  
-  expr_condition_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Transaction.expr_condition)
-}
-inline ::std::string* Transaction::mutable_expr_condition() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.Transaction.expr_condition)
-  return expr_condition_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Transaction::release_expr_condition() {
-  // @@protoc_insertion_point(field_release:protocol.Transaction.expr_condition)
-  
-  return expr_condition_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Transaction::set_allocated_expr_condition(::std::string* expr_condition) {
-  if (expr_condition != NULL) {
-    
-  } else {
-    
-  }
-  expr_condition_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), expr_condition);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Transaction.expr_condition)
+  fee_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.fee)
 }
 
-// repeated .protocol.Operation operations = 4;
-inline int Transaction::operations_size() const {
-  return operations_.size();
+// optional int64 ceil_ledger_seq = 4;
+inline void Transaction::clear_ceil_ledger_seq() {
+  ceil_ledger_seq_ = GOOGLE_LONGLONG(0);
 }
-inline void Transaction::clear_operations() {
-  operations_.Clear();
+inline ::google::protobuf::int64 Transaction::ceil_ledger_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.ceil_ledger_seq)
+  return ceil_ledger_seq_;
 }
-inline const ::protocol::Operation& Transaction::operations(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.operations)
-  return operations_.Get(index);
-}
-inline ::protocol::Operation* Transaction::mutable_operations(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.Transaction.operations)
-  return operations_.Mutable(index);
-}
-inline ::protocol::Operation* Transaction::add_operations() {
-  // @@protoc_insertion_point(field_add:protocol.Transaction.operations)
-  return operations_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
-Transaction::mutable_operations() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.Transaction.operations)
-  return &operations_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
-Transaction::operations() const {
-  // @@protoc_insertion_point(field_list:protocol.Transaction.operations)
-  return operations_;
+inline void Transaction::set_ceil_ledger_seq(::google::protobuf::int64 value) {
+  
+  ceil_ledger_seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.ceil_ledger_seq)
 }
 
 // optional bytes metadata = 5;
@@ -5399,18 +5856,34 @@ inline void Transaction::set_allocated_metadata(::std::string* metadata) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Transaction.metadata)
 }
 
-// optional int64 fee = 6;
-inline void Transaction::clear_fee() {
-  fee_ = GOOGLE_LONGLONG(0);
+// repeated .protocol.Operation operations = 6;
+inline int Transaction::operations_size() const {
+  return operations_.size();
 }
-inline ::google::protobuf::int64 Transaction::fee() const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.fee)
-  return fee_;
+inline void Transaction::clear_operations() {
+  operations_.Clear();
 }
-inline void Transaction::set_fee(::google::protobuf::int64 value) {
-  
-  fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.Transaction.fee)
+inline const ::protocol::Operation& Transaction::operations(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.operations)
+  return operations_.Get(index);
+}
+inline ::protocol::Operation* Transaction::mutable_operations(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.Transaction.operations)
+  return operations_.Mutable(index);
+}
+inline ::protocol::Operation* Transaction::add_operations() {
+  // @@protoc_insertion_point(field_add:protocol.Transaction.operations)
+  return operations_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::protocol::Operation >*
+Transaction::mutable_operations() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.Transaction.operations)
+  return &operations_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
+Transaction::operations() const {
+  // @@protoc_insertion_point(field_list:protocol.Transaction.operations)
+  return operations_;
 }
 
 // -------------------------------------------------------------------
@@ -5845,6 +6318,50 @@ inline void TransactionEnvStore::set_close_time(::google::protobuf::int64 value)
   // @@protoc_insertion_point(field_set:protocol.TransactionEnvStore.close_time)
 }
 
+// optional bytes hash = 6;
+inline void TransactionEnvStore::clear_hash() {
+  hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& TransactionEnvStore::hash() const {
+  // @@protoc_insertion_point(field_get:protocol.TransactionEnvStore.hash)
+  return hash_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransactionEnvStore::set_hash(const ::std::string& value) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.TransactionEnvStore.hash)
+}
+inline void TransactionEnvStore::set_hash(const char* value) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.TransactionEnvStore.hash)
+}
+inline void TransactionEnvStore::set_hash(const void* value, size_t size) {
+  
+  hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.TransactionEnvStore.hash)
+}
+inline ::std::string* TransactionEnvStore::mutable_hash() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.TransactionEnvStore.hash)
+  return hash_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* TransactionEnvStore::release_hash() {
+  // @@protoc_insertion_point(field_release:protocol.TransactionEnvStore.hash)
+  
+  return hash_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void TransactionEnvStore::set_allocated_hash(::std::string* hash) {
+  if (hash != NULL) {
+    
+  } else {
+    
+  }
+  hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), hash);
+  // @@protoc_insertion_point(field_set_allocated:protocol.TransactionEnvStore.hash)
+}
+
 // -------------------------------------------------------------------
 
 // TransactionEnvSet
@@ -5877,6 +6394,70 @@ inline const ::google::protobuf::RepeatedPtrField< ::protocol::TransactionEnv >&
 TransactionEnvSet::txs() const {
   // @@protoc_insertion_point(field_list:protocol.TransactionEnvSet.txs)
   return txs_;
+}
+
+// -------------------------------------------------------------------
+
+// ConsensusValueValidation
+
+// repeated int32 expire_tx_ids = 1;
+inline int ConsensusValueValidation::expire_tx_ids_size() const {
+  return expire_tx_ids_.size();
+}
+inline void ConsensusValueValidation::clear_expire_tx_ids() {
+  expire_tx_ids_.Clear();
+}
+inline ::google::protobuf::int32 ConsensusValueValidation::expire_tx_ids(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.expire_tx_ids)
+  return expire_tx_ids_.Get(index);
+}
+inline void ConsensusValueValidation::set_expire_tx_ids(int index, ::google::protobuf::int32 value) {
+  expire_tx_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.expire_tx_ids)
+}
+inline void ConsensusValueValidation::add_expire_tx_ids(::google::protobuf::int32 value) {
+  expire_tx_ids_.Add(value);
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.expire_tx_ids)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ConsensusValueValidation::expire_tx_ids() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.expire_tx_ids)
+  return expire_tx_ids_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ConsensusValueValidation::mutable_expire_tx_ids() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.expire_tx_ids)
+  return &expire_tx_ids_;
+}
+
+// repeated int32 error_tx_ids = 2;
+inline int ConsensusValueValidation::error_tx_ids_size() const {
+  return error_tx_ids_.size();
+}
+inline void ConsensusValueValidation::clear_error_tx_ids() {
+  error_tx_ids_.Clear();
+}
+inline ::google::protobuf::int32 ConsensusValueValidation::error_tx_ids(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValueValidation.error_tx_ids)
+  return error_tx_ids_.Get(index);
+}
+inline void ConsensusValueValidation::set_error_tx_ids(int index, ::google::protobuf::int32 value) {
+  error_tx_ids_.Set(index, value);
+  // @@protoc_insertion_point(field_set:protocol.ConsensusValueValidation.error_tx_ids)
+}
+inline void ConsensusValueValidation::add_error_tx_ids(::google::protobuf::int32 value) {
+  error_tx_ids_.Add(value);
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValueValidation.error_tx_ids)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::int32 >&
+ConsensusValueValidation::error_tx_ids() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValueValidation.error_tx_ids)
+  return error_tx_ids_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::int32 >*
+ConsensusValueValidation::mutable_error_tx_ids() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValueValidation.error_tx_ids)
+  return &error_tx_ids_;
 }
 
 // -------------------------------------------------------------------
@@ -6075,6 +6656,44 @@ inline void ConsensusValue::set_allocated_ledger_upgrade(::protocol::LedgerUpgra
   // @@protoc_insertion_point(field_set_allocated:protocol.ConsensusValue.ledger_upgrade)
 }
 
+// optional .protocol.ConsensusValueValidation validation = 7;
+inline bool ConsensusValue::has_validation() const {
+  return !_is_default_instance_ && validation_ != NULL;
+}
+inline void ConsensusValue::clear_validation() {
+  if (GetArenaNoVirtual() == NULL && validation_ != NULL) delete validation_;
+  validation_ = NULL;
+}
+inline const ::protocol::ConsensusValueValidation& ConsensusValue::validation() const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValue.validation)
+  return validation_ != NULL ? *validation_ : *default_instance_->validation_;
+}
+inline ::protocol::ConsensusValueValidation* ConsensusValue::mutable_validation() {
+  
+  if (validation_ == NULL) {
+    validation_ = new ::protocol::ConsensusValueValidation;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.ConsensusValue.validation)
+  return validation_;
+}
+inline ::protocol::ConsensusValueValidation* ConsensusValue::release_validation() {
+  // @@protoc_insertion_point(field_release:protocol.ConsensusValue.validation)
+  
+  ::protocol::ConsensusValueValidation* temp = validation_;
+  validation_ = NULL;
+  return temp;
+}
+inline void ConsensusValue::set_allocated_validation(::protocol::ConsensusValueValidation* validation) {
+  delete validation_;
+  validation_ = validation;
+  if (validation) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.ConsensusValue.validation)
+}
+
 // -------------------------------------------------------------------
 
 // Contract
@@ -6135,50 +6754,6 @@ inline void Contract::set_allocated_payload(::std::string* payload) {
   }
   payload_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), payload);
   // @@protoc_insertion_point(field_set_allocated:protocol.Contract.payload)
-}
-
-// optional string init_input = 3;
-inline void Contract::clear_init_input() {
-  init_input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& Contract::init_input() const {
-  // @@protoc_insertion_point(field_get:protocol.Contract.init_input)
-  return init_input_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Contract::set_init_input(const ::std::string& value) {
-  
-  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Contract.init_input)
-}
-inline void Contract::set_init_input(const char* value) {
-  
-  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Contract.init_input)
-}
-inline void Contract::set_init_input(const char* value, size_t size) {
-  
-  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Contract.init_input)
-}
-inline ::std::string* Contract::mutable_init_input() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.Contract.init_input)
-  return init_input_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* Contract::release_init_input() {
-  // @@protoc_insertion_point(field_release:protocol.Contract.init_input)
-  
-  return init_input_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void Contract::set_allocated_init_input(::std::string* init_input) {
-  if (init_input != NULL) {
-    
-  } else {
-    
-  }
-  init_input_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), init_input);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Contract.init_input)
 }
 
 // -------------------------------------------------------------------
@@ -6349,6 +6924,50 @@ inline void OperationCreateAccount::set_init_balance(::google::protobuf::int64 v
   // @@protoc_insertion_point(field_set:protocol.OperationCreateAccount.init_balance)
 }
 
+// optional string init_input = 6;
+inline void OperationCreateAccount::clear_init_input() {
+  init_input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& OperationCreateAccount::init_input() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationCreateAccount.init_input)
+  return init_input_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationCreateAccount::set_init_input(const ::std::string& value) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.OperationCreateAccount.init_input)
+}
+inline void OperationCreateAccount::set_init_input(const char* value) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.OperationCreateAccount.init_input)
+}
+inline void OperationCreateAccount::set_init_input(const char* value, size_t size) {
+  
+  init_input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationCreateAccount.init_input)
+}
+inline ::std::string* OperationCreateAccount::mutable_init_input() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.OperationCreateAccount.init_input)
+  return init_input_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* OperationCreateAccount::release_init_input() {
+  // @@protoc_insertion_point(field_release:protocol.OperationCreateAccount.init_input)
+  
+  return init_input_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationCreateAccount::set_allocated_init_input(::std::string* init_input) {
+  if (init_input != NULL) {
+    
+  } else {
+    
+  }
+  init_input_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), init_input);
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationCreateAccount.init_input)
+}
+
 // -------------------------------------------------------------------
 
 // OperationSetMetadata
@@ -6470,6 +7089,12 @@ inline void OperationSetMetadata::set_delete_flag(bool value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

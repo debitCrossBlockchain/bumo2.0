@@ -25,6 +25,74 @@
 #include "websocket_server.h"
 
 namespace bumo {
+	WsPeer::WsPeer(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id) :
+		Connection(server_h, client_h, tls_server_h, tls_client_h, con, uri, id) {
+	}
+
+	WsPeer::~WsPeer() {}
+
+	bool WsPeer::Set(const protocol::ChainSubscribeTx &sub) {
+		if (sub.address_size() > 100) {
+			LOG_ERROR("Subscribe tx size large than 100");
+			return false;
+		}
+
+		tx_filter_address_.clear();
+		for (int32_t i = 0; i < sub.address_size(); i++) {
+			if (!PublicKey::IsAddressValid(sub.address(i))) {
+				LOG_ERROR("Subscribe tx failed, address(%s) not valid", sub.address(i).c_str());
+				return false;
+			} 
+			tx_filter_address_.insert(sub.address(i));
+		}
+
+		return true;
+	}
+
+	bool WsPeer::Filter(const protocol::TransactionEnvStore &tx_msg) {
+		if (tx_filter_address_.empty()) {
+			return true;
+		}
+
+		const protocol::Transaction &trans = tx_msg.transaction_env().transaction();
+		if (tx_filter_address_.find(trans.source_address()) != tx_filter_address_.end()) {
+			return true;
+		}
+
+		for (int32_t i = 0; i < trans.operations_size(); i++) {
+			const protocol::Operation &ope = trans.operations(i);
+			if (!ope.source_address().empty() && tx_filter_address_.find(ope.source_address()) != tx_filter_address_.end()) {
+				return true;
+			}
+
+			switch (ope.type()) {
+			case protocol::Operation_Type_CREATE_ACCOUNT:{
+				if (tx_filter_address_.find(ope.create_account().dest_address()) != tx_filter_address_.end()) {
+					return true;
+				}
+				break;
+			}
+			case protocol::Operation_Type_PAY_COIN:{
+				if (tx_filter_address_.find(ope.pay_coin().dest_address()) != tx_filter_address_.end()) {
+					return true;
+				}
+				break;
+			}
+			case protocol::Operation_Type_PAYMENT:{
+				if (tx_filter_address_.find(ope.payment().dest_address()) != tx_filter_address_.end()) {
+					return true;
+				}
+				break;
+			}
+	
+			default:
+				break;
+			}
+		}
+
+		return false;
+	}
+
 	WebSocketServer::WebSocketServer() : Network(SslParameter()) {
 		connect_interval_ = 120 * utils::MICRO_UNITS_PER_SEC;
 		last_connect_time_ = 0;
@@ -32,7 +100,7 @@ namespace bumo {
 		request_methods_[protocol::CHAIN_HELLO] = std::bind(&WebSocketServer::OnChainHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_PEER_MESSAGE] = std::bind(&WebSocketServer::OnChainPeerMessage, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_SUBMITTRANSACTION] = std::bind(&WebSocketServer::OnSubmitTransaction, this, std::placeholders::_1, std::placeholders::_2);
-
+		request_methods_[protocol::CHAIN_SUBSCRIBE_TX] = std::bind(&WebSocketServer::OnSubscribeTx, this, std::placeholders::_1, std::placeholders::_2);
 		thread_ptr_ = NULL;
 	}
 
@@ -65,7 +133,7 @@ namespace bumo {
 
 	bool WebSocketServer::OnChainHello(protocol::WsMessage &message, int64_t conn_id) {
 		protocol::ChainStatus cmsg;
-		cmsg.set_BUMO_VERSION(General::BUMO_VERSION);
+		cmsg.set_bumo_version(General::BUMO_VERSION);
 		cmsg.set_monitor_version(General::MONITOR_VERSION);
 		cmsg.set_ledger_version(General::LEDGER_VERSION);
 		cmsg.set_self_addr(PeerManager::Instance().GetPeerNodeAddress());
@@ -112,17 +180,17 @@ namespace bumo {
 		}
 	}
 
+	void WebSocketServer::BroadcastChainTxMsg(const protocol::TransactionEnvStore& tx_msg) {
+		utils::MutexGuard guard(conns_list_lock_);
 
-	void WebSocketServer::BroadcastChainTxMsg(const std::string &hash, const std::string &source_address, Result result, protocol::ChainTxStatus_TxStatus status) {
-		protocol::ChainTxStatus cts;
-		cts.set_tx_hash(utils::String::BinToHexString(hash));
-		cts.set_source_address(source_address);
-		cts.set_error_code((protocol::ERRORCODE)result.code());
-		cts.set_error_desc(result.desc());
-		cts.set_status(status);
-		cts.set_timestamp(utils::Timestamp::Now().timestamp());
-		std::string str = cts.SerializeAsString();
-		bumo::WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_TX_STATUS, str);
+		for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
+			WsPeer *peer = (WsPeer *)iter->second;
+			if (peer->Filter(tx_msg)) {
+				std::error_code ec;
+				std::string str = tx_msg.SerializeAsString();
+				peer->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
+			}
+		}
 	}
 
 	bool WebSocketServer::OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id) {
@@ -168,6 +236,38 @@ namespace bumo {
 		return true;
 	}
 
+	bool WebSocketServer::OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id){
+		utils::MutexGuard guard_(conns_list_lock_);
+		WsPeer *conn = (WsPeer *)GetConnection(conn_id);
+		if (!conn) {
+			return false;
+		}
+
+		protocol::ChainResponse default_response;
+		do {
+			LOG_INFO("Recv chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			protocol::ChainSubscribeTx subs;
+			if (!subs.ParseFromString(message.data())) {
+				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				default_response.set_error_desc("ChainPeerMessage FromString fail");
+				LOG_ERROR("%s", default_response.error_desc().c_str());
+				break;
+			}
+
+			bool ret = conn->Set(subs);
+			if (!ret) {
+				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				default_response.set_error_desc("ChainPeerMessage FromString fail");
+				LOG_ERROR("%s", default_response.error_desc().c_str());
+				break;
+			} 
+		} while (false);
+
+		std::error_code ec;
+		conn->SendResponse(message, default_response.SerializeAsString(), ec);
+		return default_response.error_code() == protocol::ERRCODE_SUCCESS;
+	}
+
 	void WebSocketServer::GetModuleStatus(Json::Value &data) {
 		data["name"] = "websocket_server";
 		data["listen_port"] = GetListenPort();
@@ -177,5 +277,11 @@ namespace bumo {
 		for (auto &item : connections_) {
 			item.second->ToJson(peers[peers.size()]);
 		}
+	}
+
+	Connection *WebSocketServer::CreateConnectObject(server *server_h, client *client_,
+		tls_server *tls_server_h, tls_client *tls_client_h,
+		connection_hdl con, const std::string &uri, int64_t id) {
+		return new WsPeer(server_h, client_, tls_server_h, tls_client_h, con, uri, id);
 	}
 }

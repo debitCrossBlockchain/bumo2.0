@@ -55,7 +55,7 @@ namespace bumo {
 		int64_t GetActiveTime() const;
 		int64_t GetDelay() const;
 
-		bool SendPeers(const Json::Value &db_peers, std::error_code &ec);
+		bool SendPeers(const protocol::Peers &db_peers, std::error_code &ec);
 		void SetPeerInfo(const protocol::Hello &hello);
 		void SetActiveTime(int64_t current_time);
 		bool SendHello(int32_t listen_port, const std::string &node_address, const int64_t &network_id, const std::string &node_rand, std::error_code &ec);

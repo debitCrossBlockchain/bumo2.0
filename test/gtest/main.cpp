@@ -25,5 +25,8 @@ GTEST_API_ int main(int argc, char **argv)
 	//testing::AddGlobalTestEnvironment(new FooEnvironment);
 	testing::GTEST_FLAG(output) = "xml:gtest_result.xml";
 	testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
+	RUN_ALL_TESTS();
+	printf("enter for exit\n");
+	getchar();
+	return 0;
 }

@@ -21,6 +21,20 @@
 #include <monitor/system_manager.h>
 
 namespace bumo {
+
+	class WsPeer : public Connection {
+	private:
+
+		//Peer infomation
+		std::set<std::string> tx_filter_address_;
+	public:
+		WsPeer(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id);
+		virtual ~WsPeer();
+
+		bool Set(const protocol::ChainSubscribeTx &sub);
+		bool Filter(const protocol::TransactionEnvStore &tx_msg);
+	};
+
 	class WebSocketServer :public utils::Singleton<WebSocketServer>,
 		public StatusModule,
 		public Network,
@@ -40,9 +54,14 @@ namespace bumo {
 		bool OnChainHello(protocol::WsMessage &message, int64_t conn_id);
 		bool OnChainPeerMessage(protocol::WsMessage &message, int64_t conn_id);
 		bool OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id);
+		bool OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id);
 
 		void BroadcastMsg(int64_t type, const std::string &data);
-		void BroadcastChainTxMsg(const std::string &hash, const std::string &source_address, Result result, protocol::ChainTxStatus_TxStatus status);
+		void BroadcastChainTxMsg(const protocol::TransactionEnvStore& txMsg);
+
+		virtual Connection *CreateConnectObject(server *server_h, client *client_,
+			tls_server *tls_server_h, tls_client *tls_client_h,
+			connection_hdl con, const std::string &uri, int64_t id);
 
 		virtual void GetModuleStatus(Json::Value &data);
 	protected:
