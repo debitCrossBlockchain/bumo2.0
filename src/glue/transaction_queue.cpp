@@ -202,9 +202,9 @@ namespace bumo {
 			int64_t nonce = txproto.transaction().nonce();
 			std::pair<bool, TransactionFrm::pointer> result = Remove(source_address, nonce);
 			if (result.first) ++ret;
-			i++;
-			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) tx(%s), nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")", (int)close_ledger, i, (int)result.first, tx->GetSourceAddress().c_str(),
-				utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee(), last_seq);
+			i++
+			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
+				(int)close_ledger, i, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
 
 			//update system account nonce
 			auto it = account_nonce_.find(source_address);
@@ -226,8 +226,9 @@ namespace bumo {
 
 			auto result = Remove(source_address, nonce);
 			i++;
-			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) tx(%s), nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")", (int)close_ledger, i, (int)result.first, tx->GetSourceAddress().c_str(),
-				utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee(), last_seq);
+			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) tx(%s), nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")", 
+				(int)close_ledger, i, (int)result.first, (*it)->GetSourceAddress().c_str(),
+				utils::String::BinToHexString((*it)->GetContentHash()).c_str(), (*it)->GetNonce(), (*it)->GetFee(), last_seq);
 
 			//update system account nonce
 			auto iter = account_nonce_.find(source_address);
