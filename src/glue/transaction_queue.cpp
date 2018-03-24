@@ -201,7 +201,12 @@ namespace bumo {
 			std::string source_address = txproto.transaction().source_address();
 			int64_t nonce = txproto.transaction().nonce();
 			std::pair<bool, TransactionFrm::pointer> result = Remove(source_address, nonce);
-			if (result.first) ++ret;
+			if (result.first)
+				++ret;
+			else
+				LOG_ERROR("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
+				(int)close_ledger, i, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
+
 			i++;
 			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
 				(int)close_ledger, i, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
