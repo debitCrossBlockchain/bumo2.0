@@ -608,17 +608,17 @@ namespace bumo {
 		}
 
 
-		if (sequence > last_exe_seq_) {
-			PbftInstanceIndex index(view_number, sequence);
-			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, sequence);
-			instances_.insert(std::make_pair(index, PbftInstance()));
+		if (sequence <= last_exe_seq_) {
+			LOG_WARN("Pbft sequence(" FMT_I64 ") less than last seq(" FMT_I64 ")", sequence, last_exe_seq_);
+			return NULL;
 		}
 
 		PbftInstanceIndex index(view_number, sequence);
 		PbftInstanceMap::iterator iter_find = instances_.find(index);
 		if (iter_find == instances_.end()) {
-			LOG_INFO("Pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ") have passed", view_number, sequence);
-			return NULL;
+			PbftInstanceIndex index(view_number, sequence);
+			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, sequence);
+			instances_.insert(std::make_pair(index, PbftInstance()));
 		}
 
 		PbftInstance &instace = instances_[index];
@@ -971,8 +971,6 @@ namespace bumo {
 				max_seq = iter_inst->first.sequence_;
 			}
 		}
-
-
 
 		LOG_INFO("Replica(id: " FMT_I64 ") enter the new view(number:" FMT_I64 ")", replica_id_, new_view.view_number());
 		//enter to new view

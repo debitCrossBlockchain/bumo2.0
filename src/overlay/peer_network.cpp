@@ -228,6 +228,10 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodTransaction(protocol::WsMessage &message, int64_t conn_id) {
+		if (message.data().size() > General::TRANSACTION_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
+			LOG_ERROR("Transaction p2p data size(" FMT_SIZE ") too large", message.data().size());
+			return false;
+		}
 
 		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
 			protocol::TransactionEnv tran;
@@ -276,10 +280,16 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodPbft(protocol::WsMessage &message, int64_t conn_id) {
+		if (message.data().size() > General::TXSET_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
+			LOG_ERROR("Consensus p2p data size(" FMT_SIZE ") too large", message.data().size());
+			return false;
+		}
+
 		protocol::PbftEnv env;
 		env.ParseFromString(message.data());
 		if (!env.has_pbft()) {
 			LOG_ERROR("Pbft env is not initialize");
+			return false;
 		}
 
 		//should in validators
@@ -295,10 +305,11 @@ namespace bumo {
 			hash.c_str(), msg.GetNodeAddress(), msg.GetSeq(),
 			PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()), msg.GetSize());
 
+
 		//switch to main thread
 		Global::Instance().GetIoService().post([conn_id, msg, message, hash, this]() {
 			if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data(), conn_id)) {
-				LOG_INFO("Pbft hash(%s) would be processed", hash.c_str());
+				LOG_TRACE("Pbft hash(%s) would be processed", hash.c_str());
 				BroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data());
 				GlueManager::Instance().OnConsensus(msg);
 			}

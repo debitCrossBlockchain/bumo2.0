@@ -87,7 +87,7 @@ namespace bumo {
 	const char *General::CONTRACT_FEE_ADDRESS = "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe";
 
 	const int32_t General::TRANSACTION_LIMIT_SIZE = utils::BYTES_PER_MEGA;
-	const int32_t General::TXSET_LIMIT_SIZE = 32 * utils::BYTES_PER_MEGA;
+	const int32_t General::TXSET_LIMIT_SIZE = 16 * utils::BYTES_PER_MEGA;
 
 
 	Result::Result(){
