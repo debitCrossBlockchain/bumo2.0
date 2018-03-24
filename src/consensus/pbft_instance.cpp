@@ -52,9 +52,6 @@ namespace bumo {
 		return false;
 	}
 
-	PbftCkpInstance::PbftCkpInstance() :stable_(false) {}
-	PbftCkpInstance::~PbftCkpInstance() {}
-
 	PbftInstance::PbftInstance() {
 		phase_ = PBFT_PHASE_NONE;
 		phase_item_ = 0;
@@ -204,20 +201,7 @@ namespace bumo {
 			commit.view_number(), commit.sequence(), commit.replica_id(), utils::String::BinToHexString(commit.value_digest()).c_str());
 	}
 
-	std::string PbftDesc::GetCheckPoint(const protocol::PbftCheckPoint &checkpoint) {
-		return utils::String::Format("type:CheckPoint | seq:" FMT_I64 " replica:" FMT_I64 "| digest:%s",
-			checkpoint.sequence(), checkpoint.replica_id(), utils::String::BinToHexString(checkpoint.state_digest()).c_str());
-	}
-
 	std::string PbftDesc::GetViewChange(const protocol::PbftViewChange &viewchange) {
-		std::string checkpoints;
-		for (int32_t i = 0; i < viewchange.checkpoints_size(); i++) {
-			const protocol::PbftEnv &checkpoint_env = viewchange.checkpoints(i);
-			if (i > 0) {
-				checkpoints = utils::String::AppendFormat(checkpoints, ",");
-			}
-			checkpoints = utils::String::AppendFormat(checkpoints, "%s", GetPbft(checkpoint_env.pbft()).c_str());
-		}
 		std::string prepared_set;
 		for (int32_t i = 0; i < viewchange.prepared_set_size(); i++) {
 			const protocol::PbftPreparedSet &prepare_set_env = viewchange.prepared_set(i);
@@ -236,8 +220,8 @@ namespace bumo {
 				GetPbft(prepare_set_env.pre_prepare().pbft()).c_str(),
 				prepares.c_str());
 		}
-		return utils::String::Format("type:ViewChange | vn:" FMT_I64 " seq:" FMT_I64 " replica:" FMT_I64 " |ckp:[%s] | prepared_set:[%s]",
-			viewchange.view_number(), viewchange.sequence(), viewchange.replica_id(), checkpoints.c_str(), prepared_set.c_str());
+		return utils::String::Format("type:ViewChange | vn:" FMT_I64 " seq:" FMT_I64 " replica:" FMT_I64 " | prepared_set:[%s]",
+			viewchange.view_number(), viewchange.sequence(), viewchange.replica_id(), prepared_set.c_str());
 	}
 
 	std::string PbftDesc::GetNewView(const protocol::PbftNewView &new_view) {
@@ -279,11 +263,6 @@ namespace bumo {
 			message = GetCommit(commit);
 			break;
 		}
-		case protocol::PBFT_TYPE_CHECKPOINT:{
-			const protocol::PbftCheckPoint &checkpoint = pbft.checkpoint();
-			message = GetCheckPoint(checkpoint);
-			break;
-		}
 		case protocol::PBFT_TYPE_VIEWCHANGE:{
 			const protocol::PbftViewChange &viewchange = pbft.view_change();
 			message = GetViewChange(viewchange);
@@ -312,9 +291,6 @@ namespace bumo {
 		case protocol::PBFT_TYPE_COMMIT:{
 			return "PBFT-COMMIT";
 		}
-		case protocol::PBFT_TYPE_CHECKPOINT:{
-			return "PBFT-CHECKPOINT";
-		}
 		case protocol::PBFT_TYPE_VIEWCHANGE:{
 			return "PBFT-VIEWCHANGE";
 		}
@@ -331,7 +307,6 @@ namespace bumo {
 	const char *PbftDesc::VIEW_ACTIVE = "pbft_view_active";
 	const char *PbftDesc::SEQUENCE_NAME = "pbft_sequence";
 	const char *PbftDesc::VIEWNUMBER_NAME = "pbft_viewnumber";
-	const char *PbftDesc::CHECKPOINT_NAME = "pbft_checkpoint";
 	const char *PbftDesc::LAST_EXE_SEQUENCE_NAME = "pbft_lastexesequence";
 	const char *PbftDesc::LOW_WATER_MRAK_NAME = "pbft_lowwatermark";
 	const char *PbftDesc::INSTANCE_NAME = "pbft_instance";

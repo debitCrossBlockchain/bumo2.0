@@ -56,4 +56,12 @@ namespace bumo {
 	protocol::PbftEnv ConsensusMsg::GetPbft() const{
 		return pbft_env_;
 	}
+
+	std::string  ConsensusMsg::GetHash() const {
+		return hash_;
+	}
+
+	size_t ConsensusMsg::GetSize() const {
+		return (size_t)pbft_env_.ByteSize();
+	}
 }

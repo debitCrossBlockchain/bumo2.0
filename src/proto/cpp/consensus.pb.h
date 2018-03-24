@@ -40,7 +40,6 @@ void protobuf_ShutdownFile_consensus_2eproto();
 
 class FeeConfig;
 class Pbft;
-class PbftCheckPoint;
 class PbftCommit;
 class PbftEnv;
 class PbftNewView;
@@ -85,9 +84,8 @@ enum PbftMessageType {
   PBFT_TYPE_PREPREPARE = 0,
   PBFT_TYPE_PREPARE = 1,
   PBFT_TYPE_COMMIT = 2,
-  PBFT_TYPE_CHECKPOINT = 3,
-  PBFT_TYPE_VIEWCHANGE = 4,
-  PBFT_TYPE_NEWVIEW = 5,
+  PBFT_TYPE_VIEWCHANGE = 3,
+  PBFT_TYPE_NEWVIEW = 4,
   PbftMessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   PbftMessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
@@ -465,107 +463,6 @@ class PbftCommit : public ::google::protobuf::Message /* @@protoc_insertion_poin
 };
 // -------------------------------------------------------------------
 
-class PbftCheckPoint : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.PbftCheckPoint) */ {
- public:
-  PbftCheckPoint();
-  virtual ~PbftCheckPoint();
-
-  PbftCheckPoint(const PbftCheckPoint& from);
-
-  inline PbftCheckPoint& operator=(const PbftCheckPoint& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const PbftCheckPoint& default_instance();
-
-  void Swap(PbftCheckPoint* other);
-
-  // implements Message ----------------------------------------------
-
-  inline PbftCheckPoint* New() const { return New(NULL); }
-
-  PbftCheckPoint* New(::google::protobuf::Arena* arena) const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const PbftCheckPoint& from);
-  void MergeFrom(const PbftCheckPoint& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
-    return InternalSerializeWithCachedSizesToArray(false, output);
-  }
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  void InternalSwap(PbftCheckPoint* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return _internal_metadata_.arena();
-  }
-  inline void* MaybeArenaPtr() const {
-    return _internal_metadata_.raw_arena_ptr();
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // optional int64 sequence = 1;
-  void clear_sequence();
-  static const int kSequenceFieldNumber = 1;
-  ::google::protobuf::int64 sequence() const;
-  void set_sequence(::google::protobuf::int64 value);
-
-  // optional int64 replica_id = 2;
-  void clear_replica_id();
-  static const int kReplicaIdFieldNumber = 2;
-  ::google::protobuf::int64 replica_id() const;
-  void set_replica_id(::google::protobuf::int64 value);
-
-  // optional bytes state_digest = 3;
-  void clear_state_digest();
-  static const int kStateDigestFieldNumber = 3;
-  const ::std::string& state_digest() const;
-  void set_state_digest(const ::std::string& value);
-  void set_state_digest(const char* value);
-  void set_state_digest(const void* value, size_t size);
-  ::std::string* mutable_state_digest();
-  ::std::string* release_state_digest();
-  void set_allocated_state_digest(::std::string* state_digest);
-
-  // @@protoc_insertion_point(class_scope:protocol.PbftCheckPoint)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  bool _is_default_instance_;
-  ::google::protobuf::int64 sequence_;
-  ::google::protobuf::int64 replica_id_;
-  ::google::protobuf::internal::ArenaStringPtr state_digest_;
-  mutable int _cached_size_;
-  friend void  protobuf_AddDesc_consensus_2eproto();
-  friend void protobuf_AssignDesc_consensus_2eproto();
-  friend void protobuf_ShutdownFile_consensus_2eproto();
-
-  void InitAsDefaultInstance();
-  static PbftCheckPoint* default_instance_;
-};
-// -------------------------------------------------------------------
-
 class PbftPreparedSet : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.PbftPreparedSet) */ {
  public:
   PbftPreparedSet();
@@ -736,22 +633,10 @@ class PbftViewChange : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::int64 sequence() const;
   void set_sequence(::google::protobuf::int64 value);
 
-  // repeated .protocol.PbftEnv checkpoints = 3;
-  int checkpoints_size() const;
-  void clear_checkpoints();
-  static const int kCheckpointsFieldNumber = 3;
-  const ::protocol::PbftEnv& checkpoints(int index) const;
-  ::protocol::PbftEnv* mutable_checkpoints(int index);
-  ::protocol::PbftEnv* add_checkpoints();
-  ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >*
-      mutable_checkpoints();
-  const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
-      checkpoints() const;
-
-  // repeated .protocol.PbftPreparedSet prepared_set = 4;
+  // repeated .protocol.PbftPreparedSet prepared_set = 3;
   int prepared_set_size() const;
   void clear_prepared_set();
-  static const int kPreparedSetFieldNumber = 4;
+  static const int kPreparedSetFieldNumber = 3;
   const ::protocol::PbftPreparedSet& prepared_set(int index) const;
   ::protocol::PbftPreparedSet* mutable_prepared_set(int index);
   ::protocol::PbftPreparedSet* add_prepared_set();
@@ -760,9 +645,9 @@ class PbftViewChange : public ::google::protobuf::Message /* @@protoc_insertion_
   const ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >&
       prepared_set() const;
 
-  // optional int64 replica_id = 5;
+  // optional int64 replica_id = 4;
   void clear_replica_id();
-  static const int kReplicaIdFieldNumber = 5;
+  static const int kReplicaIdFieldNumber = 4;
   ::google::protobuf::int64 replica_id() const;
   void set_replica_id(::google::protobuf::int64 value);
 
@@ -773,7 +658,6 @@ class PbftViewChange : public ::google::protobuf::Message /* @@protoc_insertion_
   bool _is_default_instance_;
   ::google::protobuf::int64 view_number_;
   ::google::protobuf::int64 sequence_;
-  ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv > checkpoints_;
   ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet > prepared_set_;
   ::google::protobuf::int64 replica_id_;
   mutable int _cached_size_;
@@ -1007,28 +891,19 @@ class Pbft : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::protocol::PbftCommit* release_commit();
   void set_allocated_commit(::protocol::PbftCommit* commit);
 
-  // optional .protocol.PbftCheckPoint checkpoint = 6;
-  bool has_checkpoint() const;
-  void clear_checkpoint();
-  static const int kCheckpointFieldNumber = 6;
-  const ::protocol::PbftCheckPoint& checkpoint() const;
-  ::protocol::PbftCheckPoint* mutable_checkpoint();
-  ::protocol::PbftCheckPoint* release_checkpoint();
-  void set_allocated_checkpoint(::protocol::PbftCheckPoint* checkpoint);
-
-  // optional .protocol.PbftViewChange view_change = 7;
+  // optional .protocol.PbftViewChange view_change = 6;
   bool has_view_change() const;
   void clear_view_change();
-  static const int kViewChangeFieldNumber = 7;
+  static const int kViewChangeFieldNumber = 6;
   const ::protocol::PbftViewChange& view_change() const;
   ::protocol::PbftViewChange* mutable_view_change();
   ::protocol::PbftViewChange* release_view_change();
   void set_allocated_view_change(::protocol::PbftViewChange* view_change);
 
-  // optional .protocol.PbftNewView new_view = 8;
+  // optional .protocol.PbftNewView new_view = 7;
   bool has_new_view() const;
   void clear_new_view();
-  static const int kNewViewFieldNumber = 8;
+  static const int kNewViewFieldNumber = 7;
   const ::protocol::PbftNewView& new_view() const;
   ::protocol::PbftNewView* mutable_new_view();
   ::protocol::PbftNewView* release_new_view();
@@ -1043,7 +918,6 @@ class Pbft : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::protocol::PbftPrePrepare* pre_prepare_;
   ::protocol::PbftPrepare* prepare_;
   ::protocol::PbftCommit* commit_;
-  ::protocol::PbftCheckPoint* checkpoint_;
   ::protocol::PbftViewChange* view_change_;
   ::protocol::PbftNewView* new_view_;
   int type_;
@@ -1920,82 +1794,6 @@ inline void PbftCommit::set_allocated_value_digest(::std::string* value_digest) 
 
 // -------------------------------------------------------------------
 
-// PbftCheckPoint
-
-// optional int64 sequence = 1;
-inline void PbftCheckPoint::clear_sequence() {
-  sequence_ = GOOGLE_LONGLONG(0);
-}
-inline ::google::protobuf::int64 PbftCheckPoint::sequence() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.sequence)
-  return sequence_;
-}
-inline void PbftCheckPoint::set_sequence(::google::protobuf::int64 value) {
-  
-  sequence_ = value;
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.sequence)
-}
-
-// optional int64 replica_id = 2;
-inline void PbftCheckPoint::clear_replica_id() {
-  replica_id_ = GOOGLE_LONGLONG(0);
-}
-inline ::google::protobuf::int64 PbftCheckPoint::replica_id() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.replica_id)
-  return replica_id_;
-}
-inline void PbftCheckPoint::set_replica_id(::google::protobuf::int64 value) {
-  
-  replica_id_ = value;
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.replica_id)
-}
-
-// optional bytes state_digest = 3;
-inline void PbftCheckPoint::clear_state_digest() {
-  state_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& PbftCheckPoint::state_digest() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.state_digest)
-  return state_digest_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void PbftCheckPoint::set_state_digest(const ::std::string& value) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.state_digest)
-}
-inline void PbftCheckPoint::set_state_digest(const char* value) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.PbftCheckPoint.state_digest)
-}
-inline void PbftCheckPoint::set_state_digest(const void* value, size_t size) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.PbftCheckPoint.state_digest)
-}
-inline ::std::string* PbftCheckPoint::mutable_state_digest() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.PbftCheckPoint.state_digest)
-  return state_digest_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* PbftCheckPoint::release_state_digest() {
-  // @@protoc_insertion_point(field_release:protocol.PbftCheckPoint.state_digest)
-  
-  return state_digest_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void PbftCheckPoint::set_allocated_state_digest(::std::string* state_digest) {
-  if (state_digest != NULL) {
-    
-  } else {
-    
-  }
-  state_digest_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), state_digest);
-  // @@protoc_insertion_point(field_set_allocated:protocol.PbftCheckPoint.state_digest)
-}
-
-// -------------------------------------------------------------------
-
 // PbftPreparedSet
 
 // optional .protocol.PbftEnv pre_prepare = 1;
@@ -2098,37 +1896,7 @@ inline void PbftViewChange::set_sequence(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.PbftViewChange.sequence)
 }
 
-// repeated .protocol.PbftEnv checkpoints = 3;
-inline int PbftViewChange::checkpoints_size() const {
-  return checkpoints_.size();
-}
-inline void PbftViewChange::clear_checkpoints() {
-  checkpoints_.Clear();
-}
-inline const ::protocol::PbftEnv& PbftViewChange::checkpoints(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Get(index);
-}
-inline ::protocol::PbftEnv* PbftViewChange::mutable_checkpoints(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Mutable(index);
-}
-inline ::protocol::PbftEnv* PbftViewChange::add_checkpoints() {
-  // @@protoc_insertion_point(field_add:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Add();
-}
-inline ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >*
-PbftViewChange::mutable_checkpoints() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftViewChange.checkpoints)
-  return &checkpoints_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
-PbftViewChange::checkpoints() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftViewChange.checkpoints)
-  return checkpoints_;
-}
-
-// repeated .protocol.PbftPreparedSet prepared_set = 4;
+// repeated .protocol.PbftPreparedSet prepared_set = 3;
 inline int PbftViewChange::prepared_set_size() const {
   return prepared_set_.size();
 }
@@ -2158,7 +1926,7 @@ PbftViewChange::prepared_set() const {
   return prepared_set_;
 }
 
-// optional int64 replica_id = 5;
+// optional int64 replica_id = 4;
 inline void PbftViewChange::clear_replica_id() {
   replica_id_ = GOOGLE_LONGLONG(0);
 }
@@ -2424,45 +2192,7 @@ inline void Pbft::set_allocated_commit(::protocol::PbftCommit* commit) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.commit)
 }
 
-// optional .protocol.PbftCheckPoint checkpoint = 6;
-inline bool Pbft::has_checkpoint() const {
-  return !_is_default_instance_ && checkpoint_ != NULL;
-}
-inline void Pbft::clear_checkpoint() {
-  if (GetArenaNoVirtual() == NULL && checkpoint_ != NULL) delete checkpoint_;
-  checkpoint_ = NULL;
-}
-inline const ::protocol::PbftCheckPoint& Pbft::checkpoint() const {
-  // @@protoc_insertion_point(field_get:protocol.Pbft.checkpoint)
-  return checkpoint_ != NULL ? *checkpoint_ : *default_instance_->checkpoint_;
-}
-inline ::protocol::PbftCheckPoint* Pbft::mutable_checkpoint() {
-  
-  if (checkpoint_ == NULL) {
-    checkpoint_ = new ::protocol::PbftCheckPoint;
-  }
-  // @@protoc_insertion_point(field_mutable:protocol.Pbft.checkpoint)
-  return checkpoint_;
-}
-inline ::protocol::PbftCheckPoint* Pbft::release_checkpoint() {
-  // @@protoc_insertion_point(field_release:protocol.Pbft.checkpoint)
-  
-  ::protocol::PbftCheckPoint* temp = checkpoint_;
-  checkpoint_ = NULL;
-  return temp;
-}
-inline void Pbft::set_allocated_checkpoint(::protocol::PbftCheckPoint* checkpoint) {
-  delete checkpoint_;
-  checkpoint_ = checkpoint;
-  if (checkpoint) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.checkpoint)
-}
-
-// optional .protocol.PbftViewChange view_change = 7;
+// optional .protocol.PbftViewChange view_change = 6;
 inline bool Pbft::has_view_change() const {
   return !_is_default_instance_ && view_change_ != NULL;
 }
@@ -2500,7 +2230,7 @@ inline void Pbft::set_allocated_view_change(::protocol::PbftViewChange* view_cha
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.view_change)
 }
 
-// optional .protocol.PbftNewView new_view = 8;
+// optional .protocol.PbftNewView new_view = 7;
 inline bool Pbft::has_new_view() const {
   return !_is_default_instance_ && new_view_ != NULL;
 }
@@ -2879,8 +2609,6 @@ inline void FeeConfig::set_pay_coin_fee(::google::protobuf::int64 value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
-// -------------------------------------------------------------------
-
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

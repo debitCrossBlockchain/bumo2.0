@@ -30,9 +30,6 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* PbftCommit_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftCommit_reflection_ = NULL;
-const ::google::protobuf::Descriptor* PbftCheckPoint_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  PbftCheckPoint_reflection_ = NULL;
 const ::google::protobuf::Descriptor* PbftPreparedSet_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftPreparedSet_reflection_ = NULL;
@@ -129,24 +126,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftCommit),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCommit, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCommit, _is_default_instance_));
-  PbftCheckPoint_descriptor_ = file->message_type(3);
-  static const int PbftCheckPoint_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, sequence_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, replica_id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, state_digest_),
-  };
-  PbftCheckPoint_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      PbftCheckPoint_descriptor_,
-      PbftCheckPoint::default_instance_,
-      PbftCheckPoint_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(PbftCheckPoint),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, _is_default_instance_));
-  PbftPreparedSet_descriptor_ = file->message_type(4);
+  PbftPreparedSet_descriptor_ = file->message_type(3);
   static const int PbftPreparedSet_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftPreparedSet, pre_prepare_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftPreparedSet, prepare_),
@@ -162,11 +142,10 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftPreparedSet),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftPreparedSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftPreparedSet, _is_default_instance_));
-  PbftViewChange_descriptor_ = file->message_type(5);
-  static const int PbftViewChange_offsets_[5] = {
+  PbftViewChange_descriptor_ = file->message_type(4);
+  static const int PbftViewChange_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, view_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, sequence_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, checkpoints_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, prepared_set_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, replica_id_),
   };
@@ -181,7 +160,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftViewChange),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, _is_default_instance_));
-  PbftNewView_descriptor_ = file->message_type(6);
+  PbftNewView_descriptor_ = file->message_type(5);
   static const int PbftNewView_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, view_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, sequence_),
@@ -200,14 +179,13 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftNewView),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, _is_default_instance_));
-  Pbft_descriptor_ = file->message_type(7);
-  static const int Pbft_offsets_[8] = {
+  Pbft_descriptor_ = file->message_type(6);
+  static const int Pbft_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, round_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, pre_prepare_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, prepare_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, commit_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, checkpoint_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, view_change_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, new_view_),
   };
@@ -222,7 +200,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(Pbft),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, _is_default_instance_));
-  PbftEnv_descriptor_ = file->message_type(8);
+  PbftEnv_descriptor_ = file->message_type(7);
   static const int PbftEnv_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, pbft_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, signature_),
@@ -238,7 +216,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftEnv),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, _is_default_instance_));
-  Validator_descriptor_ = file->message_type(9);
+  Validator_descriptor_ = file->message_type(8);
   static const int Validator_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, pledge_coin_amount_),
@@ -254,7 +232,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(Validator),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, _is_default_instance_));
-  ValidatorSet_descriptor_ = file->message_type(10);
+  ValidatorSet_descriptor_ = file->message_type(9);
   static const int ValidatorSet_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, validators_),
   };
@@ -269,7 +247,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(ValidatorSet),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, _is_default_instance_));
-  PbftProof_descriptor_ = file->message_type(11);
+  PbftProof_descriptor_ = file->message_type(10);
   static const int PbftProof_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, commits_),
   };
@@ -284,7 +262,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftProof),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, _is_default_instance_));
-  FeeConfig_descriptor_ = file->message_type(12);
+  FeeConfig_descriptor_ = file->message_type(11);
   static const int FeeConfig_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, byte_fee_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, base_reserve_),
@@ -330,8 +308,6 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftCommit_descriptor_, &PbftCommit::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      PbftCheckPoint_descriptor_, &PbftCheckPoint::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftPreparedSet_descriptor_, &PbftPreparedSet::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftViewChange_descriptor_, &PbftViewChange::default_instance());
@@ -360,8 +336,6 @@ void protobuf_ShutdownFile_consensus_2eproto() {
   delete PbftPrepare_reflection_;
   delete PbftCommit::default_instance_;
   delete PbftCommit_reflection_;
-  delete PbftCheckPoint::default_instance_;
-  delete PbftCheckPoint_reflection_;
   delete PbftPreparedSet::default_instance_;
   delete PbftPreparedSet_reflection_;
   delete PbftViewChange::default_instance_;
@@ -399,57 +373,51 @@ void protobuf_AddDesc_consensus_2eproto() {
     "nce\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001(\003\022\024\n\014value_d"
     "igest\030\004 \001(\014\"]\n\nPbftCommit\022\023\n\013view_number"
     "\030\001 \001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003"
-    " \001(\003\022\024\n\014value_digest\030\004 \001(\014\"L\n\016PbftCheckP"
-    "oint\022\020\n\010sequence\030\001 \001(\003\022\022\n\nreplica_id\030\002 \001"
-    "(\003\022\024\n\014state_digest\030\003 \001(\014\"]\n\017PbftPrepared"
-    "Set\022&\n\013pre_prepare\030\001 \001(\0132\021.protocol.Pbft"
-    "Env\022\"\n\007prepare\030\002 \003(\0132\021.protocol.PbftEnv\""
-    "\244\001\n\016PbftViewChange\022\023\n\013view_number\030\001 \001(\003\022"
-    "\020\n\010sequence\030\002 \001(\003\022&\n\013checkpoints\030\003 \003(\0132\021"
-    ".protocol.PbftEnv\022/\n\014prepared_set\030\004 \003(\0132"
-    "\031.protocol.PbftPreparedSet\022\022\n\nreplica_id"
-    "\030\005 \001(\003\"\232\001\n\013PbftNewView\022\023\n\013view_number\030\001 "
-    "\001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001("
-    "\003\022\'\n\014view_changes\030\004 \003(\0132\021.protocol.PbftE"
-    "nv\022\'\n\014pre_prepares\030\005 \003(\0132\021.protocol.Pbft"
-    "Env\"\310\002\n\004Pbft\022\024\n\014round_number\030\001 \001(\003\022\'\n\004ty"
-    "pe\030\002 \001(\0162\031.protocol.PbftMessageType\022-\n\013p"
-    "re_prepare\030\003 \001(\0132\030.protocol.PbftPrePrepa"
-    "re\022&\n\007prepare\030\004 \001(\0132\025.protocol.PbftPrepa"
-    "re\022$\n\006commit\030\005 \001(\0132\024.protocol.PbftCommit"
-    "\022,\n\ncheckpoint\030\006 \001(\0132\030.protocol.PbftChec"
-    "kPoint\022-\n\013view_change\030\007 \001(\0132\030.protocol.P"
-    "bftViewChange\022\'\n\010new_view\030\010 \001(\0132\025.protoc"
-    "ol.PbftNewView\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132"
-    "\016.protocol.Pbft\022&\n\tsignature\030\002 \001(\0132\023.pro"
-    "tocol.Signature\"8\n\tValidator\022\017\n\007address\030"
-    "\001 \001(\t\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Val"
-    "idatorSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol"
-    ".Validator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\013"
-    "2\021.protocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010byt"
-    "e_fee\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022cre"
-    "ate_account_fee\030\003 \001(\003\022\027\n\017issue_asset_fee"
-    "\030\004 \001(\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata_"
-    "fee\030\006 \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(\003"
-    "\022\031\n\021set_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin_"
-    "fee\030\t \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE_"
-    "FEE\020\001\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_AC"
-    "COUNT_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAYM"
-    "ENT_FEE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_S"
-    "IGNER_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE\020"
-    "\010\022\020\n\014PAY_COIN_FEE\020\t*\243\001\n\017PbftMessageType\022"
-    "\030\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_P"
-    "REPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_T"
-    "YPE_CHECKPOINT\020\003\022\030\n\024PBFT_TYPE_VIEWCHANGE"
-    "\020\004\022\025\n\021PBFT_TYPE_NEWVIEW\020\005*8\n\rPbftValueTy"
-    "pe\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXSE"
-    "T\020\001b\006proto3", 2091);
+    " \001(\003\022\024\n\014value_digest\030\004 \001(\014\"]\n\017PbftPrepar"
+    "edSet\022&\n\013pre_prepare\030\001 \001(\0132\021.protocol.Pb"
+    "ftEnv\022\"\n\007prepare\030\002 \003(\0132\021.protocol.PbftEn"
+    "v\"|\n\016PbftViewChange\022\023\n\013view_number\030\001 \001(\003"
+    "\022\020\n\010sequence\030\002 \001(\003\022/\n\014prepared_set\030\003 \003(\013"
+    "2\031.protocol.PbftPreparedSet\022\022\n\nreplica_i"
+    "d\030\004 \001(\003\"\232\001\n\013PbftNewView\022\023\n\013view_number\030\001"
+    " \001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001"
+    "(\003\022\'\n\014view_changes\030\004 \003(\0132\021.protocol.Pbft"
+    "Env\022\'\n\014pre_prepares\030\005 \003(\0132\021.protocol.Pbf"
+    "tEnv\"\232\002\n\004Pbft\022\024\n\014round_number\030\001 \001(\003\022\'\n\004t"
+    "ype\030\002 \001(\0162\031.protocol.PbftMessageType\022-\n\013"
+    "pre_prepare\030\003 \001(\0132\030.protocol.PbftPrePrep"
+    "are\022&\n\007prepare\030\004 \001(\0132\025.protocol.PbftPrep"
+    "are\022$\n\006commit\030\005 \001(\0132\024.protocol.PbftCommi"
+    "t\022-\n\013view_change\030\006 \001(\0132\030.protocol.PbftVi"
+    "ewChange\022\'\n\010new_view\030\007 \001(\0132\025.protocol.Pb"
+    "ftNewView\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132\016.pro"
+    "tocol.Pbft\022&\n\tsignature\030\002 \001(\0132\023.protocol"
+    ".Signature\"8\n\tValidator\022\017\n\007address\030\001 \001(\t"
+    "\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Validato"
+    "rSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol.Vali"
+    "dator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\0132\021.pr"
+    "otocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010byte_fee"
+    "\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022create_a"
+    "ccount_fee\030\003 \001(\003\022\027\n\017issue_asset_fee\030\004 \001("
+    "\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata_fee\030\006"
+    " \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(\003\022\031\n\021s"
+    "et_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin_fee\030\t"
+    " \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE_FEE\020\001"
+    "\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_ACCOUNT"
+    "_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAYMENT_F"
+    "EE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_SIGNER"
+    "_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE\020\010\022\020\n\014"
+    "PAY_COIN_FEE\020\t*\211\001\n\017PbftMessageType\022\030\n\024PB"
+    "FT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_PREPAR"
+    "E\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_TYPE_V"
+    "IEWCHANGE\020\003\022\025\n\021PBFT_TYPE_NEWVIEW\020\004*8\n\rPb"
+    "ftValueType\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_V"
+    "ALUE_TXSET\020\001b\006proto3", 1900);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "consensus.proto", &protobuf_RegisterTypes);
   PbftPrePrepare::default_instance_ = new PbftPrePrepare();
   PbftPrepare::default_instance_ = new PbftPrepare();
   PbftCommit::default_instance_ = new PbftCommit();
-  PbftCheckPoint::default_instance_ = new PbftCheckPoint();
   PbftPreparedSet::default_instance_ = new PbftPreparedSet();
   PbftViewChange::default_instance_ = new PbftViewChange();
   PbftNewView::default_instance_ = new PbftNewView();
@@ -462,7 +430,6 @@ void protobuf_AddDesc_consensus_2eproto() {
   PbftPrePrepare::default_instance_->InitAsDefaultInstance();
   PbftPrepare::default_instance_->InitAsDefaultInstance();
   PbftCommit::default_instance_->InitAsDefaultInstance();
-  PbftCheckPoint::default_instance_->InitAsDefaultInstance();
   PbftPreparedSet::default_instance_->InitAsDefaultInstance();
   PbftViewChange::default_instance_->InitAsDefaultInstance();
   PbftNewView::default_instance_->InitAsDefaultInstance();
@@ -492,7 +459,6 @@ bool PbftMessageType_IsValid(int value) {
     case 2:
     case 3:
     case 4:
-    case 5:
       return true;
     default:
       return false;
@@ -1950,403 +1916,6 @@ void PbftCommit::clear_value_digest() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int PbftCheckPoint::kSequenceFieldNumber;
-const int PbftCheckPoint::kReplicaIdFieldNumber;
-const int PbftCheckPoint::kStateDigestFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-PbftCheckPoint::PbftCheckPoint()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:protocol.PbftCheckPoint)
-}
-
-void PbftCheckPoint::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-}
-
-PbftCheckPoint::PbftCheckPoint(const PbftCheckPoint& from)
-  : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:protocol.PbftCheckPoint)
-}
-
-void PbftCheckPoint::SharedCtor() {
-    _is_default_instance_ = false;
-  ::google::protobuf::internal::GetEmptyString();
-  _cached_size_ = 0;
-  sequence_ = GOOGLE_LONGLONG(0);
-  replica_id_ = GOOGLE_LONGLONG(0);
-  state_digest_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-PbftCheckPoint::~PbftCheckPoint() {
-  // @@protoc_insertion_point(destructor:protocol.PbftCheckPoint)
-  SharedDtor();
-}
-
-void PbftCheckPoint::SharedDtor() {
-  state_digest_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (this != default_instance_) {
-  }
-}
-
-void PbftCheckPoint::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* PbftCheckPoint::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return PbftCheckPoint_descriptor_;
-}
-
-const PbftCheckPoint& PbftCheckPoint::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_consensus_2eproto();
-  return *default_instance_;
-}
-
-PbftCheckPoint* PbftCheckPoint::default_instance_ = NULL;
-
-PbftCheckPoint* PbftCheckPoint::New(::google::protobuf::Arena* arena) const {
-  PbftCheckPoint* n = new PbftCheckPoint;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void PbftCheckPoint::Clear() {
-// @@protoc_insertion_point(message_clear_start:protocol.PbftCheckPoint)
-#if defined(__clang__)
-#define ZR_HELPER_(f) \
-  _Pragma("clang diagnostic push") \
-  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
-  __builtin_offsetof(PbftCheckPoint, f) \
-  _Pragma("clang diagnostic pop")
-#else
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<PbftCheckPoint*>(16)->f)
-#endif
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(sequence_, replica_id_);
-  state_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-
-#undef ZR_HELPER_
-#undef ZR_
-
-}
-
-bool PbftCheckPoint::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:protocol.PbftCheckPoint)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional int64 sequence = 1;
-      case 1: {
-        if (tag == 8) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &sequence_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(16)) goto parse_replica_id;
-        break;
-      }
-
-      // optional int64 replica_id = 2;
-      case 2: {
-        if (tag == 16) {
-         parse_replica_id:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &replica_id_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(26)) goto parse_state_digest;
-        break;
-      }
-
-      // optional bytes state_digest = 3;
-      case 3: {
-        if (tag == 26) {
-         parse_state_digest:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_state_digest()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:protocol.PbftCheckPoint)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:protocol.PbftCheckPoint)
-  return false;
-#undef DO_
-}
-
-void PbftCheckPoint::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:protocol.PbftCheckPoint)
-  // optional int64 sequence = 1;
-  if (this->sequence() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->sequence(), output);
-  }
-
-  // optional int64 replica_id = 2;
-  if (this->replica_id() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->replica_id(), output);
-  }
-
-  // optional bytes state_digest = 3;
-  if (this->state_digest().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      3, this->state_digest(), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:protocol.PbftCheckPoint)
-}
-
-::google::protobuf::uint8* PbftCheckPoint::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:protocol.PbftCheckPoint)
-  // optional int64 sequence = 1;
-  if (this->sequence() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->sequence(), target);
-  }
-
-  // optional int64 replica_id = 2;
-  if (this->replica_id() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->replica_id(), target);
-  }
-
-  // optional bytes state_digest = 3;
-  if (this->state_digest().size() > 0) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        3, this->state_digest(), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:protocol.PbftCheckPoint)
-  return target;
-}
-
-int PbftCheckPoint::ByteSize() const {
-// @@protoc_insertion_point(message_byte_size_start:protocol.PbftCheckPoint)
-  int total_size = 0;
-
-  // optional int64 sequence = 1;
-  if (this->sequence() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->sequence());
-  }
-
-  // optional int64 replica_id = 2;
-  if (this->replica_id() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->replica_id());
-  }
-
-  // optional bytes state_digest = 3;
-  if (this->state_digest().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::BytesSize(
-        this->state_digest());
-  }
-
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void PbftCheckPoint::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:protocol.PbftCheckPoint)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const PbftCheckPoint* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const PbftCheckPoint>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.PbftCheckPoint)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.PbftCheckPoint)
-    MergeFrom(*source);
-  }
-}
-
-void PbftCheckPoint::MergeFrom(const PbftCheckPoint& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:protocol.PbftCheckPoint)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  if (from.sequence() != 0) {
-    set_sequence(from.sequence());
-  }
-  if (from.replica_id() != 0) {
-    set_replica_id(from.replica_id());
-  }
-  if (from.state_digest().size() > 0) {
-
-    state_digest_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.state_digest_);
-  }
-}
-
-void PbftCheckPoint::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:protocol.PbftCheckPoint)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void PbftCheckPoint::CopyFrom(const PbftCheckPoint& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:protocol.PbftCheckPoint)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool PbftCheckPoint::IsInitialized() const {
-
-  return true;
-}
-
-void PbftCheckPoint::Swap(PbftCheckPoint* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void PbftCheckPoint::InternalSwap(PbftCheckPoint* other) {
-  std::swap(sequence_, other->sequence_);
-  std::swap(replica_id_, other->replica_id_);
-  state_digest_.Swap(&other->state_digest_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata PbftCheckPoint::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = PbftCheckPoint_descriptor_;
-  metadata.reflection = PbftCheckPoint_reflection_;
-  return metadata;
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// PbftCheckPoint
-
-// optional int64 sequence = 1;
-void PbftCheckPoint::clear_sequence() {
-  sequence_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 PbftCheckPoint::sequence() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.sequence)
-  return sequence_;
-}
- void PbftCheckPoint::set_sequence(::google::protobuf::int64 value) {
-  
-  sequence_ = value;
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.sequence)
-}
-
-// optional int64 replica_id = 2;
-void PbftCheckPoint::clear_replica_id() {
-  replica_id_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 PbftCheckPoint::replica_id() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.replica_id)
-  return replica_id_;
-}
- void PbftCheckPoint::set_replica_id(::google::protobuf::int64 value) {
-  
-  replica_id_ = value;
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.replica_id)
-}
-
-// optional bytes state_digest = 3;
-void PbftCheckPoint::clear_state_digest() {
-  state_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& PbftCheckPoint::state_digest() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.state_digest)
-  return state_digest_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void PbftCheckPoint::set_state_digest(const ::std::string& value) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.state_digest)
-}
- void PbftCheckPoint::set_state_digest(const char* value) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.PbftCheckPoint.state_digest)
-}
- void PbftCheckPoint::set_state_digest(const void* value, size_t size) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.PbftCheckPoint.state_digest)
-}
- ::std::string* PbftCheckPoint::mutable_state_digest() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.PbftCheckPoint.state_digest)
-  return state_digest_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* PbftCheckPoint::release_state_digest() {
-  // @@protoc_insertion_point(field_release:protocol.PbftCheckPoint.state_digest)
-  
-  return state_digest_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void PbftCheckPoint::set_allocated_state_digest(::std::string* state_digest) {
-  if (state_digest != NULL) {
-    
-  } else {
-    
-  }
-  state_digest_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), state_digest);
-  // @@protoc_insertion_point(field_set_allocated:protocol.PbftCheckPoint.state_digest)
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PbftPreparedSet::kPrePrepareFieldNumber;
 const int PbftPreparedSet::kPrepareFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -2687,7 +2256,6 @@ PbftPreparedSet::prepare() const {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PbftViewChange::kViewNumberFieldNumber;
 const int PbftViewChange::kSequenceFieldNumber;
-const int PbftViewChange::kCheckpointsFieldNumber;
 const int PbftViewChange::kPreparedSetFieldNumber;
 const int PbftViewChange::kReplicaIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -2777,7 +2345,6 @@ void PbftViewChange::Clear() {
 #undef ZR_HELPER_
 #undef ZR_
 
-  checkpoints_.Clear();
   prepared_set_.Clear();
 }
 
@@ -2816,30 +2383,14 @@ bool PbftViewChange::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_checkpoints;
+        if (input->ExpectTag(26)) goto parse_prepared_set;
         break;
       }
 
-      // repeated .protocol.PbftEnv checkpoints = 3;
+      // repeated .protocol.PbftPreparedSet prepared_set = 3;
       case 3: {
         if (tag == 26) {
-         parse_checkpoints:
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_checkpoints:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_checkpoints()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(26)) goto parse_loop_checkpoints;
-        if (input->ExpectTag(34)) goto parse_loop_prepared_set;
-        input->UnsafeDecrementRecursionDepth();
-        break;
-      }
-
-      // repeated .protocol.PbftPreparedSet prepared_set = 4;
-      case 4: {
-        if (tag == 34) {
+         parse_prepared_set:
           DO_(input->IncrementRecursionDepth());
          parse_loop_prepared_set:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
@@ -2847,15 +2398,15 @@ bool PbftViewChange::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_loop_prepared_set;
+        if (input->ExpectTag(26)) goto parse_loop_prepared_set;
         input->UnsafeDecrementRecursionDepth();
-        if (input->ExpectTag(40)) goto parse_replica_id;
+        if (input->ExpectTag(32)) goto parse_replica_id;
         break;
       }
 
-      // optional int64 replica_id = 5;
-      case 5: {
-        if (tag == 40) {
+      // optional int64 replica_id = 4;
+      case 4: {
+        if (tag == 32) {
          parse_replica_id:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
@@ -2902,21 +2453,15 @@ void PbftViewChange::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->sequence(), output);
   }
 
-  // repeated .protocol.PbftEnv checkpoints = 3;
-  for (unsigned int i = 0, n = this->checkpoints_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->checkpoints(i), output);
-  }
-
-  // repeated .protocol.PbftPreparedSet prepared_set = 4;
+  // repeated .protocol.PbftPreparedSet prepared_set = 3;
   for (unsigned int i = 0, n = this->prepared_set_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->prepared_set(i), output);
+      3, this->prepared_set(i), output);
   }
 
-  // optional int64 replica_id = 5;
+  // optional int64 replica_id = 4;
   if (this->replica_id() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->replica_id(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->replica_id(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.PbftViewChange)
@@ -2935,23 +2480,16 @@ void PbftViewChange::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->sequence(), target);
   }
 
-  // repeated .protocol.PbftEnv checkpoints = 3;
-  for (unsigned int i = 0, n = this->checkpoints_size(); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        3, this->checkpoints(i), false, target);
-  }
-
-  // repeated .protocol.PbftPreparedSet prepared_set = 4;
+  // repeated .protocol.PbftPreparedSet prepared_set = 3;
   for (unsigned int i = 0, n = this->prepared_set_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        4, this->prepared_set(i), false, target);
+        3, this->prepared_set(i), false, target);
   }
 
-  // optional int64 replica_id = 5;
+  // optional int64 replica_id = 4;
   if (this->replica_id() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->replica_id(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->replica_id(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.PbftViewChange)
@@ -2976,22 +2514,14 @@ int PbftViewChange::ByteSize() const {
         this->sequence());
   }
 
-  // optional int64 replica_id = 5;
+  // optional int64 replica_id = 4;
   if (this->replica_id() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->replica_id());
   }
 
-  // repeated .protocol.PbftEnv checkpoints = 3;
-  total_size += 1 * this->checkpoints_size();
-  for (int i = 0; i < this->checkpoints_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->checkpoints(i));
-  }
-
-  // repeated .protocol.PbftPreparedSet prepared_set = 4;
+  // repeated .protocol.PbftPreparedSet prepared_set = 3;
   total_size += 1 * this->prepared_set_size();
   for (int i = 0; i < this->prepared_set_size(); i++) {
     total_size +=
@@ -3027,7 +2557,6 @@ void PbftViewChange::MergeFrom(const PbftViewChange& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
-  checkpoints_.MergeFrom(from.checkpoints_);
   prepared_set_.MergeFrom(from.prepared_set_);
   if (from.view_number() != 0) {
     set_view_number(from.view_number());
@@ -3066,7 +2595,6 @@ void PbftViewChange::Swap(PbftViewChange* other) {
 void PbftViewChange::InternalSwap(PbftViewChange* other) {
   std::swap(view_number_, other->view_number_);
   std::swap(sequence_, other->sequence_);
-  checkpoints_.UnsafeArenaSwap(&other->checkpoints_);
   prepared_set_.UnsafeArenaSwap(&other->prepared_set_);
   std::swap(replica_id_, other->replica_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -3112,37 +2640,7 @@ void PbftViewChange::clear_sequence() {
   // @@protoc_insertion_point(field_set:protocol.PbftViewChange.sequence)
 }
 
-// repeated .protocol.PbftEnv checkpoints = 3;
-int PbftViewChange::checkpoints_size() const {
-  return checkpoints_.size();
-}
-void PbftViewChange::clear_checkpoints() {
-  checkpoints_.Clear();
-}
-const ::protocol::PbftEnv& PbftViewChange::checkpoints(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Get(index);
-}
-::protocol::PbftEnv* PbftViewChange::mutable_checkpoints(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Mutable(index);
-}
-::protocol::PbftEnv* PbftViewChange::add_checkpoints() {
-  // @@protoc_insertion_point(field_add:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Add();
-}
-::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >*
-PbftViewChange::mutable_checkpoints() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftViewChange.checkpoints)
-  return &checkpoints_;
-}
-const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
-PbftViewChange::checkpoints() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftViewChange.checkpoints)
-  return checkpoints_;
-}
-
-// repeated .protocol.PbftPreparedSet prepared_set = 4;
+// repeated .protocol.PbftPreparedSet prepared_set = 3;
 int PbftViewChange::prepared_set_size() const {
   return prepared_set_.size();
 }
@@ -3172,7 +2670,7 @@ PbftViewChange::prepared_set() const {
   return prepared_set_;
 }
 
-// optional int64 replica_id = 5;
+// optional int64 replica_id = 4;
 void PbftViewChange::clear_replica_id() {
   replica_id_ = GOOGLE_LONGLONG(0);
 }
@@ -3701,7 +3199,6 @@ const int Pbft::kTypeFieldNumber;
 const int Pbft::kPrePrepareFieldNumber;
 const int Pbft::kPrepareFieldNumber;
 const int Pbft::kCommitFieldNumber;
-const int Pbft::kCheckpointFieldNumber;
 const int Pbft::kViewChangeFieldNumber;
 const int Pbft::kNewViewFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -3717,7 +3214,6 @@ void Pbft::InitAsDefaultInstance() {
   pre_prepare_ = const_cast< ::protocol::PbftPrePrepare*>(&::protocol::PbftPrePrepare::default_instance());
   prepare_ = const_cast< ::protocol::PbftPrepare*>(&::protocol::PbftPrepare::default_instance());
   commit_ = const_cast< ::protocol::PbftCommit*>(&::protocol::PbftCommit::default_instance());
-  checkpoint_ = const_cast< ::protocol::PbftCheckPoint*>(&::protocol::PbftCheckPoint::default_instance());
   view_change_ = const_cast< ::protocol::PbftViewChange*>(&::protocol::PbftViewChange::default_instance());
   new_view_ = const_cast< ::protocol::PbftNewView*>(&::protocol::PbftNewView::default_instance());
 }
@@ -3738,7 +3234,6 @@ void Pbft::SharedCtor() {
   pre_prepare_ = NULL;
   prepare_ = NULL;
   commit_ = NULL;
-  checkpoint_ = NULL;
   view_change_ = NULL;
   new_view_ = NULL;
 }
@@ -3753,7 +3248,6 @@ void Pbft::SharedDtor() {
     delete pre_prepare_;
     delete prepare_;
     delete commit_;
-    delete checkpoint_;
     delete view_change_;
     delete new_view_;
   }
@@ -3794,8 +3288,6 @@ void Pbft::Clear() {
   prepare_ = NULL;
   if (GetArenaNoVirtual() == NULL && commit_ != NULL) delete commit_;
   commit_ = NULL;
-  if (GetArenaNoVirtual() == NULL && checkpoint_ != NULL) delete checkpoint_;
-  checkpoint_ = NULL;
   if (GetArenaNoVirtual() == NULL && view_change_ != NULL) delete view_change_;
   view_change_ = NULL;
   if (GetArenaNoVirtual() == NULL && new_view_ != NULL) delete new_view_;
@@ -3877,39 +3369,26 @@ bool Pbft::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_checkpoint;
+        if (input->ExpectTag(50)) goto parse_view_change;
         break;
       }
 
-      // optional .protocol.PbftCheckPoint checkpoint = 6;
+      // optional .protocol.PbftViewChange view_change = 6;
       case 6: {
         if (tag == 50) {
-         parse_checkpoint:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_checkpoint()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(58)) goto parse_view_change;
-        break;
-      }
-
-      // optional .protocol.PbftViewChange view_change = 7;
-      case 7: {
-        if (tag == 58) {
          parse_view_change:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_view_change()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(66)) goto parse_new_view;
+        if (input->ExpectTag(58)) goto parse_new_view;
         break;
       }
 
-      // optional .protocol.PbftNewView new_view = 8;
-      case 8: {
-        if (tag == 66) {
+      // optional .protocol.PbftNewView new_view = 7;
+      case 7: {
+        if (tag == 58) {
          parse_new_view:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_new_view()));
@@ -3973,22 +3452,16 @@ void Pbft::SerializeWithCachedSizes(
       5, *this->commit_, output);
   }
 
-  // optional .protocol.PbftCheckPoint checkpoint = 6;
-  if (this->has_checkpoint()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, *this->checkpoint_, output);
-  }
-
-  // optional .protocol.PbftViewChange view_change = 7;
+  // optional .protocol.PbftViewChange view_change = 6;
   if (this->has_view_change()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      7, *this->view_change_, output);
+      6, *this->view_change_, output);
   }
 
-  // optional .protocol.PbftNewView new_view = 8;
+  // optional .protocol.PbftNewView new_view = 7;
   if (this->has_new_view()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      8, *this->new_view_, output);
+      7, *this->new_view_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.Pbft)
@@ -4029,25 +3502,18 @@ void Pbft::SerializeWithCachedSizes(
         5, *this->commit_, false, target);
   }
 
-  // optional .protocol.PbftCheckPoint checkpoint = 6;
-  if (this->has_checkpoint()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        6, *this->checkpoint_, false, target);
-  }
-
-  // optional .protocol.PbftViewChange view_change = 7;
+  // optional .protocol.PbftViewChange view_change = 6;
   if (this->has_view_change()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        7, *this->view_change_, false, target);
+        6, *this->view_change_, false, target);
   }
 
-  // optional .protocol.PbftNewView new_view = 8;
+  // optional .protocol.PbftNewView new_view = 7;
   if (this->has_new_view()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        8, *this->new_view_, false, target);
+        7, *this->new_view_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Pbft)
@@ -4092,21 +3558,14 @@ int Pbft::ByteSize() const {
         *this->commit_);
   }
 
-  // optional .protocol.PbftCheckPoint checkpoint = 6;
-  if (this->has_checkpoint()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->checkpoint_);
-  }
-
-  // optional .protocol.PbftViewChange view_change = 7;
+  // optional .protocol.PbftViewChange view_change = 6;
   if (this->has_view_change()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->view_change_);
   }
 
-  // optional .protocol.PbftNewView new_view = 8;
+  // optional .protocol.PbftNewView new_view = 7;
   if (this->has_new_view()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
@@ -4156,9 +3615,6 @@ void Pbft::MergeFrom(const Pbft& from) {
   if (from.has_commit()) {
     mutable_commit()->::protocol::PbftCommit::MergeFrom(from.commit());
   }
-  if (from.has_checkpoint()) {
-    mutable_checkpoint()->::protocol::PbftCheckPoint::MergeFrom(from.checkpoint());
-  }
   if (from.has_view_change()) {
     mutable_view_change()->::protocol::PbftViewChange::MergeFrom(from.view_change());
   }
@@ -4196,7 +3652,6 @@ void Pbft::InternalSwap(Pbft* other) {
   std::swap(pre_prepare_, other->pre_prepare_);
   std::swap(prepare_, other->prepare_);
   std::swap(commit_, other->commit_);
-  std::swap(checkpoint_, other->checkpoint_);
   std::swap(view_change_, other->view_change_);
   std::swap(new_view_, other->new_view_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -4356,45 +3811,7 @@ void Pbft::set_allocated_commit(::protocol::PbftCommit* commit) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.commit)
 }
 
-// optional .protocol.PbftCheckPoint checkpoint = 6;
-bool Pbft::has_checkpoint() const {
-  return !_is_default_instance_ && checkpoint_ != NULL;
-}
-void Pbft::clear_checkpoint() {
-  if (GetArenaNoVirtual() == NULL && checkpoint_ != NULL) delete checkpoint_;
-  checkpoint_ = NULL;
-}
-const ::protocol::PbftCheckPoint& Pbft::checkpoint() const {
-  // @@protoc_insertion_point(field_get:protocol.Pbft.checkpoint)
-  return checkpoint_ != NULL ? *checkpoint_ : *default_instance_->checkpoint_;
-}
-::protocol::PbftCheckPoint* Pbft::mutable_checkpoint() {
-  
-  if (checkpoint_ == NULL) {
-    checkpoint_ = new ::protocol::PbftCheckPoint;
-  }
-  // @@protoc_insertion_point(field_mutable:protocol.Pbft.checkpoint)
-  return checkpoint_;
-}
-::protocol::PbftCheckPoint* Pbft::release_checkpoint() {
-  // @@protoc_insertion_point(field_release:protocol.Pbft.checkpoint)
-  
-  ::protocol::PbftCheckPoint* temp = checkpoint_;
-  checkpoint_ = NULL;
-  return temp;
-}
-void Pbft::set_allocated_checkpoint(::protocol::PbftCheckPoint* checkpoint) {
-  delete checkpoint_;
-  checkpoint_ = checkpoint;
-  if (checkpoint) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.checkpoint)
-}
-
-// optional .protocol.PbftViewChange view_change = 7;
+// optional .protocol.PbftViewChange view_change = 6;
 bool Pbft::has_view_change() const {
   return !_is_default_instance_ && view_change_ != NULL;
 }
@@ -4432,7 +3849,7 @@ void Pbft::set_allocated_view_change(::protocol::PbftViewChange* view_change) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.view_change)
 }
 
-// optional .protocol.PbftNewView new_view = 8;
+// optional .protocol.PbftNewView new_view = 7;
 bool Pbft::has_new_view() const {
   return !_is_default_instance_ && new_view_ != NULL;
 }

@@ -29,13 +29,6 @@ message PbftCommit
 	bytes value_digest = 4;
 }
 
-message PbftCheckPoint
-{
-	int64 sequence = 1;
-	int64 replica_id = 2;
-	bytes state_digest = 3;
-}
-
 message PbftPreparedSet
 {
 	PbftEnv pre_prepare = 1;
@@ -46,9 +39,8 @@ message PbftViewChange
 {
 	int64 view_number = 1; //v+1
 	int64 sequence = 2;     //n
-	repeated PbftEnv checkpoints = 3; //C
-	repeated PbftPreparedSet prepared_set = 4;  //prepared messages large than n
-	int64 replica_id = 5;
+	repeated PbftPreparedSet prepared_set = 3;  //prepared messages large than n
+	int64 replica_id = 4;
 }
 
 message PbftNewView
@@ -61,12 +53,11 @@ message PbftNewView
 }
 
 enum PbftMessageType {
-	    PBFT_TYPE_PREPREPARE = 0;
-	    PBFT_TYPE_PREPARE = 1;
-	    PBFT_TYPE_COMMIT = 2;
-		PBFT_TYPE_CHECKPOINT = 3;
-		PBFT_TYPE_VIEWCHANGE = 4;
-		PBFT_TYPE_NEWVIEW = 5;
+	  PBFT_TYPE_PREPREPARE = 0;
+	  PBFT_TYPE_PREPARE = 1;
+	  PBFT_TYPE_COMMIT = 2;
+	  PBFT_TYPE_VIEWCHANGE = 3;
+	  PBFT_TYPE_NEWVIEW = 4;
 }
 
 enum PbftValueType {
@@ -81,9 +72,8 @@ message Pbft
 	PbftPrePrepare pre_prepare = 3;
 	PbftPrepare prepare = 4;
 	PbftCommit commit = 5;
-	PbftCheckPoint checkpoint = 6;
-	PbftViewChange view_change = 7;
-	PbftNewView new_view = 8;
+	PbftViewChange view_change = 6;
+	PbftNewView new_view = 7;
 }
 
 message PbftEnv

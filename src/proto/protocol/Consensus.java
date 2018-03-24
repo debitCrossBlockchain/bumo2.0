@@ -32,17 +32,13 @@ public final class Consensus {
      */
     PBFT_TYPE_COMMIT(2),
     /**
-     * <code>PBFT_TYPE_CHECKPOINT = 3;</code>
+     * <code>PBFT_TYPE_VIEWCHANGE = 3;</code>
      */
-    PBFT_TYPE_CHECKPOINT(3),
+    PBFT_TYPE_VIEWCHANGE(3),
     /**
-     * <code>PBFT_TYPE_VIEWCHANGE = 4;</code>
+     * <code>PBFT_TYPE_NEWVIEW = 4;</code>
      */
-    PBFT_TYPE_VIEWCHANGE(4),
-    /**
-     * <code>PBFT_TYPE_NEWVIEW = 5;</code>
-     */
-    PBFT_TYPE_NEWVIEW(5),
+    PBFT_TYPE_NEWVIEW(4),
     UNRECOGNIZED(-1),
     ;
 
@@ -59,17 +55,13 @@ public final class Consensus {
      */
     public static final int PBFT_TYPE_COMMIT_VALUE = 2;
     /**
-     * <code>PBFT_TYPE_CHECKPOINT = 3;</code>
+     * <code>PBFT_TYPE_VIEWCHANGE = 3;</code>
      */
-    public static final int PBFT_TYPE_CHECKPOINT_VALUE = 3;
+    public static final int PBFT_TYPE_VIEWCHANGE_VALUE = 3;
     /**
-     * <code>PBFT_TYPE_VIEWCHANGE = 4;</code>
+     * <code>PBFT_TYPE_NEWVIEW = 4;</code>
      */
-    public static final int PBFT_TYPE_VIEWCHANGE_VALUE = 4;
-    /**
-     * <code>PBFT_TYPE_NEWVIEW = 5;</code>
-     */
-    public static final int PBFT_TYPE_NEWVIEW_VALUE = 5;
+    public static final int PBFT_TYPE_NEWVIEW_VALUE = 4;
 
 
     public final int getNumber() {
@@ -93,9 +85,8 @@ public final class Consensus {
         case 0: return PBFT_TYPE_PREPREPARE;
         case 1: return PBFT_TYPE_PREPARE;
         case 2: return PBFT_TYPE_COMMIT;
-        case 3: return PBFT_TYPE_CHECKPOINT;
-        case 4: return PBFT_TYPE_VIEWCHANGE;
-        case 5: return PBFT_TYPE_NEWVIEW;
+        case 3: return PBFT_TYPE_VIEWCHANGE;
+        case 4: return PBFT_TYPE_NEWVIEW;
         default: return null;
       }
     }
@@ -2192,566 +2183,6 @@ public final class Consensus {
 
   }
 
-  public interface PbftCheckPointOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:protocol.PbftCheckPoint)
-      com.google.protobuf.MessageOrBuilder {
-
-    /**
-     * <code>optional int64 sequence = 1;</code>
-     */
-    long getSequence();
-
-    /**
-     * <code>optional int64 replica_id = 2;</code>
-     */
-    long getReplicaId();
-
-    /**
-     * <code>optional bytes state_digest = 3;</code>
-     */
-    com.google.protobuf.ByteString getStateDigest();
-  }
-  /**
-   * Protobuf type {@code protocol.PbftCheckPoint}
-   */
-  public  static final class PbftCheckPoint extends
-      com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:protocol.PbftCheckPoint)
-      PbftCheckPointOrBuilder {
-    // Use PbftCheckPoint.newBuilder() to construct.
-    private PbftCheckPoint(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
-      super(builder);
-    }
-    private PbftCheckPoint() {
-      sequence_ = 0L;
-      replicaId_ = 0L;
-      stateDigest_ = com.google.protobuf.ByteString.EMPTY;
-    }
-
-    @java.lang.Override
-    public final com.google.protobuf.UnknownFieldSet
-    getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
-    }
-    private PbftCheckPoint(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      this();
-      int mutable_bitField0_ = 0;
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 8: {
-
-              sequence_ = input.readInt64();
-              break;
-            }
-            case 16: {
-
-              replicaId_ = input.readInt64();
-              break;
-            }
-            case 26: {
-
-              stateDigest_ = input.readBytes();
-              break;
-            }
-          }
-        }
-      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new com.google.protobuf.InvalidProtocolBufferException(
-            e).setUnfinishedMessage(this);
-      } finally {
-        makeExtensionsImmutable();
-      }
-    }
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return protocol.Consensus.internal_static_protocol_PbftCheckPoint_descriptor;
-    }
-
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return protocol.Consensus.internal_static_protocol_PbftCheckPoint_fieldAccessorTable
-          .ensureFieldAccessorsInitialized(
-              protocol.Consensus.PbftCheckPoint.class, protocol.Consensus.PbftCheckPoint.Builder.class);
-    }
-
-    public static final int SEQUENCE_FIELD_NUMBER = 1;
-    private long sequence_;
-    /**
-     * <code>optional int64 sequence = 1;</code>
-     */
-    public long getSequence() {
-      return sequence_;
-    }
-
-    public static final int REPLICA_ID_FIELD_NUMBER = 2;
-    private long replicaId_;
-    /**
-     * <code>optional int64 replica_id = 2;</code>
-     */
-    public long getReplicaId() {
-      return replicaId_;
-    }
-
-    public static final int STATE_DIGEST_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString stateDigest_;
-    /**
-     * <code>optional bytes state_digest = 3;</code>
-     */
-    public com.google.protobuf.ByteString getStateDigest() {
-      return stateDigest_;
-    }
-
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      if (sequence_ != 0L) {
-        output.writeInt64(1, sequence_);
-      }
-      if (replicaId_ != 0L) {
-        output.writeInt64(2, replicaId_);
-      }
-      if (!stateDigest_.isEmpty()) {
-        output.writeBytes(3, stateDigest_);
-      }
-    }
-
-    public int getSerializedSize() {
-      int size = memoizedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      if (sequence_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, sequence_);
-      }
-      if (replicaId_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(2, replicaId_);
-      }
-      if (!stateDigest_.isEmpty()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, stateDigest_);
-      }
-      memoizedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    public boolean equals(final java.lang.Object obj) {
-      if (obj == this) {
-       return true;
-      }
-      if (!(obj instanceof protocol.Consensus.PbftCheckPoint)) {
-        return super.equals(obj);
-      }
-      protocol.Consensus.PbftCheckPoint other = (protocol.Consensus.PbftCheckPoint) obj;
-
-      boolean result = true;
-      result = result && (getSequence()
-          == other.getSequence());
-      result = result && (getReplicaId()
-          == other.getReplicaId());
-      result = result && getStateDigest()
-          .equals(other.getStateDigest());
-      return result;
-    }
-
-    @java.lang.Override
-    public int hashCode() {
-      if (memoizedHashCode != 0) {
-        return memoizedHashCode;
-      }
-      int hash = 41;
-      hash = (19 * hash) + getDescriptorForType().hashCode();
-      hash = (37 * hash) + SEQUENCE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getSequence());
-      hash = (37 * hash) + REPLICA_ID_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getReplicaId());
-      hash = (37 * hash) + STATE_DIGEST_FIELD_NUMBER;
-      hash = (53 * hash) + getStateDigest().hashCode();
-      hash = (29 * hash) + unknownFields.hashCode();
-      memoizedHashCode = hash;
-      return hash;
-    }
-
-    public static protocol.Consensus.PbftCheckPoint parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input);
-    }
-    public static protocol.Consensus.PbftCheckPoint parseFrom(
-        com.google.protobuf.CodedInputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return com.google.protobuf.GeneratedMessageV3
-          .parseWithIOException(PARSER, input, extensionRegistry);
-    }
-
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder() {
-      return DEFAULT_INSTANCE.toBuilder();
-    }
-    public static Builder newBuilder(protocol.Consensus.PbftCheckPoint prototype) {
-      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() {
-      return this == DEFAULT_INSTANCE
-          ? new Builder() : new Builder().mergeFrom(this);
-    }
-
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    /**
-     * Protobuf type {@code protocol.PbftCheckPoint}
-     */
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:protocol.PbftCheckPoint)
-        protocol.Consensus.PbftCheckPointOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return protocol.Consensus.internal_static_protocol_PbftCheckPoint_descriptor;
-      }
-
-      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return protocol.Consensus.internal_static_protocol_PbftCheckPoint_fieldAccessorTable
-            .ensureFieldAccessorsInitialized(
-                protocol.Consensus.PbftCheckPoint.class, protocol.Consensus.PbftCheckPoint.Builder.class);
-      }
-
-      // Construct using protocol.Consensus.PbftCheckPoint.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private Builder(
-          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessageV3
-                .alwaysUseFieldBuilders) {
-        }
-      }
-      public Builder clear() {
-        super.clear();
-        sequence_ = 0L;
-
-        replicaId_ = 0L;
-
-        stateDigest_ = com.google.protobuf.ByteString.EMPTY;
-
-        return this;
-      }
-
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return protocol.Consensus.internal_static_protocol_PbftCheckPoint_descriptor;
-      }
-
-      public protocol.Consensus.PbftCheckPoint getDefaultInstanceForType() {
-        return protocol.Consensus.PbftCheckPoint.getDefaultInstance();
-      }
-
-      public protocol.Consensus.PbftCheckPoint build() {
-        protocol.Consensus.PbftCheckPoint result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public protocol.Consensus.PbftCheckPoint buildPartial() {
-        protocol.Consensus.PbftCheckPoint result = new protocol.Consensus.PbftCheckPoint(this);
-        result.sequence_ = sequence_;
-        result.replicaId_ = replicaId_;
-        result.stateDigest_ = stateDigest_;
-        onBuilt();
-        return result;
-      }
-
-      public Builder clone() {
-        return (Builder) super.clone();
-      }
-      public Builder setField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.setField(field, value);
-      }
-      public Builder clearField(
-          com.google.protobuf.Descriptors.FieldDescriptor field) {
-        return (Builder) super.clearField(field);
-      }
-      public Builder clearOneof(
-          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
-        return (Builder) super.clearOneof(oneof);
-      }
-      public Builder setRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
-        return (Builder) super.setRepeatedField(field, index, value);
-      }
-      public Builder addRepeatedField(
-          com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
-        return (Builder) super.addRepeatedField(field, value);
-      }
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof protocol.Consensus.PbftCheckPoint) {
-          return mergeFrom((protocol.Consensus.PbftCheckPoint)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-
-      public Builder mergeFrom(protocol.Consensus.PbftCheckPoint other) {
-        if (other == protocol.Consensus.PbftCheckPoint.getDefaultInstance()) return this;
-        if (other.getSequence() != 0L) {
-          setSequence(other.getSequence());
-        }
-        if (other.getReplicaId() != 0L) {
-          setReplicaId(other.getReplicaId());
-        }
-        if (other.getStateDigest() != com.google.protobuf.ByteString.EMPTY) {
-          setStateDigest(other.getStateDigest());
-        }
-        onChanged();
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        return true;
-      }
-
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        protocol.Consensus.PbftCheckPoint parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (protocol.Consensus.PbftCheckPoint) e.getUnfinishedMessage();
-          throw e.unwrapIOException();
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-
-      private long sequence_ ;
-      /**
-       * <code>optional int64 sequence = 1;</code>
-       */
-      public long getSequence() {
-        return sequence_;
-      }
-      /**
-       * <code>optional int64 sequence = 1;</code>
-       */
-      public Builder setSequence(long value) {
-        
-        sequence_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 sequence = 1;</code>
-       */
-      public Builder clearSequence() {
-        
-        sequence_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long replicaId_ ;
-      /**
-       * <code>optional int64 replica_id = 2;</code>
-       */
-      public long getReplicaId() {
-        return replicaId_;
-      }
-      /**
-       * <code>optional int64 replica_id = 2;</code>
-       */
-      public Builder setReplicaId(long value) {
-        
-        replicaId_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 replica_id = 2;</code>
-       */
-      public Builder clearReplicaId() {
-        
-        replicaId_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private com.google.protobuf.ByteString stateDigest_ = com.google.protobuf.ByteString.EMPTY;
-      /**
-       * <code>optional bytes state_digest = 3;</code>
-       */
-      public com.google.protobuf.ByteString getStateDigest() {
-        return stateDigest_;
-      }
-      /**
-       * <code>optional bytes state_digest = 3;</code>
-       */
-      public Builder setStateDigest(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
-        stateDigest_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional bytes state_digest = 3;</code>
-       */
-      public Builder clearStateDigest() {
-        
-        stateDigest_ = getDefaultInstance().getStateDigest();
-        onChanged();
-        return this;
-      }
-      public final Builder setUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
-      }
-
-      public final Builder mergeUnknownFields(
-          final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
-      }
-
-
-      // @@protoc_insertion_point(builder_scope:protocol.PbftCheckPoint)
-    }
-
-    // @@protoc_insertion_point(class_scope:protocol.PbftCheckPoint)
-    private static final protocol.Consensus.PbftCheckPoint DEFAULT_INSTANCE;
-    static {
-      DEFAULT_INSTANCE = new protocol.Consensus.PbftCheckPoint();
-    }
-
-    public static protocol.Consensus.PbftCheckPoint getDefaultInstance() {
-      return DEFAULT_INSTANCE;
-    }
-
-    private static final com.google.protobuf.Parser<PbftCheckPoint>
-        PARSER = new com.google.protobuf.AbstractParser<PbftCheckPoint>() {
-      public PbftCheckPoint parsePartialFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws com.google.protobuf.InvalidProtocolBufferException {
-          return new PbftCheckPoint(input, extensionRegistry);
-      }
-    };
-
-    public static com.google.protobuf.Parser<PbftCheckPoint> parser() {
-      return PARSER;
-    }
-
-    @java.lang.Override
-    public com.google.protobuf.Parser<PbftCheckPoint> getParserForType() {
-      return PARSER;
-    }
-
-    public protocol.Consensus.PbftCheckPoint getDefaultInstanceForType() {
-      return DEFAULT_INSTANCE;
-    }
-
-  }
-
   public interface PbftPreparedSetOrBuilder extends
       // @@protoc_insertion_point(interface_extends:protocol.PbftPreparedSet)
       com.google.protobuf.MessageOrBuilder {
@@ -3708,54 +3139,10 @@ public final class Consensus {
 
     /**
      * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    java.util.List<protocol.Consensus.PbftEnv> 
-        getCheckpointsList();
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    protocol.Consensus.PbftEnv getCheckpoints(int index);
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    int getCheckpointsCount();
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    java.util.List<? extends protocol.Consensus.PbftEnvOrBuilder> 
-        getCheckpointsOrBuilderList();
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    protocol.Consensus.PbftEnvOrBuilder getCheckpointsOrBuilder(
-        int index);
-
-    /**
-     * <pre>
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     java.util.List<protocol.Consensus.PbftPreparedSet> 
         getPreparedSetList();
@@ -3764,7 +3151,7 @@ public final class Consensus {
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     protocol.Consensus.PbftPreparedSet getPreparedSet(int index);
     /**
@@ -3772,7 +3159,7 @@ public final class Consensus {
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     int getPreparedSetCount();
     /**
@@ -3780,7 +3167,7 @@ public final class Consensus {
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     java.util.List<? extends protocol.Consensus.PbftPreparedSetOrBuilder> 
         getPreparedSetOrBuilderList();
@@ -3789,13 +3176,13 @@ public final class Consensus {
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     protocol.Consensus.PbftPreparedSetOrBuilder getPreparedSetOrBuilder(
         int index);
 
     /**
-     * <code>optional int64 replica_id = 5;</code>
+     * <code>optional int64 replica_id = 4;</code>
      */
     long getReplicaId();
   }
@@ -3813,7 +3200,6 @@ public final class Consensus {
     private PbftViewChange() {
       viewNumber_ = 0L;
       sequence_ = 0L;
-      checkpoints_ = java.util.Collections.emptyList();
       preparedSet_ = java.util.Collections.emptyList();
       replicaId_ = 0L;
     }
@@ -3855,23 +3241,14 @@ public final class Consensus {
             }
             case 26: {
               if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                checkpoints_ = new java.util.ArrayList<protocol.Consensus.PbftEnv>();
-                mutable_bitField0_ |= 0x00000004;
-              }
-              checkpoints_.add(
-                  input.readMessage(protocol.Consensus.PbftEnv.parser(), extensionRegistry));
-              break;
-            }
-            case 34: {
-              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
                 preparedSet_ = new java.util.ArrayList<protocol.Consensus.PbftPreparedSet>();
-                mutable_bitField0_ |= 0x00000008;
+                mutable_bitField0_ |= 0x00000004;
               }
               preparedSet_.add(
                   input.readMessage(protocol.Consensus.PbftPreparedSet.parser(), extensionRegistry));
               break;
             }
-            case 40: {
+            case 32: {
 
               replicaId_ = input.readInt64();
               break;
@@ -3885,9 +3262,6 @@ public final class Consensus {
             e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-          checkpoints_ = java.util.Collections.unmodifiableList(checkpoints_);
-        }
-        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
           preparedSet_ = java.util.Collections.unmodifiableList(preparedSet_);
         }
         makeExtensionsImmutable();
@@ -3932,69 +3306,14 @@ public final class Consensus {
       return sequence_;
     }
 
-    public static final int CHECKPOINTS_FIELD_NUMBER = 3;
-    private java.util.List<protocol.Consensus.PbftEnv> checkpoints_;
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    public java.util.List<protocol.Consensus.PbftEnv> getCheckpointsList() {
-      return checkpoints_;
-    }
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    public java.util.List<? extends protocol.Consensus.PbftEnvOrBuilder> 
-        getCheckpointsOrBuilderList() {
-      return checkpoints_;
-    }
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    public int getCheckpointsCount() {
-      return checkpoints_.size();
-    }
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    public protocol.Consensus.PbftEnv getCheckpoints(int index) {
-      return checkpoints_.get(index);
-    }
-    /**
-     * <pre>
-     *C
-     * </pre>
-     *
-     * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-     */
-    public protocol.Consensus.PbftEnvOrBuilder getCheckpointsOrBuilder(
-        int index) {
-      return checkpoints_.get(index);
-    }
-
-    public static final int PREPARED_SET_FIELD_NUMBER = 4;
+    public static final int PREPARED_SET_FIELD_NUMBER = 3;
     private java.util.List<protocol.Consensus.PbftPreparedSet> preparedSet_;
     /**
      * <pre>
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     public java.util.List<protocol.Consensus.PbftPreparedSet> getPreparedSetList() {
       return preparedSet_;
@@ -4004,7 +3323,7 @@ public final class Consensus {
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     public java.util.List<? extends protocol.Consensus.PbftPreparedSetOrBuilder> 
         getPreparedSetOrBuilderList() {
@@ -4015,7 +3334,7 @@ public final class Consensus {
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     public int getPreparedSetCount() {
       return preparedSet_.size();
@@ -4025,7 +3344,7 @@ public final class Consensus {
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     public protocol.Consensus.PbftPreparedSet getPreparedSet(int index) {
       return preparedSet_.get(index);
@@ -4035,17 +3354,17 @@ public final class Consensus {
      *prepared messages large than n
      * </pre>
      *
-     * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+     * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
      */
     public protocol.Consensus.PbftPreparedSetOrBuilder getPreparedSetOrBuilder(
         int index) {
       return preparedSet_.get(index);
     }
 
-    public static final int REPLICA_ID_FIELD_NUMBER = 5;
+    public static final int REPLICA_ID_FIELD_NUMBER = 4;
     private long replicaId_;
     /**
-     * <code>optional int64 replica_id = 5;</code>
+     * <code>optional int64 replica_id = 4;</code>
      */
     public long getReplicaId() {
       return replicaId_;
@@ -4069,14 +3388,11 @@ public final class Consensus {
       if (sequence_ != 0L) {
         output.writeInt64(2, sequence_);
       }
-      for (int i = 0; i < checkpoints_.size(); i++) {
-        output.writeMessage(3, checkpoints_.get(i));
-      }
       for (int i = 0; i < preparedSet_.size(); i++) {
-        output.writeMessage(4, preparedSet_.get(i));
+        output.writeMessage(3, preparedSet_.get(i));
       }
       if (replicaId_ != 0L) {
-        output.writeInt64(5, replicaId_);
+        output.writeInt64(4, replicaId_);
       }
     }
 
@@ -4093,17 +3409,13 @@ public final class Consensus {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(2, sequence_);
       }
-      for (int i = 0; i < checkpoints_.size(); i++) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(3, checkpoints_.get(i));
-      }
       for (int i = 0; i < preparedSet_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(4, preparedSet_.get(i));
+          .computeMessageSize(3, preparedSet_.get(i));
       }
       if (replicaId_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, replicaId_);
+          .computeInt64Size(4, replicaId_);
       }
       memoizedSize = size;
       return size;
@@ -4125,8 +3437,6 @@ public final class Consensus {
           == other.getViewNumber());
       result = result && (getSequence()
           == other.getSequence());
-      result = result && getCheckpointsList()
-          .equals(other.getCheckpointsList());
       result = result && getPreparedSetList()
           .equals(other.getPreparedSetList());
       result = result && (getReplicaId()
@@ -4147,10 +3457,6 @@ public final class Consensus {
       hash = (37 * hash) + SEQUENCE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getSequence());
-      if (getCheckpointsCount() > 0) {
-        hash = (37 * hash) + CHECKPOINTS_FIELD_NUMBER;
-        hash = (53 * hash) + getCheckpointsList().hashCode();
-      }
       if (getPreparedSetCount() > 0) {
         hash = (37 * hash) + PREPARED_SET_FIELD_NUMBER;
         hash = (53 * hash) + getPreparedSetList().hashCode();
@@ -4272,7 +3578,6 @@ public final class Consensus {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
-          getCheckpointsFieldBuilder();
           getPreparedSetFieldBuilder();
         }
       }
@@ -4282,15 +3587,9 @@ public final class Consensus {
 
         sequence_ = 0L;
 
-        if (checkpointsBuilder_ == null) {
-          checkpoints_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
-        } else {
-          checkpointsBuilder_.clear();
-        }
         if (preparedSetBuilder_ == null) {
           preparedSet_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000004);
         } else {
           preparedSetBuilder_.clear();
         }
@@ -4322,19 +3621,10 @@ public final class Consensus {
         int to_bitField0_ = 0;
         result.viewNumber_ = viewNumber_;
         result.sequence_ = sequence_;
-        if (checkpointsBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004)) {
-            checkpoints_ = java.util.Collections.unmodifiableList(checkpoints_);
-            bitField0_ = (bitField0_ & ~0x00000004);
-          }
-          result.checkpoints_ = checkpoints_;
-        } else {
-          result.checkpoints_ = checkpointsBuilder_.build();
-        }
         if (preparedSetBuilder_ == null) {
-          if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          if (((bitField0_ & 0x00000004) == 0x00000004)) {
             preparedSet_ = java.util.Collections.unmodifiableList(preparedSet_);
-            bitField0_ = (bitField0_ & ~0x00000008);
+            bitField0_ = (bitField0_ & ~0x00000004);
           }
           result.preparedSet_ = preparedSet_;
         } else {
@@ -4389,37 +3679,11 @@ public final class Consensus {
         if (other.getSequence() != 0L) {
           setSequence(other.getSequence());
         }
-        if (checkpointsBuilder_ == null) {
-          if (!other.checkpoints_.isEmpty()) {
-            if (checkpoints_.isEmpty()) {
-              checkpoints_ = other.checkpoints_;
-              bitField0_ = (bitField0_ & ~0x00000004);
-            } else {
-              ensureCheckpointsIsMutable();
-              checkpoints_.addAll(other.checkpoints_);
-            }
-            onChanged();
-          }
-        } else {
-          if (!other.checkpoints_.isEmpty()) {
-            if (checkpointsBuilder_.isEmpty()) {
-              checkpointsBuilder_.dispose();
-              checkpointsBuilder_ = null;
-              checkpoints_ = other.checkpoints_;
-              bitField0_ = (bitField0_ & ~0x00000004);
-              checkpointsBuilder_ = 
-                com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getCheckpointsFieldBuilder() : null;
-            } else {
-              checkpointsBuilder_.addAllMessages(other.checkpoints_);
-            }
-          }
-        }
         if (preparedSetBuilder_ == null) {
           if (!other.preparedSet_.isEmpty()) {
             if (preparedSet_.isEmpty()) {
               preparedSet_ = other.preparedSet_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000004);
             } else {
               ensurePreparedSetIsMutable();
               preparedSet_.addAll(other.preparedSet_);
@@ -4432,7 +3696,7 @@ public final class Consensus {
               preparedSetBuilder_.dispose();
               preparedSetBuilder_ = null;
               preparedSet_ = other.preparedSet_;
-              bitField0_ = (bitField0_ & ~0x00000008);
+              bitField0_ = (bitField0_ & ~0x00000004);
               preparedSetBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
                    getPreparedSetFieldBuilder() : null;
@@ -4547,324 +3811,12 @@ public final class Consensus {
         return this;
       }
 
-      private java.util.List<protocol.Consensus.PbftEnv> checkpoints_ =
-        java.util.Collections.emptyList();
-      private void ensureCheckpointsIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-          checkpoints_ = new java.util.ArrayList<protocol.Consensus.PbftEnv>(checkpoints_);
-          bitField0_ |= 0x00000004;
-         }
-      }
-
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          protocol.Consensus.PbftEnv, protocol.Consensus.PbftEnv.Builder, protocol.Consensus.PbftEnvOrBuilder> checkpointsBuilder_;
-
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public java.util.List<protocol.Consensus.PbftEnv> getCheckpointsList() {
-        if (checkpointsBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(checkpoints_);
-        } else {
-          return checkpointsBuilder_.getMessageList();
-        }
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public int getCheckpointsCount() {
-        if (checkpointsBuilder_ == null) {
-          return checkpoints_.size();
-        } else {
-          return checkpointsBuilder_.getCount();
-        }
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public protocol.Consensus.PbftEnv getCheckpoints(int index) {
-        if (checkpointsBuilder_ == null) {
-          return checkpoints_.get(index);
-        } else {
-          return checkpointsBuilder_.getMessage(index);
-        }
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder setCheckpoints(
-          int index, protocol.Consensus.PbftEnv value) {
-        if (checkpointsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureCheckpointsIsMutable();
-          checkpoints_.set(index, value);
-          onChanged();
-        } else {
-          checkpointsBuilder_.setMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder setCheckpoints(
-          int index, protocol.Consensus.PbftEnv.Builder builderForValue) {
-        if (checkpointsBuilder_ == null) {
-          ensureCheckpointsIsMutable();
-          checkpoints_.set(index, builderForValue.build());
-          onChanged();
-        } else {
-          checkpointsBuilder_.setMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder addCheckpoints(protocol.Consensus.PbftEnv value) {
-        if (checkpointsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureCheckpointsIsMutable();
-          checkpoints_.add(value);
-          onChanged();
-        } else {
-          checkpointsBuilder_.addMessage(value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder addCheckpoints(
-          int index, protocol.Consensus.PbftEnv value) {
-        if (checkpointsBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          ensureCheckpointsIsMutable();
-          checkpoints_.add(index, value);
-          onChanged();
-        } else {
-          checkpointsBuilder_.addMessage(index, value);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder addCheckpoints(
-          protocol.Consensus.PbftEnv.Builder builderForValue) {
-        if (checkpointsBuilder_ == null) {
-          ensureCheckpointsIsMutable();
-          checkpoints_.add(builderForValue.build());
-          onChanged();
-        } else {
-          checkpointsBuilder_.addMessage(builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder addCheckpoints(
-          int index, protocol.Consensus.PbftEnv.Builder builderForValue) {
-        if (checkpointsBuilder_ == null) {
-          ensureCheckpointsIsMutable();
-          checkpoints_.add(index, builderForValue.build());
-          onChanged();
-        } else {
-          checkpointsBuilder_.addMessage(index, builderForValue.build());
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder addAllCheckpoints(
-          java.lang.Iterable<? extends protocol.Consensus.PbftEnv> values) {
-        if (checkpointsBuilder_ == null) {
-          ensureCheckpointsIsMutable();
-          com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, checkpoints_);
-          onChanged();
-        } else {
-          checkpointsBuilder_.addAllMessages(values);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder clearCheckpoints() {
-        if (checkpointsBuilder_ == null) {
-          checkpoints_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000004);
-          onChanged();
-        } else {
-          checkpointsBuilder_.clear();
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public Builder removeCheckpoints(int index) {
-        if (checkpointsBuilder_ == null) {
-          ensureCheckpointsIsMutable();
-          checkpoints_.remove(index);
-          onChanged();
-        } else {
-          checkpointsBuilder_.remove(index);
-        }
-        return this;
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public protocol.Consensus.PbftEnv.Builder getCheckpointsBuilder(
-          int index) {
-        return getCheckpointsFieldBuilder().getBuilder(index);
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public protocol.Consensus.PbftEnvOrBuilder getCheckpointsOrBuilder(
-          int index) {
-        if (checkpointsBuilder_ == null) {
-          return checkpoints_.get(index);  } else {
-          return checkpointsBuilder_.getMessageOrBuilder(index);
-        }
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public java.util.List<? extends protocol.Consensus.PbftEnvOrBuilder> 
-           getCheckpointsOrBuilderList() {
-        if (checkpointsBuilder_ != null) {
-          return checkpointsBuilder_.getMessageOrBuilderList();
-        } else {
-          return java.util.Collections.unmodifiableList(checkpoints_);
-        }
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public protocol.Consensus.PbftEnv.Builder addCheckpointsBuilder() {
-        return getCheckpointsFieldBuilder().addBuilder(
-            protocol.Consensus.PbftEnv.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public protocol.Consensus.PbftEnv.Builder addCheckpointsBuilder(
-          int index) {
-        return getCheckpointsFieldBuilder().addBuilder(
-            index, protocol.Consensus.PbftEnv.getDefaultInstance());
-      }
-      /**
-       * <pre>
-       *C
-       * </pre>
-       *
-       * <code>repeated .protocol.PbftEnv checkpoints = 3;</code>
-       */
-      public java.util.List<protocol.Consensus.PbftEnv.Builder> 
-           getCheckpointsBuilderList() {
-        return getCheckpointsFieldBuilder().getBuilderList();
-      }
-      private com.google.protobuf.RepeatedFieldBuilderV3<
-          protocol.Consensus.PbftEnv, protocol.Consensus.PbftEnv.Builder, protocol.Consensus.PbftEnvOrBuilder> 
-          getCheckpointsFieldBuilder() {
-        if (checkpointsBuilder_ == null) {
-          checkpointsBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
-              protocol.Consensus.PbftEnv, protocol.Consensus.PbftEnv.Builder, protocol.Consensus.PbftEnvOrBuilder>(
-                  checkpoints_,
-                  ((bitField0_ & 0x00000004) == 0x00000004),
-                  getParentForChildren(),
-                  isClean());
-          checkpoints_ = null;
-        }
-        return checkpointsBuilder_;
-      }
-
       private java.util.List<protocol.Consensus.PbftPreparedSet> preparedSet_ =
         java.util.Collections.emptyList();
       private void ensurePreparedSetIsMutable() {
-        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
           preparedSet_ = new java.util.ArrayList<protocol.Consensus.PbftPreparedSet>(preparedSet_);
-          bitField0_ |= 0x00000008;
+          bitField0_ |= 0x00000004;
          }
       }
 
@@ -4876,7 +3828,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public java.util.List<protocol.Consensus.PbftPreparedSet> getPreparedSetList() {
         if (preparedSetBuilder_ == null) {
@@ -4890,7 +3842,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public int getPreparedSetCount() {
         if (preparedSetBuilder_ == null) {
@@ -4904,7 +3856,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public protocol.Consensus.PbftPreparedSet getPreparedSet(int index) {
         if (preparedSetBuilder_ == null) {
@@ -4918,7 +3870,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder setPreparedSet(
           int index, protocol.Consensus.PbftPreparedSet value) {
@@ -4939,7 +3891,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder setPreparedSet(
           int index, protocol.Consensus.PbftPreparedSet.Builder builderForValue) {
@@ -4957,7 +3909,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder addPreparedSet(protocol.Consensus.PbftPreparedSet value) {
         if (preparedSetBuilder_ == null) {
@@ -4977,7 +3929,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder addPreparedSet(
           int index, protocol.Consensus.PbftPreparedSet value) {
@@ -4998,7 +3950,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder addPreparedSet(
           protocol.Consensus.PbftPreparedSet.Builder builderForValue) {
@@ -5016,7 +3968,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder addPreparedSet(
           int index, protocol.Consensus.PbftPreparedSet.Builder builderForValue) {
@@ -5034,7 +3986,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder addAllPreparedSet(
           java.lang.Iterable<? extends protocol.Consensus.PbftPreparedSet> values) {
@@ -5053,12 +4005,12 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder clearPreparedSet() {
         if (preparedSetBuilder_ == null) {
           preparedSet_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000008);
+          bitField0_ = (bitField0_ & ~0x00000004);
           onChanged();
         } else {
           preparedSetBuilder_.clear();
@@ -5070,7 +4022,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public Builder removePreparedSet(int index) {
         if (preparedSetBuilder_ == null) {
@@ -5087,7 +4039,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public protocol.Consensus.PbftPreparedSet.Builder getPreparedSetBuilder(
           int index) {
@@ -5098,7 +4050,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public protocol.Consensus.PbftPreparedSetOrBuilder getPreparedSetOrBuilder(
           int index) {
@@ -5112,7 +4064,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public java.util.List<? extends protocol.Consensus.PbftPreparedSetOrBuilder> 
            getPreparedSetOrBuilderList() {
@@ -5127,7 +4079,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public protocol.Consensus.PbftPreparedSet.Builder addPreparedSetBuilder() {
         return getPreparedSetFieldBuilder().addBuilder(
@@ -5138,7 +4090,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public protocol.Consensus.PbftPreparedSet.Builder addPreparedSetBuilder(
           int index) {
@@ -5150,7 +4102,7 @@ public final class Consensus {
        *prepared messages large than n
        * </pre>
        *
-       * <code>repeated .protocol.PbftPreparedSet prepared_set = 4;</code>
+       * <code>repeated .protocol.PbftPreparedSet prepared_set = 3;</code>
        */
       public java.util.List<protocol.Consensus.PbftPreparedSet.Builder> 
            getPreparedSetBuilderList() {
@@ -5163,7 +4115,7 @@ public final class Consensus {
           preparedSetBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               protocol.Consensus.PbftPreparedSet, protocol.Consensus.PbftPreparedSet.Builder, protocol.Consensus.PbftPreparedSetOrBuilder>(
                   preparedSet_,
-                  ((bitField0_ & 0x00000008) == 0x00000008),
+                  ((bitField0_ & 0x00000004) == 0x00000004),
                   getParentForChildren(),
                   isClean());
           preparedSet_ = null;
@@ -5173,13 +4125,13 @@ public final class Consensus {
 
       private long replicaId_ ;
       /**
-       * <code>optional int64 replica_id = 5;</code>
+       * <code>optional int64 replica_id = 4;</code>
        */
       public long getReplicaId() {
         return replicaId_;
       }
       /**
-       * <code>optional int64 replica_id = 5;</code>
+       * <code>optional int64 replica_id = 4;</code>
        */
       public Builder setReplicaId(long value) {
         
@@ -5188,7 +4140,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional int64 replica_id = 5;</code>
+       * <code>optional int64 replica_id = 4;</code>
        */
       public Builder clearReplicaId() {
         
@@ -6868,41 +5820,28 @@ public final class Consensus {
     protocol.Consensus.PbftCommitOrBuilder getCommitOrBuilder();
 
     /**
-     * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-     */
-    boolean hasCheckpoint();
-    /**
-     * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-     */
-    protocol.Consensus.PbftCheckPoint getCheckpoint();
-    /**
-     * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-     */
-    protocol.Consensus.PbftCheckPointOrBuilder getCheckpointOrBuilder();
-
-    /**
-     * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+     * <code>optional .protocol.PbftViewChange view_change = 6;</code>
      */
     boolean hasViewChange();
     /**
-     * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+     * <code>optional .protocol.PbftViewChange view_change = 6;</code>
      */
     protocol.Consensus.PbftViewChange getViewChange();
     /**
-     * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+     * <code>optional .protocol.PbftViewChange view_change = 6;</code>
      */
     protocol.Consensus.PbftViewChangeOrBuilder getViewChangeOrBuilder();
 
     /**
-     * <code>optional .protocol.PbftNewView new_view = 8;</code>
+     * <code>optional .protocol.PbftNewView new_view = 7;</code>
      */
     boolean hasNewView();
     /**
-     * <code>optional .protocol.PbftNewView new_view = 8;</code>
+     * <code>optional .protocol.PbftNewView new_view = 7;</code>
      */
     protocol.Consensus.PbftNewView getNewView();
     /**
-     * <code>optional .protocol.PbftNewView new_view = 8;</code>
+     * <code>optional .protocol.PbftNewView new_view = 7;</code>
      */
     protocol.Consensus.PbftNewViewOrBuilder getNewViewOrBuilder();
   }
@@ -6998,19 +5937,6 @@ public final class Consensus {
               break;
             }
             case 50: {
-              protocol.Consensus.PbftCheckPoint.Builder subBuilder = null;
-              if (checkpoint_ != null) {
-                subBuilder = checkpoint_.toBuilder();
-              }
-              checkpoint_ = input.readMessage(protocol.Consensus.PbftCheckPoint.parser(), extensionRegistry);
-              if (subBuilder != null) {
-                subBuilder.mergeFrom(checkpoint_);
-                checkpoint_ = subBuilder.buildPartial();
-              }
-
-              break;
-            }
-            case 58: {
               protocol.Consensus.PbftViewChange.Builder subBuilder = null;
               if (viewChange_ != null) {
                 subBuilder = viewChange_.toBuilder();
@@ -7023,7 +5949,7 @@ public final class Consensus {
 
               break;
             }
-            case 66: {
+            case 58: {
               protocol.Consensus.PbftNewView.Builder subBuilder = null;
               if (newView_ != null) {
                 subBuilder = newView_.toBuilder();
@@ -7151,64 +6077,43 @@ public final class Consensus {
       return getCommit();
     }
 
-    public static final int CHECKPOINT_FIELD_NUMBER = 6;
-    private protocol.Consensus.PbftCheckPoint checkpoint_;
-    /**
-     * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-     */
-    public boolean hasCheckpoint() {
-      return checkpoint_ != null;
-    }
-    /**
-     * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-     */
-    public protocol.Consensus.PbftCheckPoint getCheckpoint() {
-      return checkpoint_ == null ? protocol.Consensus.PbftCheckPoint.getDefaultInstance() : checkpoint_;
-    }
-    /**
-     * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-     */
-    public protocol.Consensus.PbftCheckPointOrBuilder getCheckpointOrBuilder() {
-      return getCheckpoint();
-    }
-
-    public static final int VIEW_CHANGE_FIELD_NUMBER = 7;
+    public static final int VIEW_CHANGE_FIELD_NUMBER = 6;
     private protocol.Consensus.PbftViewChange viewChange_;
     /**
-     * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+     * <code>optional .protocol.PbftViewChange view_change = 6;</code>
      */
     public boolean hasViewChange() {
       return viewChange_ != null;
     }
     /**
-     * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+     * <code>optional .protocol.PbftViewChange view_change = 6;</code>
      */
     public protocol.Consensus.PbftViewChange getViewChange() {
       return viewChange_ == null ? protocol.Consensus.PbftViewChange.getDefaultInstance() : viewChange_;
     }
     /**
-     * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+     * <code>optional .protocol.PbftViewChange view_change = 6;</code>
      */
     public protocol.Consensus.PbftViewChangeOrBuilder getViewChangeOrBuilder() {
       return getViewChange();
     }
 
-    public static final int NEW_VIEW_FIELD_NUMBER = 8;
+    public static final int NEW_VIEW_FIELD_NUMBER = 7;
     private protocol.Consensus.PbftNewView newView_;
     /**
-     * <code>optional .protocol.PbftNewView new_view = 8;</code>
+     * <code>optional .protocol.PbftNewView new_view = 7;</code>
      */
     public boolean hasNewView() {
       return newView_ != null;
     }
     /**
-     * <code>optional .protocol.PbftNewView new_view = 8;</code>
+     * <code>optional .protocol.PbftNewView new_view = 7;</code>
      */
     public protocol.Consensus.PbftNewView getNewView() {
       return newView_ == null ? protocol.Consensus.PbftNewView.getDefaultInstance() : newView_;
     }
     /**
-     * <code>optional .protocol.PbftNewView new_view = 8;</code>
+     * <code>optional .protocol.PbftNewView new_view = 7;</code>
      */
     public protocol.Consensus.PbftNewViewOrBuilder getNewViewOrBuilder() {
       return getNewView();
@@ -7241,14 +6146,11 @@ public final class Consensus {
       if (commit_ != null) {
         output.writeMessage(5, getCommit());
       }
-      if (checkpoint_ != null) {
-        output.writeMessage(6, getCheckpoint());
-      }
       if (viewChange_ != null) {
-        output.writeMessage(7, getViewChange());
+        output.writeMessage(6, getViewChange());
       }
       if (newView_ != null) {
-        output.writeMessage(8, getNewView());
+        output.writeMessage(7, getNewView());
       }
     }
 
@@ -7277,17 +6179,13 @@ public final class Consensus {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(5, getCommit());
       }
-      if (checkpoint_ != null) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(6, getCheckpoint());
-      }
       if (viewChange_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(7, getViewChange());
+          .computeMessageSize(6, getViewChange());
       }
       if (newView_ != null) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, getNewView());
+          .computeMessageSize(7, getNewView());
       }
       memoizedSize = size;
       return size;
@@ -7322,11 +6220,6 @@ public final class Consensus {
       if (hasCommit()) {
         result = result && getCommit()
             .equals(other.getCommit());
-      }
-      result = result && (hasCheckpoint() == other.hasCheckpoint());
-      if (hasCheckpoint()) {
-        result = result && getCheckpoint()
-            .equals(other.getCheckpoint());
       }
       result = result && (hasViewChange() == other.hasViewChange());
       if (hasViewChange()) {
@@ -7364,10 +6257,6 @@ public final class Consensus {
       if (hasCommit()) {
         hash = (37 * hash) + COMMIT_FIELD_NUMBER;
         hash = (53 * hash) + getCommit().hashCode();
-      }
-      if (hasCheckpoint()) {
-        hash = (37 * hash) + CHECKPOINT_FIELD_NUMBER;
-        hash = (53 * hash) + getCheckpoint().hashCode();
       }
       if (hasViewChange()) {
         hash = (37 * hash) + VIEW_CHANGE_FIELD_NUMBER;
@@ -7517,12 +6406,6 @@ public final class Consensus {
           commit_ = null;
           commitBuilder_ = null;
         }
-        if (checkpointBuilder_ == null) {
-          checkpoint_ = null;
-        } else {
-          checkpoint_ = null;
-          checkpointBuilder_ = null;
-        }
         if (viewChangeBuilder_ == null) {
           viewChange_ = null;
         } else {
@@ -7573,11 +6456,6 @@ public final class Consensus {
           result.commit_ = commit_;
         } else {
           result.commit_ = commitBuilder_.build();
-        }
-        if (checkpointBuilder_ == null) {
-          result.checkpoint_ = checkpoint_;
-        } else {
-          result.checkpoint_ = checkpointBuilder_.build();
         }
         if (viewChangeBuilder_ == null) {
           result.viewChange_ = viewChange_;
@@ -7644,9 +6522,6 @@ public final class Consensus {
         }
         if (other.hasCommit()) {
           mergeCommit(other.getCommit());
-        }
-        if (other.hasCheckpoint()) {
-          mergeCheckpoint(other.getCheckpoint());
         }
         if (other.hasViewChange()) {
           mergeViewChange(other.getViewChange());
@@ -8113,134 +6988,17 @@ public final class Consensus {
         return commitBuilder_;
       }
 
-      private protocol.Consensus.PbftCheckPoint checkpoint_ = null;
-      private com.google.protobuf.SingleFieldBuilderV3<
-          protocol.Consensus.PbftCheckPoint, protocol.Consensus.PbftCheckPoint.Builder, protocol.Consensus.PbftCheckPointOrBuilder> checkpointBuilder_;
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      public boolean hasCheckpoint() {
-        return checkpointBuilder_ != null || checkpoint_ != null;
-      }
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      public protocol.Consensus.PbftCheckPoint getCheckpoint() {
-        if (checkpointBuilder_ == null) {
-          return checkpoint_ == null ? protocol.Consensus.PbftCheckPoint.getDefaultInstance() : checkpoint_;
-        } else {
-          return checkpointBuilder_.getMessage();
-        }
-      }
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      public Builder setCheckpoint(protocol.Consensus.PbftCheckPoint value) {
-        if (checkpointBuilder_ == null) {
-          if (value == null) {
-            throw new NullPointerException();
-          }
-          checkpoint_ = value;
-          onChanged();
-        } else {
-          checkpointBuilder_.setMessage(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      public Builder setCheckpoint(
-          protocol.Consensus.PbftCheckPoint.Builder builderForValue) {
-        if (checkpointBuilder_ == null) {
-          checkpoint_ = builderForValue.build();
-          onChanged();
-        } else {
-          checkpointBuilder_.setMessage(builderForValue.build());
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      public Builder mergeCheckpoint(protocol.Consensus.PbftCheckPoint value) {
-        if (checkpointBuilder_ == null) {
-          if (checkpoint_ != null) {
-            checkpoint_ =
-              protocol.Consensus.PbftCheckPoint.newBuilder(checkpoint_).mergeFrom(value).buildPartial();
-          } else {
-            checkpoint_ = value;
-          }
-          onChanged();
-        } else {
-          checkpointBuilder_.mergeFrom(value);
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      public Builder clearCheckpoint() {
-        if (checkpointBuilder_ == null) {
-          checkpoint_ = null;
-          onChanged();
-        } else {
-          checkpoint_ = null;
-          checkpointBuilder_ = null;
-        }
-
-        return this;
-      }
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      public protocol.Consensus.PbftCheckPoint.Builder getCheckpointBuilder() {
-        
-        onChanged();
-        return getCheckpointFieldBuilder().getBuilder();
-      }
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      public protocol.Consensus.PbftCheckPointOrBuilder getCheckpointOrBuilder() {
-        if (checkpointBuilder_ != null) {
-          return checkpointBuilder_.getMessageOrBuilder();
-        } else {
-          return checkpoint_ == null ?
-              protocol.Consensus.PbftCheckPoint.getDefaultInstance() : checkpoint_;
-        }
-      }
-      /**
-       * <code>optional .protocol.PbftCheckPoint checkpoint = 6;</code>
-       */
-      private com.google.protobuf.SingleFieldBuilderV3<
-          protocol.Consensus.PbftCheckPoint, protocol.Consensus.PbftCheckPoint.Builder, protocol.Consensus.PbftCheckPointOrBuilder> 
-          getCheckpointFieldBuilder() {
-        if (checkpointBuilder_ == null) {
-          checkpointBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              protocol.Consensus.PbftCheckPoint, protocol.Consensus.PbftCheckPoint.Builder, protocol.Consensus.PbftCheckPointOrBuilder>(
-                  getCheckpoint(),
-                  getParentForChildren(),
-                  isClean());
-          checkpoint_ = null;
-        }
-        return checkpointBuilder_;
-      }
-
       private protocol.Consensus.PbftViewChange viewChange_ = null;
       private com.google.protobuf.SingleFieldBuilderV3<
           protocol.Consensus.PbftViewChange, protocol.Consensus.PbftViewChange.Builder, protocol.Consensus.PbftViewChangeOrBuilder> viewChangeBuilder_;
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       public boolean hasViewChange() {
         return viewChangeBuilder_ != null || viewChange_ != null;
       }
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       public protocol.Consensus.PbftViewChange getViewChange() {
         if (viewChangeBuilder_ == null) {
@@ -8250,7 +7008,7 @@ public final class Consensus {
         }
       }
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       public Builder setViewChange(protocol.Consensus.PbftViewChange value) {
         if (viewChangeBuilder_ == null) {
@@ -8266,7 +7024,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       public Builder setViewChange(
           protocol.Consensus.PbftViewChange.Builder builderForValue) {
@@ -8280,7 +7038,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       public Builder mergeViewChange(protocol.Consensus.PbftViewChange value) {
         if (viewChangeBuilder_ == null) {
@@ -8298,7 +7056,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       public Builder clearViewChange() {
         if (viewChangeBuilder_ == null) {
@@ -8312,7 +7070,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       public protocol.Consensus.PbftViewChange.Builder getViewChangeBuilder() {
         
@@ -8320,7 +7078,7 @@ public final class Consensus {
         return getViewChangeFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       public protocol.Consensus.PbftViewChangeOrBuilder getViewChangeOrBuilder() {
         if (viewChangeBuilder_ != null) {
@@ -8331,7 +7089,7 @@ public final class Consensus {
         }
       }
       /**
-       * <code>optional .protocol.PbftViewChange view_change = 7;</code>
+       * <code>optional .protocol.PbftViewChange view_change = 6;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           protocol.Consensus.PbftViewChange, protocol.Consensus.PbftViewChange.Builder, protocol.Consensus.PbftViewChangeOrBuilder> 
@@ -8351,13 +7109,13 @@ public final class Consensus {
       private com.google.protobuf.SingleFieldBuilderV3<
           protocol.Consensus.PbftNewView, protocol.Consensus.PbftNewView.Builder, protocol.Consensus.PbftNewViewOrBuilder> newViewBuilder_;
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       public boolean hasNewView() {
         return newViewBuilder_ != null || newView_ != null;
       }
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       public protocol.Consensus.PbftNewView getNewView() {
         if (newViewBuilder_ == null) {
@@ -8367,7 +7125,7 @@ public final class Consensus {
         }
       }
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       public Builder setNewView(protocol.Consensus.PbftNewView value) {
         if (newViewBuilder_ == null) {
@@ -8383,7 +7141,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       public Builder setNewView(
           protocol.Consensus.PbftNewView.Builder builderForValue) {
@@ -8397,7 +7155,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       public Builder mergeNewView(protocol.Consensus.PbftNewView value) {
         if (newViewBuilder_ == null) {
@@ -8415,7 +7173,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       public Builder clearNewView() {
         if (newViewBuilder_ == null) {
@@ -8429,7 +7187,7 @@ public final class Consensus {
         return this;
       }
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       public protocol.Consensus.PbftNewView.Builder getNewViewBuilder() {
         
@@ -8437,7 +7195,7 @@ public final class Consensus {
         return getNewViewFieldBuilder().getBuilder();
       }
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       public protocol.Consensus.PbftNewViewOrBuilder getNewViewOrBuilder() {
         if (newViewBuilder_ != null) {
@@ -8448,7 +7206,7 @@ public final class Consensus {
         }
       }
       /**
-       * <code>optional .protocol.PbftNewView new_view = 8;</code>
+       * <code>optional .protocol.PbftNewView new_view = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
           protocol.Consensus.PbftNewView, protocol.Consensus.PbftNewView.Builder, protocol.Consensus.PbftNewViewOrBuilder> 
@@ -12431,11 +11189,6 @@ public final class Consensus {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_protocol_PbftCommit_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_protocol_PbftCheckPoint_descriptor;
-  private static final 
-    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_protocol_PbftCheckPoint_fieldAccessorTable;
-  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_protocol_PbftPreparedSet_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
@@ -12497,51 +11250,46 @@ public final class Consensus {
       "nce\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001(\003\022\024\n\014value_d" +
       "igest\030\004 \001(\014\"]\n\nPbftCommit\022\023\n\013view_number" +
       "\030\001 \001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003" +
-      " \001(\003\022\024\n\014value_digest\030\004 \001(\014\"L\n\016PbftCheckP" +
-      "oint\022\020\n\010sequence\030\001 \001(\003\022\022\n\nreplica_id\030\002 \001",
-      "(\003\022\024\n\014state_digest\030\003 \001(\014\"]\n\017PbftPrepared" +
-      "Set\022&\n\013pre_prepare\030\001 \001(\0132\021.protocol.Pbft" +
-      "Env\022\"\n\007prepare\030\002 \003(\0132\021.protocol.PbftEnv\"" +
-      "\244\001\n\016PbftViewChange\022\023\n\013view_number\030\001 \001(\003\022" +
-      "\020\n\010sequence\030\002 \001(\003\022&\n\013checkpoints\030\003 \003(\0132\021" +
-      ".protocol.PbftEnv\022/\n\014prepared_set\030\004 \003(\0132" +
-      "\031.protocol.PbftPreparedSet\022\022\n\nreplica_id" +
-      "\030\005 \001(\003\"\232\001\n\013PbftNewView\022\023\n\013view_number\030\001 " +
-      "\001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001(" +
-      "\003\022\'\n\014view_changes\030\004 \003(\0132\021.protocol.PbftE",
-      "nv\022\'\n\014pre_prepares\030\005 \003(\0132\021.protocol.Pbft" +
-      "Env\"\310\002\n\004Pbft\022\024\n\014round_number\030\001 \001(\003\022\'\n\004ty" +
-      "pe\030\002 \001(\0162\031.protocol.PbftMessageType\022-\n\013p" +
-      "re_prepare\030\003 \001(\0132\030.protocol.PbftPrePrepa" +
-      "re\022&\n\007prepare\030\004 \001(\0132\025.protocol.PbftPrepa" +
-      "re\022$\n\006commit\030\005 \001(\0132\024.protocol.PbftCommit" +
-      "\022,\n\ncheckpoint\030\006 \001(\0132\030.protocol.PbftChec" +
-      "kPoint\022-\n\013view_change\030\007 \001(\0132\030.protocol.P" +
-      "bftViewChange\022\'\n\010new_view\030\010 \001(\0132\025.protoc" +
-      "ol.PbftNewView\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132",
-      "\016.protocol.Pbft\022&\n\tsignature\030\002 \001(\0132\023.pro" +
-      "tocol.Signature\"8\n\tValidator\022\017\n\007address\030" +
-      "\001 \001(\t\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Val" +
-      "idatorSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol" +
-      ".Validator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\013" +
-      "2\021.protocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010byt" +
-      "e_fee\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022cre" +
-      "ate_account_fee\030\003 \001(\003\022\027\n\017issue_asset_fee" +
-      "\030\004 \001(\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata_" +
-      "fee\030\006 \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(\003",
-      "\022\031\n\021set_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin_" +
-      "fee\030\t \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE_" +
-      "FEE\020\001\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_AC" +
-      "COUNT_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAYM" +
-      "ENT_FEE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_S" +
-      "IGNER_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE\020" +
-      "\010\022\020\n\014PAY_COIN_FEE\020\t*\243\001\n\017PbftMessageType\022" +
-      "\030\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_P" +
-      "REPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_T" +
-      "YPE_CHECKPOINT\020\003\022\030\n\024PBFT_TYPE_VIEWCHANGE",
-      "\020\004\022\025\n\021PBFT_TYPE_NEWVIEW\020\005*8\n\rPbftValueTy" +
-      "pe\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXSE" +
-      "T\020\001b\006proto3"
+      " \001(\003\022\024\n\014value_digest\030\004 \001(\014\"]\n\017PbftPrepar" +
+      "edSet\022&\n\013pre_prepare\030\001 \001(\0132\021.protocol.Pb",
+      "ftEnv\022\"\n\007prepare\030\002 \003(\0132\021.protocol.PbftEn" +
+      "v\"|\n\016PbftViewChange\022\023\n\013view_number\030\001 \001(\003" +
+      "\022\020\n\010sequence\030\002 \001(\003\022/\n\014prepared_set\030\003 \003(\013" +
+      "2\031.protocol.PbftPreparedSet\022\022\n\nreplica_i" +
+      "d\030\004 \001(\003\"\232\001\n\013PbftNewView\022\023\n\013view_number\030\001" +
+      " \001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001" +
+      "(\003\022\'\n\014view_changes\030\004 \003(\0132\021.protocol.Pbft" +
+      "Env\022\'\n\014pre_prepares\030\005 \003(\0132\021.protocol.Pbf" +
+      "tEnv\"\232\002\n\004Pbft\022\024\n\014round_number\030\001 \001(\003\022\'\n\004t" +
+      "ype\030\002 \001(\0162\031.protocol.PbftMessageType\022-\n\013",
+      "pre_prepare\030\003 \001(\0132\030.protocol.PbftPrePrep" +
+      "are\022&\n\007prepare\030\004 \001(\0132\025.protocol.PbftPrep" +
+      "are\022$\n\006commit\030\005 \001(\0132\024.protocol.PbftCommi" +
+      "t\022-\n\013view_change\030\006 \001(\0132\030.protocol.PbftVi" +
+      "ewChange\022\'\n\010new_view\030\007 \001(\0132\025.protocol.Pb" +
+      "ftNewView\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132\016.pro" +
+      "tocol.Pbft\022&\n\tsignature\030\002 \001(\0132\023.protocol" +
+      ".Signature\"8\n\tValidator\022\017\n\007address\030\001 \001(\t" +
+      "\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Validato" +
+      "rSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol.Vali",
+      "dator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\0132\021.pr" +
+      "otocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010byte_fee" +
+      "\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022create_a" +
+      "ccount_fee\030\003 \001(\003\022\027\n\017issue_asset_fee\030\004 \001(" +
+      "\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata_fee\030\006" +
+      " \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(\003\022\031\n\021s" +
+      "et_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin_fee\030\t" +
+      " \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE_FEE\020\001" +
+      "\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_ACCOUNT" +
+      "_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAYMENT_F",
+      "EE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_SIGNER" +
+      "_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE\020\010\022\020\n\014" +
+      "PAY_COIN_FEE\020\t*\211\001\n\017PbftMessageType\022\030\n\024PB" +
+      "FT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_PREPAR" +
+      "E\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_TYPE_V" +
+      "IEWCHANGE\020\003\022\025\n\021PBFT_TYPE_NEWVIEW\020\004*8\n\rPb" +
+      "ftValueType\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_V" +
+      "ALUE_TXSET\020\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -12574,62 +11322,56 @@ public final class Consensus {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_PbftCommit_descriptor,
         new java.lang.String[] { "ViewNumber", "Sequence", "ReplicaId", "ValueDigest", });
-    internal_static_protocol_PbftCheckPoint_descriptor =
-      getDescriptor().getMessageTypes().get(3);
-    internal_static_protocol_PbftCheckPoint_fieldAccessorTable = new
-      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_protocol_PbftCheckPoint_descriptor,
-        new java.lang.String[] { "Sequence", "ReplicaId", "StateDigest", });
     internal_static_protocol_PbftPreparedSet_descriptor =
-      getDescriptor().getMessageTypes().get(4);
+      getDescriptor().getMessageTypes().get(3);
     internal_static_protocol_PbftPreparedSet_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_PbftPreparedSet_descriptor,
         new java.lang.String[] { "PrePrepare", "Prepare", });
     internal_static_protocol_PbftViewChange_descriptor =
-      getDescriptor().getMessageTypes().get(5);
+      getDescriptor().getMessageTypes().get(4);
     internal_static_protocol_PbftViewChange_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_PbftViewChange_descriptor,
-        new java.lang.String[] { "ViewNumber", "Sequence", "Checkpoints", "PreparedSet", "ReplicaId", });
+        new java.lang.String[] { "ViewNumber", "Sequence", "PreparedSet", "ReplicaId", });
     internal_static_protocol_PbftNewView_descriptor =
-      getDescriptor().getMessageTypes().get(6);
+      getDescriptor().getMessageTypes().get(5);
     internal_static_protocol_PbftNewView_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_PbftNewView_descriptor,
         new java.lang.String[] { "ViewNumber", "Sequence", "ReplicaId", "ViewChanges", "PrePrepares", });
     internal_static_protocol_Pbft_descriptor =
-      getDescriptor().getMessageTypes().get(7);
+      getDescriptor().getMessageTypes().get(6);
     internal_static_protocol_Pbft_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_Pbft_descriptor,
-        new java.lang.String[] { "RoundNumber", "Type", "PrePrepare", "Prepare", "Commit", "Checkpoint", "ViewChange", "NewView", });
+        new java.lang.String[] { "RoundNumber", "Type", "PrePrepare", "Prepare", "Commit", "ViewChange", "NewView", });
     internal_static_protocol_PbftEnv_descriptor =
-      getDescriptor().getMessageTypes().get(8);
+      getDescriptor().getMessageTypes().get(7);
     internal_static_protocol_PbftEnv_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_PbftEnv_descriptor,
         new java.lang.String[] { "Pbft", "Signature", });
     internal_static_protocol_Validator_descriptor =
-      getDescriptor().getMessageTypes().get(9);
+      getDescriptor().getMessageTypes().get(8);
     internal_static_protocol_Validator_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_Validator_descriptor,
         new java.lang.String[] { "Address", "PledgeCoinAmount", });
     internal_static_protocol_ValidatorSet_descriptor =
-      getDescriptor().getMessageTypes().get(10);
+      getDescriptor().getMessageTypes().get(9);
     internal_static_protocol_ValidatorSet_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_ValidatorSet_descriptor,
         new java.lang.String[] { "Validators", });
     internal_static_protocol_PbftProof_descriptor =
-      getDescriptor().getMessageTypes().get(11);
+      getDescriptor().getMessageTypes().get(10);
     internal_static_protocol_PbftProof_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_PbftProof_descriptor,
         new java.lang.String[] { "Commits", });
     internal_static_protocol_FeeConfig_descriptor =
-      getDescriptor().getMessageTypes().get(12);
+      getDescriptor().getMessageTypes().get(11);
     internal_static_protocol_FeeConfig_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_FeeConfig_descriptor,
