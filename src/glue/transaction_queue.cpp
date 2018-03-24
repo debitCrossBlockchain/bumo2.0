@@ -14,6 +14,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "transaction_queue.h"
+#include <ledger/ledger_manager.h>
 #include <algorithm>
 
 namespace bumo {
