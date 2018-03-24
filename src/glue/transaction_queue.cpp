@@ -191,25 +191,20 @@ namespace bumo {
 	}
 
 	uint32_t TransactionQueue::RemoveTxs(const protocol::TransactionEnvSet& set, bool close_ledger){
-		utils::WriteLockGuard g(lock_);
 		uint32_t ret = 0;
-		uint32_t i = 0;
+		uint32_t m = 0;
 		int64_t last_seq = LedgerManager::Instance().GetLastClosedLedger().seq();
 
+		utils::WriteLockGuard g(lock_);
 		for (int i = 0; i < set.txs_size(); i++) {
 			auto txproto = set.txs(i);
 			std::string source_address = txproto.transaction().source_address();
 			int64_t nonce = txproto.transaction().nonce();
 			std::pair<bool, TransactionFrm::pointer> result = Remove(source_address, nonce);
-			if (result.first)
-				++ret;
-			else
-				LOG_ERROR("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
-				(int)close_ledger, i, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
-
-			i++;
+			if (result.first) ++ret;
+			m++;
 			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
-				(int)close_ledger, i, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
+				(int)close_ledger, m, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
 
 			//update system account nonce
 			auto it = account_nonce_.find(source_address);
