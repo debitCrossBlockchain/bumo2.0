@@ -1,6 +1,7 @@
 'use strict';
 
 const validatorSetSize       = 100;
+const passRate               = 0.7;
 const effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
 const minPledgeAmount        = 100 * 100000000;
 const minSuperadditionAmount = 100 * 100000000;
@@ -12,12 +13,6 @@ const ballotVar       = 'ballot';
 const candidatesVar   = 'validator_candidates';
 const pledgeAmountVar = 'pledge_coin_amount';
 const expiredTimeVar  = 'voting_expired_time';
-
-function getQuorums(total){
-    assert(total >= 1, 'Arg-total must >= 1.');
-    let quorums = total - parseInt((total - 1) / 3);
-    return quorums;
-}
 
 function byString(name){
     let fun = function(x,y){
@@ -216,7 +211,7 @@ function voteForApplicant(applicant){
 
     assert(applicantData[ballotVar].includes(sender) !== true, sender + ' has voted.');
     applicantData[ballotVar].push(sender);
-    if(Object.keys(applicantData[ballotVar]).length >= getQuorums(validators.length)){
+    if(Object.keys(applicantData[ballotVar]).length < parseInt(validators.length * passRate + 0.5)){
         setMetaData(applicantKey, applicantData);
         return true;
     }
@@ -329,7 +324,7 @@ function voteAbolishValidator(malicious){
     
     assert(abolishProposal[ballotVar].includes(sender) !== true, sender + ' has voted.');
     abolishProposal[ballotVar].push(sender);
-    if(Object.keys(abolishProposal[ballotVar]).length >= getQuorums(validators.length)){
+    if(Object.keys(abolishProposal[ballotVar]).length < parseInt(validators.length * passRate + 0.5)){
         setMetaData(abolishKey, abolishProposal);
         return true;
     }
