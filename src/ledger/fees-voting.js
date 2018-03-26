@@ -3,7 +3,6 @@ const proposalRecordsKey = 'proposalRecordsKey';
 const voteRecordKeyPrefix ='voteRecords_';
 const nonceKey ='nonce';
 const effectiveProposalInterval =15*1000000*60*60*24;
-const votePassRate =0.8;
 let proposalRecords = {};
 let validators = {};
 
@@ -65,7 +64,10 @@ function voteFee(proposalId) {
   proposalRecords[proposalId].voteCount +=1;
   proposalRecordBody[accountId] = 1;
 
-  if(proposalRecords[proposalId].voteCount >= parseInt(Object.keys(validators).length*votePassRate)) {
+
+  let N =Object.keys(validators).length;
+  let F=parseInt((N-1)/3);
+  if(proposalRecords[proposalId].voteCount >= (N-F)) {
     let output = {};
     output[proposalRecords[proposalId].feeType] = proposalRecords[proposalId].price;
     delete proposalRecords[proposalId];
