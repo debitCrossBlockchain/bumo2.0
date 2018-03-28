@@ -388,7 +388,7 @@ namespace bumo {
 
 		//check previous ledger sequence
 		if (consensus_value.ledger_seq() != lcl.seq() + 1) {
-			LOG_ERROR("Check value failed, previous ledger seq(" FMT_I64 ") not equal to consensus message ledger seq( " FMT_I64 ")",
+			LOG_ERROR("Check value failed, previous ledger seq(" FMT_I64 ") + 1 not equal to consensus message ledger seq( " FMT_I64 ")",
 				lcl.seq(),
 				consensus_value.ledger_seq());
 			return Consensus::CHECK_VALUE_MAYVALID;

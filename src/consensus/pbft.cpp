@@ -609,7 +609,7 @@ namespace bumo {
 
 
 		if (sequence <= last_exe_seq_) {
-			LOG_WARN("Pbft sequence(" FMT_I64 ") less than last seq(" FMT_I64 ")", sequence, last_exe_seq_);
+			LOG_TRACE("Pbft sequence(" FMT_I64 ") less than last seq(" FMT_I64 ")", sequence, last_exe_seq_);
 			return NULL;
 		}
 
