@@ -1716,13 +1716,6 @@ function query(input)
 验证节点选举账户创建成功后，才可以进行后续的操作, 且该账户是全局唯一的, 不能重复创建。
 
 - 创建一个合约账户（参见[创建账号](#创建账号)），账户的地址必须是buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ。
-
->例
-
-```
-"validators_vote_account": "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
-```
-
 - 将 src\ledger\validators_vote.js 文件中的源码全部拷贝作为账户中 payload 字段的值。
 
 >例
@@ -1739,14 +1732,14 @@ function query(input)
 
  ```
    let validatorSetSize       = 100;
-   let votePassRate           = 0.8;
+   let votePassRate           = 0.7;
    let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
    let minPledgeAmount        = 100 * 100000000;
    let minSuperadditionAmount = 100 * 100000000;
 ```
  
  - validatorSetSize 指定网络内验证节点的个数；
- - votePassRate 设置投票通过值，只有验证节点有投票权限，投票数 / 验证节点总数 >= votePassRate 则投票通过;
+ - votePassRate 设置投票通过率，只有验证节点有投票权限，投票数 >= 四舍五入( 验证节点总数 * votePassRate ) 则投票通过，例如，假设总共有 4 个验证节点，那么 4 * 0.7 = 2.8，四舍五入后为 3，那么投票数必须 >= 3 才能通过, 如果总共有 6 个验证节点，那么 6 * 0.7 = 4.2，四舍五入后为 4，投票数必须 >= 4 才能通过;
  - effectiveVoteInterval 设置投票有效期，单位为微秒，超过有效期，则提案和投票作废；
  - minPledgeAmount 设置最小押金数额，低于该额度则拒绝；
  - minSuperadditionAmount 设置押金最小追加数额，低于该数额将被拒绝。
