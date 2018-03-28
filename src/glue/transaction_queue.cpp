@@ -149,7 +149,7 @@ namespace bumo {
 		protocol::TransactionEnvSet set;
 		std::unordered_map<std::string, int64_t> topic_seqs;
 		std::unordered_map<std::string, int64_t> break_nonce_accounts;
-		int64_t last_seq = LedgerManager::Instance().GetLastClosedLedger().seq();
+		int64_t last_block_seq = LedgerManager::Instance().GetLastClosedLedger().seq();
 		utils::WriteLockGuard g(lock_);
 		uint32_t i = 0;
 		
@@ -183,28 +183,28 @@ namespace bumo {
 				*set.add_txs() = tx->GetProtoTxEnv();
 
 				i++;
-				LOG_TRACE("top(%u) addr(%s) tx(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee(), last_seq);
+				//LOG_TRACE("top(%u) addr(%s) tx(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last block seq(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee(), last_block_seq);
 			}
 		}
-
+		LOG_TRACE("Take top size(%u) , last block seq(" FMT_I64 ") limit(%u) , txset byte size(%d)byte (%d)M", i, last_block_seq, limit, set.ByteSize() ,set.ByteSize() / utils::BYTES_PER_MEGA);
 		return std::move(set);
 	}
 
 	uint32_t TransactionQueue::RemoveTxs(const protocol::TransactionEnvSet& set, bool close_ledger){
+		
 		uint32_t ret = 0;
-		uint32_t m = 0;
 		int64_t last_seq = LedgerManager::Instance().GetLastClosedLedger().seq();
-
 		utils::WriteLockGuard g(lock_);
 		for (int i = 0; i < set.txs_size(); i++) {
 			auto txproto = set.txs(i);
 			std::string source_address = txproto.transaction().source_address();
 			int64_t nonce = txproto.transaction().nonce();
 			std::pair<bool, TransactionFrm::pointer> result = Remove(source_address, nonce);
-			if (result.first) ++ret;
-			m++;
-			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
-				(int)close_ledger, m, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
+			if (result.first)
+				++ret;
+			
+			//LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%d) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
+			//	(int)close_ledger, i, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
 
 			//update system account nonce
 			auto it = account_nonce_.find(source_address);
@@ -212,7 +212,8 @@ namespace bumo {
 				it->second = nonce;
 		}
 
-		LOG_TRACE("RemoveTxs after queue size(%u)", queue_.size());
+		LOG_TRACE("RemoveTxs close_ledger_flag(%d) set txs size(%d) real remove(%u) after queue size(%u) last block seq(" FMT_I64 ")", 
+			(int)close_ledger, set.txs_size(), ret, queue_.size(), last_seq);
 		return ret;
 	}
 
