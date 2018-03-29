@@ -331,7 +331,7 @@ namespace bumo {
 #else
 				ledger_db_ = new RocksDbDriver();
 #endif
-				if (!ledger_db_->Open(path)) {
+				if (!ledger_db_->Open(path, -1)) {
 					return false;
 				}
 
