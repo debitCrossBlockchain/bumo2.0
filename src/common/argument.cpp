@@ -295,12 +295,12 @@ namespace bumo {
 					printf("error");
 				}
 
-				PrivateKey priv_key(argv[4]);
+				PrivateKey priv_key(private_key);
 				std::string public_key = priv_key.GetEncPublicKey();
-				std::string raw_data = utils::String::HexStringToBin(argv[3]);
+				std::string raw_data = utils::String::HexStringToBin(argv[4]);
 				Json::Value result = Json::Value(Json::objectValue);
 
-				result["data"] = argv[3];
+				result["data"] = argv[4];
 				result["public_key"] = public_key;
 				result["sign_data"] = utils::String::BinToHexString(priv_key.Sign(raw_data));
 				printf("%s\n", result.toStyledString().c_str());

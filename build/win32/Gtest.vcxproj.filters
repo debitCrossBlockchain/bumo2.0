@@ -41,6 +41,9 @@
     <ClCompile Include="..\..\test\gtest\test\get_block_reward_utest.cpp">
       <Filter>UTest</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\test\gtest\test\libbumotools_utest.cpp">
+      <Filter>UTest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test\gtest\common\http_client.h">
