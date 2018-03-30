@@ -3,12 +3,12 @@
 
 
 #ifdef BUMO_TOOLS_EXPORTS
-#define BUMO_TOOLS_API __declspec(dllexport)
+#define BUMO_TOOLS_API  extern "C" __declspec(dllexport)
 #else
 #ifdef BUMO_TOOLS_IMPORTS
-#define BUMO_TOOLS_API __declspec(dllimport)
+#define BUMO_TOOLS_API  extern "C" __declspec(dllimport)
 #else 
-#define BUMO_TOOLS_API extern
+#define BUMO_TOOLS_API extern "C"
 #endif
 #endif
 
