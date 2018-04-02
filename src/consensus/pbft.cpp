@@ -594,9 +594,6 @@ namespace bumo {
 				if (pbft.type() == protocol::PBFT_TYPE_COMMIT) {
 					TraceOutPbftCommit(env);
 				}
-				//else if (pbft.type() == protocol::PBFT_TYPE_PREPREPARE){
-				//	TraceOutPbftPrePrepare(env);
-				//}
 			}
 			return NULL;
 		}
@@ -609,7 +606,7 @@ namespace bumo {
 
 
 		if (sequence <= last_exe_seq_) {
-			LOG_TRACE("Pbft sequence(" FMT_I64 ") less than last seq(" FMT_I64 ")", sequence, last_exe_seq_);
+			LOG_TRACE("Pbft sequence(" FMT_I64 ") <= last seq(" FMT_I64 ")", sequence, last_exe_seq_);
 			return NULL;
 		}
 
