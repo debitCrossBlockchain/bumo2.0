@@ -997,8 +997,8 @@ POST /getTransactionBlob
 |参数|描述
 |:--- | --- 
 |payment.dest_address |  目标账户
-|payment.asset.property.issuer|  资产发行方
-|payment.asset.property.code|  资产代码
+|payment.asset.key.issuer|  资产发行方
+|payment.asset.key.code|  资产代码
 |payment.asset.amount|  要转移的数量
 |payment.input|  触发合约调用的入参
 
@@ -1382,19 +1382,19 @@ function query(input)
 
 - ##### 获取某个账号的资产信息
 
-    `getAccountAsset(account_address, asset_property);`
+    `getAccountAsset(account_address, asset_key);`
 
     - account_address: 账号地址
-    - asset_property: 资产属性
+    - asset_key: 资产属性
 
     例如
     ```javascript
-    let asset_property =
+    let asset_key =
     {
       'issuer' : 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY',
       'code' : 'CNY'
     };
-    let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_property);
+    let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_key);
 
     /*
      1
@@ -1635,7 +1635,7 @@ function query(input)
 - ##### 本次支付操作的Asset
     thisPayAsset
 
-    为对象类型{"amount": 1000, "property" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
+    为对象类型{"amount": 1000, "key" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
  
 - ##### 当前区块高度
     blockNumber
@@ -1681,7 +1681,7 @@ function query(input)
   function main(inputStr) {
     let recvAsset = trigger.transaction.operations[triggerIndex].payment.asset;
 
-    if (recvAsset.property.code != 'CNY' || recvAsset.property.issuer != 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY') {
+    if (recvAsset.key.code != 'CNY' || recvAsset.key.issuer != 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY') {
       throw '不支持的资产类型';
     }
     let tx = {
@@ -1690,7 +1690,7 @@ function query(input)
           'payment': {
             'dest_address': sender,
             'asset': {
-              'property': {
+              'key': {
                 'issuer': thisAddress,
                 'code': 'IOU'
               },
