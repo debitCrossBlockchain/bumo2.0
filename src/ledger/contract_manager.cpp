@@ -283,7 +283,7 @@ namespace bumo{
 			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "issuer"), v8::String::NewFromUtf8(isolate_, asset_key.issuer().c_str()));
 			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "code"), v8::String::NewFromUtf8(isolate_, asset_key.code().c_str()));
 			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "amount"), v8::String::NewFromUtf8(isolate_, utils::String::ToString(parameter_.pay_asset_amount_.amount()).c_str()));
-			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "property"), v8_asset_property);
+			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "key"), v8_asset_property);
 
 			context->Global()->Set(context,
 				v8::String::NewFromUtf8(isolate_, pay_asset_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
