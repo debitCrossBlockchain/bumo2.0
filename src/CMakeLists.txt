@@ -117,6 +117,7 @@ file(APPEND ${SUPPLEMENT} "\tsudo ln -s -f /etc/init.d/bumod /etc/rc3.d/S50bumod
 file(APPEND ${SUPPLEMENT} "\tsudo ln -s -f /etc/init.d/bumod /etc/rc4.d/S50bumod;\\\n")
 file(APPEND ${SUPPLEMENT} "\tsudo ln -s -f /etc/init.d/bumod /etc/rc5.d/S50bumod;\\\n")
 file(APPEND ${SUPPLEMENT} "\tsudo mkdir -p ${FIX_DIR}/data;\n")
+file(APPEND ${SUPPLEMENT} "\tsudo mkdir -p ${FIX_DIR}/coredump;\n")
 
 file(APPEND ${SUPPLEMENT} "\nuninstall:\n")
 file(APPEND ${SUPPLEMENT} "\trm -f /etc/rc1.d/S99bumo;\\\n")
