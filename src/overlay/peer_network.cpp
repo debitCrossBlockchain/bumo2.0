@@ -47,6 +47,7 @@ namespace bumo {
 
 		response_methods_[protocol::OVERLAY_MSGTYPE_LEDGERS] = std::bind(&PeerNetwork::OnMethodLedgers, this, std::placeholders::_1, std::placeholders::_2);
 		response_methods_[protocol::OVERLAY_MSGTYPE_HELLO] = std::bind(&PeerNetwork::OnMethodHelloResponse, this, std::placeholders::_1, std::placeholders::_2);
+		last_update_peercache_time_ = 0;
 	}
 
 	PeerNetwork::~PeerNetwork() {
@@ -558,20 +559,23 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::GetActivePeers(int32_t max) {
-		do {
+		int64_t cur_time = utils::Timestamp::HighResolution();
+		if (db_peer_cache_.peers_size() == 0 || last_update_peercache_time_ == 0 ||
+			(cur_time - last_update_peercache_time_) > 10 * utils::MICRO_UNITS_PER_SEC) {
+			last_update_peercache_time_ = cur_time;
 			db_peer_cache_.clear_peers();
 			protocol::Peers peers;
 			
 			int32_t row_count = QueryTopItem(true, max, -1, peers);
 			if (row_count < 0) {
 				LOG_ERROR("Query records failed");
-				break;
+				return false;
 			}
 
 			db_peer_cache_ = peers;
-			return true;
-		} while (false);
-		return false;
+		}
+
+		return true;
 	}
 
 	int32_t PeerNetwork::QueryItem(const utils::InetAddress &address, protocol::Peers &records) {
