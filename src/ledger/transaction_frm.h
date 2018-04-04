@@ -92,7 +92,8 @@ namespace bumo {
 		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);
 
 		bool PayFee(std::shared_ptr<Environment> environment,int64_t& total_fee);
-		int64_t GetFee() const;
+		int64_t GetFeeLimit() const;
+		int64_t GetGasPrice() const;
 		int64_t GetSelfByteFee();
 		int64_t GetRealFee() const;
 		void AddRealFee(int64_t fee);

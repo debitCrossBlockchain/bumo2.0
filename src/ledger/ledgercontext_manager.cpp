@@ -175,7 +175,8 @@ namespace bumo {
 			protocol::TransactionEnv env;
 			protocol::Transaction *tx = env.mutable_transaction();
 			tx->set_source_address(parameter_.source_address_);
-			tx->set_fee(parameter_.fee_);
+			tx->set_fee_limit(parameter_.fee_limit_);
+			tx->set_gas_price(parameter_.gas_price_);
 			protocol::Operation *ope = tx->add_operations();
 			ope->set_type(protocol::Operation_Type_PAYMENT);
 			protocol::OperationPayment *payment = ope->mutable_payment();
@@ -488,8 +489,8 @@ namespace bumo {
 
 		int64_t real_fee = ledger->total_real_fee_;
 		if (type == LedgerContext::AT_TEST_TRANSACTION){
-			real_fee += (64 + 76 + 100 )*LedgerManager::Instance().GetCurFeeConfig().byte_fee();
-			int64_t suggest_fee = LedgerManager::Instance().GetCurFeeConfig().byte_fee() * 1000;
+			real_fee += (64 + 76 + 100 )*LedgerManager::Instance().GetCurFeeConfig().gas_price();
+			int64_t suggest_fee = LedgerManager::Instance().GetCurFeeConfig().gas_price() * 1000;
 			real_fee = real_fee < suggest_fee ? suggest_fee : real_fee;
 		}
 		ledger_context->GetLogs(logs);

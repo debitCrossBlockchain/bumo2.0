@@ -154,57 +154,15 @@ namespace bumo{
 			case protocol::FeeConfig_Type_UNKNOWN:
 				LOG_ERROR("FeeConfig type error");
 				break;
-			case protocol::FeeConfig_Type_BYTE_FEE:
-				if (new_fee.byte_fee() != price) {
-					new_fee.set_byte_fee(price);
+			case protocol::FeeConfig_Type_GAS_PRICE:
+				if (new_fee.gas_price() != price) {
+					new_fee.set_gas_price(price);
 					change = true;
 				}
 				break;
-			case protocol::FeeConfig_Type_BASE_RESERVE_FEE:
+			case protocol::FeeConfig_Type_BASE_RESERVE:
 				if (new_fee.base_reserve() != price) {
 					new_fee.set_base_reserve(price);
-					change = true;
-				}
-				break;
-			case protocol::FeeConfig_Type_CREATE_ACCOUNT_FEE:
-				if (new_fee.create_account_fee() != price) {
-					new_fee.set_create_account_fee(price);
-					change = true;
-				}
-				break;
-			case protocol::FeeConfig_Type_ISSUE_ASSET_FEE:
-				if (new_fee.issue_asset_fee() != price) {
-					new_fee.set_issue_asset_fee(price);
-					change = true;
-				}
-				break;
-			case protocol::FeeConfig_Type_PAYMENT_FEE:
-				if (new_fee.pay_fee() != price) {
-					new_fee.set_pay_fee(price);
-					change = true;
-				}
-				break;
-			case protocol::FeeConfig_Type_SET_METADATA_FEE:
-				if (new_fee.set_metadata_fee() != price) {
-					new_fee.set_set_metadata_fee(price);
-					change = true;
-				}
-				break;
-			case protocol::FeeConfig_Type_SET_SIGNER_WEIGHT_FEE:
-				if (new_fee.set_sigure_weight_fee() != price) {
-					new_fee.set_set_sigure_weight_fee(price);
-					change = true;
-				}
-				break;
-			case protocol::FeeConfig_Type_SET_THRESHOLD_FEE:
-				if (new_fee.set_threshold_fee() != price) {
-					new_fee.set_set_threshold_fee(price);
-					change = true;
-				}
-				break;
-			case protocol::FeeConfig_Type_PAY_COIN_FEE:
-				if (new_fee.pay_coin_fee() != price) {
-					new_fee.set_pay_fee(price);
 					change = true;
 				}
 				break;

@@ -338,11 +338,12 @@ namespace bumo {
 			}
 
 			int64_t coin_amount = utils::String::Stoi64(utils::String::MultiplyDecimal(args[2], General::BU_DECIMALS));
-			int64_t fee = utils::String::Stoi64(utils::String::MultiplyDecimal(args[3], General::BU_DECIMALS));
+			int64_t fee_limit = utils::String::Stoi64(utils::String::MultiplyDecimal(args[3], General::BU_DECIMALS));
+			int64_t price = utils::String::Stoi64(utils::String::MultiplyDecimal(args[4], General::BU_DECIMALS));
 			
 			std::string metadata, contract_input;
-			if (args.size() > 4) metadata = args[4];
-			if (args.size() > 5) contract_input = args[5];
+			if (args.size() > 5) metadata = args[5];
+			if (args.size() > 6) contract_input = args[6];
 
 			int64_t nonce = 0;
 			do {
@@ -360,7 +361,8 @@ namespace bumo {
 			protocol::Transaction *tran = tran_env.mutable_transaction();
 			tran->set_source_address(source_address);
 			tran->set_metadata(metadata);
-			tran->set_fee(fee);
+			tran->set_fee_limit(fee_limit);
+			tran->set_gas_price(price);
 			tran->set_nonce(nonce);
 			protocol::Operation *ope = tran->add_operations();
 			ope->set_type(protocol::Operation_Type_PAY_COIN);

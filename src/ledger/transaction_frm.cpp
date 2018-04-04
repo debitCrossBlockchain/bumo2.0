@@ -20,6 +20,7 @@
 #include <ledger/ledger_manager.h>
 #include "transaction_frm.h"
 #include "contract_manager.h"
+#include "fee_compulate.h"
 
 #include "ledger_frm.h"
 namespace bumo {
@@ -130,12 +131,16 @@ namespace bumo {
 		return tran.source_address();
 	}
 
-	int64_t TransactionFrm::GetFee() const {
-		return transaction_env_.transaction().fee();
+	int64_t TransactionFrm::GetFeeLimit() const {
+		return transaction_env_.transaction().fee_limit();
 	}
 
 	int64_t TransactionFrm::GetSelfByteFee() {
-		return LedgerManager::Instance().GetCurFeeConfig().byte_fee()*transaction_env_.ByteSize();
+		return FeeCompulate::ByteFee(GetGasPrice(), transaction_env_.ByteSize());
+	}
+
+	int64_t TransactionFrm::GetGasPrice() const {
+		return transaction_env_.transaction().gas_price();
 	}
 
 	int64_t TransactionFrm::GetRealFee() const {
@@ -236,7 +241,7 @@ namespace bumo {
 	}
 
 	bool TransactionFrm::PayFee(std::shared_ptr<Environment> environment, int64_t &total_fee) {
-		int64_t fee = GetFee();
+		int64_t fee = GetFeeLimit();
 		std::string str_address = transaction_env_.transaction().source_address();
 		AccountFrm::pointer source_account;
 
@@ -298,12 +303,24 @@ namespace bumo {
 
 			//first check fee for this transaction,but not include transaction triggered by contract
 			int64_t bytes_fee = GetSelfByteFee();
-			int64_t tran_fee = GetFee();
-			if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
-				if (tran_fee < bytes_fee) {
+			int64_t tran_gas_price = GetGasPrice();
+			int64_t tran_fee_limit = GetFeeLimit();
+			if (LedgerManager::Instance().GetCurFeeConfig().gas_price() > 0) {
+				if (tran_gas_price < LedgerManager::Instance().GetCurFeeConfig().gas_price()) {
 					std::string error_desc = utils::String::Format(
-						"Transaction(%s) fee(" FMT_I64 ") not enought for self byte fee(" FMT_I64 ") ",
-						utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
+						"Transaction(%s) gas_price(" FMT_I64 ") should not be less than the minimum gas_price(" FMT_I64 ") ",
+						utils::String::BinToHexString(hash_).c_str(), tran_gas_price, LedgerManager::Instance().GetCurFeeConfig().gas_price());
+
+					result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result_.set_desc(error_desc);
+					LOG_ERROR("%s", error_desc.c_str());
+					return false;
+				}
+
+				if (tran_fee_limit < bytes_fee) {
+					std::string error_desc = utils::String::Format(
+						"Transaction(%s) fee_limit(" FMT_I64 ") not enough for self bytes fee(" FMT_I64 ") ",
+						utils::String::BinToHexString(hash_).c_str(), tran_fee_limit, bytes_fee);
 
 					result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 					result_.set_desc(error_desc);
@@ -311,11 +328,10 @@ namespace bumo {
 					return false;
 				}
 
-				if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
-					std::string error_desc = utils::String::Format(
-						"Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base_reserve(" FMT_I64 ")",
-						str_address.c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().GetCurFeeConfig().base_reserve());
+				if (source_account->GetAccountBalance() - tran_fee_limit < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 					result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
+					std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 "),last transaction hash(%s)",
+						GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
 					result_.set_desc(error_desc);
 					LOG_ERROR("%s", error_desc.c_str());
 					return false;
@@ -338,18 +354,35 @@ namespace bumo {
         
         nonce = source_account->GetAccountNonce();
 		int64_t bytes_fee = GetSelfByteFee();
-		int64_t tran_fee = GetFee();
-		if (tran_fee < 0){
+		int64_t tran_gas_price = GetGasPrice();
+		int64_t tran_fee_limit = GetFeeLimit();
+		if (tran_gas_price < 0){
 			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-			result_.set_desc(utils::String::Format("Transaction(%s) fee(" FMT_I64 ") should not be negative number", utils::String::BinToHexString(hash_).c_str(), tran_fee));
+			result_.set_desc(utils::String::Format("Transaction(%s) gas_price(" FMT_I64 ") should not be negative number", utils::String::BinToHexString(hash_).c_str(), tran_gas_price));
+			return false;
+		}
+		if (tran_fee_limit < 0){
+			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+			result_.set_desc(utils::String::Format("Transaction(%s) fee_limit(" FMT_I64 ") should not be negative number", utils::String::BinToHexString(hash_).c_str(), tran_fee_limit));
 			return false;
 		}
 
-		if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
-			if (tran_fee < bytes_fee) {
+		if (LedgerManager::Instance().GetCurFeeConfig().gas_price() > 0) {
+			if (tran_gas_price < LedgerManager::Instance().GetCurFeeConfig().gas_price()) {
 				std::string error_desc = utils::String::Format(
-					"Transaction(%s) fee(" FMT_I64 ") not enough for self byte fee(" FMT_I64 ") ",
-					utils::String::BinToHexString(hash_).c_str(), tran_fee, bytes_fee);
+					"Transaction(%s) gas_price(" FMT_I64 ") should not be less than the minimum gas_price(" FMT_I64 ") ",
+					utils::String::BinToHexString(hash_).c_str(), tran_gas_price, LedgerManager::Instance().GetCurFeeConfig().gas_price());
+
+				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
+				return false;
+			}
+
+			if (tran_fee_limit < bytes_fee) {
+				std::string error_desc = utils::String::Format(
+					"Transaction(%s) fee_limit(" FMT_I64 ") not enough for self bytes fee(" FMT_I64 ") ",
+					utils::String::BinToHexString(hash_).c_str(), tran_fee_limit, bytes_fee);
 
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 				result_.set_desc(error_desc);
@@ -357,10 +390,10 @@ namespace bumo {
 				return false;
 			}
 
-			if (source_account->GetAccountBalance() - tran_fee < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
+			if (source_account->GetAccountBalance() - tran_fee_limit < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
 				std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 "),last transaction hash(%s)",
-					GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
+					GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				return false;
@@ -602,11 +635,12 @@ namespace bumo {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 
 		std::shared_ptr<TransactionFrm> bottom_tx = ledger_frm->lpledger_context_->GetBottomTx();
+		LOG_INFO("DEBUG BYTE_FEE " FMT_I64, transaction_env_.ByteSize());
 		bottom_tx->AddRealFee(GetSelfByteFee());
-		if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
+		if (bottom_tx->GetRealFee() > bottom_tx->GetFeeLimit()) {
 			result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-			std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 "),Transaction(%s) self byte fee(" FMT_I64 ")",
-				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), GetSelfByteFee());
+			std::string error_desc = utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current real fee(" FMT_I64 "),Transaction(%s) self byte fee(" FMT_I64 ")",
+				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetRealFee(), utils::String::BinToHexString(hash_).c_str(), GetSelfByteFee());
 			result_.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
 			bSucess = false;
@@ -623,7 +657,7 @@ namespace bumo {
 				break;
 			}
 
-			if (!bool_contract && !ledger_->IsTestMode()) {
+			if (!bool_contract) {
 				if (!opt->CheckSignature(environment_)) {
 					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::BinToHexString(GetContentHash()).c_str());
 					result_ = opt->GetResult();
@@ -644,10 +678,10 @@ namespace bumo {
 			}
 
 			bottom_tx->AddRealFee(opt->GetOpeFee());
-			if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
+			if (bottom_tx->GetRealFee() > bottom_tx->GetFeeLimit()) {
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-				std::string error_desc = utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 "), Transaction(%s) operation(%d) fee(" FMT_I64 ")",
-					utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), processing_operation_, opt->GetOpeFee());
+				std::string error_desc = utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current real fee(" FMT_I64 "), Transaction(%s) operation(%d) fee(" FMT_I64 ")",
+					utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), processing_operation_, opt->GetOpeFee());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				bSucess = false;

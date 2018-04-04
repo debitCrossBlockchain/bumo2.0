@@ -311,7 +311,8 @@ GET /getTransactionHistory?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc3592
                 "sign_data": "e950d36daaa51481f6aa7579d2ee8e893cb532d6ea536c716e89a529dd017f07ed8c0a130e897138a90b4bb44c11d4d105e65dc0070d28eb0cb5810c1f94f50a"
               }],
               "transaction": {
-                "fee": 24900,
+                "fee_limit": 24900,
+                "gas_price": 1000,
                 "nonce": 11,
                 "operations": [{
                   "pay_coin": {
@@ -371,7 +372,8 @@ GET /getTransactionCache?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d
                 ],
                 "status": "processing",
                 "transaction": {
-                    "fee": 100000,
+                    "fee_limit": 100000,
+                    "gas_price": 1000,
                     "nonce": 2,
                     "operations": [
                         {
@@ -540,7 +542,8 @@ POST /getTransactionBlob
     "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
     "nonce":2, //nonce值
     "ceil_ledger_seq": 0, //可选
-    "fee":1000, //交易支付的费用
+    "fee_limit":1000, //交易支付的费用
+    "gas_price": 1000, //gas价格(不小于配置的最低值)
     "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
     "operations":[
     {
@@ -574,7 +577,8 @@ POST /getTransactionBlob
 {
   "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
   "nonce": 1,
-  "fee": 1000000,
+  "fee_limit": 1000000,
+  "gas_price": 1000,
   "operations": [{
       "type": 1,
       "create_account": {
@@ -622,7 +626,8 @@ POST /getTransactionBlob
   "code" : "\"use strict\";log(undefined);function query() { return 1; }",
   "input" : "{}",
   "contract_balance" : "100009000000",
-  "fee" : 100000000000000000,
+  "fee_limit" : 100000000000000000,
+  "gas_price": 1000,
   "exe_or_query" : false,
   "source_address" : ""
 }
@@ -630,7 +635,8 @@ POST /getTransactionBlob
   - contract_address: 调用的智能合约地址，如果从数据库查询不到则返回错误。
   - code：需要调试的合约代码，如果 contract_address 为空，则使用code 字段，如果code字段你也为空，则返回错误。
   - input： 给被调用的合约传参。
-  - fee : 执行合约传递的参数。
+  - fee_limit : 手续费。
+  - gas_price : Gas价格。
   - contract_balance : 赋予合约的初始 BU 余额。
   - exe_or_query: true :准备调用合约的读写接口main，false :调用只读接口query。
   - source_address：模拟调用合约的原地址。
@@ -677,7 +683,8 @@ POST /getTransactionBlob
       "transaction_json": {
         "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB",
         "nonce": 6,
-        "fee":0,
+        "feeLimit":0,
+        "gasPrice":1000,
         "operations": [
           {
             "type": 7,
@@ -714,7 +721,8 @@ POST /getTransactionBlob
             {
                 "transaction_env": {
                     "transaction": {
-                        "fee": 99999999974939995,
+                        "feeLimit": 99999999974939995,
+                        "gasPrice": 1000,
                         "nonce": 6,
                         "operations": [
                             {
@@ -743,7 +751,8 @@ POST /getTransactionBlob
   {
       "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
       "nonce":2, //nonce值
-      "fee" : 1000000, //愿为交易花费的手续费
+      "fee_limit" : 1000000, //愿为交易花费的手续费
+      "gas_price": 1000,//gas价格(不小于配置的最低值)
       "ceil_ledger_seq": 100, //可选，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效
       "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
       "operations":[
@@ -767,17 +776,20 @@ POST /getTransactionBlob
       };
       string source_address = 1;
       int64 nonce = 2;
-      int64 fee = 3;
-      int64 ceil_ledger_seq = 4;
-      bytes metadata = 5;
-      repeated Operation operations = 6;
+      int64 fee_limit = 3;
+      int64 gas_price =4;
+      int64 ceil_ledger_seq = 5;
+      bytes metadata = 6;
+      repeated Operation operations = 7;
   }
   ```
 
-  交易Transaction有5个关键字段
+  交易Transaction有7个关键字段
 
   - source_address: 交易源账号，即交易发起方的账号。当这笔交易成功后，交易源账号的nonce字段会自动加1。账号中的nonce意义是本账号作为交易源执行过的交易数量。
   - nonce:其值必须等于交易源账号的当前nonce+1，这是为了防止重放攻击而设计的。如何查询一个账号的nonce可参考[查询账号](#查询账号)。若查询账号没有显示nonce值，说明账号的当前nonce是0.
+  - fee_limit:本交易能接受的最大的手续费。目前的手续费按照这个值收取，若实际计算出来的费用未超过亦不会退回多余的费用。
+  - gas_price:用于计算每个操作的手续费，还参与交易字节费的计算。
   - ceil_ledger_seq:针对本交易的区块高度限制条件，高级功能。
   - operations:操作列表。本交易的有效负载，即本交易想要做什么事情。见[操作](#操作)
   - metadata:用户自定义字段，可以不填写，备注用。
@@ -1983,25 +1995,11 @@ input 中的 address 字段填入指定的恶意节点地址。
   {
 	enum Type {
 		UNKNOWN = 0;
-		BYTE_FEE = 1;
-		BASE_RESERVE_FEE = 2;
-		CREATE_ACCOUNT_FEE = 3;
-		ISSUE_ASSET_FEE = 4;
-		PAYMENT_FEE = 5;
-		SET_METADATA_FEE = 6;
-		SET_SIGNER_WEIGHT_FEE = 7;
-		SET_THRESHOLD_FEE = 8;
-		PAY_COIN_FEE = 9;
+		GAS_PRICE = 1;
+		BASE_RESERVE = 2;
 	};
-	int64 byte_fee = 1;
+	int64 gas_price = 1;
 	int64 base_reserve = 2;
-	int64 create_account_fee = 3;
-	int64 issue_asset_fee = 4;
-	int64 pay_fee = 5;	
-	int64 set_metadata_fee = 6;
-	int64 set_sigure_weight_fee = 7;
-	int64 set_threshold_fee = 8;
-	int64 pay_coin_fee = 9;
   }
   ```
 
@@ -2009,15 +2007,8 @@ input 中的 address 字段填入指定的恶意节点地址。
 
 | 代码值 | 枚举名            | 说明                     |
 | :----- | --------------------- | ------------------- |
-| 1      | BYTE_FEE              | 字节费               |
-| 2      | BASE_RESERVE_FEE      | 预留费用             |
-| 3      | CREATE_ACCOUNT_FEE    | 创建账号费用         |
-| 4      | ISSUE_ASSET_FEE       | 发行资产费用         |
-| 5      | PAYMENT_FEE           | 转移资产费用         |
-| 6      | SET_METADATA_FEE      | 设置metadata费用     |
-| 7      | SET_SIGNER_WEIGHT_FEE | 设置权重费用         |
-| 8      | SET_THRESHOLD_FEE     | 设置门限费用         |
-| 9      | PAY_COIN_FEE          | 支付费用             |
+| 1      | GAS_PRICE             | Gas最低费用          |
+| 2      | BASE_RESERVE          | 预留费用             |
 
 #### 查询历史费用
 
@@ -2038,14 +2029,7 @@ GET /getLedger?seq=xxxx&with_fee=true
     "result": {
         "fees": {
             "base_reserve": 5,
-            "byte_fee": 1,
-            "create_account_fee": 1,
-            "issue_asset_fee": 1,
-            "pay_coin_fee": 1,
-            "pay_fee": 1,
-            "set_metadata_fee": 1,
-            "set_sigure_weight_fee": 1,
-            "set_threshold_fee": 1
+            "gas_price": 1000
         },
         "header": {
             "account_tree_hash": "c4e74a027e7fb7a96fa2c028a24fd8296df049decf928ee173ec4106ae016b0c",
@@ -2080,7 +2064,8 @@ json格式需转换成字符串形式填写到testContract接口结构
     "input" : "{\"method\":\"queryProposal\",\"params\":\"\"}",
     "exe_or_query" : false,
     "source_address" : "",
-    "fee":100000
+    "fee_limit":100000,
+    "gas_price":1000
 }
 ```
 
@@ -2140,7 +2125,8 @@ json格式需转换成字符串形式填写到testContract接口结构
     "input" :"{\"method\":\"queryVote\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}",
     "exe_or_query" : false,
     "source_address" : "",
-    "fee":100000
+    "fee_limit":100000,
+    "gas_price":1000
 }
 ```
 
@@ -2291,7 +2277,8 @@ json格式需转换成字符串形式填写到paycoin接口结构
     {
       "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
       "nonce": 1,
-      "fee":1000,
+      "fee_limit":100000,
+      "gas_price":1000,
       "operations": [{
           "type": 1,
           "create_account": {

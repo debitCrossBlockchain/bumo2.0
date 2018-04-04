@@ -19,6 +19,7 @@ limitations under the License.
 #include <glue/glue_manager.h>
 #include <ledger/ledger_manager.h>
 #include <ledger/contract_manager.h>
+#include <ledger/fee_compulate.h>
 #include "web_server.h"
 
 namespace bumo {
@@ -220,7 +221,8 @@ namespace bumo {
 		test_parameter.exe_or_query_ = body["exe_or_query"].asBool();
 		test_parameter.contract_address_ = body["contract_address"].asString();
 		test_parameter.source_address_ = body["source_address"].asString();
-		test_parameter.fee_ = body["fee"].asInt64();
+		test_parameter.fee_limit_ = body["fee_limit"].asInt64();
+		test_parameter.gas_price_ = body["gas_price"].asInt64();
 		test_parameter.contract_balance_ = body["contract_balance"].asInt64();
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
@@ -330,7 +332,7 @@ namespace bumo {
 						break;
 					}
 					
-					if ((tran->fee() == 0) && (!EvaluateFee(tran, result)))
+					if ((tran->fee_limit() == 0) && (!EvaluateFee(tran, result)))
 						break;
 
 					std::string content = tran->SerializeAsString();
@@ -345,7 +347,7 @@ namespace bumo {
 						break;
 					}
 
-					if ((tran->fee() == 0) && (!EvaluateFee(tran, result)))
+					if ((tran->fee_limit() == 0) && (!EvaluateFee(tran, result)))
 						break;
 
 					std::string content = tran->SerializeAsString();
@@ -421,8 +423,8 @@ namespace bumo {
 		int64_t balance = source_account->GetAccountBalance();
 		int64_t fee = balance - LedgerManager::Instance().GetCurFeeConfig().base_reserve() - pay_amount;
 		int64_t bytes_fee = 0;
-		if (LedgerManager::Instance().GetCurFeeConfig().byte_fee() > 0) {
-			bytes_fee = LedgerManager::Instance().GetCurFeeConfig().byte_fee()*tran->ByteSize();
+		if (LedgerManager::Instance().GetCurFeeConfig().gas_price() > 0) {
+			bytes_fee = LedgerManager::Instance().GetCurFeeConfig().gas_price()*tran->ByteSize();
 		}
 
 		if (fee < bytes_fee + total_opt_fee) {
@@ -431,7 +433,7 @@ namespace bumo {
 			LOG_ERROR("%s", result.desc().c_str());
 			return false;
 		}
-		tran->set_fee(fee);
+		tran->set_fee_limit(fee);
 		return true;
 	}
 }

@@ -28,7 +28,7 @@ namespace bumo{
 
 	ContractParameter::~ContractParameter() {}
 
-	ContractTestParameter::ContractTestParameter() : exe_or_query_(true), fee_(0), contract_balance_(0){}
+	ContractTestParameter::ContractTestParameter() : exe_or_query_(true), fee_limit_(0), gas_price_(0), contract_balance_(0){}
 
 	ContractTestParameter::~ContractTestParameter() {}
 

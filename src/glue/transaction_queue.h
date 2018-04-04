@@ -55,7 +55,7 @@ namespace bumo {
 			{
 				int64_t const& height1 = first->GetNonce() - transaction_queue_.account_nonce_[first->GetSourceAddress()];
 				int64_t const& height2 = second->GetNonce() - transaction_queue_.account_nonce_[second->GetSourceAddress()];
-				return height1 < height2 || (height1 == height2 && first->GetFee() > second->GetFee());
+				return height1 < height2 || (height1 == height2 && first->GetGasPrice() > second->GetGasPrice());
 			}
 		};
 

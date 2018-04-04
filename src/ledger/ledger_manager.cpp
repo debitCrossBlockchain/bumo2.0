@@ -19,6 +19,7 @@
 #include <monitor/monitor_manager.h>
 #include "ledger_manager.h"
 #include "contract_manager.h"
+#include "fee_compulate.h"
 
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
@@ -107,7 +108,7 @@ namespace bumo {
 			return false;
 		}
 	
-		LOG_INFO("Byte fee :" FMT_I64 " Base reserver fee:" FMT_I64 " Pay fee:" FMT_I64 " .", fees_.byte_fee(), fees_.base_reserve(), fees_.pay_fee());
+		LOG_INFO("Gas price :" FMT_I64 " Base reserver fee:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
 
 		//load proof
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof_);
@@ -289,15 +290,8 @@ namespace bumo {
 		header->set_validators_hash(validators_hash);
 
 		//for fee
-		fees_.set_byte_fee(Configure::Instance().genesis_configure_.fees_.byte_fee_);
+		fees_.set_gas_price(Configure::Instance().genesis_configure_.fees_.gas_price_);
 		fees_.set_base_reserve(Configure::Instance().genesis_configure_.fees_.base_reserve_);
-		fees_.set_create_account_fee(Configure::Instance().genesis_configure_.fees_.create_account_fee_);
-		fees_.set_pay_fee(Configure::Instance().genesis_configure_.fees_.pay_fee_);
-		fees_.set_issue_asset_fee(Configure::Instance().genesis_configure_.fees_.issue_asset_fee_);
-		fees_.set_set_metadata_fee(Configure::Instance().genesis_configure_.fees_.set_metadata_fee_);
-		fees_.set_set_sigure_weight_fee(Configure::Instance().genesis_configure_.fees_.set_sigure_weight_fee_);
-		fees_.set_set_threshold_fee(Configure::Instance().genesis_configure_.fees_.set_threshold_fee_);
-		fees_.set_pay_coin_fee(Configure::Instance().genesis_configure_.fees_.pay_coin_fee_);
 		std::string fees_hash = HashWrapper::Crypto(fees_.SerializeAsString());
 		header->set_fees_hash(fees_hash);
 
@@ -897,10 +891,10 @@ namespace bumo {
 			else {
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
-				if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
+				if (bottom_tx->GetRealFee() > bottom_tx->GetFeeLimit()) {
 					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 ") ,Transaction(%s) self byte fee(" FMT_I64 ")",
-						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
+					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current real fee(" FMT_I64 ") ,Transaction(%s) self byte fee(" FMT_I64 ")",
+						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetRealFee(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
 				}
 			}
 

@@ -10066,49 +10066,14 @@ public final class Consensus {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int64 byte_fee = 1;</code>
+     * <code>optional int64 gas_price = 1;</code>
      */
-    long getByteFee();
+    long getGasPrice();
 
     /**
      * <code>optional int64 base_reserve = 2;</code>
      */
     long getBaseReserve();
-
-    /**
-     * <code>optional int64 create_account_fee = 3;</code>
-     */
-    long getCreateAccountFee();
-
-    /**
-     * <code>optional int64 issue_asset_fee = 4;</code>
-     */
-    long getIssueAssetFee();
-
-    /**
-     * <code>optional int64 pay_fee = 5;</code>
-     */
-    long getPayFee();
-
-    /**
-     * <code>optional int64 set_metadata_fee = 6;</code>
-     */
-    long getSetMetadataFee();
-
-    /**
-     * <code>optional int64 set_sigure_weight_fee = 7;</code>
-     */
-    long getSetSigureWeightFee();
-
-    /**
-     * <code>optional int64 set_threshold_fee = 8;</code>
-     */
-    long getSetThresholdFee();
-
-    /**
-     * <code>optional int64 pay_coin_fee = 9;</code>
-     */
-    long getPayCoinFee();
   }
   /**
    * Protobuf type {@code protocol.FeeConfig}
@@ -10122,15 +10087,8 @@ public final class Consensus {
       super(builder);
     }
     private FeeConfig() {
-      byteFee_ = 0L;
+      gasPrice_ = 0L;
       baseReserve_ = 0L;
-      createAccountFee_ = 0L;
-      issueAssetFee_ = 0L;
-      payFee_ = 0L;
-      setMetadataFee_ = 0L;
-      setSigureWeightFee_ = 0L;
-      setThresholdFee_ = 0L;
-      payCoinFee_ = 0L;
     }
 
     @java.lang.Override
@@ -10160,47 +10118,12 @@ public final class Consensus {
             }
             case 8: {
 
-              byteFee_ = input.readInt64();
+              gasPrice_ = input.readInt64();
               break;
             }
             case 16: {
 
               baseReserve_ = input.readInt64();
-              break;
-            }
-            case 24: {
-
-              createAccountFee_ = input.readInt64();
-              break;
-            }
-            case 32: {
-
-              issueAssetFee_ = input.readInt64();
-              break;
-            }
-            case 40: {
-
-              payFee_ = input.readInt64();
-              break;
-            }
-            case 48: {
-
-              setMetadataFee_ = input.readInt64();
-              break;
-            }
-            case 56: {
-
-              setSigureWeightFee_ = input.readInt64();
-              break;
-            }
-            case 64: {
-
-              setThresholdFee_ = input.readInt64();
-              break;
-            }
-            case 72: {
-
-              payCoinFee_ = input.readInt64();
               break;
             }
           }
@@ -10236,41 +10159,13 @@ public final class Consensus {
        */
       UNKNOWN(0),
       /**
-       * <code>BYTE_FEE = 1;</code>
+       * <code>GAS_PRICE = 1;</code>
        */
-      BYTE_FEE(1),
+      GAS_PRICE(1),
       /**
-       * <code>BASE_RESERVE_FEE = 2;</code>
+       * <code>BASE_RESERVE = 2;</code>
        */
-      BASE_RESERVE_FEE(2),
-      /**
-       * <code>CREATE_ACCOUNT_FEE = 3;</code>
-       */
-      CREATE_ACCOUNT_FEE(3),
-      /**
-       * <code>ISSUE_ASSET_FEE = 4;</code>
-       */
-      ISSUE_ASSET_FEE(4),
-      /**
-       * <code>PAYMENT_FEE = 5;</code>
-       */
-      PAYMENT_FEE(5),
-      /**
-       * <code>SET_METADATA_FEE = 6;</code>
-       */
-      SET_METADATA_FEE(6),
-      /**
-       * <code>SET_SIGNER_WEIGHT_FEE = 7;</code>
-       */
-      SET_SIGNER_WEIGHT_FEE(7),
-      /**
-       * <code>SET_THRESHOLD_FEE = 8;</code>
-       */
-      SET_THRESHOLD_FEE(8),
-      /**
-       * <code>PAY_COIN_FEE = 9;</code>
-       */
-      PAY_COIN_FEE(9),
+      BASE_RESERVE(2),
       UNRECOGNIZED(-1),
       ;
 
@@ -10279,41 +10174,13 @@ public final class Consensus {
        */
       public static final int UNKNOWN_VALUE = 0;
       /**
-       * <code>BYTE_FEE = 1;</code>
+       * <code>GAS_PRICE = 1;</code>
        */
-      public static final int BYTE_FEE_VALUE = 1;
+      public static final int GAS_PRICE_VALUE = 1;
       /**
-       * <code>BASE_RESERVE_FEE = 2;</code>
+       * <code>BASE_RESERVE = 2;</code>
        */
-      public static final int BASE_RESERVE_FEE_VALUE = 2;
-      /**
-       * <code>CREATE_ACCOUNT_FEE = 3;</code>
-       */
-      public static final int CREATE_ACCOUNT_FEE_VALUE = 3;
-      /**
-       * <code>ISSUE_ASSET_FEE = 4;</code>
-       */
-      public static final int ISSUE_ASSET_FEE_VALUE = 4;
-      /**
-       * <code>PAYMENT_FEE = 5;</code>
-       */
-      public static final int PAYMENT_FEE_VALUE = 5;
-      /**
-       * <code>SET_METADATA_FEE = 6;</code>
-       */
-      public static final int SET_METADATA_FEE_VALUE = 6;
-      /**
-       * <code>SET_SIGNER_WEIGHT_FEE = 7;</code>
-       */
-      public static final int SET_SIGNER_WEIGHT_FEE_VALUE = 7;
-      /**
-       * <code>SET_THRESHOLD_FEE = 8;</code>
-       */
-      public static final int SET_THRESHOLD_FEE_VALUE = 8;
-      /**
-       * <code>PAY_COIN_FEE = 9;</code>
-       */
-      public static final int PAY_COIN_FEE_VALUE = 9;
+      public static final int BASE_RESERVE_VALUE = 2;
 
 
       public final int getNumber() {
@@ -10335,15 +10202,8 @@ public final class Consensus {
       public static Type forNumber(int value) {
         switch (value) {
           case 0: return UNKNOWN;
-          case 1: return BYTE_FEE;
-          case 2: return BASE_RESERVE_FEE;
-          case 3: return CREATE_ACCOUNT_FEE;
-          case 4: return ISSUE_ASSET_FEE;
-          case 5: return PAYMENT_FEE;
-          case 6: return SET_METADATA_FEE;
-          case 7: return SET_SIGNER_WEIGHT_FEE;
-          case 8: return SET_THRESHOLD_FEE;
-          case 9: return PAY_COIN_FEE;
+          case 1: return GAS_PRICE;
+          case 2: return BASE_RESERVE;
           default: return null;
         }
       }
@@ -10396,13 +10256,13 @@ public final class Consensus {
       // @@protoc_insertion_point(enum_scope:protocol.FeeConfig.Type)
     }
 
-    public static final int BYTE_FEE_FIELD_NUMBER = 1;
-    private long byteFee_;
+    public static final int GAS_PRICE_FIELD_NUMBER = 1;
+    private long gasPrice_;
     /**
-     * <code>optional int64 byte_fee = 1;</code>
+     * <code>optional int64 gas_price = 1;</code>
      */
-    public long getByteFee() {
-      return byteFee_;
+    public long getGasPrice() {
+      return gasPrice_;
     }
 
     public static final int BASE_RESERVE_FIELD_NUMBER = 2;
@@ -10412,69 +10272,6 @@ public final class Consensus {
      */
     public long getBaseReserve() {
       return baseReserve_;
-    }
-
-    public static final int CREATE_ACCOUNT_FEE_FIELD_NUMBER = 3;
-    private long createAccountFee_;
-    /**
-     * <code>optional int64 create_account_fee = 3;</code>
-     */
-    public long getCreateAccountFee() {
-      return createAccountFee_;
-    }
-
-    public static final int ISSUE_ASSET_FEE_FIELD_NUMBER = 4;
-    private long issueAssetFee_;
-    /**
-     * <code>optional int64 issue_asset_fee = 4;</code>
-     */
-    public long getIssueAssetFee() {
-      return issueAssetFee_;
-    }
-
-    public static final int PAY_FEE_FIELD_NUMBER = 5;
-    private long payFee_;
-    /**
-     * <code>optional int64 pay_fee = 5;</code>
-     */
-    public long getPayFee() {
-      return payFee_;
-    }
-
-    public static final int SET_METADATA_FEE_FIELD_NUMBER = 6;
-    private long setMetadataFee_;
-    /**
-     * <code>optional int64 set_metadata_fee = 6;</code>
-     */
-    public long getSetMetadataFee() {
-      return setMetadataFee_;
-    }
-
-    public static final int SET_SIGURE_WEIGHT_FEE_FIELD_NUMBER = 7;
-    private long setSigureWeightFee_;
-    /**
-     * <code>optional int64 set_sigure_weight_fee = 7;</code>
-     */
-    public long getSetSigureWeightFee() {
-      return setSigureWeightFee_;
-    }
-
-    public static final int SET_THRESHOLD_FEE_FIELD_NUMBER = 8;
-    private long setThresholdFee_;
-    /**
-     * <code>optional int64 set_threshold_fee = 8;</code>
-     */
-    public long getSetThresholdFee() {
-      return setThresholdFee_;
-    }
-
-    public static final int PAY_COIN_FEE_FIELD_NUMBER = 9;
-    private long payCoinFee_;
-    /**
-     * <code>optional int64 pay_coin_fee = 9;</code>
-     */
-    public long getPayCoinFee() {
-      return payCoinFee_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -10489,32 +10286,11 @@ public final class Consensus {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (byteFee_ != 0L) {
-        output.writeInt64(1, byteFee_);
+      if (gasPrice_ != 0L) {
+        output.writeInt64(1, gasPrice_);
       }
       if (baseReserve_ != 0L) {
         output.writeInt64(2, baseReserve_);
-      }
-      if (createAccountFee_ != 0L) {
-        output.writeInt64(3, createAccountFee_);
-      }
-      if (issueAssetFee_ != 0L) {
-        output.writeInt64(4, issueAssetFee_);
-      }
-      if (payFee_ != 0L) {
-        output.writeInt64(5, payFee_);
-      }
-      if (setMetadataFee_ != 0L) {
-        output.writeInt64(6, setMetadataFee_);
-      }
-      if (setSigureWeightFee_ != 0L) {
-        output.writeInt64(7, setSigureWeightFee_);
-      }
-      if (setThresholdFee_ != 0L) {
-        output.writeInt64(8, setThresholdFee_);
-      }
-      if (payCoinFee_ != 0L) {
-        output.writeInt64(9, payCoinFee_);
       }
     }
 
@@ -10523,41 +10299,13 @@ public final class Consensus {
       if (size != -1) return size;
 
       size = 0;
-      if (byteFee_ != 0L) {
+      if (gasPrice_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, byteFee_);
+          .computeInt64Size(1, gasPrice_);
       }
       if (baseReserve_ != 0L) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(2, baseReserve_);
-      }
-      if (createAccountFee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, createAccountFee_);
-      }
-      if (issueAssetFee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, issueAssetFee_);
-      }
-      if (payFee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(5, payFee_);
-      }
-      if (setMetadataFee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(6, setMetadataFee_);
-      }
-      if (setSigureWeightFee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(7, setSigureWeightFee_);
-      }
-      if (setThresholdFee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(8, setThresholdFee_);
-      }
-      if (payCoinFee_ != 0L) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(9, payCoinFee_);
       }
       memoizedSize = size;
       return size;
@@ -10575,24 +10323,10 @@ public final class Consensus {
       protocol.Consensus.FeeConfig other = (protocol.Consensus.FeeConfig) obj;
 
       boolean result = true;
-      result = result && (getByteFee()
-          == other.getByteFee());
+      result = result && (getGasPrice()
+          == other.getGasPrice());
       result = result && (getBaseReserve()
           == other.getBaseReserve());
-      result = result && (getCreateAccountFee()
-          == other.getCreateAccountFee());
-      result = result && (getIssueAssetFee()
-          == other.getIssueAssetFee());
-      result = result && (getPayFee()
-          == other.getPayFee());
-      result = result && (getSetMetadataFee()
-          == other.getSetMetadataFee());
-      result = result && (getSetSigureWeightFee()
-          == other.getSetSigureWeightFee());
-      result = result && (getSetThresholdFee()
-          == other.getSetThresholdFee());
-      result = result && (getPayCoinFee()
-          == other.getPayCoinFee());
       return result;
     }
 
@@ -10603,33 +10337,12 @@ public final class Consensus {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptorForType().hashCode();
-      hash = (37 * hash) + BYTE_FEE_FIELD_NUMBER;
+      hash = (37 * hash) + GAS_PRICE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getByteFee());
+          getGasPrice());
       hash = (37 * hash) + BASE_RESERVE_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getBaseReserve());
-      hash = (37 * hash) + CREATE_ACCOUNT_FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getCreateAccountFee());
-      hash = (37 * hash) + ISSUE_ASSET_FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getIssueAssetFee());
-      hash = (37 * hash) + PAY_FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getPayFee());
-      hash = (37 * hash) + SET_METADATA_FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getSetMetadataFee());
-      hash = (37 * hash) + SET_SIGURE_WEIGHT_FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getSetSigureWeightFee());
-      hash = (37 * hash) + SET_THRESHOLD_FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getSetThresholdFee());
-      hash = (37 * hash) + PAY_COIN_FEE_FIELD_NUMBER;
-      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
-          getPayCoinFee());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -10748,23 +10461,9 @@ public final class Consensus {
       }
       public Builder clear() {
         super.clear();
-        byteFee_ = 0L;
+        gasPrice_ = 0L;
 
         baseReserve_ = 0L;
-
-        createAccountFee_ = 0L;
-
-        issueAssetFee_ = 0L;
-
-        payFee_ = 0L;
-
-        setMetadataFee_ = 0L;
-
-        setSigureWeightFee_ = 0L;
-
-        setThresholdFee_ = 0L;
-
-        payCoinFee_ = 0L;
 
         return this;
       }
@@ -10788,15 +10487,8 @@ public final class Consensus {
 
       public protocol.Consensus.FeeConfig buildPartial() {
         protocol.Consensus.FeeConfig result = new protocol.Consensus.FeeConfig(this);
-        result.byteFee_ = byteFee_;
+        result.gasPrice_ = gasPrice_;
         result.baseReserve_ = baseReserve_;
-        result.createAccountFee_ = createAccountFee_;
-        result.issueAssetFee_ = issueAssetFee_;
-        result.payFee_ = payFee_;
-        result.setMetadataFee_ = setMetadataFee_;
-        result.setSigureWeightFee_ = setSigureWeightFee_;
-        result.setThresholdFee_ = setThresholdFee_;
-        result.payCoinFee_ = payCoinFee_;
         onBuilt();
         return result;
       }
@@ -10838,32 +10530,11 @@ public final class Consensus {
 
       public Builder mergeFrom(protocol.Consensus.FeeConfig other) {
         if (other == protocol.Consensus.FeeConfig.getDefaultInstance()) return this;
-        if (other.getByteFee() != 0L) {
-          setByteFee(other.getByteFee());
+        if (other.getGasPrice() != 0L) {
+          setGasPrice(other.getGasPrice());
         }
         if (other.getBaseReserve() != 0L) {
           setBaseReserve(other.getBaseReserve());
-        }
-        if (other.getCreateAccountFee() != 0L) {
-          setCreateAccountFee(other.getCreateAccountFee());
-        }
-        if (other.getIssueAssetFee() != 0L) {
-          setIssueAssetFee(other.getIssueAssetFee());
-        }
-        if (other.getPayFee() != 0L) {
-          setPayFee(other.getPayFee());
-        }
-        if (other.getSetMetadataFee() != 0L) {
-          setSetMetadataFee(other.getSetMetadataFee());
-        }
-        if (other.getSetSigureWeightFee() != 0L) {
-          setSetSigureWeightFee(other.getSetSigureWeightFee());
-        }
-        if (other.getSetThresholdFee() != 0L) {
-          setSetThresholdFee(other.getSetThresholdFee());
-        }
-        if (other.getPayCoinFee() != 0L) {
-          setPayCoinFee(other.getPayCoinFee());
         }
         onChanged();
         return this;
@@ -10891,28 +10562,28 @@ public final class Consensus {
         return this;
       }
 
-      private long byteFee_ ;
+      private long gasPrice_ ;
       /**
-       * <code>optional int64 byte_fee = 1;</code>
+       * <code>optional int64 gas_price = 1;</code>
        */
-      public long getByteFee() {
-        return byteFee_;
+      public long getGasPrice() {
+        return gasPrice_;
       }
       /**
-       * <code>optional int64 byte_fee = 1;</code>
+       * <code>optional int64 gas_price = 1;</code>
        */
-      public Builder setByteFee(long value) {
+      public Builder setGasPrice(long value) {
         
-        byteFee_ = value;
+        gasPrice_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int64 byte_fee = 1;</code>
+       * <code>optional int64 gas_price = 1;</code>
        */
-      public Builder clearByteFee() {
+      public Builder clearGasPrice() {
         
-        byteFee_ = 0L;
+        gasPrice_ = 0L;
         onChanged();
         return this;
       }
@@ -10939,188 +10610,6 @@ public final class Consensus {
       public Builder clearBaseReserve() {
         
         baseReserve_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long createAccountFee_ ;
-      /**
-       * <code>optional int64 create_account_fee = 3;</code>
-       */
-      public long getCreateAccountFee() {
-        return createAccountFee_;
-      }
-      /**
-       * <code>optional int64 create_account_fee = 3;</code>
-       */
-      public Builder setCreateAccountFee(long value) {
-        
-        createAccountFee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 create_account_fee = 3;</code>
-       */
-      public Builder clearCreateAccountFee() {
-        
-        createAccountFee_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long issueAssetFee_ ;
-      /**
-       * <code>optional int64 issue_asset_fee = 4;</code>
-       */
-      public long getIssueAssetFee() {
-        return issueAssetFee_;
-      }
-      /**
-       * <code>optional int64 issue_asset_fee = 4;</code>
-       */
-      public Builder setIssueAssetFee(long value) {
-        
-        issueAssetFee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 issue_asset_fee = 4;</code>
-       */
-      public Builder clearIssueAssetFee() {
-        
-        issueAssetFee_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long payFee_ ;
-      /**
-       * <code>optional int64 pay_fee = 5;</code>
-       */
-      public long getPayFee() {
-        return payFee_;
-      }
-      /**
-       * <code>optional int64 pay_fee = 5;</code>
-       */
-      public Builder setPayFee(long value) {
-        
-        payFee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 pay_fee = 5;</code>
-       */
-      public Builder clearPayFee() {
-        
-        payFee_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long setMetadataFee_ ;
-      /**
-       * <code>optional int64 set_metadata_fee = 6;</code>
-       */
-      public long getSetMetadataFee() {
-        return setMetadataFee_;
-      }
-      /**
-       * <code>optional int64 set_metadata_fee = 6;</code>
-       */
-      public Builder setSetMetadataFee(long value) {
-        
-        setMetadataFee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 set_metadata_fee = 6;</code>
-       */
-      public Builder clearSetMetadataFee() {
-        
-        setMetadataFee_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long setSigureWeightFee_ ;
-      /**
-       * <code>optional int64 set_sigure_weight_fee = 7;</code>
-       */
-      public long getSetSigureWeightFee() {
-        return setSigureWeightFee_;
-      }
-      /**
-       * <code>optional int64 set_sigure_weight_fee = 7;</code>
-       */
-      public Builder setSetSigureWeightFee(long value) {
-        
-        setSigureWeightFee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 set_sigure_weight_fee = 7;</code>
-       */
-      public Builder clearSetSigureWeightFee() {
-        
-        setSigureWeightFee_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long setThresholdFee_ ;
-      /**
-       * <code>optional int64 set_threshold_fee = 8;</code>
-       */
-      public long getSetThresholdFee() {
-        return setThresholdFee_;
-      }
-      /**
-       * <code>optional int64 set_threshold_fee = 8;</code>
-       */
-      public Builder setSetThresholdFee(long value) {
-        
-        setThresholdFee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 set_threshold_fee = 8;</code>
-       */
-      public Builder clearSetThresholdFee() {
-        
-        setThresholdFee_ = 0L;
-        onChanged();
-        return this;
-      }
-
-      private long payCoinFee_ ;
-      /**
-       * <code>optional int64 pay_coin_fee = 9;</code>
-       */
-      public long getPayCoinFee() {
-        return payCoinFee_;
-      }
-      /**
-       * <code>optional int64 pay_coin_fee = 9;</code>
-       */
-      public Builder setPayCoinFee(long value) {
-        
-        payCoinFee_ = value;
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>optional int64 pay_coin_fee = 9;</code>
-       */
-      public Builder clearPayCoinFee() {
-        
-        payCoinFee_ = 0L;
         onChanged();
         return this;
       }
@@ -11273,23 +10762,15 @@ public final class Consensus {
       "\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Validato" +
       "rSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol.Vali",
       "dator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\0132\021.pr" +
-      "otocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010byte_fee" +
-      "\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022create_a" +
-      "ccount_fee\030\003 \001(\003\022\027\n\017issue_asset_fee\030\004 \001(" +
-      "\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata_fee\030\006" +
-      " \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(\003\022\031\n\021s" +
-      "et_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin_fee\030\t" +
-      " \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE_FEE\020\001" +
-      "\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_ACCOUNT" +
-      "_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAYMENT_F",
-      "EE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_SIGNER" +
-      "_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE\020\010\022\020\n\014" +
-      "PAY_COIN_FEE\020\t*\211\001\n\017PbftMessageType\022\030\n\024PB" +
-      "FT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_PREPAR" +
-      "E\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_TYPE_V" +
-      "IEWCHANGE\020\003\022\025\n\021PBFT_TYPE_NEWVIEW\020\004*8\n\rPb" +
-      "ftValueType\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_V" +
-      "ALUE_TXSET\020\001b\006proto3"
+      "otocol.PbftEnv\"j\n\tFeeConfig\022\021\n\tgas_price" +
+      "\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\"4\n\004Type\022\013\n\007" +
+      "UNKNOWN\020\000\022\r\n\tGAS_PRICE\020\001\022\020\n\014BASE_RESERVE" +
+      "\020\002*\211\001\n\017PbftMessageType\022\030\n\024PBFT_TYPE_PREP" +
+      "REPARE\020\000\022\025\n\021PBFT_TYPE_PREPARE\020\001\022\024\n\020PBFT_" +
+      "TYPE_COMMIT\020\002\022\030\n\024PBFT_TYPE_VIEWCHANGE\020\003\022" +
+      "\025\n\021PBFT_TYPE_NEWVIEW\020\004*8\n\rPbftValueType\022" +
+      "\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXSET\020\001" +
+      "b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -11375,7 +10856,7 @@ public final class Consensus {
     internal_static_protocol_FeeConfig_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_protocol_FeeConfig_descriptor,
-        new java.lang.String[] { "ByteFee", "BaseReserve", "CreateAccountFee", "IssueAssetFee", "PayFee", "SetMetadataFee", "SetSigureWeightFee", "SetThresholdFee", "PayCoinFee", });
+        new java.lang.String[] { "GasPrice", "BaseReserve", });
     cn.bumo.blockchain.adapter3.Common.getDescriptor();
   }
 

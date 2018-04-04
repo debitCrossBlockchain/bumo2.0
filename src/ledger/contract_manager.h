@@ -61,7 +61,8 @@ namespace bumo{
 		std::string input_;
 		std::string source_address_;
 		int64_t contract_balance_;
-		int64_t fee_;
+		int64_t fee_limit_;
+		int64_t gas_price_;
 	};
 
 	class TransactionTestParameter :public TestParameter{

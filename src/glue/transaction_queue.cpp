@@ -87,7 +87,7 @@ namespace bumo {
 
 		account_nonce_[tx->GetSourceAddress()] = cur_source_nonce;
 
-		LOG_TRACE("Import account(%s) transaction(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ")", tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
+		LOG_TRACE("Import account(%s) transaction(%s) nonce(" FMT_I64 ") gas_price(" FMT_I64 ")", tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetGasPrice());
 		auto account_it = queue_by_address_and_nonce_.find(tx->GetSourceAddress());
 		if (account_it != queue_by_address_and_nonce_.end()) {
 
@@ -96,17 +96,17 @@ namespace bumo {
 			auto tx_it = account_it->second.find(tx->GetNonce());
 			if (tx_it != account_it->second.end()){
 
-				if (tx->GetFee() > (*tx_it->second.first)->GetFee()) {
+				if (tx->GetGasPrice() > (*tx_it->second.first)->GetGasPrice()) {
 					//remove transaction for replace ,and after insert
 					std::string drop_hash = (*tx_it->second.first)->GetContentHash();
 					Remove(account_it, tx_it);
 					replace = true;
 					account_txs_size--;
-					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") in queue", utils::String::BinToHexString(drop_hash).c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ") in queue", utils::String::BinToHexString(drop_hash).c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetGasPrice(), tx->GetNonce());
 				}
 				else{
 					//Discard new transaction
-					std::string error_desc = utils::String::Format("Discard transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+					std::string error_desc = utils::String::Format("Discard transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetGasPrice(), tx->GetNonce());
 					LOG_ERROR("%s", error_desc.c_str());
 					result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
 					result.set_desc(error_desc);
@@ -123,7 +123,7 @@ namespace bumo {
 				TransactionFrm::pointer t = *queue_.rbegin();
 				Remove(t->GetSourceAddress(), t->GetNonce());
 
-				std::string error_desc = utils::String::Format("Discard lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::BinToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(), t->GetNonce());
+				std::string error_desc = utils::String::Format("Discard lowest transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::BinToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetGasPrice(), t->GetNonce());
 				LOG_TRACE("%s", error_desc.c_str());
 				if (t->GetContentHash() == tx->GetContentHash()){
 					result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
@@ -136,7 +136,7 @@ namespace bumo {
 
 		if (account_txs_size >= account_txs_limit_){
 			inserted = false;
-			std::string error_desc = utils::String::Format(" transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") exceed txs limit of per account in queue", utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+			std::string error_desc = utils::String::Format(" transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ") exceed txs limit of per account in queue", utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetGasPrice(), tx->GetNonce());
 			result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
 			result.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
@@ -183,7 +183,7 @@ namespace bumo {
 				*set.add_txs() = tx->GetProtoTxEnv();
 
 				i++;
-				//LOG_TRACE("top(%u) addr(%s) tx(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last block seq(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee(), last_block_seq);
+				//LOG_TRACE("top(%u) addr(%s) tx(%s) nonce(" FMT_I64 ") gas_price(" FMT_I64 ") last block seq(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetGasPrice(), last_block_seq);
 			}
 		}
 		LOG_TRACE("Take top size(%u) , last block seq(" FMT_I64 ") limit(%u) , txset byte size(%d)byte (%d)M", i, last_block_seq, limit, set.ByteSize() ,set.ByteSize() / utils::BYTES_PER_MEGA);
@@ -227,9 +227,9 @@ namespace bumo {
 
 			auto result = Remove(source_address, nonce);
 			i++;
-			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) tx(%s), nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")", 
+			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) tx(%s), nonce(" FMT_I64 ") gas_price(" FMT_I64 ") last seq(" FMT_I64 ")", 
 				(int)close_ledger, i, (int)result.first, (*it)->GetSourceAddress().c_str(),
-				utils::String::BinToHexString((*it)->GetContentHash()).c_str(), (*it)->GetNonce(), (*it)->GetFee(), last_seq);
+				utils::String::BinToHexString((*it)->GetContentHash()).c_str(), (*it)->GetNonce(), (*it)->GetGasPrice(), last_seq);
 
 			//update system account nonce
 			auto iter = account_nonce_.find(source_address);

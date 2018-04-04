@@ -30,7 +30,7 @@
         "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
         "fees": {
             "base_reserve": 10000000,
-            "byte_fee": 1000
+            "gas_price": 1000
         },
         "validators": ["buQmKvHXJZYDdx4wWap3aQ27miWZnneti22f", "buQoWvx4YZtShfJKAJ9EPK7j3VY3o9ejyXyF", "buQjprDac98CemsqXgGC9dKegoLDAdpSGSMJ", "buQYoyrr5XhTsS8Jx9K6itvBCfopntCNSQqG"]
     },

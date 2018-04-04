@@ -99,15 +99,8 @@ namespace bumo {
 		~GenesisConfigure();
 
 		struct FeeConfigure {
-			int64_t byte_fee_;
+			int64_t gas_price_;
 			int64_t base_reserve_;
-			int64_t create_account_fee_;
-			int64_t pay_fee_;
-			int64_t issue_asset_fee_;
-			int64_t set_metadata_fee_;
-			int64_t set_sigure_weight_fee_;
-			int64_t set_threshold_fee_;
-			int64_t pay_coin_fee_;
 		};
 		FeeConfigure fees_;
 

@@ -100,23 +100,9 @@ message FeeConfig
 {
 	enum Type {
 			UNKNOWN = 0;
-			BYTE_FEE					= 1;
-			BASE_RESERVE_FEE			= 2;
-			CREATE_ACCOUNT_FEE 			= 3;
-			ISSUE_ASSET_FEE 			= 4;
-			PAYMENT_FEE                 = 5;
-			SET_METADATA_FEE			= 6;
-			SET_SIGNER_WEIGHT_FEE		= 7;
-			SET_THRESHOLD_FEE			= 8;
-			PAY_COIN_FEE                = 9;
+			GAS_PRICE					= 1;
+			BASE_RESERVE				= 2;
 	};
-	int64 byte_fee = 1;
+	int64 gas_price = 1;
 	int64 base_reserve = 2;
-	int64 create_account_fee = 3;
-	int64 issue_asset_fee = 4;
-	int64 pay_fee = 5;	
-	int64 set_metadata_fee = 6;
-	int64 set_sigure_weight_fee = 7;
-	int64 set_threshold_fee = 8;
-	int64 pay_coin_fee = 9;
 }

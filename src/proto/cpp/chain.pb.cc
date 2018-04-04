@@ -430,10 +430,11 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, _is_default_instance_));
   Transaction_descriptor_ = file->message_type(17);
-  static const int Transaction_offsets_[6] = {
+  static const int Transaction_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, nonce_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, fee_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, fee_limit_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, gas_price_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, ceil_ledger_seq_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, metadata_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, operations_),
@@ -849,50 +850,50 @@ void protobuf_AddDesc_chain_2eproto() {
     "AY_COIN\020\007\022\007\n\003LOG\020\010\"h\n\025OperationSetThresh"
     "old\022\024\n\014tx_threshold\030\001 \001(\003\0229\n\017type_thresh"
     "olds\030\004 \003(\0132 .protocol.OperationTypeThres"
-    "hold\"\274\001\n\013Transaction\022\026\n\016source_address\030\001"
-    " \001(\t\022\r\n\005nonce\030\002 \001(\003\022\013\n\003fee\030\003 \001(\003\022\027\n\017ceil"
-    "_ledger_seq\030\004 \001(\003\022\020\n\010metadata\030\005 \001(\014\022\'\n\no"
-    "perations\030\006 \003(\0132\023.protocol.Operation\"%\n\005"
-    "Limit\022\013\n\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006S"
-    "igner\022\017\n\007address\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$"
-    "\n\005Limit\022\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n"
-    "\007Trigger\022;\n\020transaction_type\030\001 \001(\0162!.pro"
-    "tocol.Trigger.TransactionType\022\022\n\nledger_"
-    "seq\030\002 \001(\003\0227\n\013transaction\030\003 \001(\0132\".protoco"
-    "l.Trigger.OperationTrigger\032/\n\020OperationT"
-    "rigger\022\014\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017T"
-    "ransactionType\022\026\n\022NORMAL_TRANSACTION\020\000\022\030"
-    "\n\024CONTRACT_TRANSACTION\020\001\"\211\001\n\016Transaction"
-    "Env\022*\n\013transaction\030\001 \001(\0132\025.protocol.Tran"
-    "saction\022\'\n\nsignatures\030\002 \003(\0132\023.protocol.S"
-    "ignature\022\"\n\007trigger\030\003 \001(\0132\021.protocol.Tri"
-    "gger\"\246\001\n\023TransactionEnvStore\0221\n\017transact"
-    "ion_env\030\001 \001(\0132\030.protocol.TransactionEnv\022"
-    "\022\n\nerror_code\030\002 \001(\005\022\022\n\nerror_desc\030\003 \001(\t\022"
-    "\022\n\nledger_seq\030\004 \001(\003\022\022\n\nclose_time\030\005 \001(\003\022"
-    "\014\n\004hash\030\006 \001(\014\":\n\021TransactionEnvSet\022%\n\003tx"
-    "s\030\002 \003(\0132\030.protocol.TransactionEnv\"G\n\030Con"
-    "sensusValueValidation\022\025\n\rexpire_tx_ids\030\001"
-    " \003(\005\022\024\n\014error_tx_ids\030\002 \003(\005\"\203\002\n\016Consensus"
-    "Value\022*\n\005txset\030\001 \001(\0132\033.protocol.Transact"
-    "ionEnvSet\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016previou"
-    "s_proof\030\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024pre"
-    "vious_ledger_hash\030\005 \001(\014\022/\n\016ledger_upgrad"
-    "e\030\006 \001(\0132\027.protocol.LedgerUpgrade\0226\n\nvali"
-    "dation\030\007 \001(\0132\".protocol.ConsensusValueVa"
-    "lidation\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037.pro"
-    "tocol.Contract.ContractType\022\017\n\007payload\030\002"
-    " \001(\t\"\036\n\014ContractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n"
-    "\026OperationCreateAccount\022\024\n\014dest_address\030"
-    "\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.protocol.Contr"
-    "act\022(\n\004priv\030\003 \001(\0132\032.protocol.AccountPriv"
-    "ilege\022$\n\tmetadatas\030\004 \003(\0132\021.protocol.KeyP"
-    "air\022\024\n\014init_balance\030\005 \001(\003\022\022\n\ninit_input\030"
-    "\006 \001(\t\"X\n\024OperationSetMetadata\022\013\n\003key\030\001 \001"
-    "(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013de"
-    "lete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n"
-    "\tSIGNATURE\020dB\035\n\033cn.bumo.blockchain.adapt"
-    "er3b\006proto3", 4051);
+    "hold\"\325\001\n\013Transaction\022\026\n\016source_address\030\001"
+    " \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_limit\030\003 \001(\003\022\021"
+    "\n\tgas_price\030\004 \001(\003\022\027\n\017ceil_ledger_seq\030\005 \001"
+    "(\003\022\020\n\010metadata\030\006 \001(\014\022\'\n\noperations\030\007 \003(\013"
+    "2\023.protocol.Operation\"%\n\005Limit\022\013\n\007UNKNOW"
+    "N\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Signer\022\017\n\007addres"
+    "s\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005Limit\022\017\n\013SIGN"
+    "ER_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007Trigger\022;\n\020tra"
+    "nsaction_type\030\001 \001(\0162!.protocol.Trigger.T"
+    "ransactionType\022\022\n\nledger_seq\030\002 \001(\003\0227\n\013tr"
+    "ansaction\030\003 \001(\0132\".protocol.Trigger.Opera"
+    "tionTrigger\032/\n\020OperationTrigger\022\014\n\004hash\030"
+    "\001 \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017TransactionType\022"
+    "\026\n\022NORMAL_TRANSACTION\020\000\022\030\n\024CONTRACT_TRAN"
+    "SACTION\020\001\"\211\001\n\016TransactionEnv\022*\n\013transact"
+    "ion\030\001 \001(\0132\025.protocol.Transaction\022\'\n\nsign"
+    "atures\030\002 \003(\0132\023.protocol.Signature\022\"\n\007tri"
+    "gger\030\003 \001(\0132\021.protocol.Trigger\"\246\001\n\023Transa"
+    "ctionEnvStore\0221\n\017transaction_env\030\001 \001(\0132\030"
+    ".protocol.TransactionEnv\022\022\n\nerror_code\030\002"
+    " \001(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledger_seq\030\004"
+    " \001(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n\004hash\030\006 \001(\014\":"
+    "\n\021TransactionEnvSet\022%\n\003txs\030\002 \003(\0132\030.proto"
+    "col.TransactionEnv\"G\n\030ConsensusValueVali"
+    "dation\022\025\n\rexpire_tx_ids\030\001 \003(\005\022\024\n\014error_t"
+    "x_ids\030\002 \003(\005\"\203\002\n\016ConsensusValue\022*\n\005txset\030"
+    "\001 \001(\0132\033.protocol.TransactionEnvSet\022\022\n\ncl"
+    "ose_time\030\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014\022\022"
+    "\n\nledger_seq\030\004 \001(\003\022\034\n\024previous_ledger_ha"
+    "sh\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001(\0132\027.proto"
+    "col.LedgerUpgrade\0226\n\nvalidation\030\007 \001(\0132\"."
+    "protocol.ConsensusValueValidation\"j\n\010Con"
+    "tract\022-\n\004type\030\001 \001(\0162\037.protocol.Contract."
+    "ContractType\022\017\n\007payload\030\002 \001(\t\"\036\n\014Contrac"
+    "tType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026OperationCreat"
+    "eAccount\022\024\n\014dest_address\030\001 \001(\t\022$\n\010contra"
+    "ct\030\002 \001(\0132\022.protocol.Contract\022(\n\004priv\030\003 \001"
+    "(\0132\032.protocol.AccountPrivilege\022$\n\tmetada"
+    "tas\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014init_bal"
+    "ance\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024Operat"
+    "ionSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001"
+    "(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010"
+    "*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\035\n"
+    "\033cn.bumo.blockchain.adapter3b\006proto3", 4076);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -9129,7 +9130,8 @@ const int Transaction::Limit_ARRAYSIZE;
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Transaction::kSourceAddressFieldNumber;
 const int Transaction::kNonceFieldNumber;
-const int Transaction::kFeeFieldNumber;
+const int Transaction::kFeeLimitFieldNumber;
+const int Transaction::kGasPriceFieldNumber;
 const int Transaction::kCeilLedgerSeqFieldNumber;
 const int Transaction::kMetadataFieldNumber;
 const int Transaction::kOperationsFieldNumber;
@@ -9159,7 +9161,8 @@ void Transaction::SharedCtor() {
   _cached_size_ = 0;
   source_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   nonce_ = GOOGLE_LONGLONG(0);
-  fee_ = GOOGLE_LONGLONG(0);
+  fee_limit_ = GOOGLE_LONGLONG(0);
+  gas_price_ = GOOGLE_LONGLONG(0);
   ceil_ledger_seq_ = GOOGLE_LONGLONG(0);
   metadata_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -9266,28 +9269,43 @@ bool Transaction::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_fee;
+        if (input->ExpectTag(24)) goto parse_fee_limit;
         break;
       }
 
-      // optional int64 fee = 3;
+      // optional int64 fee_limit = 3;
       case 3: {
         if (tag == 24) {
-         parse_fee:
+         parse_fee_limit:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &fee_)));
+                 input, &fee_limit_)));
 
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(32)) goto parse_ceil_ledger_seq;
+        if (input->ExpectTag(32)) goto parse_gas_price;
         break;
       }
 
-      // optional int64 ceil_ledger_seq = 4;
+      // optional int64 gas_price = 4;
       case 4: {
         if (tag == 32) {
+         parse_gas_price:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &gas_price_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(40)) goto parse_ceil_ledger_seq;
+        break;
+      }
+
+      // optional int64 ceil_ledger_seq = 5;
+      case 5: {
+        if (tag == 40) {
          parse_ceil_ledger_seq:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
@@ -9296,26 +9314,26 @@ bool Transaction::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_metadata;
+        if (input->ExpectTag(50)) goto parse_metadata;
         break;
       }
 
-      // optional bytes metadata = 5;
-      case 5: {
-        if (tag == 42) {
+      // optional bytes metadata = 6;
+      case 6: {
+        if (tag == 50) {
          parse_metadata:
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_metadata()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_operations;
+        if (input->ExpectTag(58)) goto parse_operations;
         break;
       }
 
-      // repeated .protocol.Operation operations = 6;
-      case 6: {
-        if (tag == 50) {
+      // repeated .protocol.Operation operations = 7;
+      case 7: {
+        if (tag == 58) {
          parse_operations:
           DO_(input->IncrementRecursionDepth());
          parse_loop_operations:
@@ -9324,7 +9342,7 @@ bool Transaction::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_loop_operations;
+        if (input->ExpectTag(58)) goto parse_loop_operations;
         input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
@@ -9369,26 +9387,31 @@ void Transaction::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->nonce(), output);
   }
 
-  // optional int64 fee = 3;
-  if (this->fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->fee(), output);
+  // optional int64 fee_limit = 3;
+  if (this->fee_limit() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->fee_limit(), output);
   }
 
-  // optional int64 ceil_ledger_seq = 4;
+  // optional int64 gas_price = 4;
+  if (this->gas_price() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->gas_price(), output);
+  }
+
+  // optional int64 ceil_ledger_seq = 5;
   if (this->ceil_ledger_seq() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->ceil_ledger_seq(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->ceil_ledger_seq(), output);
   }
 
-  // optional bytes metadata = 5;
+  // optional bytes metadata = 6;
   if (this->metadata().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      5, this->metadata(), output);
+      6, this->metadata(), output);
   }
 
-  // repeated .protocol.Operation operations = 6;
+  // repeated .protocol.Operation operations = 7;
   for (unsigned int i = 0, n = this->operations_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, this->operations(i), output);
+      7, this->operations(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.Transaction)
@@ -9413,28 +9436,33 @@ void Transaction::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->nonce(), target);
   }
 
-  // optional int64 fee = 3;
-  if (this->fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->fee(), target);
+  // optional int64 fee_limit = 3;
+  if (this->fee_limit() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->fee_limit(), target);
   }
 
-  // optional int64 ceil_ledger_seq = 4;
+  // optional int64 gas_price = 4;
+  if (this->gas_price() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->gas_price(), target);
+  }
+
+  // optional int64 ceil_ledger_seq = 5;
   if (this->ceil_ledger_seq() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->ceil_ledger_seq(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->ceil_ledger_seq(), target);
   }
 
-  // optional bytes metadata = 5;
+  // optional bytes metadata = 6;
   if (this->metadata().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        5, this->metadata(), target);
+        6, this->metadata(), target);
   }
 
-  // repeated .protocol.Operation operations = 6;
+  // repeated .protocol.Operation operations = 7;
   for (unsigned int i = 0, n = this->operations_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        6, this->operations(i), false, target);
+        7, this->operations(i), false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Transaction)
@@ -9459,28 +9487,35 @@ int Transaction::ByteSize() const {
         this->nonce());
   }
 
-  // optional int64 fee = 3;
-  if (this->fee() != 0) {
+  // optional int64 fee_limit = 3;
+  if (this->fee_limit() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->fee());
+        this->fee_limit());
   }
 
-  // optional int64 ceil_ledger_seq = 4;
+  // optional int64 gas_price = 4;
+  if (this->gas_price() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->gas_price());
+  }
+
+  // optional int64 ceil_ledger_seq = 5;
   if (this->ceil_ledger_seq() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->ceil_ledger_seq());
   }
 
-  // optional bytes metadata = 5;
+  // optional bytes metadata = 6;
   if (this->metadata().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->metadata());
   }
 
-  // repeated .protocol.Operation operations = 6;
+  // repeated .protocol.Operation operations = 7;
   total_size += 1 * this->operations_size();
   for (int i = 0; i < this->operations_size(); i++) {
     total_size +=
@@ -9524,8 +9559,11 @@ void Transaction::MergeFrom(const Transaction& from) {
   if (from.nonce() != 0) {
     set_nonce(from.nonce());
   }
-  if (from.fee() != 0) {
-    set_fee(from.fee());
+  if (from.fee_limit() != 0) {
+    set_fee_limit(from.fee_limit());
+  }
+  if (from.gas_price() != 0) {
+    set_gas_price(from.gas_price());
   }
   if (from.ceil_ledger_seq() != 0) {
     set_ceil_ledger_seq(from.ceil_ledger_seq());
@@ -9562,7 +9600,8 @@ void Transaction::Swap(Transaction* other) {
 void Transaction::InternalSwap(Transaction* other) {
   source_address_.Swap(&other->source_address_);
   std::swap(nonce_, other->nonce_);
-  std::swap(fee_, other->fee_);
+  std::swap(fee_limit_, other->fee_limit_);
+  std::swap(gas_price_, other->gas_price_);
   std::swap(ceil_ledger_seq_, other->ceil_ledger_seq_);
   metadata_.Swap(&other->metadata_);
   operations_.UnsafeArenaSwap(&other->operations_);
@@ -9639,21 +9678,35 @@ void Transaction::clear_nonce() {
   // @@protoc_insertion_point(field_set:protocol.Transaction.nonce)
 }
 
-// optional int64 fee = 3;
-void Transaction::clear_fee() {
-  fee_ = GOOGLE_LONGLONG(0);
+// optional int64 fee_limit = 3;
+void Transaction::clear_fee_limit() {
+  fee_limit_ = GOOGLE_LONGLONG(0);
 }
- ::google::protobuf::int64 Transaction::fee() const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.fee)
-  return fee_;
+ ::google::protobuf::int64 Transaction::fee_limit() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.fee_limit)
+  return fee_limit_;
 }
- void Transaction::set_fee(::google::protobuf::int64 value) {
+ void Transaction::set_fee_limit(::google::protobuf::int64 value) {
   
-  fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.Transaction.fee)
+  fee_limit_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.fee_limit)
 }
 
-// optional int64 ceil_ledger_seq = 4;
+// optional int64 gas_price = 4;
+void Transaction::clear_gas_price() {
+  gas_price_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 Transaction::gas_price() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.gas_price)
+  return gas_price_;
+}
+ void Transaction::set_gas_price(::google::protobuf::int64 value) {
+  
+  gas_price_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.gas_price)
+}
+
+// optional int64 ceil_ledger_seq = 5;
 void Transaction::clear_ceil_ledger_seq() {
   ceil_ledger_seq_ = GOOGLE_LONGLONG(0);
 }
@@ -9667,7 +9720,7 @@ void Transaction::clear_ceil_ledger_seq() {
   // @@protoc_insertion_point(field_set:protocol.Transaction.ceil_ledger_seq)
 }
 
-// optional bytes metadata = 5;
+// optional bytes metadata = 6;
 void Transaction::clear_metadata() {
   metadata_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -9711,7 +9764,7 @@ void Transaction::clear_metadata() {
   // @@protoc_insertion_point(field_set_allocated:protocol.Transaction.metadata)
 }
 
-// repeated .protocol.Operation operations = 6;
+// repeated .protocol.Operation operations = 7;
 int Transaction::operations_size() const {
   return operations_.size();
 }

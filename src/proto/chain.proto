@@ -152,13 +152,15 @@ message Transaction {
 
 		int64 nonce = 2;
 		
-		int64  fee = 3;
+		int64  fee_limit = 3;
 
-		int64 ceil_ledger_seq = 4;
+		int64  gas_price =4;
+
+		int64 ceil_ledger_seq = 5;
 		
-		bytes metadata = 5;
+		bytes metadata = 6;
 
-		repeated Operation operations = 6;
+		repeated Operation operations = 7;
 
 }
 
@@ -197,7 +199,6 @@ message TransactionEnv {
 	repeated Signature signatures 	= 2;
 	Trigger trigger = 3;
 }
-
 
 message TransactionEnvStore{
 		TransactionEnv transaction_env = 1;

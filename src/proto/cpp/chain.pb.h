@@ -2268,21 +2268,27 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::int64 nonce() const;
   void set_nonce(::google::protobuf::int64 value);
 
-  // optional int64 fee = 3;
-  void clear_fee();
-  static const int kFeeFieldNumber = 3;
-  ::google::protobuf::int64 fee() const;
-  void set_fee(::google::protobuf::int64 value);
+  // optional int64 fee_limit = 3;
+  void clear_fee_limit();
+  static const int kFeeLimitFieldNumber = 3;
+  ::google::protobuf::int64 fee_limit() const;
+  void set_fee_limit(::google::protobuf::int64 value);
 
-  // optional int64 ceil_ledger_seq = 4;
+  // optional int64 gas_price = 4;
+  void clear_gas_price();
+  static const int kGasPriceFieldNumber = 4;
+  ::google::protobuf::int64 gas_price() const;
+  void set_gas_price(::google::protobuf::int64 value);
+
+  // optional int64 ceil_ledger_seq = 5;
   void clear_ceil_ledger_seq();
-  static const int kCeilLedgerSeqFieldNumber = 4;
+  static const int kCeilLedgerSeqFieldNumber = 5;
   ::google::protobuf::int64 ceil_ledger_seq() const;
   void set_ceil_ledger_seq(::google::protobuf::int64 value);
 
-  // optional bytes metadata = 5;
+  // optional bytes metadata = 6;
   void clear_metadata();
-  static const int kMetadataFieldNumber = 5;
+  static const int kMetadataFieldNumber = 6;
   const ::std::string& metadata() const;
   void set_metadata(const ::std::string& value);
   void set_metadata(const char* value);
@@ -2291,10 +2297,10 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::std::string* release_metadata();
   void set_allocated_metadata(::std::string* metadata);
 
-  // repeated .protocol.Operation operations = 6;
+  // repeated .protocol.Operation operations = 7;
   int operations_size() const;
   void clear_operations();
-  static const int kOperationsFieldNumber = 6;
+  static const int kOperationsFieldNumber = 7;
   const ::protocol::Operation& operations(int index) const;
   ::protocol::Operation* mutable_operations(int index);
   ::protocol::Operation* add_operations();
@@ -2310,7 +2316,8 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr source_address_;
   ::google::protobuf::int64 nonce_;
-  ::google::protobuf::int64 fee_;
+  ::google::protobuf::int64 fee_limit_;
+  ::google::protobuf::int64 gas_price_;
   ::google::protobuf::int64 ceil_ledger_seq_;
   ::google::protobuf::internal::ArenaStringPtr metadata_;
   ::google::protobuf::RepeatedPtrField< ::protocol::Operation > operations_;
@@ -5784,21 +5791,35 @@ inline void Transaction::set_nonce(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.Transaction.nonce)
 }
 
-// optional int64 fee = 3;
-inline void Transaction::clear_fee() {
-  fee_ = GOOGLE_LONGLONG(0);
+// optional int64 fee_limit = 3;
+inline void Transaction::clear_fee_limit() {
+  fee_limit_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 Transaction::fee() const {
-  // @@protoc_insertion_point(field_get:protocol.Transaction.fee)
-  return fee_;
+inline ::google::protobuf::int64 Transaction::fee_limit() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.fee_limit)
+  return fee_limit_;
 }
-inline void Transaction::set_fee(::google::protobuf::int64 value) {
+inline void Transaction::set_fee_limit(::google::protobuf::int64 value) {
   
-  fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.Transaction.fee)
+  fee_limit_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.fee_limit)
 }
 
-// optional int64 ceil_ledger_seq = 4;
+// optional int64 gas_price = 4;
+inline void Transaction::clear_gas_price() {
+  gas_price_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Transaction::gas_price() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.gas_price)
+  return gas_price_;
+}
+inline void Transaction::set_gas_price(::google::protobuf::int64 value) {
+  
+  gas_price_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.gas_price)
+}
+
+// optional int64 ceil_ledger_seq = 5;
 inline void Transaction::clear_ceil_ledger_seq() {
   ceil_ledger_seq_ = GOOGLE_LONGLONG(0);
 }
@@ -5812,7 +5833,7 @@ inline void Transaction::set_ceil_ledger_seq(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.Transaction.ceil_ledger_seq)
 }
 
-// optional bytes metadata = 5;
+// optional bytes metadata = 6;
 inline void Transaction::clear_metadata() {
   metadata_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -5856,7 +5877,7 @@ inline void Transaction::set_allocated_metadata(::std::string* metadata) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Transaction.metadata)
 }
 
-// repeated .protocol.Operation operations = 6;
+// repeated .protocol.Operation operations = 7;
 inline int Transaction::operations_size() const {
   return operations_.size();
 }
