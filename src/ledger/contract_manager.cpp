@@ -216,7 +216,7 @@ namespace bumo{
 		js_func_read_["int64Mod"] = V8Contract::CallBackInt64Mod;
 		js_func_read_["int64Div"] = V8Contract::CallBackInt64Div;
 		js_func_read_["int64Compare"] = V8Contract::CallBackInt64Compare;
-		js_func_read_["toSatoshi"] = V8Contract::CallBackToSatoshi;
+		js_func_read_["toWen"] = V8Contract::CallBackToWen;
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
 
@@ -1826,7 +1826,7 @@ namespace bumo{
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
-	void V8Contract::CallBackToSatoshi(const v8::FunctionCallbackInfo<v8::Value>& args) {
+	void V8Contract::CallBackToWen(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
 				LOG_TRACE("parameter error");
@@ -1835,7 +1835,7 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_TRACE("contract execute error, toSatoshi, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, toWen, parameter 0 should be a String or Number");
 				break;
 			}
 

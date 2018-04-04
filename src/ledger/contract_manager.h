@@ -182,8 +182,8 @@ namespace bumo{
 		//assert a express
 		static void CallBackAssert(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-		//to satoshi, equal to * pow(10, 8)
-		static void CallBackToSatoshi(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//to Wen, equal to * pow(10, 8)
+		static void CallBackToWen(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//get balance of the given account 
 		static void CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//get the hash of one of the 1024 most recent complete blocks

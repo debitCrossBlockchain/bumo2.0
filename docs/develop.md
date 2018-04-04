@@ -1516,14 +1516,14 @@ function query(input)
     ```
       
  - ##### 变换单位
-    `toSatoshi(value);`
+    `toWen(value);`
 
     - 返回值: 乘以 10^8
     - value: 左值
 
     例如
     ```javascript
-    let ret = toSatoshi('12345678912');
+    let ret = toWen('12345678912');
     /*
     '1234567891200000000'
     */
