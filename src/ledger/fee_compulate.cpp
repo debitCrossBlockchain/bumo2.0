@@ -2,7 +2,7 @@
 
 namespace bumo{
 
-	const int64_t OperationGasConfigure::create_account = 10000;
+	const int64_t OperationGasConfigure::create_account = 1000;
 	const int64_t OperationGasConfigure::issue_asset = 200000;
     const int64_t OperationGasConfigure::payment = 0;
     const int64_t OperationGasConfigure::set_metadata = 0;

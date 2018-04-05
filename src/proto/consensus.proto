@@ -38,9 +38,15 @@ message PbftPreparedSet
 message PbftViewChange
 {
 	int64 view_number = 1; //v+1
-	int64 sequence = 2;     //n
-	repeated PbftPreparedSet prepared_set = 3;  //prepared messages large than n
+	int64 sequence = 2;     //last execute seq
+	bytes prepred_value_digest = 3; //prepared value hash
 	int64 replica_id = 4;
+}
+
+message PbftViewChangeWithRawValue
+{
+	PbftEnv view_change_env = 1; // view change env
+	PbftPreparedSet prepared_set = 2;  //prepared messages large than n
 }
 
 message PbftNewView
@@ -49,7 +55,7 @@ message PbftNewView
 	int64 sequence = 2;     //sequence
 	int64 replica_id = 3;
 	repeated PbftEnv view_changes = 4;     //V
-	repeated PbftEnv pre_prepares = 5;  //O
+	PbftEnv pre_prepare = 5;  //O
 }
 
 enum PbftMessageType {
@@ -58,6 +64,7 @@ enum PbftMessageType {
 	  PBFT_TYPE_COMMIT = 2;
 	  PBFT_TYPE_VIEWCHANGE = 3;
 	  PBFT_TYPE_NEWVIEW = 4;
+	  PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE = 5;
 }
 
 enum PbftValueType {
@@ -74,6 +81,7 @@ message Pbft
 	PbftCommit commit = 5;
 	PbftViewChange view_change = 6;
 	PbftNewView new_view = 7;
+	PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
 }
 
 message PbftEnv

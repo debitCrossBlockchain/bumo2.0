@@ -202,12 +202,15 @@ namespace bumo {
 	}
 
 	std::string PbftDesc::GetViewChange(const protocol::PbftViewChange &viewchange) {
+
+		return utils::String::Format("type:ViewChange | vn:" FMT_I64 " seq:" FMT_I64 " replica:" FMT_I64 " | value_digest:[%s]",
+			viewchange.view_number(), viewchange.sequence(), viewchange.replica_id(), utils::String::BinToHexString(viewchange.prepred_value_digest()).c_str());
+	}
+
+	std::string PbftDesc::GetViewChangeRawValue(const protocol::PbftViewChangeWithRawValue &viewchange_raw) {
 		std::string prepared_set;
-		for (int32_t i = 0; i < viewchange.prepared_set_size(); i++) {
-			const protocol::PbftPreparedSet &prepare_set_env = viewchange.prepared_set(i);
-			if (i > 0) {
-				prepared_set = utils::String::AppendFormat(prepared_set, ",");
-			}
+		if (viewchange_raw.has_prepared_set()) {
+			const protocol::PbftPreparedSet &prepare_set_env = viewchange_raw.prepared_set();
 			std::string prepares;
 			for (int32_t m = 0; m < prepare_set_env.prepare_size(); m++) {
 				const protocol::PbftEnv &prepare = prepare_set_env.prepare(m);
@@ -220,8 +223,12 @@ namespace bumo {
 				GetPbft(prepare_set_env.pre_prepare().pbft()).c_str(),
 				prepares.c_str());
 		}
-		return utils::String::Format("type:ViewChange | vn:" FMT_I64 " seq:" FMT_I64 " replica:" FMT_I64 " | prepared_set:[%s]",
-			viewchange.view_number(), viewchange.sequence(), viewchange.replica_id(), prepared_set.c_str());
+
+		const protocol::PbftEnv &env = viewchange_raw.view_change_env();
+		const protocol::PbftViewChange &viewchange = env.pbft().view_change();
+
+		return utils::String::Format("type:ViewChangeRawValue | vn:" FMT_I64 " seq:" FMT_I64 " replica:" FMT_I64 " | prepared_set:[%s]",
+			viewchange.view_number(), viewchange.sequence(), viewchange.replica_id(), utils::String::BinToHexString(prepared_set).c_str());
 	}
 
 	std::string PbftDesc::GetNewView(const protocol::PbftNewView &new_view) {
@@ -234,14 +241,9 @@ namespace bumo {
 			viewchanges = utils::String::AppendFormat(viewchanges, "%s", GetPbft(viewchange_env.pbft()).c_str());
 		}
 		std::string pre_prepares;
-		for (int32_t i = 0; i < new_view.pre_prepares_size(); i++) {
-			const protocol::PbftEnv &pre_prepare_env = new_view.pre_prepares(i);
-			if (i > 0) {
-				pre_prepares = utils::String::AppendFormat(pre_prepares, ",");
-			}
-			pre_prepares = utils::String::AppendFormat(pre_prepares, "%s", GetPbft(pre_prepare_env.pbft()).c_str());
-		}
-		return utils::String::Format("type:NewView | vn:" FMT_I64 " replica:" FMT_I64 " |vc:[%s] | pre_prepares:[%s]",
+		const protocol::PbftEnv &pre_prepare_env = new_view.pre_prepare();
+		pre_prepares = utils::String::AppendFormat(pre_prepares, "%s", GetPbft(pre_prepare_env.pbft()).c_str());
+		return utils::String::Format("type:NewView | vn:" FMT_I64 " replica:" FMT_I64 " |vc:[%s] | pre_prepare:[%s]",
 			new_view.view_number(), new_view.replica_id(), viewchanges.c_str(), pre_prepares.c_str());
 	}
 

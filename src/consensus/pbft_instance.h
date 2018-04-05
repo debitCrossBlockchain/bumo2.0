@@ -118,6 +118,7 @@ namespace bumo {
 		int64_t view_number_;
 		int64_t seq;
 		PbftViewChangeMap viewchanges_;
+		protocol::PbftPreparedSet pre_prepared_env_set; // last prepared related pre-prepared env
 		uint32_t view_change_round_;
 
 		PbftPhaseVector msg_buf_; //view change message
@@ -151,6 +152,7 @@ namespace bumo {
 		static std::string GetPrepare(const protocol::PbftPrepare &prepare);
 		static std::string GetCommit(const protocol::PbftCommit &commit);
 		static std::string GetViewChange(const protocol::PbftViewChange &viewchange);
+		static std::string GetViewChangeRawValue(const protocol::PbftViewChangeWithRawValue &viewchange_raw);
 		static std::string GetNewView(const protocol::PbftNewView &newview);
 		static const char *GetMessageTypeDesc(enum protocol::PbftMessageType type);
 

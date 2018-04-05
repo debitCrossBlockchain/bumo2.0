@@ -339,7 +339,7 @@ namespace bumo {
 
 			int64_t coin_amount = utils::String::Stoi64(utils::String::MultiplyDecimal(args[2], General::BU_DECIMALS));
 			int64_t fee_limit = utils::String::Stoi64(utils::String::MultiplyDecimal(args[3], General::BU_DECIMALS));
-			int64_t price = utils::String::Stoi64(utils::String::MultiplyDecimal(args[4], General::BU_DECIMALS));
+			int64_t price = utils::String::Stoi64(args[4]);
 			
 			std::string metadata, contract_input;
 			if (args.size() > 5) metadata = args[5];
@@ -402,7 +402,7 @@ namespace bumo {
 			"createWallet <path>                          create wallet\n"
 			"openWallet <path>                            open keystore\n"
 			"closeWallet                                  close current wallet opened\n"
-			"payCoin <to-address> <bu coin> <fee> [metatdata] [contract-input] \n"
+			"payCoin <to-address> <bu coin> <fee(bu)> <gas price(wen)> [metatdata] [contract-input] \n"
 			"getBalance [account]                         get balance of BU \n"
 			"getBlockNumber                               get lastest closed block number\n"
 			"showKey                                      show wallet private key\n"

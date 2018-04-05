@@ -48,6 +48,7 @@ class PbftPrepare;
 class PbftPreparedSet;
 class PbftProof;
 class PbftViewChange;
+class PbftViewChangeWithRawValue;
 class Validator;
 class ValidatorSet;
 
@@ -79,12 +80,13 @@ enum PbftMessageType {
   PBFT_TYPE_COMMIT = 2,
   PBFT_TYPE_VIEWCHANGE = 3,
   PBFT_TYPE_NEWVIEW = 4,
+  PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE = 5,
   PbftMessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   PbftMessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool PbftMessageType_IsValid(int value);
 const PbftMessageType PbftMessageType_MIN = PBFT_TYPE_PREPREPARE;
-const PbftMessageType PbftMessageType_MAX = PBFT_TYPE_NEWVIEW;
+const PbftMessageType PbftMessageType_MAX = PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE;
 const int PbftMessageType_ARRAYSIZE = PbftMessageType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* PbftMessageType_descriptor();
@@ -626,17 +628,16 @@ class PbftViewChange : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::int64 sequence() const;
   void set_sequence(::google::protobuf::int64 value);
 
-  // repeated .protocol.PbftPreparedSet prepared_set = 3;
-  int prepared_set_size() const;
-  void clear_prepared_set();
-  static const int kPreparedSetFieldNumber = 3;
-  const ::protocol::PbftPreparedSet& prepared_set(int index) const;
-  ::protocol::PbftPreparedSet* mutable_prepared_set(int index);
-  ::protocol::PbftPreparedSet* add_prepared_set();
-  ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >*
-      mutable_prepared_set();
-  const ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >&
-      prepared_set() const;
+  // optional bytes prepred_value_digest = 3;
+  void clear_prepred_value_digest();
+  static const int kPrepredValueDigestFieldNumber = 3;
+  const ::std::string& prepred_value_digest() const;
+  void set_prepred_value_digest(const ::std::string& value);
+  void set_prepred_value_digest(const char* value);
+  void set_prepred_value_digest(const void* value, size_t size);
+  ::std::string* mutable_prepred_value_digest();
+  ::std::string* release_prepred_value_digest();
+  void set_allocated_prepred_value_digest(::std::string* prepred_value_digest);
 
   // optional int64 replica_id = 4;
   void clear_replica_id();
@@ -651,7 +652,7 @@ class PbftViewChange : public ::google::protobuf::Message /* @@protoc_insertion_
   bool _is_default_instance_;
   ::google::protobuf::int64 view_number_;
   ::google::protobuf::int64 sequence_;
-  ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet > prepared_set_;
+  ::google::protobuf::internal::ArenaStringPtr prepred_value_digest_;
   ::google::protobuf::int64 replica_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_consensus_2eproto();
@@ -660,6 +661,101 @@ class PbftViewChange : public ::google::protobuf::Message /* @@protoc_insertion_
 
   void InitAsDefaultInstance();
   static PbftViewChange* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class PbftViewChangeWithRawValue : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.PbftViewChangeWithRawValue) */ {
+ public:
+  PbftViewChangeWithRawValue();
+  virtual ~PbftViewChangeWithRawValue();
+
+  PbftViewChangeWithRawValue(const PbftViewChangeWithRawValue& from);
+
+  inline PbftViewChangeWithRawValue& operator=(const PbftViewChangeWithRawValue& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PbftViewChangeWithRawValue& default_instance();
+
+  void Swap(PbftViewChangeWithRawValue* other);
+
+  // implements Message ----------------------------------------------
+
+  inline PbftViewChangeWithRawValue* New() const { return New(NULL); }
+
+  PbftViewChangeWithRawValue* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const PbftViewChangeWithRawValue& from);
+  void MergeFrom(const PbftViewChangeWithRawValue& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(PbftViewChangeWithRawValue* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .protocol.PbftEnv view_change_env = 1;
+  bool has_view_change_env() const;
+  void clear_view_change_env();
+  static const int kViewChangeEnvFieldNumber = 1;
+  const ::protocol::PbftEnv& view_change_env() const;
+  ::protocol::PbftEnv* mutable_view_change_env();
+  ::protocol::PbftEnv* release_view_change_env();
+  void set_allocated_view_change_env(::protocol::PbftEnv* view_change_env);
+
+  // optional .protocol.PbftPreparedSet prepared_set = 2;
+  bool has_prepared_set() const;
+  void clear_prepared_set();
+  static const int kPreparedSetFieldNumber = 2;
+  const ::protocol::PbftPreparedSet& prepared_set() const;
+  ::protocol::PbftPreparedSet* mutable_prepared_set();
+  ::protocol::PbftPreparedSet* release_prepared_set();
+  void set_allocated_prepared_set(::protocol::PbftPreparedSet* prepared_set);
+
+  // @@protoc_insertion_point(class_scope:protocol.PbftViewChangeWithRawValue)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::protocol::PbftEnv* view_change_env_;
+  ::protocol::PbftPreparedSet* prepared_set_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_consensus_2eproto();
+  friend void protobuf_AssignDesc_consensus_2eproto();
+  friend void protobuf_ShutdownFile_consensus_2eproto();
+
+  void InitAsDefaultInstance();
+  static PbftViewChangeWithRawValue* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -753,17 +849,14 @@ class PbftNewView : public ::google::protobuf::Message /* @@protoc_insertion_poi
   const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
       view_changes() const;
 
-  // repeated .protocol.PbftEnv pre_prepares = 5;
-  int pre_prepares_size() const;
-  void clear_pre_prepares();
-  static const int kPrePreparesFieldNumber = 5;
-  const ::protocol::PbftEnv& pre_prepares(int index) const;
-  ::protocol::PbftEnv* mutable_pre_prepares(int index);
-  ::protocol::PbftEnv* add_pre_prepares();
-  ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >*
-      mutable_pre_prepares();
-  const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
-      pre_prepares() const;
+  // optional .protocol.PbftEnv pre_prepare = 5;
+  bool has_pre_prepare() const;
+  void clear_pre_prepare();
+  static const int kPrePrepareFieldNumber = 5;
+  const ::protocol::PbftEnv& pre_prepare() const;
+  ::protocol::PbftEnv* mutable_pre_prepare();
+  ::protocol::PbftEnv* release_pre_prepare();
+  void set_allocated_pre_prepare(::protocol::PbftEnv* pre_prepare);
 
   // @@protoc_insertion_point(class_scope:protocol.PbftNewView)
  private:
@@ -774,7 +867,7 @@ class PbftNewView : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::int64 sequence_;
   ::google::protobuf::int64 replica_id_;
   ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv > view_changes_;
-  ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv > pre_prepares_;
+  ::protocol::PbftEnv* pre_prepare_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_consensus_2eproto();
   friend void protobuf_AssignDesc_consensus_2eproto();
@@ -902,6 +995,15 @@ class Pbft : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::protocol::PbftNewView* release_new_view();
   void set_allocated_new_view(::protocol::PbftNewView* new_view);
 
+  // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+  bool has_view_change_with_rawvalue() const;
+  void clear_view_change_with_rawvalue();
+  static const int kViewChangeWithRawvalueFieldNumber = 8;
+  const ::protocol::PbftViewChangeWithRawValue& view_change_with_rawvalue() const;
+  ::protocol::PbftViewChangeWithRawValue* mutable_view_change_with_rawvalue();
+  ::protocol::PbftViewChangeWithRawValue* release_view_change_with_rawvalue();
+  void set_allocated_view_change_with_rawvalue(::protocol::PbftViewChangeWithRawValue* view_change_with_rawvalue);
+
   // @@protoc_insertion_point(class_scope:protocol.Pbft)
  private:
 
@@ -913,6 +1015,7 @@ class Pbft : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::protocol::PbftCommit* commit_;
   ::protocol::PbftViewChange* view_change_;
   ::protocol::PbftNewView* new_view_;
+  ::protocol::PbftViewChangeWithRawValue* view_change_with_rawvalue_;
   int type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_consensus_2eproto();
@@ -1826,34 +1929,48 @@ inline void PbftViewChange::set_sequence(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.PbftViewChange.sequence)
 }
 
-// repeated .protocol.PbftPreparedSet prepared_set = 3;
-inline int PbftViewChange::prepared_set_size() const {
-  return prepared_set_.size();
+// optional bytes prepred_value_digest = 3;
+inline void PbftViewChange::clear_prepred_value_digest() {
+  prepred_value_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void PbftViewChange::clear_prepared_set() {
-  prepared_set_.Clear();
+inline const ::std::string& PbftViewChange::prepred_value_digest() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.prepred_value_digest)
+  return prepred_value_digest_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::protocol::PbftPreparedSet& PbftViewChange::prepared_set(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Get(index);
+inline void PbftViewChange::set_prepred_value_digest(const ::std::string& value) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.PbftViewChange.prepred_value_digest)
 }
-inline ::protocol::PbftPreparedSet* PbftViewChange::mutable_prepared_set(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Mutable(index);
+inline void PbftViewChange::set_prepred_value_digest(const char* value) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.PbftViewChange.prepred_value_digest)
 }
-inline ::protocol::PbftPreparedSet* PbftViewChange::add_prepared_set() {
-  // @@protoc_insertion_point(field_add:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Add();
+inline void PbftViewChange::set_prepred_value_digest(const void* value, size_t size) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.PbftViewChange.prepred_value_digest)
 }
-inline ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >*
-PbftViewChange::mutable_prepared_set() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftViewChange.prepared_set)
-  return &prepared_set_;
+inline ::std::string* PbftViewChange::mutable_prepred_value_digest() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.prepred_value_digest)
+  return prepred_value_digest_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >&
-PbftViewChange::prepared_set() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftViewChange.prepared_set)
-  return prepared_set_;
+inline ::std::string* PbftViewChange::release_prepred_value_digest() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChange.prepred_value_digest)
+  
+  return prepred_value_digest_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void PbftViewChange::set_allocated_prepred_value_digest(::std::string* prepred_value_digest) {
+  if (prepred_value_digest != NULL) {
+    
+  } else {
+    
+  }
+  prepred_value_digest_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prepred_value_digest);
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChange.prepred_value_digest)
 }
 
 // optional int64 replica_id = 4;
@@ -1868,6 +1985,86 @@ inline void PbftViewChange::set_replica_id(::google::protobuf::int64 value) {
   
   replica_id_ = value;
   // @@protoc_insertion_point(field_set:protocol.PbftViewChange.replica_id)
+}
+
+// -------------------------------------------------------------------
+
+// PbftViewChangeWithRawValue
+
+// optional .protocol.PbftEnv view_change_env = 1;
+inline bool PbftViewChangeWithRawValue::has_view_change_env() const {
+  return !_is_default_instance_ && view_change_env_ != NULL;
+}
+inline void PbftViewChangeWithRawValue::clear_view_change_env() {
+  if (GetArenaNoVirtual() == NULL && view_change_env_ != NULL) delete view_change_env_;
+  view_change_env_ = NULL;
+}
+inline const ::protocol::PbftEnv& PbftViewChangeWithRawValue::view_change_env() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChangeWithRawValue.view_change_env)
+  return view_change_env_ != NULL ? *view_change_env_ : *default_instance_->view_change_env_;
+}
+inline ::protocol::PbftEnv* PbftViewChangeWithRawValue::mutable_view_change_env() {
+  
+  if (view_change_env_ == NULL) {
+    view_change_env_ = new ::protocol::PbftEnv;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChangeWithRawValue.view_change_env)
+  return view_change_env_;
+}
+inline ::protocol::PbftEnv* PbftViewChangeWithRawValue::release_view_change_env() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChangeWithRawValue.view_change_env)
+  
+  ::protocol::PbftEnv* temp = view_change_env_;
+  view_change_env_ = NULL;
+  return temp;
+}
+inline void PbftViewChangeWithRawValue::set_allocated_view_change_env(::protocol::PbftEnv* view_change_env) {
+  delete view_change_env_;
+  view_change_env_ = view_change_env;
+  if (view_change_env) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChangeWithRawValue.view_change_env)
+}
+
+// optional .protocol.PbftPreparedSet prepared_set = 2;
+inline bool PbftViewChangeWithRawValue::has_prepared_set() const {
+  return !_is_default_instance_ && prepared_set_ != NULL;
+}
+inline void PbftViewChangeWithRawValue::clear_prepared_set() {
+  if (GetArenaNoVirtual() == NULL && prepared_set_ != NULL) delete prepared_set_;
+  prepared_set_ = NULL;
+}
+inline const ::protocol::PbftPreparedSet& PbftViewChangeWithRawValue::prepared_set() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChangeWithRawValue.prepared_set)
+  return prepared_set_ != NULL ? *prepared_set_ : *default_instance_->prepared_set_;
+}
+inline ::protocol::PbftPreparedSet* PbftViewChangeWithRawValue::mutable_prepared_set() {
+  
+  if (prepared_set_ == NULL) {
+    prepared_set_ = new ::protocol::PbftPreparedSet;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChangeWithRawValue.prepared_set)
+  return prepared_set_;
+}
+inline ::protocol::PbftPreparedSet* PbftViewChangeWithRawValue::release_prepared_set() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChangeWithRawValue.prepared_set)
+  
+  ::protocol::PbftPreparedSet* temp = prepared_set_;
+  prepared_set_ = NULL;
+  return temp;
+}
+inline void PbftViewChangeWithRawValue::set_allocated_prepared_set(::protocol::PbftPreparedSet* prepared_set) {
+  delete prepared_set_;
+  prepared_set_ = prepared_set;
+  if (prepared_set) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChangeWithRawValue.prepared_set)
 }
 
 // -------------------------------------------------------------------
@@ -1946,34 +2143,42 @@ PbftNewView::view_changes() const {
   return view_changes_;
 }
 
-// repeated .protocol.PbftEnv pre_prepares = 5;
-inline int PbftNewView::pre_prepares_size() const {
-  return pre_prepares_.size();
+// optional .protocol.PbftEnv pre_prepare = 5;
+inline bool PbftNewView::has_pre_prepare() const {
+  return !_is_default_instance_ && pre_prepare_ != NULL;
 }
-inline void PbftNewView::clear_pre_prepares() {
-  pre_prepares_.Clear();
+inline void PbftNewView::clear_pre_prepare() {
+  if (GetArenaNoVirtual() == NULL && pre_prepare_ != NULL) delete pre_prepare_;
+  pre_prepare_ = NULL;
 }
-inline const ::protocol::PbftEnv& PbftNewView::pre_prepares(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Get(index);
+inline const ::protocol::PbftEnv& PbftNewView::pre_prepare() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftNewView.pre_prepare)
+  return pre_prepare_ != NULL ? *pre_prepare_ : *default_instance_->pre_prepare_;
 }
-inline ::protocol::PbftEnv* PbftNewView::mutable_pre_prepares(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Mutable(index);
+inline ::protocol::PbftEnv* PbftNewView::mutable_pre_prepare() {
+  
+  if (pre_prepare_ == NULL) {
+    pre_prepare_ = new ::protocol::PbftEnv;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftNewView.pre_prepare)
+  return pre_prepare_;
 }
-inline ::protocol::PbftEnv* PbftNewView::add_pre_prepares() {
-  // @@protoc_insertion_point(field_add:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Add();
+inline ::protocol::PbftEnv* PbftNewView::release_pre_prepare() {
+  // @@protoc_insertion_point(field_release:protocol.PbftNewView.pre_prepare)
+  
+  ::protocol::PbftEnv* temp = pre_prepare_;
+  pre_prepare_ = NULL;
+  return temp;
 }
-inline ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >*
-PbftNewView::mutable_pre_prepares() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftNewView.pre_prepares)
-  return &pre_prepares_;
-}
-inline const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
-PbftNewView::pre_prepares() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_;
+inline void PbftNewView::set_allocated_pre_prepare(::protocol::PbftEnv* pre_prepare) {
+  delete pre_prepare_;
+  pre_prepare_ = pre_prepare;
+  if (pre_prepare) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftNewView.pre_prepare)
 }
 
 // -------------------------------------------------------------------
@@ -2196,6 +2401,44 @@ inline void Pbft::set_allocated_new_view(::protocol::PbftNewView* new_view) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.new_view)
+}
+
+// optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+inline bool Pbft::has_view_change_with_rawvalue() const {
+  return !_is_default_instance_ && view_change_with_rawvalue_ != NULL;
+}
+inline void Pbft::clear_view_change_with_rawvalue() {
+  if (GetArenaNoVirtual() == NULL && view_change_with_rawvalue_ != NULL) delete view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = NULL;
+}
+inline const ::protocol::PbftViewChangeWithRawValue& Pbft::view_change_with_rawvalue() const {
+  // @@protoc_insertion_point(field_get:protocol.Pbft.view_change_with_rawvalue)
+  return view_change_with_rawvalue_ != NULL ? *view_change_with_rawvalue_ : *default_instance_->view_change_with_rawvalue_;
+}
+inline ::protocol::PbftViewChangeWithRawValue* Pbft::mutable_view_change_with_rawvalue() {
+  
+  if (view_change_with_rawvalue_ == NULL) {
+    view_change_with_rawvalue_ = new ::protocol::PbftViewChangeWithRawValue;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.Pbft.view_change_with_rawvalue)
+  return view_change_with_rawvalue_;
+}
+inline ::protocol::PbftViewChangeWithRawValue* Pbft::release_view_change_with_rawvalue() {
+  // @@protoc_insertion_point(field_release:protocol.Pbft.view_change_with_rawvalue)
+  
+  ::protocol::PbftViewChangeWithRawValue* temp = view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = NULL;
+  return temp;
+}
+inline void Pbft::set_allocated_view_change_with_rawvalue(::protocol::PbftViewChangeWithRawValue* view_change_with_rawvalue) {
+  delete view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = view_change_with_rawvalue;
+  if (view_change_with_rawvalue) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.view_change_with_rawvalue)
 }
 
 // -------------------------------------------------------------------
@@ -2441,6 +2684,8 @@ inline void FeeConfig::set_base_reserve(::google::protobuf::int64 value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

@@ -110,15 +110,20 @@ namespace bumo {
 		std::string proof;
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof);
 
-		//protocol::TransactionEnvSet txset_raw = tx_pool_->top.GetRaw();
-		if (!last_consavlue.empty() && CheckValue(last_consavlue)) {
-			protocol::ConsensusValue propose_value;
-			propose_value.ParseFromString(last_consavlue);
-			LOG_INFO("Proposed last consvalue %d tx(s), lcl hash(%s) tx(s)", propose_value.txset().txs_size(),
-				utils::String::Bin4ToHexString(lcl.hash()).c_str());
-		
-			return consensus_->Request(last_consavlue);
+		if (!last_consavlue.empty()) {
+			LOG_INFO("Last prepared consvalue not empty, value digest(%s)", 
+				utils::String::BinToHexString(HashWrapper::Crypto(last_consavlue)).c_str());
+			//protocol::TransactionEnvSet txset_raw = tx_pool_->top.GetRaw();
+			if (CheckValue(last_consavlue) == Consensus::CHECK_VALUE_VALID) {
+				protocol::ConsensusValue propose_value;
+				propose_value.ParseFromString(last_consavlue);
+				LOG_INFO("Proposed last consvalue %d tx(s), lcl hash(%s) tx(s)", propose_value.txset().txs_size(),
+					utils::String::Bin4ToHexString(lcl.hash()).c_str());
+
+				return consensus_->Request(last_consavlue);
+			}
 		}
+
 
 		protocol::ConsensusValue propose_value;
 		do {

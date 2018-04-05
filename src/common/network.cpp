@@ -500,7 +500,7 @@ namespace bumo {
 					for (ConnectionMap::iterator iter = connections_delete_.begin();
 						iter != connections_delete_.end();) {
 						if (iter->first < now) {
-							LOG_INFO("delete connect id:%lld", iter->second->GetId());
+							LOG_TRACE("delete connect id:%lld", iter->second->GetId());
 							delete iter->second;
 							iter = connections_delete_.erase(iter);
 						}

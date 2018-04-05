@@ -36,6 +36,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* PbftViewChange_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftViewChange_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PbftViewChangeWithRawValue_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  PbftViewChangeWithRawValue_reflection_ = NULL;
 const ::google::protobuf::Descriptor* PbftNewView_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftNewView_reflection_ = NULL;
@@ -146,7 +149,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
   static const int PbftViewChange_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, view_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, sequence_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, prepared_set_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, prepred_value_digest_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, replica_id_),
   };
   PbftViewChange_reflection_ =
@@ -160,13 +163,29 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftViewChange),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, _is_default_instance_));
-  PbftNewView_descriptor_ = file->message_type(5);
+  PbftViewChangeWithRawValue_descriptor_ = file->message_type(5);
+  static const int PbftViewChangeWithRawValue_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChangeWithRawValue, view_change_env_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChangeWithRawValue, prepared_set_),
+  };
+  PbftViewChangeWithRawValue_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      PbftViewChangeWithRawValue_descriptor_,
+      PbftViewChangeWithRawValue::default_instance_,
+      PbftViewChangeWithRawValue_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(PbftViewChangeWithRawValue),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChangeWithRawValue, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChangeWithRawValue, _is_default_instance_));
+  PbftNewView_descriptor_ = file->message_type(6);
   static const int PbftNewView_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, view_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, sequence_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, replica_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, view_changes_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, pre_prepares_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, pre_prepare_),
   };
   PbftNewView_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -179,8 +198,8 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftNewView),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, _is_default_instance_));
-  Pbft_descriptor_ = file->message_type(6);
-  static const int Pbft_offsets_[7] = {
+  Pbft_descriptor_ = file->message_type(7);
+  static const int Pbft_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, round_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, pre_prepare_),
@@ -188,6 +207,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, commit_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, view_change_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, new_view_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, view_change_with_rawvalue_),
   };
   Pbft_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -200,7 +220,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(Pbft),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, _is_default_instance_));
-  PbftEnv_descriptor_ = file->message_type(7);
+  PbftEnv_descriptor_ = file->message_type(8);
   static const int PbftEnv_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, pbft_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, signature_),
@@ -216,7 +236,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftEnv),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftEnv, _is_default_instance_));
-  Validator_descriptor_ = file->message_type(8);
+  Validator_descriptor_ = file->message_type(9);
   static const int Validator_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, pledge_coin_amount_),
@@ -232,7 +252,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(Validator),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Validator, _is_default_instance_));
-  ValidatorSet_descriptor_ = file->message_type(9);
+  ValidatorSet_descriptor_ = file->message_type(10);
   static const int ValidatorSet_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, validators_),
   };
@@ -247,7 +267,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(ValidatorSet),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ValidatorSet, _is_default_instance_));
-  PbftProof_descriptor_ = file->message_type(10);
+  PbftProof_descriptor_ = file->message_type(11);
   static const int PbftProof_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, commits_),
   };
@@ -262,7 +282,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftProof),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, _is_default_instance_));
-  FeeConfig_descriptor_ = file->message_type(11);
+  FeeConfig_descriptor_ = file->message_type(12);
   static const int FeeConfig_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, gas_price_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, base_reserve_),
@@ -305,6 +325,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftViewChange_descriptor_, &PbftViewChange::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      PbftViewChangeWithRawValue_descriptor_, &PbftViewChangeWithRawValue::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftNewView_descriptor_, &PbftNewView::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Pbft_descriptor_, &Pbft::default_instance());
@@ -333,6 +355,8 @@ void protobuf_ShutdownFile_consensus_2eproto() {
   delete PbftPreparedSet_reflection_;
   delete PbftViewChange::default_instance_;
   delete PbftViewChange_reflection_;
+  delete PbftViewChangeWithRawValue::default_instance_;
+  delete PbftViewChangeWithRawValue_reflection_;
   delete PbftNewView::default_instance_;
   delete PbftNewView_reflection_;
   delete Pbft::default_instance_;
@@ -369,35 +393,40 @@ void protobuf_AddDesc_consensus_2eproto() {
     " \001(\003\022\024\n\014value_digest\030\004 \001(\014\"]\n\017PbftPrepar"
     "edSet\022&\n\013pre_prepare\030\001 \001(\0132\021.protocol.Pb"
     "ftEnv\022\"\n\007prepare\030\002 \003(\0132\021.protocol.PbftEn"
-    "v\"|\n\016PbftViewChange\022\023\n\013view_number\030\001 \001(\003"
-    "\022\020\n\010sequence\030\002 \001(\003\022/\n\014prepared_set\030\003 \003(\013"
-    "2\031.protocol.PbftPreparedSet\022\022\n\nreplica_i"
-    "d\030\004 \001(\003\"\232\001\n\013PbftNewView\022\023\n\013view_number\030\001"
-    " \001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001"
-    "(\003\022\'\n\014view_changes\030\004 \003(\0132\021.protocol.Pbft"
-    "Env\022\'\n\014pre_prepares\030\005 \003(\0132\021.protocol.Pbf"
-    "tEnv\"\232\002\n\004Pbft\022\024\n\014round_number\030\001 \001(\003\022\'\n\004t"
-    "ype\030\002 \001(\0162\031.protocol.PbftMessageType\022-\n\013"
-    "pre_prepare\030\003 \001(\0132\030.protocol.PbftPrePrep"
-    "are\022&\n\007prepare\030\004 \001(\0132\025.protocol.PbftPrep"
-    "are\022$\n\006commit\030\005 \001(\0132\024.protocol.PbftCommi"
-    "t\022-\n\013view_change\030\006 \001(\0132\030.protocol.PbftVi"
-    "ewChange\022\'\n\010new_view\030\007 \001(\0132\025.protocol.Pb"
-    "ftNewView\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132\016.pro"
-    "tocol.Pbft\022&\n\tsignature\030\002 \001(\0132\023.protocol"
-    ".Signature\"8\n\tValidator\022\017\n\007address\030\001 \001(\t"
-    "\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Validato"
-    "rSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol.Vali"
-    "dator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\0132\021.pr"
-    "otocol.PbftEnv\"j\n\tFeeConfig\022\021\n\tgas_price"
-    "\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\"4\n\004Type\022\013\n\007"
-    "UNKNOWN\020\000\022\r\n\tGAS_PRICE\020\001\022\020\n\014BASE_RESERVE"
-    "\020\002*\211\001\n\017PbftMessageType\022\030\n\024PBFT_TYPE_PREP"
-    "REPARE\020\000\022\025\n\021PBFT_TYPE_PREPARE\020\001\022\024\n\020PBFT_"
-    "TYPE_COMMIT\020\002\022\030\n\024PBFT_TYPE_VIEWCHANGE\020\003\022"
-    "\025\n\021PBFT_TYPE_NEWVIEW\020\004*8\n\rPbftValueType\022"
-    "\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXSET\020\001"
-    "b\006proto3", 1568);
+    "v\"i\n\016PbftViewChange\022\023\n\013view_number\030\001 \001(\003"
+    "\022\020\n\010sequence\030\002 \001(\003\022\034\n\024prepred_value_dige"
+    "st\030\003 \001(\014\022\022\n\nreplica_id\030\004 \001(\003\"y\n\032PbftView"
+    "ChangeWithRawValue\022*\n\017view_change_env\030\001 "
+    "\001(\0132\021.protocol.PbftEnv\022/\n\014prepared_set\030\002"
+    " \001(\0132\031.protocol.PbftPreparedSet\"\231\001\n\013Pbft"
+    "NewView\022\023\n\013view_number\030\001 \001(\003\022\020\n\010sequence"
+    "\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001(\003\022\'\n\014view_chang"
+    "es\030\004 \003(\0132\021.protocol.PbftEnv\022&\n\013pre_prepa"
+    "re\030\005 \001(\0132\021.protocol.PbftEnv\"\343\002\n\004Pbft\022\024\n\014"
+    "round_number\030\001 \001(\003\022\'\n\004type\030\002 \001(\0162\031.proto"
+    "col.PbftMessageType\022-\n\013pre_prepare\030\003 \001(\013"
+    "2\030.protocol.PbftPrePrepare\022&\n\007prepare\030\004 "
+    "\001(\0132\025.protocol.PbftPrepare\022$\n\006commit\030\005 \001"
+    "(\0132\024.protocol.PbftCommit\022-\n\013view_change\030"
+    "\006 \001(\0132\030.protocol.PbftViewChange\022\'\n\010new_v"
+    "iew\030\007 \001(\0132\025.protocol.PbftNewView\022G\n\031view"
+    "_change_with_rawvalue\030\010 \001(\0132$.protocol.P"
+    "bftViewChangeWithRawValue\"O\n\007PbftEnv\022\034\n\004"
+    "pbft\030\001 \001(\0132\016.protocol.Pbft\022&\n\tsignature\030"
+    "\002 \001(\0132\023.protocol.Signature\"8\n\tValidator\022"
+    "\017\n\007address\030\001 \001(\t\022\032\n\022pledge_coin_amount\030\002"
+    " \001(\003\"7\n\014ValidatorSet\022\'\n\nvalidators\030\001 \003(\013"
+    "2\023.protocol.Validator\"/\n\tPbftProof\022\"\n\007co"
+    "mmits\030\001 \003(\0132\021.protocol.PbftEnv\"j\n\tFeeCon"
+    "fig\022\021\n\tgas_price\030\001 \001(\003\022\024\n\014base_reserve\030\002"
+    " \001(\003\"4\n\004Type\022\013\n\007UNKNOWN\020\000\022\r\n\tGAS_PRICE\020\001"
+    "\022\020\n\014BASE_RESERVE\020\002*\260\001\n\017PbftMessageType\022\030"
+    "\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_PR"
+    "EPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_TY"
+    "PE_VIEWCHANGE\020\003\022\025\n\021PBFT_TYPE_NEWVIEW\020\004\022%"
+    "\n!PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE\020\005*8\n"
+    "\rPbftValueType\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBF"
+    "T_VALUE_TXSET\020\001b\006proto3", 1783);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "consensus.proto", &protobuf_RegisterTypes);
   PbftPrePrepare::default_instance_ = new PbftPrePrepare();
@@ -405,6 +434,7 @@ void protobuf_AddDesc_consensus_2eproto() {
   PbftCommit::default_instance_ = new PbftCommit();
   PbftPreparedSet::default_instance_ = new PbftPreparedSet();
   PbftViewChange::default_instance_ = new PbftViewChange();
+  PbftViewChangeWithRawValue::default_instance_ = new PbftViewChangeWithRawValue();
   PbftNewView::default_instance_ = new PbftNewView();
   Pbft::default_instance_ = new Pbft();
   PbftEnv::default_instance_ = new PbftEnv();
@@ -417,6 +447,7 @@ void protobuf_AddDesc_consensus_2eproto() {
   PbftCommit::default_instance_->InitAsDefaultInstance();
   PbftPreparedSet::default_instance_->InitAsDefaultInstance();
   PbftViewChange::default_instance_->InitAsDefaultInstance();
+  PbftViewChangeWithRawValue::default_instance_->InitAsDefaultInstance();
   PbftNewView::default_instance_->InitAsDefaultInstance();
   Pbft::default_instance_->InitAsDefaultInstance();
   PbftEnv::default_instance_->InitAsDefaultInstance();
@@ -444,6 +475,7 @@ bool PbftMessageType_IsValid(int value) {
     case 2:
     case 3:
     case 4:
+    case 5:
       return true;
     default:
       return false;
@@ -2241,7 +2273,7 @@ PbftPreparedSet::prepare() const {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PbftViewChange::kViewNumberFieldNumber;
 const int PbftViewChange::kSequenceFieldNumber;
-const int PbftViewChange::kPreparedSetFieldNumber;
+const int PbftViewChange::kPrepredValueDigestFieldNumber;
 const int PbftViewChange::kReplicaIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -2265,9 +2297,11 @@ PbftViewChange::PbftViewChange(const PbftViewChange& from)
 
 void PbftViewChange::SharedCtor() {
     _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   view_number_ = GOOGLE_LONGLONG(0);
   sequence_ = GOOGLE_LONGLONG(0);
+  prepred_value_digest_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   replica_id_ = GOOGLE_LONGLONG(0);
 }
 
@@ -2277,6 +2311,7 @@ PbftViewChange::~PbftViewChange() {
 }
 
 void PbftViewChange::SharedDtor() {
+  prepred_value_digest_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
 }
@@ -2325,12 +2360,12 @@ void PbftViewChange::Clear() {
 } while (0)
 
   ZR_(view_number_, sequence_);
+  prepred_value_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   replica_id_ = GOOGLE_LONGLONG(0);
 
 #undef ZR_HELPER_
 #undef ZR_
 
-  prepared_set_.Clear();
 }
 
 bool PbftViewChange::MergePartialFromCodedStream(
@@ -2368,23 +2403,19 @@ bool PbftViewChange::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_prepared_set;
+        if (input->ExpectTag(26)) goto parse_prepred_value_digest;
         break;
       }
 
-      // repeated .protocol.PbftPreparedSet prepared_set = 3;
+      // optional bytes prepred_value_digest = 3;
       case 3: {
         if (tag == 26) {
-         parse_prepared_set:
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_prepared_set:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_prepared_set()));
+         parse_prepred_value_digest:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_prepred_value_digest()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_loop_prepared_set;
-        input->UnsafeDecrementRecursionDepth();
         if (input->ExpectTag(32)) goto parse_replica_id;
         break;
       }
@@ -2438,10 +2469,10 @@ void PbftViewChange::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->sequence(), output);
   }
 
-  // repeated .protocol.PbftPreparedSet prepared_set = 3;
-  for (unsigned int i = 0, n = this->prepared_set_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->prepared_set(i), output);
+  // optional bytes prepred_value_digest = 3;
+  if (this->prepred_value_digest().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->prepred_value_digest(), output);
   }
 
   // optional int64 replica_id = 4;
@@ -2465,11 +2496,11 @@ void PbftViewChange::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->sequence(), target);
   }
 
-  // repeated .protocol.PbftPreparedSet prepared_set = 3;
-  for (unsigned int i = 0, n = this->prepared_set_size(); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        3, this->prepared_set(i), false, target);
+  // optional bytes prepred_value_digest = 3;
+  if (this->prepred_value_digest().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->prepred_value_digest(), target);
   }
 
   // optional int64 replica_id = 4;
@@ -2499,19 +2530,18 @@ int PbftViewChange::ByteSize() const {
         this->sequence());
   }
 
+  // optional bytes prepred_value_digest = 3;
+  if (this->prepred_value_digest().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->prepred_value_digest());
+  }
+
   // optional int64 replica_id = 4;
   if (this->replica_id() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->replica_id());
-  }
-
-  // repeated .protocol.PbftPreparedSet prepared_set = 3;
-  total_size += 1 * this->prepared_set_size();
-  for (int i = 0; i < this->prepared_set_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->prepared_set(i));
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -2542,12 +2572,15 @@ void PbftViewChange::MergeFrom(const PbftViewChange& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
-  prepared_set_.MergeFrom(from.prepared_set_);
   if (from.view_number() != 0) {
     set_view_number(from.view_number());
   }
   if (from.sequence() != 0) {
     set_sequence(from.sequence());
+  }
+  if (from.prepred_value_digest().size() > 0) {
+
+    prepred_value_digest_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.prepred_value_digest_);
   }
   if (from.replica_id() != 0) {
     set_replica_id(from.replica_id());
@@ -2580,7 +2613,7 @@ void PbftViewChange::Swap(PbftViewChange* other) {
 void PbftViewChange::InternalSwap(PbftViewChange* other) {
   std::swap(view_number_, other->view_number_);
   std::swap(sequence_, other->sequence_);
-  prepared_set_.UnsafeArenaSwap(&other->prepared_set_);
+  prepred_value_digest_.Swap(&other->prepred_value_digest_);
   std::swap(replica_id_, other->replica_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -2625,34 +2658,48 @@ void PbftViewChange::clear_sequence() {
   // @@protoc_insertion_point(field_set:protocol.PbftViewChange.sequence)
 }
 
-// repeated .protocol.PbftPreparedSet prepared_set = 3;
-int PbftViewChange::prepared_set_size() const {
-  return prepared_set_.size();
+// optional bytes prepred_value_digest = 3;
+void PbftViewChange::clear_prepred_value_digest() {
+  prepred_value_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-void PbftViewChange::clear_prepared_set() {
-  prepared_set_.Clear();
+ const ::std::string& PbftViewChange::prepred_value_digest() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.prepred_value_digest)
+  return prepred_value_digest_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::protocol::PbftPreparedSet& PbftViewChange::prepared_set(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Get(index);
+ void PbftViewChange::set_prepred_value_digest(const ::std::string& value) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.PbftViewChange.prepred_value_digest)
 }
-::protocol::PbftPreparedSet* PbftViewChange::mutable_prepared_set(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Mutable(index);
+ void PbftViewChange::set_prepred_value_digest(const char* value) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.PbftViewChange.prepred_value_digest)
 }
-::protocol::PbftPreparedSet* PbftViewChange::add_prepared_set() {
-  // @@protoc_insertion_point(field_add:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Add();
+ void PbftViewChange::set_prepred_value_digest(const void* value, size_t size) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.PbftViewChange.prepred_value_digest)
 }
-::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >*
-PbftViewChange::mutable_prepared_set() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftViewChange.prepared_set)
-  return &prepared_set_;
+ ::std::string* PbftViewChange::mutable_prepred_value_digest() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.prepred_value_digest)
+  return prepred_value_digest_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >&
-PbftViewChange::prepared_set() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftViewChange.prepared_set)
-  return prepared_set_;
+ ::std::string* PbftViewChange::release_prepred_value_digest() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChange.prepred_value_digest)
+  
+  return prepred_value_digest_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void PbftViewChange::set_allocated_prepred_value_digest(::std::string* prepred_value_digest) {
+  if (prepred_value_digest != NULL) {
+    
+  } else {
+    
+  }
+  prepred_value_digest_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prepred_value_digest);
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChange.prepred_value_digest)
 }
 
 // optional int64 replica_id = 4;
@@ -2674,11 +2721,358 @@ void PbftViewChange::clear_replica_id() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int PbftViewChangeWithRawValue::kViewChangeEnvFieldNumber;
+const int PbftViewChangeWithRawValue::kPreparedSetFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+PbftViewChangeWithRawValue::PbftViewChangeWithRawValue()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.PbftViewChangeWithRawValue)
+}
+
+void PbftViewChangeWithRawValue::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  view_change_env_ = const_cast< ::protocol::PbftEnv*>(&::protocol::PbftEnv::default_instance());
+  prepared_set_ = const_cast< ::protocol::PbftPreparedSet*>(&::protocol::PbftPreparedSet::default_instance());
+}
+
+PbftViewChangeWithRawValue::PbftViewChangeWithRawValue(const PbftViewChangeWithRawValue& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.PbftViewChangeWithRawValue)
+}
+
+void PbftViewChangeWithRawValue::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  view_change_env_ = NULL;
+  prepared_set_ = NULL;
+}
+
+PbftViewChangeWithRawValue::~PbftViewChangeWithRawValue() {
+  // @@protoc_insertion_point(destructor:protocol.PbftViewChangeWithRawValue)
+  SharedDtor();
+}
+
+void PbftViewChangeWithRawValue::SharedDtor() {
+  if (this != default_instance_) {
+    delete view_change_env_;
+    delete prepared_set_;
+  }
+}
+
+void PbftViewChangeWithRawValue::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PbftViewChangeWithRawValue::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return PbftViewChangeWithRawValue_descriptor_;
+}
+
+const PbftViewChangeWithRawValue& PbftViewChangeWithRawValue::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_consensus_2eproto();
+  return *default_instance_;
+}
+
+PbftViewChangeWithRawValue* PbftViewChangeWithRawValue::default_instance_ = NULL;
+
+PbftViewChangeWithRawValue* PbftViewChangeWithRawValue::New(::google::protobuf::Arena* arena) const {
+  PbftViewChangeWithRawValue* n = new PbftViewChangeWithRawValue;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void PbftViewChangeWithRawValue::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.PbftViewChangeWithRawValue)
+  if (GetArenaNoVirtual() == NULL && view_change_env_ != NULL) delete view_change_env_;
+  view_change_env_ = NULL;
+  if (GetArenaNoVirtual() == NULL && prepared_set_ != NULL) delete prepared_set_;
+  prepared_set_ = NULL;
+}
+
+bool PbftViewChangeWithRawValue::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.PbftViewChangeWithRawValue)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .protocol.PbftEnv view_change_env = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_view_change_env()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_prepared_set;
+        break;
+      }
+
+      // optional .protocol.PbftPreparedSet prepared_set = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_prepared_set:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_prepared_set()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.PbftViewChangeWithRawValue)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.PbftViewChangeWithRawValue)
+  return false;
+#undef DO_
+}
+
+void PbftViewChangeWithRawValue::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.PbftViewChangeWithRawValue)
+  // optional .protocol.PbftEnv view_change_env = 1;
+  if (this->has_view_change_env()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->view_change_env_, output);
+  }
+
+  // optional .protocol.PbftPreparedSet prepared_set = 2;
+  if (this->has_prepared_set()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, *this->prepared_set_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.PbftViewChangeWithRawValue)
+}
+
+::google::protobuf::uint8* PbftViewChangeWithRawValue::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.PbftViewChangeWithRawValue)
+  // optional .protocol.PbftEnv view_change_env = 1;
+  if (this->has_view_change_env()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->view_change_env_, false, target);
+  }
+
+  // optional .protocol.PbftPreparedSet prepared_set = 2;
+  if (this->has_prepared_set()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        2, *this->prepared_set_, false, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.PbftViewChangeWithRawValue)
+  return target;
+}
+
+int PbftViewChangeWithRawValue::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.PbftViewChangeWithRawValue)
+  int total_size = 0;
+
+  // optional .protocol.PbftEnv view_change_env = 1;
+  if (this->has_view_change_env()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->view_change_env_);
+  }
+
+  // optional .protocol.PbftPreparedSet prepared_set = 2;
+  if (this->has_prepared_set()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->prepared_set_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PbftViewChangeWithRawValue::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.PbftViewChangeWithRawValue)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const PbftViewChangeWithRawValue* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const PbftViewChangeWithRawValue>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.PbftViewChangeWithRawValue)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.PbftViewChangeWithRawValue)
+    MergeFrom(*source);
+  }
+}
+
+void PbftViewChangeWithRawValue::MergeFrom(const PbftViewChangeWithRawValue& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.PbftViewChangeWithRawValue)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.has_view_change_env()) {
+    mutable_view_change_env()->::protocol::PbftEnv::MergeFrom(from.view_change_env());
+  }
+  if (from.has_prepared_set()) {
+    mutable_prepared_set()->::protocol::PbftPreparedSet::MergeFrom(from.prepared_set());
+  }
+}
+
+void PbftViewChangeWithRawValue::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.PbftViewChangeWithRawValue)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PbftViewChangeWithRawValue::CopyFrom(const PbftViewChangeWithRawValue& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.PbftViewChangeWithRawValue)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PbftViewChangeWithRawValue::IsInitialized() const {
+
+  return true;
+}
+
+void PbftViewChangeWithRawValue::Swap(PbftViewChangeWithRawValue* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void PbftViewChangeWithRawValue::InternalSwap(PbftViewChangeWithRawValue* other) {
+  std::swap(view_change_env_, other->view_change_env_);
+  std::swap(prepared_set_, other->prepared_set_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata PbftViewChangeWithRawValue::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = PbftViewChangeWithRawValue_descriptor_;
+  metadata.reflection = PbftViewChangeWithRawValue_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// PbftViewChangeWithRawValue
+
+// optional .protocol.PbftEnv view_change_env = 1;
+bool PbftViewChangeWithRawValue::has_view_change_env() const {
+  return !_is_default_instance_ && view_change_env_ != NULL;
+}
+void PbftViewChangeWithRawValue::clear_view_change_env() {
+  if (GetArenaNoVirtual() == NULL && view_change_env_ != NULL) delete view_change_env_;
+  view_change_env_ = NULL;
+}
+const ::protocol::PbftEnv& PbftViewChangeWithRawValue::view_change_env() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChangeWithRawValue.view_change_env)
+  return view_change_env_ != NULL ? *view_change_env_ : *default_instance_->view_change_env_;
+}
+::protocol::PbftEnv* PbftViewChangeWithRawValue::mutable_view_change_env() {
+  
+  if (view_change_env_ == NULL) {
+    view_change_env_ = new ::protocol::PbftEnv;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChangeWithRawValue.view_change_env)
+  return view_change_env_;
+}
+::protocol::PbftEnv* PbftViewChangeWithRawValue::release_view_change_env() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChangeWithRawValue.view_change_env)
+  
+  ::protocol::PbftEnv* temp = view_change_env_;
+  view_change_env_ = NULL;
+  return temp;
+}
+void PbftViewChangeWithRawValue::set_allocated_view_change_env(::protocol::PbftEnv* view_change_env) {
+  delete view_change_env_;
+  view_change_env_ = view_change_env;
+  if (view_change_env) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChangeWithRawValue.view_change_env)
+}
+
+// optional .protocol.PbftPreparedSet prepared_set = 2;
+bool PbftViewChangeWithRawValue::has_prepared_set() const {
+  return !_is_default_instance_ && prepared_set_ != NULL;
+}
+void PbftViewChangeWithRawValue::clear_prepared_set() {
+  if (GetArenaNoVirtual() == NULL && prepared_set_ != NULL) delete prepared_set_;
+  prepared_set_ = NULL;
+}
+const ::protocol::PbftPreparedSet& PbftViewChangeWithRawValue::prepared_set() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChangeWithRawValue.prepared_set)
+  return prepared_set_ != NULL ? *prepared_set_ : *default_instance_->prepared_set_;
+}
+::protocol::PbftPreparedSet* PbftViewChangeWithRawValue::mutable_prepared_set() {
+  
+  if (prepared_set_ == NULL) {
+    prepared_set_ = new ::protocol::PbftPreparedSet;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChangeWithRawValue.prepared_set)
+  return prepared_set_;
+}
+::protocol::PbftPreparedSet* PbftViewChangeWithRawValue::release_prepared_set() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChangeWithRawValue.prepared_set)
+  
+  ::protocol::PbftPreparedSet* temp = prepared_set_;
+  prepared_set_ = NULL;
+  return temp;
+}
+void PbftViewChangeWithRawValue::set_allocated_prepared_set(::protocol::PbftPreparedSet* prepared_set) {
+  delete prepared_set_;
+  prepared_set_ = prepared_set;
+  if (prepared_set) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChangeWithRawValue.prepared_set)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PbftNewView::kViewNumberFieldNumber;
 const int PbftNewView::kSequenceFieldNumber;
 const int PbftNewView::kReplicaIdFieldNumber;
 const int PbftNewView::kViewChangesFieldNumber;
-const int PbftNewView::kPrePreparesFieldNumber;
+const int PbftNewView::kPrePrepareFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 PbftNewView::PbftNewView()
@@ -2689,6 +3083,7 @@ PbftNewView::PbftNewView()
 
 void PbftNewView::InitAsDefaultInstance() {
   _is_default_instance_ = true;
+  pre_prepare_ = const_cast< ::protocol::PbftEnv*>(&::protocol::PbftEnv::default_instance());
 }
 
 PbftNewView::PbftNewView(const PbftNewView& from)
@@ -2705,6 +3100,7 @@ void PbftNewView::SharedCtor() {
   view_number_ = GOOGLE_LONGLONG(0);
   sequence_ = GOOGLE_LONGLONG(0);
   replica_id_ = GOOGLE_LONGLONG(0);
+  pre_prepare_ = NULL;
 }
 
 PbftNewView::~PbftNewView() {
@@ -2714,6 +3110,7 @@ PbftNewView::~PbftNewView() {
 
 void PbftNewView::SharedDtor() {
   if (this != default_instance_) {
+    delete pre_prepare_;
   }
 }
 
@@ -2761,12 +3158,13 @@ void PbftNewView::Clear() {
 } while (0)
 
   ZR_(view_number_, replica_id_);
+  if (GetArenaNoVirtual() == NULL && pre_prepare_ != NULL) delete pre_prepare_;
+  pre_prepare_ = NULL;
 
 #undef ZR_HELPER_
 #undef ZR_
 
   view_changes_.Clear();
-  pre_prepares_.Clear();
 }
 
 bool PbftNewView::MergePartialFromCodedStream(
@@ -2835,23 +3233,20 @@ bool PbftNewView::MergePartialFromCodedStream(
           goto handle_unusual;
         }
         if (input->ExpectTag(34)) goto parse_loop_view_changes;
-        if (input->ExpectTag(42)) goto parse_loop_pre_prepares;
         input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectTag(42)) goto parse_pre_prepare;
         break;
       }
 
-      // repeated .protocol.PbftEnv pre_prepares = 5;
+      // optional .protocol.PbftEnv pre_prepare = 5;
       case 5: {
         if (tag == 42) {
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_pre_prepares:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_pre_prepares()));
+         parse_pre_prepare:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_pre_prepare()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_loop_pre_prepares;
-        input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -2901,10 +3296,10 @@ void PbftNewView::SerializeWithCachedSizes(
       4, this->view_changes(i), output);
   }
 
-  // repeated .protocol.PbftEnv pre_prepares = 5;
-  for (unsigned int i = 0, n = this->pre_prepares_size(); i < n; i++) {
+  // optional .protocol.PbftEnv pre_prepare = 5;
+  if (this->has_pre_prepare()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, this->pre_prepares(i), output);
+      5, *this->pre_prepare_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.PbftNewView)
@@ -2935,11 +3330,11 @@ void PbftNewView::SerializeWithCachedSizes(
         4, this->view_changes(i), false, target);
   }
 
-  // repeated .protocol.PbftEnv pre_prepares = 5;
-  for (unsigned int i = 0, n = this->pre_prepares_size(); i < n; i++) {
+  // optional .protocol.PbftEnv pre_prepare = 5;
+  if (this->has_pre_prepare()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        5, this->pre_prepares(i), false, target);
+        5, *this->pre_prepare_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.PbftNewView)
@@ -2971,20 +3366,19 @@ int PbftNewView::ByteSize() const {
         this->replica_id());
   }
 
+  // optional .protocol.PbftEnv pre_prepare = 5;
+  if (this->has_pre_prepare()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->pre_prepare_);
+  }
+
   // repeated .protocol.PbftEnv view_changes = 4;
   total_size += 1 * this->view_changes_size();
   for (int i = 0; i < this->view_changes_size(); i++) {
     total_size +=
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         this->view_changes(i));
-  }
-
-  // repeated .protocol.PbftEnv pre_prepares = 5;
-  total_size += 1 * this->pre_prepares_size();
-  for (int i = 0; i < this->pre_prepares_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->pre_prepares(i));
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -3016,7 +3410,6 @@ void PbftNewView::MergeFrom(const PbftNewView& from) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
   view_changes_.MergeFrom(from.view_changes_);
-  pre_prepares_.MergeFrom(from.pre_prepares_);
   if (from.view_number() != 0) {
     set_view_number(from.view_number());
   }
@@ -3025,6 +3418,9 @@ void PbftNewView::MergeFrom(const PbftNewView& from) {
   }
   if (from.replica_id() != 0) {
     set_replica_id(from.replica_id());
+  }
+  if (from.has_pre_prepare()) {
+    mutable_pre_prepare()->::protocol::PbftEnv::MergeFrom(from.pre_prepare());
   }
 }
 
@@ -3056,7 +3452,7 @@ void PbftNewView::InternalSwap(PbftNewView* other) {
   std::swap(sequence_, other->sequence_);
   std::swap(replica_id_, other->replica_id_);
   view_changes_.UnsafeArenaSwap(&other->view_changes_);
-  pre_prepares_.UnsafeArenaSwap(&other->pre_prepares_);
+  std::swap(pre_prepare_, other->pre_prepare_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -3144,34 +3540,42 @@ PbftNewView::view_changes() const {
   return view_changes_;
 }
 
-// repeated .protocol.PbftEnv pre_prepares = 5;
-int PbftNewView::pre_prepares_size() const {
-  return pre_prepares_.size();
+// optional .protocol.PbftEnv pre_prepare = 5;
+bool PbftNewView::has_pre_prepare() const {
+  return !_is_default_instance_ && pre_prepare_ != NULL;
 }
-void PbftNewView::clear_pre_prepares() {
-  pre_prepares_.Clear();
+void PbftNewView::clear_pre_prepare() {
+  if (GetArenaNoVirtual() == NULL && pre_prepare_ != NULL) delete pre_prepare_;
+  pre_prepare_ = NULL;
 }
-const ::protocol::PbftEnv& PbftNewView::pre_prepares(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Get(index);
+const ::protocol::PbftEnv& PbftNewView::pre_prepare() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftNewView.pre_prepare)
+  return pre_prepare_ != NULL ? *pre_prepare_ : *default_instance_->pre_prepare_;
 }
-::protocol::PbftEnv* PbftNewView::mutable_pre_prepares(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Mutable(index);
+::protocol::PbftEnv* PbftNewView::mutable_pre_prepare() {
+  
+  if (pre_prepare_ == NULL) {
+    pre_prepare_ = new ::protocol::PbftEnv;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftNewView.pre_prepare)
+  return pre_prepare_;
 }
-::protocol::PbftEnv* PbftNewView::add_pre_prepares() {
-  // @@protoc_insertion_point(field_add:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Add();
+::protocol::PbftEnv* PbftNewView::release_pre_prepare() {
+  // @@protoc_insertion_point(field_release:protocol.PbftNewView.pre_prepare)
+  
+  ::protocol::PbftEnv* temp = pre_prepare_;
+  pre_prepare_ = NULL;
+  return temp;
 }
-::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >*
-PbftNewView::mutable_pre_prepares() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftNewView.pre_prepares)
-  return &pre_prepares_;
-}
-const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
-PbftNewView::pre_prepares() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_;
+void PbftNewView::set_allocated_pre_prepare(::protocol::PbftEnv* pre_prepare) {
+  delete pre_prepare_;
+  pre_prepare_ = pre_prepare;
+  if (pre_prepare) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftNewView.pre_prepare)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3186,6 +3590,7 @@ const int Pbft::kPrepareFieldNumber;
 const int Pbft::kCommitFieldNumber;
 const int Pbft::kViewChangeFieldNumber;
 const int Pbft::kNewViewFieldNumber;
+const int Pbft::kViewChangeWithRawvalueFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Pbft::Pbft()
@@ -3201,6 +3606,7 @@ void Pbft::InitAsDefaultInstance() {
   commit_ = const_cast< ::protocol::PbftCommit*>(&::protocol::PbftCommit::default_instance());
   view_change_ = const_cast< ::protocol::PbftViewChange*>(&::protocol::PbftViewChange::default_instance());
   new_view_ = const_cast< ::protocol::PbftNewView*>(&::protocol::PbftNewView::default_instance());
+  view_change_with_rawvalue_ = const_cast< ::protocol::PbftViewChangeWithRawValue*>(&::protocol::PbftViewChangeWithRawValue::default_instance());
 }
 
 Pbft::Pbft(const Pbft& from)
@@ -3221,6 +3627,7 @@ void Pbft::SharedCtor() {
   commit_ = NULL;
   view_change_ = NULL;
   new_view_ = NULL;
+  view_change_with_rawvalue_ = NULL;
 }
 
 Pbft::~Pbft() {
@@ -3235,6 +3642,7 @@ void Pbft::SharedDtor() {
     delete commit_;
     delete view_change_;
     delete new_view_;
+    delete view_change_with_rawvalue_;
   }
 }
 
@@ -3277,6 +3685,8 @@ void Pbft::Clear() {
   view_change_ = NULL;
   if (GetArenaNoVirtual() == NULL && new_view_ != NULL) delete new_view_;
   new_view_ = NULL;
+  if (GetArenaNoVirtual() == NULL && view_change_with_rawvalue_ != NULL) delete view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = NULL;
 }
 
 bool Pbft::MergePartialFromCodedStream(
@@ -3380,6 +3790,19 @@ bool Pbft::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(66)) goto parse_view_change_with_rawvalue;
+        break;
+      }
+
+      // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_view_change_with_rawvalue:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_view_change_with_rawvalue()));
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -3449,6 +3872,12 @@ void Pbft::SerializeWithCachedSizes(
       7, *this->new_view_, output);
   }
 
+  // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+  if (this->has_view_change_with_rawvalue()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, *this->view_change_with_rawvalue_, output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.Pbft)
 }
 
@@ -3499,6 +3928,13 @@ void Pbft::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         7, *this->new_view_, false, target);
+  }
+
+  // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+  if (this->has_view_change_with_rawvalue()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        8, *this->view_change_with_rawvalue_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Pbft)
@@ -3557,6 +3993,13 @@ int Pbft::ByteSize() const {
         *this->new_view_);
   }
 
+  // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+  if (this->has_view_change_with_rawvalue()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->view_change_with_rawvalue_);
+  }
+
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -3606,6 +4049,9 @@ void Pbft::MergeFrom(const Pbft& from) {
   if (from.has_new_view()) {
     mutable_new_view()->::protocol::PbftNewView::MergeFrom(from.new_view());
   }
+  if (from.has_view_change_with_rawvalue()) {
+    mutable_view_change_with_rawvalue()->::protocol::PbftViewChangeWithRawValue::MergeFrom(from.view_change_with_rawvalue());
+  }
 }
 
 void Pbft::CopyFrom(const ::google::protobuf::Message& from) {
@@ -3639,6 +4085,7 @@ void Pbft::InternalSwap(Pbft* other) {
   std::swap(commit_, other->commit_);
   std::swap(view_change_, other->view_change_);
   std::swap(new_view_, other->new_view_);
+  std::swap(view_change_with_rawvalue_, other->view_change_with_rawvalue_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -3870,6 +4317,44 @@ void Pbft::set_allocated_new_view(::protocol::PbftNewView* new_view) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.new_view)
+}
+
+// optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+bool Pbft::has_view_change_with_rawvalue() const {
+  return !_is_default_instance_ && view_change_with_rawvalue_ != NULL;
+}
+void Pbft::clear_view_change_with_rawvalue() {
+  if (GetArenaNoVirtual() == NULL && view_change_with_rawvalue_ != NULL) delete view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = NULL;
+}
+const ::protocol::PbftViewChangeWithRawValue& Pbft::view_change_with_rawvalue() const {
+  // @@protoc_insertion_point(field_get:protocol.Pbft.view_change_with_rawvalue)
+  return view_change_with_rawvalue_ != NULL ? *view_change_with_rawvalue_ : *default_instance_->view_change_with_rawvalue_;
+}
+::protocol::PbftViewChangeWithRawValue* Pbft::mutable_view_change_with_rawvalue() {
+  
+  if (view_change_with_rawvalue_ == NULL) {
+    view_change_with_rawvalue_ = new ::protocol::PbftViewChangeWithRawValue;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.Pbft.view_change_with_rawvalue)
+  return view_change_with_rawvalue_;
+}
+::protocol::PbftViewChangeWithRawValue* Pbft::release_view_change_with_rawvalue() {
+  // @@protoc_insertion_point(field_release:protocol.Pbft.view_change_with_rawvalue)
+  
+  ::protocol::PbftViewChangeWithRawValue* temp = view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = NULL;
+  return temp;
+}
+void Pbft::set_allocated_view_change_with_rawvalue(::protocol::PbftViewChangeWithRawValue* view_change_with_rawvalue) {
+  delete view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = view_change_with_rawvalue;
+  if (view_change_with_rawvalue) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.view_change_with_rawvalue)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

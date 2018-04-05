@@ -8541,7 +8541,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *required, [-1,MAX(INT64)] -1: ±íÊ¾²»ÉèÖÃ
+     *required, [-1,MAX(INT64)] -1: è¡¨ç¤ºä¸è®¾ç½®
      * </pre>
      *
      * <code>optional int64 tx_threshold = 1;</code>
@@ -8550,7 +8550,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8559,7 +8559,7 @@ public final class Chain {
         getTypeThresholdsList();
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8567,7 +8567,7 @@ public final class Chain {
     cn.bumo.blockchain.adapter3.Chain.OperationTypeThreshold getTypeThresholds(int index);
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8575,7 +8575,7 @@ public final class Chain {
     int getTypeThresholdsCount();
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8584,7 +8584,7 @@ public final class Chain {
         getTypeThresholdsOrBuilderList();
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8678,7 +8678,7 @@ public final class Chain {
     private long txThreshold_;
     /**
      * <pre>
-     *required, [-1,MAX(INT64)] -1: ±íÊ¾²»ÉèÖÃ
+     *required, [-1,MAX(INT64)] -1: è¡¨ç¤ºä¸è®¾ç½®
      * </pre>
      *
      * <code>optional int64 tx_threshold = 1;</code>
@@ -8691,7 +8691,7 @@ public final class Chain {
     private java.util.List<cn.bumo.blockchain.adapter3.Chain.OperationTypeThreshold> typeThresholds_;
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8701,7 +8701,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8712,7 +8712,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8722,7 +8722,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -8732,7 +8732,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+     *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9074,7 +9074,7 @@ public final class Chain {
       private long txThreshold_ ;
       /**
        * <pre>
-       *required, [-1,MAX(INT64)] -1: ±íÊ¾²»ÉèÖÃ
+       *required, [-1,MAX(INT64)] -1: è¡¨ç¤ºä¸è®¾ç½®
        * </pre>
        *
        * <code>optional int64 tx_threshold = 1;</code>
@@ -9084,7 +9084,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *required, [-1,MAX(INT64)] -1: ±íÊ¾²»ÉèÖÃ
+       *required, [-1,MAX(INT64)] -1: è¡¨ç¤ºä¸è®¾ç½®
        * </pre>
        *
        * <code>optional int64 tx_threshold = 1;</code>
@@ -9097,7 +9097,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *required, [-1,MAX(INT64)] -1: ±íÊ¾²»ÉèÖÃ
+       *required, [-1,MAX(INT64)] -1: è¡¨ç¤ºä¸è®¾ç½®
        * </pre>
        *
        * <code>optional int64 tx_threshold = 1;</code>
@@ -9123,7 +9123,7 @@ public final class Chain {
 
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9137,7 +9137,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9151,7 +9151,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9165,7 +9165,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9186,7 +9186,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9204,7 +9204,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9224,7 +9224,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9245,7 +9245,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9263,7 +9263,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9281,7 +9281,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9300,7 +9300,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9317,7 +9317,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9334,7 +9334,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9345,7 +9345,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9359,7 +9359,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9374,7 +9374,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9385,7 +9385,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -9397,7 +9397,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÕâ¸öÉèÖÃ£¬Ôò²Ù×÷ÃÅÏŞÒÔÕâ¸öÎª×¼
+       *å¦‚æœè¿™ä¸ªè®¾ç½®ï¼Œåˆ™æ“ä½œé—¨é™ä»¥è¿™ä¸ªä¸ºå‡†
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 2;</code>
@@ -11003,7 +11003,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *required, [-1,MAX(UINT32)] -1: ±íÊ¾²»ÉèÖÃ
+     *required, [-1,MAX(UINT32)] -1: è¡¨ç¤ºä¸è®¾ç½®
      * </pre>
      *
      * <code>optional int64 master_weight = 1;</code>
@@ -11012,7 +11012,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11021,7 +11021,7 @@ public final class Chain {
         getSignersList();
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11029,7 +11029,7 @@ public final class Chain {
     cn.bumo.blockchain.adapter3.Chain.Signer getSigners(int index);
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11037,7 +11037,7 @@ public final class Chain {
     int getSignersCount();
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11046,7 +11046,7 @@ public final class Chain {
         getSignersOrBuilderList();
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11140,7 +11140,7 @@ public final class Chain {
     private long masterWeight_;
     /**
      * <pre>
-     *required, [-1,MAX(UINT32)] -1: ±íÊ¾²»ÉèÖÃ
+     *required, [-1,MAX(UINT32)] -1: è¡¨ç¤ºä¸è®¾ç½®
      * </pre>
      *
      * <code>optional int64 master_weight = 1;</code>
@@ -11153,7 +11153,7 @@ public final class Chain {
     private java.util.List<cn.bumo.blockchain.adapter3.Chain.Signer> signers_;
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11163,7 +11163,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11174,7 +11174,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11184,7 +11184,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11194,7 +11194,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+     *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
      * </pre>
      *
      * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11536,7 +11536,7 @@ public final class Chain {
       private long masterWeight_ ;
       /**
        * <pre>
-       *required, [-1,MAX(UINT32)] -1: ±íÊ¾²»ÉèÖÃ
+       *required, [-1,MAX(UINT32)] -1: è¡¨ç¤ºä¸è®¾ç½®
        * </pre>
        *
        * <code>optional int64 master_weight = 1;</code>
@@ -11546,7 +11546,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *required, [-1,MAX(UINT32)] -1: ±íÊ¾²»ÉèÖÃ
+       *required, [-1,MAX(UINT32)] -1: è¡¨ç¤ºä¸è®¾ç½®
        * </pre>
        *
        * <code>optional int64 master_weight = 1;</code>
@@ -11559,7 +11559,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *required, [-1,MAX(UINT32)] -1: ±íÊ¾²»ÉèÖÃ
+       *required, [-1,MAX(UINT32)] -1: è¡¨ç¤ºä¸è®¾ç½®
        * </pre>
        *
        * <code>optional int64 master_weight = 1;</code>
@@ -11585,7 +11585,7 @@ public final class Chain {
 
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11599,7 +11599,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11613,7 +11613,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11627,7 +11627,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11648,7 +11648,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11666,7 +11666,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11686,7 +11686,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11707,7 +11707,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11725,7 +11725,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11743,7 +11743,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11762,7 +11762,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11779,7 +11779,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11796,7 +11796,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11807,7 +11807,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11821,7 +11821,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11836,7 +11836,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11847,7 +11847,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -11859,7 +11859,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *address:weight, Èç¹ûweight Îª0 ±íÊ¾É¾³ıÕâ¸ösigner
+       *address:weight, å¦‚æœweight ä¸º0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªsigner
        * </pre>
        *
        * <code>repeated .protocol.Signer signers = 2;</code>
@@ -15058,7 +15058,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15067,7 +15067,7 @@ public final class Chain {
         getTypeThresholdsList();
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15075,7 +15075,7 @@ public final class Chain {
     cn.bumo.blockchain.adapter3.Chain.OperationTypeThreshold getTypeThresholds(int index);
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15083,7 +15083,7 @@ public final class Chain {
     int getTypeThresholdsCount();
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15092,7 +15092,7 @@ public final class Chain {
         getTypeThresholdsOrBuilderList();
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15195,7 +15195,7 @@ public final class Chain {
     private java.util.List<cn.bumo.blockchain.adapter3.Chain.OperationTypeThreshold> typeThresholds_;
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15205,7 +15205,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15216,7 +15216,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15226,7 +15226,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15236,7 +15236,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+     *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
      * </pre>
      *
      * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15615,7 +15615,7 @@ public final class Chain {
 
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15629,7 +15629,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15643,7 +15643,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15657,7 +15657,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15678,7 +15678,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15696,7 +15696,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15716,7 +15716,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15737,7 +15737,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15755,7 +15755,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15773,7 +15773,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15792,7 +15792,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15809,7 +15809,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15826,7 +15826,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15837,7 +15837,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15851,7 +15851,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15866,7 +15866,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15877,7 +15877,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -15889,7 +15889,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *type:threshold £¬threshold:0 ±íÊ¾É¾³ıÕâ¸öÀàĞÍµÄtype
+       *type:threshold ï¼Œthreshold:0 è¡¨ç¤ºåˆ é™¤è¿™ä¸ªç±»å‹çš„type
        * </pre>
        *
        * <code>repeated .protocol.OperationTypeThreshold type_thresholds = 4;</code>
@@ -17936,7 +17936,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *Èç¹ûÊÇÌØ¶¨Çø¿é´¥·¢µÄ£¨ÔİÊ±Î´Ìá¹©£©
+     *å¦‚æœæ˜¯ç‰¹å®šåŒºå—è§¦å‘çš„ï¼ˆæš‚æ—¶æœªæä¾›ï¼‰
      * </pre>
      *
      * <code>optional int64 ledger_seq = 2;</code>
@@ -17945,7 +17945,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+     *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
      * </pre>
      *
      * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -17953,7 +17953,7 @@ public final class Chain {
     boolean hasTransaction();
     /**
      * <pre>
-     *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+     *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
      * </pre>
      *
      * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -17961,7 +17961,7 @@ public final class Chain {
     cn.bumo.blockchain.adapter3.Chain.Trigger.OperationTrigger getTransaction();
     /**
      * <pre>
-     *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+     *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
      * </pre>
      *
      * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -18670,7 +18670,7 @@ public final class Chain {
     private long ledgerSeq_;
     /**
      * <pre>
-     *Èç¹ûÊÇÌØ¶¨Çø¿é´¥·¢µÄ£¨ÔİÊ±Î´Ìá¹©£©
+     *å¦‚æœæ˜¯ç‰¹å®šåŒºå—è§¦å‘çš„ï¼ˆæš‚æ—¶æœªæä¾›ï¼‰
      * </pre>
      *
      * <code>optional int64 ledger_seq = 2;</code>
@@ -18683,7 +18683,7 @@ public final class Chain {
     private cn.bumo.blockchain.adapter3.Chain.Trigger.OperationTrigger transaction_;
     /**
      * <pre>
-     *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+     *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
      * </pre>
      *
      * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -18693,7 +18693,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+     *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
      * </pre>
      *
      * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -18703,7 +18703,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+     *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
      * </pre>
      *
      * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19075,7 +19075,7 @@ public final class Chain {
       private long ledgerSeq_ ;
       /**
        * <pre>
-       *Èç¹ûÊÇÌØ¶¨Çø¿é´¥·¢µÄ£¨ÔİÊ±Î´Ìá¹©£©
+       *å¦‚æœæ˜¯ç‰¹å®šåŒºå—è§¦å‘çš„ï¼ˆæš‚æ—¶æœªæä¾›ï¼‰
        * </pre>
        *
        * <code>optional int64 ledger_seq = 2;</code>
@@ -19085,7 +19085,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇÌØ¶¨Çø¿é´¥·¢µÄ£¨ÔİÊ±Î´Ìá¹©£©
+       *å¦‚æœæ˜¯ç‰¹å®šåŒºå—è§¦å‘çš„ï¼ˆæš‚æ—¶æœªæä¾›ï¼‰
        * </pre>
        *
        * <code>optional int64 ledger_seq = 2;</code>
@@ -19098,7 +19098,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇÌØ¶¨Çø¿é´¥·¢µÄ£¨ÔİÊ±Î´Ìá¹©£©
+       *å¦‚æœæ˜¯ç‰¹å®šåŒºå—è§¦å‘çš„ï¼ˆæš‚æ—¶æœªæä¾›ï¼‰
        * </pre>
        *
        * <code>optional int64 ledger_seq = 2;</code>
@@ -19115,7 +19115,7 @@ public final class Chain {
           cn.bumo.blockchain.adapter3.Chain.Trigger.OperationTrigger, cn.bumo.blockchain.adapter3.Chain.Trigger.OperationTrigger.Builder, cn.bumo.blockchain.adapter3.Chain.Trigger.OperationTriggerOrBuilder> transactionBuilder_;
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19125,7 +19125,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19139,7 +19139,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19159,7 +19159,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19177,7 +19177,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19199,7 +19199,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19217,7 +19217,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19229,7 +19229,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -19244,7 +19244,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *Èç¹ûÊÇ½»Ò×´¥·¢µÄ
+       *å¦‚æœæ˜¯äº¤æ˜“è§¦å‘çš„
        * </pre>
        *
        * <code>optional .protocol.Trigger.OperationTrigger transaction = 3;</code>
@@ -24175,7 +24175,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *ºÏÔ¼ÀàĞÍ
+     *åˆçº¦ç±»å‹
      * </pre>
      *
      * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24183,7 +24183,7 @@ public final class Chain {
     int getTypeValue();
     /**
      * <pre>
-     *ºÏÔ¼ÀàĞÍ
+     *åˆçº¦ç±»å‹
      * </pre>
      *
      * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24192,7 +24192,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *ºÏÔ¼ÄÚÈİ,js ´úÂë
+     *åˆçº¦å†…å®¹,js ä»£ç 
      * </pre>
      *
      * <code>optional string payload = 2;</code>
@@ -24200,7 +24200,7 @@ public final class Chain {
     java.lang.String getPayload();
     /**
      * <pre>
-     *ºÏÔ¼ÄÚÈİ,js ´úÂë
+     *åˆçº¦å†…å®¹,js ä»£ç 
      * </pre>
      *
      * <code>optional string payload = 2;</code>
@@ -24377,7 +24377,7 @@ public final class Chain {
     private int type_;
     /**
      * <pre>
-     *ºÏÔ¼ÀàĞÍ
+     *åˆçº¦ç±»å‹
      * </pre>
      *
      * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24387,7 +24387,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *ºÏÔ¼ÀàĞÍ
+     *åˆçº¦ç±»å‹
      * </pre>
      *
      * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24401,7 +24401,7 @@ public final class Chain {
     private volatile java.lang.Object payload_;
     /**
      * <pre>
-     *ºÏÔ¼ÄÚÈİ,js ´úÂë
+     *åˆçº¦å†…å®¹,js ä»£ç 
      * </pre>
      *
      * <code>optional string payload = 2;</code>
@@ -24420,7 +24420,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *ºÏÔ¼ÄÚÈİ,js ´úÂë
+     *åˆçº¦å†…å®¹,js ä»£ç 
      * </pre>
      *
      * <code>optional string payload = 2;</code>
@@ -24727,7 +24727,7 @@ public final class Chain {
       private int type_ = 0;
       /**
        * <pre>
-       *ºÏÔ¼ÀàĞÍ
+       *åˆçº¦ç±»å‹
        * </pre>
        *
        * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24737,7 +24737,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *ºÏÔ¼ÀàĞÍ
+       *åˆçº¦ç±»å‹
        * </pre>
        *
        * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24749,7 +24749,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *ºÏÔ¼ÀàĞÍ
+       *åˆçº¦ç±»å‹
        * </pre>
        *
        * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24760,7 +24760,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *ºÏÔ¼ÀàĞÍ
+       *åˆçº¦ç±»å‹
        * </pre>
        *
        * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24776,7 +24776,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *ºÏÔ¼ÀàĞÍ
+       *åˆçº¦ç±»å‹
        * </pre>
        *
        * <code>optional .protocol.Contract.ContractType type = 1;</code>
@@ -24791,7 +24791,7 @@ public final class Chain {
       private java.lang.Object payload_ = "";
       /**
        * <pre>
-       *ºÏÔ¼ÄÚÈİ,js ´úÂë
+       *åˆçº¦å†…å®¹,js ä»£ç 
        * </pre>
        *
        * <code>optional string payload = 2;</code>
@@ -24810,7 +24810,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *ºÏÔ¼ÄÚÈİ,js ´úÂë
+       *åˆçº¦å†…å®¹,js ä»£ç 
        * </pre>
        *
        * <code>optional string payload = 2;</code>
@@ -24830,7 +24830,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *ºÏÔ¼ÄÚÈİ,js ´úÂë
+       *åˆçº¦å†…å®¹,js ä»£ç 
        * </pre>
        *
        * <code>optional string payload = 2;</code>
@@ -24847,7 +24847,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *ºÏÔ¼ÄÚÈİ,js ´úÂë
+       *åˆçº¦å†…å®¹,js ä»£ç 
        * </pre>
        *
        * <code>optional string payload = 2;</code>
@@ -24860,7 +24860,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *ºÏÔ¼ÄÚÈİ,js ´úÂë
+       *åˆçº¦å†…å®¹,js ä»£ç 
        * </pre>
        *
        * <code>optional string payload = 2;</code>
@@ -25006,7 +25006,7 @@ public final class Chain {
   }
   /**
    * <pre>
-   *´´½¨ÕË»§
+   *åˆ›å»ºè´¦æˆ·
    * </pre>
    *
    * Protobuf type {@code protocol.OperationCreateAccount}
@@ -25490,7 +25490,7 @@ public final class Chain {
     }
     /**
      * <pre>
-     *´´½¨ÕË»§
+     *åˆ›å»ºè´¦æˆ·
      * </pre>
      *
      * Protobuf type {@code protocol.OperationCreateAccount}
@@ -26423,7 +26423,7 @@ public final class Chain {
 
     /**
      * <pre>
-     *¿ÉÑ¡¡£metadataµÄ°æ±¾ºÅ¡£Èç¹ûÉèÖÃÁË£¬±ØĞëºÍÕÊºÅÏÖÓĞµÄmetadata_versionÏàÍ¬¡£
+     *å¯é€‰ã€‚metadataçš„ç‰ˆæœ¬å·ã€‚å¦‚æœè®¾ç½®äº†ï¼Œå¿…é¡»å’Œå¸å·ç°æœ‰çš„metadata_versionç›¸åŒã€‚
      * </pre>
      *
      * <code>optional int64 version = 3;</code>
@@ -26595,7 +26595,7 @@ public final class Chain {
     private long version_;
     /**
      * <pre>
-     *¿ÉÑ¡¡£metadataµÄ°æ±¾ºÅ¡£Èç¹ûÉèÖÃÁË£¬±ØĞëºÍÕÊºÅÏÖÓĞµÄmetadata_versionÏàÍ¬¡£
+     *å¯é€‰ã€‚metadataçš„ç‰ˆæœ¬å·ã€‚å¦‚æœè®¾ç½®äº†ï¼Œå¿…é¡»å’Œå¸å·ç°æœ‰çš„metadata_versionç›¸åŒã€‚
      * </pre>
      *
      * <code>optional int64 version = 3;</code>
@@ -27076,7 +27076,7 @@ public final class Chain {
       private long version_ ;
       /**
        * <pre>
-       *¿ÉÑ¡¡£metadataµÄ°æ±¾ºÅ¡£Èç¹ûÉèÖÃÁË£¬±ØĞëºÍÕÊºÅÏÖÓĞµÄmetadata_versionÏàÍ¬¡£
+       *å¯é€‰ã€‚metadataçš„ç‰ˆæœ¬å·ã€‚å¦‚æœè®¾ç½®äº†ï¼Œå¿…é¡»å’Œå¸å·ç°æœ‰çš„metadata_versionç›¸åŒã€‚
        * </pre>
        *
        * <code>optional int64 version = 3;</code>
@@ -27086,7 +27086,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *¿ÉÑ¡¡£metadataµÄ°æ±¾ºÅ¡£Èç¹ûÉèÖÃÁË£¬±ØĞëºÍÕÊºÅÏÖÓĞµÄmetadata_versionÏàÍ¬¡£
+       *å¯é€‰ã€‚metadataçš„ç‰ˆæœ¬å·ã€‚å¦‚æœè®¾ç½®äº†ï¼Œå¿…é¡»å’Œå¸å·ç°æœ‰çš„metadata_versionç›¸åŒã€‚
        * </pre>
        *
        * <code>optional int64 version = 3;</code>
@@ -27099,7 +27099,7 @@ public final class Chain {
       }
       /**
        * <pre>
-       *¿ÉÑ¡¡£metadataµÄ°æ±¾ºÅ¡£Èç¹ûÉèÖÃÁË£¬±ØĞëºÍÕÊºÅÏÖÓĞµÄmetadata_versionÏàÍ¬¡£
+       *å¯é€‰ã€‚metadataçš„ç‰ˆæœ¬å·ã€‚å¦‚æœè®¾ç½®äº†ï¼Œå¿…é¡»å’Œå¸å·ç°æœ‰çš„metadata_versionç›¸åŒã€‚
        * </pre>
        *
        * <code>optional int64 version = 3;</code>
