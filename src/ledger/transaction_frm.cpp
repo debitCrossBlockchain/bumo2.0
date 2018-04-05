@@ -635,7 +635,6 @@ namespace bumo {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 
 		std::shared_ptr<TransactionFrm> bottom_tx = ledger_frm->lpledger_context_->GetBottomTx();
-		LOG_INFO("DEBUG BYTE_FEE " FMT_I64, transaction_env_.ByteSize());
 		bottom_tx->AddRealFee(GetSelfByteFee());
 		if (bottom_tx->GetRealFee() > bottom_tx->GetFeeLimit()) {
 			result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
