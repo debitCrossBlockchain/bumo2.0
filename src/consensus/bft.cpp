@@ -15,7 +15,7 @@
 
 #include <utils/headers.h>
 #include <common/pb2json.h>
-#include "pbft.h"
+#include "bft.h"
 
 namespace bumo {
 	Pbft::Pbft() :view_number_(0),
@@ -894,6 +894,12 @@ namespace bumo {
 	}
 
 	bool Pbft::OnCommit(const protocol::Pbft &pbft, PbftInstance &pinstance) {
+		//debug
+		if (replica_id_ != 1 && view_number_ < 10){
+			LOG_INFO("debug return commit");
+			return true;
+		}
+
 		const protocol::PbftCommit &commit = pbft.commit();
 		if (CompareValue(pinstance.pre_prepare_.value_digest(), commit.value_digest()) != 0) {
 			LOG_ERROR("The message commit value(%s) != this pre-prepare value(%s) , desc(%s)",

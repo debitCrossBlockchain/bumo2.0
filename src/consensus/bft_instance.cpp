@@ -14,8 +14,8 @@
 */
 
 #include <proto/cpp/consensus.pb.h>
-#include "pbft_instance.h"
-#include "pbft.h"
+#include "bft_instance.h"
+#include "bft.h"
 #include "consensus_manager.h"
 
 namespace bumo {

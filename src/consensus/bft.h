@@ -17,7 +17,7 @@
 #define PBFT_H_
 
 #include "consensus.h"
-#include "pbft_instance.h"
+#include "bft_instance.h"
 
 namespace bumo {
 
