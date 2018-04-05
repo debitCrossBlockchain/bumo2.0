@@ -85,15 +85,15 @@
     <ClCompile Include="..\..\src\consensus\consensus.cpp" />
     <ClCompile Include="..\..\src\consensus\consensus_manager.cpp" />
     <ClCompile Include="..\..\src\consensus\consensus_msg.cpp" />
-    <ClCompile Include="..\..\src\consensus\pbft.cpp" />
-    <ClCompile Include="..\..\src\consensus\pbft_instance.cpp" />
+    <ClCompile Include="..\..\src\consensus\bft.cpp" />
+    <ClCompile Include="..\..\src\consensus\bft_instance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\consensus\consensus.h" />
     <ClInclude Include="..\..\src\consensus\consensus_manager.h" />
     <ClInclude Include="..\..\src\consensus\consensus_msg.h" />
-    <ClInclude Include="..\..\src\consensus\pbft.h" />
-    <ClInclude Include="..\..\src\consensus\pbft_instance.h" />
+    <ClInclude Include="..\..\src\consensus\bft.h" />
+    <ClInclude Include="..\..\src\consensus\bft_instance.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\consensus\Makefile.am" />
