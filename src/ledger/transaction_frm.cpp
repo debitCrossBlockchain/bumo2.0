@@ -77,6 +77,7 @@ namespace bumo {
 		result["error_desc"] = result_.desc();
 		result["close_time"] = apply_time_;
 		result["ledger_seq"] = ledger_seq_;
+		result["real_fee"] = real_fee_;
 		result["hash"] = utils::String::BinToHexString(hash_);
 	}
 
@@ -255,6 +256,32 @@ namespace bumo {
 			total_fee += fee;
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
 			int64_t new_balance = proto_source_account.balance() - fee;
+			proto_source_account.set_balance(new_balance);
+
+			return true;
+		} while (false);
+
+		return false;
+	}
+
+	bool TransactionFrm::ReturnFee(std::shared_ptr<Environment> environment) {
+		int64_t fee = GetFeeLimit() - GetRealFee();
+		if (GetResult().code() != 0 || fee < 0) {
+			return false;
+		}
+		std::string str_address = transaction_env_.transaction().source_address();
+		AccountFrm::pointer source_account;
+
+		do {
+			if (!environment->GetEntry(str_address, source_account)) {
+				LOG_ERROR("Source account(%s) does not exists", str_address.c_str());
+				result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
+				break;
+			}
+
+			// total_fee -= fee;
+			protocol::Account& proto_source_account = source_account->GetProtoAccount();
+			int64_t new_balance = proto_source_account.balance() + fee;
 			proto_source_account.set_balance(new_balance);
 
 			return true;
@@ -593,6 +620,7 @@ namespace bumo {
 
 		apply_time_ = envstor.close_time();
 		transaction_env_ = envstor.transaction_env();
+		real_fee_ = envstor.real_fee();
 
 		ledger_seq_ = envstor.ledger_seq();
 		Initialize();

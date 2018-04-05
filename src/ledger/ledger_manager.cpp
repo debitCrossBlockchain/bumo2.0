@@ -661,6 +661,10 @@ namespace bumo {
 			apply_tx_msg.set_error_code(tx->GetResult().code());
 			apply_tx_msg.set_error_desc(tx->GetResult().desc());
 			apply_tx_msg.set_hash(tx->GetContentHash());
+			if (tx->GetResult().code() != 0)
+				apply_tx_msg.set_real_fee(tx->GetFeeLimit());
+			else
+				apply_tx_msg.set_real_fee(tx->GetRealFee());
 			WebSocketServer::Instance().BroadcastChainTxMsg(apply_tx_msg);
 
 			if (tx->GetResult().code() == protocol::ERRCODE_SUCCESS)
@@ -907,6 +911,8 @@ namespace bumo {
 				return result;
 			}
 
+			txfrm->ReturnFee(back->environment_);
+
 			protocol::TransactionEnvStore tx_store;
 			tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 			auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();
@@ -928,6 +934,10 @@ namespace bumo {
 			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
+			if (txfrm->GetResult().code() != 0)
+				tx_store.set_real_fee(txfrm->GetFeeLimit());
+			else
+				tx_store.set_real_fee(txfrm->GetRealFee());
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
@@ -939,6 +949,10 @@ namespace bumo {
 		protocol::TransactionEnvStore tx_store;
 		tx_store.set_error_code(txfrm->GetResult().code());
 		tx_store.set_error_desc(txfrm->GetResult().desc());
+		if (txfrm->GetResult().code() != 0)
+			tx_store.set_real_fee(txfrm->GetFeeLimit());
+		else
+			tx_store.set_real_fee(txfrm->GetRealFee());
 		tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 		auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();
 		trigger->mutable_transaction()->set_hash(back->GetContentHash());

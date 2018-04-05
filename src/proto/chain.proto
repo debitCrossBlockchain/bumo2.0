@@ -208,6 +208,7 @@ message TransactionEnvStore{
 		int64 close_time = 5;
 		//for notify
 		bytes hash = 6;
+		int64 real_fee = 7;
 }
 
 message TransactionEnvSet{

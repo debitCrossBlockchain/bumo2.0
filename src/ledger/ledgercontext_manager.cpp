@@ -463,6 +463,10 @@ namespace bumo {
 			env_store.set_close_time(ledger->GetProtoHeader().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
+			if (ptr->GetResult().code() != 0)
+				env_store.set_real_fee(ptr->GetFeeLimit());
+			else
+				env_store.set_real_fee(ptr->GetRealFee());
 			
 			if (type == LedgerContext::AT_TEST_TRANSACTION)
 				txs[txs.size()] = Proto2Json(env_store);

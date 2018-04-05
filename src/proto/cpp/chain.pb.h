@@ -2889,6 +2889,12 @@ class TransactionEnvStore : public ::google::protobuf::Message /* @@protoc_inser
   ::std::string* release_hash();
   void set_allocated_hash(::std::string* hash);
 
+  // optional int64 real_fee = 7;
+  void clear_real_fee();
+  static const int kRealFeeFieldNumber = 7;
+  ::google::protobuf::int64 real_fee() const;
+  void set_real_fee(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.TransactionEnvStore)
  private:
 
@@ -2899,6 +2905,7 @@ class TransactionEnvStore : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::int64 ledger_seq_;
   ::google::protobuf::int64 close_time_;
   ::google::protobuf::internal::ArenaStringPtr hash_;
+  ::google::protobuf::int64 real_fee_;
   ::google::protobuf::int32 error_code_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -6381,6 +6388,20 @@ inline void TransactionEnvStore::set_allocated_hash(::std::string* hash) {
   }
   hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), hash);
   // @@protoc_insertion_point(field_set_allocated:protocol.TransactionEnvStore.hash)
+}
+
+// optional int64 real_fee = 7;
+inline void TransactionEnvStore::clear_real_fee() {
+  real_fee_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 TransactionEnvStore::real_fee() const {
+  // @@protoc_insertion_point(field_get:protocol.TransactionEnvStore.real_fee)
+  return real_fee_;
+}
+inline void TransactionEnvStore::set_real_fee(::google::protobuf::int64 value) {
+  
+  real_fee_ = value;
+  // @@protoc_insertion_point(field_set:protocol.TransactionEnvStore.real_fee)
 }
 
 // -------------------------------------------------------------------
