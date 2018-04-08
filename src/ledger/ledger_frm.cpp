@@ -278,6 +278,7 @@ namespace bumo {
 					error_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 				}
 				else {
+					tx_frm->ReturnFee(total_fee_);
 					tx_frm->environment_->Commit();
 				}
 			}
@@ -361,6 +362,7 @@ namespace bumo {
 					error_txs.insert(i);//for check
 				}
 				else {
+					tx_frm->ReturnFee(total_fee_);
 					tx_frm->environment_->Commit();
 				}
 			}
@@ -442,6 +444,7 @@ namespace bumo {
 						error_txs.insert(i);//for check
 				}
 				else {
+						tx_frm->ReturnFee(total_fee_);
 						tx_frm->environment_->Commit();
 				}
 			}

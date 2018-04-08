@@ -911,8 +911,6 @@ namespace bumo {
 				return result;
 			}
 
-			txfrm->ReturnFee(back->environment_);
-
 			protocol::TransactionEnvStore tx_store;
 			tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 			auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();

@@ -264,7 +264,7 @@ namespace bumo {
 		return false;
 	}
 
-	bool TransactionFrm::ReturnFee(std::shared_ptr<Environment> environment) {
+	bool TransactionFrm::ReturnFee(int64_t& total_fee) {
 		int64_t fee = GetFeeLimit() - GetRealFee();
 		if (GetResult().code() != 0 || fee < 0) {
 			return false;
@@ -273,16 +273,19 @@ namespace bumo {
 		AccountFrm::pointer source_account;
 
 		do {
-			if (!environment->GetEntry(str_address, source_account)) {
+			if (!environment_->GetEntry(str_address, source_account)) {
 				LOG_ERROR("Source account(%s) does not exists", str_address.c_str());
 				result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
 				break;
 			}
 
-			// total_fee -= fee;
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
 			int64_t new_balance = proto_source_account.balance() + fee;
 			proto_source_account.set_balance(new_balance);
+
+			total_fee -= fee;
+
+			LOG_INFO("Tx(" FMT_I64 ") returned fee(" FMT_I64 ") to the source account", hash_, fee);
 
 			return true;
 		} while (false);
