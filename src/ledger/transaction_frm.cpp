@@ -285,7 +285,7 @@ namespace bumo {
 
 			total_fee -= fee;
 
-			LOG_INFO("Tx(%s) returned fee(" FMT_I64 ") to the source account", hash_.c_str(), fee);
+			LOG_INFO("Tx(%s) returned fee(" FMT_I64 ") to the source account", utils::String::BinToHexString(hash_).c_str(), fee);
 
 			return true;
 		} while (false);
