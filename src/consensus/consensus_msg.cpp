@@ -14,7 +14,7 @@
 */
 
 #include <utils/headers.h>
-#include "pbft.h"
+#include "bft.h"
 #include "consensus_msg.h"
 
 namespace bumo {
