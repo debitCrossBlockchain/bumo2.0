@@ -433,20 +433,21 @@ namespace bumo {
 
 	void Network::Start(const utils::InetAddress &ip) {
 		//try {
+			asio::error_code ec;
 			if (!ip.IsNone()) {
 				if (ssl_parameter_.enable_) {
 					// listen on specified port
 					tls_server_.listen(ip.tcp_endpoint());
 					// Start the server accept loop
 					tls_server_.start_accept();
-					listen_port_ = tls_server_.get_local_endpoint().port();
+					listen_port_ = tls_server_.get_local_endpoint(ec).port();
 				}
 				else {
 					// listen on specified port
 					server_.listen(ip.tcp_endpoint());
 					// Start the server accept loop
 					server_.start_accept();
-					listen_port_ = server_.get_local_endpoint().port();
+					listen_port_ = server_.get_local_endpoint(ec).port();
 				}
 				LOG_INFO("WebSocket listen at ip(%s)", ip.ToIpPort().c_str());
 			}
