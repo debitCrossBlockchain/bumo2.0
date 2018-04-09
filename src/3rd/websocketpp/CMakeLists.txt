@@ -9,11 +9,9 @@ project (websocketpp)
 cmake_minimum_required (VERSION 2.6)
 
 set (WEBSOCKETPP_MAJOR_VERSION 0)
-set (WEBSOCKETPP_MINOR_VERSION 7)
+set (WEBSOCKETPP_MINOR_VERSION 6)
 set (WEBSOCKETPP_PATCH_VERSION 0)
 set (WEBSOCKETPP_VERSION ${WEBSOCKETPP_MAJOR_VERSION}.${WEBSOCKETPP_MINOR_VERSION}.${WEBSOCKETPP_PATCH_VERSION})
-
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
 if (WIN32 AND NOT CYGWIN)
@@ -68,8 +66,6 @@ option (BUILD_EXAMPLES "Build websocketpp examples." FALSE)
 option (BUILD_TESTS "Build websocketpp tests." FALSE)
 
 if (BUILD_TESTS OR BUILD_EXAMPLES)
-
-    enable_testing ()
 
     ############ Compiler specific setup
 
@@ -154,10 +150,6 @@ if (BUILD_TESTS OR BUILD_EXAMPLES)
         list (APPEND WEBSOCKETPP_BOOST_LIBS random)
     endif()
 
-    if (BUILD_TESTS)
-        list (APPEND WEBSOCKETPP_BOOST_LIBS unit_test_framework)
-    endif()
-
     ############ Dependencies
 
     # Set BOOST_ROOT env variable or pass with cmake -DBOOST_ROOT=path.
@@ -186,14 +178,6 @@ if (BUILD_TESTS OR BUILD_EXAMPLES)
     else ()
         set (Boost_USE_MULTITHREADED FALSE)
         set (Boost_USE_STATIC_LIBS FALSE)
-    endif ()
-
-	if (BOOST_STATIC)
-		set (Boost_USE_STATIC_LIBS TRUE)
-	endif ()
-
-    if (NOT Boost_USE_STATIC_LIBS)
-        add_definitions (/DBOOST_TEST_DYN_LINK)
     endif ()
 
     set (Boost_FIND_REQUIRED TRUE)
@@ -228,7 +212,6 @@ if (BUILD_TESTS OR BUILD_EXAMPLES)
     endif ()
 
     find_package(OpenSSL)
-    find_package(ZLIB)
 endif()
 
 ############ Add projects
@@ -238,12 +221,12 @@ add_subdirectory (websocketpp)
 
 # Add examples
 if (BUILD_EXAMPLES)
-    include_subdirs ("examples")
+    add_subdirectory (examples)
 endif ()
 
 # Add tests
 if (BUILD_TESTS)
-    include_subdirs ("test")
+    add_subdirectory (test)
 endif ()
 
 print_used_build_config()

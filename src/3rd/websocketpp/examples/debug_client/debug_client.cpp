@@ -76,7 +76,6 @@ public:
 
         if (ec) {
             m_endpoint.get_alog().write(websocketpp::log::alevel::app,ec.message());
-            return;
         }
 
         //con->set_proxy("http://humupdates.uchicago.edu:8443");

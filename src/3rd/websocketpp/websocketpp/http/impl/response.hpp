@@ -94,7 +94,7 @@ inline size_t response::consume(char const * buf, size_t len) {
             // TODO: grab content-length
             std::string length = get_header("Content-Length");
 
-            if (length.empty()) {
+            if (length == "") {
                 // no content length found, read indefinitely
                 m_read = 0;
             } else {

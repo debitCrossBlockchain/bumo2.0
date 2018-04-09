@@ -103,7 +103,7 @@ bool validate_func_subprotocol(server* s, std::string* out, std::string accept,
 
     *out = o.str();
 
-    if (!accept.empty()) {
+    if (accept != "") {
         con->select_subprotocol(accept);
     }
 
