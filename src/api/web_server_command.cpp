@@ -403,14 +403,12 @@ namespace bumo {
 		int64_t total_opt_fee = 0;
 		for (int i = 0; i < tran->operations_size(); i++) {
 			const protocol::Operation &ope = tran->operations(i);
-			std::shared_ptr<OperationFrm> opt = std::make_shared< OperationFrm>(ope, nullptr, i);
 			std::string ope_source_address = ope.source_address();
 			if (ope_source_address.size() == 0) 
 				ope_source_address = tx_source_address;
 			if (tx_source_address == ope_source_address){
 				auto type = ope.type();
-				opt->OptFee(type);
-				total_opt_fee += opt->GetOpeFee();
+				total_opt_fee += FeeCompulate::OperationFee(tran->gas_price(), type);
 				if (type == protocol::Operation_Type_PAY_COIN) {
 					pay_amount += ope.pay_coin().amount();
 				}

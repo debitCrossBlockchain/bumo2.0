@@ -23,7 +23,11 @@
 
 namespace bumo {
 	OperationFrm::OperationFrm(const protocol::Operation &operation, TransactionFrm* tran, int32_t index) :
-		operation_(operation), transaction_(tran), index_(index), ope_fee_(0){}
+		operation_(operation), transaction_(tran), index_(index){
+		if (tran) {
+			ope_fee_ = FeeCompulate::OperationFee(tran->GetGasPrice(), operation.type());
+		}
+	}
 
 	OperationFrm::~OperationFrm() {}
 
@@ -417,7 +421,6 @@ namespace bumo {
 			return result_;
 		}
 		auto type = operation_.type();
-		OptFee(type);
 		switch (type) {
 		case protocol::Operation_Type_UNKNOWN:
 			break;
@@ -788,7 +791,7 @@ namespace bumo {
 				environment->AddEntry(ope.dest_address(), dest_account_ptr);
 
 				// add create_account fee while dest_address is not exists
-				ope_fee_ += transaction_->GetGasPrice() * OperationGasConfigure::create_account;
+				ope_fee_ += FeeCompulate::OperationFee(transaction_->GetGasPrice(), protocol::Operation_Type::Operation_Type_CREATE_ACCOUNT);
 			}
 			protocol::Account& proto_dest_account = dest_account_ptr->GetProtoAccount();
 
@@ -818,10 +821,6 @@ namespace bumo {
 	}
 
 	void OperationFrm::Log(std::shared_ptr<Environment> environment) {}
-	
-	void OperationFrm::OptFee(const protocol::Operation_Type type) {
-		ope_fee_ = FeeCompulate::OperationFee(transaction_->GetGasPrice(), type);
-	}
 }
 
 
