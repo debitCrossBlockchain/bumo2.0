@@ -147,7 +147,7 @@ function main(input) {
   }
   else if (para.method === 'proposalFee') {
     assert(para.params.feeType !==undefined && para.params.price !==undefined,'params feeType price undefined');
-    assert(Number.isInteger(para.params.feeType) && para.params.feeType>0 && para.params.feeType<10,'feeType error');
+    assert(Number.isInteger(para.params.feeType) && para.params.feeType>0 && para.params.feeType<3,'feeType error');
     assert(Number.isSafeInteger(para.params.price) && para.params.price>=0,'price should be int type and price>=0');
     proposalFee(para.params.feeType,para.params.price);
   }
