@@ -256,7 +256,14 @@ namespace bumo {
 			total_fee += fee;
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
 			int64_t new_balance = proto_source_account.balance() - fee;
-			proto_source_account.set_balance(new_balance);
+			if (new_balance >= 0) {
+				proto_source_account.set_balance(new_balance);
+			}
+			else {
+				LOG_ERROR("Account(%s) new_balance(" FMT_I64 ") is a negetive number, on transaction(%s) pay fee", str_address.c_str(), new_balance, utils::String::BinToHexString(hash_).c_str());
+				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
+				return false;
+			}
 
 			return true;
 		} while (false);
