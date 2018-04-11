@@ -102,7 +102,9 @@ function proposalFee(feeType,price) {
         storageDel(key); 
         proposalRecords[newProposalId] = {'accountId':accountId,'proposalId':newProposalId,'feeType':feeType,'price':price,'voteCount':1,'expireTime':blockTimestamp+effectiveProposalInterval };               
         storageStore(proposalRecordsKey,JSON.stringify(proposalRecords));
-        storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({accountId:1}));
+        let v={};
+        v[accountId] =1;
+        storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify(v));
         return false;
       }
       else{
@@ -114,7 +116,9 @@ function proposalFee(feeType,price) {
   if (!exist) {
     proposalRecords[newProposalId] = { 'accountId': accountId, 'proposalId': newProposalId, 'feeType': feeType, 'price': price, 'voteCount': 1,'expireTime':blockTimestamp+effectiveProposalInterval };
     storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
-    storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({accountId:1}));
+    let v={};
+    v[accountId] =1;
+    storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify(v));
   }  
 
   storageStore(nonceKey,nonce.toString());
