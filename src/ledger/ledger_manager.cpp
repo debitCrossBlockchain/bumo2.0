@@ -662,9 +662,9 @@ namespace bumo {
 			apply_tx_msg.set_error_desc(tx->GetResult().desc());
 			apply_tx_msg.set_hash(tx->GetContentHash());
 			if (tx->GetResult().code() != 0)
-				apply_tx_msg.set_real_fee(tx->GetFeeLimit());
+				apply_tx_msg.set_actual_fee(tx->GetFeeLimit());
 			else
-				apply_tx_msg.set_real_fee(tx->GetRealFee());
+				apply_tx_msg.set_actual_fee(tx->GetActualFee());
 			WebSocketServer::Instance().BroadcastChainTxMsg(apply_tx_msg);
 
 			if (tx->GetResult().code() == protocol::ERRCODE_SUCCESS)
@@ -862,7 +862,7 @@ namespace bumo {
 				txfrm->result_.set_desc("Too many recursion ");
 				//add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
+				bottom_tx->AddActualFee(txfrm->GetSelfByteFee());
 				break;
 			}
 
@@ -894,11 +894,11 @@ namespace bumo {
 			}
 			else {
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
-				if (bottom_tx->GetRealFee() > bottom_tx->GetFeeLimit()) {
+				bottom_tx->AddActualFee(txfrm->GetSelfByteFee());
+				if (bottom_tx->GetActualFee() > bottom_tx->GetFeeLimit()) {
 					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current real fee(" FMT_I64 ") ,Transaction(%s) self byte fee(" FMT_I64 ")",
-						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetRealFee(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
+					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 ") ,Transaction(%s) self byte fee(" FMT_I64 ")",
+						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualFee(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
 				}
 			}
 
@@ -933,9 +933,9 @@ namespace bumo {
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
 			if (txfrm->GetResult().code() != 0)
-				tx_store.set_real_fee(txfrm->GetFeeLimit());
+				tx_store.set_actual_fee(txfrm->GetFeeLimit());
 			else
-				tx_store.set_real_fee(txfrm->GetRealFee());
+				tx_store.set_actual_fee(txfrm->GetActualFee());
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
@@ -948,9 +948,9 @@ namespace bumo {
 		tx_store.set_error_code(txfrm->GetResult().code());
 		tx_store.set_error_desc(txfrm->GetResult().desc());
 		if (txfrm->GetResult().code() != 0)
-			tx_store.set_real_fee(txfrm->GetFeeLimit());
+			tx_store.set_actual_fee(txfrm->GetFeeLimit());
 		else
-			tx_store.set_real_fee(txfrm->GetRealFee());
+			tx_store.set_actual_fee(txfrm->GetActualFee());
 		tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 		auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();
 		trigger->mutable_transaction()->set_hash(back->GetContentHash());

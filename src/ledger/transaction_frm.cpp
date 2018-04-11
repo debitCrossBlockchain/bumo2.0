@@ -37,7 +37,7 @@ namespace bumo {
 		valid_signature_(),
 		ledger_(),
 		processing_operation_(0),
-		real_fee_(0),
+		actual_fee_(0),
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
@@ -56,7 +56,7 @@ namespace bumo {
 		valid_signature_(),
 		ledger_(),
 		processing_operation_(0),
-		real_fee_(0),
+		actual_fee_(0),
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
@@ -77,7 +77,7 @@ namespace bumo {
 		result["error_desc"] = result_.desc();
 		result["close_time"] = apply_time_;
 		result["ledger_seq"] = ledger_seq_;
-		result["real_fee"] = real_fee_;
+		result["actual_fee"] = actual_fee_;
 		result["hash"] = utils::String::BinToHexString(hash_);
 	}
 
@@ -144,12 +144,12 @@ namespace bumo {
 		return transaction_env_.transaction().gas_price();
 	}
 
-	int64_t TransactionFrm::GetRealFee() const {
-		return real_fee_;
+	int64_t TransactionFrm::GetActualFee() const {
+		return actual_fee_;
 	}
 
-	void TransactionFrm::AddRealFee(int64_t fee) {
-		real_fee_ += fee;
+	void TransactionFrm::AddActualFee(int64_t fee) {
+		actual_fee_ += fee;
 	}
 
 	void TransactionFrm::SetApplyStartTime(int64_t time) {
@@ -267,7 +267,7 @@ namespace bumo {
 	}
 
 	bool TransactionFrm::ReturnFee(int64_t& total_fee) {
-		int64_t fee = GetFeeLimit() - GetRealFee();
+		int64_t fee = GetFeeLimit() - GetActualFee();
 		if (GetResult().code() != 0 || fee <= 0) {
 			return false;
 		}
@@ -622,7 +622,7 @@ namespace bumo {
 
 		apply_time_ = envstor.close_time();
 		transaction_env_ = envstor.transaction_env();
-		real_fee_ = envstor.real_fee();
+		actual_fee_ = envstor.actual_fee();
 
 		ledger_seq_ = envstor.ledger_seq();
 		Initialize();
@@ -665,11 +665,11 @@ namespace bumo {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 
 		std::shared_ptr<TransactionFrm> bottom_tx = ledger_frm->lpledger_context_->GetBottomTx();
-		bottom_tx->AddRealFee(GetSelfByteFee());
-		if (bottom_tx->GetRealFee() > bottom_tx->GetFeeLimit()) {
+		bottom_tx->AddActualFee(GetSelfByteFee());
+		if (bottom_tx->GetActualFee() > bottom_tx->GetFeeLimit()) {
 			result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-			std::string error_desc = utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current real fee(" FMT_I64 "),Transaction(%s) self byte fee(" FMT_I64 ")",
-				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetRealFee(), utils::String::BinToHexString(hash_).c_str(), GetSelfByteFee());
+			std::string error_desc = utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 "),Transaction(%s) self byte fee(" FMT_I64 ")",
+				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualFee(), utils::String::BinToHexString(hash_).c_str(), GetSelfByteFee());
 			result_.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
 			bSucess = false;
@@ -706,11 +706,11 @@ namespace bumo {
 				break;
 			}
 
-			bottom_tx->AddRealFee(opt->GetOpeFee());
-			if (bottom_tx->GetRealFee() > bottom_tx->GetFeeLimit()) {
+			bottom_tx->AddActualFee(opt->GetOpeFee());
+			if (bottom_tx->GetActualFee() > bottom_tx->GetFeeLimit()) {
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-				std::string error_desc = utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current real fee(" FMT_I64 "), Transaction(%s) operation(%d) fee(" FMT_I64 ")",
-					utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetRealFee(),utils::String::BinToHexString(hash_).c_str(), processing_operation_, opt->GetOpeFee());
+				std::string error_desc = utils::String::Format("Transaction(%s) FeeLimit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 "), Transaction(%s) operation(%d) fee(" FMT_I64 ")",
+					utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualFee(), utils::String::BinToHexString(hash_).c_str(), processing_operation_, opt->GetOpeFee());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				bSucess = false;

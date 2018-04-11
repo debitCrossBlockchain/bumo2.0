@@ -17,7 +17,7 @@ message Account{
 message AssetKey{
 	 string issuer = 1;
 	 string code = 2;
-	 int32 type = 3;		//0:not limited ammount  1:limited ammount
+	 int32 type = 3;		//0:not limited ammount
 }
 
 //payment
@@ -208,7 +208,7 @@ message TransactionEnvStore{
 		int64 close_time = 5;
 		//for notify
 		bytes hash = 6;
-		int64 real_fee = 7;
+		int64 actual_fee = 7;
 }
 
 message TransactionEnvSet{

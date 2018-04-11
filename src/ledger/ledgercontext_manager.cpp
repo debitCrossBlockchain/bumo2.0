@@ -464,9 +464,9 @@ namespace bumo {
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
 			if (ptr->GetResult().code() != 0)
-				env_store.set_real_fee(ptr->GetFeeLimit());
+				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else
-				env_store.set_real_fee(ptr->GetRealFee());
+				env_store.set_actual_fee(ptr->GetActualFee());
 			
 			if (type == LedgerContext::AT_TEST_TRANSACTION)
 				txs[txs.size()] = Proto2Json(env_store);
@@ -491,15 +491,15 @@ namespace bumo {
 			stat["apply_time"] = ptr->GetApplyTime();
 		}
 
-		int64_t real_fee = ledger->total_real_fee_;
+		int64_t actual_fee = ledger->total_actual_fee_;
 		if (type == LedgerContext::AT_TEST_TRANSACTION){
-			real_fee += (64 + 76 + 100 )*LedgerManager::Instance().GetCurFeeConfig().gas_price();
+			actual_fee += (64 + 76 + 100)*LedgerManager::Instance().GetCurFeeConfig().gas_price();
 			int64_t suggest_fee = LedgerManager::Instance().GetCurFeeConfig().gas_price() * 1000;
-			real_fee = real_fee < suggest_fee ? suggest_fee : real_fee;
+			actual_fee = actual_fee < suggest_fee ? suggest_fee : actual_fee;
 		}
 		ledger_context->GetLogs(logs);
 		ledger_context->GetRets(rets);
-		fee = real_fee;
+		fee = actual_fee;
 		ledger_context->JoinWithStop();
 		delete ledger_context;
 		return true;

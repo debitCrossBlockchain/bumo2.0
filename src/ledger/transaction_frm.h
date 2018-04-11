@@ -96,8 +96,8 @@ namespace bumo {
 		int64_t GetFeeLimit() const;
 		int64_t GetGasPrice() const;
 		int64_t GetSelfByteFee();
-		int64_t GetRealFee() const;
-		void AddRealFee(int64_t fee);
+		int64_t GetActualFee() const;
+		void AddActualFee(int64_t fee);
 
 		void SetApplyStartTime(int64_t time);
 		void SetApplyEndTime(int64_t time);
@@ -130,7 +130,7 @@ namespace bumo {
 		std::set<std::string> valid_signature_;
 		
 		int64_t incoming_time_;
-		int64_t real_fee_;
+		int64_t actual_fee_;
 
 		//flow the top tx
 		int64_t max_end_time_;
