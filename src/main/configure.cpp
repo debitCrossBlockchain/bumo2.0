@@ -174,6 +174,10 @@ namespace bumo {
 		//for fee
 		Configure::GetValue(value["fees"], "gas_price", fees_.gas_price_);
 		Configure::GetValue(value["fees"], "base_reserve", fees_.base_reserve_);
+		if (fees_.gas_price_ < 0)
+			fees_.gas_price_ = 0;
+		if (fees_.base_reserve_ < 0)
+			fees_.base_reserve_ = 0;
 		return true;
 	}
 

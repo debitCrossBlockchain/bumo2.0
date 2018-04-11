@@ -23,7 +23,7 @@
 
 namespace bumo {
 	OperationFrm::OperationFrm(const protocol::Operation &operation, TransactionFrm* tran, int32_t index) :
-		operation_(operation), transaction_(tran), index_(index){
+		operation_(operation), transaction_(tran), index_(index), ope_fee_(0){
 		if (tran) {
 			ope_fee_ = FeeCompulate::OperationFee(tran->GetGasPrice(), operation.type());
 		}

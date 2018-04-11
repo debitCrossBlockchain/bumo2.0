@@ -256,14 +256,9 @@ namespace bumo {
 			total_fee += fee;
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
 			int64_t new_balance = proto_source_account.balance() - fee;
-			if (new_balance >= 0) {
-				proto_source_account.set_balance(new_balance);
-			}
-			else {
-				LOG_ERROR("Account(%s) new_balance(" FMT_I64 ") is a negetive number, on transaction(%s) pay fee", str_address.c_str(), new_balance, utils::String::BinToHexString(hash_).c_str());
-				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				return false;
-			}
+			proto_source_account.set_balance(new_balance);
+
+			LOG_INFO("Account(%s) paid(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
 
 			return true;
 		} while (false);
@@ -273,7 +268,7 @@ namespace bumo {
 
 	bool TransactionFrm::ReturnFee(int64_t& total_fee) {
 		int64_t fee = GetFeeLimit() - GetRealFee();
-		if (GetResult().code() != 0 || fee < 0) {
+		if (GetResult().code() != 0 || fee <= 0) {
 			return false;
 		}
 		std::string str_address = transaction_env_.transaction().source_address();
@@ -286,13 +281,12 @@ namespace bumo {
 				break;
 			}
 
+			total_fee -= fee;
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
 			int64_t new_balance = proto_source_account.balance() + fee;
 			proto_source_account.set_balance(new_balance);
 
-			total_fee -= fee;
-
-			LOG_INFO("Tx(%s) returned fee(" FMT_I64 ") to the source account", utils::String::BinToHexString(hash_).c_str(), fee);
+			LOG_INFO("Account(%s) returned(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
 
 			return true;
 		} while (false);
@@ -342,6 +336,14 @@ namespace bumo {
 			int64_t bytes_fee = GetSelfByteFee();
 			int64_t tran_gas_price = GetGasPrice();
 			int64_t tran_fee_limit = GetFeeLimit();
+			if (source_account->GetAccountBalance() - tran_fee_limit < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
+				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
+				std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 "),last transaction hash(%s)",
+					GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
+				return false;
+			}
 			if (LedgerManager::Instance().GetCurFeeConfig().gas_price() > 0) {
 				if (tran_gas_price < LedgerManager::Instance().GetCurFeeConfig().gas_price()) {
 					std::string error_desc = utils::String::Format(
@@ -364,15 +366,6 @@ namespace bumo {
 					LOG_ERROR("%s", error_desc.c_str());
 					return false;
 				}
-
-				if (source_account->GetAccountBalance() - tran_fee_limit < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
-					result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-					std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 "),last transaction hash(%s)",
-						GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
-					result_.set_desc(error_desc);
-					LOG_ERROR("%s", error_desc.c_str());
-					return false;
-				}
 			}
 			return true;
 		} while (false);
@@ -388,8 +381,8 @@ namespace bumo {
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
-        
-        nonce = source_account->GetAccountNonce();
+		
+		nonce = source_account->GetAccountNonce();
 		int64_t bytes_fee = GetSelfByteFee();
 		int64_t tran_gas_price = GetGasPrice();
 		int64_t tran_fee_limit = GetFeeLimit();
@@ -401,6 +394,14 @@ namespace bumo {
 		if (tran_fee_limit < 0){
 			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 			result_.set_desc(utils::String::Format("Transaction(%s) fee_limit(" FMT_I64 ") should not be negative number", utils::String::BinToHexString(hash_).c_str(), tran_fee_limit));
+			return false;
+		}
+		if (source_account->GetAccountBalance() - tran_fee_limit < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
+			result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
+			std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 "),last transaction hash(%s)",
+				GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
+			result_.set_desc(error_desc);
+			LOG_ERROR("%s", error_desc.c_str());
 			return false;
 		}
 
@@ -422,15 +423,6 @@ namespace bumo {
 					utils::String::BinToHexString(hash_).c_str(), tran_fee_limit, bytes_fee);
 
 				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-				result_.set_desc(error_desc);
-				LOG_ERROR("%s", error_desc.c_str());
-				return false;
-			}
-
-			if (source_account->GetAccountBalance() - tran_fee_limit < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
-				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 "),last transaction hash(%s)",
-					GetSourceAddress().c_str(), source_account->GetAccountBalance(), tran_fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), utils::String::Bin4ToHexString(GetContentHash()).c_str());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				return false;
