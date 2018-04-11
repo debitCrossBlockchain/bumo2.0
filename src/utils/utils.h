@@ -170,6 +170,8 @@ namespace utils {
 	time_t GetStartupTime(time_t time_now = 0);
 	std::string GetCinPassword(const std::string &_prompt);
 
+	void SetExceptionHandle();
+
 #if __cplusplus >= 201402L || (defined(_MSC_VER) && _MSC_VER >= 1900)
 
 	using std::make_unique;

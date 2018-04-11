@@ -24,6 +24,13 @@
 #include <termios.h>
 #endif
 
+//#define WIN32_DUMP
+
+#ifdef WIN32_DUMP
+#include <DbgHelp.h>
+#pragma comment(lib, "DbgHelp.lib") 
+#endif
+
 uint32_t utils::error_code() {
 #ifdef WIN32
 	return (uint32_t)GetLastError();
@@ -171,6 +178,48 @@ time_t utils::GetStartupTime(time_t time_now) {
 #endif
 
 	return nStartupTime;
+}
+
+#ifdef WIN32_DUMP
+LONG WINAPI GenerateMiniDump(PEXCEPTION_POINTERS exception_pointers)
+{
+	if (IsDebuggerPresent())
+	{
+		return EXCEPTION_CONTINUE_SEARCH;
+	}
+
+	TCHAR str_file_name[MAX_PATH] = { 0 };
+	TCHAR* version = ("BumoDump");
+	SYSTEMTIME local_time;
+	GetLocalTime(&local_time);
+	wsprintf(str_file_name, "%s-%04d%02d%02d-%02d%02d%02d.dmp",
+		version, local_time.wYear, local_time.wMonth, local_time.wDay,
+		local_time.wHour, local_time.wMinute, local_time.wSecond);
+	HANDLE dump_file = CreateFile(str_file_name, GENERIC_READ | GENERIC_WRITE,
+		FILE_SHARE_WRITE | FILE_SHARE_READ, 0, CREATE_ALWAYS, 0, 0);
+	if (INVALID_HANDLE_VALUE == dump_file)
+	{
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+
+	MINIDUMP_EXCEPTION_INFORMATION dump_param;
+	dump_param.ThreadId = GetCurrentThreadId();
+	dump_param.ExceptionPointers = exception_pointers;
+	dump_param.ClientPointers = FALSE;
+	MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(),
+		dump_file, MiniDumpWithDataSegs, (exception_pointers ? &dump_param : NULL), NULL, NULL);
+
+	CloseHandle(dump_file);
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+#endif
+
+void utils::SetExceptionHandle()
+{
+#ifdef WIN32_DUMP
+	SetUnhandledExceptionFilter(GenerateMiniDump);
+#endif
 }
 
 std::string utils::GetCinPassword(const std::string &_prompt) {

@@ -33,6 +33,7 @@
 void SaveWSPort();
 void RunLoop();
 int main(int argc, char *argv[]){
+	utils::SetExceptionHandle();
 	utils::Thread::SetCurrentThreadName("bumo-thread");
 
 	utils::Daemon::InitInstance();
