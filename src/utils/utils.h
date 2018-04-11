@@ -44,6 +44,7 @@ namespace utils {
 	static const size_t  KILO_PER_MEGA = 1024;
 	static const size_t  BYTES_PER_MEGA = BYTES_PER_KILO * KILO_PER_MEGA;
 
+	static const size_t MAX_OPERATIONS_NUM_PER_TRANSACTION = 100;
 
 	static const uint16_t  MAX_UINT16 = 0xFFFF;
 	static const uint32_t  MAX_UINT32 = 0xFFFFFFFF;

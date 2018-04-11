@@ -317,6 +317,13 @@ namespace bumo {
 		int64_t power_index = cur_block_height / General::REWARD_PERIOD;
 		if (power_index >= 64) 
 			return 0;
-		return General::REWARD_INIT_VALUE >> power_index;
+		//decrease 1/4 every period
+		int64_t result = General::REWARD_INIT_VALUE;
+		for (int64_t i = 0; i < power_index; i++)
+		{
+			result = result - (result >> 2);
+		}
+
+		return result;
 	}
 }

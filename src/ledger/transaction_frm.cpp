@@ -492,6 +492,13 @@ namespace bumo {
 			return false;
 		}
 
+		if (tran.operations_size() > utils::MAX_OPERATIONS_NUM_PER_TRANSACTION) {
+			result_.set_code(protocol::ERRCODE_TOO_MANY_OPERATIONS);
+			result_.set_desc("Tx too many operations");
+			LOG_ERROR("%s", result_.desc().c_str());
+			return false;
+		}
+
 		if (tran.metadata().size() > General::METADATA_MAX_VALUE_SIZE) {
 			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 			//result_.set_desc("Transaction metadata too long");
