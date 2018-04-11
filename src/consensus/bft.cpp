@@ -1145,7 +1145,7 @@ namespace bumo {
 				}
 			});
 
-			LOG_INFO("It's not the new primary(replica_id:" FMT_I64 "), so donn't process the quorum view message, waiting new view message 30s, timer id(" FMT_I64")",
+			LOG_INFO("It's not the new primary(replica_id:" FMT_I64 "), so don't process the quorum view message, waiting new view message 30s, timer id(" FMT_I64")",
 				vc_instance.view_number_ % validators_.size(), new_view_repond_timer_);
 			return false;
 		}
