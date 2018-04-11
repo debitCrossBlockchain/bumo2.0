@@ -218,6 +218,7 @@ LONG WINAPI GenerateMiniDump(PEXCEPTION_POINTERS exception_pointers)
 void utils::SetExceptionHandle()
 {
 #ifdef WIN32_DUMP
+	printf("SetExceptionHandle ok..\n");
 	SetUnhandledExceptionFilter(GenerateMiniDump);
 #endif
 }
