@@ -2242,6 +2242,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 93                | ERRCODE_INVALID_SIGNATURE              | 签名权重不够，达不到操作的门限值                                                             |
 | 94                | ERRCODE_INVALID_ADDRESS                | 地址非法                                                                                     |
 | 97                | ERRCODE_MISSING_OPERATIONS             | 交易缺失操作                                                                                 |
+| 98                | ERRCODE_TOO_MANY_OPERATIONS             | 单笔交易内超过了100个操作                                                                   |
 | 99                | ERRCODE_BAD_SEQUENCE                   | 交易序号错误，nonce错误                                                                      |
 | 100               | ERRCODE_ACCOUNT_LOW_RESERVE            | 余额不足                                                                                     |
 | 101               | ERRCODE_ACCOUNT_SOURCEDEST_EQUAL       | 源和目的账号相等                                                                             |
