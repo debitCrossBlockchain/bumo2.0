@@ -341,21 +341,54 @@ void decrement_value_utest::UT_Calc_Block_Decrement_Vaule()
 
 
 	EXPECT_EQ(bumo::GetBlockReward(64 * bumo::General::REWARD_PERIOD - 1), 12);
-	EXPECT_EQ(bumo::GetBlockReward(64 * bumo::General::REWARD_PERIOD), 0);
-	EXPECT_EQ(bumo::GetBlockReward(64 * bumo::General::REWARD_PERIOD + 1), 0);
+	EXPECT_EQ(bumo::GetBlockReward(64 * bumo::General::REWARD_PERIOD), 9);
+	EXPECT_EQ(bumo::GetBlockReward(64 * bumo::General::REWARD_PERIOD + 1), 9);
 
 
-	EXPECT_EQ(bumo::GetBlockReward(65 * bumo::General::REWARD_PERIOD - 1), 0);
-	EXPECT_EQ(bumo::GetBlockReward(65 * bumo::General::REWARD_PERIOD), 0);
-	EXPECT_EQ(bumo::GetBlockReward(65 * bumo::General::REWARD_PERIOD + 1), 0);
+	EXPECT_EQ(bumo::GetBlockReward(65 * bumo::General::REWARD_PERIOD - 1), 9);
+	EXPECT_EQ(bumo::GetBlockReward(65 * bumo::General::REWARD_PERIOD), 7);
+	EXPECT_EQ(bumo::GetBlockReward(65 * bumo::General::REWARD_PERIOD + 1), 7);
 
 
-	EXPECT_EQ(bumo::GetBlockReward(66 * bumo::General::REWARD_PERIOD - 1), 0);
-	EXPECT_EQ(bumo::GetBlockReward(66 * bumo::General::REWARD_PERIOD), 0);
-	EXPECT_EQ(bumo::GetBlockReward(66 * bumo::General::REWARD_PERIOD + 1), 0);
+	EXPECT_EQ(bumo::GetBlockReward(66 * bumo::General::REWARD_PERIOD - 1), 7);
+	EXPECT_EQ(bumo::GetBlockReward(66 * bumo::General::REWARD_PERIOD), 6);
+	EXPECT_EQ(bumo::GetBlockReward(66 * bumo::General::REWARD_PERIOD + 1), 6);
 
 
-	EXPECT_EQ(bumo::GetBlockReward(67 * bumo::General::REWARD_PERIOD - 1), 0);
-	EXPECT_EQ(bumo::GetBlockReward(67 * bumo::General::REWARD_PERIOD), 0);
-	EXPECT_EQ(bumo::GetBlockReward(67 * bumo::General::REWARD_PERIOD + 1), 0);
+	EXPECT_EQ(bumo::GetBlockReward(67 * bumo::General::REWARD_PERIOD - 1), 6);
+	EXPECT_EQ(bumo::GetBlockReward(67 * bumo::General::REWARD_PERIOD), 5);
+	EXPECT_EQ(bumo::GetBlockReward(67 * bumo::General::REWARD_PERIOD + 1), 5);
+
+	EXPECT_EQ(bumo::GetBlockReward(68 * bumo::General::REWARD_PERIOD - 1), 5);
+	EXPECT_EQ(bumo::GetBlockReward(68 * bumo::General::REWARD_PERIOD), 4);
+	EXPECT_EQ(bumo::GetBlockReward(68 * bumo::General::REWARD_PERIOD + 1), 4);
+
+	EXPECT_EQ(bumo::GetBlockReward(69 * bumo::General::REWARD_PERIOD - 1), 4);
+	EXPECT_EQ(bumo::GetBlockReward(69 * bumo::General::REWARD_PERIOD), 3);
+	EXPECT_EQ(bumo::GetBlockReward(69 * bumo::General::REWARD_PERIOD + 1), 3);
+
+	EXPECT_EQ(bumo::GetBlockReward(70 * bumo::General::REWARD_PERIOD - 1), 3);
+	EXPECT_EQ(bumo::GetBlockReward(70 * bumo::General::REWARD_PERIOD), 2);
+	EXPECT_EQ(bumo::GetBlockReward(70 * bumo::General::REWARD_PERIOD + 1), 2);
+
+	EXPECT_EQ(bumo::GetBlockReward(71 * bumo::General::REWARD_PERIOD - 1), 2);
+	EXPECT_EQ(bumo::GetBlockReward(71 * bumo::General::REWARD_PERIOD), 1);
+	EXPECT_EQ(bumo::GetBlockReward(71 * bumo::General::REWARD_PERIOD + 1), 1);
+
+	EXPECT_EQ(bumo::GetBlockReward(72 * bumo::General::REWARD_PERIOD - 1), 1);
+	EXPECT_EQ(bumo::GetBlockReward(72 * bumo::General::REWARD_PERIOD), 0);
+	EXPECT_EQ(bumo::GetBlockReward(72 * bumo::General::REWARD_PERIOD + 1), 0);
+
+	EXPECT_EQ(bumo::GetBlockReward(73 * bumo::General::REWARD_PERIOD - 1), 0);
+	EXPECT_EQ(bumo::GetBlockReward(73 * bumo::General::REWARD_PERIOD), 0);
+	EXPECT_EQ(bumo::GetBlockReward(73 * bumo::General::REWARD_PERIOD + 1), 0);
+
+	EXPECT_EQ(bumo::GetBlockReward(74 * bumo::General::REWARD_PERIOD - 1), 0);
+	EXPECT_EQ(bumo::GetBlockReward(74 * bumo::General::REWARD_PERIOD), 0);
+	EXPECT_EQ(bumo::GetBlockReward(74 * bumo::General::REWARD_PERIOD + 1), 0);
+
+	EXPECT_EQ(bumo::GetBlockReward(1000 * bumo::General::REWARD_PERIOD - 1), 0);
+	EXPECT_EQ(bumo::GetBlockReward(1000 * bumo::General::REWARD_PERIOD), 0);
+	EXPECT_EQ(bumo::GetBlockReward(1000 * bumo::General::REWARD_PERIOD + 1), 0);
+
 }
