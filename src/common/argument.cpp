@@ -18,6 +18,7 @@
 #include "private_key.h"
 #include "key_store.h"
 #include "argument.h"
+#include <regex>
 
 namespace bumo {
 	bool g_enable_ = true;
@@ -36,7 +37,70 @@ namespace bumo {
 	bool Argument::Parse(int argc, char *argv[]) {
 		if (argc > 1) {
 			std::string s(argv[1]);
-			if (s == "--dropdb") {
+			if (s == "--console-with-cmd") {
+				// enter console mode for some command
+				const int size = 2048;
+				//std::string str_input;
+				std::deque<std::vector<char>> params;
+				std::string str_input;
+				static std::set<std::string> support_cmd = {
+					"--check-signed-data",
+					"--check-address",
+					"--sign-data",
+					"--get-address",
+					"--get-address-from-pubkey",
+					"--create-account",
+					"--create-keystore",
+					"--create-keystore-from-privatekey",
+					"--check-keystore",
+					"--get-privatekey-from-keystore",
+					"--sign-data-with-keystore"
+				};
+
+				std::cout << "enter console command mode" << std::endl;
+				
+				do {
+					params.clear();
+					std::getline(std::cin, str_input);
+
+					try
+					{
+						std::regex word_regex("((^|\\s)\").*?([^\\\\](?=\"))");
+						auto input_begin = std::sregex_iterator(str_input.begin(), str_input.end(), word_regex);
+						auto input_end = std::sregex_iterator();
+
+						for (auto i = input_begin; i != input_end; ++i) {
+							std::string str = std::regex_replace(i->str(), std::regex("((^|\\s)\")"), "");
+							str = std::regex_replace(str, std::regex("\\\\\""), "\"");
+							params.emplace_back(str.begin(), str.end());
+							params.back().push_back('\0');
+						}
+
+						if (params.size() > 0 && support_cmd.find(std::string(params.front().data())) != support_cmd.end()) {
+							// construct argc and argv
+							std::vector<char*> new_argv;
+							new_argv.emplace_back(argv[0]);
+							for (auto& i : params)
+								new_argv.push_back(i.data());
+
+							Parse(new_argv.size(), new_argv.data());
+						}
+						else if (std::string(params.front().data()) == "exit") {
+							break;
+						}
+						else {
+							std::cout << "error" << std::endl;
+						}
+					}
+					catch (std::exception e)
+					{
+						std::cout << "error" << std::endl;
+					}
+					
+				} while (true);
+				return true;
+			}
+			else if (s == "--dropdb") {
 				drop_db_ = true;
 			}
 			else if (s == "--console") {
