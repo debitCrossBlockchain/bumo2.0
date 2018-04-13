@@ -10,7 +10,7 @@
 		"consensus_network": {
 			"heartbeat_interval": 60,
 			"listen_port": 16001,
-			"target_peer_connection": 50,
+			"target_peer_connection": 10,
 			"known_peers": ["bumo.chinacloudapp.cn:16001"]
 		}
 	},
@@ -21,15 +21,15 @@
 		"listen_address": "127.0.0.1:16003"
 	},
 	"ledger": {
-		"max_trans_per_ledger": 1000,
-		"max_ledger_per_message": 5,
-		"max_trans_in_memory": 2000,
-		"max_apply_ledger_per_round": 3,
+		"max_trans_per_ledger": 10000,
+		"max_ledger_per_message": 15,
+		"max_trans_in_memory": 20000,
+		"max_apply_ledger_per_round": 5,
 		"hardfork_points": []
 	},
 	"genesis" :{
 		"account" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
-                "fees": {"base_reserve":10000000, "gas_price" :100},
+                "fees": {"base_reserve":10000000, "gas_price" :1000},
 		"validators": [
 			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
 		]

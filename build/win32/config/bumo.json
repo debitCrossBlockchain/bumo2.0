@@ -20,9 +20,9 @@
         "listen_address": "0.0.0.0:36003"
     },
     "ledger": {
-        "max_trans_per_ledger": 1000,
-        "max_ledger_per_message": 50,
-        "max_trans_in_memory": 2000,
+        "max_trans_per_ledger": 10000,
+        "max_ledger_per_message": 15,
+        "max_trans_in_memory": 20000,
         "max_apply_ledger_per_round": 5,
         "hardfork_points": []
     },
