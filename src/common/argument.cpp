@@ -18,7 +18,7 @@
 #include "private_key.h"
 #include "key_store.h"
 #include "argument.h"
-#include <regex>
+#include <sstream>
 
 namespace bumo {
 	bool g_enable_ = true;
@@ -38,41 +38,36 @@ namespace bumo {
 		if (argc > 1) {
 			std::string s(argv[1]);
 			if (s == "--console-with-cmd") {
-				// enter console mode for some command
-				const int size = 2048;
-				//std::string str_input;
 				std::deque<std::vector<char>> params;
 				std::string str_input;
+                std::stringstream ss_input;
 				static std::set<std::string> support_cmd = {
-					"--check-signed-data",
-					"--check-address",
 					"--sign-data",
+					"--sign-data-with-keystore",
+					"--check-address",
+					"--check-keystore",
+					"--check-signed-data",
 					"--get-address",
 					"--get-address-from-pubkey",
+					"--get-privatekey-from-keystore",
 					"--create-account",
 					"--create-keystore",
-					"--create-keystore-from-privatekey",
-					"--check-keystore",
-					"--get-privatekey-from-keystore",
-					"--sign-data-with-keystore"
+					"--create-keystore-from-privatekey"
 				};
 
 				std::cout << "enter console command mode" << std::endl;
 				
 				do {
 					params.clear();
-					std::getline(std::cin, str_input);
-
 					try
 					{
-						std::regex word_regex("((^|\\s)\").*?([^\\\\](?=\"))");
-						auto input_begin = std::sregex_iterator(str_input.begin(), str_input.end(), word_regex);
-						auto input_end = std::sregex_iterator();
-
-						for (auto i = input_begin; i != input_end; ++i) {
-							std::string str = std::regex_replace(i->str(), std::regex("((^|\\s)\")"), "");
-							str = std::regex_replace(str, std::regex("\\\\\""), "\"");
-							params.emplace_back(str.begin(), str.end());
+						std::string input2str;
+                        std::getline(std::cin, str_input);
+                        ss_input.clear();
+                        ss_input.str(str_input);
+                        while (ss_input >> str_input) {
+							utils::String::HexStringToBin(str_input, input2str);
+							params.emplace_back(input2str.begin(), input2str.end());
 							params.back().push_back('\0');
 						}
 
