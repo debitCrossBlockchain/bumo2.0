@@ -123,7 +123,6 @@ namespace bumo {
 		int64_t apply_time_;
 		bool enabled_;
 		int64_t total_fee_;
-		int64_t total_actual_fee_;
 	};
 }
 #endif //end of ifndef

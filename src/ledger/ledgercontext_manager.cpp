@@ -491,7 +491,7 @@ namespace bumo {
 			stat["apply_time"] = ptr->GetApplyTime();
 		}
 
-		int64_t actual_fee = ledger->total_actual_fee_;
+		int64_t actual_fee = ledger->total_fee_;
 		if (type == LedgerContext::AT_TEST_TRANSACTION){
 			actual_fee += (64 + 76 + 100)*LedgerManager::Instance().GetCurFeeConfig().gas_price();
 			int64_t suggest_fee = LedgerManager::Instance().GetCurFeeConfig().gas_price() * 1000;

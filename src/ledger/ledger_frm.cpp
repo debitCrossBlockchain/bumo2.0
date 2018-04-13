@@ -45,7 +45,6 @@ namespace bumo {
 		enabled_ = false;
 		apply_time_ = -1;
 		total_fee_ = 0;
-		total_actual_fee_ = 0;
 		is_test_mode_ = false;
 	}
 
@@ -226,7 +225,6 @@ namespace bumo {
 		value_ = std::make_shared<protocol::ConsensusValue>(request);
 		uint32_t success_count = 0;
 		total_fee_ = 0;
-		total_actual_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
 		//init the txs map
@@ -284,7 +282,6 @@ namespace bumo {
 			}
 
 			environment_->ClearChangeBuf();
-			total_actual_fee_ += tx_frm->GetActualFee();
 			apply_tx_frms_.push_back(tx_frm);
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
@@ -312,7 +309,6 @@ namespace bumo {
 		value_ = std::make_shared<protocol::ConsensusValue>(request);
 		uint32_t success_count = 0;
 		total_fee_ = 0;
-		total_actual_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
 		//init the txs map
@@ -368,7 +364,6 @@ namespace bumo {
 			}
 
 			environment_->ClearChangeBuf();
-			total_actual_fee_ += tx_frm->GetActualFee();
 			apply_tx_frms_.push_back(tx_frm);
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
@@ -399,7 +394,6 @@ namespace bumo {
 		value_ = std::make_shared<protocol::ConsensusValue>(request);
 		uint32_t success_count = 0;
 		total_fee_= 0;
-		total_actual_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
 		//init the txs map
@@ -433,7 +427,6 @@ namespace bumo {
 
 			if ( expire_txs_check.find(i) != expire_txs_check.end()) {
 				// follow the consensus value and do not apply
-				tx_frm->AddActualFee(tx_frm->GetSelfByteFee());
 				tx_frm->ApplyExpireResult();
 			}
 			else {
@@ -450,7 +443,6 @@ namespace bumo {
 			}
 
 			environment_->ClearChangeBuf();
-			total_actual_fee_ += tx_frm->GetActualFee();
 			apply_tx_frms_.push_back(tx_frm);			
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
