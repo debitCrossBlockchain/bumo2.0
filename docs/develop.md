@@ -660,7 +660,7 @@ POST /getTransactionBlob
             }
          }
       ],
-      "real_fee" : 0,
+      "actual_fee" : 0,
       "stat" : {
          "apply_time" : 6315,
          "memory_usage" : 886176,
@@ -683,8 +683,8 @@ POST /getTransactionBlob
       "transaction_json": {
         "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB",
         "nonce": 6,
-        "feeLimit":0,
-        "gasPrice":1000,
+        "fee_limit":0,
+        "gas_price":1000,
         "operations": [
           {
             "type": 7,
@@ -715,7 +715,7 @@ POST /getTransactionBlob
         "hash": "63109579662d7165ee3c4de0a00932d8b721651101d3255e2326de10eea6de15",
         "logs": null,
         "query_rets": null,
-        "real_fee": 1000,
+        "actual_fee": 1000,
         "stat": null,
         "txs": [
             {
@@ -2090,7 +2090,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
                 }
             }
         ],
-        "real_fee": 0,
+        "actual_fee": 0,
         "stat": {
             "apply_time": 11342,
             "memory_usage": 1325072,
@@ -2151,7 +2151,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
                 }
             }
         ],
-        "real_fee": 0,
+        "actual_fee": 0,
         "stat": {
             "apply_time": 18020,
             "memory_usage": 1326456,
