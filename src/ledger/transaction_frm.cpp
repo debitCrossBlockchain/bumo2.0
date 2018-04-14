@@ -693,7 +693,7 @@ namespace bumo {
 				break;
 			}
 
-			if (!bool_contract) {
+			if (!bool_contract && !ledger_->IsTestMode()) {
 				if (!opt->CheckSignature(environment_)) {
 					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::BinToHexString(GetContentHash()).c_str());
 					result_ = opt->GetResult();

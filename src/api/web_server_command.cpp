@@ -255,7 +255,7 @@ namespace bumo {
 			if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_V8,
 				(TestParameter*)&test_parameter,
 				utils::MICRO_UNITS_PER_SEC, 
-				exe_result, result["logs"], result["txs"], result["query_rets"], result["actual_fee"], result["stat"])) {
+				exe_result, result["logs"], result["txs"], result["query_rets"], result["stat"])) {
 				error_code = exe_result.code();
 				error_desc = exe_result.desc();
 				LOG_ERROR("%s", error_desc.c_str());
@@ -308,6 +308,10 @@ namespace bumo {
 		for (size_t j = 0; j < json_items.size() && running; j++) {
 			const Json::Value &json_item = json_items[j];
 
+			int32_t signature_number = 1;
+			if (json_item["signature_number"].asInt())
+				signature_number = json_item["signature_number"].asInt();
+
 			int64_t active_time = utils::Timestamp::HighResolution();
 			Result result;
 			result.set_code(protocol::ERRCODE_SUCCESS);
@@ -332,7 +336,11 @@ namespace bumo {
 						break;
 					}
 					
-					if ((tran->fee_limit() == 0) && (!EvaluateFee(tran, result)))
+					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					tran->set_gas_price(gas_price);
+					tran->set_fee_limit(0);
+
+					if (!EvaluateFee(tran, result))
 						break;
 
 					std::string content = tran->SerializeAsString();
@@ -347,7 +355,11 @@ namespace bumo {
 						break;
 					}
 
-					if ((tran->fee_limit() == 0) && (!EvaluateFee(tran, result)))
+					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					tran->set_gas_price(gas_price);
+					tran->set_fee_limit(0);
+
+					if (!EvaluateFee(tran, result))
 						break;
 
 					std::string content = tran->SerializeAsString();
@@ -372,7 +384,7 @@ namespace bumo {
 				if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
 					(TestParameter*)&test_parameter,
 					utils::MICRO_UNITS_PER_SEC,
-					exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["actual_fee"], result_json["stat"])) {
+					exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"],result_json["stat"], signature_number)) {
 					reply_json["error_code"] = exe_result.code();
 					reply_json["error_desc"] = exe_result.desc();
 					LOG_ERROR("%s", exe_result.desc().c_str());
@@ -421,8 +433,8 @@ namespace bumo {
 		int64_t balance = source_account->GetAccountBalance();
 		int64_t fee = balance - LedgerManager::Instance().GetCurFeeConfig().base_reserve() - pay_amount;
 		int64_t bytes_fee = 0;
-		if (LedgerManager::Instance().GetCurFeeConfig().gas_price() > 0) {
-			bytes_fee = LedgerManager::Instance().GetCurFeeConfig().gas_price()*tran->ByteSize();
+		if (tran->gas_price() > 0) {
+			bytes_fee = tran->gas_price()*tran->ByteSize();
 		}
 
 		if (fee < bytes_fee + total_opt_fee) {

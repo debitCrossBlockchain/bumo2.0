@@ -391,8 +391,8 @@ namespace bumo {
 		Json::Value &logs,
 		Json::Value &txs,
 		Json::Value &rets,
-		Json::Value &fee,
-		Json::Value &stat) {
+		Json::Value &stat,
+		int32_t signature_number) {
 		LedgerContext *ledger_context = nullptr;
 		std::string thread_name = "test";
 		if (type == LedgerContext::AT_TEST_V8){
@@ -465,11 +465,19 @@ namespace bumo {
 			env_store.set_error_desc(ptr->GetResult().desc());
 			if (ptr->GetResult().code() != 0)
 				env_store.set_actual_fee(ptr->GetFeeLimit());
-			else
-				env_store.set_actual_fee(ptr->GetActualFee());
-			
-			if (type == LedgerContext::AT_TEST_TRANSACTION)
-				txs[txs.size()] = Proto2Json(env_store);
+			else{
+				if (type == LedgerContext::AT_TEST_V8)
+					env_store.set_actual_fee(ptr->GetActualFee());
+				else if (LedgerContext::AT_TEST_TRANSACTION){
+					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					env_store.set_actual_fee(ptr->GetActualFee() + (signature_number*(64 + 76) + 20)*gas_price);//pub:64, sig:76
+
+					Json::Value jtx = Proto2Json(env_store);
+					jtx["gas"] = env_store.actual_fee() / gas_price;
+					txs[txs.size()] = jtx;
+				}
+			}
+				
 			//batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 
 			for (size_t j = 0; j < ptr->instructions_.size(); j++) {
@@ -491,15 +499,8 @@ namespace bumo {
 			stat["apply_time"] = ptr->GetApplyTime();
 		}
 
-		int64_t actual_fee = ledger->total_fee_;
-		if (type == LedgerContext::AT_TEST_TRANSACTION){
-			actual_fee += (64 + 76 + 100)*LedgerManager::Instance().GetCurFeeConfig().gas_price();
-			int64_t suggest_fee = LedgerManager::Instance().GetCurFeeConfig().gas_price() * 1000;
-			actual_fee = actual_fee < suggest_fee ? suggest_fee : actual_fee;
-		}
 		ledger_context->GetLogs(logs);
 		ledger_context->GetRets(rets);
-		fee = actual_fee;
 		ledger_context->JoinWithStop();
 		delete ledger_context;
 		return true;

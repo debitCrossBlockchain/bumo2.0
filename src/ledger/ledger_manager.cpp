@@ -108,7 +108,7 @@ namespace bumo {
 			return false;
 		}
 	
-		LOG_INFO("Gas price :" FMT_I64 " Base reserve:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
+		LOG_INFO("Gas price :" FMT_I64 " Base reserve fee:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
 
 		//load proof
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof_);
