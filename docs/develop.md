@@ -682,9 +682,8 @@ POST /getTransactionBlob
     {
       "transaction_json": {
         "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB",
+        "metadata":"0123456789abcdef", //可选
         "nonce": 6,
-        "fee_limit":0,
-        "gas_price":1000,
         "operations": [
           {
             "type": 7,
@@ -694,7 +693,8 @@ POST /getTransactionBlob
             }
           }
         ]
-      }
+      },
+      "signature_number":1
     }
   ]
 }
@@ -702,7 +702,10 @@ POST /getTransactionBlob
   评估费用不改变账号余额基础上进行的评估，交易中涉及的原账号和目标账号都必须在系统中存在，创建账号的目标地址除外。
   - source_address：模拟交易的原地址。
   - nonce : 在原账号基础上加1。
-  - fee : 费用填0系统会自动填写一个大概费用来进行交易，计算出实际费用，如果费用不足，交易终止；非0不填写费用字段，直接交易计算出实际费用，如果费用不足，交易终止。
+  - signature_number : 签名个数，默认为1；不填写系统会设置为1；
+  - metadata : 可选
+  - fee_limit : 不用填写
+  - gas_price : 不用填写
   - operations : 可以是任何一种操作类型。
 
   - 返回值如下：
@@ -712,23 +715,24 @@ POST /getTransactionBlob
     "error_code": 0,
     "error_desc": "",
     "result": {
-        "hash": "63109579662d7165ee3c4de0a00932d8b721651101d3255e2326de10eea6de15",
+        "hash": "7f0d9de23d6d8f2964a1efe4a458e02e43e47f60f3c22bb132b676c54a44ba04",
         "logs": null,
         "query_rets": null,
-        "actual_fee": 1000,
         "stat": null,
         "txs": [
             {
+                "actual_fee": 264,
+                "gas": 264,
                 "transaction_env": {
                     "transaction": {
-                        "feeLimit": 99999999974939995,
-                        "gasPrice": 1000,
-                        "nonce": 6,
+                        "fee_limit": 99999999700110000,
+                        "gas_price": 1,
+                        "nonce": 1,
                         "operations": [
                             {
                                 "pay_coin": {
-                                    "amount": 10000,
-                                    "dest_address": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw"
+                                    "amount": 299890000,
+                                    "dest_address": "buQkBDTfe4tx2Knw9NDKyntVmsYvYtHmAiE7"
                                 },
                                 "type": 7
                             }
@@ -741,6 +745,10 @@ POST /getTransactionBlob
     }
 }
 ```
+
+  - gas_price ： 会在transaction添加gas_price，gas_price为系统的最低price
+  - actual_fee ：评估交易的实际费用
+  - gas ： 评估交易所用gas 
 
 ## 定义交易
 
