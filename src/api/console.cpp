@@ -402,7 +402,7 @@ namespace bumo {
 			"createWallet <path>                          create wallet\n"
 			"openWallet <path>                            open keystore\n"
 			"closeWallet                                  close current wallet opened\n"
-			"payCoin <to-address> <bu coin> <fee(bu)> <gas price(wen)> [metatdata] [contract-input] \n"
+			"payCoin <to-address> <bu coin> <fee(bu)> <gas price(baseuint)> [metatdata] [contract-input] \n"
 			"getBalance [account]                         get balance of BU \n"
 			"getBlockNumber                               get lastest closed block number\n"
 			"showKey                                      show wallet private key\n"

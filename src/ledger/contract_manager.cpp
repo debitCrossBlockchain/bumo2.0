@@ -216,7 +216,7 @@ namespace bumo{
 		js_func_read_["int64Mod"] = V8Contract::CallBackInt64Mod;
 		js_func_read_["int64Div"] = V8Contract::CallBackInt64Div;
 		js_func_read_["int64Compare"] = V8Contract::CallBackInt64Compare;
-		js_func_read_["toWen"] = V8Contract::CallBackToWen;
+		js_func_read_["toBaseUnit"] = V8Contract::CallBackToBaseUnit;
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
 
@@ -685,19 +685,7 @@ namespace bumo{
 
 	bool V8Contract::CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue) {
 		std::string type = jsonvalue["type"].asString();
-		if (type == "jsobject") {
-			std::string value = jsonvalue["value"].asString();
-			v8::Local<v8::String> str = v8::String::NewFromUtf8(isolate, value.c_str());
-			jsvalue = v8::JSON::Parse(str);
-		}
-		else if (type == "number") {
-			std::string value = jsonvalue["value"].asString();
-			std::string bin_double = utils::String::HexStringToBin(value);
-			double d_value = 0;
-			memcpy(&d_value, bin_double.c_str(), sizeof(double));
-			jsvalue = v8::Number::New(isolate, d_value);
-		}
-		else if (type == "string") {
+		if (type == "string") {
 			jsvalue = v8::String::NewFromUtf8(isolate, jsonvalue["value"].asCString());
 		}
 		else if (type == "bool") {
@@ -708,16 +696,7 @@ namespace bumo{
 	}
 
 	bool V8Contract::JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue) {
-		if (jsvalue->IsNumber()) {
-			double s_value = jsvalue->NumberValue();
-			std::string value;
-			value.resize(sizeof(double));
-			memcpy((void *)value.c_str(), &s_value, sizeof(double));
-			jsonvalue["type"] = "number";
-			jsonvalue["value"] = utils::String::BinToHexString(value);
-			jsonvalue["valuePlain"] = jsvalue->NumberValue();
-		}
-		else if (jsvalue->IsBoolean()) {
+		if (jsvalue->IsBoolean()) {
 			jsonvalue["type"] = "bool";
 			jsonvalue["value"] = jsvalue->BooleanValue();
 		}
@@ -1744,7 +1723,7 @@ namespace bumo{
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
-	void V8Contract::CallBackToWen(const v8::FunctionCallbackInfo<v8::Value>& args) {
+	void V8Contract::CallBackToBaseUnit(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
 				LOG_TRACE("parameter error");
@@ -1753,7 +1732,7 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_TRACE("contract execute error, toWen, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, toBaseUnit, parameter 0 should be a String or Number");
 				break;
 			}
 
