@@ -87,7 +87,7 @@ namespace bumo {
 
 		void ApplyExpireResult(); // for sync node
 
-		bool ValidForParameter();
+		bool ValidForParameter(int64_t& total_op_fee);
 		
 		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);
 
