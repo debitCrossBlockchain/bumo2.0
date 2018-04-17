@@ -174,8 +174,6 @@ namespace bumo{
 		static void CallBackGetTransactionInfo(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackContractQuery(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//static void CallBackGetThisAddress(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//make a transaction
-		static void CallBackDoTransaction(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static V8Contract *UnwrapContract(v8::Local<v8::Object> obj);
 		static bool JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue);
 		static bool CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue);

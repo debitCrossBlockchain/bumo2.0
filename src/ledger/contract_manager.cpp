@@ -223,7 +223,7 @@ namespace bumo{
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
 		js_func_write_["storageDel"] = V8Contract::CallBackStorageDel;
-		js_func_write_["doTransaction"] = V8Contract::CallBackDoTransaction;
+		//js_func_write_["doTransaction"] = V8Contract::CallBackDoTransaction;
 		js_func_write_["configFee"] = V8Contract::CallBackConfigFee;
 		js_func_write_["setValidators"] = V8Contract::CallBackSetValidators;
 		js_func_write_["payCoin"] = V8Contract::CallBackPayCoin;
@@ -1141,89 +1141,6 @@ namespace bumo{
 		} while (false);
 
 		args.GetReturnValue().Set(obj);
-	}
-
-	void V8Contract::CallBackDoTransaction(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		std::string error_desc;
-		do {
-			if (args.Length() != 1) {
-				args.GetReturnValue().SetNull();
-				error_desc ="Parameter number error";
-				break;
-			}
-			v8::HandleScope handle_scope(args.GetIsolate());
-
-			if (!args[0]->IsString()) {
-				error_desc = "Parameter 0 should be string";
-				break;
-			}
-
-			v8::String::Utf8Value utf8value(args[0]);
-			const char* strdata = ToCString(utf8value);
-			Json::Value transaction_json;
-
-			if (!transaction_json.fromCString(strdata)) {
-				error_desc = utils::String::Format("String to json failed, string=%s", strdata);
-				break;
-			}
-
-			protocol::Transaction transaction;
-			std::string error_msg;
-			if (!Json2Proto(transaction_json, transaction, error_msg)) {
-				error_desc = utils::String::Format("Json to protocol object failed: json=%s. error=%s", strdata, error_msg.c_str());
-				break;
-			}
-
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				error_desc = "Can't find contract object by isolate id";
-				break;
-			}
-			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			ledger_context->GetBottomTx()->ContractStepInc(100);
-
-			std::string contractor = v8_contract->parameter_.this_address_;
-			transaction.set_source_address(contractor);
-
-			bool ope_has_pri = false;
-			for (int i = 0; i < transaction.operations_size(); i++) {
-				protocol::Operation*  ope = transaction.mutable_operations(i);
-				ope->set_source_address(contractor);
-				if (ope->type() == protocol::Operation_Type_SET_SIGNER_WEIGHT ||
-					ope->type() == protocol::Operation_Type_SET_THRESHOLD) {
-					ope_has_pri = true;
-					break;
-				}
-			}
-
-			if (ope_has_pri) {
-				error_desc = "Contract operation cann't has priv object";
-				break;
-			}
-
-			protocol::TransactionEnv env;
-			env.mutable_transaction()->CopyFrom(transaction);
-
-			if (v8_contract->IsReadonly()) {
-				error_desc = "The contract is readonly";
-				break;
-			}
-
-			Result tmp_result = LedgerManager::Instance().DoTransaction(env, ledger_context);
-			if (tmp_result.code() > 0) {
-				v8_contract->SetResult(tmp_result);
-				error_desc = utils::String::Format("Do transaction failed(%s)", tmp_result.desc().c_str());
-				break;
-			}
-
-			args.GetReturnValue().Set(tmp_result.code() == 0);
-			return;
-		} while (false);
-
-		LOG_ERROR("%s", error_desc.c_str());
-		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
-			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
 	void V8Contract::CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args)
