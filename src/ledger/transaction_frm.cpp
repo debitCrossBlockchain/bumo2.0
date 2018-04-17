@@ -300,7 +300,8 @@ namespace bumo {
 
 	bool TransactionFrm::ValidForApply(std::shared_ptr<Environment> environment, bool check_priv) {
 		do {
-			if (!ValidForParameter())
+			int64_t total_op_fee = 0;
+			if (!ValidForParameter(total_op_fee))
 				break;
 
 			std::string str_address = transaction_env_.transaction().source_address();
@@ -437,7 +438,8 @@ namespace bumo {
 			return false;
 		}
 
-		if (!ValidForParameter())
+		int64_t total_op_fee = 0;
+		if (!ValidForParameter(total_op_fee))
 			return false;
 
 		if (last_seq == 0 && GetNonce() != source_account->GetAccountNonce() + 1) {
@@ -470,10 +472,24 @@ namespace bumo {
 			LOG_ERROR(result_.desc().c_str());
 			return false;
 		}
+
+		if (LedgerManager::Instance().GetCurFeeConfig().gas_price() > 0) {
+			if (tran_fee_limit < bytes_fee + total_op_fee) {
+				std::string error_desc = utils::String::Format(
+					"Transaction(%s) fee_limit(" FMT_I64 ") not enough for self bytes fee(" FMT_I64 ") + total operation fee("  FMT_I64 ")",
+					utils::String::BinToHexString(hash_).c_str(), tran_fee_limit, bytes_fee, total_op_fee);
+
+				result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
+				result_.set_desc(error_desc);
+				LOG_ERROR("%s", error_desc.c_str());
+				return false;
+			}
+		}
+
 		return true;
 	}
 
-	bool TransactionFrm::ValidForParameter() {
+	bool TransactionFrm::ValidForParameter(int64_t& total_op_fee) {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 		const LedgerConfigure &ledger_config = Configure::Instance().ledger_configure_;
 		if (transaction_env_.ByteSize() >= General::TRANSACTION_LIMIT_SIZE) {
@@ -537,6 +553,7 @@ namespace bumo {
 			return false;
 		} 
 
+		total_op_fee = 0;
 		bool check_valid = true; 
 		//判断operation的参数合法性
 		int64_t t8 = utils::Timestamp::HighResolution();
@@ -561,6 +578,8 @@ namespace bumo {
 					break;
 				}
 			}
+
+			total_op_fee += FeeCompulate::OperationFee(tran.gas_price(), ope.type());
 
 			result_ = OperationFrm::CheckValid(ope, ope_source);
 
