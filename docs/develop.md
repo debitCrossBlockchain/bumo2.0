@@ -995,7 +995,6 @@ POST /getTransactionBlob
       "issue_asset": {
         "amount": 1000,
         "code": "CNY",
-        "type": 0 //目前只能填0 或者不填
       }
     }
     ```
@@ -1005,7 +1004,6 @@ POST /getTransactionBlob
     {
         string code = 1;
         int64 amount = 2;
-        int32 type = 3;
     }
     ```
     - code:要发行的资产代码，长度范围[1, 64]
