@@ -100,7 +100,7 @@ make install
 ```
 2、替换配置文件
 ```bash
-    cd config/
+    cd /usr/local/bumochain/config/
     #拷贝目标环境配置文件
     cp bumo-testnet.json bumo.json  
 
@@ -109,13 +109,12 @@ make install
     bumo-mainnet.json   ##主网环境配置文件，尚未启用
     bumo-testnet.json   ##测试网配置文件
 ```
-3、并清空数据库。
+3、并清空数据库并启动服务
 ```bash
-    cd /usr/local/bumochain/
+    cd ../
     ./bin/bumo --dropdb
+    service bumo start
 ```
-4、启动程序
-
 ### __运行__
 
 ```bash
