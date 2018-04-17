@@ -86,7 +86,7 @@ install(
 )
 
 install(
-    DIRECTORY ${BUMO_SRC_DIR}/3rd/basic/bin/
+    DIRECTORY ${BUMO_ROOT_DIR}/bin/
     DESTINATION ${BUMOCHAIN}/bin
     FILES_MATCHING PATTERN "*.bin" PATTERN "*.dat"
 )
@@ -94,7 +94,13 @@ install(
 install(
     DIRECTORY ${BUMO_ROOT_DIR}/build/win32/config/
     DESTINATION ${BUMOCHAIN}/config
-    REGEX "slave.json|test_case.json|monitor.json|ca.pem" EXCLUDE
+    FILES_MATCHING PATTERN "bumo.json" PATTERN "bumo-mainnet.json" PATTERN "bumo-testnet.json"
+)
+
+install(
+    DIRECTORY ${BUMO_ROOT_DIR}/build/win32/jslib/
+    DESTINATION ${BUMOCHAIN}/jslib
+    FILES_MATCHING PATTERN "*.js"
 )
 
 set(SUPPLEMENT ${BUMO_ROOT_DIR}/build/linux/MakeSupplement)
