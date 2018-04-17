@@ -634,6 +634,12 @@ class AssetProperty : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::google::protobuf::int64 issued_amount() const;
   void set_issued_amount(::google::protobuf::int64 value);
 
+  // optional int32 fee_percent = 5;
+  void clear_fee_percent();
+  static const int kFeePercentFieldNumber = 5;
+  ::google::protobuf::int32 fee_percent() const;
+  void set_fee_percent(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:protocol.AssetProperty)
  private:
 
@@ -641,8 +647,9 @@ class AssetProperty : public ::google::protobuf::Message /* @@protoc_insertion_p
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr description_;
   ::google::protobuf::int64 max_supply_;
-  ::google::protobuf::int64 issued_amount_;
   ::google::protobuf::int32 decimal_;
+  ::google::protobuf::int32 fee_percent_;
+  ::google::protobuf::int64 issued_amount_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -728,6 +735,15 @@ class AssetStore : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::google::protobuf::int64 amount() const;
   void set_amount(::google::protobuf::int64 value);
 
+  // optional .protocol.AssetProperty property = 3;
+  bool has_property() const;
+  void clear_property();
+  static const int kPropertyFieldNumber = 3;
+  const ::protocol::AssetProperty& property() const;
+  ::protocol::AssetProperty* mutable_property();
+  ::protocol::AssetProperty* release_property();
+  void set_allocated_property(::protocol::AssetProperty* property);
+
   // @@protoc_insertion_point(class_scope:protocol.AssetStore)
  private:
 
@@ -735,6 +751,7 @@ class AssetStore : public ::google::protobuf::Message /* @@protoc_insertion_poin
   bool _is_default_instance_;
   ::protocol::AssetKey* key_;
   ::google::protobuf::int64 amount_;
+  ::protocol::AssetProperty* property_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -1505,21 +1522,6 @@ class OperationIssueAsset : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::int64 amount() const;
   void set_amount(::google::protobuf::int64 value);
 
-  // optional int32 type = 3;
-  void clear_type();
-  static const int kTypeFieldNumber = 3;
-  ::google::protobuf::int32 type() const;
-  void set_type(::google::protobuf::int32 value);
-
-  // optional .protocol.AssetProperty property = 4;
-  bool has_property() const;
-  void clear_property();
-  static const int kPropertyFieldNumber = 4;
-  const ::protocol::AssetProperty& property() const;
-  ::protocol::AssetProperty* mutable_property();
-  ::protocol::AssetProperty* release_property();
-  void set_allocated_property(::protocol::AssetProperty* property);
-
   // @@protoc_insertion_point(class_scope:protocol.OperationIssueAsset)
  private:
 
@@ -1527,8 +1529,6 @@ class OperationIssueAsset : public ::google::protobuf::Message /* @@protoc_inser
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr code_;
   ::google::protobuf::int64 amount_;
-  ::protocol::AssetProperty* property_;
-  ::google::protobuf::int32 type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -4115,6 +4115,20 @@ inline void AssetProperty::set_issued_amount(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.AssetProperty.issued_amount)
 }
 
+// optional int32 fee_percent = 5;
+inline void AssetProperty::clear_fee_percent() {
+  fee_percent_ = 0;
+}
+inline ::google::protobuf::int32 AssetProperty::fee_percent() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetProperty.fee_percent)
+  return fee_percent_;
+}
+inline void AssetProperty::set_fee_percent(::google::protobuf::int32 value) {
+  
+  fee_percent_ = value;
+  // @@protoc_insertion_point(field_set:protocol.AssetProperty.fee_percent)
+}
+
 // -------------------------------------------------------------------
 
 // AssetStore
@@ -4169,6 +4183,44 @@ inline void AssetStore::set_amount(::google::protobuf::int64 value) {
   
   amount_ = value;
   // @@protoc_insertion_point(field_set:protocol.AssetStore.amount)
+}
+
+// optional .protocol.AssetProperty property = 3;
+inline bool AssetStore::has_property() const {
+  return !_is_default_instance_ && property_ != NULL;
+}
+inline void AssetStore::clear_property() {
+  if (GetArenaNoVirtual() == NULL && property_ != NULL) delete property_;
+  property_ = NULL;
+}
+inline const ::protocol::AssetProperty& AssetStore::property() const {
+  // @@protoc_insertion_point(field_get:protocol.AssetStore.property)
+  return property_ != NULL ? *property_ : *default_instance_->property_;
+}
+inline ::protocol::AssetProperty* AssetStore::mutable_property() {
+  
+  if (property_ == NULL) {
+    property_ = new ::protocol::AssetProperty;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.AssetStore.property)
+  return property_;
+}
+inline ::protocol::AssetProperty* AssetStore::release_property() {
+  // @@protoc_insertion_point(field_release:protocol.AssetStore.property)
+  
+  ::protocol::AssetProperty* temp = property_;
+  property_ = NULL;
+  return temp;
+}
+inline void AssetStore::set_allocated_property(::protocol::AssetProperty* property) {
+  delete property_;
+  property_ = property;
+  if (property) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.AssetStore.property)
 }
 
 // -------------------------------------------------------------------
@@ -4967,58 +5019,6 @@ inline void OperationIssueAsset::set_amount(::google::protobuf::int64 value) {
   
   amount_ = value;
   // @@protoc_insertion_point(field_set:protocol.OperationIssueAsset.amount)
-}
-
-// optional int32 type = 3;
-inline void OperationIssueAsset::clear_type() {
-  type_ = 0;
-}
-inline ::google::protobuf::int32 OperationIssueAsset::type() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationIssueAsset.type)
-  return type_;
-}
-inline void OperationIssueAsset::set_type(::google::protobuf::int32 value) {
-  
-  type_ = value;
-  // @@protoc_insertion_point(field_set:protocol.OperationIssueAsset.type)
-}
-
-// optional .protocol.AssetProperty property = 4;
-inline bool OperationIssueAsset::has_property() const {
-  return !_is_default_instance_ && property_ != NULL;
-}
-inline void OperationIssueAsset::clear_property() {
-  if (GetArenaNoVirtual() == NULL && property_ != NULL) delete property_;
-  property_ = NULL;
-}
-inline const ::protocol::AssetProperty& OperationIssueAsset::property() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationIssueAsset.property)
-  return property_ != NULL ? *property_ : *default_instance_->property_;
-}
-inline ::protocol::AssetProperty* OperationIssueAsset::mutable_property() {
-  
-  if (property_ == NULL) {
-    property_ = new ::protocol::AssetProperty;
-  }
-  // @@protoc_insertion_point(field_mutable:protocol.OperationIssueAsset.property)
-  return property_;
-}
-inline ::protocol::AssetProperty* OperationIssueAsset::release_property() {
-  // @@protoc_insertion_point(field_release:protocol.OperationIssueAsset.property)
-  
-  ::protocol::AssetProperty* temp = property_;
-  property_ = NULL;
-  return temp;
-}
-inline void OperationIssueAsset::set_allocated_property(::protocol::AssetProperty* property) {
-  delete property_;
-  property_ = property;
-  if (property) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationIssueAsset.property)
 }
 
 // -------------------------------------------------------------------

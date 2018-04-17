@@ -31,12 +31,13 @@ message AssetProperty{
 	string description = 2;
 	int64 max_supply = 3;
 	int64 issued_amount = 4;
+	int32 fee_percent = 5;
 }
 
 message AssetStore{
 	AssetKey key = 1; //required
 	int64 amount = 2;
-	//AssetProperty property = 3;
+	AssetProperty property = 3;
 }
 
 
@@ -89,8 +90,6 @@ message AccountThreshold{
 message OperationIssueAsset{
 	string code = 1;
 	int64 amount = 2;
-	int32 type = 3;
-	AssetProperty property = 4;
 }
 
 message OperationPayCoin{

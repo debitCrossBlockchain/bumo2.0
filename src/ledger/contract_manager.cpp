@@ -765,6 +765,7 @@ namespace bumo{
 			}
 
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			LOG_INFO("UpdateFee bottom tx(%s) top tx(%s) result(%s)", utils::String::BinToHexString(ledger_context->GetBottomTx()->GetContentHash()).c_str(),utils::String::BinToHexString(ledger_context->GetTopTx()->GetContentHash()).c_str(), json.toFastString());
 			ledger_context->GetTopTx()->environment_->UpdateFeeConfig(json);
 			args.GetReturnValue().Set(true);
 			return;

@@ -192,6 +192,12 @@ namespace bumo {
 		case protocol::Operation_Type_PAYMENT:
 		{
 			if (payment.has_asset()){
+				if (payment.asset().key().type() != 0){
+					result.set_code(protocol::ERRCODE_ASSET_INVALID);
+					result.set_desc(utils::String::Format("payment asset type must be 0"));
+					break;
+				}
+
 				if (payment.asset().amount() <= 0) {
 					result.set_code(protocol::ERRCODE_ASSET_INVALID);
 					result.set_desc(utils::String::Format("amount should be bigger than 0"));
@@ -241,12 +247,6 @@ namespace bumo {
 				trim_code.size() != issue_asset.code().size()) {
 				result.set_code(protocol::ERRCODE_ASSET_INVALID);
 				result.set_desc(utils::String::Format("Asset code length should between (0,64]"));
-				break;
-			}
-
-			if (issue_asset.type() != 0){
-				result.set_code(protocol::ERRCODE_ASSET_INVALID);
-				result.set_desc(utils::String::Format("Asset type now must be zero"));
 				break;
 			}
 
@@ -550,31 +550,22 @@ namespace bumo {
 			protocol::AssetKey key;
 			key.set_issuer(source_account_->GetAccountAddress());
 			key.set_code(ope.code());
-			key.set_type(ope.type());
 			if (!source_account_->GetAsset(key, asset_e)) {
 				protocol::AssetStore asset;
 				asset.mutable_key()->CopyFrom(key);
 				asset.set_amount(ope.amount());
-				//asset.mutable_property()->CopyFrom(ope.property());
 				source_account_->SetAsset(asset);
 			}
 			else {
-				if (ope.type() == 0) {
-					int64_t amount = asset_e.amount() + ope.amount();
-					if (amount < asset_e.amount() || amount < ope.amount())
-					{
-						result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
-						result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), ope.amount()));
-						break;
-					}
-					asset_e.set_amount(amount);
-					source_account_->SetAsset(asset_e);
-				}
-				else {
-					result_.set_code(protocol::ERRCODE_ASSET_INVALID);
-					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) repeat issue", key.issuer().c_str(), key.code().c_str(), key.type()));
+				int64_t amount = asset_e.amount() + ope.amount();
+				if (amount < asset_e.amount() || amount < ope.amount())
+				{
+					result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE);
+					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), ope.amount()));
 					break;
 				}
+				asset_e.set_amount(amount);
+				source_account_->SetAsset(asset_e);
 			}
 
 		} while (false);
@@ -630,12 +621,9 @@ namespace bumo {
 					}
 				}
 				else{
-					/*if (source_account_->GetAccountAddress() == payment.asset().key().issuer()){
-					}
-					else if (dest_account->GetAccountAddress() == payment.asset().key().issuer()){
-					}
-					else{
-					}*/
+					result_.set_code(protocol::ERRCODE_ASSET_INVALID);
+					result_.set_desc(utils::String::Format("payment asset type must be 0"));
+					break;
 				}
 			}
 			
