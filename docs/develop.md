@@ -1534,14 +1534,14 @@ function query(input)
     ```
       
  - ##### 变换单位
-    `toWen(value);`
+    `toBaseUnit(value);`
 
     - 返回值: 乘以 10^8
     - value: 左值
 
     例如
     ```javascript
-    let ret = toWen('12345678912');
+    let ret = toBaseUnit('12345678912');
     /*
     '1234567891200000000'
     */
@@ -1573,37 +1573,6 @@ function query(input)
     /*
      成功不返回,失败抛异常
     */
-    ```
-
-- ##### 做交易
-    ```javascript
-    doTransaction(transaction)
-    ```
-
-    令合约账号做一笔交易，即里面的任意一个操作的`source_address`都会自动变成合约账号。所以`source_address`是不需要填写的。
-
-  - 入参: transaction, 必须为字符串，且可反序列化
-  - 返回值: true/false
-
-    例如
-    ```javascript
-    let transaction =
-    {
-      'operations' :
-      [
-        {
-          "type" : 2,
-          "issue_asset" :
-          {
-            "amount" : 1000,
-            "code" : "CNY"
-          }
-        }
-      ]
-    };
-
-    doTransaction(JSON.stringify(transaction));
-    /*失败抛异常*/
     ```
 
 - ##### 转账
@@ -1694,36 +1663,6 @@ function query(input)
 
   1. 本次合约执行失败，合约中做的所有交易都不会生效。
   1. 触发本次合约的这笔交易为失败。错误代码为`151`。
-  >例: Bob的合约是这么写的
-  ```javascript
-  function main(inputStr) {
-    let recvAsset = trigger.transaction.operations[triggerIndex].payment.asset;
-
-    if (recvAsset.key.code != 'CNY' || recvAsset.key.issuer != 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY') {
-      throw '不支持的资产类型';
-    }
-    let tx = {
-      'operations': [{
-          'type': 3,
-          'payment': {
-            'dest_address': sender,
-            'asset': {
-              'key': {
-                'issuer': thisAddress,
-                'code': 'IOU'
-              },
-              'amount': recvAsset.amount
-            }
-          }
-        }
-      ]
-    };
-
-    doTransaction(JSON.stringify(tx));
-
-  }
-  ```
-  这段合约的功能就是，Bob以1：1的价格收`buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY`发行的`CNY`,售卖自己的IOU借条(I owe you )。Alice向Bob转移一笔资产，触发了Bob的合约，如果此时Bob的IOU已经卖完，那么会执行到`throw 'IOU卖完了';`这一步。未捕获的异常会导致JavaScript代码执行出错，那么本次合约执行失败。Alice转给Bob的资产会自动回退到Alice的账户中，同时，Alice的这笔交易执行状态为失败，错误代码为`151`。
 
 - 执行交易失败
   <font color=red>合约中可以执行多个交易，只要有一个交易失败，就会抛出异常，导致整个交易失败</font>
