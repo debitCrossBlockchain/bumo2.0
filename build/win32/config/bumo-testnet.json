@@ -10,7 +10,7 @@
 			"heartbeat_interval": 60,
 			"listen_port": 26001,
 			"target_peer_connection": 10,
-			"known_peers": ["bumo.chinacloudapp.cn:26001"]
+			"known_peers": ["seed1.bumotest.io:26001","seed2.bumotest.io:26001","seed3.bumotest.io:26001","seed4.bumotest.io:26001"]
 		}
 	},
 	"webserver": {
@@ -26,21 +26,27 @@
 		"max_apply_ledger_per_round": 5,
 		"hardfork_points": [],
 		"tx_pool":{
-            "queue_limit":10240,
-            "queue_per_account_txs_limit":64
+            	"queue_limit":10240,
+            	"queue_per_account_txs_limit":64
         }
 	},
 	"genesis" :{
-		"account" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+		"account" : "buQBEoVrVjdHmUc97EA7nChJhAMD3UoXW5uk",
 		"fees": {"base_reserve":10000000, "gas_price" :1000},
 		"validators": [
-			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
+			"buQjSCRX5rwBzKmhyry4qAFnLDubY3R5y83V",
+			"buQdE6YSqWu61JdUh6zkcPW1aPHYQX3X4Scj",
+			"buQBtykggdN9DDUCCSEK8rESXzXphzo9K6Kd",
+			"buQfs9ksvqp3kWijbBKRvgnCBLnTZW7UZHJq",
+			"buQqBLuHj1bBgcRGnmbhqEpSAY5TPktuRRVo",
+			"buQsMHovSLu8ZBAQmjfXTdZqDq88aomrfinu",
+			"buQsYKJBhAKhw8huhGV8Aye3z8txnZ91z6Wz"
 		]
 	},
 	"logger": {
 		"path": "log/bumo.log",
 		"dest": "FILE|STDOUT|STDERR",
-		"level": "TRACE|INFO|WARNING|ERROR|FATAL",
+		"level": "INFO|WARNING|ERROR|FATAL",
 		"time_capacity": 1,
 		"size_capacity": 10,
 		"expire_days": 10
