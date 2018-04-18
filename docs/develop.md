@@ -283,7 +283,7 @@ HTTP GET /getAccountBase?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 ### 查询交易
 
 ```text
-GET /getTransactionHistory?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d425d0fe644e698&ledger_seq=2
+GET /getTransactionHistory?ledger_seq=6
 ```
 
 | 参数       | 描述                     |
@@ -298,34 +298,97 @@ GET /getTransactionHistory?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc3592
 {
     "error_code": 0,
     "result": {
-        "total_count": 1, //本次查询结果，交易的数量
-        "transactions": [ //每一个交易
-            {
-              "close_time": 1516350588062394,
-              "error_code": 0,
-              "error_desc": "",
-              "hash": "3c2ebac2baec701730bec4665aab0cd045838b16a6b78f940fdd1af7715de100",
-              "ledger_seq": 14212,
-              "signatures": [{
+        "total_count": 2,
+        "transactions": [{
+            "actual_fee": 313000,
+            "close_time": 1524031260097214,
+            "error_code": 0,
+            "error_desc": "",
+            "hash": "89a9d6e5d2c0e2b5c4fe58045ab2236d12e9449ef232342a48a2e2628e12014d",
+            "ledger_seq": 6,
+            "signatures": [{
                 "public_key": "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
-                "sign_data": "e950d36daaa51481f6aa7579d2ee8e893cb532d6ea536c716e89a529dd017f07ed8c0a130e897138a90b4bb44c11d4d105e65dc0070d28eb0cb5810c1f94f50a"
-              }],
-              "transaction": {
-                "fee_limit": 24900,
+                "sign_data": "27866d70a58fc527b1ff1b4a693b8034b0078fc7ac7591fb05679abe5ca660db5c372922bfa8f26e76511e2c33386306ded7593874a6aec5baeeaddbd2012f06"
+            }],
+            "transaction": {
+                "fee_limit": 10000000000,
                 "gas_price": 1000,
-                "nonce": 11,
+                "nonce": 1,
                 "operations": [{
-                  "pay_coin": {
-                    "amount": 10000,
-                    "dest_address": "buQiAAYKvQ7ZozHLShvBZe5ChTfK2eR6hKcS"
-                  },
-                  "type": 7
+                    "create_account": {
+                        "dest_address": "buQBAfoMfXZVPpg9DaabMmM2EwUnfoVsTSVV",
+                        "init_balance": 10000000,
+                        "priv": {
+                            "master_weight": 1,
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                },
+                {
+                    "create_account": {
+                        "dest_address": "buQj8UyKbN3myVSerLDVXVXH47vWXfqtxKLm",
+                        "init_balance": 10000000,
+                        "priv": {
+                            "master_weight": 1,
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
                 }],
-                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
-                "tx_size":768
-              }
-            }
-        ]
+                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+            },
+            "tx_size": 313
+        },
+        {
+            "actual_fee": 313000,
+            "close_time": 1524031260097214,
+            "error_code": 0,
+            "error_desc": "",
+            "hash": "7d7cfc860acfd83865d01bb655ac772113833f0769264d6392c6220024b8f93f",
+            "ledger_seq": 6,
+            "signatures": [{
+                "public_key": "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                "sign_data": "fb7d9d87f4c9140b6e19a199091c6871e2380ad8e8a8fcada9b42a2911057111dc796d731f3f887e600aa89cc8692300f980723298a93b91db711155670d3e0d"
+            }],
+            "transaction": {
+                "fee_limit": 10000000000,
+                "gas_price": 1000,
+                "nonce": 2,
+                "operations": [{
+                    "create_account": {
+                        "dest_address": "buQntAvayDWkAhPh6CSrTWbiEniAL2ys5m2p",
+                        "init_balance": 10000000,
+                        "priv": {
+                            "master_weight": 1,
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                },
+                {
+                    "create_account": {
+                        "dest_address": "buQX5X9y59zbmqyFgFPQPcyUPcPnvwsLatsq",
+                        "init_balance": 10000000,
+                        "priv": {
+                            "master_weight": 1,
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                }],
+                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+            },
+            "tx_size": 313
+        }]
     }
 }
 ```
@@ -439,48 +502,144 @@ GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true&with_fee=true&wi
 {
    "error_code" : 0,
    "result" : {
-      "block_reward":	800000000,
-      "validators_reward":{
-        "a002953b57b025662c9f9de93df4c319cc39bec181c2b5": 800000000
-      },
-      "consensus_value" : {//当with_consvalue=true时才会显示
-         "close_time" : 1506478618406358,//共识结果产生的时间
-         "ledger_seq" : 136,//共识出来的区块号
-         "previous_ledger_hash" : "f7096c0d7b85e766a459c9d0eb8756268d560270c7a1cf51fc0371baaa6573f4",//上一个区块序号
-         "previous_proof" : "0aff010a2d080110022a2708011087012220f38b06d6fb8a825b537105e60e089f474b90f41de01ef43367c64553604d198612cd010a8801623030323034316136633636343233373139373465613061663862366636393136353230343964366262396539653363663739383363363763613362336563616538363337346565306465616665666563393432383138303936613335313335343635373861346632643761623664353133396339323737656264306634633931623563643739641240032efd35b8ea647dc9e687d7a79dc43344d8f58e9329070334778c70b2d7574b40fd26a9660f9f5240c93a123baaff70c6df812ac095e1b5e44790ca29ed4e1e",
+      "block_reward" : 800000000,
+      "consensus_value" : {
+         "close_time" : 1524031260097214,
+         "ledger_seq" : 6,
+         "previous_ledger_hash" : "ef329c7ed761e3065ab08f9e7672fd5f4e3ddd77b0be35598979aff8c21ada9b",
+         "previous_proof" : "0ac1010a2c080110022a26080310052220432dde2fd32a2a66da77647231821c87958f56c303bd08003633952d384eb0b61290010a4c623030316435363833363735303137666662633332366538666232303738653532316566383435373234363236353339356536383934633835323434656566643262666130386635393862661240deeb9b782410f0f86d897006cac8ad152e56e4f914e5d718706de84044ef98baef25512a337865772641d57090b5c77e9e2149dbd41910e8d6cd85c3387ea708",
          "previous_proof_plain" : {
             "commits" : [
                {
                   "pbft" : {
                      "commit" : {
-                        "sequence" : 135,
-                        "value_digest" : "f38b06d6fb8a825b537105e60e089f474b90f41de01ef43367c64553604d1986",
-                        "view_number" : 1
+                        "sequence" : 5,
+                        "value_digest" : "432dde2fd32a2a66da77647231821c87958f56c303bd08003633952d384eb0b6",
+                        "view_number" : 3
                      },
                      "round_number" : 1,
                      "type" : 2
                   },
                   "signature" : {
-                     "public_key" : "b002041a6c6642371974ea0af8b6f691652049d6bb9e9e3cf7983c67ca3b3ecae86374ee0deafefec942818096a3513546578a4f2d7ab6d5139c9277ebd0f4c91b5cd79d",
-                     "sign_data" : "032efd35b8ea647dc9e687d7a79dc43344d8f58e9329070334778c70b2d7574b40fd26a9660f9f5240c93a123baaff70c6df812ac095e1b5e44790ca29ed4e1e"
+                     "public_key" : "b001d5683675017ffbc326e8fb2078e521ef8457246265395e6894c85244eefd2bfa08f598bf",
+                     "sign_data" : "deeb9b782410f0f86d897006cac8ad152e56e4f914e5d718706de84044ef98baef25512a337865772641d57090b5c77e9e2149dbd41910e8d6cd85c3387ea708"
                   }
                }
             ]
          },
-         "txset" : null
+         "txset" : {
+            "txs" : [
+               {
+                  "signatures" : [
+                     {
+                        "public_key" : "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                        "sign_data" : "27866d70a58fc527b1ff1b4a693b8034b0078fc7ac7591fb05679abe5ca660db5c372922bfa8f26e76511e2c33386306ded7593874a6aec5baeeaddbd2012f06"
+                     }
+                  ],
+                  "transaction" : {
+                     "fee_limit" : 10000000000,
+                     "gas_price" : 1000,
+                     "nonce" : 1,
+                     "operations" : [
+                        {
+                           "create_account" : {
+                              "dest_address" : "buQBAfoMfXZVPpg9DaabMmM2EwUnfoVsTSVV",
+                              "init_balance" : 10000000,
+                              "priv" : {
+                                 "master_weight" : 1,
+                                 "thresholds" : {
+                                    "tx_threshold" : 1
+                                 }
+                              }
+                           },
+                           "type" : 1
+                        },
+                        {
+                           "create_account" : {
+                              "dest_address" : "buQj8UyKbN3myVSerLDVXVXH47vWXfqtxKLm",
+                              "init_balance" : 10000000,
+                              "priv" : {
+                                 "master_weight" : 1,
+                                 "thresholds" : {
+                                    "tx_threshold" : 1
+                                 }
+                              }
+                           },
+                           "type" : 1
+                        }
+                     ],
+                     "source_address" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+                  }
+               },
+               {
+                  "signatures" : [
+                     {
+                        "public_key" : "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                        "sign_data" : "fb7d9d87f4c9140b6e19a199091c6871e2380ad8e8a8fcada9b42a2911057111dc796d731f3f887e600aa89cc8692300f980723298a93b91db711155670d3e0d"
+                     }
+                  ],
+                  "transaction" : {
+                     "fee_limit" : 10000000000,
+                     "gas_price" : 1000,
+                     "nonce" : 2,
+                     "operations" : [
+                        {
+                           "create_account" : {
+                              "dest_address" : "buQntAvayDWkAhPh6CSrTWbiEniAL2ys5m2p",
+                              "init_balance" : 10000000,
+                              "priv" : {
+                                 "master_weight" : 1,
+                                 "thresholds" : {
+                                    "tx_threshold" : 1
+                                 }
+                              }
+                           },
+                           "type" : 1
+                        },
+                        {
+                           "create_account" : {
+                              "dest_address" : "buQX5X9y59zbmqyFgFPQPcyUPcPnvwsLatsq",
+                              "init_balance" : 10000000,
+                              "priv" : {
+                                 "master_weight" : 1,
+                                 "thresholds" : {
+                                    "tx_threshold" : 1
+                                 }
+                              }
+                           },
+                           "type" : 1
+                        }
+                     ],
+                     "source_address" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+                  }
+               }
+            ]
+         }
+      },
+      "fees" : {
+         "base_reserve" : 10000000,
+         "gas_price" : 1000
       },
       "header" : {
-         "account_tree_hash" : "d8a04da7daad5eb911c285ec56a4a5434d66af22f29f42b74373908c3efe64e0", //账号树的hash
-         "close_time" : 1506478618406358, //本区块生成的时间
-         "consensus_value_hash" : "5067eda92d887ce90f7f96b8ed1a000bd69755905286ed092fda00175e781a07", //共识结果的hash
-         "hash" : "9a3c4dc78b40eaa18b962688b24a57b160d93703e9cfaef88c0a27bdff369bee",//本区块的hash
-         "previous_hash" : "f7096c0d7b85e766a459c9d0eb8756268d560270c7a1cf51fc0371baaa6573f4",//上一个区块的hash
-         "seq" : 136, //区块的序号
-         "tx_count" : 1, //截止到当前区块，所有交易的数量
-         "validators_hash" : "b744ccae0ecd1b0c09923564bc1556949e96f78755bdbcec06a82ddad420cca4", //共识节点集合的hash
-         "version" : 1000 //区块版本
+         "account_tree_hash" : "6aca37dfe83f213942b21d02618b989619cfd7c0e67a8a14b0f7599dd4010aad",
+         "close_time" : 1524031260097214,
+         "consensus_value_hash" : "14a65d69f619395135da2ff98281d5707494801f12184a4318b9a76383e651a8",
+         "fees_hash" : "916daa78d264b3e2d9cff8aac84c943a834f49a62b7354d4fa228dab65515313",
+         "hash" : "2cf378b326ab0026625c8d036813aef89a0b383e75055b80cb7cc25a657a9c5d",
+         "previous_hash" : "ef329c7ed761e3065ab08f9e7672fd5f4e3ddd77b0be35598979aff8c21ada9b",
+         "seq" : 6,
+         "tx_count" : 2,
+         "validators_hash" : "d857aa40ecdb123415f893159321eb223e4dbc11863daef86f35565dd1633316",
+         "version" : 1000
       },
-      "validators" : [ "a002953b57b025662c9f9de93df4c319cc39bec181c2b5" ]//with_validator=true时才显示，共识节点集合
+      "validators" : [
+         {
+            "address" : "buQhmPKU1xTyC3n7zJ8zLQXtuDJmM2zTrJey"
+         }
+      ],
+      "validators_reward" : {
+         "buQhmPKU1xTyC3n7zJ8zLQXtuDJmM2zTrJey" : 800000000
+      }
    }
 }
 ```
