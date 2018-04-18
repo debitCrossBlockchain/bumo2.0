@@ -376,8 +376,6 @@ namespace bumo {
 				}
 				Json::Value m;
 				txfrm.ToJson(m);
-				int txSize = txfrm.GetProtoTxEnv().ByteSize();
-				m["tx_size"] = txSize;
 				txs[txs.size()] = m;
 			}
 		} while (false);
@@ -645,7 +643,6 @@ namespace bumo {
 				result["block_reward"] = blockReward;
 
 				protocol::ValidatorSet sets;
-				LedgerManager::Instance().GetValidators(seq - 1, sets);
 				if (!LedgerManager::Instance().GetValidators(seq - 1, sets)) {
 					error_code = protocol::ERRCODE_NOT_EXIST;
 					break;
@@ -686,7 +683,7 @@ namespace bumo {
 				}
 
 				int64_t randomIndex = seq % sets.validators_size();
-				int64_t baseReward = blockReward * sets.validators(randomIndex).pledge_coin_amount() / totalPledges;
+				int64_t baseReward = validatorsReward[sets.validators(randomIndex).address()].asInt64();
 				validatorsReward[sets.validators(randomIndex).address()] = baseReward + leftReward;
 			}
 			

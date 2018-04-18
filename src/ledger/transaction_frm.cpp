@@ -79,6 +79,7 @@ namespace bumo {
 		result["ledger_seq"] = ledger_seq_;
 		result["actual_fee"] = actual_fee_;
 		result["hash"] = utils::String::BinToHexString(hash_);
+		result["tx_size"] = transaction_env_.ByteSize();
 	}
 
 	void TransactionFrm::CacheTxToJson(Json::Value &result){
