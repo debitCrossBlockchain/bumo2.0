@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protocol;
-option java_package = "cn.bumo.blockchain.adapter3";
+option java_package = "org.bumo.sdk.core.extend.protobuf";
 
 message KeyPair{
 	string key = 1;
