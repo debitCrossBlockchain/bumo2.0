@@ -321,7 +321,8 @@ GET /getTransactionHistory?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc3592
                   },
                   "type": 7
                 }],
-                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+                "tx_size":768
               }
             }
         ]
@@ -420,7 +421,7 @@ GET /getTransactionCache?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d
 ### 查询区块头
 
 ```text
-GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true
+GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true&with_fee=true&with_block_reward=true
 ```
 
 | 参数           | 描述                                      |
@@ -429,6 +430,7 @@ GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true
 | with_validator | 默认false，不显示验证节点列表       |
 | with_consvalue | 默认false，不显示共识值             |
 | with_fee       | 默认false，不显示费用配置             |
+| with_block_reward | 默认false，不显示区块奖励和验证节点奖励             |
 
 
 - 如果查询到ledger则返回内容:
@@ -437,6 +439,10 @@ GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true
 {
    "error_code" : 0,
    "result" : {
+      "block_reward":	800000000,
+      "validators_reward":{
+        "a002953b57b025662c9f9de93df4c319cc39bec181c2b5": 800000000
+      },
       "consensus_value" : {//当with_consvalue=true时才会显示
          "close_time" : 1506478618406358,//共识结果产生的时间
          "ledger_seq" : 136,//共识出来的区块号
