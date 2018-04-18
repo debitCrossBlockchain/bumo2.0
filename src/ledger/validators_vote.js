@@ -3,7 +3,7 @@
 const validatorSetSize       = 100;
 const passRate               = 0.7;
 const effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
-const minPledgeAmount        = 100 * 100000000;
+const minPledgeAmount        = 50000 * 100000000;
 const minSuperadditionAmount = 100 * 100000000;
 const applicantVar    = 'applicant_';
 const abolishVar      = 'abolish_';
