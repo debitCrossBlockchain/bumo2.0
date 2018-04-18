@@ -538,15 +538,6 @@ namespace bumo {
 			return false;
 		}
 
-		bool average_allocte = false;
-		int64_t total_pledge_amount = 0;
-		for (int32_t i = 0; i < set.validators_size(); i++) {
-			total_pledge_amount += set.validators(i).pledge_coin_amount();
-		}
-		if (total_pledge_amount == 0) {
-			average_allocte = true;
-		}
-
 		int64_t left_reward = total_reward;
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = ledger_.header().seq() % set.validators_size();
@@ -562,17 +553,11 @@ namespace bumo {
 				random_account = account;
 			}
 
-			int64_t fee = 0;
-			if (average_allocte) {
-				fee = average_fee;
-			}
-			else {
-				fee = total_reward*set.validators(i).pledge_coin_amount() / total_pledge_amount;
-			}
-			left_reward -= fee;
-			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, left_reward, ledger_.header().seq());
+			left_reward -= average_fee;
+
+			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), average_fee, left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
-			proto_account.set_balance(proto_account.balance() + fee);
+			proto_account.set_balance(proto_account.balance() + average_fee);
 		}
 		if (left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
