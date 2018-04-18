@@ -580,7 +580,7 @@ namespace bumo {
 				}
 			}
 
-			total_op_fee += FeeCompulate::OperationFee(tran.gas_price(), ope.type());
+			total_op_fee += FeeCompulate::OperationFee(tran.gas_price(), ope.type(), &ope);
 
 			result_ = OperationFrm::CheckValid(ope, ope_source);
 
