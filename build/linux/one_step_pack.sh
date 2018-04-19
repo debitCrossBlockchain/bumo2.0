@@ -15,13 +15,12 @@ make clean_build
 if [ -n "$1" ];then
     if [ "$1" == "git" ];then
         echo "git fetch..."
-		#git fetch
-		git fetch --all;
-
-		#git reset 
-		git reset --hard origin/release/1.0.0.0
-		git pull
-        echo "$git fetch ok"
+		#git fetch --all;
+		#git reset --hard origin/release/1.0.0.0
+		#git reset --hard origin/develop
+        echo "$git fetch error...."
+		
+		exit
     fi
 fi
 
@@ -43,7 +42,7 @@ mkdir bumochain/bin
 mkdir bumochain/log
 mkdir bumochain/coredump
 cp ../build/win32/jslib/jslint.js bumochain/jslib/
-cp ../build/win32/config/bumo-publicnet.json bumochain/config/bumo.json
+cp ../build/win32/config/* bumochain/config/
 cp bumo bumochain/bin/
 cp ../src/3rd/v8_target/linux/*.bin bumochain/bin/
 cp ../src/3rd/v8_target/linux/*.dat bumochain/bin/

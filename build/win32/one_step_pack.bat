@@ -20,13 +20,12 @@ echo %CURRENT_DATE_TIME_STAMP%
 
 cd ../../
 if "%1"=="git" (
-		echo OK
-		echo "git fetch..."
-		git fetch --all
-	 
-		git reset --hard origin/release/1.0.0.0
-		git pull
-		echo "$git fetch ok"
+		::echo "git fetch..."
+		::git fetch --all
+		::git reset --hard origin/release/1.0.0.0
+		::git reset --hard origin/develop
+		exit
+		echo "$git error"
 	) else echo NO 
 
 
@@ -50,7 +49,7 @@ copy Bumo.exe bumochain\bin
 copy *.bin bumochain\bin
 copy *.dat bumochain\bin
 copy *.dll bumochain\bin
-copy ..\config\bumo-publicnet.json bumochain\config\bumo.json
+copy ..\config\* bumochain\config\
 copy ..\jslib\jslint.js bumochain\jslib\
 
 ..\zip.exe -r bumochain-%CURRENT_DATE_TIME_STAMP%.zip bumochain
