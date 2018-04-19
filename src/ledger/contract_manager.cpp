@@ -588,7 +588,7 @@ namespace bumo{
 
 	bool V8Contract::RemoveRandom(v8::Isolate* isolate, Json::Value &error_msg) {
 		v8::TryCatch try_catch(isolate);
-		std::string js_file = "delete String.prototype.localeCompare; delete Date; delete Math.random;";
+		std::string js_file = "delete String.prototype.localeCompare; delete Date; delete Math;";
 
 		v8::Local<v8::String> source = v8::String::NewFromUtf8(isolate, js_file.c_str());
 		v8::Local<v8::Script> script;
