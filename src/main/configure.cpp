@@ -172,15 +172,12 @@ namespace bumo {
 		}
 
 		//for fee
-		Configure::GetValue(value["fees"], "byte_fee", fees_.byte_fee_);
+		Configure::GetValue(value["fees"], "gas_price", fees_.gas_price_);
 		Configure::GetValue(value["fees"], "base_reserve", fees_.base_reserve_);
-		Configure::GetValue(value["fees"], "create_account_fee", fees_.create_account_fee_);
-		Configure::GetValue(value["fees"], "pay_fee", fees_.pay_fee_);
-		Configure::GetValue(value["fees"], "issue_asset_fee", fees_.issue_asset_fee_);
-		Configure::GetValue(value["fees"], "set_metadata_fee", fees_.set_metadata_fee_);
-		Configure::GetValue(value["fees"], "set_sigure_weight_fee", fees_.set_sigure_weight_fee_);
-		Configure::GetValue(value["fees"], "set_threshold_fee", fees_.set_threshold_fee_);
-		Configure::GetValue(value["fees"], "pay_coin_fee", fees_.pay_coin_fee_);
+		if (fees_.gas_price_ < 0)
+			fees_.gas_price_ = 0;
+		if (fees_.base_reserve_ < 0)
+			fees_.base_reserve_ = 0;
 		return true;
 	}
 

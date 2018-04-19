@@ -137,8 +137,8 @@ namespace bumo {
 			Json::Value &logs,
 			Json::Value &txs,
 			Json::Value &rets,
-			Json::Value &fee,
-			Json::Value &stat);
+			Json::Value &stat,
+			int32_t signature_number = 0);
 
 		//<0 : notfound 1: found and success 0: found and failed
 		int32_t CheckComplete(const std::string &chash);

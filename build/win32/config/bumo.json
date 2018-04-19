@@ -20,17 +20,21 @@
         "listen_address": "0.0.0.0:36003"
     },
     "ledger": {
-        "max_trans_per_ledger": 1000,
-        "max_ledger_per_message": 50,
-        "max_trans_in_memory": 2000,
+        "max_trans_per_ledger": 10000,
+        "max_ledger_per_message": 15,
+        "max_trans_in_memory": 20000,
         "max_apply_ledger_per_round": 5,
-        "hardfork_points": []
+        "hardfork_points": [],
+        "tx_pool":{
+            "queue_limit":10240,
+            "queue_per_account_txs_limit":64
+        }
     },
     "genesis": {
         "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
         "fees": {
             "base_reserve": 10000000,
-            "byte_fee": 1000
+            "gas_price": 1000
         },
         "validators": ["buQmKvHXJZYDdx4wWap3aQ27miWZnneti22f", "buQoWvx4YZtShfJKAJ9EPK7j3VY3o9ejyXyF", "buQjprDac98CemsqXgGC9dKegoLDAdpSGSMJ", "buQYoyrr5XhTsS8Jx9K6itvBCfopntCNSQqG"]
     },

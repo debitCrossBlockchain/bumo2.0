@@ -60,9 +60,6 @@
     <ClCompile Include="..\..\test\testlib\test_v8_terminate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\test\testlib\test_reward.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\test\testlib\test.h">

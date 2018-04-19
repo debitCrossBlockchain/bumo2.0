@@ -20,7 +20,7 @@
 #include <utils/net.h>
 #include <common/general.h>
 #include <main/configure.h>
-#include "pbft.h"
+#include "bft.h"
 
 namespace bumo {
 

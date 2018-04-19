@@ -2,8 +2,8 @@
 const proposalRecordsKey = 'proposalRecordsKey';
 const voteRecordKeyPrefix ='voteRecords_';
 const nonceKey ='nonce';
+const passRate = 0.7;
 const effectiveProposalInterval =15*1000000*60*60*24;
-const votePassRate =0.8;
 let proposalRecords = {};
 let validators = {};
 
@@ -65,7 +65,9 @@ function voteFee(proposalId) {
   proposalRecords[proposalId].voteCount +=1;
   proposalRecordBody[accountId] = 1;
 
-  if(proposalRecords[proposalId].voteCount >= parseInt(Object.keys(validators).length*votePassRate)) {
+
+  let thredhold =parseInt(Object.keys(validators).length * passRate + 0.5);
+  if(proposalRecords[proposalId].voteCount >= thredhold) {
     let output = {};
     output[proposalRecords[proposalId].feeType] = proposalRecords[proposalId].price;
     delete proposalRecords[proposalId];
@@ -100,7 +102,9 @@ function proposalFee(feeType,price) {
         storageDel(key); 
         proposalRecords[newProposalId] = {'accountId':accountId,'proposalId':newProposalId,'feeType':feeType,'price':price,'voteCount':1,'expireTime':blockTimestamp+effectiveProposalInterval };               
         storageStore(proposalRecordsKey,JSON.stringify(proposalRecords));
-        storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({accountId:1}));
+        let v={};
+        v[accountId] =1;
+        storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify(v));
         return false;
       }
       else{
@@ -112,7 +116,9 @@ function proposalFee(feeType,price) {
   if (!exist) {
     proposalRecords[newProposalId] = { 'accountId': accountId, 'proposalId': newProposalId, 'feeType': feeType, 'price': price, 'voteCount': 1,'expireTime':blockTimestamp+effectiveProposalInterval };
     storageStore(proposalRecordsKey, JSON.stringify(proposalRecords));
-    storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify({accountId:1}));
+    let v={};
+    v[accountId] =1;
+    storageStore(voteRecordKeyPrefix + newProposalId,JSON.stringify(v));
   }  
 
   storageStore(nonceKey,nonce.toString());
@@ -145,7 +151,7 @@ function main(input) {
   }
   else if (para.method === 'proposalFee') {
     assert(para.params.feeType !==undefined && para.params.price !==undefined,'params feeType price undefined');
-    assert(Number.isInteger(para.params.feeType) && para.params.feeType>0 && para.params.feeType<10,'feeType error');
+    assert(Number.isInteger(para.params.feeType) && para.params.feeType>0 && para.params.feeType<3,'feeType error');
     assert(Number.isSafeInteger(para.params.price) && para.params.price>=0,'price should be int type and price>=0');
     proposalFee(para.params.feeType,para.params.price);
   }

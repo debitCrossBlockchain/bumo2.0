@@ -58,6 +58,7 @@ namespace bumo {
 		int32_t total_peers_count_;
 
 		std::error_code last_ec_;
+		int64_t last_update_peercache_time_;
 
 		void Clean();
 

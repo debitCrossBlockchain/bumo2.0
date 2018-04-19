@@ -31,7 +31,7 @@ namespace bumo {
 		~IConsensusNotify() {};
 
 		virtual std::string OnValueCommited(int64_t request_seq, const std::string &value, const std::string &proof, bool calculate_total) = 0;
-		virtual void OnViewChanged() = 0;
+		virtual void OnViewChanged(const std::string &last_consvalue) = 0;
 		virtual int32_t CheckValue(const std::string &value) = 0;
 		virtual void SendConsensusMessage(const std::string &message) = 0;
 		virtual std::string FetchNullMsg() = 0;
@@ -58,7 +58,7 @@ namespace bumo {
 		int32_t CheckValue(const std::string &value);
 		bool SendMessage(const std::string &message);
 		std::string OnValueCommited(int64_t request_seq, const std::string &value, const std::string &proof, bool calculate_total);
-		void OnViewChanged();
+		void OnViewChanged(const std::string &last_consvalue);
 		
 		//only called by drived class
 		bool UpdateValidators(const protocol::ValidatorSet &validators);
@@ -75,7 +75,6 @@ namespace bumo {
 		virtual bool Initialize();
 		virtual bool Exit();
 		virtual bool Request(const std::string &value) { return true; };
-		virtual bool RepairStatus() { return true; }; // true : it is normal, false : waiting for pbft's notify
 		virtual bool OnRecv(const ConsensusMsg &message) { return true; };
 		virtual size_t GetQuorumSize() { return 0; };
 

@@ -40,12 +40,10 @@ namespace bumo {
 		consensus_ = ConsensusManager::Instance().GetConsensus();
 		consensus_->SetNotify(this);
 
-		if (consensus_->RepairStatus()) {
-			//start consensus
-			start_consensus_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this](int64_t data) {
-				StartConsensus();
-			});
-		}
+		//start consensus
+		start_consensus_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this](int64_t data) {
+			StartConsensus("");
+		});
 
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
 		if (lcl.version() < General::LEDGER_VERSION) {
@@ -69,7 +67,7 @@ namespace bumo {
 	void GlueManager::StartLedgerCloseTimer() {
 		//kill the ledger check timer
 		utils::Timer::Instance().DelTimer(ledgerclose_check_timer_);
-		ledgerclose_check_timer_ = utils::Timer::Instance().AddTimer(MAX_LEDGER_TIMESPAN_SECONDS + 20 * utils::MICRO_UNITS_PER_SEC, 0,
+		ledgerclose_check_timer_ = utils::Timer::Instance().AddTimer(MAX_LEDGER_TIMESPAN_SECONDS + 10 * utils::MICRO_UNITS_PER_SEC, 0,
 			[this](int64_t data) {
 			LOG_INFO("Ledger close timeout, call consensus view change");
 			consensus_->OnTxTimeout();
@@ -89,9 +87,7 @@ namespace bumo {
 		return true;
 	}
 
-	bool GlueManager::StartConsensus() {
-		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
-		protocol::TransactionEnvSet txset_raw = tx_pool_->TopTransaction(Configure::Instance().ledger_configure_.max_trans_per_ledger_);
+	bool GlueManager::StartConsensus(const std::string &last_consavlue) {
 
 		time_start_consenus_ = utils::Timestamp::HighResolution();
 		if (!consensus_->IsLeader()) {
@@ -102,6 +98,9 @@ namespace bumo {
 			LOG_INFO("Start consensus process, it is leader, just continue");
 		}
 
+		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
+		protocol::TransactionEnvSet txset_raw = tx_pool_->TopTransaction(Configure::Instance().ledger_configure_.max_trans_per_ledger_);
+
 		int64_t next_close_time = utils::Timestamp::Now().timestamp();
 		if (next_close_time < lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_) {
 			next_close_time = lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_;
@@ -111,8 +110,21 @@ namespace bumo {
 		std::string proof;
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof);
 
-		//protocol::TransactionEnvSet txset_raw = tx_pool_->top.GetRaw();
-		
+		if (!last_consavlue.empty()) {
+			LOG_INFO("Last prepared consvalue not empty, value digest(%s)", 
+				utils::String::BinToHexString(HashWrapper::Crypto(last_consavlue)).c_str());
+			//protocol::TransactionEnvSet txset_raw = tx_pool_->top.GetRaw();
+			if (CheckValue(last_consavlue) == Consensus::CHECK_VALUE_VALID) {
+				protocol::ConsensusValue propose_value;
+				propose_value.ParseFromString(last_consavlue);
+				LOG_INFO("Proposed last consvalue %d tx(s), lcl hash(%s) tx(s)", propose_value.txset().txs_size(),
+					utils::String::Bin4ToHexString(lcl.hash()).c_str());
+
+				return consensus_->Request(last_consavlue);
+			}
+		}
+
+
 		protocol::ConsensusValue propose_value;
 		do {
 			*propose_value.mutable_txset() = txset_raw;
@@ -300,7 +312,7 @@ namespace bumo {
 
 			if (consensus_->IsLeader()) {
 				start_consensus_timer_ = utils::Timer::Instance().AddTimer(waiting_time, 0, [this](int64_t data) {
-					StartConsensus();
+					StartConsensus("");
 				});
 
 				LOG_INFO("Close ledger(" FMT_I64 ") successful, use time(" FMT_I64 "ms), waiting(" FMT_I64 "ms) to start next consensus",
@@ -318,12 +330,10 @@ namespace bumo {
 		return lcl1.hash();
 	}
 
-	void GlueManager::OnViewChanged() {
+	void GlueManager::OnViewChanged(const std::string &last_consvalue) {
 		LOG_INFO("Consenter on view changed");
-		if (consensus_->RepairStatus()) {
-			StartConsensus();
-			StartLedgerCloseTimer();
-		}
+		StartConsensus(last_consvalue);
+		StartLedgerCloseTimer();
 	}
 
 	bool GlueManager::CheckValueAndProof(const std::string &consensus_value, const std::string &proof) {
@@ -383,7 +393,7 @@ namespace bumo {
 
 		//check previous ledger sequence
 		if (consensus_value.ledger_seq() != lcl.seq() + 1) {
-			LOG_ERROR("Check value failed, previous ledger seq(" FMT_I64 ") not equal to consensus message ledger seq( " FMT_I64 ")",
+			LOG_ERROR("Check value failed, previous ledger seq(" FMT_I64 ") + 1 not equal to consensus message ledger seq( " FMT_I64 ")",
 				lcl.seq(),
 				consensus_value.ledger_seq());
 			return Consensus::CHECK_VALUE_MAYVALID;

@@ -45,7 +45,6 @@ namespace bumo {
 		enabled_ = false;
 		apply_time_ = -1;
 		total_fee_ = 0;
-		total_real_fee_ = 0;
 		is_test_mode_ = false;
 	}
 
@@ -86,6 +85,10 @@ namespace bumo {
 			env_store.set_close_time(ledger_.header().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
+			if (ptr->GetResult().code() != 0)
+				env_store.set_actual_fee(ptr->GetFeeLimit());
+			else
+				env_store.set_actual_fee(ptr->GetActualFee());
 
 			batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 			list.add_entry(ptr->GetContentHash());
@@ -222,7 +225,6 @@ namespace bumo {
 		value_ = std::make_shared<protocol::ConsensusValue>(request);
 		uint32_t success_count = 0;
 		total_fee_ = 0;
-		total_real_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
 		//init the txs map
@@ -274,12 +276,12 @@ namespace bumo {
 					error_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 				}
 				else {
+					tx_frm->ReturnFee(total_fee_);
 					tx_frm->environment_->Commit();
 				}
 			}
 
 			environment_->ClearChangeBuf();
-			total_real_fee_ += tx_frm->GetRealFee();
 			apply_tx_frms_.push_back(tx_frm);
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
@@ -307,7 +309,6 @@ namespace bumo {
 		value_ = std::make_shared<protocol::ConsensusValue>(request);
 		uint32_t success_count = 0;
 		total_fee_ = 0;
-		total_real_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
 		//init the txs map
@@ -357,12 +358,12 @@ namespace bumo {
 					error_txs.insert(i);//for check
 				}
 				else {
+					tx_frm->ReturnFee(total_fee_);
 					tx_frm->environment_->Commit();
 				}
 			}
 
 			environment_->ClearChangeBuf();
-			total_real_fee_ += tx_frm->GetRealFee();
 			apply_tx_frms_.push_back(tx_frm);
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
@@ -393,7 +394,6 @@ namespace bumo {
 		value_ = std::make_shared<protocol::ConsensusValue>(request);
 		uint32_t success_count = 0;
 		total_fee_= 0;
-		total_real_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
 		//init the txs map
@@ -427,7 +427,6 @@ namespace bumo {
 
 			if ( expire_txs_check.find(i) != expire_txs_check.end()) {
 				// follow the consensus value and do not apply
-				tx_frm->AddRealFee(tx_frm->GetSelfByteFee());
 				tx_frm->ApplyExpireResult();
 			}
 			else {
@@ -438,12 +437,12 @@ namespace bumo {
 						error_txs.insert(i);//for check
 				}
 				else {
+						tx_frm->ReturnFee(total_fee_);
 						tx_frm->environment_->Commit();
 				}
 			}
 
 			environment_->ClearChangeBuf();
-			total_real_fee_ += tx_frm->GetRealFee();
 			apply_tx_frms_.push_back(tx_frm);			
 			ledger_.add_transaction_envs()->CopyFrom(txproto);
 			ledger_context->transaction_stack_.pop_back();
@@ -539,15 +538,6 @@ namespace bumo {
 			return false;
 		}
 
-		bool average_allocte = false;
-		int64_t total_pledge_amount = 0;
-		for (int32_t i = 0; i < set.validators_size(); i++) {
-			total_pledge_amount += set.validators(i).pledge_coin_amount();
-		}
-		if (total_pledge_amount == 0) {
-			average_allocte = true;
-		}
-
 		int64_t left_reward = total_reward;
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = ledger_.header().seq() % set.validators_size();
@@ -563,17 +553,11 @@ namespace bumo {
 				random_account = account;
 			}
 
-			int64_t fee = 0;
-			if (average_allocte) {
-				fee = average_fee;
-			}
-			else {
-				fee = total_reward*set.validators(i).pledge_coin_amount() / total_pledge_amount;
-			}
-			left_reward -= fee;
-			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), fee, left_reward, ledger_.header().seq());
+			left_reward -= average_fee;
+
+			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), average_fee, left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
-			proto_account.set_balance(proto_account.balance() + fee);
+			proto_account.set_balance(proto_account.balance() + average_fee);
 		}
 		if (left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();

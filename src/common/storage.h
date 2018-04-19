@@ -50,7 +50,7 @@ namespace bumo {
 	public:
 		KeyValueDb();
 		~KeyValueDb();
-		virtual bool Open(const std::string &db_path) = 0;
+		virtual bool Open(const std::string &db_path, int max_open_files) = 0;
 		virtual bool Close() = 0;
 		virtual int32_t Get(const std::string &key, std::string &value) = 0;
 		virtual bool Put(const std::string &key, const std::string &value) = 0;
@@ -73,7 +73,7 @@ namespace bumo {
 		LevelDbDriver();
 		~LevelDbDriver();
 
-		bool Open(const std::string &db_path);
+		bool Open(const std::string &db_path, int max_open_files);
 		bool Close();
 		int32_t Get(const std::string &key, std::string &value);
 		bool Put(const std::string &key, const std::string &value);
@@ -92,7 +92,7 @@ namespace bumo {
 		RocksDbDriver();
 		~RocksDbDriver();
 
-		bool Open(const std::string &db_path);
+		bool Open(const std::string &db_path, int max_open_files);
 		bool Close();
 		int32_t Get(const std::string &key, std::string &value);
 		bool Put(const std::string &key, const std::string &value);

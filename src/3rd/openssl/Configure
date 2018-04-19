@@ -1261,6 +1261,7 @@ $multilib="" if !-d "$prefix/lib$multilib";
 $libdir="lib$multilib" if $libdir eq "";
 
 $cflags = "$cflags$exp_cflags";
+$cflags = "-fPIC $cflags";
 
 # '%' in $lflags is used to split flags to "pre-" and post-flags
 my ($prelflags,$postlflags)=split('%',$lflags);

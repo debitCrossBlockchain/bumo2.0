@@ -41,6 +41,7 @@ mkdir bumochain/data
 mkdir bumochain/jslib
 mkdir bumochain/bin
 mkdir bumochain/log
+mkdir bumochain/coredump
 cp ../build/win32/jslib/jslint.js bumochain/jslib/
 cp ../build/win32/config/bumo-publicnet.json bumochain/config/bumo.json
 cp bumo bumochain/bin/

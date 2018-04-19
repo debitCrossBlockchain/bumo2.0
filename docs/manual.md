@@ -89,6 +89,32 @@ make install
 | script | 启停脚本目录
 | log | 运行日志存储目录
 
+
+### __切换测试环境__
+
+如果需要切换 BUMO 的运行环境，需要手动替换配置文件。步骤如下：
+
+1、首先需要停止 bumo 程序，
+```bash
+    service bumo stop
+```
+2、替换配置文件
+```bash
+    cd /usr/local/bumochain/config/
+    #拷贝目标环境配置文件
+    cp bumo-testnet.json bumo.json  
+
+    #配置文件环境说明
+    bumo.json           ##默认调试环境
+    bumo-mainnet.json   ##主网环境配置文件，尚未启用
+    bumo-testnet.json   ##测试网配置文件
+```
+3、并清空数据库并启动服务
+```bash
+    cd ../
+    ./bin/bumo --dropdb
+    service bumo start
+```
 ### __运行__
 
 ```bash
@@ -180,17 +206,6 @@ make install
 			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
 		]
     }
-```
-
-##### 监控配置
-
-```json
-    "monitor": {
-		"id" : "3736F393B4CB4D69BC9B0FD01E985F45", // 监控惟一标识
-        "center": "127.0.0.1:19336",  // 监控中心URL
-		"disk_path":"/,/mnt/", // 所检测的磁盘分区
-		"enabled" : true // 是否启动监控
-    },
 ```
 
 #### 多节点配置说明

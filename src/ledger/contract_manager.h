@@ -61,7 +61,8 @@ namespace bumo{
 		std::string input_;
 		std::string source_address_;
 		int64_t contract_balance_;
-		int64_t fee_;
+		int64_t fee_limit_;
+		int64_t gas_price_;
 	};
 
 	class TransactionTestParameter :public TestParameter{
@@ -173,8 +174,6 @@ namespace bumo{
 		static void CallBackGetTransactionInfo(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackContractQuery(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//static void CallBackGetThisAddress(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//make a transaction
-		static void CallBackDoTransaction(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static V8Contract *UnwrapContract(v8::Local<v8::Object> obj);
 		static bool JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue);
 		static bool CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue);
@@ -182,8 +181,8 @@ namespace bumo{
 		//assert a express
 		static void CallBackAssert(const v8::FunctionCallbackInfo<v8::Value>& args);
 
-		//to satoshi, equal to * pow(10, 8)
-		static void CallBackToSatoshi(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//to base unit, equal to * pow(10, 8)
+		static void CallBackToBaseUnit(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//get balance of the given account 
 		static void CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//get the hash of one of the 1024 most recent complete blocks

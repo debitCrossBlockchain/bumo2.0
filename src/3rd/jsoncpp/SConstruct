@@ -118,11 +118,11 @@ elif platform == 'mingw':
     env.Append( CPPDEFINES=[ "WIN32", "NDEBUG", "_MT" ] )
 elif platform.startswith('linux-gcc'):
     env.Tool( 'default' )
-    env.Append( LIBS = ['pthread'], CCFLAGS = "-Wall" )
+    env.Append( LIBS = ['pthread'], CCFLAGS = "-Wall -fPIC" )
     env['SHARED_LIB_ENABLED'] = True
 elif platform.startswith('mac-clang'):
     env.Tool( 'default' )
-    env.Append( LIBS = ['pthread'], CCFLAGS = "-Wall -DOS_MAC" )
+    env.Append( LIBS = ['pthread'], CCFLAGS = "-Wall -DOS_MAC -fPIC" )
     env['SHARED_LIB_ENABLED'] = True
     env['CXX'] = 'clang++'  
 else:
