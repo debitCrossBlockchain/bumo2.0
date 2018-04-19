@@ -72,6 +72,7 @@ add_subdirectory(utils)
 add_subdirectory(proto)
 add_subdirectory(ledger)
 add_subdirectory(common)
+add_subdirectory(libbumo_tools)
 add_subdirectory(overlay)
 add_subdirectory(consensus)
 add_subdirectory(daemon)
@@ -85,7 +86,7 @@ install(
 )
 
 install(
-    DIRECTORY ${BUMO_SRC_DIR}/3rd/basic/bin/
+    DIRECTORY ${BUMO_ROOT_DIR}/bin/
     DESTINATION ${BUMOCHAIN}/bin
     FILES_MATCHING PATTERN "*.bin" PATTERN "*.dat"
 )
@@ -93,7 +94,13 @@ install(
 install(
     DIRECTORY ${BUMO_ROOT_DIR}/build/win32/config/
     DESTINATION ${BUMOCHAIN}/config
-    REGEX "slave.json|test_case.json|monitor.json|ca.pem" EXCLUDE
+    FILES_MATCHING PATTERN "bumo.json" PATTERN "bumo-mainnet.json" PATTERN "bumo-testnet.json"
+)
+
+install(
+    DIRECTORY ${BUMO_ROOT_DIR}/build/win32/jslib/
+    DESTINATION ${BUMOCHAIN}/jslib
+    FILES_MATCHING PATTERN "*.js"
 )
 
 set(SUPPLEMENT ${BUMO_ROOT_DIR}/build/linux/MakeSupplement)
@@ -116,6 +123,7 @@ file(APPEND ${SUPPLEMENT} "\tsudo ln -s -f /etc/init.d/bumod /etc/rc3.d/S50bumod
 file(APPEND ${SUPPLEMENT} "\tsudo ln -s -f /etc/init.d/bumod /etc/rc4.d/S50bumod;\\\n")
 file(APPEND ${SUPPLEMENT} "\tsudo ln -s -f /etc/init.d/bumod /etc/rc5.d/S50bumod;\\\n")
 file(APPEND ${SUPPLEMENT} "\tsudo mkdir -p ${FIX_DIR}/data;\n")
+file(APPEND ${SUPPLEMENT} "\tsudo mkdir -p ${FIX_DIR}/coredump;\n")
 
 file(APPEND ${SUPPLEMENT} "\nuninstall:\n")
 file(APPEND ${SUPPLEMENT} "\trm -f /etc/rc1.d/S99bumo;\\\n")

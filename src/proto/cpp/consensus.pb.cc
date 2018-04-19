@@ -30,15 +30,15 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* PbftCommit_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftCommit_reflection_ = NULL;
-const ::google::protobuf::Descriptor* PbftCheckPoint_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  PbftCheckPoint_reflection_ = NULL;
 const ::google::protobuf::Descriptor* PbftPreparedSet_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftPreparedSet_reflection_ = NULL;
 const ::google::protobuf::Descriptor* PbftViewChange_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftViewChange_reflection_ = NULL;
+const ::google::protobuf::Descriptor* PbftViewChangeWithRawValue_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  PbftViewChangeWithRawValue_reflection_ = NULL;
 const ::google::protobuf::Descriptor* PbftNewView_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   PbftNewView_reflection_ = NULL;
@@ -129,24 +129,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftCommit),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCommit, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCommit, _is_default_instance_));
-  PbftCheckPoint_descriptor_ = file->message_type(3);
-  static const int PbftCheckPoint_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, sequence_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, replica_id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, state_digest_),
-  };
-  PbftCheckPoint_reflection_ =
-    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      PbftCheckPoint_descriptor_,
-      PbftCheckPoint::default_instance_,
-      PbftCheckPoint_offsets_,
-      -1,
-      -1,
-      -1,
-      sizeof(PbftCheckPoint),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftCheckPoint, _is_default_instance_));
-  PbftPreparedSet_descriptor_ = file->message_type(4);
+  PbftPreparedSet_descriptor_ = file->message_type(3);
   static const int PbftPreparedSet_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftPreparedSet, pre_prepare_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftPreparedSet, prepare_),
@@ -162,12 +145,11 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftPreparedSet),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftPreparedSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftPreparedSet, _is_default_instance_));
-  PbftViewChange_descriptor_ = file->message_type(5);
-  static const int PbftViewChange_offsets_[5] = {
+  PbftViewChange_descriptor_ = file->message_type(4);
+  static const int PbftViewChange_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, view_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, sequence_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, checkpoints_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, prepared_set_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, prepred_value_digest_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, replica_id_),
   };
   PbftViewChange_reflection_ =
@@ -181,13 +163,29 @@ void protobuf_AssignDesc_consensus_2eproto() {
       sizeof(PbftViewChange),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChange, _is_default_instance_));
+  PbftViewChangeWithRawValue_descriptor_ = file->message_type(5);
+  static const int PbftViewChangeWithRawValue_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChangeWithRawValue, view_change_env_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChangeWithRawValue, prepared_set_),
+  };
+  PbftViewChangeWithRawValue_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      PbftViewChangeWithRawValue_descriptor_,
+      PbftViewChangeWithRawValue::default_instance_,
+      PbftViewChangeWithRawValue_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(PbftViewChangeWithRawValue),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChangeWithRawValue, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftViewChangeWithRawValue, _is_default_instance_));
   PbftNewView_descriptor_ = file->message_type(6);
   static const int PbftNewView_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, view_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, sequence_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, replica_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, view_changes_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, pre_prepares_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, pre_prepare_),
   };
   PbftNewView_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -207,9 +205,9 @@ void protobuf_AssignDesc_consensus_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, pre_prepare_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, prepare_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, commit_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, checkpoint_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, view_change_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, new_view_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, view_change_with_rawvalue_),
   };
   Pbft_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -285,16 +283,9 @@ void protobuf_AssignDesc_consensus_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftProof, _is_default_instance_));
   FeeConfig_descriptor_ = file->message_type(12);
-  static const int FeeConfig_offsets_[9] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, byte_fee_),
+  static const int FeeConfig_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, gas_price_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, base_reserve_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, create_account_fee_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, issue_asset_fee_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, pay_fee_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, set_metadata_fee_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, set_sigure_weight_fee_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, set_threshold_fee_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FeeConfig, pay_coin_fee_),
   };
   FeeConfig_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -330,11 +321,11 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftCommit_descriptor_, &PbftCommit::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      PbftCheckPoint_descriptor_, &PbftCheckPoint::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftPreparedSet_descriptor_, &PbftPreparedSet::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftViewChange_descriptor_, &PbftViewChange::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      PbftViewChangeWithRawValue_descriptor_, &PbftViewChangeWithRawValue::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       PbftNewView_descriptor_, &PbftNewView::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -360,12 +351,12 @@ void protobuf_ShutdownFile_consensus_2eproto() {
   delete PbftPrepare_reflection_;
   delete PbftCommit::default_instance_;
   delete PbftCommit_reflection_;
-  delete PbftCheckPoint::default_instance_;
-  delete PbftCheckPoint_reflection_;
   delete PbftPreparedSet::default_instance_;
   delete PbftPreparedSet_reflection_;
   delete PbftViewChange::default_instance_;
   delete PbftViewChange_reflection_;
+  delete PbftViewChangeWithRawValue::default_instance_;
+  delete PbftViewChangeWithRawValue_reflection_;
   delete PbftNewView::default_instance_;
   delete PbftNewView_reflection_;
   delete Pbft::default_instance_;
@@ -399,59 +390,51 @@ void protobuf_AddDesc_consensus_2eproto() {
     "nce\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001(\003\022\024\n\014value_d"
     "igest\030\004 \001(\014\"]\n\nPbftCommit\022\023\n\013view_number"
     "\030\001 \001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003"
-    " \001(\003\022\024\n\014value_digest\030\004 \001(\014\"L\n\016PbftCheckP"
-    "oint\022\020\n\010sequence\030\001 \001(\003\022\022\n\nreplica_id\030\002 \001"
-    "(\003\022\024\n\014state_digest\030\003 \001(\014\"]\n\017PbftPrepared"
-    "Set\022&\n\013pre_prepare\030\001 \001(\0132\021.protocol.Pbft"
-    "Env\022\"\n\007prepare\030\002 \003(\0132\021.protocol.PbftEnv\""
-    "\244\001\n\016PbftViewChange\022\023\n\013view_number\030\001 \001(\003\022"
-    "\020\n\010sequence\030\002 \001(\003\022&\n\013checkpoints\030\003 \003(\0132\021"
-    ".protocol.PbftEnv\022/\n\014prepared_set\030\004 \003(\0132"
-    "\031.protocol.PbftPreparedSet\022\022\n\nreplica_id"
-    "\030\005 \001(\003\"\232\001\n\013PbftNewView\022\023\n\013view_number\030\001 "
-    "\001(\003\022\020\n\010sequence\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001("
-    "\003\022\'\n\014view_changes\030\004 \003(\0132\021.protocol.PbftE"
-    "nv\022\'\n\014pre_prepares\030\005 \003(\0132\021.protocol.Pbft"
-    "Env\"\310\002\n\004Pbft\022\024\n\014round_number\030\001 \001(\003\022\'\n\004ty"
-    "pe\030\002 \001(\0162\031.protocol.PbftMessageType\022-\n\013p"
-    "re_prepare\030\003 \001(\0132\030.protocol.PbftPrePrepa"
-    "re\022&\n\007prepare\030\004 \001(\0132\025.protocol.PbftPrepa"
-    "re\022$\n\006commit\030\005 \001(\0132\024.protocol.PbftCommit"
-    "\022,\n\ncheckpoint\030\006 \001(\0132\030.protocol.PbftChec"
-    "kPoint\022-\n\013view_change\030\007 \001(\0132\030.protocol.P"
-    "bftViewChange\022\'\n\010new_view\030\010 \001(\0132\025.protoc"
-    "ol.PbftNewView\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132"
-    "\016.protocol.Pbft\022&\n\tsignature\030\002 \001(\0132\023.pro"
-    "tocol.Signature\"8\n\tValidator\022\017\n\007address\030"
-    "\001 \001(\t\022\032\n\022pledge_coin_amount\030\002 \001(\003\"7\n\014Val"
-    "idatorSet\022\'\n\nvalidators\030\001 \003(\0132\023.protocol"
-    ".Validator\"/\n\tPbftProof\022\"\n\007commits\030\001 \003(\013"
-    "2\021.protocol.PbftEnv\"\265\003\n\tFeeConfig\022\020\n\010byt"
-    "e_fee\030\001 \001(\003\022\024\n\014base_reserve\030\002 \001(\003\022\032\n\022cre"
-    "ate_account_fee\030\003 \001(\003\022\027\n\017issue_asset_fee"
-    "\030\004 \001(\003\022\017\n\007pay_fee\030\005 \001(\003\022\030\n\020set_metadata_"
-    "fee\030\006 \001(\003\022\035\n\025set_sigure_weight_fee\030\007 \001(\003"
-    "\022\031\n\021set_threshold_fee\030\010 \001(\003\022\024\n\014pay_coin_"
-    "fee\030\t \001(\003\"\317\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\014\n\010BYTE_"
-    "FEE\020\001\022\024\n\020BASE_RESERVE_FEE\020\002\022\026\n\022CREATE_AC"
-    "COUNT_FEE\020\003\022\023\n\017ISSUE_ASSET_FEE\020\004\022\017\n\013PAYM"
-    "ENT_FEE\020\005\022\024\n\020SET_METADATA_FEE\020\006\022\031\n\025SET_S"
-    "IGNER_WEIGHT_FEE\020\007\022\025\n\021SET_THRESHOLD_FEE\020"
-    "\010\022\020\n\014PAY_COIN_FEE\020\t*\243\001\n\017PbftMessageType\022"
-    "\030\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_P"
-    "REPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_T"
-    "YPE_CHECKPOINT\020\003\022\030\n\024PBFT_TYPE_VIEWCHANGE"
-    "\020\004\022\025\n\021PBFT_TYPE_NEWVIEW\020\005*8\n\rPbftValueTy"
-    "pe\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXSE"
-    "T\020\001b\006proto3", 2091);
+    " \001(\003\022\024\n\014value_digest\030\004 \001(\014\"]\n\017PbftPrepar"
+    "edSet\022&\n\013pre_prepare\030\001 \001(\0132\021.protocol.Pb"
+    "ftEnv\022\"\n\007prepare\030\002 \003(\0132\021.protocol.PbftEn"
+    "v\"i\n\016PbftViewChange\022\023\n\013view_number\030\001 \001(\003"
+    "\022\020\n\010sequence\030\002 \001(\003\022\034\n\024prepred_value_dige"
+    "st\030\003 \001(\014\022\022\n\nreplica_id\030\004 \001(\003\"y\n\032PbftView"
+    "ChangeWithRawValue\022*\n\017view_change_env\030\001 "
+    "\001(\0132\021.protocol.PbftEnv\022/\n\014prepared_set\030\002"
+    " \001(\0132\031.protocol.PbftPreparedSet\"\231\001\n\013Pbft"
+    "NewView\022\023\n\013view_number\030\001 \001(\003\022\020\n\010sequence"
+    "\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001(\003\022\'\n\014view_chang"
+    "es\030\004 \003(\0132\021.protocol.PbftEnv\022&\n\013pre_prepa"
+    "re\030\005 \001(\0132\021.protocol.PbftEnv\"\343\002\n\004Pbft\022\024\n\014"
+    "round_number\030\001 \001(\003\022\'\n\004type\030\002 \001(\0162\031.proto"
+    "col.PbftMessageType\022-\n\013pre_prepare\030\003 \001(\013"
+    "2\030.protocol.PbftPrePrepare\022&\n\007prepare\030\004 "
+    "\001(\0132\025.protocol.PbftPrepare\022$\n\006commit\030\005 \001"
+    "(\0132\024.protocol.PbftCommit\022-\n\013view_change\030"
+    "\006 \001(\0132\030.protocol.PbftViewChange\022\'\n\010new_v"
+    "iew\030\007 \001(\0132\025.protocol.PbftNewView\022G\n\031view"
+    "_change_with_rawvalue\030\010 \001(\0132$.protocol.P"
+    "bftViewChangeWithRawValue\"O\n\007PbftEnv\022\034\n\004"
+    "pbft\030\001 \001(\0132\016.protocol.Pbft\022&\n\tsignature\030"
+    "\002 \001(\0132\023.protocol.Signature\"8\n\tValidator\022"
+    "\017\n\007address\030\001 \001(\t\022\032\n\022pledge_coin_amount\030\002"
+    " \001(\003\"7\n\014ValidatorSet\022\'\n\nvalidators\030\001 \003(\013"
+    "2\023.protocol.Validator\"/\n\tPbftProof\022\"\n\007co"
+    "mmits\030\001 \003(\0132\021.protocol.PbftEnv\"j\n\tFeeCon"
+    "fig\022\021\n\tgas_price\030\001 \001(\003\022\024\n\014base_reserve\030\002"
+    " \001(\003\"4\n\004Type\022\013\n\007UNKNOWN\020\000\022\r\n\tGAS_PRICE\020\001"
+    "\022\020\n\014BASE_RESERVE\020\002*\260\001\n\017PbftMessageType\022\030"
+    "\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_PR"
+    "EPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_TY"
+    "PE_VIEWCHANGE\020\003\022\025\n\021PBFT_TYPE_NEWVIEW\020\004\022%"
+    "\n!PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE\020\005*8\n"
+    "\rPbftValueType\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBF"
+    "T_VALUE_TXSET\020\001b\006proto3", 1783);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "consensus.proto", &protobuf_RegisterTypes);
   PbftPrePrepare::default_instance_ = new PbftPrePrepare();
   PbftPrepare::default_instance_ = new PbftPrepare();
   PbftCommit::default_instance_ = new PbftCommit();
-  PbftCheckPoint::default_instance_ = new PbftCheckPoint();
   PbftPreparedSet::default_instance_ = new PbftPreparedSet();
   PbftViewChange::default_instance_ = new PbftViewChange();
+  PbftViewChangeWithRawValue::default_instance_ = new PbftViewChangeWithRawValue();
   PbftNewView::default_instance_ = new PbftNewView();
   Pbft::default_instance_ = new Pbft();
   PbftEnv::default_instance_ = new PbftEnv();
@@ -462,9 +445,9 @@ void protobuf_AddDesc_consensus_2eproto() {
   PbftPrePrepare::default_instance_->InitAsDefaultInstance();
   PbftPrepare::default_instance_->InitAsDefaultInstance();
   PbftCommit::default_instance_->InitAsDefaultInstance();
-  PbftCheckPoint::default_instance_->InitAsDefaultInstance();
   PbftPreparedSet::default_instance_->InitAsDefaultInstance();
   PbftViewChange::default_instance_->InitAsDefaultInstance();
+  PbftViewChangeWithRawValue::default_instance_->InitAsDefaultInstance();
   PbftNewView::default_instance_->InitAsDefaultInstance();
   Pbft::default_instance_->InitAsDefaultInstance();
   PbftEnv::default_instance_->InitAsDefaultInstance();
@@ -1950,403 +1933,6 @@ void PbftCommit::clear_value_digest() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int PbftCheckPoint::kSequenceFieldNumber;
-const int PbftCheckPoint::kReplicaIdFieldNumber;
-const int PbftCheckPoint::kStateDigestFieldNumber;
-#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
-
-PbftCheckPoint::PbftCheckPoint()
-  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:protocol.PbftCheckPoint)
-}
-
-void PbftCheckPoint::InitAsDefaultInstance() {
-  _is_default_instance_ = true;
-}
-
-PbftCheckPoint::PbftCheckPoint(const PbftCheckPoint& from)
-  : ::google::protobuf::Message(),
-    _internal_metadata_(NULL) {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:protocol.PbftCheckPoint)
-}
-
-void PbftCheckPoint::SharedCtor() {
-    _is_default_instance_ = false;
-  ::google::protobuf::internal::GetEmptyString();
-  _cached_size_ = 0;
-  sequence_ = GOOGLE_LONGLONG(0);
-  replica_id_ = GOOGLE_LONGLONG(0);
-  state_digest_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-
-PbftCheckPoint::~PbftCheckPoint() {
-  // @@protoc_insertion_point(destructor:protocol.PbftCheckPoint)
-  SharedDtor();
-}
-
-void PbftCheckPoint::SharedDtor() {
-  state_digest_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (this != default_instance_) {
-  }
-}
-
-void PbftCheckPoint::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* PbftCheckPoint::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return PbftCheckPoint_descriptor_;
-}
-
-const PbftCheckPoint& PbftCheckPoint::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_consensus_2eproto();
-  return *default_instance_;
-}
-
-PbftCheckPoint* PbftCheckPoint::default_instance_ = NULL;
-
-PbftCheckPoint* PbftCheckPoint::New(::google::protobuf::Arena* arena) const {
-  PbftCheckPoint* n = new PbftCheckPoint;
-  if (arena != NULL) {
-    arena->Own(n);
-  }
-  return n;
-}
-
-void PbftCheckPoint::Clear() {
-// @@protoc_insertion_point(message_clear_start:protocol.PbftCheckPoint)
-#if defined(__clang__)
-#define ZR_HELPER_(f) \
-  _Pragma("clang diagnostic push") \
-  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
-  __builtin_offsetof(PbftCheckPoint, f) \
-  _Pragma("clang diagnostic pop")
-#else
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<PbftCheckPoint*>(16)->f)
-#endif
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(sequence_, replica_id_);
-  state_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-
-#undef ZR_HELPER_
-#undef ZR_
-
-}
-
-bool PbftCheckPoint::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:protocol.PbftCheckPoint)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional int64 sequence = 1;
-      case 1: {
-        if (tag == 8) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &sequence_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(16)) goto parse_replica_id;
-        break;
-      }
-
-      // optional int64 replica_id = 2;
-      case 2: {
-        if (tag == 16) {
-         parse_replica_id:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &replica_id_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(26)) goto parse_state_digest;
-        break;
-      }
-
-      // optional bytes state_digest = 3;
-      case 3: {
-        if (tag == 26) {
-         parse_state_digest:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_state_digest()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:protocol.PbftCheckPoint)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:protocol.PbftCheckPoint)
-  return false;
-#undef DO_
-}
-
-void PbftCheckPoint::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:protocol.PbftCheckPoint)
-  // optional int64 sequence = 1;
-  if (this->sequence() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->sequence(), output);
-  }
-
-  // optional int64 replica_id = 2;
-  if (this->replica_id() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->replica_id(), output);
-  }
-
-  // optional bytes state_digest = 3;
-  if (this->state_digest().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      3, this->state_digest(), output);
-  }
-
-  // @@protoc_insertion_point(serialize_end:protocol.PbftCheckPoint)
-}
-
-::google::protobuf::uint8* PbftCheckPoint::InternalSerializeWithCachedSizesToArray(
-    bool deterministic, ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:protocol.PbftCheckPoint)
-  // optional int64 sequence = 1;
-  if (this->sequence() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->sequence(), target);
-  }
-
-  // optional int64 replica_id = 2;
-  if (this->replica_id() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->replica_id(), target);
-  }
-
-  // optional bytes state_digest = 3;
-  if (this->state_digest().size() > 0) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        3, this->state_digest(), target);
-  }
-
-  // @@protoc_insertion_point(serialize_to_array_end:protocol.PbftCheckPoint)
-  return target;
-}
-
-int PbftCheckPoint::ByteSize() const {
-// @@protoc_insertion_point(message_byte_size_start:protocol.PbftCheckPoint)
-  int total_size = 0;
-
-  // optional int64 sequence = 1;
-  if (this->sequence() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->sequence());
-  }
-
-  // optional int64 replica_id = 2;
-  if (this->replica_id() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->replica_id());
-  }
-
-  // optional bytes state_digest = 3;
-  if (this->state_digest().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::BytesSize(
-        this->state_digest());
-  }
-
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void PbftCheckPoint::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:protocol.PbftCheckPoint)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  const PbftCheckPoint* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const PbftCheckPoint>(
-          &from);
-  if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.PbftCheckPoint)
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.PbftCheckPoint)
-    MergeFrom(*source);
-  }
-}
-
-void PbftCheckPoint::MergeFrom(const PbftCheckPoint& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:protocol.PbftCheckPoint)
-  if (GOOGLE_PREDICT_FALSE(&from == this)) {
-    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
-  }
-  if (from.sequence() != 0) {
-    set_sequence(from.sequence());
-  }
-  if (from.replica_id() != 0) {
-    set_replica_id(from.replica_id());
-  }
-  if (from.state_digest().size() > 0) {
-
-    state_digest_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.state_digest_);
-  }
-}
-
-void PbftCheckPoint::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:protocol.PbftCheckPoint)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void PbftCheckPoint::CopyFrom(const PbftCheckPoint& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:protocol.PbftCheckPoint)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool PbftCheckPoint::IsInitialized() const {
-
-  return true;
-}
-
-void PbftCheckPoint::Swap(PbftCheckPoint* other) {
-  if (other == this) return;
-  InternalSwap(other);
-}
-void PbftCheckPoint::InternalSwap(PbftCheckPoint* other) {
-  std::swap(sequence_, other->sequence_);
-  std::swap(replica_id_, other->replica_id_);
-  state_digest_.Swap(&other->state_digest_);
-  _internal_metadata_.Swap(&other->_internal_metadata_);
-  std::swap(_cached_size_, other->_cached_size_);
-}
-
-::google::protobuf::Metadata PbftCheckPoint::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = PbftCheckPoint_descriptor_;
-  metadata.reflection = PbftCheckPoint_reflection_;
-  return metadata;
-}
-
-#if PROTOBUF_INLINE_NOT_IN_HEADERS
-// PbftCheckPoint
-
-// optional int64 sequence = 1;
-void PbftCheckPoint::clear_sequence() {
-  sequence_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 PbftCheckPoint::sequence() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.sequence)
-  return sequence_;
-}
- void PbftCheckPoint::set_sequence(::google::protobuf::int64 value) {
-  
-  sequence_ = value;
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.sequence)
-}
-
-// optional int64 replica_id = 2;
-void PbftCheckPoint::clear_replica_id() {
-  replica_id_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 PbftCheckPoint::replica_id() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.replica_id)
-  return replica_id_;
-}
- void PbftCheckPoint::set_replica_id(::google::protobuf::int64 value) {
-  
-  replica_id_ = value;
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.replica_id)
-}
-
-// optional bytes state_digest = 3;
-void PbftCheckPoint::clear_state_digest() {
-  state_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& PbftCheckPoint::state_digest() const {
-  // @@protoc_insertion_point(field_get:protocol.PbftCheckPoint.state_digest)
-  return state_digest_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void PbftCheckPoint::set_state_digest(const ::std::string& value) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.PbftCheckPoint.state_digest)
-}
- void PbftCheckPoint::set_state_digest(const char* value) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.PbftCheckPoint.state_digest)
-}
- void PbftCheckPoint::set_state_digest(const void* value, size_t size) {
-  
-  state_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.PbftCheckPoint.state_digest)
-}
- ::std::string* PbftCheckPoint::mutable_state_digest() {
-  
-  // @@protoc_insertion_point(field_mutable:protocol.PbftCheckPoint.state_digest)
-  return state_digest_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- ::std::string* PbftCheckPoint::release_state_digest() {
-  // @@protoc_insertion_point(field_release:protocol.PbftCheckPoint.state_digest)
-  
-  return state_digest_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void PbftCheckPoint::set_allocated_state_digest(::std::string* state_digest) {
-  if (state_digest != NULL) {
-    
-  } else {
-    
-  }
-  state_digest_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), state_digest);
-  // @@protoc_insertion_point(field_set_allocated:protocol.PbftCheckPoint.state_digest)
-}
-
-#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
-
-// ===================================================================
-
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PbftPreparedSet::kPrePrepareFieldNumber;
 const int PbftPreparedSet::kPrepareFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -2687,8 +2273,7 @@ PbftPreparedSet::prepare() const {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PbftViewChange::kViewNumberFieldNumber;
 const int PbftViewChange::kSequenceFieldNumber;
-const int PbftViewChange::kCheckpointsFieldNumber;
-const int PbftViewChange::kPreparedSetFieldNumber;
+const int PbftViewChange::kPrepredValueDigestFieldNumber;
 const int PbftViewChange::kReplicaIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -2712,9 +2297,11 @@ PbftViewChange::PbftViewChange(const PbftViewChange& from)
 
 void PbftViewChange::SharedCtor() {
     _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   view_number_ = GOOGLE_LONGLONG(0);
   sequence_ = GOOGLE_LONGLONG(0);
+  prepred_value_digest_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   replica_id_ = GOOGLE_LONGLONG(0);
 }
 
@@ -2724,6 +2311,7 @@ PbftViewChange::~PbftViewChange() {
 }
 
 void PbftViewChange::SharedDtor() {
+  prepred_value_digest_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
   }
 }
@@ -2772,13 +2360,12 @@ void PbftViewChange::Clear() {
 } while (0)
 
   ZR_(view_number_, sequence_);
+  prepred_value_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   replica_id_ = GOOGLE_LONGLONG(0);
 
 #undef ZR_HELPER_
 #undef ZR_
 
-  checkpoints_.Clear();
-  prepared_set_.Clear();
 }
 
 bool PbftViewChange::MergePartialFromCodedStream(
@@ -2816,46 +2403,26 @@ bool PbftViewChange::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_checkpoints;
+        if (input->ExpectTag(26)) goto parse_prepred_value_digest;
         break;
       }
 
-      // repeated .protocol.PbftEnv checkpoints = 3;
+      // optional bytes prepred_value_digest = 3;
       case 3: {
         if (tag == 26) {
-         parse_checkpoints:
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_checkpoints:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_checkpoints()));
+         parse_prepred_value_digest:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
+                input, this->mutable_prepred_value_digest()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_loop_checkpoints;
-        if (input->ExpectTag(34)) goto parse_loop_prepared_set;
-        input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectTag(32)) goto parse_replica_id;
         break;
       }
 
-      // repeated .protocol.PbftPreparedSet prepared_set = 4;
+      // optional int64 replica_id = 4;
       case 4: {
-        if (tag == 34) {
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_prepared_set:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_prepared_set()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_loop_prepared_set;
-        input->UnsafeDecrementRecursionDepth();
-        if (input->ExpectTag(40)) goto parse_replica_id;
-        break;
-      }
-
-      // optional int64 replica_id = 5;
-      case 5: {
-        if (tag == 40) {
+        if (tag == 32) {
          parse_replica_id:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
@@ -2902,21 +2469,15 @@ void PbftViewChange::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->sequence(), output);
   }
 
-  // repeated .protocol.PbftEnv checkpoints = 3;
-  for (unsigned int i = 0, n = this->checkpoints_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, this->checkpoints(i), output);
+  // optional bytes prepred_value_digest = 3;
+  if (this->prepred_value_digest().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
+      3, this->prepred_value_digest(), output);
   }
 
-  // repeated .protocol.PbftPreparedSet prepared_set = 4;
-  for (unsigned int i = 0, n = this->prepared_set_size(); i < n; i++) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->prepared_set(i), output);
-  }
-
-  // optional int64 replica_id = 5;
+  // optional int64 replica_id = 4;
   if (this->replica_id() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->replica_id(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->replica_id(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.PbftViewChange)
@@ -2935,23 +2496,16 @@ void PbftViewChange::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->sequence(), target);
   }
 
-  // repeated .protocol.PbftEnv checkpoints = 3;
-  for (unsigned int i = 0, n = this->checkpoints_size(); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        3, this->checkpoints(i), false, target);
+  // optional bytes prepred_value_digest = 3;
+  if (this->prepred_value_digest().size() > 0) {
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
+        3, this->prepred_value_digest(), target);
   }
 
-  // repeated .protocol.PbftPreparedSet prepared_set = 4;
-  for (unsigned int i = 0, n = this->prepared_set_size(); i < n; i++) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        4, this->prepared_set(i), false, target);
-  }
-
-  // optional int64 replica_id = 5;
+  // optional int64 replica_id = 4;
   if (this->replica_id() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->replica_id(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->replica_id(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.PbftViewChange)
@@ -2976,27 +2530,18 @@ int PbftViewChange::ByteSize() const {
         this->sequence());
   }
 
-  // optional int64 replica_id = 5;
+  // optional bytes prepred_value_digest = 3;
+  if (this->prepred_value_digest().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
+        this->prepred_value_digest());
+  }
+
+  // optional int64 replica_id = 4;
   if (this->replica_id() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->replica_id());
-  }
-
-  // repeated .protocol.PbftEnv checkpoints = 3;
-  total_size += 1 * this->checkpoints_size();
-  for (int i = 0; i < this->checkpoints_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->checkpoints(i));
-  }
-
-  // repeated .protocol.PbftPreparedSet prepared_set = 4;
-  total_size += 1 * this->prepared_set_size();
-  for (int i = 0; i < this->prepared_set_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->prepared_set(i));
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -3027,13 +2572,15 @@ void PbftViewChange::MergeFrom(const PbftViewChange& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
-  checkpoints_.MergeFrom(from.checkpoints_);
-  prepared_set_.MergeFrom(from.prepared_set_);
   if (from.view_number() != 0) {
     set_view_number(from.view_number());
   }
   if (from.sequence() != 0) {
     set_sequence(from.sequence());
+  }
+  if (from.prepred_value_digest().size() > 0) {
+
+    prepred_value_digest_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.prepred_value_digest_);
   }
   if (from.replica_id() != 0) {
     set_replica_id(from.replica_id());
@@ -3066,8 +2613,7 @@ void PbftViewChange::Swap(PbftViewChange* other) {
 void PbftViewChange::InternalSwap(PbftViewChange* other) {
   std::swap(view_number_, other->view_number_);
   std::swap(sequence_, other->sequence_);
-  checkpoints_.UnsafeArenaSwap(&other->checkpoints_);
-  prepared_set_.UnsafeArenaSwap(&other->prepared_set_);
+  prepred_value_digest_.Swap(&other->prepred_value_digest_);
   std::swap(replica_id_, other->replica_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -3112,67 +2658,51 @@ void PbftViewChange::clear_sequence() {
   // @@protoc_insertion_point(field_set:protocol.PbftViewChange.sequence)
 }
 
-// repeated .protocol.PbftEnv checkpoints = 3;
-int PbftViewChange::checkpoints_size() const {
-  return checkpoints_.size();
+// optional bytes prepred_value_digest = 3;
+void PbftViewChange::clear_prepred_value_digest() {
+  prepred_value_digest_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-void PbftViewChange::clear_checkpoints() {
-  checkpoints_.Clear();
+ const ::std::string& PbftViewChange::prepred_value_digest() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.prepred_value_digest)
+  return prepred_value_digest_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::protocol::PbftEnv& PbftViewChange::checkpoints(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Get(index);
+ void PbftViewChange::set_prepred_value_digest(const ::std::string& value) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.PbftViewChange.prepred_value_digest)
 }
-::protocol::PbftEnv* PbftViewChange::mutable_checkpoints(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Mutable(index);
+ void PbftViewChange::set_prepred_value_digest(const char* value) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.PbftViewChange.prepred_value_digest)
 }
-::protocol::PbftEnv* PbftViewChange::add_checkpoints() {
-  // @@protoc_insertion_point(field_add:protocol.PbftViewChange.checkpoints)
-  return checkpoints_.Add();
+ void PbftViewChange::set_prepred_value_digest(const void* value, size_t size) {
+  
+  prepred_value_digest_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.PbftViewChange.prepred_value_digest)
 }
-::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >*
-PbftViewChange::mutable_checkpoints() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftViewChange.checkpoints)
-  return &checkpoints_;
+ ::std::string* PbftViewChange::mutable_prepred_value_digest() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.prepred_value_digest)
+  return prepred_value_digest_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
-PbftViewChange::checkpoints() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftViewChange.checkpoints)
-  return checkpoints_;
+ ::std::string* PbftViewChange::release_prepred_value_digest() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChange.prepred_value_digest)
+  
+  return prepred_value_digest_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-
-// repeated .protocol.PbftPreparedSet prepared_set = 4;
-int PbftViewChange::prepared_set_size() const {
-  return prepared_set_.size();
-}
-void PbftViewChange::clear_prepared_set() {
-  prepared_set_.Clear();
-}
-const ::protocol::PbftPreparedSet& PbftViewChange::prepared_set(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Get(index);
-}
-::protocol::PbftPreparedSet* PbftViewChange::mutable_prepared_set(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Mutable(index);
-}
-::protocol::PbftPreparedSet* PbftViewChange::add_prepared_set() {
-  // @@protoc_insertion_point(field_add:protocol.PbftViewChange.prepared_set)
-  return prepared_set_.Add();
-}
-::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >*
-PbftViewChange::mutable_prepared_set() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftViewChange.prepared_set)
-  return &prepared_set_;
-}
-const ::google::protobuf::RepeatedPtrField< ::protocol::PbftPreparedSet >&
-PbftViewChange::prepared_set() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftViewChange.prepared_set)
-  return prepared_set_;
+ void PbftViewChange::set_allocated_prepred_value_digest(::std::string* prepred_value_digest) {
+  if (prepred_value_digest != NULL) {
+    
+  } else {
+    
+  }
+  prepred_value_digest_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), prepred_value_digest);
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChange.prepred_value_digest)
 }
 
-// optional int64 replica_id = 5;
+// optional int64 replica_id = 4;
 void PbftViewChange::clear_replica_id() {
   replica_id_ = GOOGLE_LONGLONG(0);
 }
@@ -3191,11 +2721,358 @@ void PbftViewChange::clear_replica_id() {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int PbftViewChangeWithRawValue::kViewChangeEnvFieldNumber;
+const int PbftViewChangeWithRawValue::kPreparedSetFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+PbftViewChangeWithRawValue::PbftViewChangeWithRawValue()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.PbftViewChangeWithRawValue)
+}
+
+void PbftViewChangeWithRawValue::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  view_change_env_ = const_cast< ::protocol::PbftEnv*>(&::protocol::PbftEnv::default_instance());
+  prepared_set_ = const_cast< ::protocol::PbftPreparedSet*>(&::protocol::PbftPreparedSet::default_instance());
+}
+
+PbftViewChangeWithRawValue::PbftViewChangeWithRawValue(const PbftViewChangeWithRawValue& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.PbftViewChangeWithRawValue)
+}
+
+void PbftViewChangeWithRawValue::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  view_change_env_ = NULL;
+  prepared_set_ = NULL;
+}
+
+PbftViewChangeWithRawValue::~PbftViewChangeWithRawValue() {
+  // @@protoc_insertion_point(destructor:protocol.PbftViewChangeWithRawValue)
+  SharedDtor();
+}
+
+void PbftViewChangeWithRawValue::SharedDtor() {
+  if (this != default_instance_) {
+    delete view_change_env_;
+    delete prepared_set_;
+  }
+}
+
+void PbftViewChangeWithRawValue::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PbftViewChangeWithRawValue::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return PbftViewChangeWithRawValue_descriptor_;
+}
+
+const PbftViewChangeWithRawValue& PbftViewChangeWithRawValue::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_consensus_2eproto();
+  return *default_instance_;
+}
+
+PbftViewChangeWithRawValue* PbftViewChangeWithRawValue::default_instance_ = NULL;
+
+PbftViewChangeWithRawValue* PbftViewChangeWithRawValue::New(::google::protobuf::Arena* arena) const {
+  PbftViewChangeWithRawValue* n = new PbftViewChangeWithRawValue;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void PbftViewChangeWithRawValue::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.PbftViewChangeWithRawValue)
+  if (GetArenaNoVirtual() == NULL && view_change_env_ != NULL) delete view_change_env_;
+  view_change_env_ = NULL;
+  if (GetArenaNoVirtual() == NULL && prepared_set_ != NULL) delete prepared_set_;
+  prepared_set_ = NULL;
+}
+
+bool PbftViewChangeWithRawValue::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.PbftViewChangeWithRawValue)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .protocol.PbftEnv view_change_env = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_view_change_env()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(18)) goto parse_prepared_set;
+        break;
+      }
+
+      // optional .protocol.PbftPreparedSet prepared_set = 2;
+      case 2: {
+        if (tag == 18) {
+         parse_prepared_set:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_prepared_set()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.PbftViewChangeWithRawValue)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.PbftViewChangeWithRawValue)
+  return false;
+#undef DO_
+}
+
+void PbftViewChangeWithRawValue::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.PbftViewChangeWithRawValue)
+  // optional .protocol.PbftEnv view_change_env = 1;
+  if (this->has_view_change_env()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->view_change_env_, output);
+  }
+
+  // optional .protocol.PbftPreparedSet prepared_set = 2;
+  if (this->has_prepared_set()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, *this->prepared_set_, output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.PbftViewChangeWithRawValue)
+}
+
+::google::protobuf::uint8* PbftViewChangeWithRawValue::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.PbftViewChangeWithRawValue)
+  // optional .protocol.PbftEnv view_change_env = 1;
+  if (this->has_view_change_env()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->view_change_env_, false, target);
+  }
+
+  // optional .protocol.PbftPreparedSet prepared_set = 2;
+  if (this->has_prepared_set()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        2, *this->prepared_set_, false, target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.PbftViewChangeWithRawValue)
+  return target;
+}
+
+int PbftViewChangeWithRawValue::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.PbftViewChangeWithRawValue)
+  int total_size = 0;
+
+  // optional .protocol.PbftEnv view_change_env = 1;
+  if (this->has_view_change_env()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->view_change_env_);
+  }
+
+  // optional .protocol.PbftPreparedSet prepared_set = 2;
+  if (this->has_prepared_set()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->prepared_set_);
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PbftViewChangeWithRawValue::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.PbftViewChangeWithRawValue)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const PbftViewChangeWithRawValue* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const PbftViewChangeWithRawValue>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.PbftViewChangeWithRawValue)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.PbftViewChangeWithRawValue)
+    MergeFrom(*source);
+  }
+}
+
+void PbftViewChangeWithRawValue::MergeFrom(const PbftViewChangeWithRawValue& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.PbftViewChangeWithRawValue)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.has_view_change_env()) {
+    mutable_view_change_env()->::protocol::PbftEnv::MergeFrom(from.view_change_env());
+  }
+  if (from.has_prepared_set()) {
+    mutable_prepared_set()->::protocol::PbftPreparedSet::MergeFrom(from.prepared_set());
+  }
+}
+
+void PbftViewChangeWithRawValue::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.PbftViewChangeWithRawValue)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PbftViewChangeWithRawValue::CopyFrom(const PbftViewChangeWithRawValue& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.PbftViewChangeWithRawValue)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PbftViewChangeWithRawValue::IsInitialized() const {
+
+  return true;
+}
+
+void PbftViewChangeWithRawValue::Swap(PbftViewChangeWithRawValue* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void PbftViewChangeWithRawValue::InternalSwap(PbftViewChangeWithRawValue* other) {
+  std::swap(view_change_env_, other->view_change_env_);
+  std::swap(prepared_set_, other->prepared_set_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata PbftViewChangeWithRawValue::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = PbftViewChangeWithRawValue_descriptor_;
+  metadata.reflection = PbftViewChangeWithRawValue_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// PbftViewChangeWithRawValue
+
+// optional .protocol.PbftEnv view_change_env = 1;
+bool PbftViewChangeWithRawValue::has_view_change_env() const {
+  return !_is_default_instance_ && view_change_env_ != NULL;
+}
+void PbftViewChangeWithRawValue::clear_view_change_env() {
+  if (GetArenaNoVirtual() == NULL && view_change_env_ != NULL) delete view_change_env_;
+  view_change_env_ = NULL;
+}
+const ::protocol::PbftEnv& PbftViewChangeWithRawValue::view_change_env() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChangeWithRawValue.view_change_env)
+  return view_change_env_ != NULL ? *view_change_env_ : *default_instance_->view_change_env_;
+}
+::protocol::PbftEnv* PbftViewChangeWithRawValue::mutable_view_change_env() {
+  
+  if (view_change_env_ == NULL) {
+    view_change_env_ = new ::protocol::PbftEnv;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChangeWithRawValue.view_change_env)
+  return view_change_env_;
+}
+::protocol::PbftEnv* PbftViewChangeWithRawValue::release_view_change_env() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChangeWithRawValue.view_change_env)
+  
+  ::protocol::PbftEnv* temp = view_change_env_;
+  view_change_env_ = NULL;
+  return temp;
+}
+void PbftViewChangeWithRawValue::set_allocated_view_change_env(::protocol::PbftEnv* view_change_env) {
+  delete view_change_env_;
+  view_change_env_ = view_change_env;
+  if (view_change_env) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChangeWithRawValue.view_change_env)
+}
+
+// optional .protocol.PbftPreparedSet prepared_set = 2;
+bool PbftViewChangeWithRawValue::has_prepared_set() const {
+  return !_is_default_instance_ && prepared_set_ != NULL;
+}
+void PbftViewChangeWithRawValue::clear_prepared_set() {
+  if (GetArenaNoVirtual() == NULL && prepared_set_ != NULL) delete prepared_set_;
+  prepared_set_ = NULL;
+}
+const ::protocol::PbftPreparedSet& PbftViewChangeWithRawValue::prepared_set() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftViewChangeWithRawValue.prepared_set)
+  return prepared_set_ != NULL ? *prepared_set_ : *default_instance_->prepared_set_;
+}
+::protocol::PbftPreparedSet* PbftViewChangeWithRawValue::mutable_prepared_set() {
+  
+  if (prepared_set_ == NULL) {
+    prepared_set_ = new ::protocol::PbftPreparedSet;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftViewChangeWithRawValue.prepared_set)
+  return prepared_set_;
+}
+::protocol::PbftPreparedSet* PbftViewChangeWithRawValue::release_prepared_set() {
+  // @@protoc_insertion_point(field_release:protocol.PbftViewChangeWithRawValue.prepared_set)
+  
+  ::protocol::PbftPreparedSet* temp = prepared_set_;
+  prepared_set_ = NULL;
+  return temp;
+}
+void PbftViewChangeWithRawValue::set_allocated_prepared_set(::protocol::PbftPreparedSet* prepared_set) {
+  delete prepared_set_;
+  prepared_set_ = prepared_set;
+  if (prepared_set) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftViewChangeWithRawValue.prepared_set)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int PbftNewView::kViewNumberFieldNumber;
 const int PbftNewView::kSequenceFieldNumber;
 const int PbftNewView::kReplicaIdFieldNumber;
 const int PbftNewView::kViewChangesFieldNumber;
-const int PbftNewView::kPrePreparesFieldNumber;
+const int PbftNewView::kPrePrepareFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 PbftNewView::PbftNewView()
@@ -3206,6 +3083,7 @@ PbftNewView::PbftNewView()
 
 void PbftNewView::InitAsDefaultInstance() {
   _is_default_instance_ = true;
+  pre_prepare_ = const_cast< ::protocol::PbftEnv*>(&::protocol::PbftEnv::default_instance());
 }
 
 PbftNewView::PbftNewView(const PbftNewView& from)
@@ -3222,6 +3100,7 @@ void PbftNewView::SharedCtor() {
   view_number_ = GOOGLE_LONGLONG(0);
   sequence_ = GOOGLE_LONGLONG(0);
   replica_id_ = GOOGLE_LONGLONG(0);
+  pre_prepare_ = NULL;
 }
 
 PbftNewView::~PbftNewView() {
@@ -3231,6 +3110,7 @@ PbftNewView::~PbftNewView() {
 
 void PbftNewView::SharedDtor() {
   if (this != default_instance_) {
+    delete pre_prepare_;
   }
 }
 
@@ -3278,12 +3158,13 @@ void PbftNewView::Clear() {
 } while (0)
 
   ZR_(view_number_, replica_id_);
+  if (GetArenaNoVirtual() == NULL && pre_prepare_ != NULL) delete pre_prepare_;
+  pre_prepare_ = NULL;
 
 #undef ZR_HELPER_
 #undef ZR_
 
   view_changes_.Clear();
-  pre_prepares_.Clear();
 }
 
 bool PbftNewView::MergePartialFromCodedStream(
@@ -3352,23 +3233,20 @@ bool PbftNewView::MergePartialFromCodedStream(
           goto handle_unusual;
         }
         if (input->ExpectTag(34)) goto parse_loop_view_changes;
-        if (input->ExpectTag(42)) goto parse_loop_pre_prepares;
         input->UnsafeDecrementRecursionDepth();
+        if (input->ExpectTag(42)) goto parse_pre_prepare;
         break;
       }
 
-      // repeated .protocol.PbftEnv pre_prepares = 5;
+      // optional .protocol.PbftEnv pre_prepare = 5;
       case 5: {
         if (tag == 42) {
-          DO_(input->IncrementRecursionDepth());
-         parse_loop_pre_prepares:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
-                input, add_pre_prepares()));
+         parse_pre_prepare:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_pre_prepare()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_loop_pre_prepares;
-        input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -3418,10 +3296,10 @@ void PbftNewView::SerializeWithCachedSizes(
       4, this->view_changes(i), output);
   }
 
-  // repeated .protocol.PbftEnv pre_prepares = 5;
-  for (unsigned int i = 0, n = this->pre_prepares_size(); i < n; i++) {
+  // optional .protocol.PbftEnv pre_prepare = 5;
+  if (this->has_pre_prepare()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, this->pre_prepares(i), output);
+      5, *this->pre_prepare_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.PbftNewView)
@@ -3452,11 +3330,11 @@ void PbftNewView::SerializeWithCachedSizes(
         4, this->view_changes(i), false, target);
   }
 
-  // repeated .protocol.PbftEnv pre_prepares = 5;
-  for (unsigned int i = 0, n = this->pre_prepares_size(); i < n; i++) {
+  // optional .protocol.PbftEnv pre_prepare = 5;
+  if (this->has_pre_prepare()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        5, this->pre_prepares(i), false, target);
+        5, *this->pre_prepare_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.PbftNewView)
@@ -3488,20 +3366,19 @@ int PbftNewView::ByteSize() const {
         this->replica_id());
   }
 
+  // optional .protocol.PbftEnv pre_prepare = 5;
+  if (this->has_pre_prepare()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->pre_prepare_);
+  }
+
   // repeated .protocol.PbftEnv view_changes = 4;
   total_size += 1 * this->view_changes_size();
   for (int i = 0; i < this->view_changes_size(); i++) {
     total_size +=
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         this->view_changes(i));
-  }
-
-  // repeated .protocol.PbftEnv pre_prepares = 5;
-  total_size += 1 * this->pre_prepares_size();
-  for (int i = 0; i < this->pre_prepares_size(); i++) {
-    total_size +=
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        this->pre_prepares(i));
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -3533,7 +3410,6 @@ void PbftNewView::MergeFrom(const PbftNewView& from) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
   view_changes_.MergeFrom(from.view_changes_);
-  pre_prepares_.MergeFrom(from.pre_prepares_);
   if (from.view_number() != 0) {
     set_view_number(from.view_number());
   }
@@ -3542,6 +3418,9 @@ void PbftNewView::MergeFrom(const PbftNewView& from) {
   }
   if (from.replica_id() != 0) {
     set_replica_id(from.replica_id());
+  }
+  if (from.has_pre_prepare()) {
+    mutable_pre_prepare()->::protocol::PbftEnv::MergeFrom(from.pre_prepare());
   }
 }
 
@@ -3573,7 +3452,7 @@ void PbftNewView::InternalSwap(PbftNewView* other) {
   std::swap(sequence_, other->sequence_);
   std::swap(replica_id_, other->replica_id_);
   view_changes_.UnsafeArenaSwap(&other->view_changes_);
-  pre_prepares_.UnsafeArenaSwap(&other->pre_prepares_);
+  std::swap(pre_prepare_, other->pre_prepare_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -3661,34 +3540,42 @@ PbftNewView::view_changes() const {
   return view_changes_;
 }
 
-// repeated .protocol.PbftEnv pre_prepares = 5;
-int PbftNewView::pre_prepares_size() const {
-  return pre_prepares_.size();
+// optional .protocol.PbftEnv pre_prepare = 5;
+bool PbftNewView::has_pre_prepare() const {
+  return !_is_default_instance_ && pre_prepare_ != NULL;
 }
-void PbftNewView::clear_pre_prepares() {
-  pre_prepares_.Clear();
+void PbftNewView::clear_pre_prepare() {
+  if (GetArenaNoVirtual() == NULL && pre_prepare_ != NULL) delete pre_prepare_;
+  pre_prepare_ = NULL;
 }
-const ::protocol::PbftEnv& PbftNewView::pre_prepares(int index) const {
-  // @@protoc_insertion_point(field_get:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Get(index);
+const ::protocol::PbftEnv& PbftNewView::pre_prepare() const {
+  // @@protoc_insertion_point(field_get:protocol.PbftNewView.pre_prepare)
+  return pre_prepare_ != NULL ? *pre_prepare_ : *default_instance_->pre_prepare_;
 }
-::protocol::PbftEnv* PbftNewView::mutable_pre_prepares(int index) {
-  // @@protoc_insertion_point(field_mutable:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Mutable(index);
+::protocol::PbftEnv* PbftNewView::mutable_pre_prepare() {
+  
+  if (pre_prepare_ == NULL) {
+    pre_prepare_ = new ::protocol::PbftEnv;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.PbftNewView.pre_prepare)
+  return pre_prepare_;
 }
-::protocol::PbftEnv* PbftNewView::add_pre_prepares() {
-  // @@protoc_insertion_point(field_add:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_.Add();
+::protocol::PbftEnv* PbftNewView::release_pre_prepare() {
+  // @@protoc_insertion_point(field_release:protocol.PbftNewView.pre_prepare)
+  
+  ::protocol::PbftEnv* temp = pre_prepare_;
+  pre_prepare_ = NULL;
+  return temp;
 }
-::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >*
-PbftNewView::mutable_pre_prepares() {
-  // @@protoc_insertion_point(field_mutable_list:protocol.PbftNewView.pre_prepares)
-  return &pre_prepares_;
-}
-const ::google::protobuf::RepeatedPtrField< ::protocol::PbftEnv >&
-PbftNewView::pre_prepares() const {
-  // @@protoc_insertion_point(field_list:protocol.PbftNewView.pre_prepares)
-  return pre_prepares_;
+void PbftNewView::set_allocated_pre_prepare(::protocol::PbftEnv* pre_prepare) {
+  delete pre_prepare_;
+  pre_prepare_ = pre_prepare;
+  if (pre_prepare) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.PbftNewView.pre_prepare)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3701,9 +3588,9 @@ const int Pbft::kTypeFieldNumber;
 const int Pbft::kPrePrepareFieldNumber;
 const int Pbft::kPrepareFieldNumber;
 const int Pbft::kCommitFieldNumber;
-const int Pbft::kCheckpointFieldNumber;
 const int Pbft::kViewChangeFieldNumber;
 const int Pbft::kNewViewFieldNumber;
+const int Pbft::kViewChangeWithRawvalueFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Pbft::Pbft()
@@ -3717,9 +3604,9 @@ void Pbft::InitAsDefaultInstance() {
   pre_prepare_ = const_cast< ::protocol::PbftPrePrepare*>(&::protocol::PbftPrePrepare::default_instance());
   prepare_ = const_cast< ::protocol::PbftPrepare*>(&::protocol::PbftPrepare::default_instance());
   commit_ = const_cast< ::protocol::PbftCommit*>(&::protocol::PbftCommit::default_instance());
-  checkpoint_ = const_cast< ::protocol::PbftCheckPoint*>(&::protocol::PbftCheckPoint::default_instance());
   view_change_ = const_cast< ::protocol::PbftViewChange*>(&::protocol::PbftViewChange::default_instance());
   new_view_ = const_cast< ::protocol::PbftNewView*>(&::protocol::PbftNewView::default_instance());
+  view_change_with_rawvalue_ = const_cast< ::protocol::PbftViewChangeWithRawValue*>(&::protocol::PbftViewChangeWithRawValue::default_instance());
 }
 
 Pbft::Pbft(const Pbft& from)
@@ -3738,9 +3625,9 @@ void Pbft::SharedCtor() {
   pre_prepare_ = NULL;
   prepare_ = NULL;
   commit_ = NULL;
-  checkpoint_ = NULL;
   view_change_ = NULL;
   new_view_ = NULL;
+  view_change_with_rawvalue_ = NULL;
 }
 
 Pbft::~Pbft() {
@@ -3753,9 +3640,9 @@ void Pbft::SharedDtor() {
     delete pre_prepare_;
     delete prepare_;
     delete commit_;
-    delete checkpoint_;
     delete view_change_;
     delete new_view_;
+    delete view_change_with_rawvalue_;
   }
 }
 
@@ -3794,12 +3681,12 @@ void Pbft::Clear() {
   prepare_ = NULL;
   if (GetArenaNoVirtual() == NULL && commit_ != NULL) delete commit_;
   commit_ = NULL;
-  if (GetArenaNoVirtual() == NULL && checkpoint_ != NULL) delete checkpoint_;
-  checkpoint_ = NULL;
   if (GetArenaNoVirtual() == NULL && view_change_ != NULL) delete view_change_;
   view_change_ = NULL;
   if (GetArenaNoVirtual() == NULL && new_view_ != NULL) delete new_view_;
   new_view_ = NULL;
+  if (GetArenaNoVirtual() == NULL && view_change_with_rawvalue_ != NULL) delete view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = NULL;
 }
 
 bool Pbft::MergePartialFromCodedStream(
@@ -3877,42 +3764,42 @@ bool Pbft::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_checkpoint;
+        if (input->ExpectTag(50)) goto parse_view_change;
         break;
       }
 
-      // optional .protocol.PbftCheckPoint checkpoint = 6;
+      // optional .protocol.PbftViewChange view_change = 6;
       case 6: {
         if (tag == 50) {
-         parse_checkpoint:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_checkpoint()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(58)) goto parse_view_change;
-        break;
-      }
-
-      // optional .protocol.PbftViewChange view_change = 7;
-      case 7: {
-        if (tag == 58) {
          parse_view_change:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_view_change()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(66)) goto parse_new_view;
+        if (input->ExpectTag(58)) goto parse_new_view;
         break;
       }
 
-      // optional .protocol.PbftNewView new_view = 8;
-      case 8: {
-        if (tag == 66) {
+      // optional .protocol.PbftNewView new_view = 7;
+      case 7: {
+        if (tag == 58) {
          parse_new_view:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_new_view()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(66)) goto parse_view_change_with_rawvalue;
+        break;
+      }
+
+      // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_view_change_with_rawvalue:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_view_change_with_rawvalue()));
         } else {
           goto handle_unusual;
         }
@@ -3973,22 +3860,22 @@ void Pbft::SerializeWithCachedSizes(
       5, *this->commit_, output);
   }
 
-  // optional .protocol.PbftCheckPoint checkpoint = 6;
-  if (this->has_checkpoint()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, *this->checkpoint_, output);
-  }
-
-  // optional .protocol.PbftViewChange view_change = 7;
+  // optional .protocol.PbftViewChange view_change = 6;
   if (this->has_view_change()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      7, *this->view_change_, output);
+      6, *this->view_change_, output);
   }
 
-  // optional .protocol.PbftNewView new_view = 8;
+  // optional .protocol.PbftNewView new_view = 7;
   if (this->has_new_view()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      8, *this->new_view_, output);
+      7, *this->new_view_, output);
+  }
+
+  // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+  if (this->has_view_change_with_rawvalue()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, *this->view_change_with_rawvalue_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.Pbft)
@@ -4029,25 +3916,25 @@ void Pbft::SerializeWithCachedSizes(
         5, *this->commit_, false, target);
   }
 
-  // optional .protocol.PbftCheckPoint checkpoint = 6;
-  if (this->has_checkpoint()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        6, *this->checkpoint_, false, target);
-  }
-
-  // optional .protocol.PbftViewChange view_change = 7;
+  // optional .protocol.PbftViewChange view_change = 6;
   if (this->has_view_change()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        7, *this->view_change_, false, target);
+        6, *this->view_change_, false, target);
   }
 
-  // optional .protocol.PbftNewView new_view = 8;
+  // optional .protocol.PbftNewView new_view = 7;
   if (this->has_new_view()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        8, *this->new_view_, false, target);
+        7, *this->new_view_, false, target);
+  }
+
+  // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+  if (this->has_view_change_with_rawvalue()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        8, *this->view_change_with_rawvalue_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Pbft)
@@ -4092,25 +3979,25 @@ int Pbft::ByteSize() const {
         *this->commit_);
   }
 
-  // optional .protocol.PbftCheckPoint checkpoint = 6;
-  if (this->has_checkpoint()) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->checkpoint_);
-  }
-
-  // optional .protocol.PbftViewChange view_change = 7;
+  // optional .protocol.PbftViewChange view_change = 6;
   if (this->has_view_change()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->view_change_);
   }
 
-  // optional .protocol.PbftNewView new_view = 8;
+  // optional .protocol.PbftNewView new_view = 7;
   if (this->has_new_view()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->new_view_);
+  }
+
+  // optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+  if (this->has_view_change_with_rawvalue()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->view_change_with_rawvalue_);
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -4156,14 +4043,14 @@ void Pbft::MergeFrom(const Pbft& from) {
   if (from.has_commit()) {
     mutable_commit()->::protocol::PbftCommit::MergeFrom(from.commit());
   }
-  if (from.has_checkpoint()) {
-    mutable_checkpoint()->::protocol::PbftCheckPoint::MergeFrom(from.checkpoint());
-  }
   if (from.has_view_change()) {
     mutable_view_change()->::protocol::PbftViewChange::MergeFrom(from.view_change());
   }
   if (from.has_new_view()) {
     mutable_new_view()->::protocol::PbftNewView::MergeFrom(from.new_view());
+  }
+  if (from.has_view_change_with_rawvalue()) {
+    mutable_view_change_with_rawvalue()->::protocol::PbftViewChangeWithRawValue::MergeFrom(from.view_change_with_rawvalue());
   }
 }
 
@@ -4196,9 +4083,9 @@ void Pbft::InternalSwap(Pbft* other) {
   std::swap(pre_prepare_, other->pre_prepare_);
   std::swap(prepare_, other->prepare_);
   std::swap(commit_, other->commit_);
-  std::swap(checkpoint_, other->checkpoint_);
   std::swap(view_change_, other->view_change_);
   std::swap(new_view_, other->new_view_);
+  std::swap(view_change_with_rawvalue_, other->view_change_with_rawvalue_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -4356,45 +4243,7 @@ void Pbft::set_allocated_commit(::protocol::PbftCommit* commit) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.commit)
 }
 
-// optional .protocol.PbftCheckPoint checkpoint = 6;
-bool Pbft::has_checkpoint() const {
-  return !_is_default_instance_ && checkpoint_ != NULL;
-}
-void Pbft::clear_checkpoint() {
-  if (GetArenaNoVirtual() == NULL && checkpoint_ != NULL) delete checkpoint_;
-  checkpoint_ = NULL;
-}
-const ::protocol::PbftCheckPoint& Pbft::checkpoint() const {
-  // @@protoc_insertion_point(field_get:protocol.Pbft.checkpoint)
-  return checkpoint_ != NULL ? *checkpoint_ : *default_instance_->checkpoint_;
-}
-::protocol::PbftCheckPoint* Pbft::mutable_checkpoint() {
-  
-  if (checkpoint_ == NULL) {
-    checkpoint_ = new ::protocol::PbftCheckPoint;
-  }
-  // @@protoc_insertion_point(field_mutable:protocol.Pbft.checkpoint)
-  return checkpoint_;
-}
-::protocol::PbftCheckPoint* Pbft::release_checkpoint() {
-  // @@protoc_insertion_point(field_release:protocol.Pbft.checkpoint)
-  
-  ::protocol::PbftCheckPoint* temp = checkpoint_;
-  checkpoint_ = NULL;
-  return temp;
-}
-void Pbft::set_allocated_checkpoint(::protocol::PbftCheckPoint* checkpoint) {
-  delete checkpoint_;
-  checkpoint_ = checkpoint;
-  if (checkpoint) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.checkpoint)
-}
-
-// optional .protocol.PbftViewChange view_change = 7;
+// optional .protocol.PbftViewChange view_change = 6;
 bool Pbft::has_view_change() const {
   return !_is_default_instance_ && view_change_ != NULL;
 }
@@ -4432,7 +4281,7 @@ void Pbft::set_allocated_view_change(::protocol::PbftViewChange* view_change) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.view_change)
 }
 
-// optional .protocol.PbftNewView new_view = 8;
+// optional .protocol.PbftNewView new_view = 7;
 bool Pbft::has_new_view() const {
   return !_is_default_instance_ && new_view_ != NULL;
 }
@@ -4468,6 +4317,44 @@ void Pbft::set_allocated_new_view(::protocol::PbftNewView* new_view) {
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.new_view)
+}
+
+// optional .protocol.PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+bool Pbft::has_view_change_with_rawvalue() const {
+  return !_is_default_instance_ && view_change_with_rawvalue_ != NULL;
+}
+void Pbft::clear_view_change_with_rawvalue() {
+  if (GetArenaNoVirtual() == NULL && view_change_with_rawvalue_ != NULL) delete view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = NULL;
+}
+const ::protocol::PbftViewChangeWithRawValue& Pbft::view_change_with_rawvalue() const {
+  // @@protoc_insertion_point(field_get:protocol.Pbft.view_change_with_rawvalue)
+  return view_change_with_rawvalue_ != NULL ? *view_change_with_rawvalue_ : *default_instance_->view_change_with_rawvalue_;
+}
+::protocol::PbftViewChangeWithRawValue* Pbft::mutable_view_change_with_rawvalue() {
+  
+  if (view_change_with_rawvalue_ == NULL) {
+    view_change_with_rawvalue_ = new ::protocol::PbftViewChangeWithRawValue;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.Pbft.view_change_with_rawvalue)
+  return view_change_with_rawvalue_;
+}
+::protocol::PbftViewChangeWithRawValue* Pbft::release_view_change_with_rawvalue() {
+  // @@protoc_insertion_point(field_release:protocol.Pbft.view_change_with_rawvalue)
+  
+  ::protocol::PbftViewChangeWithRawValue* temp = view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = NULL;
+  return temp;
+}
+void Pbft::set_allocated_view_change_with_rawvalue(::protocol::PbftViewChangeWithRawValue* view_change_with_rawvalue) {
+  delete view_change_with_rawvalue_;
+  view_change_with_rawvalue_ = view_change_with_rawvalue;
+  if (view_change_with_rawvalue) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.view_change_with_rawvalue)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -5681,13 +5568,6 @@ bool FeeConfig_Type_IsValid(int value) {
     case 0:
     case 1:
     case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
       return true;
     default:
       return false;
@@ -5696,29 +5576,15 @@ bool FeeConfig_Type_IsValid(int value) {
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const FeeConfig_Type FeeConfig::UNKNOWN;
-const FeeConfig_Type FeeConfig::BYTE_FEE;
-const FeeConfig_Type FeeConfig::BASE_RESERVE_FEE;
-const FeeConfig_Type FeeConfig::CREATE_ACCOUNT_FEE;
-const FeeConfig_Type FeeConfig::ISSUE_ASSET_FEE;
-const FeeConfig_Type FeeConfig::PAYMENT_FEE;
-const FeeConfig_Type FeeConfig::SET_METADATA_FEE;
-const FeeConfig_Type FeeConfig::SET_SIGNER_WEIGHT_FEE;
-const FeeConfig_Type FeeConfig::SET_THRESHOLD_FEE;
-const FeeConfig_Type FeeConfig::PAY_COIN_FEE;
+const FeeConfig_Type FeeConfig::GAS_PRICE;
+const FeeConfig_Type FeeConfig::BASE_RESERVE;
 const FeeConfig_Type FeeConfig::Type_MIN;
 const FeeConfig_Type FeeConfig::Type_MAX;
 const int FeeConfig::Type_ARRAYSIZE;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int FeeConfig::kByteFeeFieldNumber;
+const int FeeConfig::kGasPriceFieldNumber;
 const int FeeConfig::kBaseReserveFieldNumber;
-const int FeeConfig::kCreateAccountFeeFieldNumber;
-const int FeeConfig::kIssueAssetFeeFieldNumber;
-const int FeeConfig::kPayFeeFieldNumber;
-const int FeeConfig::kSetMetadataFeeFieldNumber;
-const int FeeConfig::kSetSigureWeightFeeFieldNumber;
-const int FeeConfig::kSetThresholdFeeFieldNumber;
-const int FeeConfig::kPayCoinFeeFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 FeeConfig::FeeConfig()
@@ -5742,15 +5608,8 @@ FeeConfig::FeeConfig(const FeeConfig& from)
 void FeeConfig::SharedCtor() {
     _is_default_instance_ = false;
   _cached_size_ = 0;
-  byte_fee_ = GOOGLE_LONGLONG(0);
+  gas_price_ = GOOGLE_LONGLONG(0);
   base_reserve_ = GOOGLE_LONGLONG(0);
-  create_account_fee_ = GOOGLE_LONGLONG(0);
-  issue_asset_fee_ = GOOGLE_LONGLONG(0);
-  pay_fee_ = GOOGLE_LONGLONG(0);
-  set_metadata_fee_ = GOOGLE_LONGLONG(0);
-  set_sigure_weight_fee_ = GOOGLE_LONGLONG(0);
-  set_threshold_fee_ = GOOGLE_LONGLONG(0);
-  pay_coin_fee_ = GOOGLE_LONGLONG(0);
 }
 
 FeeConfig::~FeeConfig() {
@@ -5806,8 +5665,7 @@ void FeeConfig::Clear() {
            ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
 } while (0)
 
-  ZR_(byte_fee_, set_threshold_fee_);
-  pay_coin_fee_ = GOOGLE_LONGLONG(0);
+  ZR_(gas_price_, base_reserve_);
 
 #undef ZR_HELPER_
 #undef ZR_
@@ -5824,12 +5682,12 @@ bool FeeConfig::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional int64 byte_fee = 1;
+      // optional int64 gas_price = 1;
       case 1: {
         if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &byte_fee_)));
+                 input, &gas_price_)));
 
         } else {
           goto handle_unusual;
@@ -5845,111 +5703,6 @@ bool FeeConfig::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  input, &base_reserve_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(24)) goto parse_create_account_fee;
-        break;
-      }
-
-      // optional int64 create_account_fee = 3;
-      case 3: {
-        if (tag == 24) {
-         parse_create_account_fee:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &create_account_fee_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(32)) goto parse_issue_asset_fee;
-        break;
-      }
-
-      // optional int64 issue_asset_fee = 4;
-      case 4: {
-        if (tag == 32) {
-         parse_issue_asset_fee:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &issue_asset_fee_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(40)) goto parse_pay_fee;
-        break;
-      }
-
-      // optional int64 pay_fee = 5;
-      case 5: {
-        if (tag == 40) {
-         parse_pay_fee:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &pay_fee_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(48)) goto parse_set_metadata_fee;
-        break;
-      }
-
-      // optional int64 set_metadata_fee = 6;
-      case 6: {
-        if (tag == 48) {
-         parse_set_metadata_fee:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &set_metadata_fee_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(56)) goto parse_set_sigure_weight_fee;
-        break;
-      }
-
-      // optional int64 set_sigure_weight_fee = 7;
-      case 7: {
-        if (tag == 56) {
-         parse_set_sigure_weight_fee:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &set_sigure_weight_fee_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(64)) goto parse_set_threshold_fee;
-        break;
-      }
-
-      // optional int64 set_threshold_fee = 8;
-      case 8: {
-        if (tag == 64) {
-         parse_set_threshold_fee:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &set_threshold_fee_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(72)) goto parse_pay_coin_fee;
-        break;
-      }
-
-      // optional int64 pay_coin_fee = 9;
-      case 9: {
-        if (tag == 72) {
-         parse_pay_coin_fee:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &pay_coin_fee_)));
 
         } else {
           goto handle_unusual;
@@ -5982,49 +5735,14 @@ failure:
 void FeeConfig::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:protocol.FeeConfig)
-  // optional int64 byte_fee = 1;
-  if (this->byte_fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->byte_fee(), output);
+  // optional int64 gas_price = 1;
+  if (this->gas_price() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->gas_price(), output);
   }
 
   // optional int64 base_reserve = 2;
   if (this->base_reserve() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->base_reserve(), output);
-  }
-
-  // optional int64 create_account_fee = 3;
-  if (this->create_account_fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->create_account_fee(), output);
-  }
-
-  // optional int64 issue_asset_fee = 4;
-  if (this->issue_asset_fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->issue_asset_fee(), output);
-  }
-
-  // optional int64 pay_fee = 5;
-  if (this->pay_fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->pay_fee(), output);
-  }
-
-  // optional int64 set_metadata_fee = 6;
-  if (this->set_metadata_fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(6, this->set_metadata_fee(), output);
-  }
-
-  // optional int64 set_sigure_weight_fee = 7;
-  if (this->set_sigure_weight_fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(7, this->set_sigure_weight_fee(), output);
-  }
-
-  // optional int64 set_threshold_fee = 8;
-  if (this->set_threshold_fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(8, this->set_threshold_fee(), output);
-  }
-
-  // optional int64 pay_coin_fee = 9;
-  if (this->pay_coin_fee() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(9, this->pay_coin_fee(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.FeeConfig)
@@ -6033,49 +5751,14 @@ void FeeConfig::SerializeWithCachedSizes(
 ::google::protobuf::uint8* FeeConfig::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:protocol.FeeConfig)
-  // optional int64 byte_fee = 1;
-  if (this->byte_fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->byte_fee(), target);
+  // optional int64 gas_price = 1;
+  if (this->gas_price() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->gas_price(), target);
   }
 
   // optional int64 base_reserve = 2;
   if (this->base_reserve() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->base_reserve(), target);
-  }
-
-  // optional int64 create_account_fee = 3;
-  if (this->create_account_fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->create_account_fee(), target);
-  }
-
-  // optional int64 issue_asset_fee = 4;
-  if (this->issue_asset_fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->issue_asset_fee(), target);
-  }
-
-  // optional int64 pay_fee = 5;
-  if (this->pay_fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->pay_fee(), target);
-  }
-
-  // optional int64 set_metadata_fee = 6;
-  if (this->set_metadata_fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(6, this->set_metadata_fee(), target);
-  }
-
-  // optional int64 set_sigure_weight_fee = 7;
-  if (this->set_sigure_weight_fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(7, this->set_sigure_weight_fee(), target);
-  }
-
-  // optional int64 set_threshold_fee = 8;
-  if (this->set_threshold_fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(8, this->set_threshold_fee(), target);
-  }
-
-  // optional int64 pay_coin_fee = 9;
-  if (this->pay_coin_fee() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(9, this->pay_coin_fee(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.FeeConfig)
@@ -6086,11 +5769,11 @@ int FeeConfig::ByteSize() const {
 // @@protoc_insertion_point(message_byte_size_start:protocol.FeeConfig)
   int total_size = 0;
 
-  // optional int64 byte_fee = 1;
-  if (this->byte_fee() != 0) {
+  // optional int64 gas_price = 1;
+  if (this->gas_price() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->byte_fee());
+        this->gas_price());
   }
 
   // optional int64 base_reserve = 2;
@@ -6098,55 +5781,6 @@ int FeeConfig::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->base_reserve());
-  }
-
-  // optional int64 create_account_fee = 3;
-  if (this->create_account_fee() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->create_account_fee());
-  }
-
-  // optional int64 issue_asset_fee = 4;
-  if (this->issue_asset_fee() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->issue_asset_fee());
-  }
-
-  // optional int64 pay_fee = 5;
-  if (this->pay_fee() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->pay_fee());
-  }
-
-  // optional int64 set_metadata_fee = 6;
-  if (this->set_metadata_fee() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->set_metadata_fee());
-  }
-
-  // optional int64 set_sigure_weight_fee = 7;
-  if (this->set_sigure_weight_fee() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->set_sigure_weight_fee());
-  }
-
-  // optional int64 set_threshold_fee = 8;
-  if (this->set_threshold_fee() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->set_threshold_fee());
-  }
-
-  // optional int64 pay_coin_fee = 9;
-  if (this->pay_coin_fee() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->pay_coin_fee());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -6177,32 +5811,11 @@ void FeeConfig::MergeFrom(const FeeConfig& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
-  if (from.byte_fee() != 0) {
-    set_byte_fee(from.byte_fee());
+  if (from.gas_price() != 0) {
+    set_gas_price(from.gas_price());
   }
   if (from.base_reserve() != 0) {
     set_base_reserve(from.base_reserve());
-  }
-  if (from.create_account_fee() != 0) {
-    set_create_account_fee(from.create_account_fee());
-  }
-  if (from.issue_asset_fee() != 0) {
-    set_issue_asset_fee(from.issue_asset_fee());
-  }
-  if (from.pay_fee() != 0) {
-    set_pay_fee(from.pay_fee());
-  }
-  if (from.set_metadata_fee() != 0) {
-    set_set_metadata_fee(from.set_metadata_fee());
-  }
-  if (from.set_sigure_weight_fee() != 0) {
-    set_set_sigure_weight_fee(from.set_sigure_weight_fee());
-  }
-  if (from.set_threshold_fee() != 0) {
-    set_set_threshold_fee(from.set_threshold_fee());
-  }
-  if (from.pay_coin_fee() != 0) {
-    set_pay_coin_fee(from.pay_coin_fee());
   }
 }
 
@@ -6230,15 +5843,8 @@ void FeeConfig::Swap(FeeConfig* other) {
   InternalSwap(other);
 }
 void FeeConfig::InternalSwap(FeeConfig* other) {
-  std::swap(byte_fee_, other->byte_fee_);
+  std::swap(gas_price_, other->gas_price_);
   std::swap(base_reserve_, other->base_reserve_);
-  std::swap(create_account_fee_, other->create_account_fee_);
-  std::swap(issue_asset_fee_, other->issue_asset_fee_);
-  std::swap(pay_fee_, other->pay_fee_);
-  std::swap(set_metadata_fee_, other->set_metadata_fee_);
-  std::swap(set_sigure_weight_fee_, other->set_sigure_weight_fee_);
-  std::swap(set_threshold_fee_, other->set_threshold_fee_);
-  std::swap(pay_coin_fee_, other->pay_coin_fee_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -6254,18 +5860,18 @@ void FeeConfig::InternalSwap(FeeConfig* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // FeeConfig
 
-// optional int64 byte_fee = 1;
-void FeeConfig::clear_byte_fee() {
-  byte_fee_ = GOOGLE_LONGLONG(0);
+// optional int64 gas_price = 1;
+void FeeConfig::clear_gas_price() {
+  gas_price_ = GOOGLE_LONGLONG(0);
 }
- ::google::protobuf::int64 FeeConfig::byte_fee() const {
-  // @@protoc_insertion_point(field_get:protocol.FeeConfig.byte_fee)
-  return byte_fee_;
+ ::google::protobuf::int64 FeeConfig::gas_price() const {
+  // @@protoc_insertion_point(field_get:protocol.FeeConfig.gas_price)
+  return gas_price_;
 }
- void FeeConfig::set_byte_fee(::google::protobuf::int64 value) {
+ void FeeConfig::set_gas_price(::google::protobuf::int64 value) {
   
-  byte_fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.FeeConfig.byte_fee)
+  gas_price_ = value;
+  // @@protoc_insertion_point(field_set:protocol.FeeConfig.gas_price)
 }
 
 // optional int64 base_reserve = 2;
@@ -6280,104 +5886,6 @@ void FeeConfig::clear_base_reserve() {
   
   base_reserve_ = value;
   // @@protoc_insertion_point(field_set:protocol.FeeConfig.base_reserve)
-}
-
-// optional int64 create_account_fee = 3;
-void FeeConfig::clear_create_account_fee() {
-  create_account_fee_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 FeeConfig::create_account_fee() const {
-  // @@protoc_insertion_point(field_get:protocol.FeeConfig.create_account_fee)
-  return create_account_fee_;
-}
- void FeeConfig::set_create_account_fee(::google::protobuf::int64 value) {
-  
-  create_account_fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.FeeConfig.create_account_fee)
-}
-
-// optional int64 issue_asset_fee = 4;
-void FeeConfig::clear_issue_asset_fee() {
-  issue_asset_fee_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 FeeConfig::issue_asset_fee() const {
-  // @@protoc_insertion_point(field_get:protocol.FeeConfig.issue_asset_fee)
-  return issue_asset_fee_;
-}
- void FeeConfig::set_issue_asset_fee(::google::protobuf::int64 value) {
-  
-  issue_asset_fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.FeeConfig.issue_asset_fee)
-}
-
-// optional int64 pay_fee = 5;
-void FeeConfig::clear_pay_fee() {
-  pay_fee_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 FeeConfig::pay_fee() const {
-  // @@protoc_insertion_point(field_get:protocol.FeeConfig.pay_fee)
-  return pay_fee_;
-}
- void FeeConfig::set_pay_fee(::google::protobuf::int64 value) {
-  
-  pay_fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.FeeConfig.pay_fee)
-}
-
-// optional int64 set_metadata_fee = 6;
-void FeeConfig::clear_set_metadata_fee() {
-  set_metadata_fee_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 FeeConfig::set_metadata_fee() const {
-  // @@protoc_insertion_point(field_get:protocol.FeeConfig.set_metadata_fee)
-  return set_metadata_fee_;
-}
- void FeeConfig::set_set_metadata_fee(::google::protobuf::int64 value) {
-  
-  set_metadata_fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.FeeConfig.set_metadata_fee)
-}
-
-// optional int64 set_sigure_weight_fee = 7;
-void FeeConfig::clear_set_sigure_weight_fee() {
-  set_sigure_weight_fee_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 FeeConfig::set_sigure_weight_fee() const {
-  // @@protoc_insertion_point(field_get:protocol.FeeConfig.set_sigure_weight_fee)
-  return set_sigure_weight_fee_;
-}
- void FeeConfig::set_set_sigure_weight_fee(::google::protobuf::int64 value) {
-  
-  set_sigure_weight_fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.FeeConfig.set_sigure_weight_fee)
-}
-
-// optional int64 set_threshold_fee = 8;
-void FeeConfig::clear_set_threshold_fee() {
-  set_threshold_fee_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 FeeConfig::set_threshold_fee() const {
-  // @@protoc_insertion_point(field_get:protocol.FeeConfig.set_threshold_fee)
-  return set_threshold_fee_;
-}
- void FeeConfig::set_set_threshold_fee(::google::protobuf::int64 value) {
-  
-  set_threshold_fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.FeeConfig.set_threshold_fee)
-}
-
-// optional int64 pay_coin_fee = 9;
-void FeeConfig::clear_pay_coin_fee() {
-  pay_coin_fee_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 FeeConfig::pay_coin_fee() const {
-  // @@protoc_insertion_point(field_get:protocol.FeeConfig.pay_coin_fee)
-  return pay_coin_fee_;
-}
- void FeeConfig::set_pay_coin_fee(::google::protobuf::int64 value) {
-  
-  pay_coin_fee_ = value;
-  // @@protoc_insertion_point(field_set:protocol.FeeConfig.pay_coin_fee)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

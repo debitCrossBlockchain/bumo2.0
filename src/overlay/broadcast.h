@@ -36,7 +36,6 @@ namespace bumo{
 		~BroadcastRecord();
 
 		int64_t type_;
-		std::string data_;
 		int64_t time_stamp_;
 		std::set<int64_t> peers_;
 	};

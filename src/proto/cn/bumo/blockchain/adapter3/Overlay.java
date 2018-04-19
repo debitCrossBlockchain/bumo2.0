@@ -235,10 +235,6 @@ public final class Overlay {
      * <code>CHAIN_TX_ENV_STORE = 18;</code>
      */
     CHAIN_TX_ENV_STORE(18),
-    /**
-     * <code>CHAIN_RESPONSE = 19;</code>
-     */
-    CHAIN_RESPONSE(19),
     UNRECOGNIZED(-1),
     ;
 
@@ -294,10 +290,6 @@ public final class Overlay {
      * <code>CHAIN_TX_ENV_STORE = 18;</code>
      */
     public static final int CHAIN_TX_ENV_STORE_VALUE = 18;
-    /**
-     * <code>CHAIN_RESPONSE = 19;</code>
-     */
-    public static final int CHAIN_RESPONSE_VALUE = 19;
 
 
     public final int getNumber() {
@@ -328,7 +320,6 @@ public final class Overlay {
         case 16: return CHAIN_LEDGER_HEADER;
         case 17: return CHAIN_SUBSCRIBE_TX;
         case 18: return CHAIN_TX_ENV_STORE;
-        case 19: return CHAIN_RESPONSE;
         default: return null;
       }
     }
@@ -12362,14 +12353,14 @@ public final class Overlay {
       "AY_MSGTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSGT" +
       "YPE_LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022" +
       ")\n%OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY" +
-      "\020\007*\216\002\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_NO" +
+      "\020\007*\372\001\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_NO" +
       "NE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS",
       "\020\013\022\025\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_" +
       "OFFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHA" +
       "IN_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_H" +
       "EADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN" +
-      "_TX_ENV_STORE\020\022\022\022\n\016CHAIN_RESPONSE\020\023B\035\n\033c" +
-      "n.bumo.blockchain.adapter3b\006proto3"
+      "_TX_ENV_STORE\020\022B\035\n\033cn.bumo.blockchain.ad" +
+      "apter3b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

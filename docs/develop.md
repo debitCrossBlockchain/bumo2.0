@@ -283,7 +283,7 @@ HTTP GET /getAccountBase?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 ### 查询交易
 
 ```text
-GET /getTransactionHistory?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d425d0fe644e698&ledger_seq=2
+GET /getTransactionHistory?ledger_seq=6
 ```
 
 | 参数       | 描述                     |
@@ -298,32 +298,97 @@ GET /getTransactionHistory?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc3592
 {
     "error_code": 0,
     "result": {
-        "total_count": 1, //本次查询结果，交易的数量
-        "transactions": [ //每一个交易
-            {
-              "close_time": 1516350588062394,
-              "error_code": 0,
-              "error_desc": "",
-              "hash": "3c2ebac2baec701730bec4665aab0cd045838b16a6b78f940fdd1af7715de100",
-              "ledger_seq": 14212,
-              "signatures": [{
+        "total_count": 2,
+        "transactions": [{
+            "actual_fee": 313000,
+            "close_time": 1524031260097214,
+            "error_code": 0,
+            "error_desc": "",
+            "hash": "89a9d6e5d2c0e2b5c4fe58045ab2236d12e9449ef232342a48a2e2628e12014d",
+            "ledger_seq": 6,
+            "signatures": [{
                 "public_key": "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
-                "sign_data": "e950d36daaa51481f6aa7579d2ee8e893cb532d6ea536c716e89a529dd017f07ed8c0a130e897138a90b4bb44c11d4d105e65dc0070d28eb0cb5810c1f94f50a"
-              }],
-              "transaction": {
-                "fee": 24900,
-                "nonce": 11,
+                "sign_data": "27866d70a58fc527b1ff1b4a693b8034b0078fc7ac7591fb05679abe5ca660db5c372922bfa8f26e76511e2c33386306ded7593874a6aec5baeeaddbd2012f06"
+            }],
+            "transaction": {
+                "fee_limit": 10000000000,
+                "gas_price": 1000,
+                "nonce": 1,
                 "operations": [{
-                  "pay_coin": {
-                    "amount": 10000,
-                    "dest_address": "buQiAAYKvQ7ZozHLShvBZe5ChTfK2eR6hKcS"
-                  },
-                  "type": 7
+                    "create_account": {
+                        "dest_address": "buQBAfoMfXZVPpg9DaabMmM2EwUnfoVsTSVV",
+                        "init_balance": 10000000,
+                        "priv": {
+                            "master_weight": 1,
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                },
+                {
+                    "create_account": {
+                        "dest_address": "buQj8UyKbN3myVSerLDVXVXH47vWXfqtxKLm",
+                        "init_balance": 10000000,
+                        "priv": {
+                            "master_weight": 1,
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
                 }],
                 "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
-              }
-            }
-        ]
+            },
+            "tx_size": 313
+        },
+        {
+            "actual_fee": 313000,
+            "close_time": 1524031260097214,
+            "error_code": 0,
+            "error_desc": "",
+            "hash": "7d7cfc860acfd83865d01bb655ac772113833f0769264d6392c6220024b8f93f",
+            "ledger_seq": 6,
+            "signatures": [{
+                "public_key": "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                "sign_data": "fb7d9d87f4c9140b6e19a199091c6871e2380ad8e8a8fcada9b42a2911057111dc796d731f3f887e600aa89cc8692300f980723298a93b91db711155670d3e0d"
+            }],
+            "transaction": {
+                "fee_limit": 10000000000,
+                "gas_price": 1000,
+                "nonce": 2,
+                "operations": [{
+                    "create_account": {
+                        "dest_address": "buQntAvayDWkAhPh6CSrTWbiEniAL2ys5m2p",
+                        "init_balance": 10000000,
+                        "priv": {
+                            "master_weight": 1,
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                },
+                {
+                    "create_account": {
+                        "dest_address": "buQX5X9y59zbmqyFgFPQPcyUPcPnvwsLatsq",
+                        "init_balance": 10000000,
+                        "priv": {
+                            "master_weight": 1,
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                }],
+                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+            },
+            "tx_size": 313
+        }]
     }
 }
 ```
@@ -371,7 +436,8 @@ GET /getTransactionCache?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d
                 ],
                 "status": "processing",
                 "transaction": {
-                    "fee": 100000,
+                    "fee_limit": 100000,
+                    "gas_price": 1000,
                     "nonce": 2,
                     "operations": [
                         {
@@ -418,7 +484,7 @@ GET /getTransactionCache?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d
 ### 查询区块头
 
 ```text
-GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true
+GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true&with_fee=true&with_block_reward=true
 ```
 
 | 参数           | 描述                                      |
@@ -427,6 +493,7 @@ GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true
 | with_validator | 默认false，不显示验证节点列表       |
 | with_consvalue | 默认false，不显示共识值             |
 | with_fee       | 默认false，不显示费用配置             |
+| with_block_reward | 默认false，不显示区块奖励和验证节点奖励             |
 
 
 - 如果查询到ledger则返回内容:
@@ -435,44 +502,144 @@ GET /getLedger?seq=xxxx&with_validator=true&with_consvalue=true
 {
    "error_code" : 0,
    "result" : {
-      "consensus_value" : {//当with_consvalue=true时才会显示
-         "close_time" : 1506478618406358,//共识结果产生的时间
-         "ledger_seq" : 136,//共识出来的区块号
-         "previous_ledger_hash" : "f7096c0d7b85e766a459c9d0eb8756268d560270c7a1cf51fc0371baaa6573f4",//上一个区块序号
-         "previous_proof" : "0aff010a2d080110022a2708011087012220f38b06d6fb8a825b537105e60e089f474b90f41de01ef43367c64553604d198612cd010a8801623030323034316136633636343233373139373465613061663862366636393136353230343964366262396539653363663739383363363763613362336563616538363337346565306465616665666563393432383138303936613335313335343635373861346632643761623664353133396339323737656264306634633931623563643739641240032efd35b8ea647dc9e687d7a79dc43344d8f58e9329070334778c70b2d7574b40fd26a9660f9f5240c93a123baaff70c6df812ac095e1b5e44790ca29ed4e1e",
+      "block_reward" : 800000000,
+      "consensus_value" : {
+         "close_time" : 1524031260097214,
+         "ledger_seq" : 6,
+         "previous_ledger_hash" : "ef329c7ed761e3065ab08f9e7672fd5f4e3ddd77b0be35598979aff8c21ada9b",
+         "previous_proof" : "0ac1010a2c080110022a26080310052220432dde2fd32a2a66da77647231821c87958f56c303bd08003633952d384eb0b61290010a4c623030316435363833363735303137666662633332366538666232303738653532316566383435373234363236353339356536383934633835323434656566643262666130386635393862661240deeb9b782410f0f86d897006cac8ad152e56e4f914e5d718706de84044ef98baef25512a337865772641d57090b5c77e9e2149dbd41910e8d6cd85c3387ea708",
          "previous_proof_plain" : {
             "commits" : [
                {
                   "pbft" : {
                      "commit" : {
-                        "sequence" : 135,
-                        "value_digest" : "f38b06d6fb8a825b537105e60e089f474b90f41de01ef43367c64553604d1986",
-                        "view_number" : 1
+                        "sequence" : 5,
+                        "value_digest" : "432dde2fd32a2a66da77647231821c87958f56c303bd08003633952d384eb0b6",
+                        "view_number" : 3
                      },
                      "round_number" : 1,
                      "type" : 2
                   },
                   "signature" : {
-                     "public_key" : "b002041a6c6642371974ea0af8b6f691652049d6bb9e9e3cf7983c67ca3b3ecae86374ee0deafefec942818096a3513546578a4f2d7ab6d5139c9277ebd0f4c91b5cd79d",
-                     "sign_data" : "032efd35b8ea647dc9e687d7a79dc43344d8f58e9329070334778c70b2d7574b40fd26a9660f9f5240c93a123baaff70c6df812ac095e1b5e44790ca29ed4e1e"
+                     "public_key" : "b001d5683675017ffbc326e8fb2078e521ef8457246265395e6894c85244eefd2bfa08f598bf",
+                     "sign_data" : "deeb9b782410f0f86d897006cac8ad152e56e4f914e5d718706de84044ef98baef25512a337865772641d57090b5c77e9e2149dbd41910e8d6cd85c3387ea708"
                   }
                }
             ]
          },
-         "txset" : null
+         "txset" : {
+            "txs" : [
+               {
+                  "signatures" : [
+                     {
+                        "public_key" : "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                        "sign_data" : "27866d70a58fc527b1ff1b4a693b8034b0078fc7ac7591fb05679abe5ca660db5c372922bfa8f26e76511e2c33386306ded7593874a6aec5baeeaddbd2012f06"
+                     }
+                  ],
+                  "transaction" : {
+                     "fee_limit" : 10000000000,
+                     "gas_price" : 1000,
+                     "nonce" : 1,
+                     "operations" : [
+                        {
+                           "create_account" : {
+                              "dest_address" : "buQBAfoMfXZVPpg9DaabMmM2EwUnfoVsTSVV",
+                              "init_balance" : 10000000,
+                              "priv" : {
+                                 "master_weight" : 1,
+                                 "thresholds" : {
+                                    "tx_threshold" : 1
+                                 }
+                              }
+                           },
+                           "type" : 1
+                        },
+                        {
+                           "create_account" : {
+                              "dest_address" : "buQj8UyKbN3myVSerLDVXVXH47vWXfqtxKLm",
+                              "init_balance" : 10000000,
+                              "priv" : {
+                                 "master_weight" : 1,
+                                 "thresholds" : {
+                                    "tx_threshold" : 1
+                                 }
+                              }
+                           },
+                           "type" : 1
+                        }
+                     ],
+                     "source_address" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+                  }
+               },
+               {
+                  "signatures" : [
+                     {
+                        "public_key" : "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                        "sign_data" : "fb7d9d87f4c9140b6e19a199091c6871e2380ad8e8a8fcada9b42a2911057111dc796d731f3f887e600aa89cc8692300f980723298a93b91db711155670d3e0d"
+                     }
+                  ],
+                  "transaction" : {
+                     "fee_limit" : 10000000000,
+                     "gas_price" : 1000,
+                     "nonce" : 2,
+                     "operations" : [
+                        {
+                           "create_account" : {
+                              "dest_address" : "buQntAvayDWkAhPh6CSrTWbiEniAL2ys5m2p",
+                              "init_balance" : 10000000,
+                              "priv" : {
+                                 "master_weight" : 1,
+                                 "thresholds" : {
+                                    "tx_threshold" : 1
+                                 }
+                              }
+                           },
+                           "type" : 1
+                        },
+                        {
+                           "create_account" : {
+                              "dest_address" : "buQX5X9y59zbmqyFgFPQPcyUPcPnvwsLatsq",
+                              "init_balance" : 10000000,
+                              "priv" : {
+                                 "master_weight" : 1,
+                                 "thresholds" : {
+                                    "tx_threshold" : 1
+                                 }
+                              }
+                           },
+                           "type" : 1
+                        }
+                     ],
+                     "source_address" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+                  }
+               }
+            ]
+         }
+      },
+      "fees" : {
+         "base_reserve" : 10000000,
+         "gas_price" : 1000
       },
       "header" : {
-         "account_tree_hash" : "d8a04da7daad5eb911c285ec56a4a5434d66af22f29f42b74373908c3efe64e0", //账号树的hash
-         "close_time" : 1506478618406358, //本区块生成的时间
-         "consensus_value_hash" : "5067eda92d887ce90f7f96b8ed1a000bd69755905286ed092fda00175e781a07", //共识结果的hash
-         "hash" : "9a3c4dc78b40eaa18b962688b24a57b160d93703e9cfaef88c0a27bdff369bee",//本区块的hash
-         "previous_hash" : "f7096c0d7b85e766a459c9d0eb8756268d560270c7a1cf51fc0371baaa6573f4",//上一个区块的hash
-         "seq" : 136, //区块的序号
-         "tx_count" : 1, //截止到当前区块，所有交易的数量
-         "validators_hash" : "b744ccae0ecd1b0c09923564bc1556949e96f78755bdbcec06a82ddad420cca4", //共识节点集合的hash
-         "version" : 1000 //区块版本
+         "account_tree_hash" : "6aca37dfe83f213942b21d02618b989619cfd7c0e67a8a14b0f7599dd4010aad",
+         "close_time" : 1524031260097214,
+         "consensus_value_hash" : "14a65d69f619395135da2ff98281d5707494801f12184a4318b9a76383e651a8",
+         "fees_hash" : "916daa78d264b3e2d9cff8aac84c943a834f49a62b7354d4fa228dab65515313",
+         "hash" : "2cf378b326ab0026625c8d036813aef89a0b383e75055b80cb7cc25a657a9c5d",
+         "previous_hash" : "ef329c7ed761e3065ab08f9e7672fd5f4e3ddd77b0be35598979aff8c21ada9b",
+         "seq" : 6,
+         "tx_count" : 2,
+         "validators_hash" : "d857aa40ecdb123415f893159321eb223e4dbc11863daef86f35565dd1633316",
+         "version" : 1000
       },
-      "validators" : [ "a002953b57b025662c9f9de93df4c319cc39bec181c2b5" ]//with_validator=true时才显示，共识节点集合
+      "validators" : [
+         {
+            "address" : "buQhmPKU1xTyC3n7zJ8zLQXtuDJmM2zTrJey"
+         }
+      ],
+      "validators_reward" : {
+         "buQhmPKU1xTyC3n7zJ8zLQXtuDJmM2zTrJey" : 800000000
+      }
    }
 }
 ```
@@ -540,7 +707,8 @@ POST /getTransactionBlob
     "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
     "nonce":2, //nonce值
     "ceil_ledger_seq": 0, //可选
-    "fee":1000, //交易支付的费用
+    "fee_limit":1000, //交易支付的费用
+    "gas_price": 1000, //gas价格(不小于配置的最低值)
     "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
     "operations":[
     {
@@ -574,7 +742,8 @@ POST /getTransactionBlob
 {
   "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
   "nonce": 1,
-  "fee": 1000000,
+  "fee_limit": 1000000,
+  "gas_price": 1000,
   "operations": [{
       "type": 1,
       "create_account": {
@@ -622,7 +791,8 @@ POST /getTransactionBlob
   "code" : "\"use strict\";log(undefined);function query() { return 1; }",
   "input" : "{}",
   "contract_balance" : "100009000000",
-  "fee" : 100000000000000000,
+  "fee_limit" : 100000000000000000,
+  "gas_price": 1000,
   "exe_or_query" : false,
   "source_address" : ""
 }
@@ -630,7 +800,8 @@ POST /getTransactionBlob
   - contract_address: 调用的智能合约地址，如果从数据库查询不到则返回错误。
   - code：需要调试的合约代码，如果 contract_address 为空，则使用code 字段，如果code字段你也为空，则返回错误。
   - input： 给被调用的合约传参。
-  - fee : 执行合约传递的参数。
+  - fee_limit : 手续费。
+  - gas_price : Gas价格。
   - contract_balance : 赋予合约的初始 BU 余额。
   - exe_or_query: true :准备调用合约的读写接口main，false :调用只读接口query。
   - source_address：模拟调用合约的原地址。
@@ -654,7 +825,7 @@ POST /getTransactionBlob
             }
          }
       ],
-      "real_fee" : 0,
+      "actual_fee" : 0,
       "stat" : {
          "apply_time" : 6315,
          "memory_usage" : 886176,
@@ -674,10 +845,10 @@ POST /getTransactionBlob
 {
   "items": [
     {
-      "transaction_json": {
+      "transaction_blob": {
         "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB",
+        "metadata":"0123456789abcdef", //可选
         "nonce": 6,
-        "fee":0,
         "operations": [
           {
             "type": 7,
@@ -687,7 +858,8 @@ POST /getTransactionBlob
             }
           }
         ]
-      }
+      },
+      "signature_number":1
     }
   ]
 }
@@ -695,7 +867,10 @@ POST /getTransactionBlob
   评估费用不改变账号余额基础上进行的评估，交易中涉及的原账号和目标账号都必须在系统中存在，创建账号的目标地址除外。
   - source_address：模拟交易的原地址。
   - nonce : 在原账号基础上加1。
-  - fee : 费用填0系统会自动填写一个大概费用来进行交易，计算出实际费用，如果费用不足，交易终止；非0不填写费用字段，直接交易计算出实际费用，如果费用不足，交易终止。
+  - signature_number : 签名个数，默认为1；不填写系统会设置为1；
+  - metadata : 可选
+  - fee_limit : 不用填写
+  - gas_price : 不用填写
   - operations : 可以是任何一种操作类型。
 
   - 返回值如下：
@@ -705,22 +880,24 @@ POST /getTransactionBlob
     "error_code": 0,
     "error_desc": "",
     "result": {
-        "hash": "63109579662d7165ee3c4de0a00932d8b721651101d3255e2326de10eea6de15",
+        "hash": "7f0d9de23d6d8f2964a1efe4a458e02e43e47f60f3c22bb132b676c54a44ba04",
         "logs": null,
         "query_rets": null,
-        "real_fee": 1000,
         "stat": null,
         "txs": [
             {
+                "actual_fee": 264,
+                "gas": 264,
                 "transaction_env": {
                     "transaction": {
-                        "fee": 99999999974939995,
-                        "nonce": 6,
+                        "fee_limit": 99999999700110000,
+                        "gas_price": 1,
+                        "nonce": 1,
                         "operations": [
                             {
                                 "pay_coin": {
-                                    "amount": 10000,
-                                    "dest_address": "buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw"
+                                    "amount": 299890000,
+                                    "dest_address": "buQkBDTfe4tx2Knw9NDKyntVmsYvYtHmAiE7"
                                 },
                                 "type": 7
                             }
@@ -734,6 +911,10 @@ POST /getTransactionBlob
 }
 ```
 
+  - gas_price ： 会在transaction添加gas_price，gas_price为系统的最低price
+  - actual_fee ：评估交易的实际费用
+  - gas ： 评估交易所用gas 
+
 ## 定义交易
 
 ### 交易的基本结构
@@ -743,7 +924,8 @@ POST /getTransactionBlob
   {
       "source_address":"xxxxxxxxxxx",//交易源账号，即交易的发起方
       "nonce":2, //nonce值
-      "fee" : 1000000, //愿为交易花费的手续费
+      "fee_limit" : 1000000, //愿为交易花费的手续费
+      "gas_price": 1000,//gas价格(不小于配置的最低值)
       "ceil_ledger_seq": 100, //可选，区块高度限制, 如果大于0，则交易只有在该区块高度之前（包括该高度）才有效
       "metadata":"0123456789abcdef", //可选，用户自定义给交易的备注，16进制格式
       "operations":[
@@ -767,17 +949,20 @@ POST /getTransactionBlob
       };
       string source_address = 1;
       int64 nonce = 2;
-      int64 fee = 3;
-      int64 ceil_ledger_seq = 4;
-      bytes metadata = 5;
-      repeated Operation operations = 6;
+      int64 fee_limit = 3;
+      int64 gas_price =4;
+      int64 ceil_ledger_seq = 5;
+      bytes metadata = 6;
+      repeated Operation operations = 7;
   }
   ```
 
-  交易Transaction有5个关键字段
+  交易Transaction有7个关键字段
 
   - source_address: 交易源账号，即交易发起方的账号。当这笔交易成功后，交易源账号的nonce字段会自动加1。账号中的nonce意义是本账号作为交易源执行过的交易数量。
   - nonce:其值必须等于交易源账号的当前nonce+1，这是为了防止重放攻击而设计的。如何查询一个账号的nonce可参考[查询账号](#查询账号)。若查询账号没有显示nonce值，说明账号的当前nonce是0.
+  - fee_limit:本交易能接受的最大的手续费。交易首先会按照这个费用收取手续费，若交易执行成功，则会收取实际的花费，否则将收取这个字段的费用。
+  - gas_price:用于计算每个操作的手续费，还参与交易字节费的计算。
   - ceil_ledger_seq:针对本交易的区块高度限制条件，高级功能。
   - operations:操作列表。本交易的有效负载，即本交易想要做什么事情。见[操作](#操作)
   - metadata:用户自定义字段，可以不填写，备注用。
@@ -975,7 +1160,6 @@ POST /getTransactionBlob
       "issue_asset": {
         "amount": 1000,
         "code": "CNY",
-        "type": 0 //目前只能填0 或者不填
       }
     }
     ```
@@ -985,7 +1169,6 @@ POST /getTransactionBlob
     {
         string code = 1;
         int64 amount = 2;
-        int32 type = 3;
     }
     ```
     - code:要发行的资产代码，长度范围[1, 64]
@@ -997,8 +1180,8 @@ POST /getTransactionBlob
 |参数|描述
 |:--- | --- 
 |payment.dest_address |  目标账户
-|payment.asset.property.issuer|  资产发行方
-|payment.asset.property.code|  资产代码
+|payment.asset.key.issuer|  资产发行方
+|payment.asset.key.code|  资产代码
 |payment.asset.amount|  要转移的数量
 |payment.input|  触发合约调用的入参
 
@@ -1382,19 +1565,19 @@ function query(input)
 
 - ##### 获取某个账号的资产信息
 
-    `getAccountAsset(account_address, asset_property);`
+    `getAccountAsset(account_address, asset_key);`
 
     - account_address: 账号地址
-    - asset_property: 资产属性
+    - asset_key: 资产属性
 
     例如
     ```javascript
-    let asset_property =
+    let asset_key =
     {
       'issuer' : 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY',
       'code' : 'CNY'
     };
-    let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_property);
+    let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_key);
 
     /*
      1
@@ -1516,14 +1699,14 @@ function query(input)
     ```
       
  - ##### 变换单位
-    `toSatoshi(value);`
+    `toBaseUnit(value);`
 
     - 返回值: 乘以 10^8
     - value: 左值
 
     例如
     ```javascript
-    let ret = toSatoshi('12345678912');
+    let ret = toBaseUnit('12345678912');
     /*
     '1234567891200000000'
     */
@@ -1555,37 +1738,6 @@ function query(input)
     /*
      成功不返回,失败抛异常
     */
-    ```
-
-- ##### 做交易
-    ```javascript
-    doTransaction(transaction)
-    ```
-
-    令合约账号做一笔交易，即里面的任意一个操作的`source_address`都会自动变成合约账号。所以`source_address`是不需要填写的。
-
-  - 入参: transaction, 必须为字符串，且可反序列化
-  - 返回值: true/false
-
-    例如
-    ```javascript
-    let transaction =
-    {
-      'operations' :
-      [
-        {
-          "type" : 2,
-          "issue_asset" :
-          {
-            "amount" : 1000,
-            "code" : "CNY"
-          }
-        }
-      ]
-    };
-
-    doTransaction(JSON.stringify(transaction));
-    /*失败抛异常*/
     ```
 
 - ##### 转账
@@ -1635,7 +1787,7 @@ function query(input)
 - ##### 本次支付操作的Asset
     thisPayAsset
 
-    为对象类型{"amount": 1000, "property" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
+    为对象类型{"amount": 1000, "key" : {"issuer": "buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "code":"CNY"}}
  
 - ##### 当前区块高度
     blockNumber
@@ -1676,36 +1828,6 @@ function query(input)
 
   1. 本次合约执行失败，合约中做的所有交易都不会生效。
   1. 触发本次合约的这笔交易为失败。错误代码为`151`。
-  >例: Bob的合约是这么写的
-  ```javascript
-  function main(inputStr) {
-    let recvAsset = trigger.transaction.operations[triggerIndex].payment.asset;
-
-    if (recvAsset.property.code != 'CNY' || recvAsset.property.issuer != 'buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY') {
-      throw '不支持的资产类型';
-    }
-    let tx = {
-      'operations': [{
-          'type': 3,
-          'payment': {
-            'dest_address': sender,
-            'asset': {
-              'property': {
-                'issuer': thisAddress,
-                'code': 'IOU'
-              },
-              'amount': recvAsset.amount
-            }
-          }
-        }
-      ]
-    };
-
-    doTransaction(JSON.stringify(tx));
-
-  }
-  ```
-  这段合约的功能就是，Bob以1：1的价格收`buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY`发行的`CNY`,售卖自己的IOU借条(I owe you )。Alice向Bob转移一笔资产，触发了Bob的合约，如果此时Bob的IOU已经卖完，那么会执行到`throw 'IOU卖完了';`这一步。未捕获的异常会导致JavaScript代码执行出错，那么本次合约执行失败。Alice转给Bob的资产会自动回退到Alice的账户中，同时，Alice的这笔交易执行状态为失败，错误代码为`151`。
 
 - 执行交易失败
   <font color=red>合约中可以执行多个交易，只要有一个交易失败，就会抛出异常，导致整个交易失败</font>
@@ -1716,13 +1838,6 @@ function query(input)
 验证节点选举账户创建成功后，才可以进行后续的操作, 且该账户是全局唯一的, 不能重复创建。
 
 - 创建一个合约账户（参见[创建账号](#创建账号)），账户的地址必须是buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ。
-
->例
-
-```
-"validators_vote_account": "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
-```
-
 - 将 src\ledger\validators_vote.js 文件中的源码全部拷贝作为账户中 payload 字段的值。
 
 >例
@@ -1739,14 +1854,14 @@ function query(input)
 
  ```
    let validatorSetSize       = 100;
-   let votePassRate           = 0.8;
+   let votePassRate           = 0.7;
    let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
    let minPledgeAmount        = 100 * 100000000;
    let minSuperadditionAmount = 100 * 100000000;
 ```
  
  - validatorSetSize 指定网络内验证节点的个数；
- - votePassRate 设置投票通过值，只有验证节点有投票权限，投票数 / 验证节点总数 >= votePassRate 则投票通过;
+ - votePassRate 设置投票通过率，只有验证节点有投票权限，投票数 >= 四舍五入( 验证节点总数 * votePassRate ) 则投票通过，例如，假设总共有 4 个验证节点，那么 4 * 0.7 = 2.8，四舍五入后为 3，那么投票数必须 >= 3 才能通过, 如果总共有 6 个验证节点，那么 6 * 0.7 = 4.2，四舍五入后为 4，投票数必须 >= 4 才能通过;
  - effectiveVoteInterval 设置投票有效期，单位为微秒，超过有效期，则提案和投票作废；
  - minPledgeAmount 设置最小押金数额，低于该额度则拒绝；
  - minSuperadditionAmount 设置押金最小追加数额，低于该数额将被拒绝。
@@ -1990,25 +2105,11 @@ input 中的 address 字段填入指定的恶意节点地址。
   {
 	enum Type {
 		UNKNOWN = 0;
-		BYTE_FEE = 1;
-		BASE_RESERVE_FEE = 2;
-		CREATE_ACCOUNT_FEE = 3;
-		ISSUE_ASSET_FEE = 4;
-		PAYMENT_FEE = 5;
-		SET_METADATA_FEE = 6;
-		SET_SIGNER_WEIGHT_FEE = 7;
-		SET_THRESHOLD_FEE = 8;
-		PAY_COIN_FEE = 9;
+		GAS_PRICE = 1;
+		BASE_RESERVE = 2;
 	};
-	int64 byte_fee = 1;
+	int64 gas_price = 1;
 	int64 base_reserve = 2;
-	int64 create_account_fee = 3;
-	int64 issue_asset_fee = 4;
-	int64 pay_fee = 5;	
-	int64 set_metadata_fee = 6;
-	int64 set_sigure_weight_fee = 7;
-	int64 set_threshold_fee = 8;
-	int64 pay_coin_fee = 9;
   }
   ```
 
@@ -2016,15 +2117,8 @@ input 中的 address 字段填入指定的恶意节点地址。
 
 | 代码值 | 枚举名            | 说明                     |
 | :----- | --------------------- | ------------------- |
-| 1      | BYTE_FEE              | 字节费               |
-| 2      | BASE_RESERVE_FEE      | 预留费用             |
-| 3      | CREATE_ACCOUNT_FEE    | 创建账号费用         |
-| 4      | ISSUE_ASSET_FEE       | 发行资产费用         |
-| 5      | PAYMENT_FEE           | 转移资产费用         |
-| 6      | SET_METADATA_FEE      | 设置metadata费用     |
-| 7      | SET_SIGNER_WEIGHT_FEE | 设置权重费用         |
-| 8      | SET_THRESHOLD_FEE     | 设置门限费用         |
-| 9      | PAY_COIN_FEE          | 支付费用             |
+| 1      | GAS_PRICE             | Gas最低费用          |
+| 2      | BASE_RESERVE          | 预留费用             |
 
 #### 查询历史费用
 
@@ -2045,14 +2139,7 @@ GET /getLedger?seq=xxxx&with_fee=true
     "result": {
         "fees": {
             "base_reserve": 5,
-            "byte_fee": 1,
-            "create_account_fee": 1,
-            "issue_asset_fee": 1,
-            "pay_coin_fee": 1,
-            "pay_fee": 1,
-            "set_metadata_fee": 1,
-            "set_sigure_weight_fee": 1,
-            "set_threshold_fee": 1
+            "gas_price": 1000
         },
         "header": {
             "account_tree_hash": "c4e74a027e7fb7a96fa2c028a24fd8296df049decf928ee173ec4106ae016b0c",
@@ -2087,7 +2174,8 @@ json格式需转换成字符串形式填写到testContract接口结构
     "input" : "{\"method\":\"queryProposal\",\"params\":\"\"}",
     "exe_or_query" : false,
     "source_address" : "",
-    "fee":100000
+    "fee_limit":100000,
+    "gas_price":1000
 }
 ```
 
@@ -2112,7 +2200,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
                 }
             }
         ],
-        "real_fee": 0,
+        "actual_fee": 0,
         "stat": {
             "apply_time": 11342,
             "memory_usage": 1325072,
@@ -2147,7 +2235,8 @@ json格式需转换成字符串形式填写到testContract接口结构
     "input" :"{\"method\":\"queryVote\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}",
     "exe_or_query" : false,
     "source_address" : "",
-    "fee":100000
+    "fee_limit":100000,
+    "gas_price":1000
 }
 ```
 
@@ -2172,7 +2261,7 @@ contract_address赋值为区块上的费用选举合约地址，exe_or_query 为
                 }
             }
         ],
-        "real_fee": 0,
+        "actual_fee": 0,
         "stat": {
             "apply_time": 18020,
             "memory_usage": 1326456,
@@ -2212,6 +2301,8 @@ json格式需转换成字符串形式填写到paycoin接口结构
 ```
 
 #### 费用选取
+
+- votePassRate 设置投票通过率，只有验证节点有投票权限，投票数 >= 四舍五入( 验证节点总数 * votePassRate ) 则投票通过，例如，假设总共有 4 个验证节点，那么 4 * 0.7 = 2.8，四舍五入后为 3，那么投票数必须 >= 3 才能通过, 如果总共有 6 个验证节点，那么 6 * 0.7 = 4.2，四舍五入后为 4，投票数必须 >= 4 才能通过;
 
 通过发送转移资产交易或者付币交易来给合约发起费用选举。合约入参input参数json格式
 
@@ -2261,6 +2352,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 93                | ERRCODE_INVALID_SIGNATURE              | 签名权重不够，达不到操作的门限值                                                             |
 | 94                | ERRCODE_INVALID_ADDRESS                | 地址非法                                                                                     |
 | 97                | ERRCODE_MISSING_OPERATIONS             | 交易缺失操作                                                                                 |
+| 98                | ERRCODE_TOO_MANY_OPERATIONS             | 单笔交易内超过了100个操作                                                                   |
 | 99                | ERRCODE_BAD_SEQUENCE                   | 交易序号错误，nonce错误                                                                      |
 | 100               | ERRCODE_ACCOUNT_LOW_RESERVE            | 余额不足                                                                                     |
 | 101               | ERRCODE_ACCOUNT_SOURCEDEST_EQUAL       | 源和目的账号相等                                                                             |
@@ -2296,7 +2388,8 @@ json格式需转换成字符串形式填写到paycoin接口结构
     {
       "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
       "nonce": 1,
-      "fee":1000,
+      "fee_limit":100000,
+      "gas_price":1000,
       "operations": [{
           "type": 1,
           "create_account": {

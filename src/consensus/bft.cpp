@@ -15,12 +15,11 @@
 
 #include <utils/headers.h>
 #include <common/pb2json.h>
-#include "pbft.h"
+#include "bft.h"
 
 namespace bumo {
 	Pbft::Pbft() :view_number_(0),
 		last_exe_seq_(1),
-		sequence_(2),
 		fault_number_(0),
 		view_active_(true),
 		new_view_repond_timer_(0),
@@ -58,14 +57,9 @@ namespace bumo {
 		int64_t active = 1;
 		LoadValue(PbftDesc::VIEW_ACTIVE, active);
 		view_active_ = active > 0;
-		//LoadValue(PbftDesc::SEQUENCE_NAME, sequence_);
-		//LoadValue(PbftDesc::LOW_WATER_MRAK_NAME, low_water_mark_);
 
 		LoadValue(PbftDesc::VIEWNUMBER_NAME, view_number_);
-		//LoadValue(PbftDesc::LAST_EXE_SEQUENCE_NAME, last_exe_seq_);
-		//LoadInstance();
 		LoadVcInstance();
-		//LoadValidators();
 	}
 
 	void Pbft::ClearStatus() {
@@ -335,7 +329,6 @@ namespace bumo {
 		utils::MutexGuard lock_guad(lock_);
 		ValueSaver saver;
 
-		int64_t seq_find = last_exe_seq_;
 		//delete the last uncommitted logs
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
@@ -345,23 +338,15 @@ namespace bumo {
 				instances_.erase(iter_inst++);
 			}
 			else {
-				if (iter_inst->first.sequence_ > seq_find) {
-					seq_find = iter_inst->first.sequence_;
-				}
-
 				iter_inst++;
 			}
 		}
 
-		sequence_ = seq_find + 1;
-		PbftEnvPointer env = NewPrePrepare(value);
+		int64_t sequence = last_exe_seq_ + 1;
+		PbftEnvPointer env = NewPrePrepare(value, sequence);
 
 		//check the index
-		PbftInstanceIndex index(view_number_, sequence_);
-
-		//auto increase the sequence
-		sequence_++;
-		//saver.SaveValue(PbftDesc::SEQUENCE_NAME, sequence_);
+		PbftInstanceIndex index(view_number_, sequence);
 
 		//insert the instance to map
 		PbftInstance pinstance;
@@ -369,7 +354,7 @@ namespace bumo {
 		pinstance.phase_ = PBFT_PHASE_PREPREPARED;
 		pinstance.pre_prepare_ = env->pbft().pre_prepare();
 		pinstance.msg_buf_[env->pbft().type()].push_back(*env);
-		instances_.insert(std::make_pair(index, pinstance));
+		instances_[index] = pinstance;
 		//SaveInstance(saver);
 
 		saver.Commit();
@@ -379,25 +364,9 @@ namespace bumo {
 		return SendMessage(env);
 	}
 
-	bool Pbft::RepairStatus() {
-
-		bool normal = true;
-		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
-			iter_inst != instances_.end();
-			iter_inst++
-			) {
-			if (iter_inst->first.sequence_ > last_exe_seq_ &&
-				iter_inst->second.phase_ < PBFT_PHASE_COMMITED &&
-				IsLeader() && iter_inst->first.view_number_ == view_number_) {
-				normal = false;
-
-				iter_inst->second.SendPrepareAgain(this, utils::Timestamp::HighResolution());
-				LOG_INFO("Send pre-prepare message again repaired, view number(" FMT_I64 "),sequence(" FMT_I64 ") round number(%u)",
-					iter_inst->first.view_number_, iter_inst->first.sequence_, iter_inst->second.pre_prepare_round_);
-			}
-		}
-
-		return normal;
+	protocol::PbftMessageType Pbft::GetMessageType(const protocol::PbftEnv &env) {
+		const protocol::Pbft &pbft = env.pbft();
+		return pbft.type();
 	}
 
 	bool Pbft::CheckMessageItem(const protocol::PbftEnv &env) {
@@ -455,7 +424,23 @@ namespace bumo {
 				LOG_ERROR("Check received message failed, View change message has not related object");
 				return false;
 			}
+
 			replica_id = pbft.view_change().replica_id();
+			break;
+		}
+		case protocol::PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE:
+		{
+			if (!pbft.has_view_change_with_rawvalue()) {
+				LOG_ERROR("Check received message failed, View change with rawvalue message has not related object");
+				return false;
+			}
+
+			if (!CheckViewChangeWithRawValue(pbft.view_change_with_rawvalue(), validators)) {
+				return false;
+			}
+
+			const protocol::PbftEnv &view_change_raw = pbft.view_change_with_rawvalue().view_change_env();
+			replica_id = view_change_raw.pbft().view_change().replica_id();
 			break;
 		}
 		case protocol::PBFT_TYPE_NEWVIEW:
@@ -485,6 +470,69 @@ namespace bumo {
 			LOG_ERROR("Check received message's signature failed, desc(%s)", PbftDesc::GetPbft(pbft).c_str());
 			return false;
 		}
+		return true;
+	}
+
+	bool Pbft::CheckViewChangeWithRawValue(const protocol::PbftViewChangeWithRawValue &view_change_raw, const ValidatorMap &validators) {
+
+		if (!view_change_raw.has_view_change_env()) {
+			LOG_ERROR("Check view change raw failed, hash no view change env, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+			return false;
+		}
+
+		if (GetMessageType(view_change_raw.view_change_env()) != protocol::PBFT_TYPE_VIEWCHANGE ||
+			!CheckMessageItem(view_change_raw.view_change_env(), validators)) {
+			LOG_ERROR("Check view change raw failed, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+			return false;
+		}
+		std::string p_value_digest = view_change_raw.view_change_env().pbft().view_change().prepred_value_digest();
+
+		std::string value_digest;
+		if (view_change_raw.has_prepared_set() ) {
+			bool error_ret = false;
+			//check the prepared message
+			const protocol::PbftPreparedSet &prepared_set = view_change_raw.prepared_set();
+			//check the pre-prepare message
+			const protocol::PbftEnv &pre_prepare_env = prepared_set.pre_prepare();
+			const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
+			if (!CheckMessageItem(pre_prepare_env, validators)) {
+				return false;
+			}
+			value_digest = pre_prepare.value_digest();
+
+			std::set<int64_t> replica_ids;
+			//check the prepare message
+			for (int32_t m = 0; m < prepared_set.prepare_size(); m++) {
+				const protocol::PbftEnv &prepare_env = prepared_set.prepare(m);
+				if (!CheckMessageItem(prepare_env, validators)) {
+					LOG_ERROR("Check vc prepared set failed, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+					return false;
+				}
+
+				const protocol::PbftPrepare &prepare = prepare_env.pbft().prepare();
+
+				if (prepare.view_number() != pre_prepare.view_number() ||
+					prepare.sequence() != pre_prepare.sequence() ||
+					CompareValue(prepare.value_digest(), pre_prepare.value_digest()) != 0) {
+					LOG_ERROR("Check vc prepared set failed, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+					return false;
+				}
+
+				replica_ids.insert(prepare.replica_id());
+			}
+
+			if (replica_ids.size() < GetQuorumSize(validators.size())) {
+				LOG_ERROR("The view-change-raw message's prepared message's replica number(" FMT_SIZE ") is less than quorom size(" FMT_SIZE")",
+					 replica_ids.size(), GetQuorumSize(validators.size()) + 1);
+				return false;
+			}
+		} 
+
+		if (p_value_digest != value_digest) {
+			LOG_ERROR("Check vc failed, inner value digest diff,desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+			return false;
+		} 
+
 		return true;
 	}
 
@@ -552,7 +600,7 @@ namespace bumo {
 				//we should move to the new watermark
 				view_active_ = true;
 				view_number_ = index.view_number_;
-				sequence_ = index.sequence_;
+				last_exe_seq_ = index.sequence_;
 
 				ValueSaver saver;
 			//	saver.SaveValue(PbftDesc::LOW_WATER_MRAK_NAME, low_water_mark_);
@@ -572,13 +620,10 @@ namespace bumo {
 				//delete instance
 				for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end();) {
 					const PbftInstanceIndex &index = iter->first;
-					if (index.sequence_ <= sequence_) instances_.erase(iter++);
+					if (index.sequence_ <= last_exe_seq_) instances_.erase(iter++);
 					else iter++;
 				}
 				//SaveInstance(saver);
-
-				last_exe_seq_ = sequence_;
-				//saver.SaveValue(PbftDesc::LAST_EXE_SEQUENCE_NAME, last_exe_seq_);
 
 				//clear the Out pbft instance
 				out_pbft_instances_.clear();
@@ -628,9 +673,6 @@ namespace bumo {
 				if (pbft.type() == protocol::PBFT_TYPE_COMMIT) {
 					TraceOutPbftCommit(env);
 				}
-				//else if (pbft.type() == protocol::PBFT_TYPE_PREPREPARE){
-				//	TraceOutPbftPrePrepare(env);
-				//}
 			}
 			return NULL;
 		}
@@ -642,17 +684,30 @@ namespace bumo {
 		}
 
 
-		if (sequence > last_exe_seq_) {
-			PbftInstanceIndex index(view_number, sequence);
-			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, sequence);
-			instances_.insert(std::make_pair(index, PbftInstance()));
+		if (sequence <= last_exe_seq_) {
+			LOG_TRACE("Pbft sequence(" FMT_I64 ") <= last seq(" FMT_I64 "), don't create instance", sequence, last_exe_seq_);
+			return NULL;
 		}
 
 		PbftInstanceIndex index(view_number, sequence);
 		PbftInstanceMap::iterator iter_find = instances_.find(index);
 		if (iter_find == instances_.end()) {
-			LOG_INFO("Pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ") have passed", view_number, sequence);
-			return NULL;
+			PbftInstanceIndex index(view_number, sequence);
+			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, sequence);
+			instances_.insert(std::make_pair(index, PbftInstance()));
+
+			//delete the seq which not the same view
+			for (PbftInstanceMap::iterator iter_inst = instances_.begin();
+				iter_inst != instances_.end();
+				) {
+				if (iter_inst->first.view_number_ < view_number &&
+					iter_inst->first.sequence_ == sequence) {
+					iter_inst = instances_.erase(iter_inst);
+				}
+				else {
+					iter_inst++;
+				}
+			}
 		}
 
 		PbftInstance &instace = instances_[index];
@@ -693,9 +748,9 @@ namespace bumo {
 			if (pinstance) doret = pinstance->Go(env, this, ret);
 			break;
 		}
-		case protocol::PBFT_TYPE_VIEWCHANGE:{
+		case protocol::PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE:{
 			utils::MutexGuard lock_guad(lock_);
-			doret = OnViewChange(env);
+			doret = OnViewChangeWithRawValue(env);
 			break;
 		}
 		case protocol::PBFT_TYPE_NEWVIEW:{
@@ -862,13 +917,6 @@ namespace bumo {
 			pinstance.end_time_ = utils::Timestamp::HighResolution();
 			LOG_INFO("Request commited, view number(" FMT_I64 "),sequence(" FMT_I64 "), try to execute value", pinstance.pre_prepare_.view_number(), pinstance.pre_prepare_.sequence());
 
-			ValueSaver saver;
-			if (sequence_ < commit.sequence() + 1) {
-				//saver.SaveValue(PbftDesc::SEQUENCE_NAME, commit.sequence() + 1);
-				sequence_ = commit.sequence() + 1;
-			}
-
-			//SaveInstance(saver);
 			// this consensus has achieve
 			return TryExecuteValue();
 		}
@@ -876,55 +924,11 @@ namespace bumo {
 		return true;
 	}
 
-	bool Pbft::CheckViewChange(const protocol::PbftViewChange &view_change) {
-
-		bool error_ret = false;
-		//check the prepared message
-		for (int32_t i = 0; i < view_change.prepared_set_size(); i++) {
-			const protocol::PbftPreparedSet &prepared_set = view_change.prepared_set(i);
-			//check the pre-prepare message
-			const protocol::PbftEnv &pre_prepare_env = prepared_set.pre_prepare();
-			const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
-			if (!CheckMessageItem(pre_prepare_env)) {
-				break;
-			}
-
-			std::set<int64_t> replica_ids;
-			//check the prepare message
-			for (int32_t m = 0; m < prepared_set.prepare_size(); m++) {
-				const protocol::PbftEnv &prepare_env = prepared_set.prepare(m);
-				if (!CheckMessageItem(prepare_env)) {
-					error_ret = true;
-					break;
-				}
-
-				const protocol::PbftPrepare &prepare = prepare_env.pbft().prepare();
-
-				if (prepare.view_number() != pre_prepare.view_number() ||
-					prepare.sequence() != pre_prepare.sequence() ||
-					CompareValue(prepare.value_digest(), pre_prepare.value_digest()) != 0) {
-					error_ret = true;
-					break;
-				}
-
-				replica_ids.insert(prepare.replica_id());
-			}
-
-			if (replica_ids.size() < GetQuorumSize()) {
-				LOG_ERROR("The view-change message's sequence(" FMT_I64 ") prepared message's replica number(" FMT_SIZE ") is less than quorom size(" FMT_SIZE")",
-					view_change.sequence(), replica_ids.size(), GetQuorumSize() + 1);
-				error_ret = false;
-			}
-
-			if (error_ret) break;
-		}
-
-		return !error_ret;
-	}
-
-	bool Pbft::OnViewChange(const protocol::PbftEnv &pbft_env) {
+	bool Pbft::OnViewChangeWithRawValue(const protocol::PbftEnv &pbft_env) {
 		const protocol::Pbft &pbft = pbft_env.pbft();
-		const protocol::PbftViewChange &view_change = pbft.view_change();
+		const protocol::PbftViewChangeWithRawValue &view_change_raw = pbft.view_change_with_rawvalue();
+		const protocol::PbftEnv &inner_pbft_env = view_change_raw.view_change_env();
+		const protocol::PbftViewChange &view_change = inner_pbft_env.pbft().view_change();
 
 		LOG_INFO("Receive view change message from replica id(" FMT_I64 "), view number(" FMT_I64 "),round number(%u)",
 			view_change.replica_id(), view_change.view_number(), pbft.round_number());
@@ -940,16 +944,12 @@ namespace bumo {
 
 		LOG_INFO("Receive view change message from replica id(" FMT_I64 "), view number(" FMT_I64 "),sequence(" FMT_I64 "), round number(%u)",
 			view_change.replica_id(), view_change.view_number(), view_change.sequence(), pbft.round_number());
-		//check the view change item
-		if (!CheckViewChange(view_change)) {
-			LOG_ERROR("Check view change message failed");
-			return false;
-		}
 
 		ValueSaver saver;
 		PbftVcInstanceMap::iterator iter = vc_instances_.find(view_change.view_number());
-		if (iter == vc_instances_.end()) {
+		if (iter == vc_instances_.end()) {   //new instance
 			vc_instances_.insert(std::make_pair(view_change.view_number(), PbftVcInstance(view_change.view_number())));
+			vc_instances_[view_change.view_number()].seq = view_change.sequence();
 		}
 
 		PbftVcInstance &vc_instance = vc_instances_[view_change.view_number()];
@@ -961,8 +961,26 @@ namespace bumo {
 			vc_instance.view_change_msg_ = pbft_env;
 		}
 
-		vc_instance.msg_buf_.push_back(pbft_env);
-		vc_instance.viewchanges_.insert(std::make_pair(view_change.replica_id(), view_change));
+		PbftViewChangeMap::iterator iter_v = vc_instance.viewchanges_.find(view_change.replica_id());
+		if (iter_v == vc_instance.viewchanges_.end()) {
+			vc_instance.msg_buf_.push_back(pbft_env);
+			vc_instance.viewchanges_.insert(std::make_pair(view_change.replica_id(), view_change));
+		}
+
+		if (view_change_raw.has_prepared_set()) {
+			const protocol::PbftEnv &pre_prepared_pbft = view_change_raw.prepared_set().pre_prepare();
+			const protocol::PbftEnv &last_pre_prepared_pbft = vc_instance.pre_prepared_env_set.pre_prepare();
+			
+			int64_t msg_seq = pre_prepared_pbft.pbft().pre_prepare().sequence();
+			int64_t last_seq = last_pre_prepared_pbft.pbft().pre_prepare().sequence();
+			if (msg_seq > last_seq && msg_seq > last_exe_seq_ ) {
+
+				LOG_INFO("Replace the vc instance pre-prepared env, pbfd desc(%s)",
+					PbftDesc::GetPbft(pre_prepared_pbft.pbft()).c_str());
+				vc_instance.pre_prepared_env_set = view_change_raw.prepared_set();
+			} 
+		}
+
 		if (vc_instance.viewchanges_.size() > GetQuorumSize() && vc_instance.end_time_ == 0) { //for view change, quorum size is 2f
 			//view change have achieve
 			bool ret = ProcessQuorumViewChange(vc_instance);
@@ -1014,12 +1032,6 @@ namespace bumo {
 			}
 
 			const protocol::PbftViewChange &view_change = view_change_env.pbft().view_change();
-			if (!CheckViewChange(view_change)) {
-				LOG_ERROR("The new view message's view-number(" FMT_I64 ") check it's view-change message failed",
-					new_view.view_number());
-				check_ret = false;
-				break;
-			}
 			vc_instance_tmp.viewchanges_.insert(std::make_pair(view_change.replica_id(), view_change));
 
 			if (new_view.view_number() != view_change.view_number()) {
@@ -1042,58 +1054,17 @@ namespace bumo {
 			return false;
 		}
 
-		//check the pre-prepare message set
-		std::map<int64_t, protocol::PbftEnv> pre_prepares;
-		PbftCkpInstancePair ckp_pair;
-		if (!CreateViewChangeParam(vc_instance_tmp, pre_prepares, ckp_pair)) {
-			LOG_ERROR("The new view message(number:" FMT_I64 ")', create pre-prepare message failed",
-				new_view.view_number());
-			return false;
-		}
-
-		//compare the computed pre-prepare messages with the appended pre-prepare messages
-		bool compare_ret = true;
-		for (int32_t i = 0; i < new_view.pre_prepares_size(); i++) {
-			const protocol::PbftEnv &pre_prepare_env = new_view.pre_prepares(i);
-			if (!CheckMessageItem(pre_prepare_env)) {
-				LOG_ERROR("The new view message(number:" FMT_I64 ")', check the pre-prepare message failed",
-					new_view.view_number());
-				compare_ret = false;
-				break;
-			}
-
-			const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
-
-			std::map<int64_t, protocol::PbftEnv>::iterator iter = pre_prepares.find(pre_prepare.replica_id());
-			if (iter == pre_prepares.end()) {
-				LOG_ERROR("The new view message(number:" FMT_I64 "), check the computed pre-prepare message failed",
-					new_view.view_number());
-				compare_ret = false;
-				break;
-			}
-
-			const protocol::PbftEnv &pre_prepare_env_comp = iter->second;
-			const protocol::PbftPrePrepare &pre_prepare_comp = pre_prepare_env_comp.pbft().pre_prepare();
-			if (pre_prepare_comp.sequence() != pre_prepare.sequence() ||
-				pre_prepare_comp.view_number() != pre_prepare.view_number() ||
-				pre_prepare_comp.replica_id() != pre_prepare.replica_id() ||
-				CompareValue(pre_prepare_comp.value(), pre_prepare.value()) != 0) {
-				LOG_ERROR("The new view message(number:" FMT_I64 "), check the computed pre-prepare message failed",
-					new_view.view_number());
-				compare_ret = false;
-				break;
-			}
-		}
-
 		//delete the other log
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
 			) {
-			if (iter_inst->second.phase_ < PBFT_PHASE_COMMITED) {
-				instances_.erase(iter_inst++);
+			if (iter_inst->second.phase_ == PBFT_PHASE_COMMITED  || 
+				(iter_inst->second.phase_ == PBFT_PHASE_PREPARED &&
+				iter_inst->first.sequence_ > last_exe_seq_)) {
+				iter_inst++;
 			}
 			else {
-				iter_inst++;
+				instances_.erase(iter_inst++);
 			}
 		}
 
@@ -1108,15 +1079,9 @@ namespace bumo {
 			}
 		}
 
-		ValueSaver saver;
-		//save the sequence
-		if (max_seq > 0) {
-			sequence_ = max_seq + 1;
-			//saver.SaveValue(PbftDesc::SEQUENCE_NAME, sequence_);
-		}
-
 		LOG_INFO("Replica(id: " FMT_I64 ") enter the new view(number:" FMT_I64 ")", replica_id_, new_view.view_number());
 		//enter to new view
+		ValueSaver saver;
 		view_number_ = new_view.view_number();
 		view_active_ = true;
 		saver.SaveValue(PbftDesc::VIEWNUMBER_NAME, view_number_);
@@ -1127,6 +1092,14 @@ namespace bumo {
 			iter->second.ChangeComplete(utils::Timestamp::HighResolution());
 		}
 
+		ClearViewChanges();
+		OnViewChanged("");
+		return true;
+	}
+
+	void Pbft::ClearViewChanges() {
+
+		ValueSaver saver;
 		//delete other not ended view change instance
 		for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end();) {
 			if (iter_vc->second.end_time_ == 0) {
@@ -1142,110 +1115,15 @@ namespace bumo {
 			}
 		}
 		SaveViewChange(saver);
-
 		saver.Commit();
-
-		OnViewChanged();
-
-		//send the prepare message to others
-		for (int32_t i = 0; i < new_view.pre_prepares_size(); i++) {
-			const protocol::PbftEnv &pre_prepare_env = new_view.pre_prepares(i);
-			const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
-
-			//delete the original object with the sequence
-			for (PbftInstanceMap::iterator iter_inst = instances_.begin();
-				iter_inst != instances_.end();
-				iter_inst++) {
-				if (iter_inst->first.sequence_ == pre_prepare.sequence()) {
-					instances_.erase(iter_inst);
-					break;
-				}
-			}
-
-			//add new
-			PbftInstance *pinstance = CreateInstanceIfNotExist(pre_prepare_env);
-			if (pinstance) pinstance->Go(pre_prepare_env, this, CheckValue(pre_prepare.value()));
-		}
-
-		return true;
-	}
-
-	bool Pbft::CreateViewChangeParam(const PbftVcInstance &vc_instance,
-		std::map<int64_t, protocol::PbftEnv> &pre_prepares,
-		PbftCkpInstancePair &lasted_ckp_pair) {
-
-		//get min sequence and max sequence
-		int64_t min_seq = 0, max_seq = 0;
-		std::map<int64_t, protocol::PbftPrePrepare> pre_prepares_tmp;
-		protocol::PbftViewChange lastest_ckp_viewchange;
-		for (PbftViewChangeMap::const_iterator iter = vc_instance.viewchanges_.begin();
-			iter != vc_instance.viewchanges_.end();
-			iter++) {
-			const protocol::PbftViewChange &view_change = iter->second;
-			if (view_change.sequence() > min_seq) {
-				min_seq = view_change.sequence();
-				lastest_ckp_viewchange = view_change;
-			}
-		}
-
-		max_seq = min_seq;
-		for (PbftViewChangeMap::const_iterator iter = vc_instance.viewchanges_.begin();
-			iter != vc_instance.viewchanges_.end();
-			iter++) {
-			const protocol::PbftViewChange &view_change = iter->second;
-			for (int32_t i = 0; i < view_change.prepared_set_size(); i++) {
-				const protocol::PbftPreparedSet &set = view_change.prepared_set(i);
-				const protocol::PbftEnv &pre_prepare_env = set.pre_prepare();
-				const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
-				if (pre_prepare.sequence() > max_seq) {
-					max_seq = pre_prepare.sequence();
-				}
-			}
-		}
-
-		LOG_INFO("Create view change param, min seq(" FMT_I64 "), max seq(" FMT_I64 ")", min_seq, max_seq);
-
-		//create the pre-prepare message
-		for (PbftViewChangeMap::const_iterator iter = vc_instance.viewchanges_.begin();
-			iter != vc_instance.viewchanges_.end();
-			iter++) {
-			const protocol::PbftViewChange &view_change = iter->second;
-			for (int32_t i = 0; i < view_change.prepared_set_size(); i++) {
-				const protocol::PbftPreparedSet &set = view_change.prepared_set(i);
-				const protocol::PbftEnv &pre_prepare_env = set.pre_prepare();
-				const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
-				if (pre_prepare.sequence() <= max_seq &&
-					pre_prepare.sequence() > min_seq &&
-					pre_prepares_tmp.find(pre_prepare.sequence()) == pre_prepares_tmp.end()) {
-					pre_prepares_tmp.insert(std::make_pair(pre_prepare.sequence(), pre_prepare));
-					LOG_INFO("Create view change param, insert preprepare, seq(" FMT_I64 ")", pre_prepare.sequence());
-				}
-			}
-		}
-
-		//create the null pre-prepare message
-		for (std::map<int64_t, protocol::PbftPrePrepare>::iterator iter = pre_prepares_tmp.begin();
-			iter != pre_prepares_tmp.end();
-			iter++) {
-			protocol::PbftPrePrepare tmp_preprepare = iter->second;
-			tmp_preprepare.set_view_number(vc_instance.view_number_);
-			tmp_preprepare.set_replica_id(replica_id_);
-			pre_prepares.insert(std::make_pair(iter->first, NewPrePrepare(tmp_preprepare)));
-			if (iter->first > min_seq + 1) {
-				LOG_ERROR("Should not go here");
-			}
-
-			min_seq = iter->first;
-		}
-
-		return true;
 	}
 
 	bool Pbft::ProcessQuorumViewChange(PbftVcInstance &vc_instance) {
 		LOG_INFO("Process quorum view change, new view (number:" FMT_I64 ")", vc_instance.view_number_);
 		if (vc_instance.view_number_ % validators_.size() != replica_id_) { // we must be the leader
 
-			new_view_repond_timer_ = utils::Timer::Instance().AddTimer(30 * utils::MICRO_UNITS_PER_SEC, vc_instance.view_number_, [this](int64_t data) {
+			protocol::PbftPreparedSet temp_set = vc_instance.pre_prepared_env_set;
+			new_view_repond_timer_ = utils::Timer::Instance().AddTimer(30 * utils::MICRO_UNITS_PER_SEC, vc_instance.view_number_, [this, temp_set](int64_t data) {
 				if (view_active_) {
 					LOG_INFO("The current view(" FMT_I64 ") is active, so do not send new view(vn:" FMT_I64 ") ", view_number_
 						, data + 1);
@@ -1256,90 +1134,46 @@ namespace bumo {
 
 					//SEND NEW VIEW
 					LOG_INFO("Send view change message, new view number(" FMT_I64 ")", data + 1);
-					PbftEnvPointer msg = NewViewChange(data + 1);
+					PbftEnvPointer msg = NewViewChangeRawValue(data + 1, temp_set);
 					SendMessage(msg);
 				}
 			});
 
-			LOG_INFO("It's not the new primary(replica_id:" FMT_I64 "), so donn't process the quorum view message, waiting new view message 30s, timer id(" FMT_I64")",
+			LOG_INFO("It's not the new primary(replica_id:" FMT_I64 "), so don't process the quorum view message, waiting new view message 30s, timer id(" FMT_I64")",
 				vc_instance.view_number_ % validators_.size(), new_view_repond_timer_);
 			return false;
 		}
 
-		//try to enter to new view
-		//first get the lastest stable checkpoint
-		PbftCkpInstancePair ckp_pair;
-		std::map<int64_t, protocol::PbftEnv> pre_prepares;
-		if (!CreateViewChangeParam(vc_instance, pre_prepares, ckp_pair)) {
-			LOG_ERROR("Create view change(vn:" FMT_I64 ") parameter failed", vc_instance.view_number_);
-			return false;
-		}
-
 		//new view message
-		PbftEnvPointer msg = NewNewView(vc_instance, pre_prepares, ckp_pair.first.sequence_);
+		PbftEnvPointer msg = NewNewView(vc_instance);
 
 		LOG_INFO("Send new view message, new view number(" FMT_I64 ")", vc_instance.view_number_);
 		//send new view message
 		vc_instance.SendNewView(this, utils::Timestamp::HighResolution(), msg);
 
-		//disacard the other log
+		//get last prepared consensus value
+		std::string last_cons_value;
+		if (vc_instance.pre_prepared_env_set.has_pre_prepare()) {
+			const protocol::Pbft &pbft = vc_instance.pre_prepared_env_set.pre_prepare().pbft();
+			last_cons_value = pbft.pre_prepare().value();
+			LOG_INFO("Vc instance get the prepared value, desc(%s)", PbftDesc::GetPbft(pbft).c_str());
+		}
+
+		//delete uncommited  instance
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
 			) {
-			if (iter_inst->second.phase_ < PBFT_PHASE_COMMITED) {
-				instances_.erase(iter_inst++);
-			}
-			else {
+			if (iter_inst->second.phase_ == PBFT_PHASE_COMMITED ||
+				(iter_inst->second.phase_ == PBFT_PHASE_PREPARED &&
+				iter_inst->first.sequence_ > last_exe_seq_)) {
 				iter_inst++;
 			}
-		}
-
-		//new instance
-		bool need_notify = true;
-		for (std::map<int64_t, protocol::PbftEnv>::iterator iter_pre = pre_prepares.begin();
-			iter_pre != pre_prepares.end();
-			iter_pre++) {
-
-			const protocol::PbftEnv &pre_prepare_env = iter_pre->second;
-			const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
-			PbftInstanceIndex index(pre_prepare.view_number(), pre_prepare.sequence());
-
-			if (pre_prepare.sequence() <= last_exe_seq_) {
-				continue;
+			else {
+				instances_.erase(iter_inst++);
 			}
-
-			//add new
-			PbftInstance pinstance;
-			pinstance.pre_prepare_msg_ = pre_prepare_env;
-			pinstance.phase_ = PBFT_PHASE_PREPREPARED;
-			pinstance.pre_prepare_ = pre_prepare;
-			pinstance.msg_buf_[pre_prepare_env.pbft().type()].push_back(pre_prepare_env);
-			pinstance.check_value_result_ = CheckValue(pinstance.pre_prepare_.value());
-			instances_.insert(std::make_pair(index, pinstance));
-			need_notify = false;
 		}
 
 		ValueSaver saver;
-		//SaveInstance(saver);
-
-		//get max sequence
-		int64_t max_seq = last_exe_seq_;
-		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
-			iter_inst != instances_.end();
-			iter_inst++
-			) {
-			if (iter_inst->first.sequence_ > max_seq) {
-				max_seq = iter_inst->first.sequence_;
-			}
-		}
-
-		if (max_seq > 0) {
-			//save the sequence
-			sequence_ = max_seq + 1;
-			//saver.SaveValue(PbftDesc::SEQUENCE_NAME, sequence_);
-		}
-		saver.Commit();
-
 		//enter to new view
 		view_number_ = vc_instance.view_number_;
 		view_active_ = true;
@@ -1349,25 +1183,10 @@ namespace bumo {
 		vc_instance.ChangeComplete(utils::Timestamp::HighResolution());
 		saver.SaveValue(PbftDesc::VIEWNUMBER_NAME, view_number_);
 
-		//delete other not ended view change instance or other view change instance which sequence is less than 5
-		for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end();) {
-			if (iter_vc->second.end_time_ == 0) {
-				LOG_INFO("Delete the view change instance (vn:" FMT_I64 ") that is not complete", iter_vc->second.view_number_);
-				vc_instances_.erase(iter_vc++);
-			}
-			else if (iter_vc->second.view_number_ < view_number_ - 5) {
-				LOG_INFO("Delete the view change instance (vn:" FMT_I64 ") that has passed by 5", iter_vc->second.view_number_);
-				vc_instances_.erase(iter_vc++);
-			}
-			else {
-				iter_vc++;
-			}
-		}
-		SaveViewChange(saver);
-		saver.Commit();
+		ClearViewChanges();
 
 		notify_->OnResetCloseTimer();
-		if (need_notify) OnViewChanged();
+		OnViewChanged(last_cons_value);
 
 		return true;
 	}
@@ -1418,7 +1237,7 @@ namespace bumo {
 		return true;
 	}
 
-	PbftEnvPointer Pbft::NewPrePrepare(const std::string &value) {
+	PbftEnvPointer Pbft::NewPrePrepare(const std::string &value, int64_t sequence) {
 		PbftEnvPointer env = std::make_shared<protocol::PbftEnv>();
 
 		protocol::Pbft *pbft = env->mutable_pbft();
@@ -1428,7 +1247,7 @@ namespace bumo {
 		protocol::PbftPrePrepare *preprepare = pbft->mutable_pre_prepare();
 		preprepare->set_view_number(view_number_);
 		preprepare->set_replica_id(replica_id_);
-		preprepare->set_sequence(sequence_);
+		preprepare->set_sequence(sequence);
 		*preprepare->mutable_value() = value;
 		preprepare->set_value_digest(HashWrapper::Crypto(value));
 
@@ -1490,44 +1309,76 @@ namespace bumo {
 		return env;
 	}
 
-	PbftEnvPointer Pbft::NewViewChange(int64_t view_number) {
+	PbftEnvPointer Pbft::NewViewChangeRawValue(int64_t view_number, const protocol::PbftPreparedSet &prepared_set) {
 		PbftEnvPointer env = std::make_shared<protocol::PbftEnv>();
 
 		protocol::Pbft *pbft = env->mutable_pbft();
 		pbft->set_round_number(0);
-		pbft->set_type(protocol::PBFT_TYPE_VIEWCHANGE);
+		pbft->set_type(protocol::PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE);
+		
+		protocol::PbftViewChangeWithRawValue *vc_raw = pbft->mutable_view_change_with_rawvalue();
 
-		protocol::PbftViewChange *pviewchange = pbft->mutable_view_change();
+		//add view change
+		protocol::PbftEnv *pbft_env_inner = vc_raw->mutable_view_change_env();
+		protocol::Pbft *pbft_inner = pbft_env_inner->mutable_pbft();
+		pbft_inner->set_round_number(0);
+		pbft_inner->set_type(protocol::PBFT_TYPE_VIEWCHANGE);
+
+		protocol::PbftViewChange *pviewchange = pbft_inner->mutable_view_change();
 		pviewchange->set_view_number(view_number);
 		pviewchange->set_sequence(last_exe_seq_);
 		pviewchange->set_replica_id(replica_id_);
-		//add prepared msg large than lastest checkpoint's sequence
-		for (PbftInstanceMap::iterator iter_instance = instances_.begin();
-			iter_instance != instances_.end();
-			iter_instance++) {
-			const PbftInstance &instance = iter_instance->second;
-			const PbftInstanceIndex &index = iter_instance->first;
-			if (index.sequence_ > pviewchange->sequence() && instance.phase_ == PBFT_PHASE_PREPARED) {
-				protocol::PbftPreparedSet *prepared_set = pviewchange->add_prepared_set();
 
-				//add prepared message,add pre-prepare message
-				*prepared_set->mutable_pre_prepare() = instance.msg_buf_[0][0];//add prepreare message
+		if (prepared_set.has_pre_prepare()) {
+			*vc_raw->mutable_prepared_set() = prepared_set;
+			LOG_INFO("Get prepared value again, desc(%s)", PbftDesc::GetPbft(prepared_set.pre_prepare().pbft()).c_str());
+		} else{
+			//add prepared set
+			for (PbftInstanceMap::reverse_iterator iter_instance = instances_.rbegin();
+				iter_instance != instances_.rend();
+				iter_instance++) {
+				const PbftInstance &instance = iter_instance->second;
+				const PbftInstanceIndex &index = iter_instance->first;
+				if (index.sequence_ > pviewchange->sequence() && instance.phase_ == PBFT_PHASE_PREPARED) {
+					protocol::PbftPreparedSet *prepared_set_inner = vc_raw->mutable_prepared_set();
 
-				//add prepare message
-				for (size_t i = 0; i < instance.msg_buf_[1].size(); i++) {
-					*prepared_set->add_prepare() = instance.msg_buf_[1][i];
+					//add prepared message,add pre-prepare message
+					*prepared_set_inner->mutable_pre_prepare() = instance.msg_buf_[0][0];//add prepreare message
+
+					//add prepare message
+					for (size_t i = 0; i < instance.msg_buf_[1].size(); i++) {
+						*prepared_set_inner->add_prepare() = instance.msg_buf_[1][i];
+					}
+
+					LOG_INFO("Get prepared value, desc(%s)", PbftDesc::GetPbft(prepared_set_inner->pre_prepare().pbft()).c_str());
+					break;
 				}
 			}
 		}
+	
 
-		protocol::Signature *sig = env->mutable_signature();
-        sig->set_public_key(private_key_.GetEncPublicKey());
-		sig->set_sign_data(private_key_.Sign(pbft->SerializeAsString()));
+		//add view change value digest
+		if (vc_raw->has_prepared_set()) {
+			const protocol::PbftEnv &pp_pbft_env = vc_raw->prepared_set().pre_prepare();
+			const protocol::PbftPrePrepare &pp_pbft = pp_pbft_env.pbft().pre_prepare();
+			pviewchange->set_prepred_value_digest(pp_pbft.value_digest());
+		}
+
+
+		//add view change signature
+		protocol::Signature *sig = pbft_env_inner->mutable_signature();
+		sig->set_public_key(private_key_.GetEncPublicKey());
+		sig->set_sign_data(private_key_.Sign(pbft_inner->SerializeAsString()));
+
+		//add view change raw value signature
+		protocol::Signature *sig_out = env->mutable_signature();
+		sig_out->set_public_key(private_key_.GetEncPublicKey());
+		sig_out->set_sign_data(private_key_.Sign(pbft->SerializeAsString()));
 
 		return env;
 	}
 
-	PbftEnvPointer Pbft::NewNewView(PbftVcInstance &vc_instance, std::map<int64_t, protocol::PbftEnv> &pre_prepares, int64_t sequence) {
+	PbftEnvPointer Pbft::NewNewView(PbftVcInstance &vc_instance) {
 		PbftEnvPointer env = std::make_shared<protocol::PbftEnv>();
 
 		protocol::Pbft *pbft = env->mutable_pbft();
@@ -1537,18 +1388,21 @@ namespace bumo {
 		protocol::PbftNewView *pnewview = pbft->mutable_new_view();
 		pnewview->set_view_number(vc_instance.view_number_);
 		pnewview->set_replica_id(replica_id_);
-		pnewview->set_sequence(sequence);
+		pnewview->set_sequence(vc_instance.seq);
 
 		for (PbftPhaseVector::iterator iter = vc_instance.msg_buf_.begin(); iter != vc_instance.msg_buf_.end(); iter++) {
-			*pnewview->add_view_changes() = *iter;
+			const protocol::PbftEnv &env_out = *iter;
+
+			//get the inner view change env
+			*pnewview->add_view_changes() = env_out.pbft().view_change_with_rawvalue().view_change_env();
 		}
 
-		for (std::map<int64_t, protocol::PbftEnv>::iterator iter = pre_prepares.begin(); iter != pre_prepares.end(); iter++) {
-			*pnewview->add_pre_prepares() = iter->second;
+		if (vc_instance.pre_prepared_env_set.has_pre_prepare()) {
+			*pnewview->mutable_pre_prepare() = vc_instance.pre_prepared_env_set.pre_prepare();
 		}
 
 		protocol::Signature *sig = env->mutable_signature();
-        sig->set_public_key(private_key_.GetEncPublicKey());
+		sig->set_public_key(private_key_.GetEncPublicKey());
 		sig->set_sign_data(private_key_.Sign(pbft->SerializeAsString()));
 		return env;
 	}
@@ -1609,7 +1463,8 @@ namespace bumo {
 		view_active_ = false;
 		ValueSaver saver;
 		saver.SaveValue(PbftDesc::VIEW_ACTIVE, view_active_ ? 1 : 0);
-		PbftEnvPointer msg = NewViewChange(view_number_ + 1);
+		protocol::PbftPreparedSet null_set;
+		PbftEnvPointer msg = NewViewChangeRawValue(view_number_ + 1, null_set);
 		SendMessage(msg);
 	}
 
@@ -1666,32 +1521,20 @@ namespace bumo {
 											//	if (pbft.has_commit()) values.push_back(pbft.commit().value());
 											//	break;
 											//}
-		case protocol::PBFT_TYPE_VIEWCHANGE:{
-			if (pbft.has_view_change()) {
-				const protocol::PbftViewChange &view_change = pbft_env.pbft().view_change();
-				for (int32_t i = 0; i < view_change.prepared_set_size(); i++) {
-					const protocol::PbftPreparedSet &prepare_set = view_change.prepared_set(i);
-					const protocol::PbftEnv &pre_prepare = prepare_set.pre_prepare();
-					values.push_back(pre_prepare.pbft().pre_prepare().value());
-				}
+		case protocol::PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE:{
+			if (pbft.has_view_change_with_rawvalue()) {
+				const protocol::PbftViewChangeWithRawValue &view_change = pbft_env.pbft().view_change_with_rawvalue();
+				const protocol::PbftPreparedSet &prepare_set = view_change.prepared_set();
+				const protocol::PbftEnv &pre_prepare = prepare_set.pre_prepare();
+				values.push_back(pre_prepare.pbft().pre_prepare().value());
 			}
 			break;
 		}
 		case protocol::PBFT_TYPE_NEWVIEW:{
 			if (pbft.has_new_view()) {
 				const protocol::PbftNewView &new_view = pbft_env.pbft().new_view();
-				for (int32_t i = 0; i < new_view.view_changes_size(); i++) {
-					const protocol::PbftViewChange &view_change = new_view.view_changes(i).pbft().view_change();
-					for (int32_t i = 0; i < view_change.prepared_set_size(); i++) {
-						const protocol::PbftPreparedSet &prepare_set = view_change.prepared_set(i);
-						const protocol::PbftEnv &pre_prepare = prepare_set.pre_prepare();
-						values.push_back(pre_prepare.pbft().pre_prepare().value());
-					}
-				}
-				for (int32_t i = 0; i < new_view.pre_prepares_size(); i++) {
-					const protocol::PbftEnv &pre_prepare = new_view.pre_prepares(i);
-					values.push_back(pre_prepare.pbft().pre_prepare().value());
-				}
+				const protocol::PbftEnv &pre_prepare = new_view.pre_prepare();
+				values.push_back(pre_prepare.pbft().pre_prepare().value());
 			}
 			break;
 		}
@@ -1707,7 +1550,6 @@ namespace bumo {
 		utils::MutexGuard lock_guad(lock_);
 		data["type"] = name_;
 		data["replica_id"] = replica_id_;
-		data["sequence"] = sequence_;
 		data["view_number"] = view_number_;
 		data["ckp_interval"] = ckp_interval_;
 		data["last_exe_seq"] = last_exe_seq_;
@@ -1757,6 +1599,8 @@ namespace bumo {
 			item["last_propose_time"] = utils::Timestamp(vc_instance.last_propose_time_).ToFormatString(true);
 			item["end_time"] = utils::Timestamp(vc_instance.end_time_).ToFormatString(true);
 			item["newview_init"] = vc_instance.newview_.has_pbft();
+			item["prepared_pre_env"] = vc_instance.pre_prepared_env_set.has_pre_prepare() ?
+				PbftDesc::GetPbft(vc_instance.pre_prepared_env_set.pre_prepare().pbft()) : "";
 
 			Json::Value &vc = item["viewchange"];
 			for (PbftViewChangeMap::const_iterator iter_vc = vc_instance.viewchanges_.begin(); iter_vc != vc_instance.viewchanges_.end(); iter_vc++) {
@@ -1796,26 +1640,6 @@ namespace bumo {
 				iter_inst++;
 			}
 		}
-
-		//SaveInstance(saver);
-
-		//get max sequence
-		int64_t max_seq = last_exe_seq_;
-		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
-			iter_inst != instances_.end();
-			iter_inst++
-			) {
-			if (iter_inst->first.sequence_ > max_seq) {
-				max_seq = iter_inst->first.sequence_;
-			}
-		}
-
-		if (max_seq > 0) {
-			//save the sequence
-			sequence_ = max_seq + 1;
-			//saver.SaveValue(PbftDesc::SEQUENCE_NAME, sequence_);
-		}
-		saver.Commit();
 	}
 
 	//update
@@ -1886,11 +1710,9 @@ namespace bumo {
 		if (new_seq > 0) {
 			//set the 
 			last_exe_seq_ = new_seq;
-			sequence_ = last_exe_seq_ + 1;
 
-			LOG_INFO("Set the last exe sequence(" FMT_I64 "), sequence(" FMT_I64 ")",
-				last_exe_seq_, sequence_);
-			saver.SaveValue(PbftDesc::VIEWNUMBER_NAME, view_number_);
+			LOG_INFO("Set the last exe sequence(" FMT_I64 ")", last_exe_seq_);
+			saver.SaveValue(PbftDesc::LAST_EXE_SEQUENCE_NAME, last_exe_seq_);
 		}
 		
 		if ( new_view_number > 0 || new_seq > 0 ){

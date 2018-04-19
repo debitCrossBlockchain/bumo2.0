@@ -14,6 +14,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "transaction_queue.h"
+#include <ledger/ledger_manager.h>
 #include <algorithm>
 
 namespace bumo {
@@ -86,7 +87,7 @@ namespace bumo {
 
 		account_nonce_[tx->GetSourceAddress()] = cur_source_nonce;
 
-		LOG_TRACE("Import account(%s) transaction(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ")", tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
+		LOG_TRACE("Import account(%s) transaction(%s) nonce(" FMT_I64 ") gas_price(" FMT_I64 ")", tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetGasPrice());
 		auto account_it = queue_by_address_and_nonce_.find(tx->GetSourceAddress());
 		if (account_it != queue_by_address_and_nonce_.end()) {
 
@@ -95,17 +96,17 @@ namespace bumo {
 			auto tx_it = account_it->second.find(tx->GetNonce());
 			if (tx_it != account_it->second.end()){
 
-				if (tx->GetFee() > (*tx_it->second.first)->GetFee()) {
+				if (tx->GetGasPrice() > (*tx_it->second.first)->GetGasPrice()) {
 					//remove transaction for replace ,and after insert
 					std::string drop_hash = (*tx_it->second.first)->GetContentHash();
 					Remove(account_it, tx_it);
 					replace = true;
 					account_txs_size--;
-					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") in queue", utils::String::BinToHexString(drop_hash).c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ") in queue", utils::String::BinToHexString(drop_hash).c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetGasPrice(), tx->GetNonce());
 				}
 				else{
 					//Discard new transaction
-					std::string error_desc = utils::String::Format("Discard transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+					std::string error_desc = utils::String::Format("Discard transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ") because of lower fee  in queue", utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetGasPrice(), tx->GetNonce());
 					LOG_ERROR("%s", error_desc.c_str());
 					result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
 					result.set_desc(error_desc);
@@ -122,7 +123,7 @@ namespace bumo {
 				TransactionFrm::pointer t = *queue_.rbegin();
 				Remove(t->GetSourceAddress(), t->GetNonce());
 
-				std::string error_desc = utils::String::Format("Discard lowest transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::BinToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetFee(), t->GetNonce());
+				std::string error_desc = utils::String::Format("Discard lowest transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ")  in queue", utils::String::BinToHexString(t->GetContentHash()).c_str(), t->GetSourceAddress().c_str(), t->GetGasPrice(), t->GetNonce());
 				LOG_TRACE("%s", error_desc.c_str());
 				if (t->GetContentHash() == tx->GetContentHash()){
 					result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
@@ -135,7 +136,7 @@ namespace bumo {
 
 		if (account_txs_size >= account_txs_limit_){
 			inserted = false;
-			std::string error_desc = utils::String::Format(" transaction(%s) of account(%s) fee(" FMT_I64 ") nonce(" FMT_I64 ") exceed txs limit of per account in queue", utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetFee(), tx->GetNonce());
+			std::string error_desc = utils::String::Format(" transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ") exceed txs limit of per account in queue", utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetGasPrice(), tx->GetNonce());
 			result.set_code(protocol::ERRCODE_TX_INSERT_QUEUE_FAIL);
 			result.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
@@ -148,8 +149,10 @@ namespace bumo {
 		protocol::TransactionEnvSet set;
 		std::unordered_map<std::string, int64_t> topic_seqs;
 		std::unordered_map<std::string, int64_t> break_nonce_accounts;
+		int64_t last_block_seq = LedgerManager::Instance().GetLastClosedLedger().seq();
 		utils::WriteLockGuard g(lock_);
 		uint32_t i = 0;
+		
 		for (auto t = queue_.begin(); set.txs().size() < limit && t != queue_.end(); ++t) {
 			const TransactionFrm::pointer& tx = *t;
 			if (set.ByteSize() + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE)
@@ -180,42 +183,60 @@ namespace bumo {
 				*set.add_txs() = tx->GetProtoTxEnv();
 
 				i++;
-				LOG_TRACE("top:(%u) addr:(%s), tx:(%s), nonce:(" FMT_I64 "), fee:(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetFee());
+				//LOG_TRACE("top(%u) addr(%s) tx(%s) nonce(" FMT_I64 ") gas_price(" FMT_I64 ") last block seq(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetGasPrice(), last_block_seq);
 			}
 		}
-
+		LOG_TRACE("Take top size(%u) , last block seq(" FMT_I64 ") limit(%u) , txset byte size(%d)byte (%d)M", i, last_block_seq, limit, set.ByteSize() ,set.ByteSize() / utils::BYTES_PER_MEGA);
 		return std::move(set);
 	}
 
 	uint32_t TransactionQueue::RemoveTxs(const protocol::TransactionEnvSet& set, bool close_ledger){
+		
+		uint32_t ret = 0;
+		int64_t last_seq = LedgerManager::Instance().GetLastClosedLedger().seq();
 		utils::WriteLockGuard g(lock_);
-		size_t ret = 0;
 		for (int i = 0; i < set.txs_size(); i++) {
 			auto txproto = set.txs(i);
 			std::string source_address = txproto.transaction().source_address();
 			int64_t nonce = txproto.transaction().nonce();
 			std::pair<bool, TransactionFrm::pointer> result = Remove(source_address, nonce);
-			if (result.first) ++ret;
+			if (result.first)
+				++ret;
+			
+			//LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%d) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
+			//	(int)close_ledger, i, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
+
 			//update system account nonce
 			auto it = account_nonce_.find(source_address);
 			if (close_ledger && it != account_nonce_.end() && it->second < nonce)
 				it->second = nonce;
 		}
+
+		LOG_TRACE("RemoveTxs close_ledger_flag(%d) set txs size(%d) real remove(%u) after queue size(%u) last block seq(" FMT_I64 ")", 
+			(int)close_ledger, set.txs_size(), ret, queue_.size(), last_seq);
 		return ret;
 	}
 
 	void TransactionQueue::RemoveTxs(std::vector<TransactionFrm::pointer>& txs, bool close_ledger){
 		utils::WriteLockGuard g(lock_);
+		uint32_t i = 0;
+		int64_t last_seq = LedgerManager::Instance().GetLastClosedLedger().seq();
 		for (auto it = txs.begin(); it != txs.end(); it++){
 			std::string source_address = (*it)->GetSourceAddress();
 			int64_t nonce = (*it)->GetNonce();
 
-			Remove(source_address, nonce);
+			auto result = Remove(source_address, nonce);
+			i++;
+			LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%u) removed(%d) addr(%s) tx(%s), nonce(" FMT_I64 ") gas_price(" FMT_I64 ") last seq(" FMT_I64 ")", 
+				(int)close_ledger, i, (int)result.first, (*it)->GetSourceAddress().c_str(),
+				utils::String::BinToHexString((*it)->GetContentHash()).c_str(), (*it)->GetNonce(), (*it)->GetGasPrice(), last_seq);
+
 			//update system account nonce
 			auto iter = account_nonce_.find(source_address);
 			if (close_ledger && iter != account_nonce_.end() && iter->second < nonce)
 				iter->second = nonce;
 		}
+		LOG_TRACE("RemoveTxs after queue size(%u)", queue_.size());
 	}
 
 	void TransactionQueue::SafeRemoveTx(const std::string& account_address, const int64_t& nonce) {
@@ -236,6 +257,7 @@ namespace bumo {
 
 	void TransactionQueue::CheckTimeoutAndDel(int64_t current_time,std::vector<TransactionFrm::pointer>& timeout_txs){
 		utils::WriteLockGuard g(lock_);
+		int64_t last_seq = LedgerManager::Instance().GetLastClosedLedger().seq();		
 		while (!time_queue_.empty()){
 			auto it =time_queue_.begin();
 			if (!(*it)->CheckTimeout(current_time - QUEUE_TRANSACTION_TIMEOUT))
@@ -245,6 +267,7 @@ namespace bumo {
 			int64_t nonce = (*it)->GetNonce();
 			Remove(account_address, nonce);
 		}
+		LOG_TRACE("CheckTimeoutAndDel last seq(" FMT_I64 ") number(%u)", last_seq, timeout_txs.size());
 	}
 
 	bool TransactionQueue::IsExist(const TransactionFrm::pointer& tx){

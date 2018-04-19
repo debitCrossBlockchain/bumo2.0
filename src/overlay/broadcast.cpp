@@ -21,7 +21,6 @@
 namespace bumo{
 	BroadcastRecord::BroadcastRecord(int64_t type, const std::string &data, int64_t peer_id) {
 		type_ = type;
-		data_ = data;
 		peers_.insert(peer_id);
 		time_stamp_ = utils::Timestamp::HighResolution();
 	}

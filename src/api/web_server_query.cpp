@@ -572,6 +572,7 @@ namespace bumo {
 		std::string with_validator = request.GetParamValue("with_validator");
 		std::string with_consvalue = request.GetParamValue("with_consvalue");
 		std::string with_fee = request.GetParamValue("with_fee");
+		std::string with_block_reward = request.GetParamValue("with_block_reward");
 
 
 		/// default last closed ledger
@@ -636,6 +637,56 @@ namespace bumo {
 
 				json_cons["previous_proof_plain"] = Proto2Json(pbft_evidence);
 			}
+
+			if (with_block_reward == "true"){
+				int64_t blockReward = GetBlockReward(seq);
+				result["block_reward"] = blockReward;
+
+				protocol::ValidatorSet sets;
+				if (!LedgerManager::Instance().GetValidators(seq - 1, sets)) {
+					error_code = protocol::ERRCODE_NOT_EXIST;
+					break;
+				}
+
+				if (sets.validators_size() == 0) {
+					error_code = protocol::ERRCODE_INTERNAL_ERROR;
+					break;
+				}
+
+				bool avgReward = false;
+				int64_t totalPledges = 0;
+				for (int32_t i = 0; i < sets.validators_size(); i++) {
+					totalPledges += sets.validators(i).pledge_coin_amount();
+				}
+
+				if (totalPledges == 0) {
+					avgReward = true;
+				}
+
+				int64_t average_reward = 0;
+				Json::Value &validatorsReward = result["validators_reward"];
+				if (avgReward){
+					average_reward = blockReward / sets.validators_size();
+				}
+
+				int64_t leftReward = blockReward;
+				for (int32_t i = 0; i < sets.validators_size(); i++) {
+					if (avgReward) {
+						validatorsReward[sets.validators(i).address()] = average_reward;
+						leftReward -= average_reward;
+					}
+					else {
+						int64_t reward = blockReward * sets.validators(i).pledge_coin_amount() / totalPledges;
+						validatorsReward[sets.validators(i).address()] = reward;
+						leftReward -= reward;
+					}
+				}
+
+				int64_t randomIndex = seq % sets.validators_size();
+				int64_t baseReward = validatorsReward[sets.validators(randomIndex).address()].asInt64();
+				validatorsReward[sets.validators(randomIndex).address()] = baseReward + leftReward;
+			}
+			
 		} while (false);
 
 

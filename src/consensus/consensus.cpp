@@ -130,8 +130,8 @@ namespace bumo {
 		return notify_->OnValueCommited(request_seq, value, proof, calculate_total);
 	}
 
-	void Consensus::OnViewChanged() {
-		notify_->OnViewChanged();
+	void Consensus::OnViewChanged(const std::string &last_consvalue) {
+		notify_->OnViewChanged(last_consvalue);
 	}
 
 	int32_t Consensus::CheckValue(const std::string &value) {

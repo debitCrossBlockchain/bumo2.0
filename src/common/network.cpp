@@ -432,7 +432,7 @@ namespace bumo {
 	}
 
 	void Network::Start(const utils::InetAddress &ip) {
-		try {
+		//try {
 			if (!ip.IsNone()) {
 				if (ssl_parameter_.enable_) {
 					// listen on specified port
@@ -500,6 +500,8 @@ namespace bumo {
 					for (ConnectionMap::iterator iter = connections_delete_.begin();
 						iter != connections_delete_.end();) {
 						if (iter->first < now) {
+							LOG_TRACE("delete connect id:%lld", iter->second->GetId());
+							delete iter->second;
 							iter = connections_delete_.erase(iter);
 						}
 						else {
@@ -510,10 +512,10 @@ namespace bumo {
 					last_check_time = now;
 				}
 			}
-		}
-		catch (const std::exception & e) {
-			LOG_ERROR("%s", e.what());
-		}
+	//	}
+		//catch (const std::exception & e) {
+		//	LOG_ERROR("%s", e.what());
+		//}
 
 		enabled_ = false;
 		LOG_INFO("WebSocket server(%s) exit", ip.ToIpPort().c_str());

@@ -19,6 +19,7 @@
 #include <utils/file.h>
 #include "storage.h"
 #include "general.h"
+#define BUMO_ROCKSDB_MAX_OPEN_FILES 5000
 
 namespace bumo {
 	KeyValueDb::KeyValueDb() {}
@@ -37,8 +38,12 @@ namespace bumo {
 		}
 	}
 
-	bool LevelDbDriver::Open(const std::string &db_path) {
+	bool LevelDbDriver::Open(const std::string &db_path, int max_open_files) {
 		leveldb::Options options;
+		if (max_open_files > 0)
+		{
+			options.max_open_files = max_open_files;
+		}
 		options.create_if_missing = true;
 		leveldb::Status status = leveldb::DB::Open(options, db_path, &db_);
 		if (!status.ok()) {
@@ -139,8 +144,12 @@ namespace bumo {
 		}
 	}
 
-	bool RocksDbDriver::Open(const std::string &db_path) {
+	bool RocksDbDriver::Open(const std::string &db_path, int max_open_files) {
 		rocksdb::Options options;
+		if (max_open_files > 0)
+		{
+			options.max_open_files = max_open_files;
+		}
 		options.create_if_missing = true;
 		rocksdb::Status status = rocksdb::DB::Open(options, db_path, &db_);
 		if (!status.ok()) {
@@ -258,16 +267,17 @@ namespace bumo {
 			if (bdropdb) {
 				bool do_success = false;
 				do {
-					//check the db if opened
-					/*KeyValueDb *account_db = NewKeyValueDb(db_config);
-					if (!account_db->Open(db_config.account_db_path_)) {
+					//check the db if opened only for linux or mac
+#ifndef WIN32
+					KeyValueDb *account_db = NewKeyValueDb(db_config);
+					if (!account_db->Open(db_config.account_db_path_, -1)) {
 						LOG_ERROR("Drop failed, error desc(%s)", account_db->error_desc().c_str());
 						delete account_db;
 						break;
 					}
 					account_db->Close();
-					delete account_db;*/
-
+					delete account_db;
+#endif
 					if (utils::File::IsExist(db_config.keyvalue_db_path_) && !utils::File::DeleteFolder(db_config.keyvalue_db_path_)) {
 						LOG_ERROR_ERRNO("Delete keyvalue db failed", STD_ERR_CODE, STD_ERR_DESC);
 						break;
@@ -290,22 +300,56 @@ namespace bumo {
 				return do_success;
 			}
 
+			int32_t keyvaule_max_open_files = -1;
+			int32_t ledger_max_open_files = -1;
+			int32_t account_max_open_files = -1;
+#ifdef OS_MAC
+			FILE* fp = NULL;
+			char ulimit_cmd[1024] = {0};
+			char ulimit_result[1024] = {0};
+			sprintf(ulimit_cmd, "ulimit -n");
+			if ((fp = popen(ulimit_cmd, "r")) != NULL)
+			{
+				fgets(ulimit_result, sizeof(ulimit_result), fp);
+				pclose(fp);
+			}
+			int32_t max_open_files = utils::String::Stoi(std::string(ulimit_result));
+			if (max_open_files <= 100)
+			{
+				keyvaule_max_open_files = 2;
+				ledger_max_open_files = 4;
+				account_max_open_files = 4; 
+				LOG_ERROR("mac os max open files is too lower:%d.", max_open_files);
+			}
+			else
+			{
+				keyvaule_max_open_files = 2 + (max_open_files - 100) * 0.2;
+				ledger_max_open_files = 4 + (max_open_files - 100) * 0.4;
+				account_max_open_files = 4 + (max_open_files - 100) * 0.4;
+
+				keyvaule_max_open_files = (keyvaule_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : keyvaule_max_open_files;
+				ledger_max_open_files = (ledger_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : ledger_max_open_files;
+				account_max_open_files = (account_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : account_max_open_files;
+			}
+			LOG_INFO("mac os db file limited:%d, keyvaule:%d, ledger:%d, account:%d:",
+				max_open_files, keyvaule_max_open_files, ledger_max_open_files, account_max_open_files);
+#endif
 			keyvalue_db_ = NewKeyValueDb(db_config);
-			if (!keyvalue_db_->Open(db_config.keyvalue_db_path_)) {
+			if (!keyvalue_db_->Open(db_config.keyvalue_db_path_, keyvaule_max_open_files)) {
 				LOG_ERROR("Keyvalue_db path(%s) open fail(%s)\n",
 					db_config.keyvalue_db_path_.c_str(), keyvalue_db_->error_desc().c_str());
 				break;
 			}
 
 			ledger_db_ = NewKeyValueDb(db_config);
-			if (!ledger_db_->Open(db_config.ledger_db_path_)) {
+			if (!ledger_db_->Open(db_config.ledger_db_path_, ledger_max_open_files)) {
 				LOG_ERROR("Ledger db path(%s) open fail(%s)\n",
 					db_config.ledger_db_path_.c_str(), ledger_db_->error_desc().c_str());
 				break;
 			}
 
 			account_db_ = NewKeyValueDb(db_config);
-			if (!account_db_->Open(db_config.account_db_path_)) {
+			if (!account_db_->Open(db_config.account_db_path_, account_max_open_files)) {
 				LOG_ERROR("Ledger db path(%s) open fail(%s)\n",
 					db_config.account_db_path_.c_str(), account_db_->error_desc().c_str());
 				break;

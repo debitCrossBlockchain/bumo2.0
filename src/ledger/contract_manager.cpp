@@ -28,7 +28,7 @@ namespace bumo{
 
 	ContractParameter::~ContractParameter() {}
 
-	ContractTestParameter::ContractTestParameter() : exe_or_query_(true), fee_(0), contract_balance_(0){}
+	ContractTestParameter::ContractTestParameter() : exe_or_query_(true), fee_limit_(0), gas_price_(0), contract_balance_(0){}
 
 	ContractTestParameter::~ContractTestParameter() {}
 
@@ -216,14 +216,14 @@ namespace bumo{
 		js_func_read_["int64Mod"] = V8Contract::CallBackInt64Mod;
 		js_func_read_["int64Div"] = V8Contract::CallBackInt64Div;
 		js_func_read_["int64Compare"] = V8Contract::CallBackInt64Compare;
-		js_func_read_["toSatoshi"] = V8Contract::CallBackToSatoshi;
+		js_func_read_["toBaseUnit"] = V8Contract::CallBackToBaseUnit;
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
 		js_func_write_["storageDel"] = V8Contract::CallBackStorageDel;
-		js_func_write_["doTransaction"] = V8Contract::CallBackDoTransaction;
+		//js_func_write_["doTransaction"] = V8Contract::CallBackDoTransaction;
 		js_func_write_["configFee"] = V8Contract::CallBackConfigFee;
 		js_func_write_["setValidators"] = V8Contract::CallBackSetValidators;
 		js_func_write_["payCoin"] = V8Contract::CallBackPayCoin;
@@ -283,7 +283,7 @@ namespace bumo{
 			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "issuer"), v8::String::NewFromUtf8(isolate_, asset_key.issuer().c_str()));
 			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "code"), v8::String::NewFromUtf8(isolate_, asset_key.code().c_str()));
 			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "amount"), v8::String::NewFromUtf8(isolate_, utils::String::ToString(parameter_.pay_asset_amount_.amount()).c_str()));
-			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "property"), v8_asset_property);
+			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "key"), v8_asset_property);
 
 			context->Global()->Set(context,
 				v8::String::NewFromUtf8(isolate_, pay_asset_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
@@ -588,7 +588,7 @@ namespace bumo{
 
 	bool V8Contract::RemoveRandom(v8::Isolate* isolate, Json::Value &error_msg) {
 		v8::TryCatch try_catch(isolate);
-		std::string js_file = "delete Date; delete Math.random;";
+		std::string js_file = "delete String.prototype.localeCompare; delete Date; delete Math.random;";
 
 		v8::Local<v8::String> source = v8::String::NewFromUtf8(isolate, js_file.c_str());
 		v8::Local<v8::Script> script;
@@ -685,19 +685,7 @@ namespace bumo{
 
 	bool V8Contract::CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue) {
 		std::string type = jsonvalue["type"].asString();
-		if (type == "jsobject") {
-			std::string value = jsonvalue["value"].asString();
-			v8::Local<v8::String> str = v8::String::NewFromUtf8(isolate, value.c_str());
-			jsvalue = v8::JSON::Parse(str);
-		}
-		else if (type == "number") {
-			std::string value = jsonvalue["value"].asString();
-			std::string bin_double = utils::String::HexStringToBin(value);
-			double d_value = 0;
-			memcpy(&d_value, bin_double.c_str(), sizeof(double));
-			jsvalue = v8::Number::New(isolate, d_value);
-		}
-		else if (type == "string") {
+		if (type == "string") {
 			jsvalue = v8::String::NewFromUtf8(isolate, jsonvalue["value"].asCString());
 		}
 		else if (type == "bool") {
@@ -708,16 +696,7 @@ namespace bumo{
 	}
 
 	bool V8Contract::JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue) {
-		if (jsvalue->IsNumber()) {
-			double s_value = jsvalue->NumberValue();
-			std::string value;
-			value.resize(sizeof(double));
-			memcpy((void *)value.c_str(), &s_value, sizeof(double));
-			jsonvalue["type"] = "number";
-			jsonvalue["value"] = utils::String::BinToHexString(value);
-			jsonvalue["valuePlain"] = jsvalue->NumberValue();
-		}
-		else if (jsvalue->IsBoolean()) {
+		if (jsvalue->IsBoolean()) {
 			jsonvalue["type"] = "bool";
 			jsonvalue["value"] = jsvalue->BooleanValue();
 		}
@@ -765,6 +744,7 @@ namespace bumo{
 			}
 
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			LOG_INFO("UpdateFee bottom tx(%s) top tx(%s) result(%s)", utils::String::BinToHexString(ledger_context->GetBottomTx()->GetContentHash()).c_str(),utils::String::BinToHexString(ledger_context->GetTopTx()->GetContentHash()).c_str(), json.toFastString().c_str());
 			ledger_context->GetTopTx()->environment_->UpdateFeeConfig(json);
 			args.GetReturnValue().Set(true);
 			return;
@@ -1140,89 +1120,6 @@ namespace bumo{
 		} while (false);
 
 		args.GetReturnValue().Set(obj);
-	}
-
-	void V8Contract::CallBackDoTransaction(const v8::FunctionCallbackInfo<v8::Value>& args) {
-		std::string error_desc;
-		do {
-			if (args.Length() != 1) {
-				args.GetReturnValue().SetNull();
-				error_desc ="Parameter number error";
-				break;
-			}
-			v8::HandleScope handle_scope(args.GetIsolate());
-
-			if (!args[0]->IsString()) {
-				error_desc = "Parameter 0 should be string";
-				break;
-			}
-
-			v8::String::Utf8Value utf8value(args[0]);
-			const char* strdata = ToCString(utf8value);
-			Json::Value transaction_json;
-
-			if (!transaction_json.fromCString(strdata)) {
-				error_desc = utils::String::Format("String to json failed, string=%s", strdata);
-				break;
-			}
-
-			protocol::Transaction transaction;
-			std::string error_msg;
-			if (!Json2Proto(transaction_json, transaction, error_msg)) {
-				error_desc = utils::String::Format("Json to protocol object failed: json=%s. error=%s", strdata, error_msg.c_str());
-				break;
-			}
-
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
-				error_desc = "Can't find contract object by isolate id";
-				break;
-			}
-			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			ledger_context->GetBottomTx()->ContractStepInc(100);
-
-			std::string contractor = v8_contract->parameter_.this_address_;
-			transaction.set_source_address(contractor);
-
-			bool ope_has_pri = false;
-			for (int i = 0; i < transaction.operations_size(); i++) {
-				protocol::Operation*  ope = transaction.mutable_operations(i);
-				ope->set_source_address(contractor);
-				if (ope->type() == protocol::Operation_Type_SET_SIGNER_WEIGHT ||
-					ope->type() == protocol::Operation_Type_SET_THRESHOLD) {
-					ope_has_pri = true;
-					break;
-				}
-			}
-
-			if (ope_has_pri) {
-				error_desc = "Contract operation cann't has priv object";
-				break;
-			}
-
-			protocol::TransactionEnv env;
-			env.mutable_transaction()->CopyFrom(transaction);
-
-			if (v8_contract->IsReadonly()) {
-				error_desc = "The contract is readonly";
-				break;
-			}
-
-			Result tmp_result = LedgerManager::Instance().DoTransaction(env, ledger_context);
-			if (tmp_result.code() > 0) {
-				v8_contract->SetResult(tmp_result);
-				error_desc = utils::String::Format("Do transaction failed(%s)", tmp_result.desc().c_str());
-				break;
-			}
-
-			args.GetReturnValue().Set(tmp_result.code() == 0);
-			return;
-		} while (false);
-
-		LOG_ERROR("%s", error_desc.c_str());
-		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
-			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
 	void V8Contract::CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1826,7 +1723,7 @@ namespace bumo{
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
-	void V8Contract::CallBackToSatoshi(const v8::FunctionCallbackInfo<v8::Value>& args) {
+	void V8Contract::CallBackToBaseUnit(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
 				LOG_TRACE("parameter error");
@@ -1835,7 +1732,7 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_TRACE("contract execute error, toSatoshi, parameter 0 should be a String or Number");
+				LOG_TRACE("contract execute error, toBaseUnit, parameter 0 should be a String or Number");
 				break;
 			}
 

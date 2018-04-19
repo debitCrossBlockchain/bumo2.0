@@ -1,6 +1,6 @@
 syntax = "proto3";
 package protocol;
-option java_package = "cn.bumo.blockchain.adapter3";
+option java_package = "org.bumo.sdk.core.extend.protobuf";
 
 message KeyPair{
 	string key = 1;
@@ -54,7 +54,7 @@ enum ERRORCODE
 	ERRCODE_INVALID_SIGNATURE				= 93;
 	ERRCODE_INVALID_ADDRESS					= 94;
 	ERRCODE_MISSING_OPERATIONS				= 97;
-	
+	ERRCODE_TOO_MANY_OPERATIONS              = 98;
 	
 	ERRCODE_BAD_SEQUENCE					= 99;
 	ERRCODE_ACCOUNT_LOW_RESERVE				= 100;   //BUMO LOW RESERVE

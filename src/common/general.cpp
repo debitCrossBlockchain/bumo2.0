@@ -87,7 +87,7 @@ namespace bumo {
 	const char *General::CONTRACT_FEE_ADDRESS = "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe";
 
 	const int32_t General::TRANSACTION_LIMIT_SIZE = utils::BYTES_PER_MEGA;
-	const int32_t General::TXSET_LIMIT_SIZE = 32 * utils::BYTES_PER_MEGA;
+	const int32_t General::TXSET_LIMIT_SIZE = 16 * utils::BYTES_PER_MEGA;
 
 
 	Result::Result(){
@@ -314,9 +314,27 @@ namespace bumo {
 	}
 
 	int64_t GetBlockReward(const int64_t cur_block_height) {
-		int64_t power_index = cur_block_height / General::REWARD_PERIOD;
-		if (power_index >= 64) 
-			return 0;
-		return General::REWARD_INIT_VALUE >> power_index;
+		int64_t period_index = cur_block_height / General::REWARD_PERIOD;
+
+		//decrease 1/4 every period
+		int64_t result = General::REWARD_INIT_VALUE;
+		for (int64_t i = 0; i < period_index; i++)
+		{
+			if (result <= 0)
+			{
+				return 0;
+			}
+			else if (result < 4)
+			{
+				result = result * 3 / 4;
+			}
+			else
+			{
+				result = result - (result >> 2);
+				continue;
+			}
+		}
+
+		return result;
 	}
 }

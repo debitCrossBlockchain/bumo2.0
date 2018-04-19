@@ -17,7 +17,7 @@
 #define PBFT_H_
 
 #include "consensus.h"
-#include "pbft_instance.h"
+#include "bft_instance.h"
 
 namespace bumo {
 
@@ -51,26 +51,27 @@ namespace bumo {
 		//for change view timer
 		int64_t new_view_repond_timer_;
 
-		PbftEnvPointer NewPrePrepare(const std::string &value);
+		PbftEnvPointer NewPrePrepare(const std::string &value, int64_t sequence);
 		protocol::PbftEnv NewPrePrepare(const protocol::PbftPrePrepare &pre_prepare);
 		PbftEnvPointer NewPrepare(const protocol::PbftPrePrepare &pre_prepare, int64_t round_number);
 		PbftEnvPointer NewCommit(const protocol::PbftPrepare &prepare, int64_t round_number);
 		PbftEnvPointer NewCheckPoint(const std::string &state_digest, int64_t seq);
-		PbftEnvPointer NewViewChange(int64_t view_number);
-		PbftEnvPointer NewNewView(PbftVcInstance &vc_instance, std::map<int64_t, protocol::PbftEnv> &pre_prepares, int64_t sequence);
+		PbftEnvPointer NewViewChangeRawValue(int64_t view_number, const protocol::PbftPreparedSet &prepared_set);
+		PbftEnvPointer NewNewView(PbftVcInstance &vc_instance);
 		bool OnPrePrepare(const protocol::Pbft &pre_prepare, PbftInstance &pinstance, int32_t check_value_ret);
 		bool OnPrepare(const protocol::Pbft &prepare, PbftInstance &pinstance);
 		bool OnCommit(const protocol::Pbft &commit, PbftInstance &pinstance);
-		bool OnViewChange(const protocol::PbftEnv &pbft);
+		bool OnViewChangeWithRawValue(const protocol::PbftEnv &pbft);
 		bool OnNewView(const protocol::PbftEnv &pbft);
 
-		bool CheckViewChange(const protocol::PbftViewChange &view_change);
-		bool CreateViewChangeParam(const PbftVcInstance &vc_instance, std::map<int64_t, protocol::PbftEnv> &pre_prepares, PbftCkpInstancePair &lasted_ckp_pair);
+		static bool CheckViewChangeWithRawValue(const protocol::PbftViewChangeWithRawValue &view_change, const ValidatorMap &validators);
+		bool CreateViewChangeParam(const PbftVcInstance &vc_instance, std::map<int64_t, protocol::PbftEnv> &pre_prepares);
 		bool ProcessQuorumViewChange(PbftVcInstance &vc_instance);
 
 		PbftInstance *CreateInstanceIfNotExist(const protocol::PbftEnv &env);
 		bool InWaterMark(int64_t seq);
 		bool TryExecuteValue();
+		static protocol::PbftMessageType GetMessageType(const protocol::PbftEnv &env);
 		bool CheckMessageItem(const protocol::PbftEnv &env);
 		static bool CheckMessageItem(const protocol::PbftEnv &env, const ValidatorMap &validators);
 		bool TraceOutPbftCommit(const protocol::PbftEnv &env);
@@ -85,6 +86,7 @@ namespace bumo {
 		bool SaveValidators(ValueSaver &saver);
 		bool SaveViewChange(ValueSaver &saver);
 		bool SendMessage(const PbftEnvPointer &msg);
+		void ClearViewChanges();
 	public:
 		Pbft();
 		~Pbft();
@@ -94,7 +96,6 @@ namespace bumo {
 		virtual bool Initialize();
 		virtual bool Exit();
 		virtual bool Request(const std::string &value);
-		virtual bool RepairStatus(); // true : it is normal, false : waiting for pbft's notify
 		virtual bool OnRecv(const ConsensusMsg &meesage);
 
 		virtual void OnTimer(int64_t current_time);

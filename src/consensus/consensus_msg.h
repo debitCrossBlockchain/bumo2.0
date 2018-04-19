@@ -38,6 +38,8 @@ namespace bumo {
 		const char *GetNodeAddress() const;
 		std::string GetType() const;
 		protocol::PbftEnv  GetPbft() const;
+		std::string  GetHash() const;
+		size_t GetSize() const;
 	};
 }
 

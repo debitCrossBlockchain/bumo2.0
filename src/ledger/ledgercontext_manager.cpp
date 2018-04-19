@@ -175,7 +175,8 @@ namespace bumo {
 			protocol::TransactionEnv env;
 			protocol::Transaction *tx = env.mutable_transaction();
 			tx->set_source_address(parameter_.source_address_);
-			tx->set_fee(parameter_.fee_);
+			tx->set_fee_limit(parameter_.fee_limit_);
+			tx->set_gas_price(parameter_.gas_price_);
 			protocol::Operation *ope = tx->add_operations();
 			ope->set_type(protocol::Operation_Type_PAYMENT);
 			protocol::OperationPayment *payment = ope->mutable_payment();
@@ -390,8 +391,8 @@ namespace bumo {
 		Json::Value &logs,
 		Json::Value &txs,
 		Json::Value &rets,
-		Json::Value &fee,
-		Json::Value &stat) {
+		Json::Value &stat,
+		int32_t signature_number) {
 		LedgerContext *ledger_context = nullptr;
 		std::string thread_name = "test";
 		if (type == LedgerContext::AT_TEST_V8){
@@ -462,9 +463,21 @@ namespace bumo {
 			env_store.set_close_time(ledger->GetProtoHeader().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
-			
-			if (type == LedgerContext::AT_TEST_TRANSACTION)
-				txs[txs.size()] = Proto2Json(env_store);
+			if (ptr->GetResult().code() != 0)
+				env_store.set_actual_fee(ptr->GetFeeLimit());
+			else{
+				if (type == LedgerContext::AT_TEST_V8)
+					env_store.set_actual_fee(ptr->GetActualFee());
+				else if (LedgerContext::AT_TEST_TRANSACTION){
+					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					env_store.set_actual_fee(ptr->GetActualFee() + (signature_number*(64 + 76) + 20)*gas_price);//pub:64, sig:76
+
+					Json::Value jtx = Proto2Json(env_store);
+					jtx["gas"] = env_store.actual_fee() / gas_price;
+					txs[txs.size()] = jtx;
+				}
+			}
+				
 			//batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 
 			for (size_t j = 0; j < ptr->instructions_.size(); j++) {
@@ -486,15 +499,8 @@ namespace bumo {
 			stat["apply_time"] = ptr->GetApplyTime();
 		}
 
-		int64_t real_fee = ledger->total_real_fee_;
-		if (type == LedgerContext::AT_TEST_TRANSACTION){
-			real_fee += (64 + 76 + 100 )*LedgerManager::Instance().GetCurFeeConfig().byte_fee();
-			int64_t suggest_fee = LedgerManager::Instance().GetCurFeeConfig().byte_fee() * 1000;
-			real_fee = real_fee < suggest_fee ? suggest_fee : real_fee;
-		}
 		ledger_context->GetLogs(logs);
 		ledger_context->GetRets(rets);
-		fee = real_fee;
 		ledger_context->JoinWithStop();
 		delete ledger_context;
 		return true;

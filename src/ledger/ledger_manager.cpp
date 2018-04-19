@@ -19,6 +19,7 @@
 #include <monitor/monitor_manager.h>
 #include "ledger_manager.h"
 #include "contract_manager.h"
+#include "fee_compulate.h"
 
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
@@ -107,7 +108,7 @@ namespace bumo {
 			return false;
 		}
 	
-		LOG_INFO("Byte fee :" FMT_I64 " Base reserver fee:" FMT_I64 " Pay fee:" FMT_I64 " .", fees_.byte_fee(), fees_.base_reserve(), fees_.pay_fee());
+		LOG_INFO("Gas price :" FMT_I64 " Base reserve:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
 
 		//load proof
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof_);
@@ -289,15 +290,8 @@ namespace bumo {
 		header->set_validators_hash(validators_hash);
 
 		//for fee
-		fees_.set_byte_fee(Configure::Instance().genesis_configure_.fees_.byte_fee_);
+		fees_.set_gas_price(Configure::Instance().genesis_configure_.fees_.gas_price_);
 		fees_.set_base_reserve(Configure::Instance().genesis_configure_.fees_.base_reserve_);
-		fees_.set_create_account_fee(Configure::Instance().genesis_configure_.fees_.create_account_fee_);
-		fees_.set_pay_fee(Configure::Instance().genesis_configure_.fees_.pay_fee_);
-		fees_.set_issue_asset_fee(Configure::Instance().genesis_configure_.fees_.issue_asset_fee_);
-		fees_.set_set_metadata_fee(Configure::Instance().genesis_configure_.fees_.set_metadata_fee_);
-		fees_.set_set_sigure_weight_fee(Configure::Instance().genesis_configure_.fees_.set_sigure_weight_fee_);
-		fees_.set_set_threshold_fee(Configure::Instance().genesis_configure_.fees_.set_threshold_fee_);
-		fees_.set_pay_coin_fee(Configure::Instance().genesis_configure_.fees_.pay_coin_fee_);
 		std::string fees_hash = HashWrapper::Crypto(fees_.SerializeAsString());
 		header->set_fees_hash(fees_hash);
 
@@ -667,6 +661,10 @@ namespace bumo {
 			apply_tx_msg.set_error_code(tx->GetResult().code());
 			apply_tx_msg.set_error_desc(tx->GetResult().desc());
 			apply_tx_msg.set_hash(tx->GetContentHash());
+			if (tx->GetResult().code() != 0)
+				apply_tx_msg.set_actual_fee(tx->GetFeeLimit());
+			else
+				apply_tx_msg.set_actual_fee(tx->GetActualFee());
 			WebSocketServer::Instance().BroadcastChainTxMsg(apply_tx_msg);
 
 			if (tx->GetResult().code() == protocol::ERRCODE_SUCCESS)
@@ -864,7 +862,7 @@ namespace bumo {
 				txfrm->result_.set_desc("Too many recursion ");
 				//add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
+				bottom_tx->AddActualFee(txfrm->GetSelfByteFee());
 				break;
 			}
 
@@ -885,7 +883,8 @@ namespace bumo {
 			ledger_context->transaction_stack_.push_back(txfrm);
 			txfrm->SetMaxEndTime(back->GetMaxEndTime());
 			txfrm->NonceIncrease(ledger_context->closing_ledger_.get(), back->environment_);
-			if (txfrm->ValidForParameter()) {
+			int64_t total_op_fee = 0;
+			if (txfrm->ValidForParameter(total_op_fee)) {
 				if (back->environment_->useAtomMap_)
 				{
 					std::shared_ptr<Environment> cacheEnv = back->environment_->NewStackFrameEnv();
@@ -896,11 +895,11 @@ namespace bumo {
 			}
 			else {
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-				bottom_tx->AddRealFee(txfrm->GetSelfByteFee());
-				if (bottom_tx->GetRealFee() > bottom_tx->GetFee()) {
+				bottom_tx->AddActualFee(txfrm->GetSelfByteFee());
+				if (bottom_tx->GetActualFee() > bottom_tx->GetFeeLimit()) {
 					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) Fee(" FMT_I64 ") not enough,current real fee(" FMT_I64 ") ,Transaction(%s) self byte fee(" FMT_I64 ")",
-						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFee(), bottom_tx->GetRealFee(),utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
+					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) fee limit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 ") ,transaction(%s) self byte fee(" FMT_I64 ")",
+						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualFee(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
 				}
 			}
 
@@ -934,6 +933,10 @@ namespace bumo {
 			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
+			if (txfrm->GetResult().code() != 0)
+				tx_store.set_actual_fee(txfrm->GetFeeLimit());
+			else
+				tx_store.set_actual_fee(txfrm->GetActualFee());
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
@@ -945,6 +948,10 @@ namespace bumo {
 		protocol::TransactionEnvStore tx_store;
 		tx_store.set_error_code(txfrm->GetResult().code());
 		tx_store.set_error_desc(txfrm->GetResult().desc());
+		if (txfrm->GetResult().code() != 0)
+			tx_store.set_actual_fee(txfrm->GetFeeLimit());
+		else
+			tx_store.set_actual_fee(txfrm->GetActualFee());
 		tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 		auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();
 		trigger->mutable_transaction()->set_hash(back->GetContentHash());

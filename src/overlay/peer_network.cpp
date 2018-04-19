@@ -47,6 +47,7 @@ namespace bumo {
 
 		response_methods_[protocol::OVERLAY_MSGTYPE_LEDGERS] = std::bind(&PeerNetwork::OnMethodLedgers, this, std::placeholders::_1, std::placeholders::_2);
 		response_methods_[protocol::OVERLAY_MSGTYPE_HELLO] = std::bind(&PeerNetwork::OnMethodHelloResponse, this, std::placeholders::_1, std::placeholders::_2);
+		last_update_peercache_time_ = 0;
 	}
 
 	PeerNetwork::~PeerNetwork() {
@@ -228,6 +229,10 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodTransaction(protocol::WsMessage &message, int64_t conn_id) {
+		if (message.data().size() > General::TRANSACTION_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
+			LOG_ERROR("Transaction p2p data size(" FMT_SIZE ") too large", message.data().size());
+			return false;
+		}
 
 		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
 			protocol::TransactionEnv tran;
@@ -276,10 +281,16 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodPbft(protocol::WsMessage &message, int64_t conn_id) {
+		if (message.data().size() > General::TXSET_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
+			LOG_ERROR("Consensus p2p data size(" FMT_SIZE ") too large", message.data().size());
+			return false;
+		}
+
 		protocol::PbftEnv env;
 		env.ParseFromString(message.data());
 		if (!env.has_pbft()) {
 			LOG_ERROR("Pbft env is not initialize");
+			return false;
 		}
 
 		//should in validators
@@ -289,16 +300,17 @@ namespace bumo {
 			return true;
 		}
 
-		std::string hash = utils::String::Bin4ToHexString(HashWrapper::Crypto(message.SerializeAsString()));
+		std::string hash = utils::String::Bin4ToHexString(msg.GetHash());
 
-		LOG_TRACE("On pbft hash(%s), receive consensus from node address(%s) sequence(" FMT_I64 ") pbft type(%s)",
+		LOG_TRACE("On pbft hash(%s), receive consensus from node address(%s) sequence(" FMT_I64 ") pbft type(%s) size(" FMT_SIZE ")",
 			hash.c_str(), msg.GetNodeAddress(), msg.GetSeq(),
-			PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()));
+			PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()), msg.GetSize());
+
 
 		//switch to main thread
 		Global::Instance().GetIoService().post([conn_id, msg, message, hash, this]() {
 			if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data(), conn_id)) {
-				LOG_INFO("Pbft hash(%s) would be processed", hash.c_str());
+				LOG_TRACE("Pbft hash(%s) would be processed", hash.c_str());
 				BroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data());
 				GlueManager::Instance().OnConsensus(msg);
 			}
@@ -547,20 +559,23 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::GetActivePeers(int32_t max) {
-		do {
+		int64_t cur_time = utils::Timestamp::HighResolution();
+		if (db_peer_cache_.peers_size() == 0 || last_update_peercache_time_ == 0 ||
+			(cur_time - last_update_peercache_time_) > 10 * utils::MICRO_UNITS_PER_SEC) {
+			last_update_peercache_time_ = cur_time;
 			db_peer_cache_.clear_peers();
 			protocol::Peers peers;
 			
 			int32_t row_count = QueryTopItem(true, max, -1, peers);
 			if (row_count < 0) {
 				LOG_ERROR("Query records failed");
-				break;
+				return false;
 			}
 
 			db_peer_cache_ = peers;
-			return true;
-		} while (false);
-		return false;
+		}
+
+		return true;
 	}
 
 	int32_t PeerNetwork::QueryItem(const utils::InetAddress &address, protocol::Peers &records) {

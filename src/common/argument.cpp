@@ -18,6 +18,7 @@
 #include "private_key.h"
 #include "key_store.h"
 #include "argument.h"
+#include <sstream>
 
 namespace bumo {
 	bool g_enable_ = true;
@@ -36,7 +37,65 @@ namespace bumo {
 	bool Argument::Parse(int argc, char *argv[]) {
 		if (argc > 1) {
 			std::string s(argv[1]);
-			if (s == "--dropdb") {
+			if (s == "--console-with-cmd") {
+				std::deque<std::vector<char>> params;
+				std::string str_input;
+                std::stringstream ss_input;
+				static std::set<std::string> support_cmd = {
+					"--sign-data",
+					"--sign-data-with-keystore",
+					"--check-address",
+					"--check-keystore",
+					"--check-signed-data",
+					"--get-address",
+					"--get-address-from-pubkey",
+					"--get-privatekey-from-keystore",
+					"--create-account",
+					"--create-keystore",
+					"--create-keystore-from-privatekey"
+				};
+
+				std::cout << "enter console command mode" << std::endl;
+				
+				do {
+					params.clear();
+					try
+					{
+						std::string input2str;
+                        std::getline(std::cin, str_input);
+                        ss_input.clear();
+                        ss_input.str(str_input);
+                        while (ss_input >> str_input) {
+							utils::String::HexStringToBin(str_input, input2str);
+							params.emplace_back(input2str.begin(), input2str.end());
+							params.back().push_back('\0');
+						}
+
+						if (params.size() > 0 && support_cmd.find(std::string(params.front().data())) != support_cmd.end()) {
+							// construct argc and argv
+							std::vector<char*> new_argv;
+							new_argv.emplace_back(argv[0]);
+							for (auto& i : params)
+								new_argv.push_back(i.data());
+
+							Parse(new_argv.size(), new_argv.data());
+						}
+						else if (std::string(params.front().data()) == "exit") {
+							break;
+						}
+						else {
+							std::cout << "error" << std::endl;
+						}
+					}
+					catch (std::exception e)
+					{
+						std::cout << "error" << std::endl;
+					}
+					
+				} while (true);
+				return true;
+			}
+			else if (s == "--dropdb") {
 				drop_db_ = true;
 			}
 			else if (s == "--console") {
@@ -295,12 +354,12 @@ namespace bumo {
 					printf("error");
 				}
 
-				PrivateKey priv_key(argv[4]);
+				PrivateKey priv_key(private_key);
 				std::string public_key = priv_key.GetEncPublicKey();
-				std::string raw_data = utils::String::HexStringToBin(argv[3]);
+				std::string raw_data = utils::String::HexStringToBin(argv[4]);
 				Json::Value result = Json::Value(Json::objectValue);
 
-				result["data"] = argv[3];
+				result["data"] = argv[4];
 				result["public_key"] = public_key;
 				result["sign_data"] = utils::String::BinToHexString(priv_key.Sign(raw_data));
 				printf("%s\n", result.toStyledString().c_str());
@@ -331,7 +390,7 @@ namespace bumo {
 #else
 				ledger_db_ = new RocksDbDriver();
 #endif
-				if (!ledger_db_->Open(path)) {
+				if (!ledger_db_->Open(path, -1)) {
 					return false;
 				}
 

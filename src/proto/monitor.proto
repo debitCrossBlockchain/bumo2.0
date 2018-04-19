@@ -1,6 +1,6 @@
 syntax = "proto3";
 package monitor;
-option java_package = "cn.bumo.blockchain.adapter3";
+option java_package = "org.bumo.sdk.core.extend.protobuf";
 
 import "chain.proto";
 

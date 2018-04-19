@@ -1,9 +1,9 @@
 'use strict';
 
 const validatorSetSize       = 100;
-const votePassRate           = 0.8;
+const passRate               = 0.7;
 const effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
-const minPledgeAmount        = 100 * 100000000;
+const minPledgeAmount        = 50000 * 100000000;
 const minSuperadditionAmount = 100 * 100000000;
 const applicantVar    = 'applicant_';
 const abolishVar      = 'abolish_';
@@ -211,7 +211,7 @@ function voteForApplicant(applicant){
 
     assert(applicantData[ballotVar].includes(sender) !== true, sender + ' has voted.');
     applicantData[ballotVar].push(sender);
-    if(Object.keys(applicantData[ballotVar]).length < parseInt(validators.length * votePassRate)){
+    if(Object.keys(applicantData[ballotVar]).length < parseInt(validators.length * passRate + 0.5)){
         setMetaData(applicantKey, applicantData);
         return true;
     }
@@ -324,7 +324,7 @@ function voteAbolishValidator(malicious){
     
     assert(abolishProposal[ballotVar].includes(sender) !== true, sender + ' has voted.');
     abolishProposal[ballotVar].push(sender);
-    if(Object.keys(abolishProposal[ballotVar]).length < parseInt(validators.length * votePassRate)){
+    if(Object.keys(abolishProposal[ballotVar]).length < parseInt(validators.length * passRate + 0.5)){
         setMetaData(abolishKey, abolishProposal);
         return true;
     }
