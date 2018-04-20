@@ -12,48 +12,41 @@ namespace bumo{
 	const int64_t OperationGasConfigure::log = 1;
 	const int64_t OperationGasConfigure::create_contract = 1000000;
 
-	int64_t FeeCompulate::ByteFee(const int64_t& price, const int64_t& tx_size){
-		return price*tx_size;
+	int64_t FeeCompulate::CaculateFee(const int64_t& price, const int64_t& gas){
+		return price*gas;
 	}
 
-	int64_t FeeCompulate::OperationFee(const int64_t& price, const protocol::Operation_Type& op_type, const protocol::Operation* op){
-		int64_t fee = 0;
+	int64_t FeeCompulate::GetOperationTypeGas(const protocol::Operation& op){
+		const protocol::Operation_Type& op_type = op.type();
 		switch (op_type) {
 		case protocol::Operation_Type_UNKNOWN:
-			break;
+			return 0;
 		case protocol::Operation_Type_CREATE_ACCOUNT:
-			if (op != nullptr && !op->create_account().contract().payload().empty())
-				fee = OperationGasConfigure::create_contract * price;
-			else
-				fee = OperationGasConfigure::create_account * price;
-			break;
-		case protocol::Operation_Type_PAYMENT:
-			fee = OperationGasConfigure::payment * price;
-			break;
-		case protocol::Operation_Type_ISSUE_ASSET:
-			fee = OperationGasConfigure::issue_asset * price;
-			break;
-		case protocol::Operation_Type_SET_METADATA:
-			fee = OperationGasConfigure::set_metadata * price;
-			break;
-		case protocol::Operation_Type_SET_SIGNER_WEIGHT:
-			fee = OperationGasConfigure::set_sigure_weight * price;
-			break;
-		case protocol::Operation_Type_SET_THRESHOLD:
-			fee = OperationGasConfigure::set_threshold * price;
-			break;
-		case protocol::Operation_Type_PAY_COIN:
-			fee = OperationGasConfigure::pay_coin * price;
-			break;
-		case protocol::Operation_Type_LOG:
-			fee = OperationGasConfigure::log * price;
-			break;
-		default:
-			fee = 0;
-			break;
+		{
+			const protocol::OperationCreateAccount& createaccount = op.create_account();
+			std::string javascript = createaccount.contract().payload();
+			if (!javascript.empty()) {
+				return OperationGasConfigure::create_contract;
+			}
+			return OperationGasConfigure::create_account;
 		}
-
-		return fee;
+		case protocol::Operation_Type_PAYMENT:
+			return OperationGasConfigure::payment;
+		case protocol::Operation_Type_ISSUE_ASSET:
+			return OperationGasConfigure::issue_asset;
+		case protocol::Operation_Type_SET_METADATA:
+			return OperationGasConfigure::set_metadata;
+		case protocol::Operation_Type_SET_SIGNER_WEIGHT:
+			return OperationGasConfigure::set_sigure_weight;
+		case protocol::Operation_Type_SET_THRESHOLD:
+			return OperationGasConfigure::set_threshold;
+		case protocol::Operation_Type_PAY_COIN:
+			return OperationGasConfigure::pay_coin;
+		case protocol::Operation_Type_LOG:
+			return OperationGasConfigure::log;
+		default:
+			return 0;
+		}
 	}
 
 }

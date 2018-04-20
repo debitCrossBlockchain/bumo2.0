@@ -88,7 +88,7 @@ namespace bumo {
 			if (ptr->GetResult().code() != 0)
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else
-				env_store.set_actual_fee(ptr->GetActualFee());
+				env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
 
 			batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 			list.add_entry(ptr->GetContentHash());
@@ -259,17 +259,24 @@ namespace bumo {
 
 			tx_frm->EnableChecked();
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
+
 			
-			bool ret = tx_frm->Apply(this, environment_);
-			//caculate byte fee ,do not store when fee not enough 
-			std::string error_info;
-			if (tx_frm->IsExpire(error_info)) {
-				LOG_ERROR("transaction(%s) apply failed. %s, %s",
-					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-					error_info.c_str());
-				expire_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
+			bool ret = false;
+			bool expired = false;
+			if (TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm)){
+				ret = tx_frm->Apply(this, environment_);
+
+				std::string error_info;
+				if (tx_frm->IsExpire(error_info)) {
+					LOG_ERROR("transaction(%s) apply failed. %s, %s",
+						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
+						error_info.c_str());
+					expire_txs.insert(i - proposed_result.need_dropped_tx_.size());
+					expired = true;
+				}
 			}
-			else {
+
+			if (!expired){
 				if (!ret) {
 					LOG_ERROR("transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
@@ -342,16 +349,22 @@ namespace bumo {
 			tx_frm->EnableChecked();
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
-			bool ret = tx_frm->Apply(this, environment_);
-			//caculate byte fee ,do not store when fee not enough 
-			std::string error_info;
-			if (tx_frm->IsExpire(error_info)) {
-				LOG_ERROR("transaction(%s) apply failed. %s, %s",
-					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-					error_info.c_str());
-				expire_txs.insert(i);//for check
+			bool ret = false;
+			bool expired = false;
+			if (TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm)){
+				ret = tx_frm->Apply(this, environment_);
+
+				std::string error_info;
+				if (tx_frm->IsExpire(error_info)) {
+					LOG_ERROR("transaction(%s) apply failed. %s, %s",
+						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
+						error_info.c_str());
+					expire_txs.insert(i);
+					expired = true;
+				}
 			}
-			else {
+
+			if (!expired){
 				if (!ret) {
 					LOG_ERROR("transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
@@ -430,7 +443,11 @@ namespace bumo {
 				tx_frm->ApplyExpireResult();
 			}
 			else {
-				bool ret = tx_frm->Apply(this, environment_);
+				bool ret = false;
+				if (TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm)){
+					ret = tx_frm->Apply(this, environment_);
+				}
+
 				if (!ret) {
 						LOG_ERROR("transaction(%s) apply failed. %s",
 							utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());

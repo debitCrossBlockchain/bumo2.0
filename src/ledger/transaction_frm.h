@@ -87,17 +87,21 @@ namespace bumo {
 
 		void ApplyExpireResult(); // for sync node
 
-		bool ValidForParameter(int64_t& total_op_fee);
+		int64_t GetGas();
+
+		bool ValidForParameter();
 		
 		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);
+
+		bool CheckFee(const int64_t& gas_price, const int64_t& fee_limit, AccountFrm::pointer account);
+		static bool AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm::pointer txfrm);
 
 		bool PayFee(std::shared_ptr<Environment> environment,int64_t& total_fee);
 		bool ReturnFee(int64_t& total_fee);
 		int64_t GetFeeLimit() const;
 		int64_t GetGasPrice() const;
-		int64_t GetSelfByteFee();
-		int64_t GetActualFee() const;
-		void AddActualFee(int64_t fee);
+		int64_t GetActualGas() const;
+		void AddActualGas(int64_t gas);
 
 		void SetApplyStartTime(int64_t time);
 		void SetApplyEndTime(int64_t time);
@@ -130,7 +134,8 @@ namespace bumo {
 		std::set<std::string> valid_signature_;
 		
 		int64_t incoming_time_;
-		int64_t actual_fee_;
+		int64_t actual_gas_;
+		int64_t self_gas_;
 
 		//flow the top tx
 		int64_t max_end_time_;

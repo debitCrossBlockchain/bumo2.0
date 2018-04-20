@@ -420,7 +420,7 @@ namespace bumo {
 				ope_source_address = tx_source_address;
 			if (tx_source_address == ope_source_address){
 				auto type = ope.type();
-				total_opt_fee += FeeCompulate::OperationFee(tran->gas_price(), type, &ope);
+				total_opt_fee += FeeCompulate::GetOperationTypeGas(ope)*tran->gas_price();
 				if (type == protocol::Operation_Type_PAY_COIN) {
 					pay_amount += ope.pay_coin().amount();
 				}

@@ -24,9 +24,6 @@
 namespace bumo {
 	OperationFrm::OperationFrm(const protocol::Operation &operation, TransactionFrm* tran, int32_t index) :
 		operation_(operation), transaction_(tran), index_(index), ope_fee_(0){
-		if (tran) {
-			ope_fee_ = FeeCompulate::OperationFee(tran->GetGasPrice(), operation.type(), &operation);
-		}
 	}
 
 	OperationFrm::~OperationFrm() {}
@@ -778,8 +775,6 @@ namespace bumo {
 				dest_account_ptr = std::make_shared<AccountFrm>(account);
 				environment->AddEntry(ope.dest_address(), dest_account_ptr);
 
-				// add create_account fee while dest_address is not exists
-				ope_fee_ += FeeCompulate::OperationFee(transaction_->GetGasPrice(), protocol::Operation_Type::Operation_Type_CREATE_ACCOUNT);
 			}
 			protocol::Account& proto_dest_account = dest_account_ptr->GetProtoAccount();
 

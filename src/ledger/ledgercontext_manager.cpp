@@ -467,10 +467,10 @@ namespace bumo {
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else{
 				if (type == LedgerContext::AT_TEST_V8)
-					env_store.set_actual_fee(ptr->GetActualFee());
+					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
 				else if (LedgerContext::AT_TEST_TRANSACTION){
 					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
-					env_store.set_actual_fee(ptr->GetActualFee() + (signature_number*(64 + 76) + 20)*gas_price);//pub:64, sig:76
+					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76) + 20))*gas_price);//pub:64, sig:76
 
 					Json::Value jtx = Proto2Json(env_store);
 					jtx["gas"] = env_store.actual_fee() / gas_price;

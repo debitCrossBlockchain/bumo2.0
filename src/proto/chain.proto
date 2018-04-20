@@ -83,8 +83,8 @@ message AccountPrivilege {
 }
 
 message AccountThreshold{
-		 int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
-		 repeated OperationTypeThreshold type_thresholds = 2;  //如果这个设置，则操作门限以这个为准
+		 int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置 indicate no setting
+		 repeated OperationTypeThreshold type_thresholds = 2;  //如果这个设置，则操作门限以这个为准 
 }
 
 message OperationIssueAsset{

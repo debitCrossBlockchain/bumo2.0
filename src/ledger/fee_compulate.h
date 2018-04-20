@@ -20,8 +20,8 @@ namespace bumo{
 
 	class FeeCompulate {
 	public:
-		static int64_t ByteFee(const int64_t& price,const int64_t& tx_size);
-		static int64_t OperationFee(const int64_t& price, const protocol::Operation_Type& op_type, const protocol::Operation* op = nullptr);
+		static int64_t CaculateFee(const int64_t& price, const int64_t& gas);
+		static int64_t GetOperationTypeGas(const protocol::Operation& op);
 	};
 }
 
