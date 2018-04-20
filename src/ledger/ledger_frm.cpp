@@ -252,6 +252,7 @@ namespace bumo {
 				proposed_result.need_dropped_tx_.insert(i);//for drop
 				continue;
 			}
+			TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
@@ -260,23 +261,16 @@ namespace bumo {
 			tx_frm->EnableChecked();
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
-			
-			bool ret = false;
-			bool expired = false;
-			if (TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm)){
-				ret = tx_frm->Apply(this, environment_);
-
-				std::string error_info;
-				if (tx_frm->IsExpire(error_info)) {
-					LOG_ERROR("transaction(%s) apply failed. %s, %s",
-						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-						error_info.c_str());
-					expire_txs.insert(i - proposed_result.need_dropped_tx_.size());
-					expired = true;
-				}
+			bool ret = tx_frm->Apply(this, environment_);
+			//caculate byte fee ,do not store when fee not enough 
+			std::string error_info;
+			if (tx_frm->IsExpire(error_info)) {
+				LOG_ERROR("transaction(%s) apply failed. %s, %s",
+					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
+					error_info.c_str());
+				expire_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 			}
-
-			if (!expired){
+			else {
 				if (!ret) {
 					LOG_ERROR("transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
@@ -341,6 +335,7 @@ namespace bumo {
 				LOG_ERROR("Check consensus value failed, pay fee failed, seq(" FMT_I64 ")", request.ledger_seq());
 				return false;
 			}
+			TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
@@ -349,22 +344,16 @@ namespace bumo {
 			tx_frm->EnableChecked();
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
-			bool ret = false;
-			bool expired = false;
-			if (TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm)){
-				ret = tx_frm->Apply(this, environment_);
-
-				std::string error_info;
-				if (tx_frm->IsExpire(error_info)) {
-					LOG_ERROR("transaction(%s) apply failed. %s, %s",
-						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
-						error_info.c_str());
-					expire_txs.insert(i);
-					expired = true;
-				}
+			bool ret = tx_frm->Apply(this, environment_);
+			//caculate byte fee ,do not store when fee not enough 
+			std::string error_info;
+			if (tx_frm->IsExpire(error_info)) {
+				LOG_ERROR("transaction(%s) apply failed. %s, %s",
+					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
+					error_info.c_str());
+				expire_txs.insert(i);//for check
 			}
-
-			if (!expired){
+			else {
 				if (!ret) {
 					LOG_ERROR("transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
@@ -432,6 +421,7 @@ namespace bumo {
 				LOG_WARN("Should not go hear");
 				continue;
 			}
+			TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
@@ -443,19 +433,15 @@ namespace bumo {
 				tx_frm->ApplyExpireResult();
 			}
 			else {
-				bool ret = false;
-				if (TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm)){
-					ret = tx_frm->Apply(this, environment_);
-				}
-
+				bool ret = tx_frm->Apply(this, environment_);
 				if (!ret) {
-						LOG_ERROR("transaction(%s) apply failed. %s",
-							utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
-						error_txs.insert(i);//for check
+					LOG_ERROR("transaction(%s) apply failed. %s",
+						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
+					error_txs.insert(i);//for check
 				}
 				else {
-						tx_frm->ReturnFee(total_fee_);
-						tx_frm->environment_->Commit();
+					tx_frm->ReturnFee(total_fee_);
+					tx_frm->environment_->Commit();
 				}
 			}
 

@@ -38,7 +38,6 @@ namespace bumo {
 		ledger_(),
 		processing_operation_(0),
 		actual_gas_(0),
-		self_gas_(0),
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
@@ -58,7 +57,6 @@ namespace bumo {
 		ledger_(),
 		processing_operation_(0),
 		actual_gas_(0),
-		self_gas_(0),
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
@@ -528,7 +526,7 @@ namespace bumo {
 			return false;
 		}
 
-		int64_t tx_fee =GetGas()*gas_price;
+		int64_t tx_fee = GetSelfGas()*gas_price;
 		if (fee_limit < tx_fee){
 			std::string error_desc = utils::String::Format(
 				"Transaction(%s) fee limit(" FMT_I64 ") not enough for transaction fee(" FMT_I64 ") ",
@@ -544,27 +542,25 @@ namespace bumo {
 	}
 
 	bool TransactionFrm::AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm::pointer txfrm){
-		bottom_tx->AddActualGas(txfrm->GetGas());
+		bottom_tx->AddActualGas(txfrm->GetSelfGas());
 		if (bottom_tx->GetActualGas()*bottom_tx->GetGasPrice() > bottom_tx->GetFeeLimit()){
 			txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 			txfrm->result_.set_desc(utils::String::Format("Transaction(%s) fee limit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 ") ,transaction(%s) fee(" FMT_I64 ")",
-				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualGas()*bottom_tx->GetGasPrice(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetGas()*bottom_tx->GetGasPrice()));
+				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualGas()*bottom_tx->GetGasPrice(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfGas()*bottom_tx->GetGasPrice()));
 			LOG_ERROR("%s", txfrm->result_.desc().c_str());
 			return false;
 		}
 		return true;
 	}
 
-	int64_t TransactionFrm::GetGas(){
+	int64_t TransactionFrm::GetSelfGas(){
+		int64_t self_gas = 0;
+		self_gas += transaction_env_.ByteSize();
+		const protocol::Transaction &tran = transaction_env_.transaction();
+		for (int i = 0; i < tran.operations_size(); i++)
+			self_gas += FeeCompulate::GetOperationTypeGas(tran.operations(i));
 
-		if (self_gas_ == 0){
-			self_gas_ += transaction_env_.ByteSize();
-			const protocol::Transaction &tran = transaction_env_.transaction();
-			for (int i = 0; i < tran.operations_size(); i++)
-				self_gas_ += FeeCompulate::GetOperationTypeGas(tran.operations(i));
-
-		}
-		return self_gas_;
+		return self_gas;
 	}
 
 	bool TransactionFrm::SignerHashPriv(AccountFrm::pointer account_ptr, int32_t type) const {

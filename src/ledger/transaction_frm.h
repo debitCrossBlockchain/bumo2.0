@@ -87,7 +87,7 @@ namespace bumo {
 
 		void ApplyExpireResult(); // for sync node
 
-		int64_t GetGas();
+		int64_t GetSelfGas();
 
 		bool ValidForParameter();
 		
@@ -135,7 +135,6 @@ namespace bumo {
 		
 		int64_t incoming_time_;
 		int64_t actual_gas_;
-		int64_t self_gas_;
 
 		//flow the top tx
 		int64_t max_end_time_;

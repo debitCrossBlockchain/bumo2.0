@@ -864,7 +864,7 @@ namespace bumo {
 				txfrm->result_.set_desc("Too many recursion ");
 				//add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-				bottom_tx->AddActualGas(txfrm->GetGas());
+				bottom_tx->AddActualGas(txfrm->GetSelfGas());
 				break;
 			}
 
