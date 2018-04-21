@@ -21,7 +21,6 @@
 #include "transaction_frm.h"
 #include "contract_manager.h"
 #include "fee_compulate.h"
-#include <algorithm>
 #include "ledger_frm.h"
 namespace bumo {
 
@@ -469,7 +468,7 @@ namespace bumo {
 		}
 
 		int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
-		int64_t p = std::max<int64_t>(0, sys_gas_price);
+		int64_t p = MAX(0, sys_gas_price);
 		if (tran.gas_price() <p){
 			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 			result_.set_desc(utils::String::Format("Tx gas price(" FMT_I64 ") is less than (" FMT_I64 ")", tran.gas_price(), p));
@@ -526,7 +525,20 @@ namespace bumo {
 			return false;
 		}
 
-		int64_t tx_fee = GetSelfGas()*gas_price;
+		int64_t self_gas = GetSelfGas();
+		if ((self_gas != 0) && ((utils::MAX_INT64 / self_gas) < gas_price)) {
+			std::string error_desc = utils::String::Format(
+				"Transaction(%s), gas(" FMT_I64 "), self gas price(" FMT_I64 ") not valid",
+				utils::String::BinToHexString(GetContentHash()).c_str(), self_gas, gas_price);
+
+			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+			result_.set_desc(error_desc);
+			LOG_ERROR("%s", error_desc.c_str());
+
+			return false;
+		}
+
+		int64_t tx_fee = self_gas * gas_price;
 		if (fee_limit < tx_fee){
 			std::string error_desc = utils::String::Format(
 				"Transaction(%s) fee limit(" FMT_I64 ") not enough for transaction fee(" FMT_I64 ") ",
@@ -543,7 +555,14 @@ namespace bumo {
 
 	bool TransactionFrm::AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm::pointer txfrm){
 		bottom_tx->AddActualGas(txfrm->GetSelfGas());
-		if (bottom_tx->GetActualGas()*bottom_tx->GetGasPrice() > bottom_tx->GetFeeLimit()){
+		if ((bottom_tx->GetGasPrice() != 0) && ((utils::MAX_INT64 / bottom_tx->GetGasPrice())  <  bottom_tx->GetActualGas())) {
+			txfrm->result_.set_code(protocol::ERRCODE_FEE_INVALID);
+			txfrm->result_.set_desc(utils::String::Format("Transaction(%s), actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(),
+				bottom_tx->GetActualGas(), bottom_tx->GetGasPrice()));
+			return false;
+		}
+
+		if (bottom_tx->GetActualGas() * bottom_tx->GetGasPrice() > bottom_tx->GetFeeLimit()){
 			txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 			txfrm->result_.set_desc(utils::String::Format("Transaction(%s) fee limit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 ") ,transaction(%s) fee(" FMT_I64 ")",
 				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualGas()*bottom_tx->GetGasPrice(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfGas()*bottom_tx->GetGasPrice()));

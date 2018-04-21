@@ -252,7 +252,6 @@ namespace bumo {
 				proposed_result.need_dropped_tx_.insert(i);//for drop
 				continue;
 			}
-			TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
@@ -261,7 +260,11 @@ namespace bumo {
 			tx_frm->EnableChecked();
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
-			bool ret = tx_frm->Apply(this, environment_);
+			bool ret = TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
+			if (ret){
+				ret = tx_frm->Apply(this, environment_);
+			}
+
 			//caculate byte fee ,do not store when fee not enough 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
@@ -335,7 +338,6 @@ namespace bumo {
 				LOG_ERROR("Check consensus value failed, pay fee failed, seq(" FMT_I64 ")", request.ledger_seq());
 				return false;
 			}
-			TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
@@ -344,7 +346,10 @@ namespace bumo {
 			tx_frm->EnableChecked();
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
-			bool ret = tx_frm->Apply(this, environment_);
+			bool ret = TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
+			if (ret) {
+				ret = tx_frm->Apply(this, environment_);
+			}
 			//caculate byte fee ,do not store when fee not enough 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
@@ -421,7 +426,6 @@ namespace bumo {
 				LOG_WARN("Should not go hear");
 				continue;
 			}
-			TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
@@ -433,7 +437,11 @@ namespace bumo {
 				tx_frm->ApplyExpireResult();
 			}
 			else {
-				bool ret = tx_frm->Apply(this, environment_);
+				bool ret = TransactionFrm::AddActualFee(lpledger_context_->GetBottomTx(), tx_frm);
+				if (ret) {
+					ret = tx_frm->Apply(this, environment_);
+				}
+
 				if (!ret) {
 					LOG_ERROR("transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
