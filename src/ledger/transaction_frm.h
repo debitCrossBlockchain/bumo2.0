@@ -94,7 +94,7 @@ namespace bumo {
 		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);
 
 		bool CheckFee(const int64_t& gas_price, const int64_t& fee_limit, AccountFrm::pointer account);
-		static bool AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm::pointer txfrm);
+		static bool AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm* txfrm);
 
 		bool PayFee(std::shared_ptr<Environment> environment,int64_t& total_fee);
 		bool ReturnFee(int64_t& total_fee);

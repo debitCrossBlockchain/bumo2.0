@@ -553,7 +553,7 @@ namespace bumo {
 		return true;
 	}
 
-	bool TransactionFrm::AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm::pointer txfrm){
+	bool TransactionFrm::AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm* txfrm){
 		bottom_tx->AddActualGas(txfrm->GetSelfGas());
 		if ((bottom_tx->GetGasPrice() != 0) && ((utils::MAX_INT64 / bottom_tx->GetGasPrice())  <  bottom_tx->GetActualGas())) {
 			txfrm->result_.set_code(protocol::ERRCODE_FEE_INVALID);
@@ -678,6 +678,9 @@ namespace bumo {
 			environment_ = parent;
 		else
 			environment_ = std::make_shared<Environment>(parent.get());
+
+		bool ret = TransactionFrm::AddActualFee(ledger_frm->lpledger_context_->GetBottomTx(), this);
+		if (!ret) return ret;
 
 		bool bSucess = true;
 		const protocol::Transaction &tran = transaction_env_.transaction();
