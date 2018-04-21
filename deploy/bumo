@@ -27,7 +27,7 @@ start(){
         echo "Starting "$NAME "..."
 		ulimit -c unlimited
 		ulimit -n 655350
-		echo echo "${install_dir}/coredump/core.%p.%u.%g.%s.%t.%e"> /proc/sys/kernel/core_pattern 
+		echo "${install_dir}/coredump/core.%p.%u.%g.%s.%t.%e"> /proc/sys/kernel/core_pattern 
 	    $script_dir/start-stop-daemon -S --oknodo --background  -m -p $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
         echo "."
 }
