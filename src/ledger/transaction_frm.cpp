@@ -460,7 +460,7 @@ namespace bumo {
 			return false;
 		} 
 
-		if (contract_trigger){
+		if (!contract_trigger){
 			if (tran.fee_limit() < 0){
 				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 				result_.set_desc(utils::String::Format("Tx fee limit(" FMT_I64 ") < 0", tran.fee_limit()));
