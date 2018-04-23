@@ -2526,7 +2526,7 @@ const jslint = (function JSLint() {
     infix("*", 140);
     infix("/", 140);
     infix("%", 140);
-    infixr("**", 150);
+    //infixr("**", 150);
     infix("(", 160, function (left) {
         const the_paren = token;
         let the_argument;
