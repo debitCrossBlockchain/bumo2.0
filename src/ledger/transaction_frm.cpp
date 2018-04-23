@@ -396,7 +396,7 @@ namespace bumo {
 		return true;
 	}
 
-	bool TransactionFrm::ValidForParameter() {
+	bool TransactionFrm::ValidForParameter(bool contract_trigger) {
 		const protocol::Transaction &tran = transaction_env_.transaction();
 		const LedgerConfigure &ledger_config = Configure::Instance().ledger_configure_;
 		if (transaction_env_.ByteSize() >= General::TRANSACTION_LIMIT_SIZE) {
@@ -460,22 +460,23 @@ namespace bumo {
 			return false;
 		} 
 
-		if (tran.fee_limit() < 0){
-			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-			result_.set_desc(utils::String::Format("Tx fee limit(" FMT_I64 ") < 0", tran.fee_limit()));
-			LOG_ERROR("%s", result_.desc().c_str());
-			return false;
-		}
+		if (contract_trigger){
+			if (tran.fee_limit() < 0){
+				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+				result_.set_desc(utils::String::Format("Tx fee limit(" FMT_I64 ") < 0", tran.fee_limit()));
+				LOG_ERROR("%s", result_.desc().c_str());
+				return false;
+			}
 
-		int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
-		int64_t p = MAX(0, sys_gas_price);
-		if (tran.gas_price() <p){
-			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-			result_.set_desc(utils::String::Format("Tx gas price(" FMT_I64 ") is less than (" FMT_I64 ")", tran.gas_price(), p));
-			LOG_ERROR("%s", result_.desc().c_str());
-			return false;
+			int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+			int64_t p = MAX(0, sys_gas_price);
+			if (tran.gas_price() < p){
+				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+				result_.set_desc(utils::String::Format("Tx gas price(" FMT_I64 ") is less than (" FMT_I64 ")", tran.gas_price(), p));
+				LOG_ERROR("%s", result_.desc().c_str());
+				return false;
+			}
 		}
-
 
 		bool check_valid = true; 
 		//判断operation的参数合法性

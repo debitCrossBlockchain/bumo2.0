@@ -89,7 +89,7 @@ namespace bumo {
 
 		int64_t GetSelfGas();
 
-		bool ValidForParameter();
+		bool ValidForParameter(bool contract_trigger = false);
 		
 		bool ValidForApply(std::shared_ptr<Environment> environment, bool check_priv = true);
 

@@ -885,7 +885,7 @@ namespace bumo {
 			ledger_context->transaction_stack_.push_back(txfrm);
 			txfrm->SetMaxEndTime(back->GetMaxEndTime());
 			txfrm->NonceIncrease(ledger_context->closing_ledger_.get(), back->environment_);
-			if (txfrm->ValidForParameter()) {
+			if (txfrm->ValidForParameter(true)) {
 				if (back->environment_->useAtomMap_){
 					std::shared_ptr<Environment> cacheEnv = back->environment_->NewStackFrameEnv();
 					txfrm->Apply(ledger_context->closing_ledger_.get(), cacheEnv, true);
