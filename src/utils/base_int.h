@@ -506,5 +506,33 @@ namespace utils {
 	bool bigDivide(int64_t& result, int64_t A, int64_t B, int64_t C);
 	bool bigDivide(uint64_t& result, uint64_t A, uint64_t B, uint64_t C);
 	int64_t  bigDivide(int64_t A, int64_t B, int64_t C);
+
+	template<class T>
+	bool MultlOverflowed(T x, T y){
+		T m = x * y;
+
+		if ((x != 0) && (m / x != y))
+			return true;
+		else
+			return false;
+	}
+
+	template<class T>
+	bool AddOverflowed(T x, T y){
+		T sum = x + y;
+
+		if ((x > 0 && y > 0 && sum < 0) || (x < 0 && y < 0 && sum > 0))
+			return true;
+		else
+			return false;
+	}
+
+	template<class T>
+	bool SubOverflowed(T x, T y){
+		if ((x > 0 && y < 0) || (x < 0 && y > 0))
+			return AddOverflowed(x, -y);
+		else
+			return false;
+	}
 }
 #endif
