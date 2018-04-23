@@ -1648,7 +1648,7 @@ namespace bumo{
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
 			if (iarg1 <= 0 || iarg0 < 0) {
-				error_desc = "Parameter arg < 0";
+				error_desc = "Parameter arg <= 0";
 				break;
 			}
 
@@ -1685,7 +1685,7 @@ namespace bumo{
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
 			if (iarg1 <= 0 || iarg0 < 0) {
-				error_desc  ="Parameter arg < 0";
+				error_desc  ="Parameter arg <= 0";
 				break;
 			}
 
