@@ -507,6 +507,7 @@ namespace utils {
 	bool bigDivide(uint64_t& result, uint64_t A, uint64_t B, uint64_t C);
 	int64_t  bigDivide(int64_t A, int64_t B, int64_t C);
 
+	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
 	bool MultlOverflowed(T x, T y){
 		T m = x * y;
@@ -517,6 +518,7 @@ namespace utils {
 			return false;
 	}
 
+	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
 	bool AddOverflowed(T x, T y){
 		T sum = x + y;
@@ -527,6 +529,7 @@ namespace utils {
 			return false;
 	}
 
+	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
 	bool SubOverflowed(T x, T y){
 		if ((x > 0 && y < 0) || (x < 0 && y > 0))
