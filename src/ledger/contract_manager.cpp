@@ -1528,12 +1528,10 @@ namespace bumo{
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
-			if (utils::AddOverflowed(iarg0, iarg1)){
+			if (!utils::SafeIntPlus(iarg0, iarg1, iarg0)){
 				error_desc = "Contract execute error, int64Plus, parameter 0 + parameter 1 overflowed";
 				break;
 			}
-
-			iarg0 += iarg1;
 
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
 				args.GetIsolate(), utils::String::ToString(iarg0).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
@@ -1568,12 +1566,10 @@ namespace bumo{
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
-			if (utils::SubOverflowed(iarg0, iarg1)){
+			if (!utils::SafeIntSub(iarg0, iarg1, iarg0)){
 				error_desc = "Contract execute error, int64Sub, parameter 0 - parameter 1 overflowed";
 				break;
 			}
-
-			iarg0 -= iarg1;
 
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
 				args.GetIsolate(), utils::String::ToString(iarg0).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
@@ -1722,13 +1718,13 @@ namespace bumo{
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
-			if (utils::MultlOverflowed(iarg0, iarg1)){
+			if (!utils::SafeIntMul(iarg0, iarg1, iarg0)){
 				error_desc = "Contract execute error, int64Mul, parameter 0 * parameter 1 overflowed";
 				break;
 			}
 
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
-				args.GetIsolate(), utils::String::ToString(iarg0 * iarg1).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+				args.GetIsolate(), utils::String::ToString(iarg0).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 			return;
 		} while (false);
 		LOG_ERROR("%s", error_desc.c_str());

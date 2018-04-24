@@ -509,28 +509,40 @@ namespace utils {
 
 	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
-	bool MultlOverflowed(T x, T y){
-		T m = x * y;
-		bool overFlowed = x != 0 && m / x != y;
-		return overFlowed;
+	bool SafeIntMul(T x, T y, T& r){
+		T mul = x * y;
+
+		bool safe = x == 0 || mul / x == y;
+		if (safe) r = mul;
+
+		return safe;
 	}
 
 	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
-	bool AddOverflowed(T x, T y){
+	bool SafeIntPlus(T x, T y, T& r){
 		T sum = x + y;
+
 		bool negOver = x < 0 && y < 0 && sum >= 0;
 		bool posOver = x >= 0 && y >= 0 && sum < 0;
-		return negOver || posOver;
+		bool safe = !negOver && !posOver;
+
+		if (safe) r = sum;
+
+		return safe;
 	}
 
 	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
-	bool SubOverflowed(T x, T y){
+	bool SafeIntSub(T x, T y, T& r){
 		T dif = x - y;
 		bool negOver = x < 0 && y >= 0 && dif >= 0;
 		bool posOver = x >= 0 && y < 0 && dif <= 0;
-		return negOver || posOver;
+		bool safe = !negOver && !posOver;
+		
+		if (safe) r = dif;
+
+		return safe;
 	}
 }
 #endif
