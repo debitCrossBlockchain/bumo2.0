@@ -1745,8 +1745,8 @@ namespace bumo{
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
-			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_TRACE("contract execute error, toBaseUnit, parameter 0 should be a String or Number");
+			if (!args[0]->IsString()) {
+				LOG_TRACE("contract execute error, toBaseUnit, parameter 0 should be a String");
 				break;
 			}
 
