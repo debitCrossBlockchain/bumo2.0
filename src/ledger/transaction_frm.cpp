@@ -37,6 +37,7 @@ namespace bumo {
 		ledger_(),
 		processing_operation_(0),
 		actual_gas_(0),
+		actual_gas_for_query_(0),
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
@@ -56,6 +57,7 @@ namespace bumo {
 		ledger_(),
 		processing_operation_(0),
 		actual_gas_(0),
+		actual_gas_for_query_(0),
 		max_end_time_(0),
 		contract_step_(0),
 		contract_memory_usage_(0),
@@ -76,7 +78,7 @@ namespace bumo {
 		result["error_desc"] = result_.desc();
 		result["close_time"] = apply_time_;
 		result["ledger_seq"] = ledger_seq_;
-		result["actual_fee"] = actual_gas_*GetGasPrice();
+		result["actual_fee"] = actual_gas_for_query_;
 		result["hash"] = utils::String::BinToHexString(hash_);
 		result["tx_size"] = transaction_env_.ByteSize();
 	}
@@ -640,8 +642,7 @@ namespace bumo {
 
 		apply_time_ = envstor.close_time();
 		transaction_env_ = envstor.transaction_env();
-		if(envstor.transaction_env().transaction().gas_price() !=0)
-			actual_gas_ = envstor.actual_fee() / envstor.transaction_env().transaction().gas_price();
+		actual_gas_for_query_ = envstor.actual_fee();
 
 		ledger_seq_ = envstor.ledger_seq();
 		Initialize();

@@ -135,6 +135,7 @@ namespace bumo {
 		
 		int64_t incoming_time_;
 		int64_t actual_gas_;
+		int64_t actual_gas_for_query_;
 
 		//flow the top tx
 		int64_t max_end_time_;
