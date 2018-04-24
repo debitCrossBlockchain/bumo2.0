@@ -511,31 +511,26 @@ namespace utils {
 	template<class T>
 	bool MultlOverflowed(T x, T y){
 		T m = x * y;
-
-		if ((x != 0) && (m / x != y))
-			return true;
-		else
-			return false;
+		bool overFlowed = x != 0 && m / x != y;
+		return overFlowed;
 	}
 
 	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
 	bool AddOverflowed(T x, T y){
 		T sum = x + y;
-
-		if ((x > 0 && y > 0 && sum < 0) || (x < 0 && y < 0 && sum > 0))
-			return true;
-		else
-			return false;
+		bool negOver = x < 0 && y < 0 && sum >= 0;
+		bool posOver = x >= 0 && y >= 0 && sum < 0;
+		return negOver || posOver;
 	}
 
 	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
 	bool SubOverflowed(T x, T y){
-		if ((x > 0 && y < 0) || (x < 0 && y > 0))
-			return AddOverflowed(x, -y);
-		else
-			return false;
+		T dif = x - y;
+		bool negOver = x < 0 && y >= 0 && dif >= 0;
+		bool posOver = x >= 0 && y < 0 && dif <= 0;
+		return negOver || posOver;
 	}
 }
 #endif
