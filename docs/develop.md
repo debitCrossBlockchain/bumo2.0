@@ -1603,13 +1603,13 @@ function query(input)
 
 - ##### 64位加法
 
-    `int64Plus(left_value, right_value);`
+    `int64Add(left_value, right_value);`
     - left_value: 左值
     - right_value：右值
 
     例如
     ```javascript
-    let ret = int64Plus('12345678912345', 1);
+    let ret = int64Add('12345678912345', 1);
     /*
     成功：'12345678912346'
     失败：抛异常
