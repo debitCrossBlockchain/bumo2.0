@@ -249,7 +249,7 @@ namespace bumo {
 		if (current_time - last_connect_time_ > connect_interval_) {
 			utils::MutexGuard guard(conns_list_lock_);
 			Monitor *monitor = (Monitor *)GetClientConnection();
-			if (NULL == monitor) {
+			if (NULL == monitor && Configure::Instance().monitor_configure_.enabled_) {
 				std::string url = utils::String::Format("ws://%s", Configure::Instance().monitor_configure_.center_.c_str());
 				Connect(url);
 			}

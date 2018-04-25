@@ -334,7 +334,7 @@ namespace bumo {
 			const protocol::OperationPayCoin &pay_coin = operation.pay_coin();
 			if (pay_coin.amount() < 0){
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc(utils::String::Format("Amount should be bigger than 0"));
+				result.set_desc(utils::String::Format("Amount should be greater than or equal to 0"));
 				break;
 			}
 
