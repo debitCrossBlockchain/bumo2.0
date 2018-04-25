@@ -37,7 +37,7 @@ mkdir bumo/log
 mkdir bumo/coredump
 cp ../build/win32/jslib/jslint.js bumo/jslib/
 cp ../build/win32/config/* bumo/config/
-cp bumo bumo/bin/
+cp ../bin/bumo bumo/bin/
 cp ../src/3rd/v8_target/mac/*.bin bumo/bin/
 cp ../src/3rd/v8_target/mac/*.dat bumo/bin/
 

@@ -46,10 +46,10 @@ mkdir bumo\data
 mkdir bumo\jslib
 mkdir bumo\log
 
-copy Bumo.exe bumo\bin
-copy *.bin bumo\bin
-copy *.dat bumo\bin
-copy *.dll bumo\bin
+copy ..\bin\Bumo.exe bumo\bin
+copy ..\bin\*.bin bumo\bin
+copy ..\bin\*.dat bumo\bin
+copy ..\bin\*.dll bumo\bin
 copy ..\config\* bumo\config\
 copy ..\jslib\jslint.js bumo\jslib\
 
