@@ -1064,7 +1064,7 @@ namespace bumo{
 			bumo::AccountFrm::pointer account_frm = nullptr;
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			ledger_context->GetBottomTx()->ContractStepInc(100);
+			ledger_context->GetBottomTx()->ContractStepInc(1000);
 
 			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
 			if (!environment->GetEntry(address, account_frm)) {
