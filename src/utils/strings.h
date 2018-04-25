@@ -263,6 +263,66 @@ namespace utils {
 			return val ? "1" : "0";
 		}
 
+		static bool SafeStoi(const std::string &str, int& num){
+			if (str.size() > 11)
+				return false;
+
+			int temNum = Stoi(str);
+			std::string temStr = ToString(temNum);
+			if (0 == str.compare(temStr)){
+				num = temNum;
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+
+		static bool SafeStoui(const std::string &str, unsigned int& num){
+			if (str.size() > 10)
+				return false;
+
+			unsigned int temNum = Stoui(str);
+			std::string temStr = ToString(temNum);
+			if (0 == str.compare(temStr)){
+				num = temNum;
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+
+		static bool SafeStoi64(const std::string &str, int64_t& num){
+			if (str.size() > 20)
+				return false;
+
+			int64_t temNum = Stoi64(str);
+			std::string temStr = ToString(temNum);
+			if (0 == str.compare(temStr)){
+				num = temNum;
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+
+		static bool SafeStoui64(const std::string &str, uint64_t& num){
+			if (str.size() > 20)
+				return false;
+
+			uint64_t temNum = Stoui64(str);
+			std::string temStr = ToString(temNum);
+			if (0 == str.compare(temStr)){
+				num = temNum;
+				return true;
+			}
+			else{
+				return false;
+			}
+		}
+
 		/// @brief 格式化字符串
 		static std::string &Format(std::string &str, const char *format, ...) {
 			va_list ap;
