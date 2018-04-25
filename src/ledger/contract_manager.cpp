@@ -1526,8 +1526,19 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Add, parameter 0 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Add, parameter 1 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
 			if (!utils::SafeIntAdd(iarg0, iarg1, iarg0)){
 				error_desc = "Contract execute error, int64Add, parameter 0 + parameter 1 overflowed";
 				break;
@@ -1564,8 +1575,19 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Sub, parameter 0 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Sub, parameter 1 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
 			if (!utils::SafeIntSub(iarg0, iarg1, iarg0)){
 				error_desc = "Contract execute error, int64Sub, parameter 0 - parameter 1 overflowed";
 				break;
@@ -1602,8 +1624,19 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Compare, parameter 0 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Compare, parameter 1 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
 			int32_t compare1 = 0;
 			if (iarg0 > iarg1) compare1 = 1;
 			else if (iarg0 == iarg1) {
@@ -1641,8 +1674,19 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Div, parameter 0 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Div, parameter 1 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
 			if (iarg1 <= 0 || iarg0 < 0) {
 				error_desc = "Parameter arg <= 0";
 				break;
@@ -1678,8 +1722,19 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Mod, parameter 0 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Mod, parameter 1 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
 			if (iarg1 <= 0 || iarg0 < 0) {
 				error_desc  ="Parameter arg <= 0";
 				break;
@@ -1716,8 +1771,19 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Mul, parameter 0 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Mul, parameter 1 illegal, maybe excceed the limit value of int64.";
+				break;
+			}
+
 			if (!utils::SafeIntMul(iarg0, iarg1, iarg0)){
 				error_desc = "Contract execute error, int64Mul, parameter 0 * parameter 1 overflowed";
 				break;
