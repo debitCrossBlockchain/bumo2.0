@@ -2344,6 +2344,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 3                 | ERRCODE_ALREADY_EXIST                  | 对象已存在， 如重复提交交易                                                                  |
 | 4                 | ERRCODE_NOT_EXIST                      | 对象不存在，如查询不到账号、TX、区块等                                                       |
 | 5                 | ERRCODE_TX_TIMEOUT                     | TX 超时，指该 TX 已经被当前节点从 TX 缓存队列去掉，**但并不代表这个一定不能被执行**          |
+| 7                 | ERRCODE_MATH_OVERFLOW                  | 数学计算溢出 
 | 20                | ERRCODE_EXPR_CONDITION_RESULT_FALSE    | 指表达式执行结果为 false，意味着该 TX 当前没有执行成功，**但这并不代表在以后的区块不能成功** |
 | 21                | ERRCODE_EXPR_CONDITION_SYNTAX_ERROR    | 指表达式语法分析错误，代表该 TX 一定会失败                                                   |
 | 90                | ERRCODE_INVALID_PUBKEY                 | 公钥非法                                                                                     |
