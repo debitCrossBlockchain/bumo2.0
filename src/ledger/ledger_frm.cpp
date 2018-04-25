@@ -85,10 +85,18 @@ namespace bumo {
 			env_store.set_close_time(ledger_.header().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
-			if (ptr->GetResult().code() != 0)
+			if (ptr->GetResult().code() != 0){
 				env_store.set_actual_fee(ptr->GetFeeLimit());
-			else
-				env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
+			}
+			else{
+				int64_t actual_fee;
+				if (!utils::SafeIntMul(ptr->GetActualGas(), ptr->GetGasPrice(), actual_fee)){
+					LOG_ERROR("actual_fee math overflow");
+					return false;
+				}
+
+				env_store.set_actual_fee(actual_fee);
+			}
 
 			batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 			list.add_entry(ptr->GetContentHash());
@@ -557,11 +565,21 @@ namespace bumo {
 
 			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), average_fee, left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
-			proto_account.set_balance(proto_account.balance() + average_fee);
+			int64_t new_balance;
+			if (!utils::SafeIntPlus(proto_account.balance(), average_fee, new_balance)){
+				LOG_ERROR("AllocateReward math overflow balance:(" FMT_I64 "), average_fee:(" FMT_I64 ")", proto_account.balance(), average_fee);
+				return false;
+			}
+			proto_account.set_balance(new_balance);
 		}
 		if (left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
-			proto_account.set_balance(proto_account.balance() + left_reward);
+			int64_t new_balance;
+			if (!utils::SafeIntPlus(proto_account.balance(), left_reward, new_balance)){
+				LOG_ERROR("AllocateReward math overflow balance:(" FMT_I64 "), reward:(" FMT_I64 ")", proto_account.balance(), left_reward);
+				return false;
+			}
+			proto_account.set_balance(new_balance);
 			LOG_TRACE("Account(%s) allocate last reward(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
 		}
 		if (environment_->useAtomMap_)

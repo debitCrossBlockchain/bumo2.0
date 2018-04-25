@@ -661,10 +661,18 @@ namespace bumo {
 			apply_tx_msg.set_error_code(tx->GetResult().code());
 			apply_tx_msg.set_error_desc(tx->GetResult().desc());
 			apply_tx_msg.set_hash(tx->GetContentHash());
-			if (tx->GetResult().code() != 0)
+			if (tx->GetResult().code() != 0){
 				apply_tx_msg.set_actual_fee(tx->GetFeeLimit());
-			else
-				apply_tx_msg.set_actual_fee(tx->GetActualGas()*tx->GetGasPrice());
+			}
+			else {
+				int64_t actual_fee;
+				if (!utils::SafeIntMul(tx->GetActualGas(), tx->GetGasPrice(), actual_fee)){
+					LOG_ERROR("Gas and price math over flow");
+					return;
+				}
+				apply_tx_msg.set_actual_fee(actual_fee);
+			}
+				
 			WebSocketServer::Instance().BroadcastChainTxMsg(apply_tx_msg);
 
 			if (tx->GetResult().code() == protocol::ERRCODE_SUCCESS)
@@ -926,10 +934,19 @@ namespace bumo {
 			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
-			if (txfrm->GetResult().code() != 0)
+			if (txfrm->GetResult().code() != 0){
 				tx_store.set_actual_fee(txfrm->GetFeeLimit());
-			else
-				tx_store.set_actual_fee(txfrm->GetActualGas()*txfrm->GetGasPrice());
+			}
+			else{
+				int64_t actual_fee;
+				if (!utils::SafeIntMul(txfrm->GetActualGas(), txfrm->GetGasPrice(), actual_fee)){
+					result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+					result.set_desc("Gas and price math over flow");
+					return result;
+				}
+				tx_store.set_actual_fee(actual_fee);
+			}
+				
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
@@ -941,10 +958,19 @@ namespace bumo {
 		protocol::TransactionEnvStore tx_store;
 		tx_store.set_error_code(txfrm->GetResult().code());
 		tx_store.set_error_desc(txfrm->GetResult().desc());
-		if (txfrm->GetResult().code() != 0)
+		if (txfrm->GetResult().code() != 0){
 			tx_store.set_actual_fee(txfrm->GetFeeLimit());
-		else
-			tx_store.set_actual_fee(txfrm->GetActualGas()*txfrm->GetGasPrice());
+		}
+		else {
+			int64_t actual_fee;
+			if (!utils::SafeIntMul(txfrm->GetActualGas(), txfrm->GetGasPrice(), actual_fee)){
+				result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+				result.set_desc("Gas and price math over flow");
+				return result;
+			}
+			tx_store.set_actual_fee(actual_fee);
+		}
+			
 		tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 		auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();
 		trigger->mutable_transaction()->set_hash(back->GetContentHash());

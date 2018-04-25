@@ -1701,8 +1701,8 @@ function query(input)
  - ##### 变换单位
     `toBaseUnit(value);`
 
-    - 返回值: 乘以 10^8
-    - value: 左值
+    - 返回值: 成功会返回乘以 10^8 的字符串，失败会返回 false
+    - value: 被转换的数字，只能传入字符串，可以包含小数点，且小数点之后最多保留 8 位数字
 
     例如
     ```javascript

@@ -1734,21 +1734,22 @@ namespace bumo{
 	}
 
 	void V8Contract::CallBackToBaseUnit(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		std::string error_desc;
 		do {
 			if (args.Length() != 1) {
-				LOG_TRACE("parameter error");
+				error_desc = "parameter error";
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString()) {
-				LOG_TRACE("contract execute error, toBaseUnit, parameter 0 should be a String");
+				error_desc = "contract execute error, toBaseUnit, parameter 0 should be a String";
 				break;
 			}
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			if (!utils::String::IsDecNumber(arg0, General::BU_DECIMALS)) {
-				LOG_TRACE("Not decimal number");
+				error_desc = "Not decimal number";
 				break;
 			} 
 
@@ -1756,7 +1757,10 @@ namespace bumo{
 				args.GetIsolate(), utils::String::MultiplyDecimal(arg0, General::BU_DECIMALS).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 			return;
 		} while (false);
-		args.GetReturnValue().Set(false);
+		LOG_ERROR("To base unit error, %s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
 	QueryContract::QueryContract():contract_(NULL){}

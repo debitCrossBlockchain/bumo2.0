@@ -63,9 +63,13 @@ namespace bumo {
 	}
 
 	bool AccountFrm::AddBalance(int64_t amount){
-		int64_t tmp = account_info_.balance() + amount;
-		if (tmp < 0)	return false;
-		account_info_.set_balance(tmp);
+		int64_t balance;
+		if (!utils::SafeIntPlus(account_info_.balance(), amount, balance)) {
+			LOG_ERROR("Add balance math overflow! Account addr:%s, balance(" FMT_I64 ") (" FMT_I64 ")", 
+				account_info_.address().c_str(), account_info_.balance(), amount);
+			return false;
+		}
+		account_info_.set_balance(balance);
 		return true;
 	}
 	
