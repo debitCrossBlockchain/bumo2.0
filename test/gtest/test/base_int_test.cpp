@@ -23,12 +23,12 @@ private:
 
 protected:
 	void resetArgs(int64_t x, int64_t y, int64_t z);
-	void UT_SafeIntPlus();
+	void UT_SafeIntAdd();
 	void UT_SafeIntSub();
 	void UT_SafeIntMul();
 };
 
-TEST_F(SafeIntegerOpeTest, UT_SafeIntPlus){ UT_SafeIntPlus(); }
+TEST_F(SafeIntegerOpeTest, UT_SafeIntAdd){ UT_SafeIntAdd(); }
 TEST_F(SafeIntegerOpeTest, UT_SafeIntSub){ UT_SafeIntSub(); }
 TEST_F(SafeIntegerOpeTest, UT_SafeIntMul){ UT_SafeIntMul(); }
 
@@ -38,34 +38,34 @@ void SafeIntegerOpeTest::resetArgs(int64_t x, int64_t y, int64_t z){
 	result_ = z;
 }
 
-void SafeIntegerOpeTest::UT_SafeIntPlus()
+void SafeIntegerOpeTest::UT_SafeIntAdd()
 {
 	resetArgs(9223372036854775806, 1, 0);
-	EXPECT_EQ(utils::SafeIntPlus(argLeft_, argRight_, result_), true);
+	EXPECT_EQ(utils::SafeIntAdd(argLeft_, argRight_, result_), true);
 	printf("a = %lld, b = %lld, r = %lld\n", argLeft_, argRight_, result_);
 
 	resetArgs(324524352354, 2345, 0);
-	EXPECT_EQ(utils::SafeIntPlus(argLeft_, argRight_, result_), true);
+	EXPECT_EQ(utils::SafeIntAdd(argLeft_, argRight_, result_), true);
 	printf("a = %lld, b = %lld, r = %lld\n", argLeft_, argRight_, result_);
 	
 	resetArgs(9223372036854775807, 1, 0);
-	EXPECT_EQ(utils::SafeIntPlus(argLeft_, argRight_, result_), false);
+	EXPECT_EQ(utils::SafeIntAdd(argLeft_, argRight_, result_), false);
 	printf("a = %lld, b = %lld, r = %lld\n", argLeft_, argRight_, result_);
 
 	resetArgs((-9223372036854775807) - 1, 1, 0);
-	EXPECT_EQ(utils::SafeIntPlus(argLeft_, argRight_, result_), true);
+	EXPECT_EQ(utils::SafeIntAdd(argLeft_, argRight_, result_), true);
 	printf("a = %lld, b = %lld, r = %lld\n", argLeft_, argRight_, result_);
 
 	resetArgs(-94775807, 1, 0);
-	EXPECT_EQ(utils::SafeIntPlus(argLeft_, argRight_, result_), true);
+	EXPECT_EQ(utils::SafeIntAdd(argLeft_, argRight_, result_), true);
 	printf("a = %lld, b = %lld, r = %lld\n", argLeft_, argRight_, result_);
 
 	resetArgs((-9223372036854775807) - 1, -1, 0);
-	EXPECT_EQ(utils::SafeIntPlus(argLeft_, argRight_, result_), false);
+	EXPECT_EQ(utils::SafeIntAdd(argLeft_, argRight_, result_), false);
 	printf("a = %lld, b = %lld, r = %lld\n", argLeft_, argRight_, result_);
 
 	resetArgs((-9223372036854775807) - 1, (-9223372036854775807) - 1, 0);
-	EXPECT_EQ(utils::SafeIntPlus(argLeft_, argRight_, result_), false);
+	EXPECT_EQ(utils::SafeIntAdd(argLeft_, argRight_, result_), false);
 	printf("a = %lld, b = %lld, r = %lld\n", argLeft_, argRight_, result_);
 }
 
