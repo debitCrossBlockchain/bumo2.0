@@ -11,8 +11,8 @@
 set -e
 
 #!/bin/bash
-install_dir=/usr/local/bumo
-script_dir=/usr/local/bumo/scripts
+install_dir=/usr/local/buchain
+script_dir=/usr/local/buchain/scripts
 
 
 NAME=bumo

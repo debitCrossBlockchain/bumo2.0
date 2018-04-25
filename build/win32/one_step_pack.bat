@@ -37,25 +37,24 @@ del output.log
 
 "C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe" Bumo.vs12.sln  /rebuild RELEASE /out output.log
 
-mkdir pack
-cd pack
-mkdir bumo
-mkdir bumo\bin
-mkdir bumo\config
-mkdir bumo\data
-mkdir bumo\jslib
-mkdir bumo\log
+cd bin
+mkdir buchain
+mkdir buchain\bin
+mkdir buchain\config
+mkdir buchain\data
+mkdir buchain\jslib
+mkdir buchain\log
 
-copy Bumo.exe bumo\bin
-copy *.bin bumo\bin
-copy *.dat bumo\bin
-copy *.dll bumo\bin
-copy ..\config\* bumo\config\
-copy ..\jslib\jslint.js bumo\jslib\
+copy Bumo.exe buchain\bin
+copy *.bin buchain\bin
+copy *.dat buchain\bin
+copy *.dll buchain\bin
+copy ..\config\* buchain\config\
+copy ..\jslib\jslint.js buchain\jslib\
 
-..\zip.exe -r bumo-%CURRENT_DATE_TIME_STAMP%.zip bumo
+..\zip.exe -r buchain-%CURRENT_DATE_TIME_STAMP%.zip buchain
 
-rd /s /Q ".\bumo\"
+rd /s /Q ".\buchain\"
 
 cd ../
 	
