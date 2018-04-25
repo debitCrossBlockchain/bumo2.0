@@ -45,10 +45,10 @@ mkdir buchain\data
 mkdir buchain\jslib
 mkdir buchain\log
 
-copy Bumo.exe buchain\bin
-copy *.bin buchain\bin
-copy *.dat buchain\bin
-copy *.dll buchain\bin
+copy ..\bin\Bumo.exe buchain\bin
+copy ..\bin\*.bin buchain\bin
+copy ..\bin\*.dat buchain\bin
+copy ..\bin\*.dll buchain\bin
 copy ..\config\* buchain\config\
 copy ..\jslib\jslint.js buchain\jslib\
 

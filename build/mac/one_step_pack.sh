@@ -37,7 +37,7 @@ mkdir buchain/log
 mkdir buchain/coredump
 cp ../build/win32/jslib/jslint.js buchain/jslib/
 cp ../build/win32/config/* buchain/config/
-cp bumo buchain/bin/
+cp ../bin/bumo buchain/bin/
 cp ../src/3rd/v8_target/mac/*.bin buchain/bin/
 cp ../src/3rd/v8_target/mac/*.dat buchain/bin/
 
