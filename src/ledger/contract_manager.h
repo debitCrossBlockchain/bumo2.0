@@ -204,7 +204,7 @@ namespace bumo{
 		//Get block timestamp 
 		static void CallBackGetBlockTimestamp(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 add
-		static void CallBackInt64Plus(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackInt64Add(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 sub
 		static void CallBackInt64Sub(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 div

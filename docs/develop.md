@@ -1603,13 +1603,13 @@ function query(input)
 
 - ##### 64位加法
 
-    `int64Plus(left_value, right_value);`
+    `int64Add(left_value, right_value);`
     - left_value: 左值
     - right_value：右值
 
     例如
     ```javascript
-    let ret = int64Plus('12345678912345', 1);
+    let ret = int64Add('12345678912345', 1);
     /*
     成功：'12345678912346'
     失败：抛异常
@@ -1701,8 +1701,8 @@ function query(input)
  - ##### 变换单位
     `toBaseUnit(value);`
 
-    - 返回值: 乘以 10^8
-    - value: 左值
+    - 返回值: 成功会返回乘以 10^8 的字符串，失败会返回 false
+    - value: 被转换的数字，只能传入字符串，可以包含小数点，且小数点之后最多保留 8 位数字
 
     例如
     ```javascript
@@ -2344,6 +2344,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 3                 | ERRCODE_ALREADY_EXIST                  | 对象已存在， 如重复提交交易                                                                  |
 | 4                 | ERRCODE_NOT_EXIST                      | 对象不存在，如查询不到账号、TX、区块等                                                       |
 | 5                 | ERRCODE_TX_TIMEOUT                     | TX 超时，指该 TX 已经被当前节点从 TX 缓存队列去掉，**但并不代表这个一定不能被执行**          |
+| 7                 | ERRCODE_MATH_OVERFLOW                  | 数学计算溢出 
 | 20                | ERRCODE_EXPR_CONDITION_RESULT_FALSE    | 指表达式执行结果为 false，意味着该 TX 当前没有执行成功，**但这并不代表在以后的区块不能成功** |
 | 21                | ERRCODE_EXPR_CONDITION_SYNTAX_ERROR    | 指表达式语法分析错误，代表该 TX 一定会失败                                                   |
 | 90                | ERRCODE_INVALID_PUBKEY                 | 公钥非法                                                                                     |

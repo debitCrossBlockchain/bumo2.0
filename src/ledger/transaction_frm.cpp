@@ -251,9 +251,21 @@ namespace bumo {
 				break;
 			}
 
-			total_fee += fee;
+			if (!utils::SafeIntAdd(total_fee, fee, total_fee)){
+				LOG_ERROR("Source account(%s), fee overflow (" FMT_I64 ") (" FMT_I64 ")", 
+					str_address.c_str(), total_fee, fee);
+				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+				break;
+			}
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
-			int64_t new_balance = proto_source_account.balance() - fee;
+			int64_t new_balance;
+			if (!utils::SafeIntSub(proto_source_account.balance(), fee, new_balance)) {
+				LOG_ERROR("Source account(%s), proto_source_account overflow (" FMT_I64 ") (" FMT_I64 ")",
+					str_address.c_str(), proto_source_account.balance(), fee);
+				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+				break;
+			}
+
 			proto_source_account.set_balance(new_balance);
 
 			LOG_INFO("Account(%s) paid(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
@@ -266,7 +278,20 @@ namespace bumo {
 	
 	//must bottom tx use this function
 	bool TransactionFrm::ReturnFee(int64_t& total_fee) {
-		int64_t fee = GetFeeLimit() - GetActualGas()*GetGasPrice();
+		int64_t actual_fee;
+		if (!utils::SafeIntMul(GetActualGas(), GetGasPrice(), actual_fee)){
+			result_.set_desc(utils::String::Format("Math overflow, GetActualGas:(" FMT_I64 "), GetGasPrice:(" FMT_I64 ")", GetActualGas(), GetGasPrice()));
+			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+			return false;
+		}
+
+		int64_t fee;
+		if (!utils::SafeIntSub(GetFeeLimit(), actual_fee, fee)){
+			result_.set_desc(utils::String::Format("Math overflow, GetFeeLimit:(" FMT_I64 "), actual_fee:(" FMT_I64 ")", GetFeeLimit(), actual_fee));
+			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+			return false;
+		}
+
 		if (GetResult().code() != 0 || fee <= 0) {
 			return false;
 		}
@@ -280,9 +305,24 @@ namespace bumo {
 				break;
 			}
 
-			total_fee -= fee;
+			if (!utils::SafeIntSub(total_fee, fee, total_fee)){
+				result_.set_desc(utils::String::Format("Source account(%s) math overflow, total_fee:(" FMT_I64 "), fee:(" FMT_I64 ")",
+					str_address.c_str(), total_fee, fee));
+				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+				LOG_ERROR(result_.desc().c_str());
+				break;
+			}
+
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
-			int64_t new_balance = proto_source_account.balance() + fee;
+			int64_t new_balance;
+			if (!utils::SafeIntAdd(proto_source_account.balance(), fee, new_balance)){
+				result_.set_desc(utils::String::Format("Source account(%s) math overflow, blance:(" FMT_I64 "), fee:(" FMT_I64 ")",
+					str_address.c_str(), proto_source_account.balance(), fee));
+				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+				LOG_ERROR(result_.desc().c_str());
+				break;
+			}
+
 			proto_source_account.set_balance(new_balance);
 
 			LOG_INFO("Account(%s) returned(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
@@ -517,7 +557,19 @@ namespace bumo {
 
 
 	bool TransactionFrm::CheckFee(const int64_t& gas_price, const int64_t& fee_limit, AccountFrm::pointer source_account){
-		if (source_account->GetAccountBalance() - fee_limit < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
+
+		int64_t limit_balance;
+		if (!utils::SafeIntSub(source_account->GetAccountBalance(), fee_limit, limit_balance)){
+			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+			std::string error_desc = utils::String::Format("Account(%s) reserve balance overflow for transaction(%s) fee and base reserve: balance(" FMT_I64 ") fee(" FMT_I64 "), base reserve(" FMT_I64 ")",
+				source_account->GetAccountAddress().c_str(), utils::String::Bin4ToHexString(GetContentHash()).c_str(),
+				source_account->GetAccountBalance(), fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve());
+			result_.set_desc(error_desc);
+			LOG_ERROR("%s", error_desc.c_str());
+			return false;
+		}
+
+		if (limit_balance < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 			
 			result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
 			std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction(%s) fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 ")",
@@ -529,19 +581,29 @@ namespace bumo {
 		}
 
 		int64_t self_gas = GetSelfGas();
-		if ((self_gas != 0) && ((utils::MAX_INT64 / self_gas) < gas_price)) {
+		//if ((self_gas != 0) && ((utils::MAX_INT64 / self_gas) < gas_price)) {
+		//	std::string error_desc = utils::String::Format(
+		//		"Transaction(%s), gas(" FMT_I64 "), self gas price(" FMT_I64 ") not valid",
+		//		utils::String::BinToHexString(GetContentHash()).c_str(), self_gas, gas_price);
+
+		//	result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+		//	result_.set_desc(error_desc);
+		//	LOG_ERROR("%s", error_desc.c_str());
+
+		//	return false;
+		//}
+		int64_t tx_fee;
+		if (!utils::SafeIntMul(self_gas, gas_price, tx_fee)){
 			std::string error_desc = utils::String::Format(
-				"Transaction(%s), gas(" FMT_I64 "), self gas price(" FMT_I64 ") not valid",
+				"Transaction(%s), gas(" FMT_I64 "), self gas price(" FMT_I64 ") math overflow",
 				utils::String::BinToHexString(GetContentHash()).c_str(), self_gas, gas_price);
 
 			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 			result_.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
-
 			return false;
 		}
-
-		int64_t tx_fee = self_gas * gas_price;
+		
 		if (fee_limit < tx_fee){
 			std::string error_desc = utils::String::Format(
 				"Transaction(%s) fee limit(" FMT_I64 ") not enough for transaction fee(" FMT_I64 ") ",
@@ -557,15 +619,25 @@ namespace bumo {
 	}
 
 	bool TransactionFrm::AddActualFee(TransactionFrm::pointer bottom_tx, TransactionFrm* txfrm){
+		
+		//if ((bottom_tx->GetGasPrice() != 0) && ((utils::MAX_INT64 / bottom_tx->GetGasPrice())  <  bottom_tx->GetActualGas())) {
+		//	txfrm->result_.set_code(protocol::ERRCODE_FEE_INVALID);
+		//	txfrm->result_.set_desc(utils::String::Format("Transaction(%s), actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(),
+		//		bottom_tx->GetActualGas(), bottom_tx->GetGasPrice()));
+		//	return false;
+		//}
+
 		bottom_tx->AddActualGas(txfrm->GetSelfGas());
-		if ((bottom_tx->GetGasPrice() != 0) && ((utils::MAX_INT64 / bottom_tx->GetGasPrice())  <  bottom_tx->GetActualGas())) {
-			txfrm->result_.set_code(protocol::ERRCODE_FEE_INVALID);
-			txfrm->result_.set_desc(utils::String::Format("Transaction(%s), actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(),
+		int64_t actual_fee = 0;
+		if (!utils::SafeIntMul(bottom_tx->GetActualGas(), bottom_tx->GetGasPrice(), actual_fee)){
+			txfrm->result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+			txfrm->result_.set_desc(utils::String::Format("Transaction(%s), math overflow actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(),
 				bottom_tx->GetActualGas(), bottom_tx->GetGasPrice()));
+			LOG_ERROR("%s", txfrm->result_.desc().c_str());
 			return false;
 		}
 
-		if (bottom_tx->GetActualGas() * bottom_tx->GetGasPrice() > bottom_tx->GetFeeLimit()){
+		if (actual_fee > bottom_tx->GetFeeLimit()){
 			txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 			txfrm->result_.set_desc(utils::String::Format("Transaction(%s) fee limit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 ") ,transaction(%s) fee(" FMT_I64 ")",
 				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualGas()*bottom_tx->GetGasPrice(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfGas()*bottom_tx->GetGasPrice()));
