@@ -1530,12 +1530,12 @@ namespace bumo{
 			int64_t iarg1 = 0;
 
 			if (!utils::String::SafeStoi64(arg0, iarg0)){
-				error_desc = "Contract execute error, int64Add, parameter 0 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Add, parameter 0 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
 			if (!utils::String::SafeStoi64(arg1, iarg1)){
-				error_desc = "Contract execute error, int64Add, parameter 1 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Add, parameter 1 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
@@ -1579,12 +1579,12 @@ namespace bumo{
 			int64_t iarg1 = 0;
 
 			if (!utils::String::SafeStoi64(arg0, iarg0)){
-				error_desc = "Contract execute error, int64Sub, parameter 0 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Sub, parameter 0 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
 			if (!utils::String::SafeStoi64(arg1, iarg1)){
-				error_desc = "Contract execute error, int64Sub, parameter 1 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Sub, parameter 1 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
@@ -1628,12 +1628,12 @@ namespace bumo{
 			int64_t iarg1 = 0;
 
 			if (!utils::String::SafeStoi64(arg0, iarg0)){
-				error_desc = "Contract execute error, int64Compare, parameter 0 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Compare, parameter 0 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
 			if (!utils::String::SafeStoi64(arg1, iarg1)){
-				error_desc = "Contract execute error, int64Compare, parameter 1 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Compare, parameter 1 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
@@ -1678,12 +1678,12 @@ namespace bumo{
 			int64_t iarg1 = 0;
 
 			if (!utils::String::SafeStoi64(arg0, iarg0)){
-				error_desc = "Contract execute error, int64Div, parameter 0 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Div, parameter 0 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
 			if (!utils::String::SafeStoi64(arg1, iarg1)){
-				error_desc = "Contract execute error, int64Div, parameter 1 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Div, parameter 1 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
@@ -1726,12 +1726,12 @@ namespace bumo{
 			int64_t iarg1 = 0;
 
 			if (!utils::String::SafeStoi64(arg0, iarg0)){
-				error_desc = "Contract execute error, int64Mod, parameter 0 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Mod, parameter 0 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
 			if (!utils::String::SafeStoi64(arg1, iarg1)){
-				error_desc = "Contract execute error, int64Mod, parameter 1 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Mod, parameter 1 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
@@ -1775,12 +1775,12 @@ namespace bumo{
 			int64_t iarg1 = 0;
 
 			if (!utils::String::SafeStoi64(arg0, iarg0)){
-				error_desc = "Contract execute error, int64Mul, parameter 0 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Mul, parameter 0 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
 			if (!utils::String::SafeStoi64(arg1, iarg1)){
-				error_desc = "Contract execute error, int64Mul, parameter 1 illegal, maybe excceed the limit value of int64.";
+				error_desc = "Contract execute error, int64Mul, parameter 1 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 
