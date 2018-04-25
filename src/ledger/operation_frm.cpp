@@ -335,6 +335,7 @@ namespace bumo {
 			if (pay_coin.amount() < 0){
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 				result.set_desc(utils::String::Format("Amount should be bigger than 0"));
+				break;
 			}
 
 			if (source_address == pay_coin.dest_address()) {
@@ -571,7 +572,7 @@ namespace bumo {
 			}
 			else {
 				int64_t amount;
-				if (!utils::SafeIntPlus(asset_e.amount(), ope.amount(), amount)){
+				if (!utils::SafeIntAdd(asset_e.amount(), ope.amount(), amount)){
 					result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), ope.amount()));
 					break;
@@ -628,7 +629,7 @@ namespace bumo {
 					}
 					else {
 						int64_t receiver_amount;
-						if (!utils::SafeIntPlus(dest_asset.amount(), payment.asset().amount(), receiver_amount))
+						if (!utils::SafeIntAdd(dest_asset.amount(), payment.asset().amount(), receiver_amount))
 						{
 							result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 							result_.set_desc(utils::String::Format("Payment asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", 
@@ -768,7 +769,7 @@ namespace bumo {
 		do {
 			protocol::Account& proto_source_account = source_account_->GetProtoAccount();
 			int64_t min_balance;
-			if (!utils::SafeIntPlus(ope.amount(), reserve_coin, min_balance)){
+			if (!utils::SafeIntAdd(ope.amount(), reserve_coin, min_balance)){
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				result_.set_desc(utils::String::Format("Account(%s) proto_source_account, amount(" FMT_I64 "), reserve_coin:(" FMT_I64 ") ",
 					proto_source_account.address().c_str(), ope.amount(), reserve_coin));
@@ -818,7 +819,7 @@ namespace bumo {
 			
 			int64_t dest_balance;
 			protocol::Account& proto_dest_account = dest_account_ptr->GetProtoAccount();
-			if (!utils::SafeIntPlus(proto_dest_account.balance(), ope.amount(), dest_balance)) {
+			if (!utils::SafeIntAdd(proto_dest_account.balance(), ope.amount(), dest_balance)) {
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				result_.set_desc(utils::String::Format("Account(%s) proto_dest_account overflow(" FMT_I64 "), amount:(" FMT_I64 ") ",
 					proto_dest_account.address().c_str(), proto_dest_account.balance(), ope.amount()));

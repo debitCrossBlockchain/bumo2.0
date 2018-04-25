@@ -210,7 +210,7 @@ namespace bumo{
 		js_func_read_["contractQuery"] = V8Contract::CallBackContractQuery;
 		js_func_read_["getValidators"] = V8Contract::CallBackGetValidators;
 		js_func_read_[General::CHECK_TIME_FUNCTION] = V8Contract::InternalCheckTime;
-		js_func_read_["int64Plus"] = V8Contract::CallBackInt64Plus;
+		js_func_read_["int64Add"] = V8Contract::CallBackInt64Add;
 		js_func_read_["int64Sub"] = V8Contract::CallBackInt64Sub;
 		js_func_read_["int64Mul"] = V8Contract::CallBackInt64Mul;
 		js_func_read_["int64Mod"] = V8Contract::CallBackInt64Mod;
@@ -1506,7 +1506,7 @@ namespace bumo{
 // 	//selfDestruct
 
 // 	//Int64 add
-	void V8Contract::CallBackInt64Plus(const v8::FunctionCallbackInfo<v8::Value>& args) {
+	void V8Contract::CallBackInt64Add(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		std::string error_desc;
 		do {
 			if (args.Length() != 2) {
@@ -1516,11 +1516,11 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				error_desc = "Contract execute error, int64Plus, parameter 0 should be a String or Number";
+				error_desc = "Contract execute error, int64Add, parameter 0 should be a String or Number";
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				error_desc = "Contract execute error, int64Plus, parameter 1 should be a String or Number";
+				error_desc = "Contract execute error, int64Add, parameter 1 should be a String or Number";
 				break;
 			}
 
@@ -1528,8 +1528,8 @@ namespace bumo{
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
 			int64_t iarg0 = utils::String::Stoi64(arg0);
 			int64_t iarg1 = utils::String::Stoi64(arg1);
-			if (!utils::SafeIntPlus(iarg0, iarg1, iarg0)){
-				error_desc = "Contract execute error, int64Plus, parameter 0 + parameter 1 overflowed";
+			if (!utils::SafeIntAdd(iarg0, iarg1, iarg0)){
+				error_desc = "Contract execute error, int64Add, parameter 0 + parameter 1 overflowed";
 				break;
 			}
 

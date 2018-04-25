@@ -251,7 +251,7 @@ namespace bumo {
 				break;
 			}
 
-			if (!utils::SafeIntPlus(total_fee, fee, total_fee)){
+			if (!utils::SafeIntAdd(total_fee, fee, total_fee)){
 				LOG_ERROR("Source account(%s), fee overflow (" FMT_I64 ") (" FMT_I64 ")", 
 					str_address.c_str(), total_fee, fee);
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
@@ -315,7 +315,7 @@ namespace bumo {
 
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
 			int64_t new_balance;
-			if (!utils::SafeIntPlus(proto_source_account.balance(), fee, new_balance)){
+			if (!utils::SafeIntAdd(proto_source_account.balance(), fee, new_balance)){
 				result_.set_desc(utils::String::Format("Source account(%s) math overflow, blance:(" FMT_I64 "), fee:(" FMT_I64 ")",
 					str_address.c_str(), proto_source_account.balance(), fee));
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
@@ -628,7 +628,7 @@ namespace bumo {
 		//}
 
 		bottom_tx->AddActualGas(txfrm->GetSelfGas());
-		int64_t actual_fee;
+		int64_t actual_fee = 0;
 		if (!utils::SafeIntMul(bottom_tx->GetActualGas(), bottom_tx->GetGasPrice(), actual_fee)){
 			txfrm->result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			txfrm->result_.set_desc(utils::String::Format("Transaction(%s), math overflow actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(),

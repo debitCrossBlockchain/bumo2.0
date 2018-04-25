@@ -60,7 +60,7 @@ function transfer(to, value){
 
     let toKey = makeBalanceKey(to);
     let toValue = storageLoad(toKey);
-    toValue = (toValue === false) ? value : int64Plus(toValue, value); 
+    toValue = (toValue === false) ? value : int64Add(toValue, value); 
     storageStore(toKey, toValue);
 
     senderValue = int64Sub(senderValue, value);
@@ -81,7 +81,7 @@ function assign(to, value){
 
     let toKey = makeBalanceKey(to);
     let toValue = storageLoad(toKey);
-    toValue = (toValue === false) ? value : int64Plus(toValue, value); 
+    toValue = (toValue === false) ? value : int64Add(toValue, value); 
     storageStore(toKey, toValue);
 
     globalAttribute.balance = int64Sub(globalAttribute.balance, value);
@@ -106,7 +106,7 @@ function transferFrom(from, to, value){
 
     let toKey = makeBalanceKey(to);
     let toValue = storageLoad(toKey);
-    toValue = (toValue === false) ? value : int64Plus(toValue, value); 
+    toValue = (toValue === false) ? value : int64Add(toValue, value); 
     storageStore(toKey, toValue);
 
     fromValue = int64Sub(fromValue, value);

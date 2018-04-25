@@ -429,7 +429,7 @@ namespace bumo {
 					return false;
 				}
 
-				if (!utils::SafeIntPlus(total_opt_fee, opt_price, total_opt_fee)){
+				if (!utils::SafeIntAdd(total_opt_fee, opt_price, total_opt_fee)){
 					result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 					result.set_desc(utils::String::Format("Source account(%s) math overflow, total_opt_fee:(" FMT_I64 "), opt_price:(" FMT_I64 ")",
 						tx_source_address.c_str(), total_opt_fee, opt_price));
@@ -438,7 +438,7 @@ namespace bumo {
 				}
 
 				if (type == protocol::Operation_Type_PAY_COIN) {
-					if (!utils::SafeIntPlus(pay_amount, ope.pay_coin().amount(), pay_amount)) {
+					if (!utils::SafeIntAdd(pay_amount, ope.pay_coin().amount(), pay_amount)) {
 						result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 						result.set_desc(utils::String::Format("Source account(%s) math overflow, pay_amount:(" FMT_I64 "), pay_coin().amount:(" FMT_I64 ")", 
 							tx_source_address.c_str(), pay_amount, ope.pay_coin().amount()));
@@ -447,7 +447,7 @@ namespace bumo {
 					}
 				}
 				if (type == protocol::Operation_Type_CREATE_ACCOUNT) {
-					if (!utils::SafeIntPlus(pay_amount, ope.create_account().init_balance(), pay_amount)) {
+					if (!utils::SafeIntAdd(pay_amount, ope.create_account().init_balance(), pay_amount)) {
 						result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 						result.set_desc(utils::String::Format("Source account(%s) math overflow, pay_amount:(" FMT_I64 "), init_balance:(" FMT_I64 ")",
 							tx_source_address.c_str(), pay_amount, ope.create_account().init_balance()));
@@ -488,7 +488,7 @@ namespace bumo {
 		}
 
 		int64_t total_fee;
-		if (!utils::SafeIntPlus(bytes_fee, total_opt_fee, total_fee)) {
+		if (!utils::SafeIntAdd(bytes_fee, total_opt_fee, total_fee)) {
 			result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			result.set_desc(utils::String::Format("Source account(%s) overflow for fee, bytes_fee:(" FMT_I64 "), total_opt_fee:(" FMT_I64 ")", 
 				tx_source_address.c_str(), bytes_fee, total_opt_fee));

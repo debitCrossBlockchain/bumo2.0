@@ -520,7 +520,7 @@ namespace utils {
 
 	//CAUTION: not suitable for all kinds of unsigned integer
 	template<class T>
-	bool SafeIntPlus(T x, T y, T& r){
+	bool SafeIntAdd(T x, T y, T& r){
 		T sum = x + y;
 
 		bool negOver = x < 0 && y < 0 && sum >= 0;
