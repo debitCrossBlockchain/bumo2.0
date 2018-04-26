@@ -258,7 +258,7 @@ namespace bumo {
 				break;
 			}
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
-			int64_t new_balance;
+			int64_t new_balance=0;
 			if (!utils::SafeIntSub(proto_source_account.balance(), fee, new_balance)) {
 				LOG_ERROR("Source account(%s), proto_source_account overflow (" FMT_I64 ") (" FMT_I64 ")",
 					str_address.c_str(), proto_source_account.balance(), fee);
@@ -278,14 +278,14 @@ namespace bumo {
 	
 	//must bottom tx use this function
 	bool TransactionFrm::ReturnFee(int64_t& total_fee) {
-		int64_t actual_fee;
+		int64_t actual_fee=0;
 		if (!utils::SafeIntMul(GetActualGas(), GetGasPrice(), actual_fee)){
 			result_.set_desc(utils::String::Format("Math overflow, GetActualGas:(" FMT_I64 "), GetGasPrice:(" FMT_I64 ")", GetActualGas(), GetGasPrice()));
 			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			return false;
 		}
 
-		int64_t fee;
+		int64_t fee=0;
 		if (!utils::SafeIntSub(GetFeeLimit(), actual_fee, fee)){
 			result_.set_desc(utils::String::Format("Math overflow, GetFeeLimit:(" FMT_I64 "), actual_fee:(" FMT_I64 ")", GetFeeLimit(), actual_fee));
 			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
@@ -314,7 +314,7 @@ namespace bumo {
 			}
 
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
-			int64_t new_balance;
+			int64_t new_balance =0;
 			if (!utils::SafeIntAdd(proto_source_account.balance(), fee, new_balance)){
 				result_.set_desc(utils::String::Format("Source account(%s) math overflow, blance:(" FMT_I64 "), fee:(" FMT_I64 ")",
 					str_address.c_str(), proto_source_account.balance(), fee));
@@ -558,7 +558,7 @@ namespace bumo {
 
 	bool TransactionFrm::CheckFee(const int64_t& gas_price, const int64_t& fee_limit, AccountFrm::pointer source_account){
 
-		int64_t limit_balance;
+		int64_t limit_balance=0;
 		if (!utils::SafeIntSub(source_account->GetAccountBalance(), fee_limit, limit_balance)){
 			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			std::string error_desc = utils::String::Format("Account(%s) reserve balance overflow for transaction(%s) fee and base reserve: balance(" FMT_I64 ") fee(" FMT_I64 "), base reserve(" FMT_I64 ")",
@@ -592,7 +592,7 @@ namespace bumo {
 
 		//	return false;
 		//}
-		int64_t tx_fee;
+		int64_t tx_fee=0;
 		if (!utils::SafeIntMul(self_gas, gas_price, tx_fee)){
 			std::string error_desc = utils::String::Format(
 				"Transaction(%s), gas(" FMT_I64 "), self gas price(" FMT_I64 ") math overflow",

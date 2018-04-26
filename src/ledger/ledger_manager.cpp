@@ -665,10 +665,9 @@ namespace bumo {
 				apply_tx_msg.set_actual_fee(tx->GetFeeLimit());
 			}
 			else {
-				int64_t actual_fee;
+				int64_t actual_fee=0;
 				if (!utils::SafeIntMul(tx->GetActualGas(), tx->GetGasPrice(), actual_fee)){
-					LOG_ERROR("Gas and price math over flow");
-					return;
+					LOG_ERROR("Gas and price math over flow,ever go here");
 				}
 				apply_tx_msg.set_actual_fee(actual_fee);
 			}
@@ -934,18 +933,6 @@ namespace bumo {
 			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
-			if (txfrm->GetResult().code() != 0){
-				tx_store.set_actual_fee(txfrm->GetFeeLimit());
-			}
-			else{
-				int64_t actual_fee;
-				if (!utils::SafeIntMul(txfrm->GetActualGas(), txfrm->GetGasPrice(), actual_fee)){
-					result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-					result.set_desc("Gas and price math over flow");
-					return result;
-				}
-				tx_store.set_actual_fee(actual_fee);
-			}
 				
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
@@ -958,18 +945,6 @@ namespace bumo {
 		protocol::TransactionEnvStore tx_store;
 		tx_store.set_error_code(txfrm->GetResult().code());
 		tx_store.set_error_desc(txfrm->GetResult().desc());
-		if (txfrm->GetResult().code() != 0){
-			tx_store.set_actual_fee(txfrm->GetFeeLimit());
-		}
-		else {
-			int64_t actual_fee;
-			if (!utils::SafeIntMul(txfrm->GetActualGas(), txfrm->GetGasPrice(), actual_fee)){
-				result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-				result.set_desc("Gas and price math over flow");
-				return result;
-			}
-			tx_store.set_actual_fee(actual_fee);
-		}
 			
 		tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 		auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();

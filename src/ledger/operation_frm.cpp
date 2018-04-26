@@ -478,7 +478,7 @@ namespace bumo {
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
-			int64_t limit_balance;
+			int64_t limit_balance=0;
 			if (!utils::SafeIntSub(source_account_->GetAccountBalance(), base_reserve, limit_balance)){
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") overflow (" FMT_I64 ")", source_account_->GetAccountBalance(), base_reserve);
@@ -571,7 +571,7 @@ namespace bumo {
 				source_account_->SetAsset(asset);
 			}
 			else {
-				int64_t amount;
+				int64_t amount = 0;
 				if (!utils::SafeIntAdd(asset_e.amount(), ope.amount(), amount)){
 					result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), ope.amount()));
@@ -605,7 +605,7 @@ namespace bumo {
 				}
 
 				if (payment.asset().key().type() == 0){
-					int64_t sender_amount;
+					int64_t sender_amount=0;
 					if (!utils::SafeIntSub(asset_e.amount(), payment.asset().amount(), sender_amount)) {
 						result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 						result_.set_desc(utils::String::Format("Payment asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")",
@@ -628,7 +628,7 @@ namespace bumo {
 						dest_account->SetAsset(dest_asset);
 					}
 					else {
-						int64_t receiver_amount;
+						int64_t receiver_amount =0;
 						if (!utils::SafeIntAdd(dest_asset.amount(), payment.asset().amount(), receiver_amount))
 						{
 							result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
@@ -768,7 +768,7 @@ namespace bumo {
 		int64_t reserve_coin = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
 		do {
 			protocol::Account& proto_source_account = source_account_->GetProtoAccount();
-			int64_t min_balance;
+			int64_t min_balance=0;
 			if (!utils::SafeIntAdd(ope.amount(), reserve_coin, min_balance)){
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				result_.set_desc(utils::String::Format("Account(%s) proto_source_account, amount(" FMT_I64 "), reserve_coin:(" FMT_I64 ") ",
@@ -808,7 +808,7 @@ namespace bumo {
 
 			}
 
-			int64_t src_balance;
+			int64_t src_balance=0;
 			if (!utils::SafeIntSub(proto_source_account.balance(), ope.amount(), src_balance)) {
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				result_.set_desc(utils::String::Format("Account(%s) proto_source_account overflow(" FMT_I64 "), amount:(" FMT_I64 ") ",
@@ -817,7 +817,7 @@ namespace bumo {
 			}
 			proto_source_account.set_balance(src_balance);
 			
-			int64_t dest_balance;
+			int64_t dest_balance=0;
 			protocol::Account& proto_dest_account = dest_account_ptr->GetProtoAccount();
 			if (!utils::SafeIntAdd(proto_dest_account.balance(), ope.amount(), dest_balance)) {
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);

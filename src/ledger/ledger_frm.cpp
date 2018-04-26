@@ -89,10 +89,9 @@ namespace bumo {
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			}
 			else{
-				int64_t actual_fee;
+				int64_t actual_fee=0;
 				if (!utils::SafeIntMul(ptr->GetActualGas(), ptr->GetGasPrice(), actual_fee)){
-					LOG_ERROR("actual_fee math overflow");
-					return false;
+					LOG_ERROR("actual_fee math overflow,ever go here");
 				}
 
 				env_store.set_actual_fee(actual_fee);
@@ -565,7 +564,7 @@ namespace bumo {
 
 			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), average_fee, left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
-			int64_t new_balance;
+			int64_t new_balance = 0;;
 			if (!utils::SafeIntAdd(proto_account.balance(), average_fee, new_balance)){
 				LOG_ERROR("AllocateReward math overflow balance:(" FMT_I64 "), average_fee:(" FMT_I64 ")", proto_account.balance(), average_fee);
 				return false;
@@ -574,7 +573,7 @@ namespace bumo {
 		}
 		if (left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
-			int64_t new_balance;
+			int64_t new_balance = 0;
 			if (!utils::SafeIntAdd(proto_account.balance(), left_reward, new_balance)){
 				LOG_ERROR("AllocateReward math overflow balance:(" FMT_I64 "), reward:(" FMT_I64 ")", proto_account.balance(), left_reward);
 				return false;
