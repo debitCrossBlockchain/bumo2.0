@@ -1268,7 +1268,12 @@ namespace bumo{
 			std::string contractor = v8_contract->parameter_.this_address_;
 
 			std::string dest_address = std::string(ToCString(v8::String::Utf8Value(args[0])));
-			int64_t pay_amount = utils::String::Stoi64(ToCString(v8::String::Utf8Value(args[1])));
+			std::string arg_1 = std::string(ToCString(v8::String::Utf8Value(args[1])));
+			int64_t pay_amount = 0;
+			if (!utils::String::SafeStoi64(arg_1, pay_amount) || pay_amount < 0){
+				error_desc = utils::String::Format("Contract paycoin error, dest_address:%s, amount:%s.", dest_address.c_str(), arg_1.c_str());
+				break;
+			}
 
 			protocol::TransactionEnv txenv;
 			txenv.mutable_transaction()->set_source_address(contractor);
