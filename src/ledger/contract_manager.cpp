@@ -1220,10 +1220,7 @@ namespace bumo{
 			return;
 		} while (false);
 
-		LOG_ERROR("%s", error_desc.c_str());
-		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
-			v8::NewStringType::kNormal).ToLocalChecked());
+		args.GetReturnValue().Set(false);
 	}
 
 	void V8Contract::CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args) {
