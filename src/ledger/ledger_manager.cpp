@@ -667,7 +667,7 @@ namespace bumo {
 			else {
 				int64_t actual_fee=0;
 				if (!utils::SafeIntMul(tx->GetActualGas(), tx->GetGasPrice(), actual_fee)){
-					LOG_ERROR("Gas and price math over flow,ever go here");
+					LOG_ERROR("Gas and price math over flow, never go here");
 				}
 				apply_tx_msg.set_actual_fee(actual_fee);
 			}

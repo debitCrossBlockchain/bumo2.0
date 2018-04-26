@@ -91,7 +91,7 @@ namespace bumo {
 			else{
 				int64_t actual_fee=0;
 				if (!utils::SafeIntMul(ptr->GetActualGas(), ptr->GetGasPrice(), actual_fee)){
-					LOG_ERROR("actual_fee math overflow,ever go here");
+					LOG_ERROR("actual_fee math overflow, never go here");
 				}
 
 				env_store.set_actual_fee(actual_fee);
