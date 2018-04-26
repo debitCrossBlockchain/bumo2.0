@@ -3633,6 +3633,9 @@ const jslint = (function JSLint() {
         return the_throw;
     });
     stmt("try", function () {
+		//donot use try
+		warn("undeclared_a", token);
+		
         let the_catch;
         let the_disrupt;
         const the_try = token;
