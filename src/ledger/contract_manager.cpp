@@ -210,6 +210,7 @@ namespace bumo{
 		js_func_read_["contractQuery"] = V8Contract::CallBackContractQuery;
 		js_func_read_["getValidators"] = V8Contract::CallBackGetValidators;
 		js_func_read_[General::CHECK_TIME_FUNCTION] = V8Contract::InternalCheckTime;
+		js_func_read_["stoI64Check"] = V8Contract::CallBackStoI64Check;
 		js_func_read_["int64Add"] = V8Contract::CallBackInt64Add;
 		js_func_read_["int64Sub"] = V8Contract::CallBackInt64Sub;
 		js_func_read_["int64Mul"] = V8Contract::CallBackInt64Mul;
@@ -1503,7 +1504,34 @@ namespace bumo{
 		args.GetReturnValue().Set(false);
 	}
 
-// 	//selfDestruct
+	//str to int64 check
+	void V8Contract::CallBackStoI64Check(const v8::FunctionCallbackInfo<v8::Value>& args){
+		std::string error_desc;
+		do {
+			if (args.Length() != 1) {
+				error_desc = "Parameter number error";
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString()) {
+				error_desc = "Contract execute error, int64Add, parameter 0 should be a String or Number";
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+
+			int64_t iarg0 = 0;
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, StoI64Check, parameter 0 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			args.GetReturnValue().Set(true);
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
 
 // 	//Int64 add
 	void V8Contract::CallBackInt64Add(const v8::FunctionCallbackInfo<v8::Value>& args) {
