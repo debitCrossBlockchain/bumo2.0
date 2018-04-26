@@ -178,10 +178,10 @@ namespace bumo {
 			tx->set_fee_limit(parameter_.fee_limit_);
 			tx->set_gas_price(parameter_.gas_price_);
 			protocol::Operation *ope = tx->add_operations();
-			ope->set_type(protocol::Operation_Type_PAYMENT);
-			protocol::OperationPayment *payment = ope->mutable_payment();
-			payment->set_dest_address(parameter_.contract_address_);
-			payment->set_input(parameter_.input_);
+			ope->set_type(protocol::Operation_Type_PAY_ASSET);
+			protocol::OperationPayAsset *payAsset = ope->mutable_pay_asset();
+			payAsset->set_dest_address(parameter_.contract_address_);
+			payAsset->set_input(parameter_.input_);
 
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(env);
 			//tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + utils::MICRO_UNITS_PER_SEC);

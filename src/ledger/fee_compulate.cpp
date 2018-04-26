@@ -4,7 +4,7 @@ namespace bumo{
 
 	const int64_t OperationGasConfigure::create_account = 0;
 	const int64_t OperationGasConfigure::issue_asset = 5000000;
-	const int64_t OperationGasConfigure::payment = 0;
+	const int64_t OperationGasConfigure::payAsset = 0;
 	const int64_t OperationGasConfigure::set_metadata = 0;
 	const int64_t OperationGasConfigure::set_sigure_weight = 0;
 	const int64_t OperationGasConfigure::set_threshold = 0;
@@ -30,8 +30,8 @@ namespace bumo{
 			}
 			return OperationGasConfigure::create_account;
 		}
-		case protocol::Operation_Type_PAYMENT:
-			return OperationGasConfigure::payment;
+		case protocol::Operation_Type_PAY_ASSET:
+			return OperationGasConfigure::payAsset;
 		case protocol::Operation_Type_ISSUE_ASSET:
 			return OperationGasConfigure::issue_asset;
 		case protocol::Operation_Type_SET_METADATA:

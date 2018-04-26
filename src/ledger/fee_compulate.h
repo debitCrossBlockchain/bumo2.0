@@ -9,7 +9,7 @@ namespace bumo{
 	struct OperationGasConfigure {
 		const static int64_t create_account;
 		const static int64_t issue_asset;
-		const static int64_t payment;
+		const static int64_t payAsset;
 		const static int64_t set_metadata;
 		const static int64_t set_sigure_weight;
 		const static int64_t set_threshold;

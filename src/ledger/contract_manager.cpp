@@ -228,6 +228,8 @@ namespace bumo{
 		js_func_write_["configFee"] = V8Contract::CallBackConfigFee;
 		js_func_write_["setValidators"] = V8Contract::CallBackSetValidators;
 		js_func_write_["payCoin"] = V8Contract::CallBackPayCoin;
+		js_func_write_["issueAsset"] = V8Contract::CallBackIssueAsset;
+		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
 		js_func_write_["tlog"] = V8Contract::CallBackTopicLog;
 
 		LoadJsLibSource();
@@ -1285,6 +1287,165 @@ namespace bumo{
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
 				error_desc = utils::String::Format("Do transaction failed(%s)", tmp_result.desc().c_str());				
+				break;
+			}
+
+			args.GetReturnValue().Set(tmp_result.code() == 0);
+			return;
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	void V8Contract::CallBackIssueAsset(const v8::FunctionCallbackInfo<v8::Value>& args){
+		std::string error_desc;
+		do {
+			if (args.Length() < 2) {
+				error_desc = "Parameter number error";
+				args.GetReturnValue().Set(false);
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString()) {
+				error_desc = "Contract execute error, issueAsset parameter 0 should be a string";
+				break;
+			}
+
+			if (!args[1]->IsString()) {
+				error_desc = "Contract execute error, issueAsset parameter 1 should be a string";
+				break;
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				error_desc = "Can't find contract object by isolate id";
+				break;
+			}
+
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
+			if (v8_contract->IsReadonly()) {
+				error_desc = "The contract is readonly";
+				break;
+			}
+
+			std::string contractor = v8_contract->parameter_.this_address_;
+
+			std::string assetCode = std::string(ToCString(v8::String::Utf8Value(args[0])));
+			std::string amount = std::string(ToCString(v8::String::Utf8Value(args[1])));
+			int64_t issueAmount = 0;
+			if (!utils::String::SafeStoi64(amount, issueAmount) || issueAmount < 0){
+				error_desc = utils::String::Format("Contract issueAsset error, asset code:%s, asset amount:%s.", assetCode.c_str(), amount.c_str());
+				break;
+			}
+
+			protocol::TransactionEnv txenv;
+			txenv.mutable_transaction()->set_source_address(contractor);
+			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
+
+			ope->set_type(protocol::Operation_Type_ISSUE_ASSET);
+			ope->mutable_issue_asset()->set_code(assetCode);
+			ope->mutable_issue_asset()->set_amount(issueAmount);
+
+			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
+			if (tmp_result.code() > 0) {
+				v8_contract->SetResult(tmp_result);
+				error_desc = utils::String::Format("Do transaction failed(%s)", tmp_result.desc().c_str());
+				break;
+			}
+
+			args.GetReturnValue().Set(tmp_result.code() == 0);
+			return;
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	void V8Contract::CallBackPayAsset(const v8::FunctionCallbackInfo<v8::Value>& args){
+		std::string error_desc;
+		do {
+			if (args.Length() < 4) {
+				error_desc = "Parameter number error";
+				args.GetReturnValue().Set(false);
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString()) {
+				error_desc = "Contract execute error,payAsset parameter 0 should be a string";
+				break;
+			}
+
+			if (!args[1]->IsString()) {
+				error_desc = "Contract execute error,payAsset parameter 1 should be a string";
+				break;
+			}
+
+			if (!args[2]->IsString()) {
+				error_desc = "Contract execute error,payAsset parameter 2 should be a string";
+				break;
+			}
+
+			if (!args[3]->IsString()) {
+				error_desc = "Contract execute error,payAsset parameter 3 should be a string";
+				break;
+			}
+
+
+			std::string input;
+			if (args.Length() > 4) {
+				input = ToCString(v8::String::Utf8Value(args[4]));
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				error_desc = "Can't find contract object by isolate id";
+				break;
+			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
+			if (v8_contract->IsReadonly()) {
+				error_desc = "The contract is readonly";
+				break;
+			}
+
+			std::string contractor = v8_contract->parameter_.this_address_;
+
+			std::string dest_address = std::string(ToCString(v8::String::Utf8Value(args[0])));
+			std::string issuer    = std::string(ToCString(v8::String::Utf8Value(args[1])));
+			std::string assetCode = std::string(ToCString(v8::String::Utf8Value(args[2])));
+			std::string amount    = std::string(ToCString(v8::String::Utf8Value(args[3])));
+			int64_t pay_amount = 0;
+			if (!utils::String::SafeStoi64(amount, pay_amount) || pay_amount < 0){
+				error_desc = utils::String::Format("Contract payAsset error, dest_address:%s, amount:%s.", dest_address.c_str(), amount.c_str());
+				break;
+			}
+
+			protocol::TransactionEnv txenv;
+			txenv.mutable_transaction()->set_source_address(contractor);
+			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
+
+			ope->set_type(protocol::Operation_Type_PAY_ASSET);
+
+			ope->mutable_pay_asset()->set_dest_address(dest_address);
+			ope->mutable_pay_asset()->mutable_asset()->mutable_key()->set_issuer(issuer);
+			ope->mutable_pay_asset()->mutable_asset()->mutable_key()->set_code(assetCode);
+			ope->mutable_pay_asset()->mutable_asset()->set_amount(pay_amount);
+			ope->mutable_pay_asset()->set_input(input);
+
+			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
+			if (tmp_result.code() > 0) {
+				v8_contract->SetResult(tmp_result);
+				error_desc = utils::String::Format("Do transaction failed(%s)", tmp_result.desc().c_str());
 				break;
 			}
 

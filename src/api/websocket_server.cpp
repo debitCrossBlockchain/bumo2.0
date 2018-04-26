@@ -78,8 +78,8 @@ namespace bumo {
 				}
 				break;
 			}
-			case protocol::Operation_Type_PAYMENT:{
-				if (tx_filter_address_.find(ope.payment().dest_address()) != tx_filter_address_.end()) {
+			case protocol::Operation_Type_PAY_ASSET:{
+				if (tx_filter_address_.find(ope.pay_asset().dest_address()) != tx_filter_address_.end()) {
 					return true;
 				}
 				break;

@@ -20,7 +20,7 @@ message AssetKey{
 	 int32 type = 3;		//0:not limited ammount
 }
 
-//payment
+//payAsset
 message Asset{
 	 AssetKey	key = 1;
 	 int64		amount = 2;
@@ -63,7 +63,7 @@ message Ledger{
 }
 
 
-message OperationPayment
+message OperationPayAsset
 {
 	string dest_address = 1;
 	Asset asset = 2;
@@ -114,7 +114,7 @@ message Operation {
 			UNKNOWN = 0;
 			CREATE_ACCOUNT 			= 1;
 			ISSUE_ASSET 			= 2;
-			PAYMENT                 = 3;
+			PAY_ASSET               = 3;
 			SET_METADATA			= 4;
 			SET_SIGNER_WEIGHT		= 5;
 			SET_THRESHOLD			= 6;
@@ -128,7 +128,7 @@ message Operation {
 	//
 	OperationCreateAccount		create_account 	   = 4;
 	OperationIssueAsset			issue_asset 	   = 5;
-	OperationPayment			payment 		   = 6;
+	OperationPayAsset			pay_asset 		   = 6;
 	OperationSetMetadata		set_metadata	   = 7;
 	OperationSetSignerWeight	set_signer_weight  = 8;
 	OperationSetThreshold		set_threshold 	   = 9;

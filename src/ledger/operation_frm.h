@@ -50,7 +50,7 @@ namespace bumo{
 	protected:
 		void CreateAccount(std::shared_ptr<Environment> environment);
 		void IssueAsset(std::shared_ptr<Environment> environment);
-		void Payment(std::shared_ptr<Environment> environment);
+		void PayAsset(std::shared_ptr<Environment> environment);
 		void SetMetaData(std::shared_ptr<Environment> environment);
 		void SetSignerWeight(std::shared_ptr<Environment> environment);
 		void SetThreshold(std::shared_ptr<Environment> environment);
