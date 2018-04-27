@@ -1994,7 +1994,7 @@ namespace bumo{
 		std::string error_desc;
 		do {
 			if (args.Length() != 1) {
-				error_desc = "parameter error";
+				error_desc = utils::String::Format("parameter nums error:%d", args.Length());
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
@@ -2006,12 +2006,19 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			if (!utils::String::IsDecNumber(arg0, General::BU_DECIMALS)) {
-				error_desc = "Not decimal number";
+				error_desc = utils::String::Format("Not decimal number:%s", arg0.c_str());
 				break;
 			} 
 
+			std::string multi_result = utils::String::MultiplyDecimal(arg0, General::BU_DECIMALS).c_str();
+			int64_t multi_i64 = 0;
+			if (!utils::String::SafeStoi64(multi_result, multi_i64)){
+				error_desc = utils::String::Format("CallBackToBaseUnit error, StoI64Check overload int64:%s", multi_result.c_str());
+				break;
+			}
+
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
-				args.GetIsolate(), utils::String::MultiplyDecimal(arg0, General::BU_DECIMALS).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+				args.GetIsolate(), multi_result.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 			return;
 		} while (false);
 		LOG_ERROR("To base unit error, %s", error_desc.c_str());
