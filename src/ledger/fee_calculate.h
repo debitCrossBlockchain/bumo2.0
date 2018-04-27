@@ -1,5 +1,5 @@
 
-#ifndef FEE_COMPULATE_H
+#ifndef FEE_CALCULATE_H
 
 #include<cstdint>
 #include<proto/cpp/chain.pb.h>
@@ -9,7 +9,7 @@ namespace bumo{
 	struct OperationGasConfigure {
 		const static int64_t create_account;
 		const static int64_t issue_asset;
-		const static int64_t payAsset;
+		const static int64_t pay_asset;
 		const static int64_t set_metadata;
 		const static int64_t set_sigure_weight;
 		const static int64_t set_threshold;
@@ -18,12 +18,12 @@ namespace bumo{
 		const static int64_t create_contract;
 	};
 
-	class FeeCompulate {
+    class FeeCalculate {
 	public:
 		static int64_t CaculateFee(const int64_t& price, const int64_t& gas);
 		static int64_t GetOperationTypeGas(const protocol::Operation& op);
 	};
 }
 
-#endif // !FEE_COMPULATE_H
+#endif // !FEE_CALCULATE_H
 

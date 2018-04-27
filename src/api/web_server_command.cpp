@@ -19,7 +19,7 @@ limitations under the License.
 #include <glue/glue_manager.h>
 #include <ledger/ledger_manager.h>
 #include <ledger/contract_manager.h>
-#include <ledger/fee_compulate.h>
+#include <ledger/fee_calculate.h>
 #include "web_server.h"
 
 namespace bumo {
@@ -421,10 +421,10 @@ namespace bumo {
 			if (tx_source_address == ope_source_address){
 				auto type = ope.type();
 				int64_t opt_price;
-				if (!utils::SafeIntMul(FeeCompulate::GetOperationTypeGas(ope), tran->gas_price(), opt_price)) {
+                if (!utils::SafeIntMul(FeeCalculate::GetOperationTypeGas(ope), tran->gas_price(), opt_price)) {
 					result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 					result.set_desc(utils::String::Format("Source account(%s) math overflow, GetOperationTypeGas:(" FMT_I64 "), gas_price:(" FMT_I64 ")",
-						tx_source_address.c_str(), FeeCompulate::GetOperationTypeGas(ope), tran->gas_price()));
+                        tx_source_address.c_str(), FeeCalculate::GetOperationTypeGas(ope), tran->gas_price()));
 					LOG_ERROR("%s", result.desc().c_str());
 					return false;
 				}

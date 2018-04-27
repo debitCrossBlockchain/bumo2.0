@@ -18,7 +18,7 @@
 #include "transaction_frm.h"
 #include "operation_frm.h"
 #include "contract_manager.h"
-#include "fee_compulate.h"
+#include "fee_calculate.h"
 
 
 namespace bumo {

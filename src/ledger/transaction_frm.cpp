@@ -20,7 +20,7 @@
 #include <ledger/ledger_manager.h>
 #include "transaction_frm.h"
 #include "contract_manager.h"
-#include "fee_compulate.h"
+#include "fee_calculate.h"
 #include "ledger_frm.h"
 namespace bumo {
 
@@ -652,7 +652,7 @@ namespace bumo {
 		self_gas += transaction_env_.ByteSize();
 		const protocol::Transaction &tran = transaction_env_.transaction();
 		for (int i = 0; i < tran.operations_size(); i++)
-			self_gas += FeeCompulate::GetOperationTypeGas(tran.operations(i));
+            self_gas += FeeCalculate::GetOperationTypeGas(tran.operations(i));
 
 		return self_gas;
 	}

@@ -1,10 +1,10 @@
-#include "fee_compulate.h"
+#include "fee_calculate.h"
 
 namespace bumo{
 
 	const int64_t OperationGasConfigure::create_account = 0;
 	const int64_t OperationGasConfigure::issue_asset = 5000000;
-	const int64_t OperationGasConfigure::payAsset = 0;
+	const int64_t OperationGasConfigure::pay_asset = 0;
 	const int64_t OperationGasConfigure::set_metadata = 0;
 	const int64_t OperationGasConfigure::set_sigure_weight = 0;
 	const int64_t OperationGasConfigure::set_threshold = 0;
@@ -12,11 +12,11 @@ namespace bumo{
 	const int64_t OperationGasConfigure::log = 1;
 	const int64_t OperationGasConfigure::create_contract = 1000000;
 
-	int64_t FeeCompulate::CaculateFee(const int64_t& price, const int64_t& gas){
+    int64_t FeeCalculate::CaculateFee(const int64_t& price, const int64_t& gas){
 		return price*gas;
 	}
 
-	int64_t FeeCompulate::GetOperationTypeGas(const protocol::Operation& op){
+    int64_t FeeCalculate::GetOperationTypeGas(const protocol::Operation& op){
 		const protocol::Operation_Type& op_type = op.type();
 		switch (op_type) {
 		case protocol::Operation_Type_UNKNOWN:
@@ -30,8 +30,8 @@ namespace bumo{
 			}
 			return OperationGasConfigure::create_account;
 		}
-		case protocol::Operation_Type_PAY_ASSET:
-			return OperationGasConfigure::payAsset;
+        case protocol::Operation_Type_PAY_ASSET:
+			return OperationGasConfigure::pay_asset;
 		case protocol::Operation_Type_ISSUE_ASSET:
 			return OperationGasConfigure::issue_asset;
 		case protocol::Operation_Type_SET_METADATA:

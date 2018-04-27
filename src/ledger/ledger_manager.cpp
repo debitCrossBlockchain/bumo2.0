@@ -19,7 +19,7 @@
 #include <monitor/monitor_manager.h>
 #include "ledger_manager.h"
 #include "contract_manager.h"
-#include "fee_compulate.h"
+#include "fee_calculate.h"
 
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
