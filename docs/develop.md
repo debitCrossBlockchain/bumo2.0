@@ -1772,14 +1772,13 @@ function query(input)
 
 - ##### 发行资产
 
-    `issueAsset(code, amount[, input]);`
+    `issueAsset(code, amount);`
      - code: 资产代码
      - amount: 发行资产数量
-     - input: 可选，合约参数
 
     例如
     ```javascript
-    issueAsset("CNY", "10000", "{}");
+    issueAsset("CNY", "10000");
     /*失败抛异常*/
     ```
 
