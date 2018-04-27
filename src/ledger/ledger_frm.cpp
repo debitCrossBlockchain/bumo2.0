@@ -160,7 +160,6 @@ namespace bumo {
 	}
 
 	bool LedgerFrm::CheckConsValueValidation(const protocol::ConsensusValue& request,
-		APPLY_MODE propose_mode,
 		std::set<int32_t> &expire_txs_status,
 		std::set<int32_t> &error_txs_status) {
 		
@@ -321,7 +320,7 @@ namespace bumo {
 		//init the txs map
 		std::set<int32_t> expire_txs_check,  error_txs_check;
 		std::set<int32_t> expire_txs,  error_txs;
-		if (!CheckConsValueValidation(request, LedgerFrm::APPLY_MODE_CHECK, expire_txs_check,  error_txs_check)) {
+		if (!CheckConsValueValidation(request, expire_txs_check,  error_txs_check)) {
 			LOG_ERROR("Check consensus value validation failed,consvalue seq(" FMT_I64 ")", request.ledger_seq());
 			return false;
 		}
@@ -406,7 +405,7 @@ namespace bumo {
 		//init the txs map
 		std::set<int32_t> expire_txs_check, error_txs_check;
 		std::set<int32_t> expire_txs, error_txs;
-		if (!CheckConsValueValidation(request, LedgerFrm::APPLY_MODE_CHECK, expire_txs_check, error_txs_check)) {
+		if (!CheckConsValueValidation(request, expire_txs_check, error_txs_check)) {
 			LOG_ERROR("Check consensus value validation failed,consvalue seq(" FMT_I64 ")", request.ledger_seq());
 			return false;
 		}
