@@ -7,7 +7,7 @@ dist: trusty
 compiler: gcc
 
 script:
-- make
+- cd build;./install-build-deps-linux.sh;make -C ../
 
 branches:
 - develop

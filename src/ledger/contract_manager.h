@@ -168,6 +168,8 @@ namespace bumo{
 		static void CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackAddressValidCheck(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackIssueAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackPayAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void Include(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void InternalCheckTime(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//get transaction info from a transaction
@@ -203,8 +205,10 @@ namespace bumo{
 
 		//Get block timestamp 
 		static void CallBackGetBlockTimestamp(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//str to int64 check
+		static void CallBackStoI64Check(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 add
-		static void CallBackInt64Plus(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackInt64Add(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 sub
 		static void CallBackInt64Sub(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 div

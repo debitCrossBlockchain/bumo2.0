@@ -13,7 +13,7 @@ set -e
 # Must be a valid filename
 NAME=bumod
 PIDFILE=/var/run/$NAME.pid
-install_dir=/usr/local/bumochain
+install_dir=/usr/local/buchain
 script_dir=${install_dir}/scripts
 #This is the command to be run, give the full pathname
 DAEMON=${install_dir}/bin/bumod

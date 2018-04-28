@@ -300,9 +300,9 @@ const jslint = (function JSLint() {
         "Set", "String", "Symbol", "SyntaxError", "TypeError"
     ];
 	
-    const useable_standard = ["log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "int64Plus", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "thisPayCoinAmount", "thisPayAsset", "blockTimestamp", "blockNumber", "addressCheck", "tlog", "toBaseUnit"];
+    const useable_standard = ["log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "int64Add", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "thisPayCoinAmount", "thisPayAsset", "blockTimestamp", "blockNumber", "addressCheck", "tlog", "toBaseUnit", "stoI64Check", "issueAsset", "payAsset"];
 	
-    const do_not_use_internal_func = ["internal_check_time", "internal_hello_test"];
+    const do_not_use_internal_func = ["internal_check_time", "internal_hello_test", "localeCompare"];
 
     const bundle = {
 
@@ -2526,7 +2526,7 @@ const jslint = (function JSLint() {
     infix("*", 140);
     infix("/", 140);
     infix("%", 140);
-    infixr("**", 150);
+    //infixr("**", 150);
     infix("(", 160, function (left) {
         const the_paren = token;
         let the_argument;
@@ -3633,6 +3633,9 @@ const jslint = (function JSLint() {
         return the_throw;
     });
     stmt("try", function () {
+		//donot use try
+		warn("undeclared_a", token);
+		
         let the_catch;
         let the_disrupt;
         const the_try = token;

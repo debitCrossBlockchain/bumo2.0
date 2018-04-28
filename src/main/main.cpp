@@ -33,6 +33,11 @@
 void SaveWSPort();
 void RunLoop();
 int main(int argc, char *argv[]){
+
+#ifdef WIN32
+	_set_output_format(_TWO_DIGIT_EXPONENT);
+#endif
+
 	utils::SetExceptionHandle();
 	utils::Thread::SetCurrentThreadName("bumo-thread");
 

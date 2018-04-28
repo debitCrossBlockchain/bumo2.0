@@ -20,7 +20,7 @@ ELSE ()
     MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")  
 ENDIF ()  
 
-set(BUMOCHAIN bumochain)
+set(BUMOCHAIN buchain)
 set(BUMO_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(BUMO_ROOT_DIR ${BUMO_SRC_DIR}/..)
 set(LIBRARY_OUTPUT_PATH ${BUMO_ROOT_DIR}/lib)

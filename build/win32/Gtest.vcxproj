@@ -95,8 +95,10 @@
     <ClCompile Include="..\..\test\gtest\common\websocket_test.cpp" />
     <ClCompile Include="..\..\test\gtest\common\web_socket_server.cpp" />
     <ClCompile Include="..\..\test\gtest\main.cpp" />
+    <ClCompile Include="..\..\test\gtest\test\base_int_test.cpp" />
     <ClCompile Include="..\..\test\gtest\test\get_block_reward_utest.cpp" />
     <ClCompile Include="..\..\test\gtest\test\libbumotools_utest.cpp" />
+    <ClCompile Include="..\..\test\gtest\test\strings_test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Ed25519-donna.vcxproj">
