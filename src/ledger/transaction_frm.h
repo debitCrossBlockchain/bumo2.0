@@ -29,7 +29,6 @@
 namespace bumo {
 
 	class OperationFrm;
-	class AccountEntry;
 	class LedgerFrm;
 	class TransactionFrm {
 	public:
