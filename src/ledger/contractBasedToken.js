@@ -28,7 +28,7 @@ function makeAllowanceKey(owner, spender){
 
 function approve(spender, value){
     assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
-    assert(typeof value === 'string', 'Arg-value must be string type.');
+    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
 
     let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
@@ -51,7 +51,7 @@ function allowance(owner, spender){
 
 function transfer(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(typeof value === 'string', 'Arg-value must be string type.');
+    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
 
     let senderKey = makeBalanceKey(sender);
     let senderValue = storageLoad(senderKey);
@@ -73,7 +73,7 @@ function transfer(to, value){
 
 function assign(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(typeof value === 'string', 'Arg-value must be string type.');
+    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
 
     loadGlobalAttribute();
     assert(sender === globalAttribute.contractOwner, sender + ' has no permission transfer contract balance.');
@@ -94,7 +94,7 @@ function assign(to, value){
 function transferFrom(from, to, value){
     assert(addressCheck(from) === true, 'Arg-from is not valid adress.');
     assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(typeof value === 'string', 'Arg-value must be string type.');
+    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
 
     let fromKey = makeBalanceKey(from);
     let fromValue = storageLoad(fromKey);
@@ -168,10 +168,10 @@ function init(input_str){
     let input = JSON.parse(input_str);
 
     assert(addressCheck(input.params.contractOwner) === true &&
+           stoI64Check(input.params.totalSupply) === true &&
            typeof input.params.name === 'string' &&
            typeof input.params.symbol === 'string' &&
-           typeof input.params.decimals === 'number' &&
-           typeof input.params.totalSupply === 'string',
+           typeof input.params.decimals === 'number',
            'Args check failed.');
 
     globalAttribute.name = input.params.name;
