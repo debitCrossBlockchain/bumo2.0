@@ -197,7 +197,7 @@ namespace bumo {
 
 				if (payAsset.asset().amount() <= 0) {
 					result.set_code(protocol::ERRCODE_ASSET_INVALID);
-					result.set_desc(utils::String::Format("amount should be bigger than 0"));
+					result.set_desc(utils::String::Format("Amount should be greater than 0"));
 					break;
 				}
 
@@ -234,7 +234,7 @@ namespace bumo {
 		{
 			if (issue_asset.amount() <= 0) {
 				result.set_code(protocol::ERRCODE_ASSET_INVALID);
-				result.set_desc(utils::String::Format("amount should be bigger than 0"));
+				result.set_desc(utils::String::Format("Amount should be greater than 0"));
 				break;
 			}
 

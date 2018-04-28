@@ -718,12 +718,12 @@ namespace bumo {
 			}
 
 			if (message.end() - message.begin() < 0) {
-				LOG_ERROR("begin is bigger than end [" FMT_I64 "," FMT_I64 "]", message.begin(), message.end());
+				LOG_ERROR("Begin is greater than end [" FMT_I64 "," FMT_I64 "]", message.begin(), message.end());
 				return;
 			}
 
 			if (last_closed_ledger_->GetProtoHeader().seq() < message.end()) {
-				LOG_INFO("peer(" FMT_I64 ") request [" FMT_I64 "," FMT_I64 "] while the max consensus_value is (" FMT_I64 ")",
+				LOG_INFO("Peer(" FMT_I64 ") request [" FMT_I64 "," FMT_I64 "] while the max consensus_value is (" FMT_I64 ")",
 					peer_id, message.begin(), message.end(), last_closed_ledger_->GetProtoHeader().seq());
 				return;
 			}

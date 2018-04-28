@@ -1994,7 +1994,7 @@ namespace bumo{
 		std::string error_desc;
 		do {
 			if (args.Length() != 1) {
-				error_desc = utils::String::Format("parameter nums error:%d", args.Length());
+				error_desc = utils::String::Format("Parameter nums error:%d", args.Length());
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());

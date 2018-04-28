@@ -91,7 +91,7 @@ namespace bumo {
 			else{
 				int64_t actual_fee=0;
 				if (!utils::SafeIntMul(ptr->GetActualGas(), ptr->GetGasPrice(), actual_fee)){
-					LOG_ERROR("actual_fee math overflow, never go here");
+					LOG_ERROR("Actual_fee math overflow, never go here");
 				}
 
 				env_store.set_actual_fee(actual_fee);
@@ -270,14 +270,14 @@ namespace bumo {
 			//caculate byte fee ,do not store when fee not enough 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
-				LOG_ERROR("transaction(%s) apply failed. %s, %s",
+				LOG_ERROR("Transaction(%s) apply failed. %s, %s",
 					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
 					error_info.c_str());
 				expire_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 			}
 			else {
 				if (!ret) {
-					LOG_ERROR("transaction(%s) apply failed. %s",
+					LOG_ERROR("Transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
 					error_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 				}
@@ -352,14 +352,14 @@ namespace bumo {
 			//caculate byte fee ,do not store when fee not enough 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
-				LOG_ERROR("transaction(%s) apply failed. %s, %s",
+				LOG_ERROR("Transaction(%s) apply failed. %s, %s",
 					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
 					error_info.c_str());
 				expire_txs.insert(i);//for check
 			}
 			else {
 				if (!ret) {
-					LOG_ERROR("transaction(%s) apply failed. %s",
+					LOG_ERROR("Transaction(%s) apply failed. %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
 					error_txs.insert(i);//for check
 				}
