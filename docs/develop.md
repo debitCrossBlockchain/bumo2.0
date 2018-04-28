@@ -976,7 +976,7 @@ POST /getTransactionBlob
           UNKNOWN = 0;
           CREATE_ACCOUNT = 1;
           ISSUE_ASSET = 2;
-          PAYMENT = 3;
+          PAY_ASSET = 3;
           SET_METADATA = 4;
           SET_SIGNER_WEIGHT = 5;
           SET_THRESHOLD = 6;
@@ -988,7 +988,7 @@ POST /getTransactionBlob
 
       OperationCreateAccount create_account = 4;
       OperationIssueAsset issue_asset = 5;
-      OperationPayment payment = 6;
+      OperationPayAsset pay_asset = 6;
       OperationSetMetadata set_metadata = 7;
       OperationSetSignerWeight set_signer_weight = 8;
       OperationSetThreshold set_threshold = 9;
@@ -996,7 +996,7 @@ POST /getTransactionBlob
   }
   ```
 
-  - type: 操作类型的枚举。如其值为ISSUE_ASSET（发行资产），那么本操作中的issue_asset字段就会被使用；如果其值为PAYMENT，那么本操作中payment字段就会被使用……详见[操作码](#操作码)
+  - type: 操作类型的枚举。如其值为ISSUE_ASSET（发行资产），那么本操作中的issue_asset字段就会被使用；如果其值为PAY_ASSET，那么本操作中pay_asset字段就会被使用……详见[操作码](#操作码)
   - source_address:操作源，即本操作针对哪个账号生效。若不填写，则默认本操作源等于本操作源。
   - metadata:本操作的备注，用户自定义，可以不填写
 
@@ -1008,7 +1008,7 @@ POST /getTransactionBlob
 | :----- | ----------------- | ------------ |
 | 1      | CREATE_ACCOUNT    | 创建账号     |
 | 2      | ISSUE_ASSET       | 发行资产     |
-| 3      | PAYMENT           | 转移资产     |
+| 3      | PAY_ASSET         | 转移资产     |
 | 4      | SET_METADATA      | 设置metadata |
 | 5      | SET_SIGNER_WEIGHT | 设置权重     |
 | 6      | SET_THRESHOLD     | 设置门限     |
@@ -1179,11 +1179,11 @@ POST /getTransactionBlob
 
 |参数|描述
 |:--- | --- 
-|payment.dest_address |  目标账户
-|payment.asset.key.issuer|  资产发行方
-|payment.asset.key.code|  资产代码
-|payment.asset.amount|  要转移的数量
-|payment.input|  触发合约调用的入参
+|pay_asset.dest_address |  目标账户
+|pay_asset.asset.key.issuer|  资产发行方
+|pay_asset.asset.key.code|  资产代码
+|pay_asset.asset.amount|  要转移的数量
+|pay_asset.input|  触发合约调用的入参
 
 - 功能
   操作源账号将一笔资产转给目标账号
@@ -1196,7 +1196,7 @@ POST /getTransactionBlob
   ```JSON
     {
       "type": 3,
-      "payment": {
+      "pay_asset": {
         "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
         "asset": {
           "key": {
@@ -1213,7 +1213,7 @@ POST /getTransactionBlob
 
 - protocol buffer 结构
     ```text
-    message OperationPayment
+    message OperationPayAsset
     {
         string dest_address = 1;
         Asset asset = 2;
@@ -1601,15 +1601,45 @@ function query(input)
 
     ```
 
+- ##### 地址合法性检查
+
+    `addressCheck(address);`
+    -address 地址参数
+
+    例如
+    ```javascript
+    let ret = addressCheck('buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf');
+    /*
+    成功：true
+    失败：false
+    */
+
+    ```
+
+- ##### 字符串数字合法性检查
+
+    `stoI64Check(strNumber);`
+    - strNumber：字符串数字参数
+
+    例如
+    ```javascript
+    let ret = stoI64Check('12345678912345');
+    /*
+    成功：true
+    失败：false
+    */
+
+    ```
+
 - ##### 64位加法
 
-    `int64Plus(left_value, right_value);`
+    `int64Add(left_value, right_value);`
     - left_value: 左值
     - right_value：右值
 
     例如
     ```javascript
-    let ret = int64Plus('12345678912345', 1);
+    let ret = int64Add('12345678912345', 1);
     /*
     成功：'12345678912346'
     失败：抛异常
@@ -1701,8 +1731,8 @@ function query(input)
  - ##### 变换单位
     `toBaseUnit(value);`
 
-    - 返回值: 乘以 10^8
-    - value: 左值
+    - 返回值: 成功会返回乘以 10^8 的字符串，失败会返回 false
+    - value: 被转换的数字，只能传入字符串，可以包含小数点，且小数点之后最多保留 8 位数字
 
     例如
     ```javascript
@@ -1738,6 +1768,33 @@ function query(input)
     /*
      成功不返回,失败抛异常
     */
+    ```
+
+- ##### 发行资产
+
+    `issueAsset(code, amount);`
+     - code: 资产代码
+     - amount: 发行资产数量
+
+    例如
+    ```javascript
+    issueAsset("CNY", "10000");
+    /*失败抛异常*/
+    ```
+
+- ##### 转移资产
+
+    `payAsset(address, issuer, code, amount[, input]);`
+     - address: 转移资产的目标地址
+     - issuer: 资产发行方
+     - code: 资产代码
+     - amount: 转移资产的数量
+     - input: 可选，合约参数
+
+    例如
+    ```javascript
+    payAsset("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf", "CNY", "10000", "{}");
+    /*失败抛异常*/
     ```
 
 - ##### 转账
@@ -2344,6 +2401,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 3                 | ERRCODE_ALREADY_EXIST                  | 对象已存在， 如重复提交交易                                                                  |
 | 4                 | ERRCODE_NOT_EXIST                      | 对象不存在，如查询不到账号、TX、区块等                                                       |
 | 5                 | ERRCODE_TX_TIMEOUT                     | TX 超时，指该 TX 已经被当前节点从 TX 缓存队列去掉，**但并不代表这个一定不能被执行**          |
+| 7                 | ERRCODE_MATH_OVERFLOW                  | 数学计算溢出 
 | 20                | ERRCODE_EXPR_CONDITION_RESULT_FALSE    | 指表达式执行结果为 false，意味着该 TX 当前没有执行成功，**但这并不代表在以后的区块不能成功** |
 | 21                | ERRCODE_EXPR_CONDITION_SYNTAX_ERROR    | 指表达式语法分析错误，代表该 TX 一定会失败                                                   |
 | 90                | ERRCODE_INVALID_PUBKEY                 | 公钥非法                                                                                     |

@@ -42,9 +42,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* Ledger_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Ledger_reflection_ = NULL;
-const ::google::protobuf::Descriptor* OperationPayment_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* OperationPayAsset_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  OperationPayment_reflection_ = NULL;
+  OperationPayAsset_reflection_ = NULL;
 const ::google::protobuf::Descriptor* OperationTypeThreshold_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   OperationTypeThreshold_reflection_ = NULL;
@@ -256,23 +256,23 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(Ledger),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ledger, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Ledger, _is_default_instance_));
-  OperationPayment_descriptor_ = file->message_type(7);
-  static const int OperationPayment_offsets_[3] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, dest_address_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, asset_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, input_),
+  OperationPayAsset_descriptor_ = file->message_type(7);
+  static const int OperationPayAsset_offsets_[3] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, dest_address_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, asset_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, input_),
   };
-  OperationPayment_reflection_ =
+  OperationPayAsset_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
-      OperationPayment_descriptor_,
-      OperationPayment::default_instance_,
-      OperationPayment_offsets_,
+      OperationPayAsset_descriptor_,
+      OperationPayAsset::default_instance_,
+      OperationPayAsset_offsets_,
       -1,
       -1,
       -1,
-      sizeof(OperationPayment),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, _internal_metadata_),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayment, _is_default_instance_));
+      sizeof(OperationPayAsset),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationPayAsset, _is_default_instance_));
   OperationTypeThreshold_descriptor_ = file->message_type(8);
   static const int OperationTypeThreshold_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationTypeThreshold, type_),
@@ -394,7 +394,7 @@ void protobuf_AssignDesc_chain_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, metadata_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, create_account_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, issue_asset_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, payment_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, pay_asset_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_metadata_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_signer_weight_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_threshold_),
@@ -676,7 +676,7 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Ledger_descriptor_, &Ledger::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-      OperationPayment_descriptor_, &OperationPayment::default_instance());
+      OperationPayAsset_descriptor_, &OperationPayAsset::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       OperationTypeThreshold_descriptor_, &OperationTypeThreshold::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -738,8 +738,8 @@ void protobuf_ShutdownFile_chain_2eproto() {
   delete LedgerHeader_reflection_;
   delete Ledger::default_instance_;
   delete Ledger_reflection_;
-  delete OperationPayment::default_instance_;
-  delete OperationPayment_reflection_;
+  delete OperationPayAsset::default_instance_;
+  delete OperationPayAsset_reflection_;
   delete OperationTypeThreshold::default_instance_;
   delete OperationTypeThreshold_reflection_;
   delete AccountPrivilege::default_instance_;
@@ -815,87 +815,87 @@ void protobuf_AddDesc_chain_2eproto() {
     "\030\t \001(\014\022\021\n\tfees_hash\030\n \001(\014\022\017\n\007reserve\030\013 \001"
     "(\t\"d\n\006Ledger\022&\n\006header\030\001 \001(\0132\026.protocol."
     "LedgerHeader\0222\n\020transaction_envs\030\002 \003(\0132\030"
-    ".protocol.TransactionEnv\"W\n\020OperationPay"
-    "ment\022\024\n\014dest_address\030\001 \001(\t\022\036\n\005asset\030\002 \001("
-    "\0132\017.protocol.Asset\022\r\n\005input\030\003 \001(\t\"S\n\026Ope"
-    "rationTypeThreshold\022&\n\004type\030\001 \001(\0162\030.prot"
-    "ocol.Operation.Type\022\021\n\tthreshold\030\002 \001(\003\"|"
-    "\n\020AccountPrivilege\022\025\n\rmaster_weight\030\001 \001("
-    "\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\022.\n\n"
-    "thresholds\030\003 \001(\0132\032.protocol.AccountThres"
-    "hold\"c\n\020AccountThreshold\022\024\n\014tx_threshold"
-    "\030\001 \001(\003\0229\n\017type_thresholds\030\002 \003(\0132 .protoc"
-    "ol.OperationTypeThreshold\"3\n\023OperationIs"
-    "sueAsset\022\014\n\004code\030\001 \001(\t\022\016\n\006amount\030\002 \001(\003\"G"
-    "\n\020OperationPayCoin\022\024\n\014dest_address\030\001 \001(\t"
-    "\022\016\n\006amount\030\002 \001(\003\022\r\n\005input\030\003 \001(\t\"T\n\030Opera"
-    "tionSetSignerWeight\022\025\n\rmaster_weight\030\001 \001"
-    "(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\",\n"
-    "\014OperationLog\022\r\n\005topic\030\001 \001(\t\022\r\n\005datas\030\002 "
-    "\003(\t\"\223\005\n\tOperation\022&\n\004type\030\001 \001(\0162\030.protoc"
-    "ol.Operation.Type\022\026\n\016source_address\030\002 \001("
-    "\t\022\020\n\010metadata\030\003 \001(\014\0228\n\016create_account\030\004 "
-    "\001(\0132 .protocol.OperationCreateAccount\0222\n"
-    "\013issue_asset\030\005 \001(\0132\035.protocol.OperationI"
-    "ssueAsset\022+\n\007payment\030\006 \001(\0132\032.protocol.Op"
-    "erationPayment\0224\n\014set_metadata\030\007 \001(\0132\036.p"
-    "rotocol.OperationSetMetadata\022=\n\021set_sign"
-    "er_weight\030\010 \001(\0132\".protocol.OperationSetS"
-    "ignerWeight\0226\n\rset_threshold\030\t \001(\0132\037.pro"
-    "tocol.OperationSetThreshold\022,\n\010pay_coin\030"
-    "\n \001(\0132\032.protocol.OperationPayCoin\022#\n\003log"
-    "\030\013 \001(\0132\026.protocol.OperationLog\"\230\001\n\004Type\022"
-    "\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_ACCOUNT\020\001\022\017\n\013ISSU"
-    "E_ASSET\020\002\022\013\n\007PAYMENT\020\003\022\020\n\014SET_METADATA\020\004"
-    "\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\rSET_THRESHOLD"
-    "\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\"h\n\025OperationSe"
-    "tThreshold\022\024\n\014tx_threshold\030\001 \001(\003\0229\n\017type"
-    "_thresholds\030\004 \003(\0132 .protocol.OperationTy"
-    "peThreshold\"\325\001\n\013Transaction\022\026\n\016source_ad"
-    "dress\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_limit\030"
-    "\003 \001(\003\022\021\n\tgas_price\030\004 \001(\003\022\027\n\017ceil_ledger_"
-    "seq\030\005 \001(\003\022\020\n\010metadata\030\006 \001(\014\022\'\n\noperation"
-    "s\030\007 \003(\0132\023.protocol.Operation\"%\n\005Limit\022\013\n"
-    "\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Signer\022\017\n"
-    "\007address\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005Limit\022"
-    "\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007Trigger"
-    "\022;\n\020transaction_type\030\001 \001(\0162!.protocol.Tr"
-    "igger.TransactionType\022\022\n\nledger_seq\030\002 \001("
-    "\003\0227\n\013transaction\030\003 \001(\0132\".protocol.Trigge"
-    "r.OperationTrigger\032/\n\020OperationTrigger\022\014"
-    "\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017Transacti"
-    "onType\022\026\n\022NORMAL_TRANSACTION\020\000\022\030\n\024CONTRA"
-    "CT_TRANSACTION\020\001\"\211\001\n\016TransactionEnv\022*\n\013t"
-    "ransaction\030\001 \001(\0132\025.protocol.Transaction\022"
-    "\'\n\nsignatures\030\002 \003(\0132\023.protocol.Signature"
-    "\022\"\n\007trigger\030\003 \001(\0132\021.protocol.Trigger\"\272\001\n"
-    "\023TransactionEnvStore\0221\n\017transaction_env\030"
-    "\001 \001(\0132\030.protocol.TransactionEnv\022\022\n\nerror"
-    "_code\030\002 \001(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledge"
-    "r_seq\030\004 \001(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n\004hash\030"
-    "\006 \001(\014\022\022\n\nactual_fee\030\007 \001(\003\":\n\021Transaction"
-    "EnvSet\022%\n\003txs\030\002 \003(\0132\030.protocol.Transacti"
-    "onEnv\"G\n\030ConsensusValueValidation\022\025\n\rexp"
-    "ire_tx_ids\030\001 \003(\005\022\024\n\014error_tx_ids\030\002 \003(\005\"\203"
-    "\002\n\016ConsensusValue\022*\n\005txset\030\001 \001(\0132\033.proto"
-    "col.TransactionEnvSet\022\022\n\nclose_time\030\002 \001("
-    "\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\nledger_seq\030"
-    "\004 \001(\003\022\034\n\024previous_ledger_hash\030\005 \001(\014\022/\n\016l"
-    "edger_upgrade\030\006 \001(\0132\027.protocol.LedgerUpg"
-    "rade\0226\n\nvalidation\030\007 \001(\0132\".protocol.Cons"
-    "ensusValueValidation\"j\n\010Contract\022-\n\004type"
-    "\030\001 \001(\0162\037.protocol.Contract.ContractType\022"
-    "\017\n\007payload\030\002 \001(\t\"\036\n\014ContractType\022\016\n\nJAVA"
-    "SCRIPT\020\000\"\316\001\n\026OperationCreateAccount\022\024\n\014d"
-    "est_address\030\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.pr"
-    "otocol.Contract\022(\n\004priv\030\003 \001(\0132\032.protocol"
-    ".AccountPrivilege\022$\n\tmetadatas\030\004 \003(\0132\021.p"
-    "rotocol.KeyPair\022\024\n\014init_balance\030\005 \001(\003\022\022\n"
-    "\ninit_input\030\006 \001(\t\"X\n\024OperationSetMetadat"
-    "a\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version"
-    "\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007"
-    "UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\035\n\033cn.bumo.bloc"
-    "kchain.adapter3b\006proto3", 4103);
+    ".protocol.TransactionEnv\"X\n\021OperationPay"
+    "Asset\022\024\n\014dest_address\030\001 \001(\t\022\036\n\005asset\030\002 \001"
+    "(\0132\017.protocol.Asset\022\r\n\005input\030\003 \001(\t\"S\n\026Op"
+    "erationTypeThreshold\022&\n\004type\030\001 \001(\0162\030.pro"
+    "tocol.Operation.Type\022\021\n\tthreshold\030\002 \001(\003\""
+    "|\n\020AccountPrivilege\022\025\n\rmaster_weight\030\001 \001"
+    "(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\022.\n"
+    "\nthresholds\030\003 \001(\0132\032.protocol.AccountThre"
+    "shold\"c\n\020AccountThreshold\022\024\n\014tx_threshol"
+    "d\030\001 \001(\003\0229\n\017type_thresholds\030\002 \003(\0132 .proto"
+    "col.OperationTypeThreshold\"3\n\023OperationI"
+    "ssueAsset\022\014\n\004code\030\001 \001(\t\022\016\n\006amount\030\002 \001(\003\""
+    "G\n\020OperationPayCoin\022\024\n\014dest_address\030\001 \001("
+    "\t\022\016\n\006amount\030\002 \001(\003\022\r\n\005input\030\003 \001(\t\"T\n\030Oper"
+    "ationSetSignerWeight\022\025\n\rmaster_weight\030\001 "
+    "\001(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\","
+    "\n\014OperationLog\022\r\n\005topic\030\001 \001(\t\022\r\n\005datas\030\002"
+    " \003(\t\"\230\005\n\tOperation\022&\n\004type\030\001 \001(\0162\030.proto"
+    "col.Operation.Type\022\026\n\016source_address\030\002 \001"
+    "(\t\022\020\n\010metadata\030\003 \001(\014\0228\n\016create_account\030\004"
+    " \001(\0132 .protocol.OperationCreateAccount\0222"
+    "\n\013issue_asset\030\005 \001(\0132\035.protocol.Operation"
+    "IssueAsset\022.\n\tpay_asset\030\006 \001(\0132\033.protocol"
+    ".OperationPayAsset\0224\n\014set_metadata\030\007 \001(\013"
+    "2\036.protocol.OperationSetMetadata\022=\n\021set_"
+    "signer_weight\030\010 \001(\0132\".protocol.Operation"
+    "SetSignerWeight\0226\n\rset_threshold\030\t \001(\0132\037"
+    ".protocol.OperationSetThreshold\022,\n\010pay_c"
+    "oin\030\n \001(\0132\032.protocol.OperationPayCoin\022#\n"
+    "\003log\030\013 \001(\0132\026.protocol.OperationLog\"\232\001\n\004T"
+    "ype\022\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_ACCOUNT\020\001\022\017\n\013"
+    "ISSUE_ASSET\020\002\022\r\n\tPAY_ASSET\020\003\022\020\n\014SET_META"
+    "DATA\020\004\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\rSET_THR"
+    "ESHOLD\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\"h\n\025Opera"
+    "tionSetThreshold\022\024\n\014tx_threshold\030\001 \001(\003\0229"
+    "\n\017type_thresholds\030\004 \003(\0132 .protocol.Opera"
+    "tionTypeThreshold\"\325\001\n\013Transaction\022\026\n\016sou"
+    "rce_address\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_"
+    "limit\030\003 \001(\003\022\021\n\tgas_price\030\004 \001(\003\022\027\n\017ceil_l"
+    "edger_seq\030\005 \001(\003\022\020\n\010metadata\030\006 \001(\014\022\'\n\nope"
+    "rations\030\007 \003(\0132\023.protocol.Operation\"%\n\005Li"
+    "mit\022\013\n\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Sig"
+    "ner\022\017\n\007address\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005"
+    "Limit\022\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007T"
+    "rigger\022;\n\020transaction_type\030\001 \001(\0162!.proto"
+    "col.Trigger.TransactionType\022\022\n\nledger_se"
+    "q\030\002 \001(\003\0227\n\013transaction\030\003 \001(\0132\".protocol."
+    "Trigger.OperationTrigger\032/\n\020OperationTri"
+    "gger\022\014\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017Tra"
+    "nsactionType\022\026\n\022NORMAL_TRANSACTION\020\000\022\030\n\024"
+    "CONTRACT_TRANSACTION\020\001\"\211\001\n\016TransactionEn"
+    "v\022*\n\013transaction\030\001 \001(\0132\025.protocol.Transa"
+    "ction\022\'\n\nsignatures\030\002 \003(\0132\023.protocol.Sig"
+    "nature\022\"\n\007trigger\030\003 \001(\0132\021.protocol.Trigg"
+    "er\"\272\001\n\023TransactionEnvStore\0221\n\017transactio"
+    "n_env\030\001 \001(\0132\030.protocol.TransactionEnv\022\022\n"
+    "\nerror_code\030\002 \001(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n"
+    "\nledger_seq\030\004 \001(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n"
+    "\004hash\030\006 \001(\014\022\022\n\nactual_fee\030\007 \001(\003\":\n\021Trans"
+    "actionEnvSet\022%\n\003txs\030\002 \003(\0132\030.protocol.Tra"
+    "nsactionEnv\"G\n\030ConsensusValueValidation\022"
+    "\025\n\rexpire_tx_ids\030\001 \003(\005\022\024\n\014error_tx_ids\030\002"
+    " \003(\005\"\203\002\n\016ConsensusValue\022*\n\005txset\030\001 \001(\0132\033"
+    ".protocol.TransactionEnvSet\022\022\n\nclose_tim"
+    "e\030\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\nledge"
+    "r_seq\030\004 \001(\003\022\034\n\024previous_ledger_hash\030\005 \001("
+    "\014\022/\n\016ledger_upgrade\030\006 \001(\0132\027.protocol.Led"
+    "gerUpgrade\0226\n\nvalidation\030\007 \001(\0132\".protoco"
+    "l.ConsensusValueValidation\"j\n\010Contract\022-"
+    "\n\004type\030\001 \001(\0162\037.protocol.Contract.Contrac"
+    "tType\022\017\n\007payload\030\002 \001(\t\"\036\n\014ContractType\022\016"
+    "\n\nJAVASCRIPT\020\000\"\316\001\n\026OperationCreateAccoun"
+    "t\022\024\n\014dest_address\030\001 \001(\t\022$\n\010contract\030\002 \001("
+    "\0132\022.protocol.Contract\022(\n\004priv\030\003 \001(\0132\032.pr"
+    "otocol.AccountPrivilege\022$\n\tmetadatas\030\004 \003"
+    "(\0132\021.protocol.KeyPair\022\024\n\014init_balance\030\005 "
+    "\001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024OperationSetM"
+    "etadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007v"
+    "ersion\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Lim"
+    "it\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB#\n!org.bu"
+    "mo.sdk.core.extend.protobufb\006proto3", 4115);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -905,7 +905,7 @@ void protobuf_AddDesc_chain_2eproto() {
   AssetStore::default_instance_ = new AssetStore();
   LedgerHeader::default_instance_ = new LedgerHeader();
   Ledger::default_instance_ = new Ledger();
-  OperationPayment::default_instance_ = new OperationPayment();
+  OperationPayAsset::default_instance_ = new OperationPayAsset();
   OperationTypeThreshold::default_instance_ = new OperationTypeThreshold();
   AccountPrivilege::default_instance_ = new AccountPrivilege();
   AccountThreshold::default_instance_ = new AccountThreshold();
@@ -934,7 +934,7 @@ void protobuf_AddDesc_chain_2eproto() {
   AssetStore::default_instance_->InitAsDefaultInstance();
   LedgerHeader::default_instance_->InitAsDefaultInstance();
   Ledger::default_instance_->InitAsDefaultInstance();
-  OperationPayment::default_instance_->InitAsDefaultInstance();
+  OperationPayAsset::default_instance_->InitAsDefaultInstance();
   OperationTypeThreshold::default_instance_->InitAsDefaultInstance();
   AccountPrivilege::default_instance_->InitAsDefaultInstance();
   AccountThreshold::default_instance_->InitAsDefaultInstance();
@@ -4743,31 +4743,31 @@ Ledger::transaction_envs() const {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int OperationPayment::kDestAddressFieldNumber;
-const int OperationPayment::kAssetFieldNumber;
-const int OperationPayment::kInputFieldNumber;
+const int OperationPayAsset::kDestAddressFieldNumber;
+const int OperationPayAsset::kAssetFieldNumber;
+const int OperationPayAsset::kInputFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
-OperationPayment::OperationPayment()
+OperationPayAsset::OperationPayAsset()
   : ::google::protobuf::Message(), _internal_metadata_(NULL) {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:protocol.OperationPayment)
+  // @@protoc_insertion_point(constructor:protocol.OperationPayAsset)
 }
 
-void OperationPayment::InitAsDefaultInstance() {
+void OperationPayAsset::InitAsDefaultInstance() {
   _is_default_instance_ = true;
   asset_ = const_cast< ::protocol::Asset*>(&::protocol::Asset::default_instance());
 }
 
-OperationPayment::OperationPayment(const OperationPayment& from)
+OperationPayAsset::OperationPayAsset(const OperationPayAsset& from)
   : ::google::protobuf::Message(),
     _internal_metadata_(NULL) {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:protocol.OperationPayment)
+  // @@protoc_insertion_point(copy_constructor:protocol.OperationPayAsset)
 }
 
-void OperationPayment::SharedCtor() {
+void OperationPayAsset::SharedCtor() {
     _is_default_instance_ = false;
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
@@ -4776,12 +4776,12 @@ void OperationPayment::SharedCtor() {
   input_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-OperationPayment::~OperationPayment() {
-  // @@protoc_insertion_point(destructor:protocol.OperationPayment)
+OperationPayAsset::~OperationPayAsset() {
+  // @@protoc_insertion_point(destructor:protocol.OperationPayAsset)
   SharedDtor();
 }
 
-void OperationPayment::SharedDtor() {
+void OperationPayAsset::SharedDtor() {
   dest_address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   input_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
@@ -4789,44 +4789,44 @@ void OperationPayment::SharedDtor() {
   }
 }
 
-void OperationPayment::SetCachedSize(int size) const {
+void OperationPayAsset::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* OperationPayment::descriptor() {
+const ::google::protobuf::Descriptor* OperationPayAsset::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return OperationPayment_descriptor_;
+  return OperationPayAsset_descriptor_;
 }
 
-const OperationPayment& OperationPayment::default_instance() {
+const OperationPayAsset& OperationPayAsset::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_chain_2eproto();
   return *default_instance_;
 }
 
-OperationPayment* OperationPayment::default_instance_ = NULL;
+OperationPayAsset* OperationPayAsset::default_instance_ = NULL;
 
-OperationPayment* OperationPayment::New(::google::protobuf::Arena* arena) const {
-  OperationPayment* n = new OperationPayment;
+OperationPayAsset* OperationPayAsset::New(::google::protobuf::Arena* arena) const {
+  OperationPayAsset* n = new OperationPayAsset;
   if (arena != NULL) {
     arena->Own(n);
   }
   return n;
 }
 
-void OperationPayment::Clear() {
-// @@protoc_insertion_point(message_clear_start:protocol.OperationPayment)
+void OperationPayAsset::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.OperationPayAsset)
   dest_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (GetArenaNoVirtual() == NULL && asset_ != NULL) delete asset_;
   asset_ = NULL;
   input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
-bool OperationPayment::MergePartialFromCodedStream(
+bool OperationPayAsset::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:protocol.OperationPayment)
+  // @@protoc_insertion_point(parse_start:protocol.OperationPayAsset)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -4840,7 +4840,7 @@ bool OperationPayment::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->dest_address().data(), this->dest_address().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.OperationPayment.dest_address"));
+            "protocol.OperationPayAsset.dest_address"));
         } else {
           goto handle_unusual;
         }
@@ -4870,7 +4870,7 @@ bool OperationPayment::MergePartialFromCodedStream(
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
             this->input().data(), this->input().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.OperationPayment.input"));
+            "protocol.OperationPayAsset.input"));
         } else {
           goto handle_unusual;
         }
@@ -4891,23 +4891,23 @@ bool OperationPayment::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:protocol.OperationPayment)
+  // @@protoc_insertion_point(parse_success:protocol.OperationPayAsset)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:protocol.OperationPayment)
+  // @@protoc_insertion_point(parse_failure:protocol.OperationPayAsset)
   return false;
 #undef DO_
 }
 
-void OperationPayment::SerializeWithCachedSizes(
+void OperationPayAsset::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:protocol.OperationPayment)
+  // @@protoc_insertion_point(serialize_start:protocol.OperationPayAsset)
   // optional string dest_address = 1;
   if (this->dest_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->dest_address().data(), this->dest_address().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationPayment.dest_address");
+      "protocol.OperationPayAsset.dest_address");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       1, this->dest_address(), output);
   }
@@ -4923,23 +4923,23 @@ void OperationPayment::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->input().data(), this->input().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationPayment.input");
+      "protocol.OperationPayAsset.input");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
       3, this->input(), output);
   }
 
-  // @@protoc_insertion_point(serialize_end:protocol.OperationPayment)
+  // @@protoc_insertion_point(serialize_end:protocol.OperationPayAsset)
 }
 
-::google::protobuf::uint8* OperationPayment::InternalSerializeWithCachedSizesToArray(
+::google::protobuf::uint8* OperationPayAsset::InternalSerializeWithCachedSizesToArray(
     bool deterministic, ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:protocol.OperationPayment)
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.OperationPayAsset)
   // optional string dest_address = 1;
   if (this->dest_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->dest_address().data(), this->dest_address().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationPayment.dest_address");
+      "protocol.OperationPayAsset.dest_address");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         1, this->dest_address(), target);
@@ -4957,18 +4957,18 @@ void OperationPayment::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->input().data(), this->input().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.OperationPayment.input");
+      "protocol.OperationPayAsset.input");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
         3, this->input(), target);
   }
 
-  // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationPayment)
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationPayAsset)
   return target;
 }
 
-int OperationPayment::ByteSize() const {
-// @@protoc_insertion_point(message_byte_size_start:protocol.OperationPayment)
+int OperationPayAsset::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.OperationPayAsset)
   int total_size = 0;
 
   // optional string dest_address = 1;
@@ -4998,25 +4998,25 @@ int OperationPayment::ByteSize() const {
   return total_size;
 }
 
-void OperationPayment::MergeFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:protocol.OperationPayment)
+void OperationPayAsset::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.OperationPayAsset)
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
-  const OperationPayment* source = 
-      ::google::protobuf::internal::DynamicCastToGenerated<const OperationPayment>(
+  const OperationPayAsset* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const OperationPayAsset>(
           &from);
   if (source == NULL) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.OperationPayment)
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.OperationPayAsset)
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
   } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.OperationPayment)
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.OperationPayAsset)
     MergeFrom(*source);
   }
 }
 
-void OperationPayment::MergeFrom(const OperationPayment& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:protocol.OperationPayment)
+void OperationPayAsset::MergeFrom(const OperationPayAsset& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.OperationPayAsset)
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
@@ -5033,30 +5033,30 @@ void OperationPayment::MergeFrom(const OperationPayment& from) {
   }
 }
 
-void OperationPayment::CopyFrom(const ::google::protobuf::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:protocol.OperationPayment)
+void OperationPayAsset::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.OperationPayAsset)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void OperationPayment::CopyFrom(const OperationPayment& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:protocol.OperationPayment)
+void OperationPayAsset::CopyFrom(const OperationPayAsset& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.OperationPayAsset)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool OperationPayment::IsInitialized() const {
+bool OperationPayAsset::IsInitialized() const {
 
   return true;
 }
 
-void OperationPayment::Swap(OperationPayment* other) {
+void OperationPayAsset::Swap(OperationPayAsset* other) {
   if (other == this) return;
   InternalSwap(other);
 }
-void OperationPayment::InternalSwap(OperationPayment* other) {
+void OperationPayAsset::InternalSwap(OperationPayAsset* other) {
   dest_address_.Swap(&other->dest_address_);
   std::swap(asset_, other->asset_);
   input_.Swap(&other->input_);
@@ -5064,89 +5064,89 @@ void OperationPayment::InternalSwap(OperationPayment* other) {
   std::swap(_cached_size_, other->_cached_size_);
 }
 
-::google::protobuf::Metadata OperationPayment::GetMetadata() const {
+::google::protobuf::Metadata OperationPayAsset::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = OperationPayment_descriptor_;
-  metadata.reflection = OperationPayment_reflection_;
+  metadata.descriptor = OperationPayAsset_descriptor_;
+  metadata.reflection = OperationPayAsset_reflection_;
   return metadata;
 }
 
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
-// OperationPayment
+// OperationPayAsset
 
 // optional string dest_address = 1;
-void OperationPayment::clear_dest_address() {
+void OperationPayAsset::clear_dest_address() {
   dest_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& OperationPayment::dest_address() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationPayment.dest_address)
+ const ::std::string& OperationPayAsset::dest_address() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationPayAsset.dest_address)
   return dest_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void OperationPayment::set_dest_address(const ::std::string& value) {
+ void OperationPayAsset::set_dest_address(const ::std::string& value) {
   
   dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.OperationPayment.dest_address)
+  // @@protoc_insertion_point(field_set:protocol.OperationPayAsset.dest_address)
 }
- void OperationPayment::set_dest_address(const char* value) {
+ void OperationPayAsset::set_dest_address(const char* value) {
   
   dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.OperationPayment.dest_address)
+  // @@protoc_insertion_point(field_set_char:protocol.OperationPayAsset.dest_address)
 }
- void OperationPayment::set_dest_address(const char* value, size_t size) {
+ void OperationPayAsset::set_dest_address(const char* value, size_t size) {
   
   dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.OperationPayment.dest_address)
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationPayAsset.dest_address)
 }
- ::std::string* OperationPayment::mutable_dest_address() {
+ ::std::string* OperationPayAsset::mutable_dest_address() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.OperationPayment.dest_address)
+  // @@protoc_insertion_point(field_mutable:protocol.OperationPayAsset.dest_address)
   return dest_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* OperationPayment::release_dest_address() {
-  // @@protoc_insertion_point(field_release:protocol.OperationPayment.dest_address)
+ ::std::string* OperationPayAsset::release_dest_address() {
+  // @@protoc_insertion_point(field_release:protocol.OperationPayAsset.dest_address)
   
   return dest_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void OperationPayment::set_allocated_dest_address(::std::string* dest_address) {
+ void OperationPayAsset::set_allocated_dest_address(::std::string* dest_address) {
   if (dest_address != NULL) {
     
   } else {
     
   }
   dest_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), dest_address);
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayment.dest_address)
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayAsset.dest_address)
 }
 
 // optional .protocol.Asset asset = 2;
-bool OperationPayment::has_asset() const {
+bool OperationPayAsset::has_asset() const {
   return !_is_default_instance_ && asset_ != NULL;
 }
-void OperationPayment::clear_asset() {
+void OperationPayAsset::clear_asset() {
   if (GetArenaNoVirtual() == NULL && asset_ != NULL) delete asset_;
   asset_ = NULL;
 }
-const ::protocol::Asset& OperationPayment::asset() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationPayment.asset)
+const ::protocol::Asset& OperationPayAsset::asset() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationPayAsset.asset)
   return asset_ != NULL ? *asset_ : *default_instance_->asset_;
 }
-::protocol::Asset* OperationPayment::mutable_asset() {
+::protocol::Asset* OperationPayAsset::mutable_asset() {
   
   if (asset_ == NULL) {
     asset_ = new ::protocol::Asset;
   }
-  // @@protoc_insertion_point(field_mutable:protocol.OperationPayment.asset)
+  // @@protoc_insertion_point(field_mutable:protocol.OperationPayAsset.asset)
   return asset_;
 }
-::protocol::Asset* OperationPayment::release_asset() {
-  // @@protoc_insertion_point(field_release:protocol.OperationPayment.asset)
+::protocol::Asset* OperationPayAsset::release_asset() {
+  // @@protoc_insertion_point(field_release:protocol.OperationPayAsset.asset)
   
   ::protocol::Asset* temp = asset_;
   asset_ = NULL;
   return temp;
 }
-void OperationPayment::set_allocated_asset(::protocol::Asset* asset) {
+void OperationPayAsset::set_allocated_asset(::protocol::Asset* asset) {
   delete asset_;
   asset_ = asset;
   if (asset) {
@@ -5154,51 +5154,51 @@ void OperationPayment::set_allocated_asset(::protocol::Asset* asset) {
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayment.asset)
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayAsset.asset)
 }
 
 // optional string input = 3;
-void OperationPayment::clear_input() {
+void OperationPayAsset::clear_input() {
   input_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& OperationPayment::input() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationPayment.input)
+ const ::std::string& OperationPayAsset::input() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationPayAsset.input)
   return input_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void OperationPayment::set_input(const ::std::string& value) {
+ void OperationPayAsset::set_input(const ::std::string& value) {
   
   input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.OperationPayment.input)
+  // @@protoc_insertion_point(field_set:protocol.OperationPayAsset.input)
 }
- void OperationPayment::set_input(const char* value) {
+ void OperationPayAsset::set_input(const char* value) {
   
   input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.OperationPayment.input)
+  // @@protoc_insertion_point(field_set_char:protocol.OperationPayAsset.input)
 }
- void OperationPayment::set_input(const char* value, size_t size) {
+ void OperationPayAsset::set_input(const char* value, size_t size) {
   
   input_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.OperationPayment.input)
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationPayAsset.input)
 }
- ::std::string* OperationPayment::mutable_input() {
+ ::std::string* OperationPayAsset::mutable_input() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.OperationPayment.input)
+  // @@protoc_insertion_point(field_mutable:protocol.OperationPayAsset.input)
   return input_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* OperationPayment::release_input() {
-  // @@protoc_insertion_point(field_release:protocol.OperationPayment.input)
+ ::std::string* OperationPayAsset::release_input() {
+  // @@protoc_insertion_point(field_release:protocol.OperationPayAsset.input)
   
   return input_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void OperationPayment::set_allocated_input(::std::string* input) {
+ void OperationPayAsset::set_allocated_input(::std::string* input) {
   if (input != NULL) {
     
   } else {
     
   }
   input_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), input);
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayment.input)
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationPayAsset.input)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -7714,7 +7714,7 @@ bool Operation_Type_IsValid(int value) {
 const Operation_Type Operation::UNKNOWN;
 const Operation_Type Operation::CREATE_ACCOUNT;
 const Operation_Type Operation::ISSUE_ASSET;
-const Operation_Type Operation::PAYMENT;
+const Operation_Type Operation::PAY_ASSET;
 const Operation_Type Operation::SET_METADATA;
 const Operation_Type Operation::SET_SIGNER_WEIGHT;
 const Operation_Type Operation::SET_THRESHOLD;
@@ -7730,7 +7730,7 @@ const int Operation::kSourceAddressFieldNumber;
 const int Operation::kMetadataFieldNumber;
 const int Operation::kCreateAccountFieldNumber;
 const int Operation::kIssueAssetFieldNumber;
-const int Operation::kPaymentFieldNumber;
+const int Operation::kPayAssetFieldNumber;
 const int Operation::kSetMetadataFieldNumber;
 const int Operation::kSetSignerWeightFieldNumber;
 const int Operation::kSetThresholdFieldNumber;
@@ -7748,7 +7748,7 @@ void Operation::InitAsDefaultInstance() {
   _is_default_instance_ = true;
   create_account_ = const_cast< ::protocol::OperationCreateAccount*>(&::protocol::OperationCreateAccount::default_instance());
   issue_asset_ = const_cast< ::protocol::OperationIssueAsset*>(&::protocol::OperationIssueAsset::default_instance());
-  payment_ = const_cast< ::protocol::OperationPayment*>(&::protocol::OperationPayment::default_instance());
+  pay_asset_ = const_cast< ::protocol::OperationPayAsset*>(&::protocol::OperationPayAsset::default_instance());
   set_metadata_ = const_cast< ::protocol::OperationSetMetadata*>(&::protocol::OperationSetMetadata::default_instance());
   set_signer_weight_ = const_cast< ::protocol::OperationSetSignerWeight*>(&::protocol::OperationSetSignerWeight::default_instance());
   set_threshold_ = const_cast< ::protocol::OperationSetThreshold*>(&::protocol::OperationSetThreshold::default_instance());
@@ -7773,7 +7773,7 @@ void Operation::SharedCtor() {
   metadata_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   create_account_ = NULL;
   issue_asset_ = NULL;
-  payment_ = NULL;
+  pay_asset_ = NULL;
   set_metadata_ = NULL;
   set_signer_weight_ = NULL;
   set_threshold_ = NULL;
@@ -7792,7 +7792,7 @@ void Operation::SharedDtor() {
   if (this != default_instance_) {
     delete create_account_;
     delete issue_asset_;
-    delete payment_;
+    delete pay_asset_;
     delete set_metadata_;
     delete set_signer_weight_;
     delete set_threshold_;
@@ -7835,8 +7835,8 @@ void Operation::Clear() {
   create_account_ = NULL;
   if (GetArenaNoVirtual() == NULL && issue_asset_ != NULL) delete issue_asset_;
   issue_asset_ = NULL;
-  if (GetArenaNoVirtual() == NULL && payment_ != NULL) delete payment_;
-  payment_ = NULL;
+  if (GetArenaNoVirtual() == NULL && pay_asset_ != NULL) delete pay_asset_;
+  pay_asset_ = NULL;
   if (GetArenaNoVirtual() == NULL && set_metadata_ != NULL) delete set_metadata_;
   set_metadata_ = NULL;
   if (GetArenaNoVirtual() == NULL && set_signer_weight_ != NULL) delete set_signer_weight_;
@@ -7926,16 +7926,16 @@ bool Operation::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_payment;
+        if (input->ExpectTag(50)) goto parse_pay_asset;
         break;
       }
 
-      // optional .protocol.OperationPayment payment = 6;
+      // optional .protocol.OperationPayAsset pay_asset = 6;
       case 6: {
         if (tag == 50) {
-         parse_payment:
+         parse_pay_asset:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_payment()));
+               input, mutable_pay_asset()));
         } else {
           goto handle_unusual;
         }
@@ -8066,10 +8066,10 @@ void Operation::SerializeWithCachedSizes(
       5, *this->issue_asset_, output);
   }
 
-  // optional .protocol.OperationPayment payment = 6;
-  if (this->has_payment()) {
+  // optional .protocol.OperationPayAsset pay_asset = 6;
+  if (this->has_pay_asset()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, *this->payment_, output);
+      6, *this->pay_asset_, output);
   }
 
   // optional .protocol.OperationSetMetadata set_metadata = 7;
@@ -8146,11 +8146,11 @@ void Operation::SerializeWithCachedSizes(
         5, *this->issue_asset_, false, target);
   }
 
-  // optional .protocol.OperationPayment payment = 6;
-  if (this->has_payment()) {
+  // optional .protocol.OperationPayAsset pay_asset = 6;
+  if (this->has_pay_asset()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        6, *this->payment_, false, target);
+        6, *this->pay_asset_, false, target);
   }
 
   // optional .protocol.OperationSetMetadata set_metadata = 7;
@@ -8230,11 +8230,11 @@ int Operation::ByteSize() const {
         *this->issue_asset_);
   }
 
-  // optional .protocol.OperationPayment payment = 6;
-  if (this->has_payment()) {
+  // optional .protocol.OperationPayAsset pay_asset = 6;
+  if (this->has_pay_asset()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->payment_);
+        *this->pay_asset_);
   }
 
   // optional .protocol.OperationSetMetadata set_metadata = 7;
@@ -8317,8 +8317,8 @@ void Operation::MergeFrom(const Operation& from) {
   if (from.has_issue_asset()) {
     mutable_issue_asset()->::protocol::OperationIssueAsset::MergeFrom(from.issue_asset());
   }
-  if (from.has_payment()) {
-    mutable_payment()->::protocol::OperationPayment::MergeFrom(from.payment());
+  if (from.has_pay_asset()) {
+    mutable_pay_asset()->::protocol::OperationPayAsset::MergeFrom(from.pay_asset());
   }
   if (from.has_set_metadata()) {
     mutable_set_metadata()->::protocol::OperationSetMetadata::MergeFrom(from.set_metadata());
@@ -8366,7 +8366,7 @@ void Operation::InternalSwap(Operation* other) {
   metadata_.Swap(&other->metadata_);
   std::swap(create_account_, other->create_account_);
   std::swap(issue_asset_, other->issue_asset_);
-  std::swap(payment_, other->payment_);
+  std::swap(pay_asset_, other->pay_asset_);
   std::swap(set_metadata_, other->set_metadata_);
   std::swap(set_signer_weight_, other->set_signer_weight_);
   std::swap(set_threshold_, other->set_threshold_);
@@ -8565,42 +8565,42 @@ void Operation::set_allocated_issue_asset(::protocol::OperationIssueAsset* issue
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.issue_asset)
 }
 
-// optional .protocol.OperationPayment payment = 6;
-bool Operation::has_payment() const {
-  return !_is_default_instance_ && payment_ != NULL;
+// optional .protocol.OperationPayAsset pay_asset = 6;
+bool Operation::has_pay_asset() const {
+  return !_is_default_instance_ && pay_asset_ != NULL;
 }
-void Operation::clear_payment() {
-  if (GetArenaNoVirtual() == NULL && payment_ != NULL) delete payment_;
-  payment_ = NULL;
+void Operation::clear_pay_asset() {
+  if (GetArenaNoVirtual() == NULL && pay_asset_ != NULL) delete pay_asset_;
+  pay_asset_ = NULL;
 }
-const ::protocol::OperationPayment& Operation::payment() const {
-  // @@protoc_insertion_point(field_get:protocol.Operation.payment)
-  return payment_ != NULL ? *payment_ : *default_instance_->payment_;
+const ::protocol::OperationPayAsset& Operation::pay_asset() const {
+  // @@protoc_insertion_point(field_get:protocol.Operation.pay_asset)
+  return pay_asset_ != NULL ? *pay_asset_ : *default_instance_->pay_asset_;
 }
-::protocol::OperationPayment* Operation::mutable_payment() {
+::protocol::OperationPayAsset* Operation::mutable_pay_asset() {
   
-  if (payment_ == NULL) {
-    payment_ = new ::protocol::OperationPayment;
+  if (pay_asset_ == NULL) {
+    pay_asset_ = new ::protocol::OperationPayAsset;
   }
-  // @@protoc_insertion_point(field_mutable:protocol.Operation.payment)
-  return payment_;
+  // @@protoc_insertion_point(field_mutable:protocol.Operation.pay_asset)
+  return pay_asset_;
 }
-::protocol::OperationPayment* Operation::release_payment() {
-  // @@protoc_insertion_point(field_release:protocol.Operation.payment)
+::protocol::OperationPayAsset* Operation::release_pay_asset() {
+  // @@protoc_insertion_point(field_release:protocol.Operation.pay_asset)
   
-  ::protocol::OperationPayment* temp = payment_;
-  payment_ = NULL;
+  ::protocol::OperationPayAsset* temp = pay_asset_;
+  pay_asset_ = NULL;
   return temp;
 }
-void Operation::set_allocated_payment(::protocol::OperationPayment* payment) {
-  delete payment_;
-  payment_ = payment;
-  if (payment) {
+void Operation::set_allocated_pay_asset(::protocol::OperationPayAsset* pay_asset) {
+  delete pay_asset_;
+  pay_asset_ = pay_asset;
+  if (pay_asset) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.payment)
+  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.pay_asset)
 }
 
 // optional .protocol.OperationSetMetadata set_metadata = 7;

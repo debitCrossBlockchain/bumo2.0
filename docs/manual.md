@@ -64,7 +64,7 @@ make
 
 ### Windows
 - 安装 Visual Studio Ulimate 2013
-- 打开 bumochain\build\win32\Bumo.vs12.sln, 使用 VS 自带编译器编译即可。生成的可执行文件在bumo\build\win32\dbin 目录下。
+- 打开 buchain\build\win32\Bumo.vs12.sln, 使用 VS 自带编译器编译即可。生成的可执行文件在bumo\build\win32\dbin 目录下。
 - 首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库，进入 build目录，双击执行 install-build-deps-win32.bat 脚本。
 
 ## __部署__
@@ -76,7 +76,7 @@ cd bumo
 make install
 ```
 
-服务将安装在/usr/local/bumochain/目录下
+服务将安装在/usr/local/buchain/目录下
 
 ### __目录结构__
 
@@ -100,7 +100,7 @@ make install
 ```
 2、替换配置文件
 ```bash
-    cd /usr/local/bumochain/config/
+    cd /usr/local/buchain/config/
     #拷贝目标环境配置文件
     cp bumo-testnet.json bumo.json  
 
@@ -235,7 +235,7 @@ make install
 - 命令./bin/bumo --aes-crypto [参数]
 
 ```bash
-[root@localhost bumochain]# ./bin/bumo --aes-crypto root e2ba44bf0b27f0acbe7b5857e3bc6348
+[root@localhost buchain]# ./bin/bumo --aes-crypto root e2ba44bf0b27f0acbe7b5857e3bc6348
 ```
 - 需加密配置项 
 
@@ -307,12 +307,12 @@ make install
 ```
 ### 清空数据库
 ```bash
-bumochain/bin/bumo --dropdb
+buchain/bin/bumo --dropdb
 ```
 ### 创建硬分叉
 ```bash
-bumochain/bin/bumo --create-hardfork
-bumochain/bin/bumo --clear-consensus-status
+buchain/bin/bumo --create-hardfork
+buchain/bin/bumo --clear-consensus-status
 ```
 当已经加入其他区块链网络的节点想单独运行一条链时，可以执行以上命令创建硬分叉
 执行后，新的区块链网络只有一个验证节点为本节点。
@@ -339,4 +339,4 @@ Create hard fork ledger successful, seq(20), consensus value hash(**7aa332f05748
 - 启动节点服务即可生效
 
 ### 数据库存储
-BUMO 区块链存储的数据默认是存放在 bumochain/data 目录下，如有需要可修改配置文件中数据存储部分
+BUMO 区块链存储的数据默认是存放在 buchain/data 目录下，如有需要可修改配置文件中数据存储部分

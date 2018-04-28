@@ -178,10 +178,10 @@ namespace bumo {
 			tx->set_fee_limit(parameter_.fee_limit_);
 			tx->set_gas_price(parameter_.gas_price_);
 			protocol::Operation *ope = tx->add_operations();
-			ope->set_type(protocol::Operation_Type_PAYMENT);
-			protocol::OperationPayment *payment = ope->mutable_payment();
-			payment->set_dest_address(parameter_.contract_address_);
-			payment->set_input(parameter_.input_);
+			ope->set_type(protocol::Operation_Type_PAY_ASSET);
+			protocol::OperationPayAsset *payAsset = ope->mutable_pay_asset();
+			payAsset->set_dest_address(parameter_.contract_address_);
+			payAsset->set_input(parameter_.input_);
 
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(env);
 			//tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + utils::MICRO_UNITS_PER_SEC);
@@ -467,10 +467,10 @@ namespace bumo {
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else{
 				if (type == LedgerContext::AT_TEST_V8)
-					env_store.set_actual_fee(ptr->GetActualFee());
+					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
 				else if (LedgerContext::AT_TEST_TRANSACTION){
 					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
-					env_store.set_actual_fee(ptr->GetActualFee() + (signature_number*(64 + 76) + 20)*gas_price);//pub:64, sig:76
+					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76) + 20))*gas_price);//pub:64, sig:76
 
 					Json::Value jtx = Proto2Json(env_store);
 					jtx["gas"] = env_store.actual_fee() / gas_price;

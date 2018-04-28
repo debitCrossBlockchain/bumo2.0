@@ -145,7 +145,7 @@ function applyAsValidatorCandidate(){
         let comc = int64Compare(thisPayCoinAmount, minSuperadditionAmount);
         assert(comc === 1 || comc === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
-        let amountc = int64Plus(candidates[position][1], thisPayCoinAmount);
+        let amountc = int64Add(candidates[position][1], thisPayCoinAmount);
         candidates.splice(position, 1);
         let newCandidates = insertCandidatesSorted(sender, amountc, candidates);
         setMetaData(candidatesVar, newCandidates);
@@ -163,7 +163,7 @@ function applyAsValidatorCandidate(){
             assert(coms === 1 || coms === 0, 'Superaddtion coin amount must more than ' + minSuperadditionAmount);
 
             applicant = JSON.parse(applicantStr); 
-            let amountp = int64Plus(applicant[pledgeAmountVar], thisPayCoinAmount);
+            let amountp = int64Add(applicant[pledgeAmountVar], thisPayCoinAmount);
             applicant[pledgeAmountVar] = amountp;
        }
        else{
@@ -342,12 +342,12 @@ function voteAbolishValidator(malicious){
     let award   = int64Mod(forfeit, leftValidatorsCnt);
     let average = int64Div(forfeit, leftValidatorsCnt);
     if(award !== '0'){
-        candidates[0][1] = int64Plus(candidates[0][1], award);
+        candidates[0][1] = int64Add(candidates[0][1], award);
     }
 
     let i = 0;
     while(i < leftValidatorsCnt){
-        candidates[i][1] = int64Plus(candidates[i][1], average);
+        candidates[i][1] = int64Add(candidates[i][1], average);
         i += 1;
     }
 

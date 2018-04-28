@@ -47,6 +47,11 @@ namespace bumo {
 
 	bool MonitorManager::Initialize() {
 		MonitorConfigure& monitor_configure = Configure::Instance().monitor_configure_;
+		if (!monitor_configure.enabled_){
+			LOG_TRACE("monitor is unable");
+			return true;
+		}
+
 		monitor_id_ = monitor_configure.id_;
 
 		thread_ptr_ = new utils::Thread(this);
@@ -62,7 +67,9 @@ namespace bumo {
 
 	bool MonitorManager::Exit() {
 		Stop();
-		thread_ptr_->JoinWithStop();
+		if (thread_ptr_) {
+			thread_ptr_->JoinWithStop();
+		}
 		return true;
 	}
 
@@ -82,6 +89,12 @@ namespace bumo {
 
 	bool MonitorManager::SendMonitor(int64_t type, const std::string &data) {
 		bool bret = false;
+		MonitorConfigure& monitor_configure = Configure::Instance().monitor_configure_;
+		if (!monitor_configure.enabled_){
+			LOG_TRACE("monitor is unable");
+			return true;
+		}
+
 		do {
 			utils::MutexGuard guard(conns_list_lock_);
 			Monitor *monitor = (Monitor *)GetClientConnection();

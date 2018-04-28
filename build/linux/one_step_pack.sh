@@ -15,13 +15,12 @@ make clean_build
 if [ -n "$1" ];then
     if [ "$1" == "git" ];then
         echo "git fetch..."
-		#git fetch
-		git fetch --all;
-
-		#git reset 
-		git reset --hard origin/release/1.0.0.0
-		git pull
-        echo "$git fetch ok"
+		#git fetch --all;
+		#git reset --hard origin/release/1.0.0.0
+		#git reset --hard origin/develop
+        echo "$git fetch error...."
+		
+		exit
     fi
 fi
 
@@ -34,22 +33,23 @@ v=${version:7:7}
 #make 
 make bumo_version=$v
 
-cd bin/
-mkdir bumochain
-mkdir bumochain/config
-mkdir bumochain/data
-mkdir bumochain/jslib
-mkdir bumochain/bin
-mkdir bumochain/log
-mkdir bumochain/coredump
-cp ../build/win32/jslib/jslint.js bumochain/jslib/
-cp ../build/win32/config/bumo-publicnet.json bumochain/config/bumo.json
-cp bumo bumochain/bin/
-cp ../src/3rd/v8_target/linux/*.bin bumochain/bin/
-cp ../src/3rd/v8_target/linux/*.dat bumochain/bin/
+mkdir pack
+cd pack/
+mkdir bumo
+mkdir bumo/config
+mkdir bumo/data
+mkdir bumo/jslib
+mkdir bumo/bin
+mkdir bumo/log
+mkdir bumo/coredump
+cp ../build/win32/jslib/jslint.js bumo/jslib/
+cp ../build/win32/config/* bumo/config/
+cp ../bin/bumo buchain/bin/
+cp ../src/3rd/v8_target/linux/*.bin bumo/bin/
+cp ../src/3rd/v8_target/linux/*.dat bumo/bin/
 
-tar czvf bumochain-$DATE.tar.gz bumochain/
-rm bumochain/ -rf
+tar czvf bumo-$DATE.tar.gz bumo/
+rm bumo/ -rf
 
 echo "build ok...."
 

@@ -210,7 +210,8 @@ namespace bumo{
 		js_func_read_["contractQuery"] = V8Contract::CallBackContractQuery;
 		js_func_read_["getValidators"] = V8Contract::CallBackGetValidators;
 		js_func_read_[General::CHECK_TIME_FUNCTION] = V8Contract::InternalCheckTime;
-		js_func_read_["int64Plus"] = V8Contract::CallBackInt64Plus;
+		js_func_read_["stoI64Check"] = V8Contract::CallBackStoI64Check;
+		js_func_read_["int64Add"] = V8Contract::CallBackInt64Add;
 		js_func_read_["int64Sub"] = V8Contract::CallBackInt64Sub;
 		js_func_read_["int64Mul"] = V8Contract::CallBackInt64Mul;
 		js_func_read_["int64Mod"] = V8Contract::CallBackInt64Mod;
@@ -227,6 +228,8 @@ namespace bumo{
 		js_func_write_["configFee"] = V8Contract::CallBackConfigFee;
 		js_func_write_["setValidators"] = V8Contract::CallBackSetValidators;
 		js_func_write_["payCoin"] = V8Contract::CallBackPayCoin;
+		js_func_write_["issueAsset"] = V8Contract::CallBackIssueAsset;
+		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
 		js_func_write_["tlog"] = V8Contract::CallBackTopicLog;
 
 		LoadJsLibSource();
@@ -588,7 +591,7 @@ namespace bumo{
 
 	bool V8Contract::RemoveRandom(v8::Isolate* isolate, Json::Value &error_msg) {
 		v8::TryCatch try_catch(isolate);
-		std::string js_file = "delete String.prototype.localeCompare; delete Date; delete Math.random;";
+		std::string js_file = "delete String.prototype.localeCompare; delete Date; delete Math;";
 
 		v8::Local<v8::String> source = v8::String::NewFromUtf8(isolate, js_file.c_str());
 		v8::Local<v8::Script> script;
@@ -1064,7 +1067,7 @@ namespace bumo{
 			bumo::AccountFrm::pointer account_frm = nullptr;
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			ledger_context->GetBottomTx()->ContractStepInc(100);
+			ledger_context->GetBottomTx()->ContractStepInc(1000);
 
 			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
 			if (!environment->GetEntry(address, account_frm)) {
@@ -1219,10 +1222,7 @@ namespace bumo{
 			return;
 		} while (false);
 
-		LOG_ERROR("%s", error_desc.c_str());
-		args.GetIsolate()->ThrowException(
-			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
-			v8::NewStringType::kNormal).ToLocalChecked());
+		args.GetReturnValue().Set(false);
 	}
 
 	void V8Contract::CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args) {
@@ -1267,7 +1267,12 @@ namespace bumo{
 			std::string contractor = v8_contract->parameter_.this_address_;
 
 			std::string dest_address = std::string(ToCString(v8::String::Utf8Value(args[0])));
-			int64_t pay_amount = utils::String::Stoi64(ToCString(v8::String::Utf8Value(args[1])));
+			std::string arg_1 = std::string(ToCString(v8::String::Utf8Value(args[1])));
+			int64_t pay_amount = 0;
+			if (!utils::String::SafeStoi64(arg_1, pay_amount) || pay_amount < 0){
+				error_desc = utils::String::Format("Contract paycoin error, dest_address:%s, amount:%s.", dest_address.c_str(), arg_1.c_str());
+				break;
+			}
 
 			protocol::TransactionEnv txenv;
 			txenv.mutable_transaction()->set_source_address(contractor);
@@ -1282,6 +1287,165 @@ namespace bumo{
 			if (tmp_result.code() > 0) {
 				v8_contract->SetResult(tmp_result);
 				error_desc = utils::String::Format("Do transaction failed(%s)", tmp_result.desc().c_str());				
+				break;
+			}
+
+			args.GetReturnValue().Set(tmp_result.code() == 0);
+			return;
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	void V8Contract::CallBackIssueAsset(const v8::FunctionCallbackInfo<v8::Value>& args){
+		std::string error_desc;
+		do {
+			if (args.Length() < 2) {
+				error_desc = "Parameter number error";
+				args.GetReturnValue().Set(false);
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString()) {
+				error_desc = "Contract execute error, issueAsset parameter 0 should be a string";
+				break;
+			}
+
+			if (!args[1]->IsString()) {
+				error_desc = "Contract execute error, issueAsset parameter 1 should be a string";
+				break;
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				error_desc = "Can't find contract object by isolate id";
+				break;
+			}
+
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
+			if (v8_contract->IsReadonly()) {
+				error_desc = "The contract is readonly";
+				break;
+			}
+
+			std::string contractor = v8_contract->parameter_.this_address_;
+
+			std::string assetCode = std::string(ToCString(v8::String::Utf8Value(args[0])));
+			std::string amount = std::string(ToCString(v8::String::Utf8Value(args[1])));
+			int64_t issueAmount = 0;
+			if (!utils::String::SafeStoi64(amount, issueAmount) || issueAmount < 0){
+				error_desc = utils::String::Format("Contract issueAsset error, asset code:%s, asset amount:%s.", assetCode.c_str(), amount.c_str());
+				break;
+			}
+
+			protocol::TransactionEnv txenv;
+			txenv.mutable_transaction()->set_source_address(contractor);
+			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
+
+			ope->set_type(protocol::Operation_Type_ISSUE_ASSET);
+			ope->mutable_issue_asset()->set_code(assetCode);
+			ope->mutable_issue_asset()->set_amount(issueAmount);
+
+			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
+			if (tmp_result.code() > 0) {
+				v8_contract->SetResult(tmp_result);
+				error_desc = utils::String::Format("Do transaction failed(%s)", tmp_result.desc().c_str());
+				break;
+			}
+
+			args.GetReturnValue().Set(tmp_result.code() == 0);
+			return;
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	void V8Contract::CallBackPayAsset(const v8::FunctionCallbackInfo<v8::Value>& args){
+		std::string error_desc;
+		do {
+			if (args.Length() < 4) {
+				error_desc = "Parameter number error";
+				args.GetReturnValue().Set(false);
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString()) {
+				error_desc = "Contract execute error,payAsset parameter 0 should be a string";
+				break;
+			}
+
+			if (!args[1]->IsString()) {
+				error_desc = "Contract execute error,payAsset parameter 1 should be a string";
+				break;
+			}
+
+			if (!args[2]->IsString()) {
+				error_desc = "Contract execute error,payAsset parameter 2 should be a string";
+				break;
+			}
+
+			if (!args[3]->IsString()) {
+				error_desc = "Contract execute error,payAsset parameter 3 should be a string";
+				break;
+			}
+
+
+			std::string input;
+			if (args.Length() > 4) {
+				input = ToCString(v8::String::Utf8Value(args[4]));
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				error_desc = "Can't find contract object by isolate id";
+				break;
+			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
+			if (v8_contract->IsReadonly()) {
+				error_desc = "The contract is readonly";
+				break;
+			}
+
+			std::string contractor = v8_contract->parameter_.this_address_;
+
+			std::string dest_address = std::string(ToCString(v8::String::Utf8Value(args[0])));
+			std::string issuer    = std::string(ToCString(v8::String::Utf8Value(args[1])));
+			std::string assetCode = std::string(ToCString(v8::String::Utf8Value(args[2])));
+			std::string amount    = std::string(ToCString(v8::String::Utf8Value(args[3])));
+			int64_t pay_amount = 0;
+			if (!utils::String::SafeStoi64(amount, pay_amount) || pay_amount < 0){
+				error_desc = utils::String::Format("Contract payAsset error, dest_address:%s, amount:%s.", dest_address.c_str(), amount.c_str());
+				break;
+			}
+
+			protocol::TransactionEnv txenv;
+			txenv.mutable_transaction()->set_source_address(contractor);
+			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
+
+			ope->set_type(protocol::Operation_Type_PAY_ASSET);
+
+			ope->mutable_pay_asset()->set_dest_address(dest_address);
+			ope->mutable_pay_asset()->mutable_asset()->mutable_key()->set_issuer(issuer);
+			ope->mutable_pay_asset()->mutable_asset()->mutable_key()->set_code(assetCode);
+			ope->mutable_pay_asset()->mutable_asset()->set_amount(pay_amount);
+			ope->mutable_pay_asset()->set_input(input);
+
+			Result tmp_result = LedgerManager::Instance().DoTransaction(txenv, ledger_context);
+			if (tmp_result.code() > 0) {
+				v8_contract->SetResult(tmp_result);
+				error_desc = utils::String::Format("Do transaction failed(%s)", tmp_result.desc().c_str());
 				break;
 			}
 
@@ -1503,10 +1667,37 @@ namespace bumo{
 		args.GetReturnValue().Set(false);
 	}
 
-// 	//selfDestruct
+	//str to int64 check
+	void V8Contract::CallBackStoI64Check(const v8::FunctionCallbackInfo<v8::Value>& args){
+		std::string error_desc;
+		do {
+			if (args.Length() != 1) {
+				error_desc = "Parameter number error";
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+
+			if (!args[0]->IsString()) {
+				error_desc = "Contract execute error, int64Add, parameter 0 should be a String or Number";
+				break;
+			}
+
+			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
+
+			int64_t iarg0 = 0;
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, StoI64Check, parameter 0 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			args.GetReturnValue().Set(true);
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
 
 // 	//Int64 add
-	void V8Contract::CallBackInt64Plus(const v8::FunctionCallbackInfo<v8::Value>& args) {
+	void V8Contract::CallBackInt64Add(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		std::string error_desc;
 		do {
 			if (args.Length() != 2) {
@@ -1516,19 +1707,33 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				error_desc = "Contract execute error, int64Plus, parameter 0 should be a String or Number";
+				error_desc = "Contract execute error, int64Add, parameter 0 should be a String or Number";
 				break;
 			}
 			if (!args[1]->IsString() && !args[1]->IsNumber()) {
-				error_desc = "Contract execute error, int64Plus, parameter 1 should be a String or Number";
+				error_desc = "Contract execute error, int64Add, parameter 1 should be a String or Number";
 				break;
 			}
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
-			iarg0 += iarg1;
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Add, parameter 0 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Add, parameter 1 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::SafeIntAdd(iarg0, iarg1, iarg0)){
+				error_desc = "Contract execute error, int64Add, parameter 0 + parameter 1 overflowed";
+				break;
+			}
 
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
 				args.GetIsolate(), utils::String::ToString(iarg0).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
@@ -1561,9 +1766,23 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
-			iarg0 -= iarg1;
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Sub, parameter 0 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Sub, parameter 1 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::SafeIntSub(iarg0, iarg1, iarg0)){
+				error_desc = "Contract execute error, int64Sub, parameter 0 - parameter 1 overflowed";
+				break;
+			}
 
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
 				args.GetIsolate(), utils::String::ToString(iarg0).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
@@ -1596,8 +1815,19 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Compare, parameter 0 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Compare, parameter 1 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
 			int32_t compare1 = 0;
 			if (iarg0 > iarg1) compare1 = 1;
 			else if (iarg0 == iarg1) {
@@ -1635,10 +1865,21 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Div, parameter 0 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Div, parameter 1 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
 			if (iarg1 <= 0 || iarg0 < 0) {
-				error_desc = "Parameter arg < 0";
+				error_desc = "Parameter arg <= 0";
 				break;
 			}
 
@@ -1672,10 +1913,21 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Mod, parameter 0 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Mod, parameter 1 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
 			if (iarg1 <= 0 || iarg0 < 0) {
-				error_desc  ="Parameter arg < 0";
+				error_desc  ="Parameter arg <= 0";
 				break;
 			}
 
@@ -1710,11 +1962,26 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			std::string arg1 = ToCString(v8::String::Utf8Value(args[1]));
-			int64_t iarg0 = utils::String::Stoi64(arg0);
-			int64_t iarg1 = utils::String::Stoi64(arg1);
+			int64_t iarg0 = 0;
+			int64_t iarg1 = 0;
+
+			if (!utils::String::SafeStoi64(arg0, iarg0)){
+				error_desc = "Contract execute error, int64Mul, parameter 0 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::String::SafeStoi64(arg1, iarg1)){
+				error_desc = "Contract execute error, int64Mul, parameter 1 illegal, maybe exceed the limit value of int64.";
+				break;
+			}
+
+			if (!utils::SafeIntMul(iarg0, iarg1, iarg0)){
+				error_desc = "Contract execute error, int64Mul, parameter 0 * parameter 1 overflowed";
+				break;
+			}
 
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
-				args.GetIsolate(), utils::String::ToString(iarg0 * iarg1).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+				args.GetIsolate(), utils::String::ToString(iarg0).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 			return;
 		} while (false);
 		LOG_ERROR("%s", error_desc.c_str());
@@ -1724,29 +1991,40 @@ namespace bumo{
 	}
 
 	void V8Contract::CallBackToBaseUnit(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		std::string error_desc;
 		do {
 			if (args.Length() != 1) {
-				LOG_TRACE("parameter error");
+				error_desc = utils::String::Format("Parameter nums error:%d", args.Length());
 				break;
 			}
 			v8::HandleScope handle_scope(args.GetIsolate());
 
-			if (!args[0]->IsString() && !args[0]->IsNumber()) {
-				LOG_TRACE("contract execute error, toBaseUnit, parameter 0 should be a String or Number");
+			if (!args[0]->IsString()) {
+				error_desc = "contract execute error, toBaseUnit, parameter 0 should be a String";
 				break;
 			}
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			if (!utils::String::IsDecNumber(arg0, General::BU_DECIMALS)) {
-				LOG_TRACE("Not decimal number");
+				error_desc = utils::String::Format("Not decimal number:%s", arg0.c_str());
 				break;
 			} 
 
+			std::string multi_result = utils::String::MultiplyDecimal(arg0, General::BU_DECIMALS).c_str();
+			int64_t multi_i64 = 0;
+			if (!utils::String::SafeStoi64(multi_result, multi_i64)){
+				error_desc = utils::String::Format("CallBackToBaseUnit error, StoI64Check overload int64:%s", multi_result.c_str());
+				break;
+			}
+
 			args.GetReturnValue().Set(v8::String::NewFromUtf8(
-				args.GetIsolate(), utils::String::MultiplyDecimal(arg0, General::BU_DECIMALS).c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+				args.GetIsolate(), multi_result.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
 			return;
 		} while (false);
-		args.GetReturnValue().Set(false);
+		LOG_ERROR("To base unit error, %s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
 	QueryContract::QueryContract():contract_(NULL){}

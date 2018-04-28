@@ -128,6 +128,8 @@ function main(input)
     //Array
     let num_array = [1,2,3,4];
     log(num_array);
+
+    throw "this is a exception";
 }
 ```
 
@@ -154,6 +156,8 @@ function main(input)
 - 禁止使用 'new' 创建 'Number', 'String', 'Boolean'对象，可以使用其构造调用来获取对象
 
 - 禁止使用的数组关键字创建数组
+
+- 禁止使用 'try', 'catch' 关键字，可以使用 'throw' 手动抛出异常
 
 ```javascript
 "Array", "ArrayBuffer", "Float32Array", "Float64Array", 

@@ -23,7 +23,7 @@
     <ClCompile Include="..\..\src\glue\transaction_queue.cpp" />
     <ClCompile Include="..\..\src\ledger\contract_manager.cpp" />
     <ClCompile Include="..\..\src\ledger\environment.cpp" />
-    <ClCompile Include="..\..\src\ledger\fee_compulate.cpp" />
+    <ClCompile Include="..\..\src\ledger\fee_calculate.cpp" />
     <ClCompile Include="..\..\src\ledger\kv_trie.cpp" />
     <ClCompile Include="..\..\src\ledger\ledgercontext_manager.cpp" />
     <ClCompile Include="..\..\src\ledger\operation_frm.cpp" />
@@ -58,7 +58,7 @@
     <ClInclude Include="..\..\src\glue\transaction_set.h" />
     <ClInclude Include="..\..\src\ledger\contract_manager.h" />
     <ClInclude Include="..\..\src\ledger\environment.h" />
-    <ClInclude Include="..\..\src\ledger\fee_compulate.h" />
+    <ClInclude Include="..\..\src\ledger\fee_calculate.h" />
     <ClInclude Include="..\..\src\ledger\kv_trie.h" />
     <ClInclude Include="..\..\src\ledger\ledgercontext_manager.h" />
     <ClInclude Include="..\..\src\ledger\operation_frm.h" />

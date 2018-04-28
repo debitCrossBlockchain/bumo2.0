@@ -19,7 +19,7 @@
 #include <monitor/monitor_manager.h>
 #include "ledger_manager.h"
 #include "contract_manager.h"
-#include "fee_compulate.h"
+#include "fee_calculate.h"
 
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
@@ -661,10 +661,17 @@ namespace bumo {
 			apply_tx_msg.set_error_code(tx->GetResult().code());
 			apply_tx_msg.set_error_desc(tx->GetResult().desc());
 			apply_tx_msg.set_hash(tx->GetContentHash());
-			if (tx->GetResult().code() != 0)
+			if (tx->GetResult().code() != 0){
 				apply_tx_msg.set_actual_fee(tx->GetFeeLimit());
-			else
-				apply_tx_msg.set_actual_fee(tx->GetActualFee());
+			}
+			else {
+				int64_t actual_fee=0;
+				if (!utils::SafeIntMul(tx->GetActualGas(), tx->GetGasPrice(), actual_fee)){
+					LOG_ERROR("Gas and price math over flow, never go here");
+				}
+				apply_tx_msg.set_actual_fee(actual_fee);
+			}
+				
 			WebSocketServer::Instance().BroadcastChainTxMsg(apply_tx_msg);
 
 			if (tx->GetResult().code() == protocol::ERRCODE_SUCCESS)
@@ -711,12 +718,12 @@ namespace bumo {
 			}
 
 			if (message.end() - message.begin() < 0) {
-				LOG_ERROR("begin is bigger than end [" FMT_I64 "," FMT_I64 "]", message.begin(), message.end());
+				LOG_ERROR("Begin is greater than end [" FMT_I64 "," FMT_I64 "]", message.begin(), message.end());
 				return;
 			}
 
 			if (last_closed_ledger_->GetProtoHeader().seq() < message.end()) {
-				LOG_INFO("peer(" FMT_I64 ") request [" FMT_I64 "," FMT_I64 "] while the max consensus_value is (" FMT_I64 ")",
+				LOG_INFO("Peer(" FMT_I64 ") request [" FMT_I64 "," FMT_I64 "] while the max consensus_value is (" FMT_I64 ")",
 					peer_id, message.begin(), message.end(), last_closed_ledger_->GetProtoHeader().seq());
 				return;
 			}
@@ -855,14 +862,16 @@ namespace bumo {
 		auto header = std::make_shared<protocol::LedgerHeader>(ledger_context->closing_ledger_->GetProtoHeader());
 
 		TransactionFrm::pointer txfrm = std::make_shared<bumo::TransactionFrm >(env);
-
+		TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 		do {
+			
+
 			if (ledger_context->transaction_stack_.size() > General::CONTRACT_MAX_RECURSIVE_DEPTH) {
 				txfrm->result_.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_RECURSION);
 				txfrm->result_.set_desc("Too many recursion ");
 				//add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-				bottom_tx->AddActualFee(txfrm->GetSelfByteFee());
+				bottom_tx->AddActualGas(txfrm->GetSelfGas());
 				break;
 			}
 
@@ -883,10 +892,8 @@ namespace bumo {
 			ledger_context->transaction_stack_.push_back(txfrm);
 			txfrm->SetMaxEndTime(back->GetMaxEndTime());
 			txfrm->NonceIncrease(ledger_context->closing_ledger_.get(), back->environment_);
-			int64_t total_op_fee = 0;
-			if (txfrm->ValidForParameter(total_op_fee)) {
-				if (back->environment_->useAtomMap_)
-				{
+			if (txfrm->ValidForParameter(true)) {
+				if (back->environment_->useAtomMap_){
 					std::shared_ptr<Environment> cacheEnv = back->environment_->NewStackFrameEnv();
 					txfrm->Apply(ledger_context->closing_ledger_.get(), cacheEnv, true);
 				}
@@ -894,16 +901,9 @@ namespace bumo {
 					txfrm->Apply(ledger_context->closing_ledger_.get(), back->environment_, true);
 			}
 			else {
-				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
-				bottom_tx->AddActualFee(txfrm->GetSelfByteFee());
-				if (bottom_tx->GetActualFee() > bottom_tx->GetFeeLimit()) {
-					txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-					txfrm->result_.set_desc(utils::String::Format("Transaction(%s) fee limit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 ") ,transaction(%s) self byte fee(" FMT_I64 ")",
-						utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualFee(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfByteFee()));
-				}
+				TransactionFrm::AddActualFee(bottom_tx, txfrm.get());
 			}
 
-			TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 			//throw the contract
 			if (txfrm->GetResult().code() == protocol::ERRCODE_FEE_NOT_ENOUGH ||
 				txfrm->GetResult().code() == protocol::ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS) {
@@ -933,10 +933,7 @@ namespace bumo {
 			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
 			tx_store.set_error_desc(txfrm->GetResult().desc());
-			if (txfrm->GetResult().code() != 0)
-				tx_store.set_actual_fee(txfrm->GetFeeLimit());
-			else
-				tx_store.set_actual_fee(txfrm->GetActualFee());
+				
 			back->instructions_.push_back(tx_store);
 			ledger_context->transaction_stack_.pop_back();
 
@@ -948,10 +945,7 @@ namespace bumo {
 		protocol::TransactionEnvStore tx_store;
 		tx_store.set_error_code(txfrm->GetResult().code());
 		tx_store.set_error_desc(txfrm->GetResult().desc());
-		if (txfrm->GetResult().code() != 0)
-			tx_store.set_actual_fee(txfrm->GetFeeLimit());
-		else
-			tx_store.set_actual_fee(txfrm->GetActualFee());
+			
 		tx_store.mutable_transaction_env()->CopyFrom(txfrm->GetProtoTxEnv());
 		auto trigger = tx_store.mutable_transaction_env()->mutable_trigger();
 		trigger->mutable_transaction()->set_hash(back->GetContentHash());
