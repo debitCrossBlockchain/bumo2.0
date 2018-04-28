@@ -37,4 +37,4 @@ BUMO 区块链底层技术已经商用于数字资产平台一年多，目前（
 参见[BUMO区块链开发文档](docs/develop.md "") 
 
 ## __License__
-bubichain is under the GPLv3 license.
+Bumo blockchain is under the GPLv3 license.
