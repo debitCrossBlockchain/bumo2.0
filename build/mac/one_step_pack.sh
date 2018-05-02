@@ -26,8 +26,9 @@ v=${version:7:7}
 
 #make 
 make bumo_version=$v
-mkdir pack
+mkdir -p pack
 cd pack/
+rm -rf buchain/ 
 mkdir buchain
 mkdir buchain/config
 mkdir buchain/data
@@ -41,7 +42,7 @@ cp ../bin/bumo buchain/bin/
 cp ../src/3rd/v8_target/mac/*.bin buchain/bin/
 cp ../src/3rd/v8_target/mac/*.dat buchain/bin/
 
-tar czvf bumo-$DATE.tar.gz bumo/
+tar czvf buchain-$DATE.tar.gz buchain/
 rm -rf buchain/ 
 
 echo "build ok...."

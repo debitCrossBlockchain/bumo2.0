@@ -33,23 +33,26 @@ v=${version:7:7}
 #make 
 make bumo_version=$v
 
-mkdir pack
+mkdir -p pack
 cd pack/
-mkdir bumo
-mkdir bumo/config
-mkdir bumo/data
-mkdir bumo/jslib
-mkdir bumo/bin
-mkdir bumo/log
-mkdir bumo/coredump
-cp ../build/win32/jslib/jslint.js bumo/jslib/
-cp ../build/win32/config/* bumo/config/
-cp ../bin/bumo buchain/bin/
-cp ../src/3rd/v8_target/linux/*.bin bumo/bin/
-cp ../src/3rd/v8_target/linux/*.dat bumo/bin/
+rm buchain/ -rf
 
-tar czvf bumo-$DATE.tar.gz bumo/
-rm bumo/ -rf
+
+mkdir buchain
+mkdir buchain/config
+mkdir buchain/data
+mkdir buchain/jslib
+mkdir buchain/bin
+mkdir buchain/log
+mkdir buchain/coredump
+cp ../build/win32/jslib/jslint.js buchain/jslib/
+cp ../build/win32/config/* buchain/config/
+cp ../bin/bumo buchain/bin/
+cp ../src/3rd/v8_target/linux/*.bin buchain/bin/
+cp ../src/3rd/v8_target/linux/*.dat buchain/bin/
+
+tar czvf buchain-$DATE.tar.gz buchain/
+rm buchain/ -rf
 
 echo "build ok...."
 
