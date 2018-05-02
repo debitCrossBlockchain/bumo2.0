@@ -1183,7 +1183,7 @@ POST /getTransactionBlob
 |pay_asset.asset.key.issuer|  资产发行方
 |pay_asset.asset.key.code|  资产代码
 |pay_asset.asset.amount|  要转移的数量
-|pay_asset.input|  触发合约调用的入参
+|pay_asset.input|  触发合约调用的入参，如果用户未输入，默认为空字符串
 
 - 功能
   操作源账号将一笔资产转给目标账号
@@ -1377,7 +1377,7 @@ POST /getTransactionBlob
 |:--- | --- 
 |pay_coin.dest_address |  目标账户
 |pay_coin.amount|  要转移的数量
-|pay_coin.input|  触发合约调用的入参
+|pay_coin.input|  触发合约调用的入参，如果用户未输入，默认为空字符串
 
 - 功能
   操作源账号将一笔资产转给目标账号
@@ -1789,7 +1789,7 @@ function query(input)
      - issuer: 资产发行方
      - code: 资产代码
      - amount: 转移资产的数量
-     - input: 可选，合约参数
+     - input: 可选，合约参数，如果用户未填入，默认为空字符串
 
     例如
     ```javascript
@@ -1802,7 +1802,7 @@ function query(input)
     `payCoin(address, amount[, input]);`
      - address: 发送BU的目标地址
      - amount: 发送BU的数量
-     - input: 可选，合约参数
+     - input: 可选，合约参数，如果用户未填入，默认为空字符串
 
     例如
     ```javascript
