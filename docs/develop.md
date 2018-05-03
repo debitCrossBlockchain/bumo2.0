@@ -782,28 +782,31 @@ POST /getTransactionBlob
 }
 ```
 ### 调试合约
+在智能合约模块的设计中，我们提供了沙箱环境来进行调试合约，且调试过程中不会更改区块链和合约的状态。在 BUMO 链上，我们为用户提供了 callContract 接口来帮助用户来调试智能合约，智能合约可以是公链上已存的，也可以是通过参数上传本地的合约代码进行测试，使用 callContract 接口不会发送交易，也就无需支付上链手续费。
+
 ```text
-   POST /testContract
+   POST /callContract
 ```
 - post内容如下
 ```http
 {
+  "contract_address" : "",
   "code" : "\"use strict\";log(undefined);function query() { return 1; }",
   "input" : "{}",
   "contract_balance" : "100009000000",
   "fee_limit" : 100000000000000000,
   "gas_price": 1000,
-  "exe_or_query" : false,
+  "opt_type" : 2,
   "source_address" : ""
 }
 ```
-  - contract_address: 调用的智能合约地址，如果从数据库查询不到则返回错误。
-  - code：需要调试的合约代码，如果 contract_address 为空，则使用code 字段，如果code字段你也为空，则返回错误。
+  - contract_address: 调用的智能合约地址，如果从数据库查询不到则返回错误。如果填空，则默认读取 code 字段的内容
+  - code：需要调试的合约代码，如果 contract_address 为空，则使用 code 字段，如果code字段你也为空，则返回错误。
   - input： 给被调用的合约传参。
   - fee_limit : 手续费。
   - gas_price : Gas价格。
   - contract_balance : 赋予合约的初始 BU 余额。
-  - exe_or_query: true :准备调用合约的读写接口main，false :调用只读接口query。
+  - opt_type: 0: 调用合约的读写接口 init, 1: 调用合约的读写接口 main, 2 :调用只读接口 query。
   - source_address：模拟调用合约的原地址。
 
   - 返回值如下：
@@ -2076,7 +2079,7 @@ function query(input)
 
 #### 查询功能
 
-用户通过向查询接口（即 query 接口）提供指定参数，可以查看相关信息, 调用查询接口当前只能通过 testContract, contract_address 字段填入验证者候选节点选举账户地址。
+用户通过向查询接口（即 query 接口）提供指定参数，可以查看相关信息, 调用查询接口当前只能通过 callContract, contract_address 字段填入验证者候选节点选举账户地址。
 
 ##### 查询当前验证节点集合
 
@@ -2087,7 +2090,7 @@ function query(input)
     "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "code" : "",
     "input" : "{\"method\": \"getValidators\"}",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : ""
   }
 ```
@@ -2101,7 +2104,7 @@ function query(input)
     "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "code" : "",
     "input" : "{\"method\": \"getCandidates\"}",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : ""
   }
 ```
@@ -2123,7 +2126,7 @@ input 中的 address 字段填入申请者地址。
          \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
     }",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : ""
   }
 ```
@@ -2145,7 +2148,7 @@ input 中的 address 字段填入指定的恶意节点地址。
          \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
     }",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : ""
   }
 ```
@@ -2213,7 +2216,7 @@ GET /getLedger?seq=xxxx&with_fee=true
 
 #### 查询费用提案
 
-通过发送接口testContract接口查询。合约入参input参数json格式
+通过发送接口 callContract 接口查询。合约入参input参数json格式
 
 ```json
 {
@@ -2222,21 +2225,21 @@ GET /getLedger?seq=xxxx&with_fee=true
 }
 ```
 
-json格式需转换成字符串形式填写到testContract接口结构
+json格式需转换成字符串形式填写到 callContract 接口结构
 
 ```json
 {
     "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
     "input" : "{\"method\":\"queryProposal\",\"params\":\"\"}",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : "",
     "fee_limit":100000,
     "gas_price":1000
 }
 ```
 
-contract_address赋值为区块上的费用选举合约地址，exe_or_query 为false代表查询
+contract_address赋值为区块上的费用选举合约地址，opt_type 为 2 代表调用查询接口
 
 
 - 如果查询到则返回内容:
@@ -2272,7 +2275,7 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 #### 查询投票
 
-通过发送接口testContract接口查询，可根据提案id进行查询单项。合约入参input参数json格式
+通过发送接口 callContract 接口查询，可根据提案id进行查询单项。合约入参input参数json格式
 
 ```json
 {
@@ -2283,21 +2286,21 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 }
 ```
 
-json格式需转换成字符串形式填写到testContract接口结构
+json格式需转换成字符串形式填写到 callContract 接口结构
 
 ```json
 {
     "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
     "input" :"{\"method\":\"queryVote\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : "",
     "fee_limit":100000,
     "gas_price":1000
 }
 ```
 
-contract_address赋值为区块上的费用选举合约地址，exe_or_query 为false代表查询
+contract_address赋值为区块上的费用选举合约地址，opt_type 为 2 代表调用查询接口
 
 
 - 如果查询到则返回内容:
