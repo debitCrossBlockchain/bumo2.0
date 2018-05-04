@@ -123,7 +123,6 @@ namespace bumo{
 
 	class V8Contract : public Contract {
 		v8::Isolate* isolate_;
-		v8::Global<v8::Context> g_context_;
 	public:
 		V8Contract(bool readonly, const ContractParameter &parameter);
 		virtual ~V8Contract();

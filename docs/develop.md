@@ -1502,6 +1502,7 @@ function query(input)
 ```
 
 系统提供了几个全局函数, 这些函数可以获取区块链的一些信息，也可驱动账号发起所有交易，除了设置门限和权重这两种类型的操作。
+
 **注意，自定义的函数和变量不要与内置变量和全局函数重名，否则会造成不可控的数据错误。**
 
 #### 语法说明
@@ -1509,32 +1510,47 @@ function query(input)
 参考文档：[智能合约语法说明](../src/web/jslint/ContractRules.md)
 
 #### 内置函数
+- ##### 函数读写权限
+    每个函数都有固定的**只读**或者**可写**权限
+
+    只读权限是指**不会写数据到区块链**的接口函数，比如获取余额 `getBalance`
+
+    可写权限是指**会写数据到区块链**的接口函数，比如转账 `payCoin`
+
+    在编写智能合约的时候，需要注意的是不同的入口函数拥有不同的调用权限
+
+    `init` 和 `main` 能调用所有的内置函数
+
+    `query`  只能调用只读权限的函数，否则在调试或者执行过程中会提示接口未定义
+  
 
 - ##### 返回值介绍
-   所有内部函数的调用，如果失败则 返回 false ，成功则为其他对象。
+   所有内部函数的调用，如果失败则返回 false 或者直接抛出异常执行终止，成功则为其他对象。
 
 - ##### 获取账号信息(不包含metada和资产)
 
     `getBalance(address);`
-     address: 账号地址
+    - address: 账号地址
 
     例如
     ```javascript
     let balance = getBalance('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
-    balance 具有如下格式
-     '9999111100000'
+      权限：只读
+      返回：字符串格式数字 '9999111100000'
     */
     ```
 
 - ##### 存储合约账号的metadata信息
   `storageStore(metadata_key, metadata_value);`
-  - metadata_key: metadata的key
+  - metadata_key: metadata 的 key
+  - metadata_key: metadata 的 value
+
   ```javascript
   storageStore('abc', 'values');
   /*
-    参数字符串格式
-    执行成功或者失败抛异常
+    权限：可写
+    返回：成功返回true, 失败抛异常
   */
 
   ```
@@ -1545,9 +1561,8 @@ function query(input)
   ```javascript
   let value = storageLoad('abc');
   /*
-    value 的值是如下的格式
-    'values'
-    失败返回false
+    权限：只读
+    返回：成功返回字符串，如 'values', 失败返回 false
   */
 
   ```
@@ -1559,8 +1574,8 @@ function query(input)
   ```javascript
   storageDel('abc');
   /*
-    参数字符串格式
-    执行成功或者失败抛异常
+    权限：可写
+    返回：成功返回 true, 失败抛异常
   */
 
   ```
@@ -1583,9 +1598,8 @@ function query(input)
     let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_key);
 
     /*
-     1
-
-    失败返回false
+      权限：只读
+      返回：成功返回资产数字如 '10000'，失败返回 false
     */
     ```
 
@@ -1598,8 +1612,8 @@ function query(input)
     ```javascript
     let ledger = getBlockHash(4);
     /*
-    'c2f6892eb934d56076a49f8b01aeb3f635df3d51aaed04ca521da3494451afb3'
-    失败返回false
+      权限：只读
+      返回：成功返回字符串， 如 'c2f6892eb934d56076a49f8b01aeb3f635df3d51aaed04ca521da3494451afb3'，失败返回 false
     */
 
     ```
@@ -1607,14 +1621,14 @@ function query(input)
 - ##### 地址合法性检查
 
     `addressCheck(address);`
-    -address 地址参数
+    - address 地址参数，字符串
 
     例如
     ```javascript
     let ret = addressCheck('buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf');
     /*
-    成功：true
-    失败：false
+      权限：只读
+      返回：成功返回 true，失败返回 false
     */
 
     ```
@@ -1628,8 +1642,8 @@ function query(input)
     ```javascript
     let ret = stoI64Check('12345678912345');
     /*
-    成功：true
-    失败：false
+      权限：只读
+      返回：成功返回 true，失败返回 false
     */
 
     ```
@@ -1644,8 +1658,8 @@ function query(input)
     ```javascript
     let ret = int64Add('12345678912345', 1);
     /*
-    成功：'12345678912346'
-    失败：抛异常
+      权限：只读
+      返回：成功返回字符串 '12345678912346', 失败抛异常
     */
 
     ```
@@ -1660,8 +1674,8 @@ function query(input)
     ```javascript
     let ret = int64Sub('12345678912345', 1);
     /*
-    成功：'123456789123464'
-    失败：抛异常
+      权限：只读
+      返回：成功返回字符串 '123456789123464'，失败抛异常
     */
 
     ```
@@ -1676,8 +1690,8 @@ function query(input)
     ```javascript
     let ret = int64Mul('12345678912345', 2);
     /*
-    成功：'24691357824690'
-    失败：抛异常
+      权限：只读
+      返回：成功返回字符串 '24691357824690'，失败抛异常
     */
 
     ```
@@ -1692,8 +1706,8 @@ function query(input)
     ```javascript
     let ret = int64Div('12345678912345', 2);
     /*
-    成功：'6172839456172'
-    失败：抛异常
+      权限：只读
+      返回：成功返回 '6172839456172'，失败抛异常
     */
 
     ```
@@ -1708,8 +1722,8 @@ function query(input)
     ```javascript
     let ret = int64Mod('12345678912345', 2);
     /*
-    成功：'1'
-    失败：抛异常
+      权限：只读
+      返回：成功返回字符串 '1'，失败抛异常
     */
 
     ```
@@ -1725,8 +1739,8 @@ function query(input)
     ```javascript
     let ret = int64Compare('12345678912345', 2);
     /*
-    成功：1
-    失败：抛异常
+      权限：只读
+      返回：成功返回数字 1（左值大于右值），失败抛异常
     */
 
     ```
@@ -1741,7 +1755,8 @@ function query(input)
     ```javascript
     let ret = toBaseUnit('12345678912');
     /*
-    '1234567891200000000'
+      权限：只读
+      返回：成功返回字符串 '1234567891200000000'，失败抛异常
     */
 
     ```
@@ -1755,7 +1770,8 @@ function query(input)
     ```javascript
     let ret = log('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
-     成功不返回,失败返回false
+      权限：只读
+      返回：成功无返回值，失败返回 false
     */
     ```
 - #### 输出交易日志
@@ -1769,7 +1785,8 @@ function query(input)
     ```javascript
     tlog('transfer',sender +' transfer 1000',true);
     /*
-     成功不返回,失败抛异常
+      权限：可写
+      返回：成功返回 true，失败抛异常
     */
     ```
 
@@ -1782,7 +1799,10 @@ function query(input)
     例如
     ```javascript
     issueAsset("CNY", "10000");
-    /*失败抛异常*/
+    /*
+      权限：可写
+      返回：成功返回 true，失败抛异常  
+    */
     ```
 
 - ##### 转移资产
@@ -1797,7 +1817,10 @@ function query(input)
     例如
     ```javascript
     payAsset("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf", "CNY", "10000", "{}");
-    /*失败抛异常*/
+    /*
+      权限：可写
+      返回：成功返回 true，失败抛异常    
+    */
     ```
 
 - ##### 转账
@@ -1810,7 +1833,10 @@ function query(input)
     例如
     ```javascript
     payCoin("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "10000", "{}");
-    /*失败抛异常*/
+    /*
+      权限：可写
+      返回：成功返回 true，失败抛异常  
+    */
     ```
 
 - ##### 断言
@@ -1822,7 +1848,10 @@ function query(input)
     例如
     ```javascript
     assert(1===1, "Not valid");
-    /*失败抛异常*/
+    /*
+      权限：只读
+      返回：成功返回 true，失败抛异常  
+    */
     ```
 
 #### 内置变量
