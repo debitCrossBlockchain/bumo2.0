@@ -1916,7 +1916,7 @@ function query(input)
    let validatorSetSize       = 100;
    let votePassRate           = 0.7;
    let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
-   let minPledgeAmount        = 100 * 100000000;
+   let minPledgeAmount        = 50000 * 100000000;
    let minSuperadditionAmount = 100 * 100000000;
 ```
  
