@@ -105,7 +105,7 @@ namespace bumo {
 		server_ptr_->addRoute("submitTransaction", std::bind(&WebServer::SubmitTransaction, this, std::placeholders::_1, std::placeholders::_2));
 		//server_ptr_->addRoute("confValidator", std::bind(&WebServer::ConfValidator, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("contractQuery", std::bind(&WebServer::ContractQuery, this, std::placeholders::_1, std::placeholders::_2));
-		server_ptr_->addRoute("testContract", std::bind(&WebServer::TestContract, this, std::placeholders::_1, std::placeholders::_2));
+		server_ptr_->addRoute("testContract", std::bind(&WebServer::CallContract, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("testTransaction", std::bind(&WebServer::TestTransaction, this, std::placeholders::_1, std::placeholders::_2));
 
 		server_ptr_->Run();
