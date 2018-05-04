@@ -2409,7 +2409,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 21                | ERRCODE_EXPR_CONDITION_SYNTAX_ERROR    | 指表达式语法分析错误，代表该 TX 一定会失败                                                   |
 | 90                | ERRCODE_INVALID_PUBKEY                 | 公钥非法                                                                                     |
 | 91                | ERRCODE_INVALID_PRIKEY                 | 私钥非法                                                                                     |
-| 92                | ERRCODE_ASSET_INVALID                  | 资产issue 地址非法                                                                           |  |  |
+| 92                | ERRCODE_ASSET_INVALID                  | 无效的资产                                                                           |  |  |
 | 93                | ERRCODE_INVALID_SIGNATURE              | 签名权重不够，达不到操作的门限值                                                             |
 | 94                | ERRCODE_INVALID_ADDRESS                | 地址非法                                                                                     |
 | 97                | ERRCODE_MISSING_OPERATIONS             | 交易缺失操作                                                                                 |
