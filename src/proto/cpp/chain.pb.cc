@@ -894,8 +894,8 @@ void protobuf_AddDesc_chain_2eproto() {
     "\001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024OperationSetM"
     "etadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007v"
     "ersion\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Lim"
-    "it\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB#\n!org.bu"
-    "mo.sdk.core.extend.protobufb\006proto3", 4115);
+    "it\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\"\n io.bum"
+    "o.sdk.core.extend.protobufb\006proto3", 4114);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
