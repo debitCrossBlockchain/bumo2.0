@@ -138,7 +138,7 @@ message Operation {
 
 message OperationSetThreshold{
 	    int64 tx_threshold = 1;
-	    repeated OperationTypeThreshold type_thresholds = 4; //type:threshold ，threshold:0 表示删除这个类型的type
+	    repeated OperationTypeThreshold type_thresholds = 2; //type:threshold ，threshold:0 表示删除这个类型的type
 }
 
 message Transaction {

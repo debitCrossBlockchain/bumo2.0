@@ -850,7 +850,7 @@ void protobuf_AddDesc_chain_2eproto() {
     "DATA\020\004\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\rSET_THR"
     "ESHOLD\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\"h\n\025Opera"
     "tionSetThreshold\022\024\n\014tx_threshold\030\001 \001(\003\0229"
-    "\n\017type_thresholds\030\004 \003(\0132 .protocol.Opera"
+    "\n\017type_thresholds\030\002 \003(\0132 .protocol.Opera"
     "tionTypeThreshold\"\325\001\n\013Transaction\022\026\n\016sou"
     "rce_address\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_"
     "limit\030\003 \001(\003\022\021\n\tgas_price\030\004 \001(\003\022\027\n\017ceil_l"
@@ -8887,13 +8887,13 @@ bool OperationSetThreshold::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_type_thresholds;
+        if (input->ExpectTag(18)) goto parse_type_thresholds;
         break;
       }
 
-      // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
-      case 4: {
-        if (tag == 34) {
+      // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
+      case 2: {
+        if (tag == 18) {
          parse_type_thresholds:
           DO_(input->IncrementRecursionDepth());
          parse_loop_type_thresholds:
@@ -8902,7 +8902,7 @@ bool OperationSetThreshold::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_loop_type_thresholds;
+        if (input->ExpectTag(18)) goto parse_loop_type_thresholds;
         input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
@@ -8937,10 +8937,10 @@ void OperationSetThreshold::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->tx_threshold(), output);
   }
 
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+  // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
   for (unsigned int i = 0, n = this->type_thresholds_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, this->type_thresholds(i), output);
+      2, this->type_thresholds(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.OperationSetThreshold)
@@ -8954,11 +8954,11 @@ void OperationSetThreshold::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->tx_threshold(), target);
   }
 
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+  // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
   for (unsigned int i = 0, n = this->type_thresholds_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        4, this->type_thresholds(i), false, target);
+        2, this->type_thresholds(i), false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationSetThreshold)
@@ -8976,7 +8976,7 @@ int OperationSetThreshold::ByteSize() const {
         this->tx_threshold());
   }
 
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+  // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
   total_size += 1 * this->type_thresholds_size();
   for (int i = 0; i < this->type_thresholds_size(); i++) {
     total_size +=
@@ -9073,7 +9073,7 @@ void OperationSetThreshold::clear_tx_threshold() {
   // @@protoc_insertion_point(field_set:protocol.OperationSetThreshold.tx_threshold)
 }
 
-// repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+// repeated .protocol.OperationTypeThreshold type_thresholds = 2;
 int OperationSetThreshold::type_thresholds_size() const {
   return type_thresholds_.size();
 }
