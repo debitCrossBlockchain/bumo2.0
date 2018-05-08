@@ -848,7 +848,7 @@ POST /getTransactionBlob
 {
   "items": [
     {
-      "transaction_blob": {
+      "transaction_json": {
         "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB",
         "metadata":"0123456789abcdef", //可选
         "nonce": 6,
