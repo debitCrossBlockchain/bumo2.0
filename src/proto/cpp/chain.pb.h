@@ -2136,10 +2136,10 @@ class OperationSetThreshold : public ::google::protobuf::Message /* @@protoc_ins
   ::google::protobuf::int64 tx_threshold() const;
   void set_tx_threshold(::google::protobuf::int64 value);
 
-  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+  // repeated .protocol.OperationTypeThreshold type_thresholds = 2;
   int type_thresholds_size() const;
   void clear_type_thresholds();
-  static const int kTypeThresholdsFieldNumber = 4;
+  static const int kTypeThresholdsFieldNumber = 2;
   const ::protocol::OperationTypeThreshold& type_thresholds(int index) const;
   ::protocol::OperationTypeThreshold* mutable_type_thresholds(int index);
   ::protocol::OperationTypeThreshold* add_type_thresholds();
@@ -5706,7 +5706,7 @@ inline void OperationSetThreshold::set_tx_threshold(::google::protobuf::int64 va
   // @@protoc_insertion_point(field_set:protocol.OperationSetThreshold.tx_threshold)
 }
 
-// repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+// repeated .protocol.OperationTypeThreshold type_thresholds = 2;
 inline int OperationSetThreshold::type_thresholds_size() const {
   return type_thresholds_.size();
 }
