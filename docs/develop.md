@@ -31,6 +31,7 @@
             - [设置权重](#设置权重)
             - [设置门限](#设置门限)
             - [转移BU资产](#转移BU资产)
+            - [记录日志](#记录日志)
     - [高级功能](#高级功能)
         - [控制权的分配](#控制权的分配)
         - [版本化控制](#版本化控制)
@@ -221,7 +222,7 @@ HTTP GET /getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3&key=hello&code
         "tx_threshold" : 1
       }
     },
-    "storage_hash" : "82c8407cc7cd77897be3100c47ed9d43ec4097ee1c00e2c13447187e5b1ac66c"
+    "metadatas_hash" : "82c8407cc7cd77897be3100c47ed9d43ec4097ee1c00e2c13447187e5b1ac66c"
   }
 }
 
@@ -265,7 +266,7 @@ HTTP GET /getAccountBase?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
         "tx_threshold" : 1
       }
     },
-    "storage_hash" : "82c8407cc7cd77897be3100c47ed9d43ec4097ee1c00e2c13447187e5b1ac66c"
+    "metadatas_hash" : "82c8407cc7cd77897be3100c47ed9d43ec4097ee1c00e2c13447187e5b1ac66c"
   }
 }
 
@@ -832,6 +833,7 @@ POST /getTransactionBlob
       "stat" : {
          "apply_time" : 6315,
          "memory_usage" : 886176,
+         "stack_usage": 2564,
          "step" : 3
       },
       "txs" : null
@@ -984,6 +986,7 @@ POST /getTransactionBlob
           SET_SIGNER_WEIGHT = 5;
           SET_THRESHOLD = 6;
           PAY_COIN = 7;
+          LOG = 8;
       };
       Type type = 1;
       string source_address = 2;
@@ -996,6 +999,7 @@ POST /getTransactionBlob
       OperationSetSignerWeight set_signer_weight = 8;
       OperationSetThreshold set_threshold = 9;
       OperationPayCoin pay_coin = 10;
+      OperationLog log = 11;
   }
   ```
 
@@ -1414,6 +1418,44 @@ POST /getTransactionBlob
     - dest_address: BU接收方账号地址
     - amount: 要转移的BU数量
     - input: 本次转移触发接收方的合约，合约的执行入参就是input
+
+#### 记录日志
+|参数|描述
+|:--- | --- 
+|log.topic |  日志主题，必须为字符串类型,参数长度(0,128]
+|log.datas|   日志内容，以数组方式存储的字符串，每个元素长度(0,1024]
+
+- 功能
+  写数据到区块链中
+- 成功条件
+  - 各项参数合法
+- json格式
+
+
+  ```JSON
+    {
+      "type": 8,
+      "log": {
+          "topic": "hello",
+          "datas":
+          [
+            "hello, log 1",
+            "hello, log 2"
+          ]
+      }
+    }
+  ```
+
+- protocol buffer 结构
+    ```text
+      message OperationLog{
+        string topic = 1;
+        repeated string datas = 2;
+      }
+    ```
+    - topic: 日志主题
+    - datas: 日志内容
+
 
 ## 高级功能
 
@@ -2293,6 +2335,7 @@ contract_address赋值为区块上的费用选举合约地址，opt_type 为 2 �
         "stat": {
             "apply_time": 11342,
             "memory_usage": 1325072,
+            "stack_usage": 2564,
             "step": 16
         },
         "txs": null
@@ -2354,6 +2397,7 @@ contract_address赋值为区块上的费用选举合约地址，opt_type 为 2 �
         "stat": {
             "apply_time": 18020,
             "memory_usage": 1326456,
+            "stack_usage": 2564,
             "step": 19
         },
         "txs": null

@@ -1,14 +1,13 @@
 
-配置文件版本说明
+//Configuration file version description.
 
-bumo.json					默认研发版本
+//mainnet config
+bumo-mainnet.json 			
 
-bumo-publicnet.json			研发版本
+//testnet config
+bumo-testnet.json			
 
-bumo-mainnet.json 			主网版本
-
-bumo-testnet.json			测试网版本
-
-
+//single config
+bumo-single.json			
 
 

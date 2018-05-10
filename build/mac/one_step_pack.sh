@@ -16,23 +16,6 @@ make clean_build
 
 
 #update git
-if [ $# != 1 ] ; then 
-echo "set para: mainnet, testnet, publicnet"
-exit
-fi
-
-if [ "$1" == "mainnet" ];then
-	echo "mainnet"
-elif [ "$1" == "testnet" ]; then 
-	echo "testnet"
-elif [ "$1" == "publicnet" ]; then 
-	echo "publicnet"
-
-else
-	echo "set para: mainnet, testnet, publicnet"
-	exit
-fi
-
 
 version=`git log |grep commit |head -1`
 echo 'version: ' + $version
@@ -54,12 +37,15 @@ mkdir buchain/bin
 mkdir buchain/log
 mkdir buchain/coredump
 cp ../build/win32/jslib/jslint.js buchain/jslib/
-cp ../build/win32/config/bumo-$1.json buchain/config/bumo.json
+cp ../build/win32/config/bumo-mainnet.json buchain/config/
+cp ../build/win32/config/bumo-testnet.json buchain/config/
+cp ../build/win32/config/bumo-single.json  buchain/config/
+cp ../build/win32/config/ReadMe.txt  buchain/config/
 cp ../bin/bumo buchain/bin/
 cp ../src/3rd/v8_target/mac/*.bin buchain/bin/
 cp ../src/3rd/v8_target/mac/*.dat buchain/bin/
 
-tar czvf buchain-$DATE-$1-$v.tar.gz buchain/
+tar czvf buchain-mac-$DATE-$v.tar.gz buchain/
 rm -rf buchain/ 
 
 echo "build ok...."

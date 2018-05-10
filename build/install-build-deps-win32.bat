@@ -7,6 +7,9 @@ rd /s /Q ".\win\"
 
 .\wget bumo.chinacloudapp.cn:36002/v8_target/win.zip
 
+certutil -hashfile .\win.zip MD5
+
+
 .\unzip.exe -u win.zip
 
 mkdir bin

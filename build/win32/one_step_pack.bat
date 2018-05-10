@@ -23,19 +23,6 @@ set CURRENT_DATE_TIME_STAMP=%YEAR%_%MONTH%%DAY%_%HOUR%%MINUTE%
 echo %CURRENT_DATE_TIME_STAMP%
 
 cd ../../
-echo %1
-
-if "%1"=="mainnet" (
-		echo "mainnet"
-	) else if "%1"=="testnet" (
-		echo "testnet"
-	) else if "%1"=="publicnet" (
-		echo "publicnet"
-	) else (
-		echo "error:set para: mainnet, testnet, publicnet"
-		exit
-	)
-
 	
 
 cd build/win32
@@ -59,10 +46,13 @@ copy ..\bin\Bumo.exe buchain\bin
 copy ..\bin\*.bin buchain\bin
 copy ..\bin\*.dat buchain\bin
 copy ..\bin\*.dll buchain\bin
-copy ..\config\bumo-%1.json buchain\config\bumo.json
+copy ..\config\bumo-mainnet.json buchain\config\
+copy ..\config\bumo-testnet.json buchain\config\
+copy ..\config\bumo-single.json  buchain\config\
+copy ..\config\ReadMe.txt  buchain\config\
 copy ..\jslib\jslint.js buchain\jslib\
 
-..\zip.exe -r buchain-%CURRENT_DATE_TIME_STAMP%-%1.zip buchain
+..\zip.exe -r buchain-win-%CURRENT_DATE_TIME_STAMP%.zip buchain
 
 rd /s /Q ".\buchain\"
 
