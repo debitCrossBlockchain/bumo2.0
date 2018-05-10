@@ -1,3 +1,7 @@
+::git fetch --all
+::git reset --hard origin/release/1.0.0.0
+::git reset --hard origin/develop
+
 set ORIGINAL_DATE=%date% 
 
 set YEAR=%date:~0,4%
@@ -15,22 +19,27 @@ set TMP_HOUR=%time:~1,1%
 set NINE=9
 set ZERO=0
 
-set CURRENT_DATE_TIME_STAMP=%YEAR%%MONTH%%DAY%_%HOUR%%MINUTE%
+set CURRENT_DATE_TIME_STAMP=%YEAR%_%MONTH%%DAY%_%HOUR%%MINUTE%
 echo %CURRENT_DATE_TIME_STAMP%
 
 cd ../../
-if "%1"=="git" (
-		::echo "git fetch..."
-		::git fetch --all
-		::git reset --hard origin/release/1.0.0.0
-		::git reset --hard origin/develop
-		exit
-		echo "$git error"
-	) else echo NO 
+echo %1
 
+if "%1"=="mainnet" (
+		echo "mainnet"
+	) else if "%1"=="testnet" (
+		echo "testnet"
+	) else if "%1"=="publicnet" (
+		echo "publicnet"
+	) else (
+		echo "error:set para: mainnet, testnet, publicnet"
+		exit
+	)
+
+	
 
 cd build/win32
-
+rd /s /Q ".\pack\"
 del output.log
 
 "C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe" /Clean "Release|Win32" Bumo.vs12.sln
@@ -50,14 +59,12 @@ copy ..\bin\Bumo.exe buchain\bin
 copy ..\bin\*.bin buchain\bin
 copy ..\bin\*.dat buchain\bin
 copy ..\bin\*.dll buchain\bin
-copy ..\config\* buchain\config\
+copy ..\config\bumo-%1.json buchain\config\bumo.json
 copy ..\jslib\jslint.js buchain\jslib\
 
-..\zip.exe -r buchain-%CURRENT_DATE_TIME_STAMP%.zip buchain
+..\zip.exe -r buchain-%CURRENT_DATE_TIME_STAMP%-%1.zip buchain
 
 rd /s /Q ".\buchain\"
 
 cd ../
 	
-::"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe" /Clean "Release|Win32" Bumo.vs12.sln
-::"C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe" Bumo.vs12.sln /rebuild "Release|Win32" 
