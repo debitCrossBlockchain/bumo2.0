@@ -168,9 +168,44 @@ namespace bumo {
 		consensus_value_.set_ledger_seq(lcl.seq() + 1);
 		consensus_value_.set_close_time(lcl.close_time() + 1);
 
-		if (parameter_.exe_or_query_) {
-			//construct consensus value
+		if (ContractTestParameter::INIT == parameter_.opt_type_){
+			protocol::TransactionEnv env;
+			protocol::Transaction *tx = env.mutable_transaction();
+			tx->set_source_address(parameter_.source_address_);
+			tx->set_fee_limit(parameter_.fee_limit_);
+			tx->set_gas_price(parameter_.gas_price_);
+			protocol::Operation *ope = tx->add_operations();
+			ope->set_type(protocol::Operation_Type_CREATE_ACCOUNT);
 
+			protocol::OperationCreateAccount* create_account = ope->mutable_create_account();
+			PrivateKey priv_key(SIGNTYPE_ED25519);
+			create_account->set_dest_address(priv_key.GetEncAddress());
+			create_account->set_init_input(parameter_.input_);
+			create_account->set_init_balance(100000000000000);
+			protocol::AccountPrivilege *priv = create_account->mutable_priv();
+			priv->set_master_weight(0);
+			priv->mutable_thresholds()->set_tx_threshold(1);
+			create_account->mutable_contract()->set_payload(parameter_.code_);
+			create_account->mutable_contract()->set_type((protocol::Contract_ContractType)type_);
+
+			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(env);
+			tx_frm->environment_ = environment;
+			int64_t time_now = utils::Timestamp::HighResolution();
+			tx_frm->SetApplyStartTime(time_now);
+			tx_frm->SetMaxEndTime(time_now + 5 * utils::MICRO_UNITS_PER_SEC);
+			tx_frm->EnableChecked();
+
+			transaction_stack_.push_back(tx_frm);
+			closing_ledger_->apply_tx_frms_.push_back(tx_frm);
+
+			closing_ledger_->value_ = std::make_shared<protocol::ConsensusValue>(consensus_value_);
+			closing_ledger_->lpledger_context_ = this;
+
+			bool ret = LedgerManager::Instance().DoTransaction(env, this).code() == 0;
+			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
+			return ret;
+		}
+		else if (ContractTestParameter::MAIN == parameter_.opt_type_) {
 			//construct trigger tx
 			protocol::TransactionEnv env;
 			protocol::Transaction *tx = env.mutable_transaction();
@@ -200,7 +235,8 @@ namespace bumo {
 			bool ret = LedgerManager::Instance().DoTransaction(env, this).code() == 0;
 			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
 			return ret;
-		} else{
+		}
+		else if(ContractTestParameter::QUERY == parameter_.opt_type_){
 			do {
 				if (parameter_.code_.empty()) {
 					break;
@@ -405,6 +441,14 @@ namespace bumo {
 				if (code.empty()) {
 					break;
 				}
+
+				ContractTestParameter::OptType opt_type = ((ContractTestParameter*)parameter)->opt_type_;
+				if (opt_type > ContractTestParameter::QUERY || opt_type < ContractTestParameter::INIT){
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("opt_type overload:%d", opt_type));
+					return false;
+				}
+
 				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, code);
 				if (result.code() == protocol::ERRCODE_SUCCESS) {
 					break;

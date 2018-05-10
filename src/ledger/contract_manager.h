@@ -55,7 +55,13 @@ namespace bumo{
 		ContractTestParameter();
 		~ContractTestParameter();
 
-		bool exe_or_query_; //true: exe, false:query
+		typedef enum tagOptType {
+			INIT = 0,
+			MAIN = 1,
+			QUERY = 2
+		}OptType;
+
+		OptType opt_type_;
 		std::string contract_address_;
 		std::string code_;
 		std::string input_;
@@ -117,7 +123,6 @@ namespace bumo{
 
 	class V8Contract : public Contract {
 		v8::Isolate* isolate_;
-		v8::Global<v8::Context> g_context_;
 	public:
 		V8Contract(bool readonly, const ContractParameter &parameter);
 		virtual ~V8Contract();
@@ -240,7 +245,7 @@ namespace bumo{
 		bool GetResult(Json::Value &result);
 	};
 
-// 	class TestContract : public utils::Thread {
+// 	class CallContract : public utils::Thread {
 // 		int32_t type_;
 // 		ContractTestParameter parameter_;
 // 
@@ -248,8 +253,8 @@ namespace bumo{
 // 		bool ret_;
 // 		LedgerContext ledger_context;
 // 	public:
-// 		TestContract();
-// 		~TestContract();
+// 		CallContract();
+// 		~CallContract();
 // 
 // 		bool Init(int32_t type, const ContractTestParameter &parameter);
 // 		virtual void Run();

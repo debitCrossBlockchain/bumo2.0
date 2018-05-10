@@ -37,64 +37,55 @@ namespace bumo {
 	bool Argument::Parse(int argc, char *argv[]) {
 		if (argc > 1) {
 			std::string s(argv[1]);
-			if (s == "--console-with-cmd") {
-				std::deque<std::vector<char>> params;
-				std::string str_input;
-                std::stringstream ss_input;
-				static std::set<std::string> support_cmd = {
-					"--sign-data",
-					"--sign-data-with-keystore",
-					"--check-address",
-					"--check-keystore",
-					"--check-signed-data",
-					"--get-address",
-					"--get-address-from-pubkey",
-					"--get-privatekey-from-keystore",
-					"--create-account",
-					"--create-keystore",
-					"--create-keystore-from-privatekey"
-				};
+            if (s == "--console-with-cmd") {
+                static std::set<std::string> support_cmd = {
+                    "--sign-data",
+                    "--sign-data-with-keystore",
+                    "--check-address",
+                    "--check-keystore",
+                    "--check-signed-data",
+                    "--get-address",
+                    "--get-address-from-pubkey",
+                    "--get-privatekey-from-keystore",
+                    "--create-account",
+                    "--create-keystore",
+                    "--create-keystore-from-privatekey"
+                };
 
-				std::cout << "enter console command mode" << std::endl;
-				
-				do {
-					params.clear();
-					try
-					{
-						std::string input2str;
-                        std::getline(std::cin, str_input);
-                        ss_input.clear();
-                        ss_input.str(str_input);
-                        while (ss_input >> str_input) {
-							utils::String::HexStringToBin(str_input, input2str);
-							params.emplace_back(input2str.begin(), input2str.end());
-							params.back().push_back('\0');
-						}
+                std::cout << "enter console command mode" << std::endl;
 
-						if (params.size() > 0 && support_cmd.find(std::string(params.front().data())) != support_cmd.end()) {
-							// construct argc and argv
-							std::vector<char*> new_argv;
-							new_argv.emplace_back(argv[0]);
-							for (auto& i : params)
-								new_argv.push_back(i.data());
+                do {
+                    std::string input;
+                    std::getline(std::cin, input);
+                    utils::StringVector args_vec = utils::String::Strtok(input, ' ');
+                    args_vec.insert(args_vec.begin(), utils::String::BinToHexString(argv[0]));
+                    if (args_vec.size() < 1 || args_vec.size() > 9) {
+                        std::cout << "error" << std::endl;
+                        break;
+                    }
 
-							Parse(new_argv.size(), new_argv.data());
-						}
-						else if (std::string(params.front().data()) == "exit") {
-							break;
-						}
-						else {
-							std::cout << "error" << std::endl;
-						}
-					}
-					catch (std::exception e)
-					{
-						std::cout << "error" << std::endl;
-					}
-					
-				} while (true);
-				return true;
-			}
+                    char* tmp_argv[10];
+                    for (size_t i = 0; i < args_vec.size(); i++) {
+                        args_vec[i] = utils::String::HexStringToBin(args_vec[i]);
+                        tmp_argv[i] = (char *)args_vec[i].c_str();
+                    }
+
+                    if (strcmp(tmp_argv[0], "exit") == 0) {
+                        std::cout << "exit" << std::endl;
+                        break;
+                    }
+
+                    //search the command
+                    if (support_cmd.find(tmp_argv[1]) == support_cmd.end()) {
+                        std::cout << "error, command not found" << std::endl;
+                        break;
+                    }
+
+                    Parse(args_vec.size(), tmp_argv);
+
+                } while (true);
+                return true;
+            }
 			else if (s == "--dropdb") {
 				drop_db_ = true;
 			}

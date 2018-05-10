@@ -9,7 +9,7 @@ namespace bumo{
 	const int64_t OperationGasConfigure::set_sigure_weight = 0;
 	const int64_t OperationGasConfigure::set_threshold = 0;
 	const int64_t OperationGasConfigure::pay_coin = 0;
-	const int64_t OperationGasConfigure::log = 1;
+	const int64_t OperationGasConfigure::log = 0;
 	const int64_t OperationGasConfigure::create_contract = 1000000;
 
     int64_t FeeCalculate::CaculateFee(const int64_t& price, const int64_t& gas){

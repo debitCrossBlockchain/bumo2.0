@@ -39,13 +39,11 @@
 #endif
 
 namespace bumo {
-	class LedgerFetch;
 	class ContractManager;
 	class LedgerManager : public utils::Singleton<bumo::LedgerManager>,
 		public bumo::TimerNotify,
 		public bumo::StatusModule {
 		friend class utils::Singleton<bumo::LedgerManager>;
-		friend class LedgerFetch;
 	public:
 
 		bool Initialize();

@@ -76,7 +76,7 @@ namespace bumo {
 		void SubmitTransaction(const http::server::request &request, std::string &reply);
 
 		void ContractQuery(const http::server::request &request, std::string &reply);
-		void TestContract(const http::server::request &request, std::string &reply);
+		void CallContract(const http::server::request &request, std::string &reply);
 		void TestTransaction(const http::server::request &request, std::string &reply);
 		bool MakeTransactionHelper(const Json::Value &object, protocol::Transaction *tran, Result& result);
 

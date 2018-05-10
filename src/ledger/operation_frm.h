@@ -25,7 +25,6 @@
 namespace bumo{
 
 	class TransactionFrm;
-	class AccountEntry;
 	class OperationFrm {
 	protected:
 		protocol::Operation operation_;

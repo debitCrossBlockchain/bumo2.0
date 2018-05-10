@@ -782,28 +782,31 @@ POST /getTransactionBlob
 }
 ```
 ### 调试合约
+在智能合约模块的设计中，我们提供了沙箱环境来进行调试合约，且调试过程中不会更改区块链和合约的状态。在 BUMO 链上，我们为用户提供了 callContract 接口来帮助用户来调试智能合约，智能合约可以是公链上已存的，也可以是通过参数上传本地的合约代码进行测试，使用 callContract 接口不会发送交易，也就无需支付上链手续费。
+
 ```text
-   POST /testContract
+   POST /callContract
 ```
 - post内容如下
 ```http
 {
+  "contract_address" : "",
   "code" : "\"use strict\";log(undefined);function query() { return 1; }",
   "input" : "{}",
   "contract_balance" : "100009000000",
   "fee_limit" : 100000000000000000,
   "gas_price": 1000,
-  "exe_or_query" : false,
+  "opt_type" : 2,
   "source_address" : ""
 }
 ```
-  - contract_address: 调用的智能合约地址，如果从数据库查询不到则返回错误。
-  - code：需要调试的合约代码，如果 contract_address 为空，则使用code 字段，如果code字段你也为空，则返回错误。
+  - contract_address: 调用的智能合约地址，如果从数据库查询不到则返回错误。如果填空，则默认读取 code 字段的内容
+  - code：需要调试的合约代码，如果 contract_address 为空，则使用 code 字段，如果code字段你也为空，则返回错误。
   - input： 给被调用的合约传参。
   - fee_limit : 手续费。
   - gas_price : Gas价格。
   - contract_balance : 赋予合约的初始 BU 余额。
-  - exe_or_query: true :准备调用合约的读写接口main，false :调用只读接口query。
+  - opt_type: 0: 调用合约的读写接口 init, 1: 调用合约的读写接口 main, 2 :调用只读接口 query。
   - source_address：模拟调用合约的原地址。
 
   - 返回值如下：
@@ -845,7 +848,7 @@ POST /getTransactionBlob
 {
   "items": [
     {
-      "transaction_blob": {
+      "transaction_json": {
         "source_address": "buQBDf23WtBBC8GySAZHsoBMVGeENWzSRYqB",
         "metadata":"0123456789abcdef", //可选
         "nonce": 6,
@@ -1183,7 +1186,7 @@ POST /getTransactionBlob
 |pay_asset.asset.key.issuer|  资产发行方
 |pay_asset.asset.key.code|  资产代码
 |pay_asset.asset.amount|  要转移的数量
-|pay_asset.input|  触发合约调用的入参
+|pay_asset.input|  触发合约调用的入参，如果用户未输入，默认为空字符串
 
 - 功能
   操作源账号将一笔资产转给目标账号
@@ -1377,7 +1380,7 @@ POST /getTransactionBlob
 |:--- | --- 
 |pay_coin.dest_address |  目标账户
 |pay_coin.amount|  要转移的数量
-|pay_coin.input|  触发合约调用的入参
+|pay_coin.input|  触发合约调用的入参，如果用户未输入，默认为空字符串
 
 - 功能
   操作源账号将一笔资产转给目标账号
@@ -1499,6 +1502,7 @@ function query(input)
 ```
 
 系统提供了几个全局函数, 这些函数可以获取区块链的一些信息，也可驱动账号发起所有交易，除了设置门限和权重这两种类型的操作。
+
 **注意，自定义的函数和变量不要与内置变量和全局函数重名，否则会造成不可控的数据错误。**
 
 #### 语法说明
@@ -1506,32 +1510,47 @@ function query(input)
 参考文档：[智能合约语法说明](../src/web/jslint/ContractRules.md)
 
 #### 内置函数
+- ##### 函数读写权限
+    每个函数都有固定的**只读**或者**可写**权限
+
+    只读权限是指**不会写数据到区块链**的接口函数，比如获取余额 `getBalance`
+
+    可写权限是指**会写数据到区块链**的接口函数，比如转账 `payCoin`
+
+    在编写智能合约的时候，需要注意的是不同的入口函数拥有不同的调用权限
+
+    `init` 和 `main` 能调用所有的内置函数
+
+    `query`  只能调用只读权限的函数，否则在调试或者执行过程中会提示接口未定义
+  
 
 - ##### 返回值介绍
-   所有内部函数的调用，如果失败则 返回 false ，成功则为其他对象。
+   所有内部函数的调用，如果失败则返回 false 或者直接抛出异常执行终止，成功则为其他对象。
 
 - ##### 获取账号信息(不包含metada和资产)
 
     `getBalance(address);`
-     address: 账号地址
+    - address: 账号地址
 
     例如
     ```javascript
     let balance = getBalance('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
-    balance 具有如下格式
-     '9999111100000'
+      权限：只读
+      返回：字符串格式数字 '9999111100000'
     */
     ```
 
 - ##### 存储合约账号的metadata信息
   `storageStore(metadata_key, metadata_value);`
-  - metadata_key: metadata的key
+  - metadata_key: metadata 的 key
+  - metadata_key: metadata 的 value
+
   ```javascript
   storageStore('abc', 'values');
   /*
-    参数字符串格式
-    执行成功或者失败抛异常
+    权限：可写
+    返回：成功返回true, 失败抛异常
   */
 
   ```
@@ -1542,9 +1561,8 @@ function query(input)
   ```javascript
   let value = storageLoad('abc');
   /*
-    value 的值是如下的格式
-    'values'
-    失败返回false
+    权限：只读
+    返回：成功返回字符串，如 'values', 失败返回 false
   */
 
   ```
@@ -1556,8 +1574,8 @@ function query(input)
   ```javascript
   storageDel('abc');
   /*
-    参数字符串格式
-    执行成功或者失败抛异常
+    权限：可写
+    返回：成功返回 true, 失败抛异常
   */
 
   ```
@@ -1580,9 +1598,8 @@ function query(input)
     let bar = getAccountAsset('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', asset_key);
 
     /*
-     1
-
-    失败返回false
+      权限：只读
+      返回：成功返回资产数字如 '10000'，失败返回 false
     */
     ```
 
@@ -1595,8 +1612,8 @@ function query(input)
     ```javascript
     let ledger = getBlockHash(4);
     /*
-    'c2f6892eb934d56076a49f8b01aeb3f635df3d51aaed04ca521da3494451afb3'
-    失败返回false
+      权限：只读
+      返回：成功返回字符串， 如 'c2f6892eb934d56076a49f8b01aeb3f635df3d51aaed04ca521da3494451afb3'，失败返回 false
     */
 
     ```
@@ -1604,14 +1621,14 @@ function query(input)
 - ##### 地址合法性检查
 
     `addressCheck(address);`
-    -address 地址参数
+    - address 地址参数，字符串
 
     例如
     ```javascript
     let ret = addressCheck('buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf');
     /*
-    成功：true
-    失败：false
+      权限：只读
+      返回：成功返回 true，失败返回 false
     */
 
     ```
@@ -1625,8 +1642,8 @@ function query(input)
     ```javascript
     let ret = stoI64Check('12345678912345');
     /*
-    成功：true
-    失败：false
+      权限：只读
+      返回：成功返回 true，失败返回 false
     */
 
     ```
@@ -1641,8 +1658,8 @@ function query(input)
     ```javascript
     let ret = int64Add('12345678912345', 1);
     /*
-    成功：'12345678912346'
-    失败：抛异常
+      权限：只读
+      返回：成功返回字符串 '12345678912346', 失败抛异常
     */
 
     ```
@@ -1657,8 +1674,8 @@ function query(input)
     ```javascript
     let ret = int64Sub('12345678912345', 1);
     /*
-    成功：'123456789123464'
-    失败：抛异常
+      权限：只读
+      返回：成功返回字符串 '123456789123464'，失败抛异常
     */
 
     ```
@@ -1673,8 +1690,8 @@ function query(input)
     ```javascript
     let ret = int64Mul('12345678912345', 2);
     /*
-    成功：'24691357824690'
-    失败：抛异常
+      权限：只读
+      返回：成功返回字符串 '24691357824690'，失败抛异常
     */
 
     ```
@@ -1689,8 +1706,8 @@ function query(input)
     ```javascript
     let ret = int64Div('12345678912345', 2);
     /*
-    成功：'6172839456172'
-    失败：抛异常
+      权限：只读
+      返回：成功返回 '6172839456172'，失败抛异常
     */
 
     ```
@@ -1705,8 +1722,8 @@ function query(input)
     ```javascript
     let ret = int64Mod('12345678912345', 2);
     /*
-    成功：'1'
-    失败：抛异常
+      权限：只读
+      返回：成功返回字符串 '1'，失败抛异常
     */
 
     ```
@@ -1722,8 +1739,8 @@ function query(input)
     ```javascript
     let ret = int64Compare('12345678912345', 2);
     /*
-    成功：1
-    失败：抛异常
+      权限：只读
+      返回：成功返回数字 1（左值大于右值），失败抛异常
     */
 
     ```
@@ -1738,7 +1755,8 @@ function query(input)
     ```javascript
     let ret = toBaseUnit('12345678912');
     /*
-    '1234567891200000000'
+      权限：只读
+      返回：成功返回字符串 '1234567891200000000'，失败抛异常
     */
 
     ```
@@ -1752,7 +1770,8 @@ function query(input)
     ```javascript
     let ret = log('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY');
     /*
-     成功不返回,失败返回false
+      权限：只读
+      返回：成功无返回值，失败返回 false
     */
     ```
 - #### 输出交易日志
@@ -1766,7 +1785,8 @@ function query(input)
     ```javascript
     tlog('transfer',sender +' transfer 1000',true);
     /*
-     成功不返回,失败抛异常
+      权限：可写
+      返回：成功返回 true，失败抛异常
     */
     ```
 
@@ -1779,7 +1799,10 @@ function query(input)
     例如
     ```javascript
     issueAsset("CNY", "10000");
-    /*失败抛异常*/
+    /*
+      权限：可写
+      返回：成功返回 true，失败抛异常  
+    */
     ```
 
 - ##### 转移资产
@@ -1789,12 +1812,15 @@ function query(input)
      - issuer: 资产发行方
      - code: 资产代码
      - amount: 转移资产的数量
-     - input: 可选，合约参数
+     - input: 可选，合约参数，如果用户未填入，默认为空字符串
 
     例如
     ```javascript
     payAsset("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf", "CNY", "10000", "{}");
-    /*失败抛异常*/
+    /*
+      权限：可写
+      返回：成功返回 true，失败抛异常    
+    */
     ```
 
 - ##### 转账
@@ -1802,12 +1828,15 @@ function query(input)
     `payCoin(address, amount[, input]);`
      - address: 发送BU的目标地址
      - amount: 发送BU的数量
-     - input: 可选，合约参数
+     - input: 可选，合约参数，如果用户未填入，默认为空字符串
 
     例如
     ```javascript
     payCoin("buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY", "10000", "{}");
-    /*失败抛异常*/
+    /*
+      权限：可写
+      返回：成功返回 true，失败抛异常  
+    */
     ```
 
 - ##### 断言
@@ -1819,7 +1848,10 @@ function query(input)
     例如
     ```javascript
     assert(1===1, "Not valid");
-    /*失败抛异常*/
+    /*
+      权限：只读
+      返回：成功返回 true，失败抛异常  
+    */
     ```
 
 #### 内置变量
@@ -1913,7 +1945,7 @@ function query(input)
    let validatorSetSize       = 100;
    let votePassRate           = 0.7;
    let effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
-   let minPledgeAmount        = 100 * 100000000;
+   let minPledgeAmount        = 50000 * 100000000;
    let minSuperadditionAmount = 100 * 100000000;
 ```
  
@@ -2076,7 +2108,7 @@ function query(input)
 
 #### 查询功能
 
-用户通过向查询接口（即 query 接口）提供指定参数，可以查看相关信息, 调用查询接口当前只能通过 testContract, contract_address 字段填入验证者候选节点选举账户地址。
+用户通过向查询接口（即 query 接口）提供指定参数，可以查看相关信息, 调用查询接口当前只能通过 callContract, contract_address 字段填入验证者候选节点选举账户地址。
 
 ##### 查询当前验证节点集合
 
@@ -2087,7 +2119,7 @@ function query(input)
     "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "code" : "",
     "input" : "{\"method\": \"getValidators\"}",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : ""
   }
 ```
@@ -2101,7 +2133,7 @@ function query(input)
     "contract_address" : "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ",
     "code" : "",
     "input" : "{\"method\": \"getCandidates\"}",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : ""
   }
 ```
@@ -2123,7 +2155,7 @@ input 中的 address 字段填入申请者地址。
          \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
     }",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : ""
   }
 ```
@@ -2145,7 +2177,7 @@ input 中的 address 字段填入指定的恶意节点地址。
          \"address\":\"buQmvKW11Xy1GL9RUXJKrydWuNykfaQr9SKE\"
       }
     }",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : ""
   }
 ```
@@ -2213,7 +2245,7 @@ GET /getLedger?seq=xxxx&with_fee=true
 
 #### 查询费用提案
 
-通过发送接口testContract接口查询。合约入参input参数json格式
+通过发送接口 callContract 接口查询。合约入参input参数json格式
 
 ```json
 {
@@ -2222,21 +2254,21 @@ GET /getLedger?seq=xxxx&with_fee=true
 }
 ```
 
-json格式需转换成字符串形式填写到testContract接口结构
+json格式需转换成字符串形式填写到 callContract 接口结构
 
 ```json
 {
     "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
     "input" : "{\"method\":\"queryProposal\",\"params\":\"\"}",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : "",
     "fee_limit":100000,
     "gas_price":1000
 }
 ```
 
-contract_address赋值为区块上的费用选举合约地址，exe_or_query 为false代表查询
+contract_address赋值为区块上的费用选举合约地址，opt_type 为 2 代表调用查询接口
 
 
 - 如果查询到则返回内容:
@@ -2272,7 +2304,7 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 
 #### 查询投票
 
-通过发送接口testContract接口查询，可根据提案id进行查询单项。合约入参input参数json格式
+通过发送接口 callContract 接口查询，可根据提案id进行查询单项。合约入参input参数json格式
 
 ```json
 {
@@ -2283,21 +2315,21 @@ result 域的value值为返回结果，反序列化为json格式即可得到所�
 }
 ```
 
-json格式需转换成字符串形式填写到testContract接口结构
+json格式需转换成字符串形式填写到 callContract 接口结构
 
 ```json
 {
     "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
     "input" :"{\"method\":\"queryVote\",\"params\":{\"proposalId\":\"buQft4EdxHrtatWUXjTFD7xAbMXACnUyT8vw1\"}}",
-    "exe_or_query" : false,
+    "opt_type" : 2,
     "source_address" : "",
     "fee_limit":100000,
     "gas_price":1000
 }
 ```
 
-contract_address赋值为区块上的费用选举合约地址，exe_or_query 为false代表查询
+contract_address赋值为区块上的费用选举合约地址，opt_type 为 2 代表调用查询接口
 
 
 - 如果查询到则返回内容:
@@ -2406,7 +2438,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 | 21                | ERRCODE_EXPR_CONDITION_SYNTAX_ERROR    | 指表达式语法分析错误，代表该 TX 一定会失败                                                   |
 | 90                | ERRCODE_INVALID_PUBKEY                 | 公钥非法                                                                                     |
 | 91                | ERRCODE_INVALID_PRIKEY                 | 私钥非法                                                                                     |
-| 92                | ERRCODE_ASSET_INVALID                  | 资产issue 地址非法                                                                           |  |  |
+| 92                | ERRCODE_ASSET_INVALID                  | 无效的资产                                                                           |  |  |
 | 93                | ERRCODE_INVALID_SIGNATURE              | 签名权重不够，达不到操作的门限值                                                             |
 | 94                | ERRCODE_INVALID_ADDRESS                | 地址非法                                                                                     |
 | 97                | ERRCODE_MISSING_OPERATIONS             | 交易缺失操作                                                                                 |

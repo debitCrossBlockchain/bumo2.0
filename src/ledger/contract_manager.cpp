@@ -28,7 +28,7 @@ namespace bumo{
 
 	ContractParameter::~ContractParameter() {}
 
-	ContractTestParameter::ContractTestParameter() : exe_or_query_(true), fee_limit_(0), gas_price_(0), contract_balance_(0){}
+	ContractTestParameter::ContractTestParameter() : opt_type_(QUERY), fee_limit_(0), gas_price_(0), contract_balance_(0){}
 
 	ContractTestParameter::~ContractTestParameter() {}
 
@@ -1678,7 +1678,7 @@ namespace bumo{
 			v8::HandleScope handle_scope(args.GetIsolate());
 
 			if (!args[0]->IsString()) {
-				error_desc = "Contract execute error, int64Add, parameter 0 should be a String or Number";
+				error_desc = "Contract execute error, stoI64Check, parameter 0 should be a String or Number";
 				break;
 			}
 
@@ -1686,7 +1686,7 @@ namespace bumo{
 
 			int64_t iarg0 = 0;
 			if (!utils::String::SafeStoi64(arg0, iarg0)){
-				error_desc = "Contract execute error, StoI64Check, parameter 0 illegal, maybe exceed the limit value of int64.";
+				error_desc = "Contract execute error, stoI64Check, parameter 0 illegal, maybe exceed the limit value of int64.";
 				break;
 			}
 

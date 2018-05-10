@@ -37,7 +37,8 @@ del output.log
 
 "C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\devenv.exe" Bumo.vs12.sln  /rebuild RELEASE /out output.log
 
-cd bin
+mkdir pack
+cd pack
 mkdir buchain
 mkdir buchain\bin
 mkdir buchain\config

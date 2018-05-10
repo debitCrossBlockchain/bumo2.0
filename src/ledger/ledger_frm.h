@@ -38,7 +38,6 @@ namespace bumo {
 		void SetApply(ProposeTxsResult &result);
 	};
 
-	class AccountEntry;
 	class LedgerContext;
 	class LedgerFrm {
 	public:

@@ -202,7 +202,7 @@ namespace bumo {
 		reply = reply_json.toStyledString();
 	}
 
-	void WebServer::TestContract(const http::server::request &request, std::string &reply) {
+	void WebServer::CallContract(const http::server::request &request, std::string &reply) {
 		
 		Json::Value body;
 		if (!body.fromString(request.body)) {
@@ -218,7 +218,7 @@ namespace bumo {
 		ContractTestParameter test_parameter;
 		test_parameter.code_ = body["code"].asString();
 		test_parameter.input_ = body["input"].asString();
-		test_parameter.exe_or_query_ = body["exe_or_query"].asBool();
+		test_parameter.opt_type_ = ContractTestParameter::OptType(body["opt_type"].asInt());
 		test_parameter.contract_address_ = body["contract_address"].asString();
 		test_parameter.source_address_ = body["source_address"].asString();
 		test_parameter.fee_limit_ = body["fee_limit"].asInt64();

@@ -239,9 +239,8 @@ void protobuf_AddDesc_common_2eproto() {
     "RRCODE_CONTRACT_TOO_MANY_RECURSION\020\231\001\022+\n"
     "&ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS\020"
     "\232\001\022%\n ERRCODE_CONTRACT_EXECUTE_EXPIRED\020\233"
-    "\001\022!\n\034ERRCODE_TX_INSERT_QUEUE_FAIL\020\240\001B#\n!"
-    "org.bumo.sdk.core.extend.protobufb\006proto"
-    "3", 1601);
+    "\001\022!\n\034ERRCODE_TX_INSERT_QUEUE_FAIL\020\240\001B\"\n "
+    "io.bumo.sdk.core.extend.protobufb\006proto3", 1600);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "common.proto", &protobuf_RegisterTypes);
   KeyPair::default_instance_ = new KeyPair();

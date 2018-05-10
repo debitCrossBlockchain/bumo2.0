@@ -414,8 +414,8 @@ void protobuf_AddDesc_monitor_2eproto() {
     "OR_MSGTYPE_SYSTEM\020\"\022\031\n\025MONITOR_MSGTYPE_A"
     "LERT\020#\022\032\n\026MONITOR_MSGTYPE_NOTICE\020$\022%\n!MO"
     "NITOR_MSGTYPE_ACCOUNT_EXCEPTION\020%\022\031\n\025MON"
-    "ITOR_MSGTYPE_ERROR\020\'B\035\n\033cn.bumo.blockcha"
-    "in.adapter3b\006proto3", 1579);
+    "ITOR_MSGTYPE_ERROR\020\'B\"\n io.bumo.sdk.core"
+    ".extend.protobufb\006proto3", 1584);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "monitor.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();

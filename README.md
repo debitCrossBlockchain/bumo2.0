@@ -3,38 +3,30 @@
 [![Build Status](https://travis-ci.org/bumoproject/bumo.svg?branch=develop)](https://travis-ci.org/bumoproject/bumo)[![Build status](https://ci.appveyor.com/api/projects/status/et33rln9a30yry1w?svg=true)](https://ci.appveyor.com/project/bumo-source/bumo)
 
  
-## __简介__
-- __去中心化__ 
-采用P2P分布式存储，没有中心化的管理节点，所有的节点具备相同的权利。
+## __What is BUMO__
+Bumo is focusing on next generation platform of public Blockchain infrastructure and building a future ecosystem of Ubiquitous Trust Network. Therefore, value will be transferred freely on Blockchain just as information is transferred freely on Internet today. Lots of decentralized applications, such as digital assets and Internet of things, can be developed and deployed rapidly over BUMO network.
 
-- __智能合约__ 
-目前支持 JavaScript 语言，并由高效的 V8 引擎执行。并且后续将支持 WASM 虚拟机。
+## __Features__
+- Flexible multi-asset and multi-operator structure for account and transaction.
+- An improved two-stage and two-layer consensus protocol based on DPoS+BFT, called as “Firework”.
+- A novel two-layer polymorphic architecture for multi-child Blockchain will be supported, called as "Orbits".
+- An Inter-Chain for routing value among Blockchains will be supported, called as "Canal".
+- Turing-perfect smart contract, with programming language of Javascript and WASM.
+- Kinds of signature algorithms are supported, such as ED25519 and SM2.
+- Built-in joint accounts to reach the control of multi-sig.
+- High performance of transaction process with thousands of TPS.
+- Cross-platform support, such as Linux, MacOS, Windows and Android.
 
-- __安全__ 
-数据经过节点之间达成共识然后才可添加至区块链、共识节点的变更需用户投票处理。
-
-- __高效__ 
-通过优化数据结构、采用高效加密算法、关键路径多线程并发，使得性能提高明显，普通 PC 节点可以达万级别TPS。
-
-- __稳定__
-BUMO 区块链底层技术已经商用于数字资产平台一年多，目前（2018年4月7日）累积用户数1013万，周新增用户数14万，周新增交易数110万。
-
-- __合规__
-除了高效的 ED25519 签名算法，同时还支持 SM2/SM3 加密算法，
-
-- __可移植__ 
-使用标准C++开发，支持 Windows、Linux、MAC 等各种平台
-
-## __架构__
+## __Architecture__
 ![](docs/image/arch.png)
 
-## __使用说明__
+## __Manual__
 
-参见[BUMO 区块链使用文档](docs/manual.md "") 
+ - [manual document](docs/manual.md "") 
 
-##  __开发文档__
+##  __Development__
 
-参见[BUMO区块链开发文档](docs/develop.md "") 
+ - [development document](docs/develop.md "") 
 
 ## __License__
 Bumo blockchain is under the GPLv3 license.

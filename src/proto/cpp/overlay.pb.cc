@@ -490,8 +490,8 @@ void protobuf_AddDesc_overlay_2eproto() {
     "OFFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHA"
     "IN_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_H"
     "EADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN"
-    "_TX_ENV_STORE\020\022B\035\n\033cn.bumo.blockchain.ad"
-    "apter3b\006proto3", 2214);
+    "_TX_ENV_STORE\020\022B\"\n io.bumo.sdk.core.exte"
+    "nd.protobufb\006proto3", 2219);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
