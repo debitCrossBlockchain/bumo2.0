@@ -1,7 +1,42 @@
 # __BUMO区块链使用文档__
 
-[TOC]
+<!-- TOC -->
+- [__编译__](#编译)
+    - [Linux](#linux)
+    - [MAC](#mac)
+    - [Windows](#windows)
+- [__部署__](#部署)
+    - [__Linux下的安装步骤__](#linux下的安装步骤)
+    - [__目录结构__](#目录结构)
+    - [__切换测试环境__](#切换测试环境)
+    - [__运行__](#运行)
+    - [__运行状态__](#运行状态)
+    - [__配置__](#配置)
+        - [config.json](#configjson)
+            - [数据存储](#数据存储)
+            - [节点间网络通信](#节点间网络通信)
+            - [WEB API 配置](#web-api-配置)
+            - [WebSocket API 配置](#websocket-api-配置)
+            - [区块配置](#区块配置)
+            - [创世区块](#创世区块)
+            - [日志配置](#日志配置)
+            - [多节点配置说明](#多节点配置说明)
+            - [节点间网络通信](#节点间网络通信)
+            - [共识参数](#共识参数)
+            - [区块参数](#区块参数)
+            - [配置同步节点](#配置同步节点)
+            - [加密数据配置](#加密数据配置)
+            - [节点间网络通信](#节点间网络通信)
+            - [节点间网络通信](#节点间网络通信)
+- [__运维__](#运维)
+    - [服务启动与停止](#服务启动与停止)
+    - [查看系统详细状态](#查看系统详细状态)
+    - [查看具体数据信息](#查看具体数据信息)
+    - [清空数据库](#清空数据库)   
+    - [创建硬分叉](#创建硬分叉)   
+    - [数据库存储](#数据库存储)   
 
+<!-- /TOC -->
 
 ## __编译__
 ### Linux
@@ -52,7 +87,7 @@ brew install wget
 
  ```
 bash
-##首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库
+#首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库
 cd bumo/build/
 ./install-build-deps-mac.sh
 cd ../
@@ -70,7 +105,7 @@ make
 ## __部署__
 Windows 部署与 Linux 下部署基本类似，本示例以 Linux 为准。
 
-### Linux下的安装步骤
+### __Linux下的安装步骤__
 ```bash
 cd bumo
 make install
@@ -175,13 +210,26 @@ make install
 
 ```json
     "ledger":{
-        "genesis_account":"buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",//创世账号，同一条链上的每一个节点都必须相同
+        "validation_address":"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",//验证节点地址，同步节点或者钱包不需要配置
+        "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54", //验证节点私钥，同步节点或者钱包不需要配置
         "max_trans_per_ledger":1000,
         "max_ledger_per_message":5,
         "max_trans_in_memory":2000,
         "max_apply_ledger_per_round":3
     }
 ```
+#### 创世区块
+```json
+   "genesis": {
+        "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3", //创世区块地址
+        "fees": {
+            "base_reserve": 10000000,  //账号最低预留费
+            "byte_fee": 1000           //字节费
+        },
+        "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY"] //验证节点区块列表
+    }
+```
+    同一个区块链上的 `genesis` 配置，必须保持一致
 
 ##### 日志配置
 
@@ -196,18 +244,6 @@ make install
     }
 ```
 
-##### 共识配置
-
-```json
-    "validation":{
-		"address": "buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g",
-		"node_private_key": "01ab35a14935d51faf48f51c3bfd1e0478e83d21d378f3bc92332dbbee5b180b9e122475517da2651227ce4a8bb37e2621c4611a889a8d7e45679efe881d56f2",
-		"validators": [
-			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
-		]
-    }
-```
-
 #### 多节点配置说明
 
 - 下面示例是配置多个节点在一条链上运行示例，配置多节点主要修改p2p、validation和ledger这三块的设置
@@ -216,12 +252,12 @@ make install
 
 - config.p2p.consensus_network.known_peers 填写其他节点的 ip 以及 port
 
-##### 共识配置
+##### 共识参数
 
 - validators 填写每个节点 validation 的 address
 - address 与 node_private_key是成对应关系
 
-##### 区块配置
+##### 区块参数
 - config.ledger.genesis_account 是创世账号，同一条链上，每个节点配置中 genesis_account 的值必须一致
 
 注意：运行前请确保每个节点的初始数据是一致，否则无法达成共识产生区块
