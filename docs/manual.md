@@ -1,33 +1,35 @@
 # __BUMO区块链使用文档__
 
 <!-- TOC -->
+
 - [__编译__](#编译)
     - [Linux](#linux)
     - [MAC](#mac)
     - [Windows](#windows)
 - [__部署__](#部署)
     - [__Linux下的安装步骤__](#linux下的安装步骤)
+        - [__使用编译方式安装__](#使用编译方式安装)
+        - [__使用安装包安装__](#使用安装包安装)
     - [__目录结构__](#目录结构)
     - [__切换测试环境__](#切换测试环境)
     - [__运行__](#运行)
     - [__运行状态__](#运行状态)
     - [__配置__](#配置)
-        - [config.json](#configjson)
-            - [数据存储](#数据存储)
-            - [节点间网络通信](#节点间网络通信)
-            - [WEB API 配置](#web-api-配置)
-            - [WebSocket API 配置](#websocket-api-配置)
-            - [区块配置](#区块配置)
-            - [创世区块](#创世区块)
-            - [日志配置](#日志配置)
-            - [多节点配置说明](#多节点配置说明)
-            - [节点间网络通信](#节点间网络通信)
-            - [共识参数](#共识参数)
-            - [区块参数](#区块参数)
-            - [配置同步节点](#配置同步节点)
-            - [加密数据配置](#加密数据配置)
-            - [节点间网络通信](#节点间网络通信)
-            - [节点间网络通信](#节点间网络通信)
+        - [数据存储](#数据存储)
+        - [节点间网络通信](#节点间网络通信)
+        - [WEB API 配置](#web-api-配置)
+        - [WebSocket API 配置](#websocket-api-配置)
+        - [区块配置](#区块配置)
+        - [创世区块](#创世区块)
+        - [日志配置](#日志配置)
+        - [多节点配置说明](#多节点配置说明)
+        - [节点间网络通信](#节点间网络通信)
+        - [共识参数](#共识参数)
+        - [区块参数](#区块参数)
+        - [配置同步节点](#配置同步节点)
+        - [加密数据配置](#加密数据配置)
+        - [节点间网络通信](#节点间网络通信)
+        - [节点间网络通信](#节点间网络通信)
 - [__运维__](#运维)
     - [服务启动与停止](#服务启动与停止)
     - [查看系统详细状态](#查看系统详细状态)
@@ -39,6 +41,9 @@
 <!-- /TOC -->
 
 ## __编译__
+
+__如果不想编译源码，可以直接使用安装包部署，[安装包下载]( https://github.com/bumoproject/bumo/releases/ "download")，下载完成后参考[__使用安装包安装__](#使用安装包安装)__
+
 ### Linux
 支持 Ubuntu、Centos 等大多数操作系统编译，下面编译步骤以 Ubuntu 14.04 示例
 - 安装依赖
@@ -106,12 +111,55 @@ make
 Windows 部署与 Linux 下部署基本类似，本示例以 Linux 为准。
 
 ### __Linux下的安装步骤__
+
+#### __使用编译方式安装__
 ```bash
 cd bumo
 make install
 ```
-
 服务将安装在/usr/local/buchain/目录下
+
+#### __使用安装包安装__
+
+__解压__
+
+拷贝 buchain-`1.0.0.x`-linux-x64.tar.gz 到 /usr/local/
+
+    cd /usr/local/
+    //需要注意用实际版本包 1.0.0.x 的名字
+    tar xzvf buchain-1.0.0.x-linux-x64.tar.gz
+
+__注册服务__
+
+    ln -s /usr/local/buchain/scripts/bumo /etc/init.d/bumo 
+    ln -s /usr/local/buchain/scripts/bumod /etc/init.d/bumod 
+
+__修改服务启动路径__
+
+打开 ./buchain/scripts/bumo 和 ./buchain/scripts/bumod 
+
+将 `install_dir` 变量值修改成安装布比系统的安装路径 
+
+    install_dir=/usr/local/buchain 
+
+ __设置开机启动__
+
+ 注：若 系 统 为 Ubuntu16 或 Centos7 及 以 上 ， 需 要 将 tool 目 录 下 的 bumo.service 放在 /usr/lib/systemd/system 目录下，并执行 systemctl enable bumo 
+
+    #分别执行如下命令（级别1~5）
+    ln -s -f /etc/init.d/bumod /etc/rc1.d/S99bumod 
+    ln -s -f /etc/init.d/bumod /etc/rc2.d/S99bumod 
+    ln -s -f /etc/init.d/bumod /etc/rc3.d/S99bumod 
+    ln -s -f /etc/init.d/bumod /etc/rc4.d/S99bumod 
+    ln -s -f /etc/init.d/bumod /etc/rc5.d/S99bumod 
+
+在 /etc/rc.local 文件末尾追加如下命令
+
+    /etc/init.d/bumod start
+
+保存后添加执行可执行权限： 
+
+    chmod +x /etc/rc.local
 
 ### __目录结构__
 
@@ -164,8 +212,9 @@ make install
 
 ### __配置__
 
-#### config.json 
-##### 数据存储
+config.json
+
+#### 数据存储
 
 ```json
     "db":{
@@ -174,7 +223,7 @@ make install
 		"keyvalue_path": "data/keyvalue.db" //存储共识数据
     }
 ```
-##### 节点间网络通信
+#### 节点间网络通信
 ```json
     "p2p":{
         "network_id":10000,//网络ID,区分测试路和主网
@@ -190,7 +239,7 @@ make install
     }
 ```
 
-##### WEB API 配置
+#### WEB API 配置
 
 ```json
     "webserver":{
@@ -198,7 +247,7 @@ make install
     }
 ```
 
-##### WebSocket API 配置 
+#### WebSocket API 配置 
 
 ```json
     "wsserver":{
@@ -206,7 +255,7 @@ make install
     }
 ```
 
-##### 区块配置
+#### 区块配置
 
 ```json
     "ledger":{
@@ -231,7 +280,7 @@ make install
 ```
     同一个区块链上的 `genesis` 配置，必须保持一致
 
-##### 日志配置
+#### 日志配置
 
 ```json
     "logger":{
@@ -248,16 +297,16 @@ make install
 
 - 下面示例是配置多个节点在一条链上运行示例，配置多节点主要修改p2p、validation和ledger这三块的设置
 
-##### 节点间网络通信
+#### 节点间网络通信
 
 - config.p2p.consensus_network.known_peers 填写其他节点的 ip 以及 port
 
-##### 共识参数
+#### 共识参数
 
 - validators 填写每个节点 validation 的 address
 - address 与 node_private_key是成对应关系
 
-##### 区块参数
+#### 区块参数
 - config.ledger.genesis_account 是创世账号，同一条链上，每个节点配置中 genesis_account 的值必须一致
 
 注意：运行前请确保每个节点的初始数据是一致，否则无法达成共识产生区块
@@ -265,7 +314,7 @@ make install
 #### 配置同步节点
  - 配置同步节点与验证节点有一点不同的是共识配置中validators不需要填写同步节点validation的address
  
-##### 加密数据配置
+#### 加密数据配置
 配置文件中所有隐私数据都是加密存储的，解密密钥都是被硬编码在程序中。所以拿到密码明文后需要经过如下转换才可配置：
 
 - 命令./bin/bumo --aes-crypto [参数]

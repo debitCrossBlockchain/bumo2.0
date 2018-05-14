@@ -11,3 +11,11 @@ bumo-testnet.json
 bumo-single.json			
 
 
+Please copy one of these files to bumo.json first! if not, it can not run
+
+like this:
+	cp bumo-mainnet.json bumo.json
+or
+	cp bumo-testnet.json bumo.json
+or
+	cp bumo-single.json bumo.json

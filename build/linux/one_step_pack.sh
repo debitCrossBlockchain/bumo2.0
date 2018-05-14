@@ -35,15 +35,22 @@ mkdir buchain/data
 mkdir buchain/jslib
 mkdir buchain/bin
 mkdir buchain/log
+mkdir buchain/scripts
 mkdir buchain/coredump
 cp ../build/win32/jslib/jslint.js buchain/jslib/
 cp ../build/win32/config/bumo-mainnet.json buchain/config/
 cp ../build/win32/config/bumo-testnet.json buchain/config/
 cp ../build/win32/config/bumo-single.json  buchain/config/
 cp ../build/win32/config/ReadMe.txt  buchain/config/
+cp ../deploy/bumo  buchain/scripts/
+cp ../deploy/bumod  buchain/scripts/
+cp ../deploy/start-stop-daemon  buchain/scripts/
 cp ../bin/bumo buchain/bin/
+cp ../bin/bumod buchain/bin/
 cp ../src/3rd/v8_target/linux/*.bin buchain/bin/
 cp ../src/3rd/v8_target/linux/*.dat buchain/bin/
+
+chmod +x buchain/scripts/*
 
 tar czvf buchain-linux-$DATE-$v.tar.gz buchain/
 rm -rf buchain/ 
