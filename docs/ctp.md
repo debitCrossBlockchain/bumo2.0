@@ -1,4 +1,4 @@
-# Bumo CTP1.0 token标准
+# Bumo CTP1.0 Token 标准
 
 ## 简介
 
@@ -300,7 +300,13 @@ E.g.
 
 ## 入口函数
 
-入口函数必须严格按照以下规范进入个执行函数。
+### 入口函数 init
+
+```js
+function init(input_str){
+}
+
+```
 
 ### 入口函数 main
 
