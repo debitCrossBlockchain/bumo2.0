@@ -320,7 +320,8 @@ All the private information of configuration profile is encrypted, and the decry
 - command `./bin/bumo --aes-crypto [key]`
 
 ```bash
-[root@localhost buchain]# ./bin/bumo --aes-crypto root e2ba44bf0b27f0acbe7b5857e3bc6348
+[root@localhost buchain]# ./bin/bumo --aes-crypto root 
+e2ba44bf0b27f0acbe7b5857e3bc6348
 ```
 - The information of configuration needs to be encrypted
 

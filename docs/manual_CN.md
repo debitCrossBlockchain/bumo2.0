@@ -321,7 +321,8 @@ config.json
 - 命令./bin/bumo --aes-crypto [参数]
 
 ```bash
-[root@localhost buchain]# ./bin/bumo --aes-crypto root e2ba44bf0b27f0acbe7b5857e3bc6348
+[root@localhost buchain]# ./bin/bumo --aes-crypto root 
+e2ba44bf0b27f0acbe7b5857e3bc6348
 ```
 - 需加密配置项 
 
