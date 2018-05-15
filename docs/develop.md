@@ -1166,7 +1166,7 @@ POST /getTransactionBlob
       "type": 2,
       "issue_asset": {
         "amount": 1000,
-        "code": "CNY",
+        "code": "CNY"
       }
     }
     ```
