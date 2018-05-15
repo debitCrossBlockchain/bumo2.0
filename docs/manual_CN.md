@@ -272,6 +272,7 @@ config.json
 ```json
    "genesis": {
         "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3", //创世区块地址
+        "slogan" : "a new era of value",
         "fees": {
             "base_reserve": 10000000,  //账号最低预留费
             "byte_fee": 1000           //字节费

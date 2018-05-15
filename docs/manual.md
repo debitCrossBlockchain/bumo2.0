@@ -271,6 +271,7 @@ config.json
 ```json
    "genesis": {
         "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3", //account of initial block
+        "slogan" : "a new era of value",
         "fees": {
             "base_reserve": 10000000,  // based reserve of the account
             "byte_fee": 1000           //byte fee

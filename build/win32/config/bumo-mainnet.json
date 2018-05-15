@@ -33,7 +33,8 @@
 	},
 	"genesis" :{
 		"account" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
-                "fees": {"base_reserve":10000000, "gas_price" :1000},
+		"slogan" : "a new era of value",
+		"fees": {"base_reserve":10000000, "gas_price" :1000},
 		"validators": [
 			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
 		]
