@@ -30,10 +30,7 @@
     "ledger": {
 	"validation_address": "buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",
         "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54",
-        "max_trans_per_ledger": 1000,
-        "max_ledger_per_message": 50,
-        "max_trans_in_memory": 2000,
-        "max_apply_ledger_per_round": 5,
+        "max_trans_per_ledger": 10000,
         "hardfork_points": [],
 		"tx_pool":{
 			"queue_limit": 10240,
@@ -42,6 +39,7 @@
     },
     "genesis": {
         "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+	"slogan" : "a new era of value",
         "fees": {
             "base_reserve": 10000000,
             "byte_fee": 1000
