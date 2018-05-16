@@ -639,6 +639,11 @@ namespace bumo {
 			}
 
 			if (with_block_reward == "true"){
+				if (seq <= 1){
+					result["block_reward"] = 0;
+					break;
+				}
+
 				int64_t blockReward = GetBlockReward(seq);
 				result["block_reward"] = blockReward;
 
