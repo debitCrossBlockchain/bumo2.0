@@ -103,6 +103,7 @@ namespace bumo {
 			int64_t base_reserve_;
 		};
 		FeeConfigure fees_;
+		std::string slogan_;
 
 		std::string account_;
 		utils::StringList validators_;

@@ -2006,7 +2006,7 @@ namespace bumo{
 
 			std::string arg0 = ToCString(v8::String::Utf8Value(args[0]));
 			if (!utils::String::IsDecNumber(arg0, General::BU_DECIMALS)) {
-				error_desc = utils::String::Format("Not decimal number:%s", arg0.c_str());
+				error_desc = utils::String::Format("Not a decimal number:%s", arg0.c_str());
 				break;
 			} 
 

@@ -294,8 +294,8 @@ namespace bumo {
 		fees_.set_base_reserve(Configure::Instance().genesis_configure_.fees_.base_reserve_);
 		std::string fees_hash = HashWrapper::Crypto(fees_.SerializeAsString());
 		header->set_fees_hash(fees_hash);
-
-		header->set_hash("");
+		header->set_reserve(Configure::Instance().genesis_configure_.slogan_);
+		header->set_hash ("");
 		header->set_hash(HashWrapper::Crypto(ledger.SerializeAsString()));
 
 		last_closed_ledger_ = std::make_shared<LedgerFrm>();

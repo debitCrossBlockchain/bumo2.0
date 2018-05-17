@@ -25,7 +25,7 @@ namespace bumo {
 	const uint32_t General::LEDGER_VERSION = 1000;
 	const uint32_t General::LEDGER_MIN_VERSION = 1000;
 	const uint32_t General::MONITOR_VERSION = 1000;
-	const char *General::BUMO_VERSION = "1.0.0.2";
+	const char *General::BUMO_VERSION = "1.0.0.3";
 
 #ifdef WIN32
 	const char *General::DEFAULT_KEYVALUE_DB_PATH = "data/keyvalue.db";
@@ -231,6 +231,7 @@ namespace bumo {
 		if (type_ == HASH_TYPE_SM3){
 			hash_ = new utils::Sm3();
 		}
+
 		else{
 			hash_ = new utils::Sha256();
 		}
