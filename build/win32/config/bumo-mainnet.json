@@ -22,9 +22,6 @@
 	},
 	"ledger": {
 		"max_trans_per_ledger": 10000,
-		"max_ledger_per_message": 15,
-		"max_trans_in_memory": 20000,
-		"max_apply_ledger_per_round": 5,
 		"hardfork_points": [],
 		"tx_pool":{
             "queue_limit":10240,
@@ -42,7 +39,7 @@
 	"logger": {
 		"path": "log/bumo.log",
 		"dest": "FILE|STDOUT|STDERR",
-		"level": "TRACE|INFO|WARNING|ERROR|FATAL",
+		"level": "INFO|WARNING|ERROR|FATAL",
 		"time_capacity": 1,
 		"size_capacity": 10,
 		"expire_days": 10
