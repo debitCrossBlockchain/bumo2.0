@@ -262,10 +262,11 @@ config.json
     "ledger":{
         "validation_address":"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",//验证节点地址，同步节点或者钱包不需要配置
         "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54", //验证节点私钥，同步节点或者钱包不需要配置
-        "max_trans_per_ledger":1000,
-        "max_ledger_per_message":5,
-        "max_trans_in_memory":2000,
-        "max_apply_ledger_per_round":3
+        "max_trans_per_ledger":1000,  //单个区块最大交易个数
+        "tx_pool":{
+            "queue_limit":10240,
+            "queue_per_account_txs_limit":64
+        }
     }
 ```
 #### 创世区块
@@ -414,9 +415,6 @@ Create hard fork ledger successful, seq(20), consensus value hash(**7aa332f05748
     "ledger": {
        	"genesis_account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
         "max_trans_per_ledger": 1000,
-        "max_ledger_per_message": 5,
-        "max_trans_in_memory": 2000,
-        "max_apply_ledger_per_round": 3,
         "hardfork_points" : 
         [
         	"7aa332f05748e6ce9ad3d059c959a50675109bcaf0a4ba2c5c6adc6418960197"
