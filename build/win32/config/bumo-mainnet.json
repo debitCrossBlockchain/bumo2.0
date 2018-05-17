@@ -11,7 +11,15 @@
 			"heartbeat_interval": 60,
 			"listen_port": 16001,
 			"target_peer_connection": 10,
-			"known_peers": ["bumo.chinacloudapp.cn:16001"]
+			"known_peers": [
+				"seed1.bumo.io:16001", 
+				"seed2.bumo.io:16001", 
+				"seed3.bumo.io:16001", 
+				"seed4.bumo.io:16001", 
+				"seed5.bumo.io:16001", 
+				"seed6.bumo.io:16001", 
+				"seed7.bumo.io:16001"
+			]
 		}
 	},
 	"webserver": {
@@ -29,11 +37,23 @@
         }
 	},
 	"genesis" :{
-		"account" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+		"account" : "buQhQn789EEzY55A5k7KS1YqKi9Sc7QueBeE",
 		"slogan" : "a new era of value",
 		"fees": {"base_reserve":10000000, "gas_price" :1000},
 		"validators": [
-			"buQdEwCroM2PaMSTWFK4XQ63AVMtKDqRdz3g"
+			"buQepro8K7vtL4rXpmXgeXgpSinfersGPhqq",
+			"buQZuyLXnej9uhRMeHvb6MNEK8chYig8tEiE",
+			"buQnXgA9n9xyTSRDZe5udvzBtummAdA3nMHB",
+			"buQpAATLcXQXFDSw4Bqeec6CVWUZiKaXcj6i",
+			"buQcoAnDCn21JXbN6chfW4XsfedCazGTEq8F",
+			"buQntYq7qrC31vuRLhJuMvPxgbU32sFjviDr",
+			"buQYySFa8S7r5TTydJ65RfA4uQyyRNbuK9mW",
+			"buQky1gqTLikvUK3c4zPS1C6KEuCioYHcZ9h",
+			"buQYzyhvtXxNRua21euMJrDErrBfu4HSrSdg",
+			"buQnNS6D6mFT8Se1vHtgsJuraBst6n7rnk87",
+			"buQj4cA7eW7akR6jzSKgd3Vx8tLEQLssW97z",
+			"buQkrtMLQxENbx3vZagE2FzDjKgHQ2njq2S7",
+			"buQiHJuDdXqf2Zx3ZfJ7pQ1MzgMnbA8ymo5p"
 		]
 	},
 	"logger": {
