@@ -55,7 +55,7 @@
             - [查询历史费用](#查询历史费用)
             - [查询费用提案](#查询费用提案)
             - [费用提案](#费用提案)
-            - [费用选取](#费用选取)
+            - [费用选举](#费用选举)
     - [错误码](#错误码)
     - [示例](#示例)
 
@@ -2291,8 +2291,7 @@ GET /getLedger?seq=xxxx&with_fee=true
 
 ```json
 {
-    "method":"queryProposal",
-    "params":""
+    "method":"queryProposal"
 }
 ```
 
@@ -2302,7 +2301,7 @@ json格式需转换成字符串形式填写到 callContract 接口结构
 {
     "contract_address" : "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe",
     "code" : "",
-    "input" : "{\"method\":\"queryProposal\",\"params\":\"\"}",
+    "input" : "{\"method\":\"queryProposal\"}",
     "opt_type" : 2,
     "source_address" : "",
     "fee_limit":100000,
@@ -2433,7 +2432,7 @@ json格式需转换成字符串形式填写到paycoin接口结构
 }
 ```
 
-#### 费用选取
+#### 费用选举
 
 - votePassRate 设置投票通过率，只有验证节点有投票权限，投票数 >= 四舍五入( 验证节点总数 * votePassRate ) 则投票通过，例如，假设总共有 4 个验证节点，那么 4 * 0.7 = 2.8，四舍五入后为 3，那么投票数必须 >= 3 才能通过, 如果总共有 6 个验证节点，那么 6 * 0.7 = 4.2，四舍五入后为 4，投票数必须 >= 4 才能通过;
 
