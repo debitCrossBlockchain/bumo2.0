@@ -188,6 +188,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../src/3rd/basic/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>leveldb.lib;json.lib;sqlite3.lib;iphlpapi.lib;libprotobuf.lib;libeay32.lib;ssleay32.lib;pcre.lib;icui18n.lib;icuuc.lib;winmm.lib;gdi32.lib;v8.lib;v8_libplatform.lib;v8_libbase.lib;libscrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <StackReserveSize>2097152</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
