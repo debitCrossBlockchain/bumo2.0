@@ -54,7 +54,7 @@
             - [Structure of Transaction Fee](#structure-of-transaction-fee)
             - [Types of Transaction Fee](#types-of-transaction-fee) 
             - [Querying Transaction Fee History](#querying-transaction-fee-history) 
-            - [Querying Proposals of Transaction Fee](#querying-proposals-of-transaction-fee)
+            - [Querying Proposals of Transaction Fee](#querying-proposals-of-transaction-fee)
             - [Proposals of Transaction Fee](#proposals-of-transaction-fee)
             - [Selectinging Transaction Fee](#selecting-transaction-fee)
     - [Error Code](#error-code)
