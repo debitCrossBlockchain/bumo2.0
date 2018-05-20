@@ -7,35 +7,35 @@
         - [What is Protocol Buffer3](#what-is-protocol-buffer3)
         - [Protocol Buffer3 and JSON](#protocol-buffer3-and-json)
         - [Websocket and http](#websocket-and-http)
-        - [Port Configuration](#port-config)
+        - [Port Configuration](#port-configuration)
         - [Perform Transaction](#perform-transaction)
         - [Give it a Try](#give-it-a-try) 
     - [HTTP api](#http-api)
-        - [Create Test Account](#create-test-account)
-        - [Querying Account](#query-account) 
-        - [Querying Basic Information of the Account](#query-basic-information-of-account)
-        - [Querying Transaction](#query-transaction)
-        - [Querying Transaction in Buffer-queue](#query-transactions-in-buffer-queue)
-        - [Querying Block Header](#query-block-header)
-        - [Submitting Transaction](#submit-transaction)
-        - [Serializing Transaction](#serialize-transaction)
-        - [Debugging Smart Contract](#debug-smart-contract)
-        - [Evaluating Transaction Fee](#evaluate-transaction-fee)
+        - [Creating Test Account](#creating-test-account)
+        - [Querying Account](#querying-account) 
+        - [Querying Basic Information of Account](#querying-basic-information-of-account)
+        - [Querying Transaction](#querying-transaction)
+        - [Querying Transaction in Buffer-queue](#querying-transactions-in-buffer-queue)
+        - [Querying Block Header](#querying-block-header)
+        - [Submitting Transaction](#submitting-transaction)
+        - [Serializing Transaction](#serializing-transaction)
+        - [Debugging Smart Contract](#debugging-smart-contract)
+        - [Evaluating Transaction Fee](#evaluating-transaction-fee)
     - [Transaction Definition](#transaction-definition)
         - [Basic Structure of Transaction](#basic-structure-of-transactions)
         - [Operation](#operation)
             - [Operating Code](#operating-code)
-            - [Creating Account](#create-account)
-            - [Issuing Assets](#issue-asstes) 
-            - [Transfering Assets](#transfer-asstes) 
-            - [Setting Metadata](#ser-metadata)
-            - [Setting Weight](#ser-weight) 
-            - [Setting Threshold](#set-threshold)
-            - [Transfer BU Assets](#transfer-bu-asset)
+            - [Creating Account](#creating-account)
+            - [Issuing Assets](#issuing-assets) 
+            - [Transferring Assets](#transferring-assets) 
+            - [Setting Metadata](#setting-metadata)
+            - [Setting Weight](#setting-weight) 
+            - [Setting Threshold](#setting-threshold)
+            - [Transferring BU Assets](#transferring-bu-assets)
             - [Log](#log)
     - [Advanced Features](#advanced-features)
-        - [Distributing Weight](#distribute-weight) 
-        - [Controlling Version](#control-version)
+        - [Distributing Weight](#distributing-weight) 
+        - [Controlling Version](#controlling-version)
         - [Smart Contract](#smart-contract)
             - [Syntax](#syntax)
             - [Default Functions](#default-functions)
@@ -44,19 +44,19 @@
         - [Validator Nodes Election](#validator-nodes-election)
             - [Creating Election Contract Account](#creating-election-contract-account)
             - [Candidates of Validator Nodes](#candidates-of-validator-nodes)
-            - [Voting on the Validator Nodes Appliers](#voting-on-the-validator-nodes-appliers) 
+            - [Voting on Validator Nodes Appliers](#voting-on-validator-nodes-appliers) 
             - [Forfeiting the Pledge](#forfeit-the-pledge) 
-            - [Banning the Malicious Nodes](#banning-the-malicious-nodes) 
-            - [Revoking banning the Malicious Nodes](#revoking-banning-the-malicious-nodes)
-            - [Voting on Banning the Malicious Nodes](#vote-on-banning-the-malicious-nodes) 
-            - [Querying Functions](#query-functions) 
-        - [Election Contract of Transaction Fee](#election-contract-of-transaction-fee) (Reconsider 'fees' or 'fee' for all usages of this word - considering i see 'types of transaction' below)
+            - [Banning Malicious Nodes](#banning-malicious-nodes) 
+            - [Revoking banning Malicious Nodes](#revoking-banning-malicious-nodes)
+            - [Voting on Banning Malicious Nodes](#voting-on-banning-malicious-nodes) 
+            - [Querying Functions](#querying-functions) 
+        - [Election Contract of Transaction Fee](#election-contract-of-transaction-fee)
             - [Structure of Transaction Fee](#structure-of-transaction-fee)
             - [Types of Transaction Fee](#types-of-transaction-fee) 
-            - [Querying Transaction Fee History](#query-transaction-fee-history) 
-            - [Querying Proposals of Transaction Fee](#query-proposals-of-transaction-fee) (Querying or Inquire); (Proposal or proposals)
-            - [Proposals of Transaction Fee](#proposals-of-transaction-fee) (Proposal or proposals)
-            - [Selectinging Transaction Fee](#select-transaction-fee)
+            - [Querying Transaction Fee History](#querying-transaction-fee-history) 
+            - [Querying Proposals of Transaction Fee](#querying-proposals-of-transaction-fee)
+            - [Proposals of Transaction Fee](#proposals-of-transaction-fee)
+            - [Selectinging Transaction Fee](#selecting-transaction-fee)
     - [Error Code](#error-code)
     - [Example](#example)
 
@@ -68,7 +68,7 @@
 
 BUMO Blockchain serializes data with `protocol buffer 3`, which is a general serialization protocol launched by Google. Click this [link](https://developers.google.com/protocol-buffers/docs/proto3) to get more information. All the data format we use are under the dir: `src\proto`. Other data with reference to transaction, block ,account are in the `chain.proto` file. 
 
-### Protocol Buffer  3 and JSON
+### Protocol Buffer3 and JSON
 
 Data from http api are in json format, and are transferred automatically by protocol buffer. The text defined as type **bytes** is hexadecimal in json. It can not be utilized directly.  
 
@@ -138,7 +138,7 @@ HTTP GET host:36002/getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 
 ## HTTP api
 
-### Create Test Account 
+### Creating Test Account 
 
 ```text
 HTTP GET /createAccount
@@ -238,7 +238,7 @@ return,
 }
 ```
 
-### Querying Basic Information of the Account
+### Querying Basic Information of Account
 
 ```text
 HTTP GET /getAccountBase?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
@@ -282,7 +282,7 @@ return,
 }
 ```
 
-### Querying Transactions
+### Querying Transaction
 
 ```text
 GET /getTransactionHistory?ledger_seq=6
@@ -849,7 +849,7 @@ In the smart contract module, we designed a sandbox for debugging the contract. 
 }
 ```
 
-### Evaluationg Transaction Fee
+### Evaluating Transaction Fee
 ```text
    POST /testTransaction
 ```
@@ -1057,7 +1057,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 | 6          | SET_THRESHOLD     | Setting threshold   |
 | 7          | PAY_COIN          | Paying with BU COIN |
 
-#### Create Account
+#### Creating Account
 
 |Parameters|Description
 |:--- | --- 
@@ -1191,7 +1191,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 
   - init_input:  If the newly created account is for contract, then pass the parameter to initialize the contract.
 
-#### Issue Assets
+#### Issuing Assets
 
 |Parameters|Description
 |:--- | --- 
@@ -1226,7 +1226,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
     - Amount of the assets, length (0, MAX(int64)) 
     - After you complete successfully, the assets will be added into your source account balance. 
 
-#### Transfer Assets
+#### Transferring Assets
 
 |Parameters|Description
 |:--- | --- 
@@ -1237,7 +1237,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 |pay_asset.input|  input for tiggering the smart contract (defaults to null)
 
 - Function
-  Transfer the asset form (**from?) sender account to receiver account.
+  Transfer the asset from sender account to receiver account.
 - Conditions
   - valid parameters
   - sender account has sufficient balance
@@ -1326,10 +1326,10 @@ Evaluating transaction fee would not alter the account balance. Related sender a
     - value: length [0,256K]
     - version: Set null.  If you would like to get more advanced function, please refer to [Control Version](#版本化控制). 
 
-#### Setting weight
+#### Setting Weight
 |Parameters|Description
 |:--- | --- 
-|master_weight |Optional.  defaults to  0; -1: set null; 0: set the weight of master as 0; >0 && <= MAX(UINT32): set the weight as the value, others are ilvalid (invalid??)***.  
+|master_weight |Optional.  defaults to  0; -1: set null; 0: set the weight of master as 0; >0 && <= MAX(UINT32): set the weight as the value, others are invalid.  
 |address | Signer address ( should be valid ) 
 |weight | optional. defaults to 0; 0: delete the signer; >0 && <= MAX(UINT32): Set the weight as the value, others are invalid
 
@@ -1422,7 +1422,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
   }
   ```
 
-#### Transfer BU Asset
+#### Transferring BU Assets
 
 |Parameters|Description
 |:--- | --- 
@@ -1503,7 +1503,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 
 ## Advanced Features
 
-### Distribute weight 
+### Distributing weight 
 
 As you are creating a new account, you can assign the weight for this account from setting the `priv`. the following is a simple example, 
 
@@ -1553,7 +1553,7 @@ As you are creating a new account, you can assign the weight for this account fr
 }
 ```
 
-### Control Version
+### Controlling Version
 
 Every metadata of accounts is a micro database. Versioning can prevent the conflictions of altering. 
 
@@ -1588,7 +1588,7 @@ function query(input)
 
 The system offers several global variables for getting the information of blockchain and drive the transactions, except setting thresholds and weight. 
 
-**Note: **Do not duplicate the name of global variables or default variables as the custom fuctions. It will lead TO uncontrolled defacts (uncontrollable error?)***.
+**Note: Do not duplicate the name of global variables or default variables as the custom fuctions. It will lead to uncontrollable error.**
 
 #### Syntax
 
@@ -2003,7 +2003,7 @@ Referenced Documents: [Smart Contract Rules](../src/web/jslint/ContractRules.md)
 
 ### Validator Nodes Election
 
-#### Create Election Contract Account
+#### Creating Election Contract Account
 Before you create an election contract account, you cannot complete the following operations. The new account should be global and without space repetition. 
 
 - Creating a [contract account](#创建账号), and the address of this contract should be `buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ`.  
@@ -2058,7 +2058,7 @@ Validators nodes will vote on the appliers (refer to [Vote on the Validator Node
 
 It depends on the pledge amount for becoming a formal validator nodes. Suppose that the net needs 100 validator nodes (`validatorSettingSize`= 100),  the candidates whose pledge are among top 100 can become the formal validators. The pledge can be added as many times as they want (refer to Candidates of Validator Nodes)
 
-#### Vote on the Validator Nodes Appliers
+#### Voting on Validator Nodes Appliers
 
 If validator nodes vote for the Appliers, they can become formal candidates of validator nodes. The pledge can be taken back (refer to [Forfeit the Pledge](#Forfeit the Pledge) ) if the candidates would not vote through becoming formal validator nodes. 
 
@@ -2105,7 +2105,7 @@ example,
 
 After this operation, election account will return all the pledge to the sender account. If the sender accounts have been validator nodes, they will lose the identity as the validators. Election contract will vote on new validators to replace them.
 
-#### Banning the Malicious Nodes
+#### Banning Malicious Nodes
 
 If a validator node finds a malicious or unqualified node, it can submit **banning the malicious nodes**. To ban the malicious nodes, all of the validator nodes should vote on the proposal. 
 
@@ -2135,7 +2135,7 @@ Note: The proposer nodes and the malicious nodes both are validator nodes.
 
 
 
-#### Revoking Banning the Malicious Nodes
+#### Revoking Banning Malicious Nodes
 Operations can be revoked if initiated proposes are found to be wrong. However, once a proposal is passed, it can no longer be revoked.
 
 - The proposers transfer any number of asset (including 0) to election validator nodes contract account.
@@ -2195,7 +2195,7 @@ Note: Only the validator nodes have voting rights. The proposal would be voided 
 
 By sending appointed parameters to the query interface (query api), you can obtain  the related information. Currently, you can only call the query interface by sending sections `callContract`and `contract_address`, filling in address of validator candidates' election account.
 
-##### Querying the Current validator Nodes Setting
+##### Querying Current Validator Nodes Setting
 
 example,
 
@@ -2209,7 +2209,7 @@ example,
   }
 ```
 
-##### Querying the List of  Validator Nodes Candidates and Pledge 
+##### Querying List of Validator Nodes Candidates and Pledge 
 
 example:
 
@@ -2223,7 +2223,7 @@ example:
   }
 ```
 
-##### Querying the Proposals of  Applying to be Candidate Nodes 
+##### Querying Proposals of Applying to be Candidate Nodes 
 Fill in the appliers' address into section `address`.
 
 example,
@@ -2245,7 +2245,7 @@ example,
   }
 ```
 
-##### Querying the Proposals of Banning the Malicious Nodes 
+##### Querying Proposals of Banning Malicious Nodes 
 Fill in the address of the malicious nodes into section `address`. 
 
 example,
@@ -2273,7 +2273,7 @@ This contract is for planning the standard of transaction fee. Every standard of
 
 address of this contract:` buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe`
 
-#### Fee Structure
+#### Structure of Transaction Fee
 
   ```text
   message FeeConfig
@@ -2288,7 +2288,7 @@ address of this contract:` buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe`
   }
   ```
 
-#### Fee Type
+#### Types of Transaction Fee
 
 | Code | Names        | Description   |
 | :--- | ------------ | ------------- |
@@ -2329,7 +2329,7 @@ GET /getLedger?seq=xxxx&with_fee=true
 }
 ```
 
-#### Querying the Proposals of Transaction Fee
+#### Querying Proposals of Transaction Fee
 
 Call the query interface by sending the section `callContract`. The format of the input is json. 
 
