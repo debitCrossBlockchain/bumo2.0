@@ -292,6 +292,7 @@ GET /getTransactionHistory?ledger_seq=6
 | :--------- | ------------------------------------------------------------ |
 | hash       | Querying transactions with the unique identification by hash value. |
 | ledger_seq | Querying transactions with specified block.                  |
+
 Note: If you appoint the two parameters at the same time, api will return the specified transaction in the specified block. 
 
 return,
@@ -418,6 +419,7 @@ GET /getTransactionCache?hash=ad545bfc26c440e324076fbbe1d8affbd8a2277858dc35927d
 | :--------- | ------------------------------------------------------------ |
 | hash       | Querying transactions with the unique identification by hash value. |
 | limit      | Querying the first N transactions in the buffer queue.       |
+
 Note: If you appoint the two parameters at the same time, api will return the query by hash value. 
 
 return,
