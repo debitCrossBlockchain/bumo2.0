@@ -2513,13 +2513,13 @@ JSON format contents should be transmitted into type string, then fill in the `p
 
 error list:
 
-| error_code | names                     | description                                                  |
+| error_code | Names                     | Description                                                  |
 | :--------- | ------------------------- | ------------------------------------------------------------ |
-| 0          | ERRCODE_SUCCESS           | successful operation                                         |
-| 1          | ERRCODE_INTERNAL_ERROR    | inner service defect                                         |
-| 2          | ERRCODE_INVALID_PARAMETER | parameters error                                             |
-| 3          | ERRCODE_ALREADY_EXIST     | objects already exist, such as repeated transactions***      |
-| 4          | ERRCODE_NOT_EXIST         | objects do not exist, such as null account, transactions and blocks etc. |
+| 0          | ERRCODE_SUCCESS           | Successful operation                                         |
+| 1          | ERRCODE_INTERNAL_ERROR    | Inner service defect                                         |
+| 2          | ERRCODE_INVALID_PARAMETER | Parameters error                                             |
+| 3          | ERRCODE_ALREADY_EXIST     | Objects already exist, such as repeated transactions***      |
+| 4          | ERRCODE_NOT_EXIST         | Objects do not exist, such as null account, transactions and blocks etc. |
 | 5          | ERRCODE_TX_TIMEOUT        | Transactions expired. It means the transaction has been removed from the buffer, but it still has probability to be executed. |
 | 7                 | ERRCODE_MATH_OVERFLOW                  | Math calculation is overflown
 | 20                | ERRCODE_EXPR_CONDITION_RESULT_FALSE    | The expression returns false. It means the TX failed to be executed currently, but it still has probability to be executed in the following blocks . 
