@@ -234,18 +234,28 @@ namespace bumo {
 			return false;
 		}
 
-		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
-			protocol::TransactionEnv tran;
-			tran.ParseFromString(message.data());
-			TransactionFrm::pointer tran_ptr = std::make_shared<TransactionFrm>(tran);
-			//switch to main thread
-			Global::Instance().GetIoService().post([tran_ptr, message, this]() {
-				Result ig_err;
-				if (GlueManager::Instance().OnTransaction(tran_ptr, ig_err)) {
-					BroadcastMsg(message.type(), message.data());
-				}
-			});
+		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data())) {
+			LOG_TRACE("Transaction from id(" FMT_I64 ") queued", conn_id);
+			return true;
 		}
+
+		//if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
+		protocol::TransactionEnv tran;
+		if (!tran.ParseFromString(message.data())) {
+			LOG_TRACE("Transaction from id(" FMT_I64 ") parse error", conn_id);
+			return false;
+		}
+
+		TransactionFrm::pointer tran_ptr = std::make_shared<TransactionFrm>(tran);
+		//switch to main thread
+		Global::Instance().GetIoService().post([tran_ptr, message, this, conn_id]() {
+			Result ig_err;
+			if (GlueManager::Instance().OnTransaction(tran_ptr, ig_err)) {
+				ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id);
+				BroadcastMsg(message.type(), message.data());
+			}
+		});
+
 		return true;
 	}
 
@@ -306,15 +316,23 @@ namespace bumo {
 			hash.c_str(), msg.GetNodeAddress(), msg.GetSeq(),
 			PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()), msg.GetSize());
 
+		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data())) {
+			LOG_TRACE("Consensus msg from id(" FMT_I64 ") queued", conn_id);
+			return true;
+		}
 
 		//switch to main thread
-		Global::Instance().GetIoService().post([conn_id, msg, message, hash, this]() {
-			if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data(), conn_id)) {
+		Global::Instance().GetIoService().post([msg, message, hash, this, conn_id]() {
 				LOG_TRACE("Pbft hash(%s) would be processed", hash.c_str());
-				BroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data());
-				GlueManager::Instance().OnConsensus(msg);
-			}
+				if (GlueManager::Instance().OnConsensus(msg)) {
+					ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data(), conn_id);
+					BroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data());
+				}
+				else {
+					LOG_ERROR("Pbft hash(%s) on consensus failed", hash.c_str());
+				}
 		});
+		
 		return true;
 	}
 

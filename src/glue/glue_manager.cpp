@@ -23,7 +23,6 @@
 namespace bumo {
 
 	int64_t const  MAX_LEDGER_TIMESPAN_SECONDS = 20 * utils::MICRO_UNITS_PER_SEC;
-	int64_t const QUEUE_TRANSACTION_TIMEOUT = 60 * utils::MICRO_UNITS_PER_SEC;
 	GlueManager::GlueManager() {
 		time_start_consenus_ = 0;
 		ledgerclose_check_timer_ = 0;
@@ -219,8 +218,8 @@ namespace bumo {
 				js["action"] = "apply";
 				js["error_code"] = err.code();
 				js["desc"] = err.desc();
-				LOG_ERROR("Check transaction failed, source address(%s) hash(%s), return(%s)",
-					address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str(), js.toFastString().c_str());
+				LOG_ERROR("Check transaction failed, source address(%s) nonce(" FMT_I64 ") hash(%s), return(%s)",
+					address.c_str(), tx->GetNonce(), utils::String::Bin4ToHexString(hash_value).c_str(), js.toFastString().c_str());
 				break;
 			}
 
@@ -235,8 +234,8 @@ namespace bumo {
 		return err.code() == protocol::ERRCODE_SUCCESS;
 	}
 
-	void GlueManager::OnConsensus(const ConsensusMsg &msg) {
-		consensus_->OnRecv(msg);
+	bool GlueManager::OnConsensus(const ConsensusMsg &msg) {
+		return consensus_->OnRecv(msg);
 	}
 
 	void GlueManager::OnTimer(int64_t current_time) {

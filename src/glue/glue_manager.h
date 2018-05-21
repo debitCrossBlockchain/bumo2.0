@@ -73,7 +73,7 @@ namespace bumo {
 		int64_t GetIntervalTime(bool empty_block);
 
 		bool OnTransaction(TransactionFrm::pointer tx, Result &err);
-		void OnConsensus(const ConsensusMsg &msg);
+		bool OnConsensus(const ConsensusMsg &msg);
 		void NotifyErrTx(std::vector<TransactionFrm::pointer> &txs);
 
 		//called by ledger manger once ledger closed

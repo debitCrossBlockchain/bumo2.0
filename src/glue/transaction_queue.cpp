@@ -19,7 +19,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace bumo {
 
-	int64_t const QUEUE_TRANSACTION_TIMEOUT = 60 * utils::MICRO_UNITS_PER_SEC;
+	int64_t const QUEUE_TRANSACTION_TIMEOUT = 600 * utils::MICRO_UNITS_PER_SEC;
 
 	TransactionQueue::TransactionQueue(uint32_t queue_limit, uint32_t account_txs_limit)
 		: queue_(PriorityCompare{ *this }),
