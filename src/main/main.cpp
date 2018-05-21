@@ -46,17 +46,16 @@ int main(int argc, char *argv[]){
 		return -1;
 	}
 
-	printf(" main pthread statck size:%d\n", (int)stacksize);
 	if (stacksize <= 2 * 1024 * 1024)
 	{
 		stacksize = 2 * 1024 * 1024;
-		printf("set pthread statck size:%d\n", (int)stacksize);
+		printf("set main pthread statck size:%d\n", (int)stacksize);
 
 		pthread_attr_t object_attr;
 		pthread_attr_init(&object_attr);
 		ret = pthread_attr_setstacksize(&object_attr, stacksize);
 		if (ret != 0) {
-			printf("set stacksize error!:%d\n", (int)stacksize);
+			printf("set main stacksize error!:%d\n", (int)stacksize);
 			return -1;
 		}
 	}
