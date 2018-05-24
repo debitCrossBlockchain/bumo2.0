@@ -266,6 +266,67 @@ namespace bumo {
 				return true;
 			}
 
+			else if (s == "--create-keystore-list") {
+				std::string path = argc > 3 ? argv[2] : "";
+				int nums = argc > 3 ? utils::String::Stoi(argv[3]) : 0;
+				std::string password;
+
+				if (4 == argc) {
+					password = utils::GetCinPassword("input the password:");
+					std::cout << std::endl;
+					if (password.empty()) {
+						std::cout << "error, empty" << std::endl;
+						return true;
+					}
+					std::string password1 = utils::GetCinPassword("input the password again:");
+					std::cout << std::endl;
+					if (password != password1) {
+						std::cout << "error, not match" << std::endl;
+						return true;
+					}
+				}
+				else if(5 == argc){
+					password = argv[4];
+				}
+
+				if (path.empty() || nums <= 0 || password.empty()){
+					Usage();
+					return true;
+				}
+
+				if (!utils::File::IsExist(path) && !utils::File::CreateDir(path)){
+					printf("create dir false, path:%s, make sure the path exists\n", path.c_str());
+					return true;
+				}
+
+				for (int i = 0; i < nums; i++){
+					KeyStore key_store;
+					std::string new_priv_key;
+					Json::Value key_store_json;
+					bool ret = key_store.Generate(password, key_store_json, new_priv_key);
+					if (ret) {
+						std::string key_path = utils::File::RegularPath(utils::String::Format("%s/%s.wallet", path.c_str(), key_store_json["address"].asString().c_str()));
+						std::string key_store_result = key_store_json.toFastString();
+
+						utils::File file;
+						if (!file.Open(key_path, utils::File::FILE_M_WRITE | utils::File::FILE_M_TEXT)){
+							printf("open file failure, path:%s\n", key_path.c_str());
+							return true;
+						}
+
+						if (key_store_result.size() != file.Write(key_store_result.c_str(), 1, key_store_result.size())){
+							printf("write file failure, path:%s\n", path);
+						}
+
+						file.Close();
+					}
+					else {
+						printf("error");
+					}
+				}
+				
+				return true;
+			}
 			else if (s == "--create-keystore-from-privatekey") {
 				std::string password;
 				if (argc <= 3) {
@@ -445,6 +506,7 @@ namespace bumo {
 			"  --create-hardfork                                             create hard fork ledger\n"
 			"  --clear-peer-addresses                                        clear peer list\n"
 			"  --create-keystore <password>                                  create key store\n"
+			"  --create-keystore-list <path> <nums> <password>               create a number of keystores into path with same password\n"
 			"  --create-keystore-from-privatekey <private key> <password>    create key store from private key\n"
 			"  --sign-data-with-keystore <keystore> <password> <blob data>   sign blob data with keystore\n"
 			"  --check-keystore <keystore> <password>                        check password match the keystore\n"
