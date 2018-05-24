@@ -95,8 +95,8 @@ namespace bumo {
 
 			auto tx_it = account_it->second.find(tx->GetNonce());
 			if (tx_it != account_it->second.end()){
-
-				if (tx->GetGasPrice() > (*tx_it->second.first)->GetGasPrice()) {
+				int64_t p = (*tx_it->second.first)->GetGasPrice();
+				if ((tx->GetGasPrice() - p)>=(p*0.1)) {
 					//remove transaction for replace ,and after insert
 					std::string drop_hash = (*tx_it->second.first)->GetContentHash();
 					Remove(account_it, tx_it);
