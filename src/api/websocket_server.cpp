@@ -215,8 +215,10 @@ namespace bumo {
 			std::string content = tran_env.transaction().SerializeAsString();
 
 			TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-			GlueManager::Instance().OnTransaction(ptr, result);
-			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
+
+			if (GlueManager::Instance().OnTransaction(ptr, result)) {
+				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
+			} 
 		
 		} while (false);
 

@@ -144,8 +144,14 @@ namespace bumo {
 
 			if (result.code() == protocol::ERRCODE_SUCCESS) {
 				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, ptr->GetFullData());
-				if (result.code() == protocol::ERRCODE_SUCCESS) success_count++;
 			}
+
+			//force exist to success
+			if (result.code() == protocol::ERRCODE_SUCCESS || result.code() == protocol::ERRCODE_ALREADY_EXIST) {
+				result.set_code(protocol::ERRCODE_SUCCESS);
+				success_count++;
+			}
+
 			result_item["error_code"] = result.code();
 			result_item["error_desc"] = result.desc();
 		}

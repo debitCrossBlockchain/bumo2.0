@@ -204,8 +204,8 @@ namespace bumo {
 		do {
 			if (tx_pool_->IsExist(tx->GetContentHash())){
 				//dont't reply the tx, then break;
-				//err.set_code(protocol::ERRCODE_ALREADY_EXIST);
-				//err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
+				err.set_code(protocol::ERRCODE_ALREADY_EXIST);
+				err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
 				LOG_INFO("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
 				break;
 			}
