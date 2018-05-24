@@ -16,6 +16,7 @@
 #ifndef BROADCAST_H_
 #define BROADCAST_H_
 
+#include <unordered_map>
 namespace bumo{
 
 	class IBroadcastDriver{
@@ -41,7 +42,7 @@ namespace bumo{
 	};
 
 	typedef std::map<int64_t, std::string> BroadcastRecordCoupleMap;
-	typedef std::map<std::string, BroadcastRecord::pointer> BroadcastRecordMap;
+	typedef std::unordered_map<std::string, BroadcastRecord::pointer> BroadcastRecordMap;
 
 	class Broadcast {
 	private:

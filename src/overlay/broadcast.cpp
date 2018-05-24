@@ -102,5 +102,22 @@ namespace bumo{
 				break;
 			}
 		}
+
+		size_t max_size = 1000 * 1000;
+		if (records_couple_.size() > max_size) {
+			size_t i = 0;
+			for (auto it = records_couple_.begin(); it != records_couple_.end();) {
+
+				if (i < max_size / 2) {
+					records_.erase(it->second);
+					records_couple_.erase(it++);
+					i++;
+				}
+				else {
+					break;
+				}
+			}
+		} 
+
 	}
 }
