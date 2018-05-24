@@ -316,7 +316,7 @@ namespace bumo {
 			hash.c_str(), msg.GetNodeAddress(), msg.GetSeq(),
 			PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()), msg.GetSize());
 
-		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data())) {
+		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_PBFT, message.data())) {
 			LOG_TRACE("Consensus msg from id(" FMT_I64 ") queued", conn_id);
 			return true;
 		}
@@ -329,7 +329,7 @@ namespace bumo {
 					BroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data());
 				}
 				else {
-					LOG_ERROR("Pbft hash(%s) on consensus failed", hash.c_str());
+					LOG_TRACE("Pbft hash(%s) on consensus failed", hash.c_str());
 				}
 		});
 		
