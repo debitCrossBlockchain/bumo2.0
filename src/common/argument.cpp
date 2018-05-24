@@ -315,7 +315,7 @@ namespace bumo {
 						}
 
 						if (key_store_result.size() != file.Write(key_store_result.c_str(), 1, key_store_result.size())){
-							printf("write file failure, path:%s\n", path);
+							printf("write file failure, path:%s\n", path.c_str());
 						}
 
 						file.Close();
