@@ -100,6 +100,7 @@ namespace bumo {
 					//remove transaction for replace ,and after insert
 					std::string drop_hash = (*tx_it->second.first)->GetContentHash();
 					Remove(account_it, tx_it);
+					account_nonce_[tx->GetSourceAddress()] = cur_source_nonce;
 					replace = true;
 					account_txs_size--;
 					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ") in queue", utils::String::BinToHexString(drop_hash).c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetGasPrice(), tx->GetNonce());
