@@ -127,6 +127,9 @@ namespace bumo {
 		KeyValueDb *account_db();   //storage account tree
 		KeyValueDb *ledger_db();    //storage transaction and ledger
 
+		//sync account db and ledger db
+		utils::ReadWriteLock account_ledger_lock_;
+
 		virtual void OnTimer(int64_t current_time) {};
 		virtual void OnSlowTimer(int64_t current_time);
 	};

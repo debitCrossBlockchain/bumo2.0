@@ -415,10 +415,10 @@ namespace bumo {
 			
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
 
-			if (!tx_frm->ValidForApply(environment_,!IsTestMode())){
+			/*if (!tx_frm->ValidForApply(environment_,!IsTestMode())){
 				LOG_WARN("Should not go hear");
 				continue;
-			}
+			}*/
 
 			//pay fee
 			if (!tx_frm->PayFee(environment_, total_fee_)) {

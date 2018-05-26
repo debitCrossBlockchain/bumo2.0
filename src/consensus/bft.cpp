@@ -766,7 +766,7 @@ namespace bumo {
 	bool Pbft::OnPrePrepare(const protocol::Pbft &pbft, PbftInstance &pinstance, int32_t check_value_ret) {
 		//if has only one node, then continue
 		if (view_number_ % validators_.size() == replica_id_ && validators_.size() != 1) {
-			return false;
+			return true;
 		}
 
 		const protocol::PbftPrePrepare &pre_prepare = pbft.pre_prepare();
@@ -939,7 +939,7 @@ namespace bumo {
 		else if (view_change.view_number() < view_number_) {
 			LOG_INFO("The new view number(" FMT_I64 ") is less than current view number(" FMT_I64 "), do nothing",
 				view_change.view_number(), view_number_);
-			return true;
+			return false;
 		}
 
 		LOG_INFO("Receive view change message from replica id(" FMT_I64 "), view number(" FMT_I64 "),sequence(" FMT_I64 "), round number(%u)",
@@ -1005,7 +1005,7 @@ namespace bumo {
 		else if (new_view.view_number() < view_number_) {
 			LOG_INFO("The new view number(" FMT_I64 ") is less than current view number(" FMT_I64 "), do nothing",
 				new_view.view_number(), view_number_);
-			return true;
+			return false;
 		}
 
 		//delete the response timer
@@ -1141,7 +1141,7 @@ namespace bumo {
 
 			LOG_INFO("It's not the new primary(replica_id:" FMT_I64 "), so don't process the quorum view message, waiting new view message 30s, timer id(" FMT_I64")",
 				vc_instance.view_number_ % validators_.size(), new_view_repond_timer_);
-			return false;
+			return true;
 		}
 
 		//new view message

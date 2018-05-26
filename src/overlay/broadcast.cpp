@@ -50,6 +50,13 @@ namespace bumo{
 		return true;
 	}
 
+	bool Broadcast::IsQueued(int64_t type, const std::string &data) {
+		std::string hash = HashWrapper::Crypto(data);
+		utils::MutexGuard guard(mutex_msg_sending_);
+		BroadcastRecordMap::iterator result = records_.find(hash);
+		return result != records_.end();
+	}
+
 	void Broadcast::Send(int64_t type, const std::string &data) {
 		std::string hash = HashWrapper::Crypto(data);
 		utils::MutexGuard guard(mutex_msg_sending_);
@@ -85,7 +92,7 @@ namespace bumo{
 
 		for (auto it = records_couple_.begin(); it != records_couple_.end();){
 			// give one ledger of leeway
-			if (it->first + 120 * utils::MICRO_UNITS_PER_SEC < current_time)
+			if (it->first + 3600 * utils::MICRO_UNITS_PER_SEC < current_time)
 			{
 				records_.erase(it->second);
 				records_couple_.erase(it++);
@@ -95,5 +102,22 @@ namespace bumo{
 				break;
 			}
 		}
+
+		size_t max_size = 1000 * 1000;
+		if (records_couple_.size() > max_size) {
+			size_t i = 0;
+			for (auto it = records_couple_.begin(); it != records_couple_.end();) {
+
+				if (i < max_size / 2) {
+					records_.erase(it->second);
+					records_couple_.erase(it++);
+					i++;
+				}
+				else {
+					break;
+				}
+			}
+		} 
+
 	}
 }

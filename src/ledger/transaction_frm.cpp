@@ -42,6 +42,7 @@ namespace bumo {
 		contract_step_(0),
 		contract_memory_usage_(0),
 		contract_stack_usage_(0),
+		contract_stack_max_vaule_(0),
 		enable_check_(false), apply_start_time_(0), apply_use_time_(0),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		utils::AtomicInc(&bumo::General::tx_new_count);
@@ -62,6 +63,7 @@ namespace bumo {
 		contract_step_(0),
 		contract_memory_usage_(0),
 		contract_stack_usage_(0),
+		contract_stack_max_vaule_(0),
 		enable_check_(false), apply_start_time_(0), apply_use_time_(0),
 		incoming_time_(utils::Timestamp::HighResolution()) {
 		Initialize();
@@ -186,8 +188,9 @@ namespace bumo {
 		return contract_memory_usage_;
 	}
 
-	void TransactionFrm::SetStackUsage(int64_t memory_usage) {
-		contract_stack_usage_ = memory_usage;
+	void TransactionFrm::SetStackRemain(int64_t remain_size) {
+		contract_stack_max_vaule_ = std::max(contract_stack_max_vaule_, remain_size);
+		contract_stack_usage_ = contract_stack_max_vaule_ - remain_size;
 	}
 
 	int64_t TransactionFrm::GetStackUsage() {
@@ -268,7 +271,7 @@ namespace bumo {
 
 			proto_source_account.set_balance(new_balance);
 
-			LOG_INFO("Account(%s) paid(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
+			LOG_TRACE("Account(%s) paid(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
 
 			return true;
 		} while (false);
@@ -325,7 +328,7 @@ namespace bumo {
 
 			proto_source_account.set_balance(new_balance);
 
-			LOG_INFO("Account(%s) returned(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
+			LOG_TRACE("Account(%s) returned(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
 
 			return true;
 		} while (false);

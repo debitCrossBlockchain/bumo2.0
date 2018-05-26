@@ -19,7 +19,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace bumo {
 
-	int64_t const QUEUE_TRANSACTION_TIMEOUT = 60 * utils::MICRO_UNITS_PER_SEC;
+	int64_t const QUEUE_TRANSACTION_TIMEOUT = 600 * utils::MICRO_UNITS_PER_SEC;
 
 	TransactionQueue::TransactionQueue(uint32_t queue_limit, uint32_t account_txs_limit)
 		: queue_(PriorityCompare{ *this }),
@@ -95,11 +95,12 @@ namespace bumo {
 
 			auto tx_it = account_it->second.find(tx->GetNonce());
 			if (tx_it != account_it->second.end()){
-
-				if (tx->GetGasPrice() > (*tx_it->second.first)->GetGasPrice()) {
+				int64_t p = (*tx_it->second.first)->GetGasPrice();
+				if ((tx->GetGasPrice() - p)>=(p*0.1)) {
 					//remove transaction for replace ,and after insert
 					std::string drop_hash = (*tx_it->second.first)->GetContentHash();
 					Remove(account_it, tx_it);
+					account_nonce_[tx->GetSourceAddress()] = cur_source_nonce;
 					replace = true;
 					account_txs_size--;
 					LOG_TRACE("Remove transaction(%s) for replace by transaction(%s) of account(%s) gas_price(" FMT_I64 ") nonce(" FMT_I64 ") in queue", utils::String::BinToHexString(drop_hash).c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetSourceAddress().c_str(), tx->GetGasPrice(), tx->GetNonce());

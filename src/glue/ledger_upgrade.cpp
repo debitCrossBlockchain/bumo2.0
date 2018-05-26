@@ -79,6 +79,9 @@ namespace bumo {
 		if (notify && ConsensusManager::Instance().GetConsensus()->IsValidator()){
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY, notify->SerializeAsString());
 			Recv(*notify);
+		}
+
+		if (notify){
 			delete notify;
 		}
 	}
