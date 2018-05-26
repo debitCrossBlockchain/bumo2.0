@@ -122,7 +122,6 @@ namespace bumo {
 		Storage::Instance().account_db()->Get(bumo::General::KEY_GENE_ACCOUNT, address);
 		http::server::request req;
 		req.parameter.insert({ std::string("address"), address });
-		utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
 		GetAccount(req, reply);
 	}
 
