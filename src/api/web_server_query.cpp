@@ -68,6 +68,8 @@ namespace bumo {
 		Json::Value record = Json::Value(Json::arrayValue);
 		Json::Value &result = reply_json["result"];
 
+		utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
+
 		if (!Environment::AccountFromDB(address, acc)) {
 			error_code = protocol::ERRCODE_NOT_EXIST;
 			LOG_TRACE("GetAccount fail, account(%s) not exist", address.c_str());
@@ -120,6 +122,7 @@ namespace bumo {
 		Storage::Instance().account_db()->Get(bumo::General::KEY_GENE_ACCOUNT, address);
 		http::server::request req;
 		req.parameter.insert({ std::string("address"), address });
+		utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
 		GetAccount(req, reply);
 	}
 
@@ -132,6 +135,8 @@ namespace bumo {
 		Json::Value reply_json = Json::Value(Json::objectValue);
 		Json::Value record = Json::Value(Json::arrayValue);
 		Json::Value &result = reply_json["result"];
+
+		utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
 
 		if (!Environment::AccountFromDB(address, acc)) {
 			error_code = protocol::ERRCODE_NOT_EXIST;
@@ -188,6 +193,8 @@ namespace bumo {
 		Json::Value reply_json = Json::Value(Json::objectValue);
 		Json::Value record = Json::Value(Json::arrayValue);
 		Json::Value &result = reply_json["result"];
+
+		utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
 
 		if (!Environment::AccountFromDB(address, acc)) {
 			error_code = protocol::ERRCODE_NOT_EXIST;
@@ -323,7 +330,9 @@ namespace bumo {
 		Json::Value &txs = result["transactions"];
 		txs = Json::Value(Json::arrayValue);
 		result["total_count"] = 0;
+
 		do {
+			utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
 
 			protocol::EntryList list;
 			//avoid scan the whole table
@@ -587,6 +596,7 @@ namespace bumo {
 
 		LedgerFrm frm;
 		do {
+			utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
 			int64_t seq = utils::String::Stoi64(ledger_seq);
 			if (!frm.LoadFromDb(seq)) {
 				error_code = protocol::ERRCODE_NOT_EXIST;
