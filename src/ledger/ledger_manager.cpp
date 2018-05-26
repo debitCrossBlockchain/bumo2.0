@@ -600,13 +600,18 @@ namespace bumo {
 		WRITE_BATCH ledger_db_batch;
 		ledger_db_batch.Put(ComposePrefix(General::CONSENSUS_VALUE_PREFIX, consensus_value.ledger_seq()), consensus_value.SerializeAsString());
 
-		if (!closing_ledger->AddToDb(ledger_db_batch)) {
-			PROCESS_EXIT("AddToDb failed");
-		}
+		do {
+			utils::WriteLockGuard guard(Storage::Instance().account_ledger_lock_);
 
-		if (!Storage::Instance().account_db()->WriteBatch(*account_db_batch)) {
-			PROCESS_EXIT("Write batch failed: %s", Storage::Instance().account_db()->error_desc().c_str());
-		}
+			if (!closing_ledger->AddToDb(ledger_db_batch)) {
+				PROCESS_EXIT("AddToDb failed");
+			}
+
+			if (!Storage::Instance().account_db()->WriteBatch(*account_db_batch)) {
+				PROCESS_EXIT("Write batch failed: %s", Storage::Instance().account_db()->error_desc().c_str());
+			}
+
+		} while (false);
 
 		//write successful, then update the variable
 		last_closed_ledger_ = closing_ledger;
