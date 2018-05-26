@@ -299,32 +299,60 @@ namespace bumo {
 					return true;
 				}
 
+				utils::File file;
+				std::string address_path = utils::File::RegularPath(utils::String::Format("%s/address_list", path.c_str()));
+				if (!file.Open(address_path, utils::File::FILE_M_APPEND | utils::File::FILE_M_TEXT)){
+					printf("open file failure, path:%s\n", address_path.c_str());
+					return true;
+				}
+				long long a = nums;
+				int count = 0;
+				while (a != 0) {
+					a /= 10;
+					count++;
+				}
+				//std::string str_count = utils::String::Format("%d", count);
+
 				for (int i = 0; i < nums; i++){
 					KeyStore key_store;
 					std::string new_priv_key;
 					Json::Value key_store_json;
 					bool ret = key_store.Generate(password, key_store_json, new_priv_key);
 					if (ret) {
-						std::string key_path = utils::File::RegularPath(utils::String::Format("%s/%s.wallet", path.c_str(), key_store_json["address"].asString().c_str()));
+						std::string format_key = utils::String::Format("%%s/%%0%dd-%%s.wallet", count);
+						std::string format_address = utils::String::Format("%%0%dd-%%s%%s", count);
+						std::string key_path = utils::File::RegularPath(utils::String::Format(format_key.c_str(), path.c_str(), i + 1, key_store_json["address"].asString().c_str()));
 						std::string key_store_result = key_store_json.toFastString();
 
-						utils::File file;
-						if (!file.Open(key_path, utils::File::FILE_M_WRITE | utils::File::FILE_M_TEXT)){
+						std::string address = utils::String::Format(format_address.c_str(), i + 1, key_store_json["address"].asString().c_str(),
+#ifdef WIN32
+							"\n"
+#else
+							"\r\n"
+#endif // DEBUG 
+							);
+
+						if (address.size() != file.Write(address.c_str(), 1, address.size())){
+							printf("write file failure, path:%s\n", path.c_str());
+						}
+
+						utils::File file_list;
+						if (!file_list.Open(key_path, utils::File::FILE_M_WRITE | utils::File::FILE_M_TEXT)){
 							printf("open file failure, path:%s\n", key_path.c_str());
 							return true;
 						}
 
-						if (key_store_result.size() != file.Write(key_store_result.c_str(), 1, key_store_result.size())){
+						if (key_store_result.size() != file_list.Write(key_store_result.c_str(), 1, key_store_result.size())){
 							printf("write file failure, path:%s\n", path.c_str());
 						}
 
-						file.Close();
+						file_list.Close();
 					}
 					else {
 						printf("error");
 					}
 				}
-				
+				file.Close();
 				return true;
 			}
 			else if (s == "--create-keystore-from-privatekey") {
