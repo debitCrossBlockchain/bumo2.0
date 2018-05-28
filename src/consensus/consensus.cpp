@@ -102,7 +102,7 @@ namespace bumo {
 
 	bool Consensus::SendMessage(const std::string &message) {
 		if (!is_validator_) {
-			return false;
+			return true;
 		}
 
 		notify_->SendConsensusMessage(message);

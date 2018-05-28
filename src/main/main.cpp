@@ -49,7 +49,6 @@ int main(int argc, char *argv[]){
 	if (stacksize <= 2 * 1024 * 1024)
 	{
 		stacksize = 2 * 1024 * 1024;
-		printf("set main pthread statck size:%d\n", (int)stacksize);
 
 		pthread_attr_t object_attr;
 		pthread_attr_init(&object_attr);

@@ -78,7 +78,7 @@ namespace bumo {
 				pbft_object->OnPrepare(env.pbft(), *this);
 			else if (env.pbft().type() == protocol::PBFT_TYPE_COMMIT)
 				pbft_object->OnCommit(env.pbft(), *this);
-			return true;
+			return false;
 		}
 
 		bool doret = false;

@@ -59,11 +59,11 @@ void posix_thread::start_thread(func_base* arg)
 	return;
   }
   
-  printf("default asio pthread statck size:%d\n", (int)stacksize);
+  //printf("default asio pthread statck size:%d\n", (int)stacksize);
   if(stacksize <= 2 * 1024 * 1024)
   {
 	  stacksize = 2 * 1024 * 1024;
-	  printf("set pthread statck size:%d\n", (int)stacksize);
+	  //printf("set pthread statck size:%d\n", (int)stacksize);
 	  
 	  ret = pthread_attr_setstacksize(&object_attr, stacksize);
 	  if(ret != 0) {
