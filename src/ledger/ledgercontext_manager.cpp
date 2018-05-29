@@ -462,7 +462,6 @@ namespace bumo {
 		}
 		else {
 			LOG_ERROR("Test type(%d) error",type);
-			delete ledger_context;
 			return false;
 		}
 

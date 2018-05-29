@@ -150,6 +150,7 @@ namespace bumo {
 			LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, true, propose_result);
 
 			if (propose_result.block_timeout_) {
+				LOG_ERROR("Pre execute block timeout, tx size:%d, propose value block num:(" FMT_I64 ")", txset_raw.txs_size(), propose_value.ledger_seq());
 				//remove the time out tx
 				//reduct to 1/2
 				protocol::TransactionEnvSet tmp_raw;
