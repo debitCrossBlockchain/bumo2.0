@@ -509,6 +509,7 @@ namespace bumo {
 			env_store.set_close_time(ledger->GetProtoHeader().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
+			int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
 			if (ptr->GetResult().code() != 0)
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else{
