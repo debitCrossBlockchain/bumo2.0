@@ -402,6 +402,35 @@ namespace bumo {
 					LOG_ERROR("%s", exe_result.desc().c_str());
 					break;
 				}
+				if (exe_result.code() == protocol::ERRCODE_SUCCESS){
+					int i = 0;
+					int64_t actual_fee = result_json["txs"][i]["actual_fee"].asInt64();
+					
+					Result exe_result2;
+					do{
+						protocol::Transaction *tran = tran_env.mutable_transaction();
+						tran->set_fee_limit(actual_fee);
+						tx_set->clear_txs();
+						*tx_set->add_txs() = tran_env;
+						Json::Value logs;
+						Json::Value txs;
+						Json::Value query_rets;
+						Json::Value stat;
+						if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
+							(TestParameter*)&test_parameter,
+							utils::MICRO_UNITS_PER_SEC,
+							exe_result2, logs, txs, query_rets, stat, signature_number)) {
+							break;
+						}
+						int64_t actual_fee2 = txs[i]["actual_fee"].asInt64();
+						if (exe_result2.code() == protocol::ERRCODE_SUCCESS){
+							result_json["logs"] = logs;
+							result_json["txs"] = txs;
+							result_json["query_rets"] = query_rets;
+							result_json["stat"] = stat;
+						}
+					} while (false);
+				}
 				result = exe_result;
 				
 				//bool skip_flag = false;
