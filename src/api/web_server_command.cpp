@@ -439,6 +439,9 @@ namespace bumo {
 					} while (exe_result2.code() == protocol::ERRCODE_SUCCESS);
 				}
 				result = exe_result;
+				if (exe_result.code() != protocol::ERRCODE_SUCCESS){
+					reply_json.removeMember("result");
+				}
 				
 				//bool skip_flag = false;
 				//int try_count = 0;
