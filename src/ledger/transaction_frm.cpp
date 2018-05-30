@@ -348,20 +348,22 @@ namespace bumo {
 			std::string str_address = transaction_env_.transaction().source_address();
 			AccountFrm::pointer source_account;
 
-			if (!environment->GetEntry(str_address, source_account)) {
-				LOG_ERROR("Source account(%s) not exists", str_address.c_str());
+			if (!environment->GetEntry(str_address, source_account)) {				
 				result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
+				result_.set_desc(utils::String::Format("Source account(%s) not exists", str_address.c_str()));
+				LOG_ERROR("%s", result_.desc().c_str());
 				break;
 			}
 
 			//判断序号是否正确
 			int64_t last_seq = source_account->GetAccountNonce();
 			if (last_seq + 1 != GetNonce()) {
-				LOG_ERROR("Account(%s) Tx sequence(" FMT_I64 ") not match reserve sequence (" FMT_I64 " + 1)",
+				result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
+				result_.set_desc(utils::String::Format("Account(%s) Tx sequence(" FMT_I64 ") not match reserve sequence (" FMT_I64 " + 1)",
 					str_address.c_str(),
 					GetNonce(),
-					last_seq);
-				result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
+					last_seq));
+				LOG_ERROR("%s", result_.desc().c_str());
 				break;
 			}
 
