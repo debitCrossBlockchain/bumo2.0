@@ -404,12 +404,12 @@ namespace bumo {
 				}
 				if (exe_result.code() == protocol::ERRCODE_SUCCESS){
 					int i = 0;
-					int64_t actual_fee = result_json["txs"][i]["actual_fee"].asInt64();
-					
+					int64_t actual_fee1 = result_json["txs"][i]["actual_fee"].asInt64();
+					int64_t actual_fee2 = 0;
 					Result exe_result2;
 					do{
 						protocol::Transaction *tran = tran_env.mutable_transaction();
-						tran->set_fee_limit(actual_fee);
+						tran->set_fee_limit(actual_fee1);
 						tx_set->clear_txs();
 						*tx_set->add_txs() = tran_env;
 						Json::Value logs;
@@ -422,14 +422,21 @@ namespace bumo {
 							exe_result2, logs, txs, query_rets, stat, signature_number)) {
 							break;
 						}
-						int64_t actual_fee2 = txs[i]["actual_fee"].asInt64();
+						actual_fee2 = txs[i]["actual_fee"].asInt64();
 						if (exe_result2.code() == protocol::ERRCODE_SUCCESS){
 							result_json["logs"] = logs;
 							result_json["txs"] = txs;
 							result_json["query_rets"] = query_rets;
 							result_json["stat"] = stat;
+							if (actual_fee1 != actual_fee2){
+								actual_fee1 = actual_fee2;
+								continue;
+							}
+							else{
+								break;
+							}
 						}
-					} while (false);
+					} while (exe_result2.code() == protocol::ERRCODE_SUCCESS);
 				}
 				result = exe_result;
 				
