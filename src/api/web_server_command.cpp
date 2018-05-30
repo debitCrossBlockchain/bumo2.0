@@ -351,7 +351,7 @@ namespace bumo {
 					if (!EvaluateFee(tran_env, result, max, min))
 						break;
 
-					tran->set_fee_limit(min);
+					tran->set_fee_limit(max);
 
 					std::string content = tran->SerializeAsString();
 					result_json["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
@@ -372,7 +372,7 @@ namespace bumo {
 					if (!EvaluateFee(tran_env, result, max, min))
 						break;
 
-					tran->set_fee_limit(min);
+					tran->set_fee_limit(max);
 
 					std::string content = tran->SerializeAsString();
 					const Json::Value &private_keys = json_item["private_keys"];					
@@ -390,62 +390,76 @@ namespace bumo {
 
 			if (result.code() == protocol::ERRCODE_SUCCESS) {
 				TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-				bool skip_flag = false;
-				int try_count = 0;
-				int64_t last_mid = min;
-				while (!skip_flag && min <= max){
-					//...TODO
-					result_json["txs"].clear();
-					tx_set->clear_txs();
-					*tx_set->add_txs() = tran_env;
-					Result exe_result;
-					if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
-						(TestParameter*)&test_parameter,
-						utils::MICRO_UNITS_PER_SEC,
-						exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["stat"], signature_number)) {
-						reply_json["error_code"] = exe_result.code();
-						reply_json["error_desc"] = exe_result.desc();
-						LOG_ERROR("%s", exe_result.desc().c_str());
-						skip_flag = true;
-						break;
-					}
-					else{
-						int i = 0;
-						result = exe_result;
-						if (result_json["txs"][i].isMember("error_code")){
-							if (result_json["txs"][i]["error_code"].asInt() == (int)protocol::ERRCODE_FEE_NOT_ENOUGH){
-								int64_t actual_fee =result_json["txs"][i]["actual_fee"].asInt64();
-								protocol::Transaction *tran = tran_env.mutable_transaction();
-								int64_t mid = (actual_fee + max) / 2;
-								tran->set_fee_limit(mid);
-								min = last_mid+1;
-								last_mid = mid;
-								try_count++;
-								LOG_INFO("reset actual_fee(" FMT_I64 ") %d", actual_fee, try_count);
-								continue;
-							}
-							else if (result_json["txs"][i]["error_code"].asInt() == (int)protocol::ERRCODE_ACCOUNT_LOW_RESERVE){
-								int64_t actual_fee = result_json["txs"][i]["actual_fee"].asInt64();
-								protocol::Transaction *tran = tran_env.mutable_transaction();
-								int64_t mid = (actual_fee + min) / 2;
-								tran->set_fee_limit(mid);
-								max = last_mid-1;
-								last_mid = mid;
-								try_count++;
-								LOG_INFO("reset actual_fee(" FMT_I64 ") %d", actual_fee, try_count);
-								continue;
-							}
-							else{
-								skip_flag = true;
-							}
-						}
-						else{
-							skip_flag = true;
-						}
-					}
-				};
 				
-				//if (result.code() == protocol::ERRCODE_SUCCESS) success_count++;
+				*tx_set->add_txs() = tran_env;
+				Result exe_result;
+				if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
+					(TestParameter*)&test_parameter,
+					utils::MICRO_UNITS_PER_SEC,
+					exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["stat"], signature_number)) {
+					reply_json["error_code"] = exe_result.code();
+					reply_json["error_desc"] = exe_result.desc();
+					LOG_ERROR("%s", exe_result.desc().c_str());
+					break;
+				}
+				result = exe_result;
+				
+				//bool skip_flag = false;
+				//int try_count = 0;
+				//int64_t last_mid = min;
+				//while (!skip_flag && min <= max){
+				//	//...TODO
+				//	result_json["txs"].clear();
+				//	tx_set->clear_txs();
+				//	*tx_set->add_txs() = tran_env;
+				//	Result exe_result;
+				//	if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
+				//		(TestParameter*)&test_parameter,
+				//		utils::MICRO_UNITS_PER_SEC,
+				//		exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["stat"], signature_number)) {
+				//		reply_json["error_code"] = exe_result.code();
+				//		reply_json["error_desc"] = exe_result.desc();
+				//		LOG_ERROR("%s", exe_result.desc().c_str());
+				//		skip_flag = true;
+				//		break;
+				//	}
+				//	else{
+				//		int i = 0;
+				//		result = exe_result;
+				//		if (result_json["txs"][i].isMember("error_code")){
+				//			if (result_json["txs"][i]["error_code"].asInt() == (int)protocol::ERRCODE_FEE_NOT_ENOUGH){
+				//				int64_t actual_fee =result_json["txs"][i]["actual_fee"].asInt64();
+				//				protocol::Transaction *tran = tran_env.mutable_transaction();
+				//				int64_t mid = (actual_fee + max) / 2;
+				//				tran->set_fee_limit(mid);
+				//				min = last_mid+1;
+				//				last_mid = mid;
+				//				try_count++;
+				//				LOG_INFO("reset actual_fee(" FMT_I64 ") %d", actual_fee, try_count);
+				//				continue;
+				//			}
+				//			else if (result_json["txs"][i]["error_code"].asInt() == (int)protocol::ERRCODE_ACCOUNT_LOW_RESERVE){
+				//				int64_t actual_fee = result_json["txs"][i]["actual_fee"].asInt64();
+				//				protocol::Transaction *tran = tran_env.mutable_transaction();
+				//				int64_t mid = (actual_fee + min) / 2;
+				//				tran->set_fee_limit(mid);
+				//				max = last_mid-1;
+				//				last_mid = mid;
+				//				try_count++;
+				//				LOG_INFO("reset actual_fee(" FMT_I64 ") %d", actual_fee, try_count);
+				//				continue;
+				//			}
+				//			else{
+				//				skip_flag = true;
+				//			}
+				//		}
+				//		else{
+				//			skip_flag = true;
+				//		}
+				//	}
+				//};
+				
+				
 			}
 			reply_json["error_code"] = result.code();
 			reply_json["error_desc"] = result.desc();
