@@ -13,7 +13,7 @@ English | [中文](develop_CN.md)
         - [Perform Transaction](#perform-transaction)
         - [Give it a Try](#give-it-a-try) 
     - [HTTP api](#http-api)
-        - [Creating Test Account](#creating-test-account)
+        - [Creating Test Key Pair](#creating-test-key-pair)
         - [Querying Account](#querying-account) 
         - [Querying Basic Information of Account](#querying-basic-information-of-account)
         - [Querying Transaction](#querying-transaction)
@@ -140,13 +140,13 @@ HTTP GET host:36002/getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 
 ## HTTP api
 
-### Creating Test Account 
+### Creating Test Key Pair 
 
 ```text
-HTTP GET /createAccount
+HTTP GET /createKeyPair
 ```
 
-Function: This api is only for testing, please DO NOT use this api in the production environment (substitute SDK or Command for api). If the server is malicious, using the api will risk you private key in exposure. 
+Function: This api is only for testing, please DO NOT use this api in the production environment (substitute SDK or Command for api). If the server is malicious, using the api will risk you private key in exposure. This api only create a new public-private key pair which does not write into bumo chain.If you want to write, you can do any transaction of [Creating Account](#creating-account), [Transferring Assets](#transferring-assets) ,[Transferring BU Assets](#transferring-bu-assets) for the new key pair.
 
 return,
 
@@ -1605,7 +1605,16 @@ Referenced Documents: [Smart Contract Rules](../src/web/jslint/ContractRules.md)
 
 
 - ##### return
-   For all the default functions, if they fail, then, return *false* or throw the exceptions directly. Otherwise, they will return other objects.
+   For all the default functions, if they fail, then, return *false* or throw the exceptions directly. Otherwise, they will return other objects.If there is a parameter error, the error description will describe the parameter location, which refers to the index number of the parameter, i.e., counting from __0__. e.g.
+
+   ```
+   issueAsset("CNY", 10000);
+   /*
+      error description:
+      Contract execute error,issueAsset parameter 1 should be a string
+
+      Means that the second argument should be a string
+   */
 
 - ##### Get account information (except metadata and assets) 
 

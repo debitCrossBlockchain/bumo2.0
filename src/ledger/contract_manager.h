@@ -245,23 +245,6 @@ namespace bumo{
 		bool GetResult(Json::Value &result);
 	};
 
-// 	class CallContract : public utils::Thread {
-// 		int32_t type_;
-// 		ContractTestParameter parameter_;
-// 
-// 		Json::Value result_;
-// 		bool ret_;
-// 		LedgerContext ledger_context;
-// 	public:
-// 		CallContract();
-// 		~CallContract();
-// 
-// 		bool Init(int32_t type, const ContractTestParameter &parameter);
-// 		virtual void Run();
-// 		void Cancel();
-// 		bool GetResult(Json::Value &result);
-// 	};
-
 	typedef std::map<int64_t, Contract *> ContractMap;
 	class ContractManager :
 		public utils::Singleton<ContractManager>{

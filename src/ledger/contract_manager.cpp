@@ -381,11 +381,6 @@ namespace bumo{
 	}
 
 	bool V8Contract::SourceCodeCheck() {
- 		if (parameter_.code_.find(General::CHECK_TIME_FUNCTION) != std::string::npos) {
- 			LOG_ERROR("Source code should not include function(%s)", General::CHECK_TIME_FUNCTION);
- 			return false;
- 		}
-
 		v8::Isolate::Scope isolate_scope(isolate_);
 		v8::HandleScope handle_scope(isolate_);
 		v8::TryCatch try_catch(isolate_);
@@ -762,21 +757,18 @@ namespace bumo{
 		std::string error_desc = "assert expression occur";
 		do {
 			if (args.Length() < 1 || args.Length() > 2) {
-				LOG_ERROR("parameter error");
-				error_desc.append(",parameter error");
+				error_desc.append(",parameter nums error");
 				break;
 			}
 			if (!args[0]->IsBoolean()) {
-				LOG_ERROR("parameter args[0] should be boolean");
-				error_desc.append(",parameter error");
+				error_desc.append("parameter 0 should be boolean");
 				break;
 			}
 
 			v8::HandleScope scope(args.GetIsolate());
 			if (args.Length() == 2) {
 				if (!args[1]->IsString()) {
-					LOG_ERROR("parameter args[1] should be string");
-					error_desc.append(",parameter error");
+					error_desc.append("parameter 1 should be string");
 					break;
 				}
 				else {
@@ -790,7 +782,7 @@ namespace bumo{
 			args.GetReturnValue().Set(true);
 			return;
 		}while (false);
-
+        LOG_ERROR("%s", error_desc.c_str());
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
 			v8::NewStringType::kNormal).ToLocalChecked());

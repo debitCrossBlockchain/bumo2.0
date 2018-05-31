@@ -163,7 +163,7 @@ namespace bumo {
 		reply = reply_json.toStyledString();
 	}
 
-	void WebServer::CreateAccount(const http::server::request &request, std::string &reply) {
+	void WebServer::CreateKeyPair(const http::server::request &request, std::string &reply) {
 		std::string error_desc;
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		Json::Value reply_json = Json::Value(Json::objectValue);
