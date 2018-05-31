@@ -517,13 +517,12 @@ namespace bumo {
 					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
 				else if (LedgerContext::AT_TEST_TRANSACTION){
 					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76) + 20))*gas_price);//pub:64, sig:76 + key
+
+					result = ptr->GetResult();
+					Json::Value jtx = Proto2Json(env_store);
+					jtx["gas"] = env_store.actual_fee() / gas_price;
+					txs[txs.size()] = jtx;
 				}
-			}
-			if (type == LedgerContext::AT_TEST_TRANSACTION){
-				result = ptr->GetResult();
-				Json::Value jtx = Proto2Json(env_store);
-				jtx["gas"] = env_store.actual_fee() / gas_price;
-				txs[txs.size()] = jtx;
 			}
 				
 			//batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
@@ -541,6 +540,13 @@ namespace bumo {
 		//add stat
 		if (ledger_context->transaction_stack_.size() > 0) {
 			TransactionFrm::pointer ptr = ledger_context->transaction_stack_[0];
+			stat["step"] = ptr->GetContractStep();
+			stat["memory_usage"] = ptr->GetMemoryUsage();
+			stat["stack_usage"] = ptr->GetStackUsage();
+			stat["apply_time"] = ptr->GetApplyTime();
+		}
+		if (type == LedgerContext::AT_TEST_TRANSACTION){
+			TransactionFrm::pointer ptr = apply_tx_frms[0];
 			stat["step"] = ptr->GetContractStep();
 			stat["memory_usage"] = ptr->GetMemoryUsage();
 			stat["stack_usage"] = ptr->GetStackUsage();
