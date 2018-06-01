@@ -76,7 +76,8 @@ namespace bumo {
 		server_ptr_->add404(std::bind(&WebServer::FileNotFound, this, std::placeholders::_1, std::placeholders::_2));
 
 		server_ptr_->addRoute("hello", std::bind(&WebServer::Hello, this, std::placeholders::_1, std::placeholders::_2));
-		server_ptr_->addRoute("createAccount", std::bind(&WebServer::CreateAccount, this, std::placeholders::_1, std::placeholders::_2));
+		server_ptr_->addRoute("createAccount", std::bind(&WebServer::CreateKeyPair, this, std::placeholders::_1, std::placeholders::_2));
+		server_ptr_->addRoute("createKeyPair", std::bind(&WebServer::CreateKeyPair, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getAccount", std::bind(&WebServer::GetAccount, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getAccountBase", std::bind(&WebServer::GetAccountBase, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("getGenesisAccount", std::bind(&WebServer::GetGenesisAccount, this, std::placeholders::_1, std::placeholders::_2));
@@ -104,7 +105,6 @@ namespace bumo {
 		server_ptr_->addRoute("multiQuery", std::bind(&WebServer::MultiQuery, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("submitTransaction", std::bind(&WebServer::SubmitTransaction, this, std::placeholders::_1, std::placeholders::_2));
 		//server_ptr_->addRoute("confValidator", std::bind(&WebServer::ConfValidator, this, std::placeholders::_1, std::placeholders::_2));
-		server_ptr_->addRoute("contractQuery", std::bind(&WebServer::ContractQuery, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("callContract", std::bind(&WebServer::CallContract, this, std::placeholders::_1, std::placeholders::_2));
 		server_ptr_->addRoute("testTransaction", std::bind(&WebServer::TestTransaction, this, std::placeholders::_1, std::placeholders::_2));
 
