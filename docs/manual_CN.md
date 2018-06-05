@@ -47,7 +47,7 @@
 __如果不想编译源码，可以直接使用安装包部署，[安装包下载]( https://github.com/bumoproject/bumo/releases/ "download")，下载完成后参考[__使用安装包安装__](#使用安装包安装)__
 
 ### Linux
-支持 Ubuntu、Centos 等大多数操作系统编译，下面编译步骤以 Ubuntu 14.04 示例
+支持 Ubuntu、Centos 等大多数操作系统编译，推荐使用版本Ubuntu 14.04，Centos 7。下面编译步骤以 Ubuntu 14.04 示例
 - 安装依赖
 
 ```bash
