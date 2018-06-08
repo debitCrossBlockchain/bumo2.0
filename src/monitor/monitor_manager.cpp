@@ -175,7 +175,6 @@ namespace bumo {
 			bret = true;
 		} while (false);
 
-
 		return bret;
 	}
 
@@ -243,7 +242,6 @@ namespace bumo {
 				break;
 			}
 		}
-
 		return monitor;
 	}
 
@@ -273,6 +271,7 @@ namespace bumo {
 
 	void MonitorManager::OnSlowTimer(int64_t current_time) {
 
+		// update cpu
 		system_manager_.OnSlowTimer(current_time);
 
 		// send alert
