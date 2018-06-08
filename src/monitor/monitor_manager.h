@@ -21,6 +21,7 @@
 #include <monitor/system_manager.h>
 
 namespace bumo {
+	/* monitor manager */
 	class MonitorManager :public utils::Singleton<MonitorManager>,
 		public StatusModule,
 		public TimerNotify,
@@ -31,16 +32,54 @@ namespace bumo {
 		MonitorManager();
 		~MonitorManager();
 
-		
-		//virtual bool Send(const ZMQTaskType type, const std::string& buf);
-
+		/*************************************************
+		Function:       Initialize
+		Description:    Initialize the variables of this class
+		Calls:          StatusModule::RegisterModule; TimerNotify::RegisterModule
+		Return:         boolean success or failure
+		*************************************************/
 		bool Initialize();
+
+		/*************************************************
+		Function:       Exit
+		Description:    Exit this class
+		Calls:          Stop; Join
+		Return:         boolean success or failure
+		*************************************************/
 		bool Exit();
 
+		/*************************************************
+		Function:       OnTimer
+		Description:    Check the connection of WebSocket
+		Calls:          GetClientConnection; Connect
+		Input:          current_time The current time
+		*************************************************/
 		virtual void OnTimer(int64_t current_time) override;
+
+		/*************************************************
+		Function:       OnSlowTimer
+		Description:    Check alert and send alert
+		Calls:          GetLastClosedLedger; GetPeerNodeAddress; GetSystemMonitor; 
+		                GetClientConnection; SendRequest
+		Input:          current_time The current time
+		*************************************************/
 		virtual void OnSlowTimer(int64_t current_time) override;
+
+		/*************************************************
+		Function:       GetModuleStatus
+		Description:    Get the status of monitor
+		Input:          data Json::Value The data of status
+		*************************************************/
 		virtual void GetModuleStatus(Json::Value &data);
 
+		/*************************************************
+		Function:       SendMonitor
+		Description:    Send the monitor info
+		Calls:          GetClientConnection; SendRequest
+		Input:          type int64_t The type of monitor
+		                data std::string The data of monitor
+		Return:         bool success or failure
+		*************************************************/
 		bool SendMonitor(int64_t type, const std::string &data);
 		
 	protected:
