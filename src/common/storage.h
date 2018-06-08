@@ -26,6 +26,7 @@
 #include <leveldb/leveldb.h>
 #else
 #include <rocksdb/db.h>
+#include "tidb.h"
 #endif
 
 namespace bumo {
@@ -35,12 +36,16 @@ namespace bumo {
 #define WRITE_BATCH_DATA(batch) (((std::string*)(&batch))->c_str())
 #define WRITE_BATCH_DATA_SIZE(batch) (((std::string*)(&batch))->size())
 #define SLICE       leveldb::Slice
-#else 
+#elif ROCKSDB 
 #define KVDB rocksdb
 #define WRITE_BATCH rocksdb::WriteBatch
 #define WRITE_BATCH_DATA(batch) (batch.Data().c_str())
 #define WRITE_BATCH_DATA_SIZE(batch) (batch.GetDataSize())
 #define SLICE       rocksdb::Slice
+#else
+
+#define WRITE_BATCH WriteTidbBatch
+
 #endif
 
 	class KeyValueDb {
@@ -83,7 +88,7 @@ namespace bumo {
 
 		void* NewIterator();
 	};
-#else
+#elif ROCKSDB 
 	class RocksDbDriver : public KeyValueDb {
 	private:
 		rocksdb::DB* db_;
@@ -101,6 +106,66 @@ namespace bumo {
 		bool WriteBatch(WRITE_BATCH &values);
 
 		void* NewIterator();
+	};
+
+
+#else
+	class TidbDriver : public KeyValueDb {
+	private:
+		tidb * db_;
+
+	public:
+		TidbDriver(const std::string host_ip, const std::string user_name, const std::string pwd,int32_t port)
+		{
+			db_ = new tidb(host_ip,  user_name,  pwd, port);
+		}
+		~TidbDriver()
+		{
+			if (db_)
+			{
+				delete db_;
+			}
+			db_ = NULL;
+		}
+
+		bool Open(const std::string &db_name, int max_open_files)	{
+			bool ret =  db_->Open(db_name);
+			if(!ret)
+				error_desc_ = db_->get_error();
+			return ret;
+		}
+
+		bool Close()	{return db_->Close();}
+
+		int32_t Get(const std::string &key, std::string &value)	{
+			int32_t ret =  db_->Get(key,value);
+			if(ret<0)
+				error_desc_ = db_->get_error();
+			return ret;
+		}
+		bool Put(const std::string &key, const std::string &value)	{
+			bool ret =  db_->Put(key,value);
+			if(!ret)
+				error_desc_ = db_->get_error();
+			return ret;
+		}
+		bool Delete(const std::string &key)		{
+			bool ret =  db_->Delete(key);
+			if(!ret)
+				error_desc_ = db_->get_error();
+			return ret;
+		}
+
+		bool DropDB(const std::string &db_name)		{
+			return true;
+		}
+		//todo »ñÈ¡Êý¾Ý¿â×´Ì¬
+		bool GetOptions(Json::Value &options)	{return true;}
+		bool WriteBatch(WriteTidbBatch &values)	{
+			return db_->Put(values);
+		}
+		//todo ´òÓ¡ËùÓÐ¼ÇÂ¼
+		void* NewIterator() {return NULL;}
 	};
 #endif
 
@@ -121,6 +186,7 @@ namespace bumo {
 		KeyValueDb *NewKeyValueDb(const DbConfigure &db_config);
 	public:
 		bool Initialize(const DbConfigure &db_config, bool bdropdb);
+		bool Initialize_Tidb(const DbConfigure &db_config, bool bdropdb);
 		bool Exit();
 
 		KeyValueDb *keyvalue_db();   //storage others

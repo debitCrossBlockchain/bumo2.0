@@ -1,8 +1,15 @@
 {
     "db": {
+        "type":"tidb",
         "account_path": "data/account.db",
         "ledger_path": "data/ledger.db",
-        "keyvalue_path": "data/keyvalue.db"
+        "keyvalue_path": "data/keyvalue.db",
+        "tidb_config":{
+            "address": "192.168.2.132",
+            "port": 4000,
+            "user": "tidb",
+            "pwd": "bubi"
+        }
     },
     "p2p": {
         "network_id": 30000,

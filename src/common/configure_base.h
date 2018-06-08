@@ -23,6 +23,8 @@
 
 namespace bumo {
 
+#define		TIDB	"tidb"
+
 	class LoggerConfigure {
 	public:
 		LoggerConfigure();
@@ -51,6 +53,13 @@ namespace bumo {
 		std::string rational_string_;
 		std::string rational_db_type_;
 		std::string tmp_path_;
+
+		std::string db_type_;
+		std::string tidb_address_;
+		int32_t tidb_port_;
+		std::string tidb_user_;
+		std::string tidb_pwd_;
+
 		bool async_write_sql_;
 		bool async_write_kv_;
 		bool Load(const Json::Value &value);

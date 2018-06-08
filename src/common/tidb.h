@@ -1,0 +1,194 @@
+#ifndef TIDB_H_
+#define TIDB_H_
+
+#ifdef WIN32
+#include <winsock2.h>
+#include "mysql/mysql.h"
+#else
+#include "mysql.h"
+#endif
+#include <string>
+#include <map>
+#include <utils/headers.h>
+
+
+#define TIDB_KV_DB		"KVDB"
+#define TIDB_LEDGER_DB	"LEDGERDB"
+#define TIDB_ACCOUNT_DB	"ACCOUNTDB"
+
+
+namespace bumo{
+
+	typedef void(*Call_back)(MYSQL_ROW, int, unsigned long *,void *);
+
+	class SqlDb {
+
+	protected:
+		std::string error_desc_;
+	public:
+		SqlDb() {}
+		~SqlDb() {}
+
+		virtual int connect(const char *host, const char *username, const char *password,
+			const char *database, int port, const char * unixsocket, int flag) = 0;
+
+		virtual int close() = 0;
+
+		virtual int exec_sql(const char *sql, Call_back  call_back = NULL, void *param = NULL) = 0;
+
+		virtual void* NewIterator() = 0;
+	};
+
+	class MysqlDriver   {
+	private:
+		MYSQL * m_pMysql;
+		
+	public:
+		//
+		MysqlDriver();
+		~MysqlDriver();
+
+		
+		//desc£ºconnect mysql
+		//input£º	host, username,password, database, port, unixsocket,  flag
+		//output£º	
+		//return£º	error		Nonzero 
+		//			success		Zero 
+		int mysql_connect(const char *host, const char *username, const char *password, 
+			const char *database, int port, const char * unixsocket, int flag);
+
+		//desc£ºclose mysql connect
+		void close_mysql();
+
+		
+		//desc£ºexcute sql statement
+		//input£º	sql				sql statement
+		//			Call_back		if sql is select statement,need Call_back deal with the result set
+		//							or not select please input null or do nothing;
+		//output£º	param			save the dealed data 
+		//return£º	select/show...			result set rows
+		//			insert/delete...		affected rows
+		int64_t mysql_exec(const char *sql, Call_back  call_back = NULL, void *param = NULL);
+
+		//desc£ºget the last mysql error msg
+		std::string get_err_str()
+		{
+			char err_code[256];
+#ifdef WIN32
+			_snprintf(err_code, 256, "error_code:%d,error_string:%s\n", mysql_errno(m_pMysql), mysql_error(m_pMysql));
+			err_code[255] = '\0';
+#else
+			snprintf(err_code, 256,"error_code:%d,error_string:%s\n", mysql_errno(m_pMysql), mysql_error(m_pMysql));
+#endif
+			std::string ret_str = err_code;
+			return ret_str;
+		}
+
+		//desc£ºswitch database
+		//input£ºdb_name			database name
+		//output£º
+		//return£ºZero for success. Nonzero if an error occurred.
+		int64_t select_db(const char*db_name);
+
+		//desc£º The special characters in the SQL statement need be escaped 
+		//input£ºorgStr			string need be escaped
+		//		 iLen			orgStr length
+		//output£ºsv_str		saved string for escaped str, at leaset (2*iLen+1) space have been allocate
+		//return£ºescaped string length.
+		long format_blob_string(char *sv_str, const char *orgStr, int iLen);
+
+
+	private:
+		int64_t do_sql(const char *sql, Call_back  call_back = NULL, void *param = NULL);
+
+	//	int do_count_sql(const std::string &sql);
+
+	//	int do_trans_sql(const std::string &sql);
+
+		int64_t mysql_select(const char *sql, Call_back  call_back, void *param);
+
+	};
+
+	class WriteTidbBatch
+	{
+	public:
+		WriteTidbBatch() {}
+		~WriteTidbBatch(){}
+
+		// Store the mapping "key->value" in the database.
+		void Put(const std::string& key, const std::string& value)
+		{
+			put_op_map[key] = value;
+		}
+
+
+		// If the database contains a mapping for "key", erase it.  Else do nothing.
+		void Delete(const std::string& key)
+		{
+			put_op_map.erase(key);
+		}
+
+		// Clear all updates buffered in this batch.
+		void Clear()
+		{
+			put_op_map.clear();
+		}
+
+		std::map<std::string, std::string> &get_put_map()
+		{
+			return put_op_map;
+		}
+
+	private:
+		std::map<std::string, std::string> put_op_map;
+	};
+	
+	class tidb /*: public KeyValueDb*/ {
+
+	public:
+		tidb(const std::string host_ip, const std::string user_name, const std::string pwd,int32_t port );
+		~tidb();
+
+		//db_name  database name
+		bool Open(const std::string &db_name);
+		bool Close();
+		int64_t Get(const std::string &key, std::string &value);
+		bool Put(const std::string &key, const std::string &value) ;
+		bool Delete(const std::string &key);
+		//bool GetOptions(Json::Value &options) ;
+		std::string get_error() {
+			return m_pMysqlDriver->get_err_str();
+		}
+
+		bool Put(WriteTidbBatch &value);
+
+		
+	private:
+		//create database
+		bool initDB(const char *db_name);
+
+		//create kv_table£¬the first table for example
+		bool create_kv_table();
+
+		//init config
+		bool initialize();
+
+		
+
+	private:
+		//mysql driver
+		MysqlDriver *m_pMysqlDriver;
+		//tidb host
+		std::string m_Host_ip ;
+		//tidb user
+		std::string m_User_name;
+		//tidb pass
+		std::string m_Password;
+		//tidb port
+		int32_t m_Port;
+
+	};
+
+
+}
+#endif

@@ -467,8 +467,10 @@ namespace bumo {
 				KeyValueDb* ledger_db_ = nullptr;
 #ifdef WIN32
 				ledger_db_ = new LevelDbDriver();
-#else
+#else 
 				ledger_db_ = new RocksDbDriver();
+//#else 
+//				ledger_db_ = new TidbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
 #endif
 				if (!ledger_db_->Open(path, -1)) {
 					return false;

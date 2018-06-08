@@ -39,6 +39,9 @@ GTEST_PATH = gtest
 PCRE = pcre-8.39/.libs/libpcre.a
 PCRE_PATH = pcre-8.39
 
+MYSQL = mysql-6.1.0/libmysqlclient.a
+MYSQL_PATH = mysql-6.1.0
+
 CUR_DIR = $(shell pwd)
 
 #default libraries target list
@@ -56,7 +59,8 @@ all:add_permission\
     $(JSONCPP) \
     $(PCRE) \
 	$(CURL) \
-	$(GTEST)
+	$(GTEST) \
+	$(MYSQL)
 
 .PHONY:add_permission
 add_permission:
@@ -91,6 +95,9 @@ $(PCRE):
 $(GTEST):
 	@echo "**************building gtest now***************" && cd $(GTEST_PATH) && $(MAKE) -j 4
 
+$(MYSQL) :
+	@echo "*************building mysqlclient now ***************" && cd $(MYSQL_PATH) && cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=$(CUR_DIR)/$(MYSQL_PATH) && $(MAKE) -j 4 && $(MAKE) install 
+	
 clean:
 	@echo "******************skip clean 3rd, you can use 'clean_3rd' if you need******************"
 	
@@ -105,7 +112,8 @@ clean_3rd: \
     JSONCPP_clean \
 	CURL_clean \
 	PCRE_clean \
-	GTEST_clean 
+	GTEST_clean \
+	MYSQL_clean
     
 install:
 	@echo "No library to install for 3rd"
@@ -130,6 +138,8 @@ PCRE_clean:
 	@echo "******************Cleaning pcre now*************" && cd $(PCRE_PATH) && make clean
 GTEST_clean:
 	@echo "******************Cleaning gtest now*************" && cd $(GTEST_PATH) && make clean
+MYSQL_clean:
+	@echo "******************Cleaning mysqlclient now*************" && cd $(MYSQL_PATH) && make clean
 
 #scon -c may complains error
 JSONCPP_clean: 

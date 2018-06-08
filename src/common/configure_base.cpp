@@ -41,6 +41,15 @@ namespace bumo {
 		ConfigureBase::GetValue(value, "async_write_sql", async_write_sql_);
 		ConfigureBase::GetValue(value, "async_write_kv", async_write_kv_);
 
+		ConfigureBase::GetValue(value, "type", db_type_);
+		if (TIDB == db_type_)
+		{
+			const Json::Value tidb_value = value["tidb_config"];
+			ConfigureBase::GetValue(tidb_value, "address", tidb_address_);
+			ConfigureBase::GetValue(tidb_value, "port", tidb_port_);
+			ConfigureBase::GetValue(tidb_value, "user", tidb_user_);
+			ConfigureBase::GetValue(tidb_value, "pwd", tidb_pwd_);
+		}
 
 		std::string rational_decode;
 		std::vector<std::string> nparas = utils::String::split(rational_string_, " ");

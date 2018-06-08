@@ -131,7 +131,7 @@ namespace bumo {
 		return true;
 	}
 
-#else
+#elif ROCKSDB 
 
 	RocksDbDriver::RocksDbDriver() {
 		db_ = NULL;
@@ -364,6 +364,51 @@ namespace bumo {
 		return false;
 	}
 
+	bool Storage::Initialize_Tidb(const DbConfigure &db_config, bool bdropdb) {
+#ifndef WIN32
+		do {
+			
+			if (bdropdb) {
+				bool do_success = false;
+				do {
+					//check the db if opened only for linux or mac
+					TidbDriver *db_handle = new TidbDriver(db_config.tidb_address_,db_config.tidb_user_,db_config.tidb_pwd_,db_config.tidb_port_);
+					db_handle->DropDB("abc");
+
+					LOG_INFO("Drop db successful");
+					do_success = true;
+				} while (false);
+
+				return do_success;
+			}
+			keyvalue_db_ = NewKeyValueDb(db_config);
+			if (!keyvalue_db_->Open(TIDB_KV_DB, 0)) {
+				LOG_ERROR("tidb_kv_db open fail(%s)\n", keyvalue_db_->error_desc().c_str());
+				break;
+			}
+
+			ledger_db_ = NewKeyValueDb(db_config);
+			if (!ledger_db_->Open(TIDB_LEDGER_DB, 0)) {
+				LOG_ERROR("TIDB_LEDGER_DB open fail(%s)\n",ledger_db_->error_desc().c_str());
+				break;
+			}
+
+			account_db_ = NewKeyValueDb(db_config);
+			if (!account_db_->Open(TIDB_ACCOUNT_DB, 0)) {
+				LOG_ERROR("TIDB_ACCOUNT_DB open fail(%s)\n", account_db_->error_desc().c_str());
+				break;
+			}
+
+			TimerNotify::RegisterModule(this);
+			return true;
+
+		} while (false);
+
+		CloseDb();
+#endif
+		return false;
+	}
+
 
 	bool  Storage::CloseDb() {
 		bool ret1 = true, ret2 = true, ret3 = true;
@@ -411,8 +456,11 @@ namespace bumo {
 		KeyValueDb *db = NULL;
 #ifdef WIN32
 		db = new LevelDbDriver();
-#else
-		db = new RocksDbDriver();
+#else	
+		if (db_config.db_type_ == TIDB)
+			db = new TidbDriver(db_config.tidb_address_,db_config.tidb_user_,db_config.tidb_pwd_,db_config.tidb_port_);
+//		else
+//ROCKSDB			db = new RocksDbDriver();
 #endif
 
 		return db;
