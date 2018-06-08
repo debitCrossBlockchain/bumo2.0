@@ -42,6 +42,7 @@ namespace bumo {
 	MonitorManager::~MonitorManager() {
 		if (thread_ptr_){
 			delete thread_ptr_;
+			thread_ptr_ = NULL;
 		} 
 	}
 
