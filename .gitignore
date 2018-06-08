@@ -27,3 +27,6 @@
 *.exe
 *.out
 *.app
+build/win32/Bumo.vs12.sdf
+build/win32/Bumo.vs12.opensdf
+build/win32/Bumo.vs12.v12.suo
