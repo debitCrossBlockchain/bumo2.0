@@ -102,17 +102,17 @@ namespace bumo {
 		Connection * GetClientConnection();
 
 	private:
-		utils::Thread *thread_ptr_;
+		utils::Thread *thread_ptr_;    /* The pointer of the thread */
 
-		std::string monitor_id_;
+		std::string monitor_id_;  /* The id of the monitor */
 
-		uint64_t last_connect_time_;
-		uint64_t connect_interval_;
+		uint64_t last_connect_time_; /* The last time of connection */
+		uint64_t connect_interval_; /* The interval between the time of the two connections */
 
-		uint64_t check_alert_interval_;
-		uint64_t last_alert_time_;
+		uint64_t check_alert_interval_; /* The interval between the time of checking alert */
+		uint64_t last_alert_time_; /* The last time of checking alert */
 
-		SystemManager system_manager_;
+		SystemManager system_manager_; /* The system manager */
 	};
 }
 
