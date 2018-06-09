@@ -399,24 +399,24 @@ namespace bumo {
 			const protocol::OperationSetPrivilege &set_privilege = operation.set_privilege();
 
 			//check master weight
-			const int64_t use_master_weight = set_privilege.master_weight_enable();
+			const int64_t master_weight_enable = set_privilege.master_weight_enable();
 			const int64_t master_weight = set_privilege.master_weight();
-			if (use_master_weight != 0 && use_master_weight != 1) {
+			if (master_weight_enable != 0 && master_weight_enable != 1) {
 				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-				result.set_desc(utils::String::Format("Parameter use_master_weight(" FMT_I64 ") must 0 or 1 ", use_master_weight));
+				result.set_desc(utils::String::Format("Parameter master_weight_enable(" FMT_I64 ") must 0 or 1 ", master_weight_enable));
 				break;
 			}
 
-			if (use_master_weight == 0 && master_weight >= 0) {
+			if (master_weight_enable == 0 && master_weight >= 0) {
 				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-				result.set_desc(utils::String::Format("Parameter use_master_weight is 0 , master_weight(" FMT_I64 ") must < 0", master_weight));
+				result.set_desc(utils::String::Format("Parameter master_weight_enable is 0 , master_weight(" FMT_I64 ") must < 0", master_weight));
 				break;
 			}
 			
-			if ((use_master_weight == 1) && ((master_weight < 0 || master_weight > UINT32_MAX)))
+			if ((master_weight_enable == 1) && ((master_weight < 0 || master_weight > UINT32_MAX)))
 			{
 				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-				result.set_desc(utils::String::Format("Parameter use_master_weight is 1, master_weight(" FMT_I64 ") is larger than %u or less 0", master_weight, UINT32_MAX));
+				result.set_desc(utils::String::Format("Parameter master_weight_enable is 1, master_weight(" FMT_I64 ") is larger than %u or less 0", master_weight, UINT32_MAX));
 				break;
 			}
 			
@@ -460,23 +460,23 @@ namespace bumo {
 			if (shouldBreak) break;
 
 			//for threshold
-			const int64_t use_tx_threshold = set_privilege.tx_threshold_enable();
+			const int64_t tx_threshold_enable = set_privilege.tx_threshold_enable();
 			bool has_thresholds_obj = set_privilege.has_thresholds();
-			if (use_tx_threshold != 0 && use_tx_threshold != 1){
+			if (tx_threshold_enable != 0 && tx_threshold_enable != 1){
 				result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
-				result.set_desc(utils::String::Format("Parameter use_tx_threshold(" FMT_I64 ") must 0 or 1", use_tx_threshold));
+				result.set_desc(utils::String::Format("Parameter tx_threshold_enable(" FMT_I64 ") must 0 or 1", tx_threshold_enable));
 				break;
 			}
 
-			if (use_tx_threshold == 1 && (!has_thresholds_obj || set_privilege.thresholds().tx_threshold() < 0)){
+			if (tx_threshold_enable == 1 && (!has_thresholds_obj || set_privilege.thresholds().tx_threshold() < 0)){
 				result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
-				result.set_desc(utils::String::Format("Parameter use_tx_threshold is 1, must add thresholds obj and set thresholds.tx_threshold >= 0 "));
+				result.set_desc(utils::String::Format("Parameter tx_threshold_enable is 1, must add thresholds obj and set thresholds.tx_threshold >= 0 "));
 				break;
 			}
 			
-			if (use_tx_threshold == 0 && has_thresholds_obj && set_privilege.thresholds().tx_threshold() >= 0){
+			if (tx_threshold_enable == 0 && has_thresholds_obj && set_privilege.thresholds().tx_threshold() >= 0){
 				result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
-				result.set_desc(utils::String::Format("Parameter use_tx_threshold is 0, must delete thresholds obj or set thresholds.tx_threshold < 0 "));
+				result.set_desc(utils::String::Format("Parameter tx_threshold_enable is 0, must delete thresholds obj or set thresholds.tx_threshold < 0 "));
 				break;
 			}
 
