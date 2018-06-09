@@ -30,8 +30,7 @@
             - [发行资产](#发行资产)
             - [转移资产](#转移资产)
             - [设置metadata](#设置metadata)
-            - [设置权重](#设置权重)
-            - [设置门限](#设置门限)
+            - [设置权限](#设置权限)
             - [转移BU资产](#转移bu资产)
             - [记录日志](#记录日志)
     - [高级功能](#高级功能)
@@ -1019,9 +1018,8 @@ POST /getTransactionBlob
 | 2      | ISSUE_ASSET       | 发行资产     |
 | 3      | PAY_ASSET         | 转移资产     |
 | 4      | SET_METADATA      | 设置metadata |
-| 5      | SET_SIGNER_WEIGHT | 设置权重     |
-| 6      | SET_THRESHOLD     | 设置门限     |
 | 7      | PAY_COIN          | 支付BU COIN  |
+| 9      | SET_PRIVILEGE     | 设置权限     |
 
 #### 创建账号
 
@@ -1038,7 +1036,8 @@ POST /getTransactionBlob
 - 成功条件
   - 各项参数合法
   - 要创建的账号不存在
-- **注意：如果目标为合约账户，则priv配置必须符合 {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}**
+- **注意：如果目标为合约账户，则priv配置必须符合   {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}，如果是普通账号需要配置 {"master_weight" : 1 , "thresholds": {"tx_threshold":1}}**
+
 - json格式
 
 
@@ -1048,7 +1047,7 @@ POST /getTransactionBlob
       "create_account": {
         "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
         "contract": {
-          "payload": "function main(input) { /*do what ever you want*/ }"
+          "payload": ""
         },
         "init_balance": 100000,  //give the init_balance to this account
         "init_input" : "",  // if create contract , then init with this input
@@ -1062,23 +1061,10 @@ POST /getTransactionBlob
             "version": 0
           }
         ],
-        "priv": {
-          "master_weight": 10,
-          "signers": [{
-              "address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
-              "weight": 6
-            }
-          ],
+        "priv":  {
+          "master_weight": 1,
           "thresholds": {
-            "tx_threshold": 7,
-            "type_thresholds": [{
-                "type": 1,
-                "threshold": 8
-              }, {
-                "type": 2,
-                "threshold": 5
-              }
-            ]
+              "tx_threshold": 1
           }
         }
       }
@@ -1103,18 +1089,25 @@ POST /getTransactionBlob
   - contract:合约。若你想要创建一个不具有合约功能的账号，可以不填写这部分。若您想创建具有合约功能的账号，请参照[合约](#合约)
   - priv: 账号的初始权力分配。相关的数据结构定义:
       ```text
-        message OperationTypeThreshold
-        {
-            Operation.Type type = 1;
-            int64 threshold = 2;
-        }
-
         message AccountPrivilege
         {
             int64 master_weight = 1;
             repeated Signer signers = 2;
             AccountThreshold thresholds = 3;
         }
+
+        message AccountThreshold
+        {
+            int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
+            repeated OperationTypeThreshold type_thresholds = 2; //如果这个设置，则操作门限以这个为准
+        }
+
+        message OperationTypeThreshold
+        {
+            Operation.Type type = 1;
+            int64 threshold = 2;
+        }
+
         message Signer
         {
             enum Limit
@@ -1125,14 +1118,10 @@ POST /getTransactionBlob
             string address = 1;
             int64 weight = 2;
         }
-        message AccountThreshold
-        {
-            int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
-            repeated OperationTypeThreshold type_thresholds = 2; //如果这个设置，则操作门限以这个为准
-        }
+        
       ```
 
-    若你想创建一个不受其他账号控制的账号。将priv.master_weight设置为1，将`priv.thresholds.tx_threshold`设为1即可。若您想创建一个受其他账号控制的账号，参见[控制权的分配](#控制权的分配)
+     若您想设置账号受别人控制或者设置分配操作权重，可以通过 [设置权限](#设置权限) 操作
 
   - metadatas:metadata列表。您可以为新建的账号设置一批初始的metadata。其数据类型为KeyPair,结构如下
 
@@ -1284,101 +1273,83 @@ POST /getTransactionBlob
     - value: 值。长度范围[0,256K]
     - version: 版本号，可以不填写。若您想使用这个高级功能，参见[版本化控制](#版本化控制)
 
-#### 设置权重
+#### 设置权限
 |参数|描述
 |:--- | --- 
-|master_weight |optional，default 0， -1 ： 不设置该值，0：设置master权重值为0， >0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
+|master_weight_enable |required，default 0， 1：设置 master_weight 字段，0：不设置master_weight字段，其他：非法
+|master_weight |optional，default 0， -1 ：不设置该值，0：设置master权重值为0， >0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
+|tx_threshold_enable |required，default 0， 1：设置 thresholds.tx_threshold 字段，0：不设置thresholds.tx_threshold 字段，其他：非法
 |address |需要操作的 signer 地址，符合地址校验规则。
 |weight | optional，default 0, 0 ：删除该signer，>0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
-
-- 功能
-  设置签名者拥有的权重
-- 成功条件
-  - 各项参数合法
-- json格式
-  ```json
-  {
-    "type": 5,
-    "set_signer_weight": {
-      "master_weight": 2,
-      "signers": [{
-          "address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-          "weight": 2
-        }
-      ]
-    }
-  }
-    ```
-
-- protocol buffer 结构
-    ```text
-    message OperationSetSignerWeight
-    {
-         int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: 表示不设置
-         repeated Signer signers = 2; //address:weight, 如果weight 为0 表示删除这个signer
-    }
-    ```
-    - master_weight:本账号地址拥有的权力值
-    - 各个签名者的权力值, Signer的定义如下
-    ```text
-    message Signer
-    {
-    enum Limit{
-            SIGNER_NONE = 0;
-            SIGNER = 100;
-    };
-         string address = 1;
-         int64 weight = 2;
-    }
-    ```
-
-#### 设置门限
-|参数|描述
-|:--- | --- 
 |tx_threshold |optional，default 0, 表示该账号的最低权限，-1: 表示不设置该值，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
 |type |表示某种类型的操作  (0, 100]
 |threshold | optional，default 0, 0 ：删除该类型操作，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
 
 - 功能
-  设置各个操作所需要的门限
+  设置签名者拥有的权重，设置各个操作所需要的门限。
 - 成功条件
   - 各项参数合法
 - json格式
     ```json
     {
-      "type": 6,
-      "set_threshold": {
-        "tx_threshold": 7,
-        "type_thresholds": [{
-            "type": 1,
-            "threshold": 8
-          }, {
-            "type": 2,
-            "threshold": 5
+        "set_privilege": {
+          "master_weight_enable": 1,
+          "master_weight": 10,
+          "tx_threshold_enable":1,
+          "signers": [{
+            "address": "buQqfssWJjyKfFHZYx8WcSgLVUdXPT3VNwJG",
+            "weight": 8
           }
-        ]
-      }
+          ],
+          "thresholds": {
+            "tx_threshold": 7,
+            "type_thresholds": [{
+              "type": 1,
+              "threshold": 8
+              }, {
+              "type": 2,
+              "threshold": 9
+              }
+            ]
+          }
+        },
+        "type": 9
     }
     ```
 
 - protocol buffer 结构
+    ```text
+      message AccountPrivilege
+      {
+          int64 master_weight = 1;
+          repeated Signer signers = 2;
+          AccountThreshold thresholds = 3;
+      }
 
-  ```text
-  message OperationSetThreshold
-  {
-          int64 tx_threshold = 1;
-          repeated OperationTypeThreshold type_thresholds = 4; //type:threshold ，threshold:0 表示删除这个类型的type
-  }
-  ```
+      message AccountThreshold
+      {
+          int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
+          repeated OperationTypeThreshold type_thresholds = 2; //如果这个设置，则操作门限以这个为准
+      }
 
-  OperationTypeThreshold的结构定义如下
+      message OperationTypeThreshold
+      {
+          Operation.Type type = 1;
+          int64 threshold = 2;
+      }
 
-  ```text
-  message OperationTypeThreshold{
-        Operation.Type type = 1;  //操作码，哪种操作
-        int64 threshold = 2;    //代表这种操作所需的权重门限
-  }
-  ```
+      message Signer
+      {
+          enum Limit
+          {
+              SIGNER_NONE = 0;
+              SIGNER = 100;
+          };
+          string address = 1;
+          int64 weight = 2;
+      }
+      
+    ```
 
 #### 转移BU资产
 
