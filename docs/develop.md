@@ -31,8 +31,7 @@ English | [中文](develop_CN.md)
             - [Issuing Assets](#issuing-assets) 
             - [Transferring Assets](#transferring-assets) 
             - [Setting Metadata](#setting-metadata)
-            - [Setting Weight](#setting-weight) 
-            - [Setting Threshold](#setting-threshold)
+            - [Setting Privilege](#setting-privilege) 
             - [Transferring BU Assets](#transferring-bu-assets)
             - [Log](#log)
     - [Advanced Features](#advanced-features)
@@ -1057,9 +1056,8 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 | 2          | ISSUE_ASSET       | Issuing asset       |
 | 3          | PAY_ASSET         | Transferring asset  |
 | 4          | SET_METADATA      | Setting metadata    |
-| 5          | SET_SIGNER_WEIGHT | Setting weight      |
-| 6          | SET_THRESHOLD     | Setting threshold   |
 | 7          | PAY_COIN          | Paying with BU COIN |
+| 9          | SET_PRIVILEGE     | Setting weight and threshold|
 
 #### Creating Account
 
@@ -1078,7 +1076,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
   - Valid parameters
   - The new account is not an existing one
 
-- **Note: If the target account is a contract account, the `priv`should be set like the FOLLOWING: {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}**
+- **Note: If the target account is a contract account, the `priv`should be set like the FOLLOWING: {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}, if the target account is a common account, the `priv`should be set like the FOLLOWING: {"master_weight" : 1 , "thresholds": {"tx_threshold":1}}**
 
 
 - json format
@@ -1090,7 +1088,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
       "create_account": {
         "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
         "contract": {
-          "payload": "function main(input) { /*do what ever you want*/ }"
+          "payload": ""
         },
         "init_balance": 100000,  //give the init_balance to this account
         "init_input" : "",  // if create contract , then init with this input
@@ -1105,22 +1103,9 @@ Evaluating transaction fee would not alter the account balance. Related sender a
           }
         ],
         "priv": {
-          "master_weight": 10,
-          "signers": [{
-              "address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
-              "weight": 6
-            }
-          ],
+          "master_weight": 1,
           "thresholds": {
-            "tx_threshold": 7,
-            "type_thresholds": [{
-                "type": 1,
-                "threshold": 8
-              }, {
-                "type": 2,
-                "threshold": 5
-              }
-            ]
+            "tx_threshold": 1
           }
         }
       }
@@ -1174,7 +1159,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
         }
       ```
 
-  If you would like to create a standalone account, please set the `priv.master_weight=1` and `priv.thresholds.tx_threshold=1`. If you would like to create a joint-management account, please refer to [Distribute Access](#控制权的分配).
+  If you would like to create a joint-management account, please refer to [Setting Privilege](#setting-privilege) .
 
   
 
@@ -1330,101 +1315,84 @@ Evaluating transaction fee would not alter the account balance. Related sender a
     - value: length [0,256K]
     - version: Set null.  If you would like to get more advanced function, please refer to [Control Version](#版本化控制). 
 
-#### Setting Weight
+#### Setting Privilege
 |Parameters|Description
 |:--- | --- 
-|master_weight |Optional.  defaults to  0; -1: set null; 0: set the weight of master as 0; >0 && <= MAX(UINT32): set the weight as the value, others are invalid.  
-|address | Signer address ( should be valid ) 
+|master_weight_enable |required，default 0, 1：use parameter master_weight, 0: do not use parameter master_weight, others are invalid. Prevents incorrect operation with master_weight.
+|master_weight |required. defaults to 0; -1: set null; 0: set the weight of master as 0; >0 && <= MAX(UINT32): set the weight as the value, others are invalid.Need to work with master_weight_enable，master_weight_enable = 1，this must a nonnegative number, master_weight_enable = 0 ，this must be -1.
+|address |Signer address ( should be valid )
 |weight | optional. defaults to 0; 0: delete the signer; >0 && <= MAX(UINT32): Set the weight as the value, others are invalid
+|tx_threshold_enable |required，default 0， 1：use parameter thresholds.tx_threshold，0：do not use parameter thresholds.tx_threshold。 Prevents incorrect operation with thresholds.tx_threshold
+|thresholds |optional，default null obj
+|tx_threshold |required，default 0, denotes the lowest weight of this account. -1: set null; >0 && <= MAX(INT64): set the weight as the value, others are invalid.Need to work with  tx_threshold_enable, when tx_threshold_enable = 1，this must a nonnegative number, when tx_threshold_enable = 0，thresholds can be null，if not，this must be -1.
+|type |Type of specific operation (0, 100]
+|threshold | optional，default 0, 0 : delete the operation; >0 && <= MAX(INT64): Setting the weight as the value, others are invalid.
 
-- Function
-  Setting the weight of the signer
+- Function 
+  Set the weight of the signer and set the threshold required for each operation.
 - Conditions
   - Valid parameters
 - json format
-  ```json
-  {
-    "type": 5,
-    "set_signer_weight": {
-      "master_weight": 2,
-      "signers": [{
-          "address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-          "weight": 2
-        }
-      ]
-    }
-  }
-  ```
-
-- protocol buffer structure
-    ```text
-    message OperationSettingSignerWeight
-    {
-         int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: set null
-         repeated Signer signers = 2; //address.  weight 0:delete the signer
-    }
-    ```
-    - master_weight: The weight of master address
-    - Signer Definition
-    ```text
-    message Signer
-    {
-    enum Limit{
-            SIGNER_NONE = 0;
-            SIGNER = 100;
-    };
-         string address = 1;
-         int64 weight = 2;
-    }
-    ```
-
-#### Setting Threshold
-|Parameters|Description
-|:--- | --- 
-|tx_threshold |Optional，default 0, denotes the lowest weight of this account. -1: set null; >0 && <= MAX(INT64): set the weight as the value, others are invalid.
-|type |Type of specific operation  (0, 100]
-|threshold | optional，default 0, 0 : delete the operation; >0 && <= MAX(INT64): Setting the weight as the value, others are invalid. 
-
-- Function
-  Setting the threshold for different operations.
-- Conditions
-  - Valid parameters
-- json format 
     ```json
     {
-      "type": 6,
-      "set_threshold": {
-        "tx_threshold": 7,
-        "type_thresholds": [{
-            "type": 1,
-            "threshold": 8
-          }, {
-            "type": 2,
-            "threshold": 5
+        "set_privilege": {
+          "master_weight_enable": 1,
+          "master_weight": 10,
+          "signers": [{
+            "address": "buQqfssWJjyKfFHZYx8WcSgLVUdXPT3VNwJG",
+            "weight": 8
           }
-        ]
-      }
+          ],
+          "tx_threshold_enable":1,
+          "thresholds": {
+            "tx_threshold": 7,
+            "type_thresholds": [{
+              "type": 1,
+              "threshold": 8
+              }, {
+              "type": 2,
+              "threshold": 9
+              }
+            ]
+          }
+        },
+        "type": 9
     }
     ```
 
 - protocol buffer structure
+    ```text
+      message AccountPrivilege
+      {
+          int64 master_weight = 1;
+          repeated Signer signers = 2;
+          AccountThreshold thresholds = 3;
+      }
 
-  ```text
-  message OperationSettingThreshold
-  {
-          int64 tx_threshold = 1;
-          repeated OperationTypeThreshold type_thresholds = 4; //type:threshold ; threshold:0: delete this type
-  }
-  ```
+      message AccountThreshold
+      {
+          int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: set null
+          repeated OperationTypeThreshold type_thresholds = 2; // threshold with higher priority 
+      }
 
-  OperationTypeThreshold structure
+      message OperationTypeThreshold
+      {
+          Operation.Type type = 1;
+          int64 threshold = 2;
+      }
 
-  ```text
-  message OperationTypeThreshold{
-        Operation.Type type = 1;  //what kind of operation
-        int64 threshold = 2;    //the threshole of this operation
-  }
-  ```
+      message Signer
+      {
+          enum Limit
+          {
+              SIGNER_NONE = 0;
+              SIGNER = 100;
+          };
+          string address = 1;
+          int64 weight = 2;
+      }
+      
+    ```
 
 #### Transferring BU Assets
 
