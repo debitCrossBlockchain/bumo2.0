@@ -1276,13 +1276,13 @@ POST /getTransactionBlob
 #### 设置权限
 |参数|描述
 |:--- | --- 
-|master_weight_enable |required，default 0， 1：设置 master_weight 字段，0：不设置master_weight字段，其他：非法
-|master_weight |required，default 0， -1 ：不设置该值，0：设置master权重值为0， >0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
+|master_weight_enable |required，default 0， 1：设置 master_weight 字段，0：不设置 master_weight 字段，其他：非法。用于防止对 master_weight 字段的错误操作
+|master_weight |required，default 0， -1 ：不设置该值，0：设置 master 权重值为 0， >0 && <= MAX(UINT32)：设置权重值为该值，其他：非法。需要与 master_weight_enable 配对使用，master_weight_enable 等于 1 时，该值必须填非负数。master_weight_enable 等于 0 时，该值必须填 -1，即不设置.
 |address |需要操作的 signer 地址，符合地址校验规则。
-|weight | optional，default 0, 0 ：删除该signer，>0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
-|tx_threshold_enable |required，default 0， 1：设置 thresholds.tx_threshold 字段，0：不设置
-|thresholds |optional，default 空对象
-|tx_threshold |required，default 0, 表示该账号的最低权限，-1: 表示不设置该值，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
+|weight | optional，default 0, 0 ：删除该 signer，>0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
+|tx_threshold_enable |required，default 0， 1：设置 thresholds.tx_threshold 字段，0：不设置 thresholds.tx_threshold 字段。用于防止对 thresholds.tx_threshold 字段的错误操作
+|thresholds |optional，默认为空对象
+|tx_threshold |required，default 0, 表示该账号的最低权限，-1: 表示不设置该值，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法。该字段必须与 tx_threshold_enable 配合使用，当 tx_threshold_enable 等于 1 时，该值必须为非负数，tx_threshold_enable 等于 0 时，thresholds 对象可以不填充，如果填充了，必须保证该值为 -1，即不设置.
 |type |表示某种类型的操作  (0, 100]
 |threshold | optional，default 0, 0 ：删除该类型操作，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
 
