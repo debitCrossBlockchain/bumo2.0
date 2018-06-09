@@ -75,38 +75,42 @@ namespace bumo {
 			//for signers
 			std::set<std::string> duplicate_set;
 			bool shouldBreak = false;
-			for (int32_t i = 0; i < priv.signers_size(); i++) {
-				const protocol::Signer &signer = priv.signers(i);
-				if (signer.weight() < 0 || signer.weight() > UINT32_MAX) {
-					result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-					result.set_desc(utils::String::Format("Signer weight(" FMT_I64 ") is larger than %u or less 0", signer.weight(), UINT32_MAX));
-					shouldBreak = true;
-					break;
+			//version 1000 use to check singer
+			if (LAST_CLOSED_LEDGER_VERSION == General::LEDGER_VERSION_HISTORY_1000) {
+				for (int32_t i = 0; i < priv.signers_size(); i++) {
+					const protocol::Signer &signer = priv.signers(i);
+					if (signer.weight() < 0 || signer.weight() > UINT32_MAX) {
+						result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
+						result.set_desc(utils::String::Format("Signer weight(" FMT_I64 ") is larger than %u or less 0", signer.weight(), UINT32_MAX));
+						shouldBreak = true;
+						break;
+					}
+
+					if (signer.address() == create_account.dest_address()) {
+						result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+						result.set_desc(utils::String::Format("Signer address(%s) can't be equal to the source address", signer.address().c_str()));
+						shouldBreak = true;
+						break;
+					}
+
+					if (!PublicKey::IsAddressValid(signer.address())) {
+						result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+						result.set_desc(utils::String::Format("Signer address(%s) is not valid", signer.address().c_str()));
+						shouldBreak = true;
+						break;
+					}
+
+					if (duplicate_set.find(signer.address()) != duplicate_set.end()) {
+						result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+						result.set_desc(utils::String::Format("Signer address(%s) duplicated", signer.address().c_str()));
+						shouldBreak = true;
+						break;
+					}
+
+					duplicate_set.insert(signer.address());
 				}
-
-				if (signer.address() == create_account.dest_address()) {
-					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-					result.set_desc(utils::String::Format("Signer address(%s) can't be equal to the source address", signer.address().c_str()));
-					shouldBreak = true;
-					break;
-				}
-
-				if (!PublicKey::IsAddressValid(signer.address())) {
-					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-					result.set_desc(utils::String::Format("Signer address(%s) is not valid", signer.address().c_str()));
-					shouldBreak = true;
-					break;
-				}
-
-				if (duplicate_set.find(signer.address()) != duplicate_set.end()) {
-					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("Signer address(%s) duplicated", signer.address().c_str()));
-					shouldBreak = true;
-					break;
-				} 
-
-				duplicate_set.insert(signer.address());
 			}
+			
 			if (shouldBreak) break;
 
 			//for threshold
@@ -168,6 +172,21 @@ namespace bumo {
 				
 				std::string src = create_account.contract().payload();
 				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, src);
+			}
+			
+			//if it's common and version > 1000,  then must set master_weight 1, tx_threshold:1	
+			if (create_account.contract().payload() == "" && 
+				LAST_CLOSED_LEDGER_VERSION > General::LEDGER_VERSION_HISTORY_1000)
+			{
+				if (!(priv.master_weight() == 1 &&
+					priv.signers_size() == 0 &&
+					threshold.tx_threshold() == 1 &&
+					threshold.type_thresholds_size() == 0
+					)) {
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("Common account 'priv' config must be({master_weight:1, thresholds:{tx_threshold:1}})"));
+					break;
+				}
 			}
 
 			for (int32_t i = 0; i < create_account.metadatas_size(); i++){
@@ -368,6 +387,128 @@ namespace bumo {
 			}
 			break;
 		}
+		case protocol::Operation_Type_SET_PRIVILEGE:
+		{
+			if (LAST_CLOSED_LEDGER_VERSION == General::LEDGER_VERSION_HISTORY_1000)
+			{
+				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+				result.set_desc(utils::String::Format("Set privilege need ledger version must bigger than %u ", General::LEDGER_VERSION_HISTORY_1000));
+				break;
+			}
+
+			const protocol::OperationSetPrivilege &set_privilege = operation.set_privilege();
+
+			//check master weight
+			const int64_t use_master_weight = set_privilege.use_master_weight();
+			const int64_t master_weight = set_privilege.master_weight();
+			if (use_master_weight != 0 && use_master_weight != 1) {
+				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
+				result.set_desc(utils::String::Format("Parameter use_master_weight(" FMT_I64 ") must 0 or 1 ", use_master_weight));
+				break;
+			}
+
+			if (use_master_weight == 0 && master_weight >= 0) {
+				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
+				result.set_desc(utils::String::Format("Parameter use_master_weight is 0 , master_weight(" FMT_I64 ") must < 0", master_weight));
+				break;
+			}
+			
+			if ((use_master_weight == 1) && ((master_weight < 0 || master_weight > UINT32_MAX)))
+			{
+				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
+				result.set_desc(utils::String::Format("Parameter use_master_weight is 1, master_weight(" FMT_I64 ") is larger than %u or less 0", master_weight, UINT32_MAX));
+				break;
+			}
+			
+			//for signers
+			std::set<std::string> duplicate_set;
+			bool shouldBreak = false;
+			for (int32_t i = 0; i < set_privilege.signers_size(); i++) {
+				const protocol::Signer &signer = set_privilege.signers(i);
+				if (signer.weight() < 0 || signer.weight() > UINT32_MAX) {
+					result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
+					result.set_desc(utils::String::Format("Signer weight(" FMT_I64 ") is larger than %u or less 0", signer.weight(), UINT32_MAX));
+					shouldBreak = true;
+					break;
+				}
+
+				if (signer.address() == source_address)
+				{
+					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+					result.set_desc(utils::String::Format("Signer address(%s) can't be equal to the source address", signer.address().c_str()));
+					shouldBreak = true;
+					break;
+				}
+
+				if (!PublicKey::IsAddressValid(signer.address())) {
+					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+					result.set_desc(utils::String::Format("Signer address(%s) is not valid", signer.address().c_str()));
+					shouldBreak = true;
+					break;
+				}
+
+				if (duplicate_set.find(signer.address()) != duplicate_set.end()) {
+					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+					result.set_desc(utils::String::Format("Signer address(%s) duplicated", signer.address().c_str()));
+					shouldBreak = true;
+					break;
+				}
+
+				duplicate_set.insert(signer.address());
+			}
+
+			if (shouldBreak) break;
+
+			//for threshold
+			const int64_t use_tx_threshold = set_privilege.use_tx_threshold();
+			bool has_thresholds_obj = set_privilege.has_thresholds();
+			if (use_tx_threshold != 0 && use_tx_threshold != 1){
+				result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
+				result.set_desc(utils::String::Format("Parameter use_tx_threshold(" FMT_I64 ") must 0 or 1", use_tx_threshold));
+				break;
+			}
+
+			if (use_tx_threshold == 1 && (!has_thresholds_obj || set_privilege.thresholds().tx_threshold() < 0)){
+				result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
+				result.set_desc(utils::String::Format("Parameter use_tx_threshold is 1, must add thresholds obj and set thresholds.tx_threshold >= 0 "));
+				break;
+			}
+			
+			if (use_tx_threshold == 0 && has_thresholds_obj && set_privilege.thresholds().tx_threshold() >= 0){
+				result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
+				result.set_desc(utils::String::Format("Parameter use_tx_threshold is 0, must delete thresholds obj or set thresholds.tx_threshold < 0 "));
+				break;
+			}
+
+			//check type and threshold
+			if (has_thresholds_obj){
+				const protocol::AccountThreshold &threshold = set_privilege.thresholds();
+				std::set<int32_t> duplicate_type;
+				for (int32_t i = 0; i < threshold.type_thresholds_size(); i++) {
+					const protocol::OperationTypeThreshold  &type_thresholds = threshold.type_thresholds(i);
+					if (type_thresholds.type() > 100 || type_thresholds.type() <= 0) {
+						result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+						result.set_desc(utils::String::Format("Operation type(%u) not support", type_thresholds.type()));
+						break;
+					}
+
+					if (type_thresholds.threshold() < 0) {
+						result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
+						result.set_desc(utils::String::Format("Operation type(%d) threshold(" FMT_I64 ") is less than 0", (int32_t)type_thresholds.type(), type_thresholds.threshold()));
+						break;
+					}
+
+					if (duplicate_type.find(type_thresholds.type()) != duplicate_type.end()) {
+						result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+						result.set_desc(utils::String::Format("Operation type(%u) duplicated", type_thresholds.type()));
+						break;
+					}
+
+					duplicate_type.insert(type_thresholds.type());
+				}
+			}
+			break;
+		}
 
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
@@ -445,6 +586,9 @@ namespace bumo {
 			break;
 		case protocol::Operation_Type_LOG:
 			Log(environment);
+			break;
+		case protocol::Operation_Type_SET_PRIVILEGE:
+			SetPrivilege(environment);
 			break;
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
@@ -849,6 +993,39 @@ namespace bumo {
 	}
 
 	void OperationFrm::Log(std::shared_ptr<Environment> environment) {}
+
+	void OperationFrm::SetPrivilege(std::shared_ptr<Environment> environment) {
+		const protocol::OperationSetPrivilege &set_priv_opt = operation_.set_privilege();
+
+		std::shared_ptr<AccountFrm> source_account = nullptr;
+		do {
+			//for master_weight
+			if (set_priv_opt.use_master_weight() == 1 && set_priv_opt.master_weight() >= 0) {
+				source_account_->SetProtoMasterWeight(set_priv_opt.master_weight());
+			}
+
+			//for Signer
+			for (int32_t i = 0; i < set_priv_opt.signers_size(); i++) {
+
+				int64_t weight = set_priv_opt.signers(i).weight();
+				source_account_->UpdateSigner(set_priv_opt.signers(i).address(), weight);
+			}
+
+			//for thresholds
+			if (set_priv_opt.has_thresholds()){
+				const protocol::AccountThreshold &threshold_opt = set_priv_opt.thresholds();
+				if (set_priv_opt.use_tx_threshold() == 1 && threshold_opt.tx_threshold() >= 0) {
+					source_account_->SetProtoTxThreshold(threshold_opt.tx_threshold());
+				}
+
+				for (int32_t i = 0; i < threshold_opt.type_thresholds_size(); i++) {
+					source_account_->UpdateTypeThreshold(threshold_opt.type_thresholds(i).type(),
+						threshold_opt.type_thresholds(i).threshold());
+				}
+			}
+			
+		} while (false);
+	}
 }
 
 

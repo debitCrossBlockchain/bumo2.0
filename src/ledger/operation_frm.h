@@ -55,6 +55,7 @@ namespace bumo{
 		void SetThreshold(std::shared_ptr<Environment> environment);
 		void PayCoin(std::shared_ptr<Environment> environment);
 		void Log(std::shared_ptr<Environment> environment);
+		void SetPrivilege(std::shared_ptr<Environment> environment);
 		void Exit(std::shared_ptr<Environment> environment);
 		//void OperationDeployContract(Environment *environment);
 		//void InvokeContract(Environment *environment);

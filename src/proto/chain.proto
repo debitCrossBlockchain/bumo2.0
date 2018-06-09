@@ -79,7 +79,6 @@ message AccountPrivilege {
 	int64 master_weight = 1;
 	repeated Signer signers = 2;
 	AccountThreshold thresholds = 3;
-	
 }
 
 message AccountThreshold{
@@ -108,6 +107,13 @@ message OperationLog{
 	repeated string datas = 2;
 }
 
+message OperationSetPrivilege{
+	int64 master_weight = 1;
+	repeated Signer signers = 2;
+	AccountThreshold thresholds = 3;
+	int64 use_master_weight = 4;	// set 0, do not use master_weight, set 1 will use master_weight
+	int64 use_tx_threshold = 5;	// set 0, do not use tx_threshold, set 1 will use tx_threshold
+}
 
 message Operation {
 	enum Type {
@@ -120,6 +126,7 @@ message Operation {
 			SET_THRESHOLD			= 6;
 			PAY_COIN                = 7;
 			LOG						= 8;
+			SET_PRIVILEGE			= 9;
 	};
 	Type type = 1;
 	string source_address = 2;
@@ -134,6 +141,7 @@ message Operation {
 	OperationSetThreshold		set_threshold 	   = 9;
 	OperationPayCoin			pay_coin           = 10;
 	OperationLog				log				   = 11;
+	OperationSetPrivilege		set_privilege	   = 12;
 }
 
 message OperationSetThreshold{
