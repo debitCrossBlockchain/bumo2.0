@@ -1121,7 +1121,7 @@ POST /getTransactionBlob
         
       ```
 
-     若您想设置账号受别人控制或者设置分配操作权重，可以通过 [设置权限](#设置权限) 操作
+     若您想设置账号受别人控制、设置分配给其他控制账号操作权重、设置操作门限等，可以通过 [设置权限](#设置权限) 操作
 
   - metadatas:metadata列表。您可以为新建的账号设置一批初始的metadata。其数据类型为KeyPair,结构如下
 
@@ -1277,11 +1277,12 @@ POST /getTransactionBlob
 |参数|描述
 |:--- | --- 
 |master_weight_enable |required，default 0， 1：设置 master_weight 字段，0：不设置master_weight字段，其他：非法
-|master_weight |optional，default 0， -1 ：不设置该值，0：设置master权重值为0， >0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
-|tx_threshold_enable |required，default 0， 1：设置 thresholds.tx_threshold 字段，0：不设置thresholds.tx_threshold 字段，其他：非法
+|master_weight |required，default 0， -1 ：不设置该值，0：设置master权重值为0， >0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
 |address |需要操作的 signer 地址，符合地址校验规则。
 |weight | optional，default 0, 0 ：删除该signer，>0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
-|tx_threshold |optional，default 0, 表示该账号的最低权限，-1: 表示不设置该值，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
+|tx_threshold_enable |required，default 0， 1：设置 thresholds.tx_threshold 字段，0：不设置
+|thresholds |optional，default 空对象
+|tx_threshold |required，default 0, 表示该账号的最低权限，-1: 表示不设置该值，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
 |type |表示某种类型的操作  (0, 100]
 |threshold | optional，default 0, 0 ：删除该类型操作，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
 
@@ -1295,12 +1296,12 @@ POST /getTransactionBlob
         "set_privilege": {
           "master_weight_enable": 1,
           "master_weight": 10,
-          "tx_threshold_enable":1,
           "signers": [{
             "address": "buQqfssWJjyKfFHZYx8WcSgLVUdXPT3VNwJG",
             "weight": 8
           }
           ],
+          "tx_threshold_enable":1,
           "thresholds": {
             "tx_threshold": 7,
             "type_thresholds": [{
