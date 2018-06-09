@@ -1933,17 +1933,17 @@ class OperationSetPrivilege : public ::google::protobuf::Message /* @@protoc_ins
   ::protocol::AccountThreshold* release_thresholds();
   void set_allocated_thresholds(::protocol::AccountThreshold* thresholds);
 
-  // optional int64 use_master_weight = 4;
-  void clear_use_master_weight();
-  static const int kUseMasterWeightFieldNumber = 4;
-  ::google::protobuf::int64 use_master_weight() const;
-  void set_use_master_weight(::google::protobuf::int64 value);
+  // optional int64 master_weight_enable = 4;
+  void clear_master_weight_enable();
+  static const int kMasterWeightEnableFieldNumber = 4;
+  ::google::protobuf::int64 master_weight_enable() const;
+  void set_master_weight_enable(::google::protobuf::int64 value);
 
-  // optional int64 use_tx_threshold = 5;
-  void clear_use_tx_threshold();
-  static const int kUseTxThresholdFieldNumber = 5;
-  ::google::protobuf::int64 use_tx_threshold() const;
-  void set_use_tx_threshold(::google::protobuf::int64 value);
+  // optional int64 tx_threshold_enable = 5;
+  void clear_tx_threshold_enable();
+  static const int kTxThresholdEnableFieldNumber = 5;
+  ::google::protobuf::int64 tx_threshold_enable() const;
+  void set_tx_threshold_enable(::google::protobuf::int64 value);
 
   // @@protoc_insertion_point(class_scope:protocol.OperationSetPrivilege)
  private:
@@ -1953,8 +1953,8 @@ class OperationSetPrivilege : public ::google::protobuf::Message /* @@protoc_ins
   ::google::protobuf::int64 master_weight_;
   ::google::protobuf::RepeatedPtrField< ::protocol::Signer > signers_;
   ::protocol::AccountThreshold* thresholds_;
-  ::google::protobuf::int64 use_master_weight_;
-  ::google::protobuf::int64 use_tx_threshold_;
+  ::google::protobuf::int64 master_weight_enable_;
+  ::google::protobuf::int64 tx_threshold_enable_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -5497,32 +5497,32 @@ inline void OperationSetPrivilege::set_allocated_thresholds(::protocol::AccountT
   // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetPrivilege.thresholds)
 }
 
-// optional int64 use_master_weight = 4;
-inline void OperationSetPrivilege::clear_use_master_weight() {
-  use_master_weight_ = GOOGLE_LONGLONG(0);
+// optional int64 master_weight_enable = 4;
+inline void OperationSetPrivilege::clear_master_weight_enable() {
+  master_weight_enable_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 OperationSetPrivilege::use_master_weight() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.use_master_weight)
-  return use_master_weight_;
+inline ::google::protobuf::int64 OperationSetPrivilege::master_weight_enable() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.master_weight_enable)
+  return master_weight_enable_;
 }
-inline void OperationSetPrivilege::set_use_master_weight(::google::protobuf::int64 value) {
+inline void OperationSetPrivilege::set_master_weight_enable(::google::protobuf::int64 value) {
   
-  use_master_weight_ = value;
-  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.use_master_weight)
+  master_weight_enable_ = value;
+  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.master_weight_enable)
 }
 
-// optional int64 use_tx_threshold = 5;
-inline void OperationSetPrivilege::clear_use_tx_threshold() {
-  use_tx_threshold_ = GOOGLE_LONGLONG(0);
+// optional int64 tx_threshold_enable = 5;
+inline void OperationSetPrivilege::clear_tx_threshold_enable() {
+  tx_threshold_enable_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 OperationSetPrivilege::use_tx_threshold() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.use_tx_threshold)
-  return use_tx_threshold_;
+inline ::google::protobuf::int64 OperationSetPrivilege::tx_threshold_enable() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.tx_threshold_enable)
+  return tx_threshold_enable_;
 }
-inline void OperationSetPrivilege::set_use_tx_threshold(::google::protobuf::int64 value) {
+inline void OperationSetPrivilege::set_tx_threshold_enable(::google::protobuf::int64 value) {
   
-  use_tx_threshold_ = value;
-  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.use_tx_threshold)
+  tx_threshold_enable_ = value;
+  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.tx_threshold_enable)
 }
 
 // -------------------------------------------------------------------

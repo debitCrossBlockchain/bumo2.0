@@ -399,7 +399,7 @@ namespace bumo {
 			const protocol::OperationSetPrivilege &set_privilege = operation.set_privilege();
 
 			//check master weight
-			const int64_t use_master_weight = set_privilege.use_master_weight();
+			const int64_t use_master_weight = set_privilege.master_weight_enable();
 			const int64_t master_weight = set_privilege.master_weight();
 			if (use_master_weight != 0 && use_master_weight != 1) {
 				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
@@ -460,7 +460,7 @@ namespace bumo {
 			if (shouldBreak) break;
 
 			//for threshold
-			const int64_t use_tx_threshold = set_privilege.use_tx_threshold();
+			const int64_t use_tx_threshold = set_privilege.tx_threshold_enable();
 			bool has_thresholds_obj = set_privilege.has_thresholds();
 			if (use_tx_threshold != 0 && use_tx_threshold != 1){
 				result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
@@ -1000,7 +1000,7 @@ namespace bumo {
 		std::shared_ptr<AccountFrm> source_account = nullptr;
 		do {
 			//for master_weight
-			if (set_priv_opt.use_master_weight() == 1 && set_priv_opt.master_weight() >= 0) {
+			if (set_priv_opt.master_weight_enable() == 1 && set_priv_opt.master_weight() >= 0) {
 				source_account_->SetProtoMasterWeight(set_priv_opt.master_weight());
 			}
 
@@ -1014,7 +1014,7 @@ namespace bumo {
 			//for thresholds
 			if (set_priv_opt.has_thresholds()){
 				const protocol::AccountThreshold &threshold_opt = set_priv_opt.thresholds();
-				if (set_priv_opt.use_tx_threshold() == 1 && threshold_opt.tx_threshold() >= 0) {
+				if (set_priv_opt.tx_threshold_enable() == 1 && threshold_opt.tx_threshold() >= 0) {
 					source_account_->SetProtoTxThreshold(threshold_opt.tx_threshold());
 				}
 

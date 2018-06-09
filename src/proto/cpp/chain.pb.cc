@@ -395,8 +395,8 @@ void protobuf_AssignDesc_chain_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, master_weight_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, signers_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, thresholds_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, use_master_weight_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, use_tx_threshold_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, master_weight_enable_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, tx_threshold_enable_),
   };
   OperationSetPrivilege_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -859,77 +859,77 @@ void protobuf_AddDesc_chain_2eproto() {
     "ationSetSignerWeight\022\025\n\rmaster_weight\030\001 "
     "\001(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\","
     "\n\014OperationLog\022\r\n\005topic\030\001 \001(\t\022\r\n\005datas\030\002"
-    " \003(\t\"\266\001\n\025OperationSetPrivilege\022\025\n\rmaster"
+    " \003(\t\"\274\001\n\025OperationSetPrivilege\022\025\n\rmaster"
     "_weight\030\001 \001(\003\022!\n\007signers\030\002 \003(\0132\020.protoco"
     "l.Signer\022.\n\nthresholds\030\003 \001(\0132\032.protocol."
-    "AccountThreshold\022\031\n\021use_master_weight\030\004 "
-    "\001(\003\022\030\n\020use_tx_threshold\030\005 \001(\003\"\343\005\n\tOperat"
-    "ion\022&\n\004type\030\001 \001(\0162\030.protocol.Operation.T"
-    "ype\022\026\n\016source_address\030\002 \001(\t\022\020\n\010metadata\030"
-    "\003 \001(\014\0228\n\016create_account\030\004 \001(\0132 .protocol"
-    ".OperationCreateAccount\0222\n\013issue_asset\030\005"
-    " \001(\0132\035.protocol.OperationIssueAsset\022.\n\tp"
-    "ay_asset\030\006 \001(\0132\033.protocol.OperationPayAs"
-    "set\0224\n\014set_metadata\030\007 \001(\0132\036.protocol.Ope"
-    "rationSetMetadata\022=\n\021set_signer_weight\030\010"
-    " \001(\0132\".protocol.OperationSetSignerWeight"
-    "\0226\n\rset_threshold\030\t \001(\0132\037.protocol.Opera"
-    "tionSetThreshold\022,\n\010pay_coin\030\n \001(\0132\032.pro"
-    "tocol.OperationPayCoin\022#\n\003log\030\013 \001(\0132\026.pr"
-    "otocol.OperationLog\0226\n\rset_privilege\030\014 \001"
-    "(\0132\037.protocol.OperationSetPrivilege\"\255\001\n\004"
-    "Type\022\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_ACCOUNT\020\001\022\017\n"
-    "\013ISSUE_ASSET\020\002\022\r\n\tPAY_ASSET\020\003\022\020\n\014SET_MET"
-    "ADATA\020\004\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\rSET_TH"
-    "RESHOLD\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\022\021\n\rSET_"
-    "PRIVILEGE\020\t\"h\n\025OperationSetThreshold\022\024\n\014"
-    "tx_threshold\030\001 \001(\003\0229\n\017type_thresholds\030\002 "
-    "\003(\0132 .protocol.OperationTypeThreshold\"\325\001"
-    "\n\013Transaction\022\026\n\016source_address\030\001 \001(\t\022\r\n"
-    "\005nonce\030\002 \001(\003\022\021\n\tfee_limit\030\003 \001(\003\022\021\n\tgas_p"
-    "rice\030\004 \001(\003\022\027\n\017ceil_ledger_seq\030\005 \001(\003\022\020\n\010m"
-    "etadata\030\006 \001(\014\022\'\n\noperations\030\007 \003(\0132\023.prot"
-    "ocol.Operation\"%\n\005Limit\022\013\n\007UNKNOWN\020\000\022\017\n\n"
-    "OPERATIONS\020\350\007\"O\n\006Signer\022\017\n\007address\030\001 \001(\t"
-    "\022\016\n\006weight\030\002 \001(\003\"$\n\005Limit\022\017\n\013SIGNER_NONE"
-    "\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007Trigger\022;\n\020transactio"
-    "n_type\030\001 \001(\0162!.protocol.Trigger.Transact"
-    "ionType\022\022\n\nledger_seq\030\002 \001(\003\0227\n\013transacti"
-    "on\030\003 \001(\0132\".protocol.Trigger.OperationTri"
-    "gger\032/\n\020OperationTrigger\022\014\n\004hash\030\001 \001(\014\022\r"
-    "\n\005index\030\002 \001(\003\"C\n\017TransactionType\022\026\n\022NORM"
-    "AL_TRANSACTION\020\000\022\030\n\024CONTRACT_TRANSACTION"
-    "\020\001\"\211\001\n\016TransactionEnv\022*\n\013transaction\030\001 \001"
-    "(\0132\025.protocol.Transaction\022\'\n\nsignatures\030"
-    "\002 \003(\0132\023.protocol.Signature\022\"\n\007trigger\030\003 "
-    "\001(\0132\021.protocol.Trigger\"\272\001\n\023TransactionEn"
-    "vStore\0221\n\017transaction_env\030\001 \001(\0132\030.protoc"
-    "ol.TransactionEnv\022\022\n\nerror_code\030\002 \001(\005\022\022\n"
-    "\nerror_desc\030\003 \001(\t\022\022\n\nledger_seq\030\004 \001(\003\022\022\n"
-    "\nclose_time\030\005 \001(\003\022\014\n\004hash\030\006 \001(\014\022\022\n\nactua"
-    "l_fee\030\007 \001(\003\":\n\021TransactionEnvSet\022%\n\003txs\030"
-    "\002 \003(\0132\030.protocol.TransactionEnv\"G\n\030Conse"
-    "nsusValueValidation\022\025\n\rexpire_tx_ids\030\001 \003"
-    "(\005\022\024\n\014error_tx_ids\030\002 \003(\005\"\203\002\n\016ConsensusVa"
-    "lue\022*\n\005txset\030\001 \001(\0132\033.protocol.Transactio"
-    "nEnvSet\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016previous_"
-    "proof\030\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024previ"
-    "ous_ledger_hash\030\005 \001(\014\022/\n\016ledger_upgrade\030"
-    "\006 \001(\0132\027.protocol.LedgerUpgrade\0226\n\nvalida"
-    "tion\030\007 \001(\0132\".protocol.ConsensusValueVali"
-    "dation\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037.proto"
-    "col.Contract.ContractType\022\017\n\007payload\030\002 \001"
-    "(\t\"\036\n\014ContractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026O"
-    "perationCreateAccount\022\024\n\014dest_address\030\001 "
-    "\001(\t\022$\n\010contract\030\002 \001(\0132\022.protocol.Contrac"
-    "t\022(\n\004priv\030\003 \001(\0132\032.protocol.AccountPrivil"
-    "ege\022$\n\tmetadatas\030\004 \003(\0132\021.protocol.KeyPai"
-    "r\022\024\n\014init_balance\030\005 \001(\003\022\022\n\ninit_input\030\006 "
-    "\001(\t\"X\n\024OperationSetMetadata\022\013\n\003key\030\001 \001(\t"
-    "\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013dele"
-    "te_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tS"
-    "IGNATURE\020dB\"\n io.bumo.sdk.core.extend.pr"
-    "otobufb\006proto3", 4374);
+    "AccountThreshold\022\034\n\024master_weight_enable"
+    "\030\004 \001(\003\022\033\n\023tx_threshold_enable\030\005 \001(\003\"\343\005\n\t"
+    "Operation\022&\n\004type\030\001 \001(\0162\030.protocol.Opera"
+    "tion.Type\022\026\n\016source_address\030\002 \001(\t\022\020\n\010met"
+    "adata\030\003 \001(\014\0228\n\016create_account\030\004 \001(\0132 .pr"
+    "otocol.OperationCreateAccount\0222\n\013issue_a"
+    "sset\030\005 \001(\0132\035.protocol.OperationIssueAsse"
+    "t\022.\n\tpay_asset\030\006 \001(\0132\033.protocol.Operatio"
+    "nPayAsset\0224\n\014set_metadata\030\007 \001(\0132\036.protoc"
+    "ol.OperationSetMetadata\022=\n\021set_signer_we"
+    "ight\030\010 \001(\0132\".protocol.OperationSetSigner"
+    "Weight\0226\n\rset_threshold\030\t \001(\0132\037.protocol"
+    ".OperationSetThreshold\022,\n\010pay_coin\030\n \001(\013"
+    "2\032.protocol.OperationPayCoin\022#\n\003log\030\013 \001("
+    "\0132\026.protocol.OperationLog\0226\n\rset_privile"
+    "ge\030\014 \001(\0132\037.protocol.OperationSetPrivileg"
+    "e\"\255\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_ACCOUN"
+    "T\020\001\022\017\n\013ISSUE_ASSET\020\002\022\r\n\tPAY_ASSET\020\003\022\020\n\014S"
+    "ET_METADATA\020\004\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\r"
+    "SET_THRESHOLD\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\022\021"
+    "\n\rSET_PRIVILEGE\020\t\"h\n\025OperationSetThresho"
+    "ld\022\024\n\014tx_threshold\030\001 \001(\003\0229\n\017type_thresho"
+    "lds\030\002 \003(\0132 .protocol.OperationTypeThresh"
+    "old\"\325\001\n\013Transaction\022\026\n\016source_address\030\001 "
+    "\001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_limit\030\003 \001(\003\022\021\n"
+    "\tgas_price\030\004 \001(\003\022\027\n\017ceil_ledger_seq\030\005 \001("
+    "\003\022\020\n\010metadata\030\006 \001(\014\022\'\n\noperations\030\007 \003(\0132"
+    "\023.protocol.Operation\"%\n\005Limit\022\013\n\007UNKNOWN"
+    "\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Signer\022\017\n\007address"
+    "\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005Limit\022\017\n\013SIGNE"
+    "R_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007Trigger\022;\n\020tran"
+    "saction_type\030\001 \001(\0162!.protocol.Trigger.Tr"
+    "ansactionType\022\022\n\nledger_seq\030\002 \001(\003\0227\n\013tra"
+    "nsaction\030\003 \001(\0132\".protocol.Trigger.Operat"
+    "ionTrigger\032/\n\020OperationTrigger\022\014\n\004hash\030\001"
+    " \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017TransactionType\022\026"
+    "\n\022NORMAL_TRANSACTION\020\000\022\030\n\024CONTRACT_TRANS"
+    "ACTION\020\001\"\211\001\n\016TransactionEnv\022*\n\013transacti"
+    "on\030\001 \001(\0132\025.protocol.Transaction\022\'\n\nsigna"
+    "tures\030\002 \003(\0132\023.protocol.Signature\022\"\n\007trig"
+    "ger\030\003 \001(\0132\021.protocol.Trigger\"\272\001\n\023Transac"
+    "tionEnvStore\0221\n\017transaction_env\030\001 \001(\0132\030."
+    "protocol.TransactionEnv\022\022\n\nerror_code\030\002 "
+    "\001(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledger_seq\030\004 "
+    "\001(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n\004hash\030\006 \001(\014\022\022\n"
+    "\nactual_fee\030\007 \001(\003\":\n\021TransactionEnvSet\022%"
+    "\n\003txs\030\002 \003(\0132\030.protocol.TransactionEnv\"G\n"
+    "\030ConsensusValueValidation\022\025\n\rexpire_tx_i"
+    "ds\030\001 \003(\005\022\024\n\014error_tx_ids\030\002 \003(\005\"\203\002\n\016Conse"
+    "nsusValue\022*\n\005txset\030\001 \001(\0132\033.protocol.Tran"
+    "sactionEnvSet\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016pre"
+    "vious_proof\030\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022\034\n"
+    "\024previous_ledger_hash\030\005 \001(\014\022/\n\016ledger_up"
+    "grade\030\006 \001(\0132\027.protocol.LedgerUpgrade\0226\n\n"
+    "validation\030\007 \001(\0132\".protocol.ConsensusVal"
+    "ueValidation\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037"
+    ".protocol.Contract.ContractType\022\017\n\007paylo"
+    "ad\030\002 \001(\t\"\036\n\014ContractType\022\016\n\nJAVASCRIPT\020\000"
+    "\"\316\001\n\026OperationCreateAccount\022\024\n\014dest_addr"
+    "ess\030\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.protocol.C"
+    "ontract\022(\n\004priv\030\003 \001(\0132\032.protocol.Account"
+    "Privilege\022$\n\tmetadatas\030\004 \003(\0132\021.protocol."
+    "KeyPair\022\024\n\014init_balance\030\005 \001(\003\022\022\n\ninit_in"
+    "put\030\006 \001(\t\"X\n\024OperationSetMetadata\022\013\n\003key"
+    "\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023"
+    "\n\013delete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020"
+    "\000\022\r\n\tSIGNATURE\020dB\"\n io.bumo.sdk.core.ext"
+    "end.protobufb\006proto3", 4380);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -7729,8 +7729,8 @@ OperationLog::mutable_datas() {
 const int OperationSetPrivilege::kMasterWeightFieldNumber;
 const int OperationSetPrivilege::kSignersFieldNumber;
 const int OperationSetPrivilege::kThresholdsFieldNumber;
-const int OperationSetPrivilege::kUseMasterWeightFieldNumber;
-const int OperationSetPrivilege::kUseTxThresholdFieldNumber;
+const int OperationSetPrivilege::kMasterWeightEnableFieldNumber;
+const int OperationSetPrivilege::kTxThresholdEnableFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 OperationSetPrivilege::OperationSetPrivilege()
@@ -7757,8 +7757,8 @@ void OperationSetPrivilege::SharedCtor() {
   _cached_size_ = 0;
   master_weight_ = GOOGLE_LONGLONG(0);
   thresholds_ = NULL;
-  use_master_weight_ = GOOGLE_LONGLONG(0);
-  use_tx_threshold_ = GOOGLE_LONGLONG(0);
+  master_weight_enable_ = GOOGLE_LONGLONG(0);
+  tx_threshold_enable_ = GOOGLE_LONGLONG(0);
 }
 
 OperationSetPrivilege::~OperationSetPrivilege() {
@@ -7815,7 +7815,7 @@ void OperationSetPrivilege::Clear() {
            ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
 } while (0)
 
-  ZR_(use_master_weight_, use_tx_threshold_);
+  ZR_(master_weight_enable_, tx_threshold_enable_);
   master_weight_ = GOOGLE_LONGLONG(0);
   if (GetArenaNoVirtual() == NULL && thresholds_ != NULL) delete thresholds_;
   thresholds_ = NULL;
@@ -7876,32 +7876,32 @@ bool OperationSetPrivilege::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(32)) goto parse_use_master_weight;
+        if (input->ExpectTag(32)) goto parse_master_weight_enable;
         break;
       }
 
-      // optional int64 use_master_weight = 4;
+      // optional int64 master_weight_enable = 4;
       case 4: {
         if (tag == 32) {
-         parse_use_master_weight:
+         parse_master_weight_enable:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &use_master_weight_)));
+                 input, &master_weight_enable_)));
 
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(40)) goto parse_use_tx_threshold;
+        if (input->ExpectTag(40)) goto parse_tx_threshold_enable;
         break;
       }
 
-      // optional int64 use_tx_threshold = 5;
+      // optional int64 tx_threshold_enable = 5;
       case 5: {
         if (tag == 40) {
-         parse_use_tx_threshold:
+         parse_tx_threshold_enable:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &use_tx_threshold_)));
+                 input, &tx_threshold_enable_)));
 
         } else {
           goto handle_unusual;
@@ -7951,14 +7951,14 @@ void OperationSetPrivilege::SerializeWithCachedSizes(
       3, *this->thresholds_, output);
   }
 
-  // optional int64 use_master_weight = 4;
-  if (this->use_master_weight() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->use_master_weight(), output);
+  // optional int64 master_weight_enable = 4;
+  if (this->master_weight_enable() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->master_weight_enable(), output);
   }
 
-  // optional int64 use_tx_threshold = 5;
-  if (this->use_tx_threshold() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->use_tx_threshold(), output);
+  // optional int64 tx_threshold_enable = 5;
+  if (this->tx_threshold_enable() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->tx_threshold_enable(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.OperationSetPrivilege)
@@ -7986,14 +7986,14 @@ void OperationSetPrivilege::SerializeWithCachedSizes(
         3, *this->thresholds_, false, target);
   }
 
-  // optional int64 use_master_weight = 4;
-  if (this->use_master_weight() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->use_master_weight(), target);
+  // optional int64 master_weight_enable = 4;
+  if (this->master_weight_enable() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->master_weight_enable(), target);
   }
 
-  // optional int64 use_tx_threshold = 5;
-  if (this->use_tx_threshold() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->use_tx_threshold(), target);
+  // optional int64 tx_threshold_enable = 5;
+  if (this->tx_threshold_enable() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->tx_threshold_enable(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationSetPrivilege)
@@ -8018,18 +8018,18 @@ int OperationSetPrivilege::ByteSize() const {
         *this->thresholds_);
   }
 
-  // optional int64 use_master_weight = 4;
-  if (this->use_master_weight() != 0) {
+  // optional int64 master_weight_enable = 4;
+  if (this->master_weight_enable() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->use_master_weight());
+        this->master_weight_enable());
   }
 
-  // optional int64 use_tx_threshold = 5;
-  if (this->use_tx_threshold() != 0) {
+  // optional int64 tx_threshold_enable = 5;
+  if (this->tx_threshold_enable() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->use_tx_threshold());
+        this->tx_threshold_enable());
   }
 
   // repeated .protocol.Signer signers = 2;
@@ -8075,11 +8075,11 @@ void OperationSetPrivilege::MergeFrom(const OperationSetPrivilege& from) {
   if (from.has_thresholds()) {
     mutable_thresholds()->::protocol::AccountThreshold::MergeFrom(from.thresholds());
   }
-  if (from.use_master_weight() != 0) {
-    set_use_master_weight(from.use_master_weight());
+  if (from.master_weight_enable() != 0) {
+    set_master_weight_enable(from.master_weight_enable());
   }
-  if (from.use_tx_threshold() != 0) {
-    set_use_tx_threshold(from.use_tx_threshold());
+  if (from.tx_threshold_enable() != 0) {
+    set_tx_threshold_enable(from.tx_threshold_enable());
   }
 }
 
@@ -8110,8 +8110,8 @@ void OperationSetPrivilege::InternalSwap(OperationSetPrivilege* other) {
   std::swap(master_weight_, other->master_weight_);
   signers_.UnsafeArenaSwap(&other->signers_);
   std::swap(thresholds_, other->thresholds_);
-  std::swap(use_master_weight_, other->use_master_weight_);
-  std::swap(use_tx_threshold_, other->use_tx_threshold_);
+  std::swap(master_weight_enable_, other->master_weight_enable_);
+  std::swap(tx_threshold_enable_, other->tx_threshold_enable_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -8209,32 +8209,32 @@ void OperationSetPrivilege::set_allocated_thresholds(::protocol::AccountThreshol
   // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetPrivilege.thresholds)
 }
 
-// optional int64 use_master_weight = 4;
-void OperationSetPrivilege::clear_use_master_weight() {
-  use_master_weight_ = GOOGLE_LONGLONG(0);
+// optional int64 master_weight_enable = 4;
+void OperationSetPrivilege::clear_master_weight_enable() {
+  master_weight_enable_ = GOOGLE_LONGLONG(0);
 }
- ::google::protobuf::int64 OperationSetPrivilege::use_master_weight() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.use_master_weight)
-  return use_master_weight_;
+ ::google::protobuf::int64 OperationSetPrivilege::master_weight_enable() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.master_weight_enable)
+  return master_weight_enable_;
 }
- void OperationSetPrivilege::set_use_master_weight(::google::protobuf::int64 value) {
+ void OperationSetPrivilege::set_master_weight_enable(::google::protobuf::int64 value) {
   
-  use_master_weight_ = value;
-  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.use_master_weight)
+  master_weight_enable_ = value;
+  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.master_weight_enable)
 }
 
-// optional int64 use_tx_threshold = 5;
-void OperationSetPrivilege::clear_use_tx_threshold() {
-  use_tx_threshold_ = GOOGLE_LONGLONG(0);
+// optional int64 tx_threshold_enable = 5;
+void OperationSetPrivilege::clear_tx_threshold_enable() {
+  tx_threshold_enable_ = GOOGLE_LONGLONG(0);
 }
- ::google::protobuf::int64 OperationSetPrivilege::use_tx_threshold() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.use_tx_threshold)
-  return use_tx_threshold_;
+ ::google::protobuf::int64 OperationSetPrivilege::tx_threshold_enable() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.tx_threshold_enable)
+  return tx_threshold_enable_;
 }
- void OperationSetPrivilege::set_use_tx_threshold(::google::protobuf::int64 value) {
+ void OperationSetPrivilege::set_tx_threshold_enable(::google::protobuf::int64 value) {
   
-  use_tx_threshold_ = value;
-  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.use_tx_threshold)
+  tx_threshold_enable_ = value;
+  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.tx_threshold_enable)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
