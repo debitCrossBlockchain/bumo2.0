@@ -106,6 +106,7 @@ make
 生成的可执行文件目录：bumo/bin/
 
 ### Windows
+- 支持 WinXP/2003/Vista/7/8/10平台编译，推荐使用 Win10
 - 安装 Visual Studio Ulimate 2013
 - 打开 buchain\build\win32\Bumo.vs12.sln, 使用 VS 自带编译器编译即可。生成的可执行文件在bumo\build\win32\dbin 目录下。
 - 首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库，进入 build目录，双击执行 install-build-deps-win32.bat 脚本。
