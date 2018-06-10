@@ -105,6 +105,7 @@ Temporary executable program dir:bumo/bulid/mac/
 Executable program dir:bumo/bin/
 
 ### Windows
+- Supports WinXP/2003/Vista/7/8/10 to building，Recommended Win10
 - Install Visual Studio Ultimate 2013
 - Compile `buchain\build\win32\Bumo.vs12.sln` with VS, then get the executable program in the dir `bumo\build\win32\dbin`
 - After the first download of the code, you have to install related dependencies from the server to initialize the development environment. Enter the dir `build`, and double click the following:`install-build-deps-win32.bat`.
