@@ -390,13 +390,12 @@ namespace bumo {
 		case protocol::Operation_Type_SET_PRIVILEGE:
 		{
 			const protocol::OperationSetPrivilege &set_privilege = operation.set_privilege();
-
 			//check master weight
 			if (!set_privilege.master_weight().empty())
 			{
 				int64_t master_weight = -1;
 				bool int64_check = utils::String::SafeStoi64(set_privilege.master_weight(), master_weight);
-				if (!int64_check || master_weight <  -1 || master_weight > UINT32_MAX)
+				if (!int64_check || master_weight <  0 || master_weight > UINT32_MAX)
 				{
 					result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
 					result.set_desc(utils::String::Format("Parameter master_weight(%s) is larger than %u or less -1", 
@@ -448,11 +447,11 @@ namespace bumo {
 			if (!set_privilege.tx_threshold().empty()){
 				int64_t tx_threshold = -1;
 				bool int64_check = utils::String::SafeStoi64(set_privilege.tx_threshold(), tx_threshold);
-				if (!int64_check || tx_threshold < -1 || tx_threshold > UINT32_MAX)
+				if (!int64_check || tx_threshold < 0)
 				{
 					result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
-					result.set_desc(utils::String::Format("Parameter tx_threshold(%s) is larger than %u or less -1", 
-						set_privilege.tx_threshold().c_str(), UINT32_MAX));
+					result.set_desc(utils::String::Format("Parameter tx_threshold(%s) is less 0", 
+						set_privilege.tx_threshold().c_str()));
 					break;
 				}
 			}
@@ -982,7 +981,6 @@ namespace bumo {
 
 		//for Signer
 		for (int32_t i = 0; i < set_priv_opt.signers_size(); i++) {
-
 			int64_t weight = set_priv_opt.signers(i).weight();
 			source_account_->UpdateSigner(set_priv_opt.signers(i).address(), weight);
 		}
