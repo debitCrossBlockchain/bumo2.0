@@ -1318,15 +1318,13 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 #### Setting Privilege
 |Parameters|Description
 |:--- | --- 
-|master_weight_enable |required，default 0, 1：use parameter master_weight, 0: do not use parameter master_weight, others are invalid. Prevents incorrect operation with master_weight.
-|master_weight |required. defaults to 0; -1: set null; 0: set the weight of master as 0; >0 && <= MAX(UINT32): set the weight as the value, others are invalid.Need to work with master_weight_enable，master_weight_enable = 1，this must a nonnegative number, master_weight_enable = 0 ，this must be -1.
+|master_weight |optional, string format, defaults to "", set self's master weight; "": do nothing; "0": set the weight of master as 0; ("0", "MAX(UINT32)"]: set the weight as the value, others are invalid.
+|signers |optional, signer address list, default null. null: do nothing; other: set signers
 |address |Signer address ( should be valid )
-|weight | optional. defaults to 0; 0: delete the signer; >0 && <= MAX(UINT32): Set the weight as the value, others are invalid
-|tx_threshold_enable |required，default 0， 1：use parameter thresholds.tx_threshold，0：do not use parameter thresholds.tx_threshold。 Prevents incorrect operation with thresholds.tx_threshold
-|thresholds |optional，default null obj
-|tx_threshold |required，default 0, denotes the lowest weight of this account. -1: set null; >0 && <= MAX(INT64): set the weight as the value, others are invalid.Need to work with  tx_threshold_enable, when tx_threshold_enable = 1，this must a nonnegative number, when tx_threshold_enable = 0，thresholds can be null，if not，this must be -1.
+|weight | optional, defaults to 0; 0: delete the signer; (0, MAX(UINT32)]: Set the weight as the value, others are invalid
+|tx_threshold |optional，string format, default to "", denotes the lowest weight of this account. "": do nothing; "0": set the weight 0; (0, MAX(INT64)]: set the weight as the value, others are invalid.
 |type |Type of specific operation (0, 100]
-|threshold | optional，default 0, 0 : delete the operation; >0 && <= MAX(INT64): Setting the weight as the value, others are invalid.
+|threshold | optional，default 0, 0 : delete the operation; (0,MAX(INT64)): Setting the weight as the value, others are invalid.
 
 - Function 
   Set the weight of the signer and set the threshold required for each operation.
@@ -1334,63 +1332,60 @@ Evaluating transaction fee would not alter the account balance. Related sender a
   - Valid parameters
 - json format
     ```json
-    {
-        "set_privilege": {
-          "master_weight_enable": 1,
-          "master_weight": 10,
-          "signers": [{
-            "address": "buQqfssWJjyKfFHZYx8WcSgLVUdXPT3VNwJG",
-            "weight": 8
-          }
-          ],
-          "tx_threshold_enable":1,
-          "thresholds": {
-            "tx_threshold": 7,
-            "type_thresholds": [{
-              "type": 1,
-              "threshold": 8
-              }, {
-              "type": 2,
-              "threshold": 9
+      {
+          "set_privilege": 
+          {
+            "master_weight": "10",
+            "signers": 
+            [
+              {
+              "address": "buQqfssWJjyKfFHZYx8WcSgLVUdXPT3VNwJG",
+              "weight": 8
+              }
+            ],
+            "tx_threshold": "2",
+            "type_thresholds": 
+            [
+              {
+                "type": 1,
+                "threshold": 8
+              }, 
+              {
+                "type": 2,
+                "threshold": 9
               }
             ]
-          }
-        },
-        "type": 9
-    }
+          },
+          "type": 9
+      }
     ```
 
 - protocol buffer structure
     ```text
-      message AccountPrivilege
-      {
-          int64 master_weight = 1;
-          repeated Signer signers = 2;
-          AccountThreshold thresholds = 3;
-      }
+     message OperationSetPrivilege
+     {
+        string master_weight = 1;
+        repeated Signer signers = 2;
+        string tx_threshold = 3;
+        repeated OperationTypeThreshold type_thresholds = 4;
+     }
 
-      message AccountThreshold
-      {
-          int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: set null
-          repeated OperationTypeThreshold type_thresholds = 2; // threshold with higher priority 
-      }
+     message OperationTypeThreshold
+     {
+        Operation.Type type = 1;
+        int64 threshold = 2;
+     }
 
-      message OperationTypeThreshold
-      {
-          Operation.Type type = 1;
-          int64 threshold = 2;
-      }
-
-      message Signer
-      {
-          enum Limit
-          {
-              SIGNER_NONE = 0;
-              SIGNER = 100;
-          };
-          string address = 1;
-          int64 weight = 2;
-      }
+     message Signer 
+     {
+        enum Limit
+        {
+            SIGNER_NONE = 0;
+            SIGNER = 100;
+        };
+        string address = 1;
+        int64 weight = 2;
+     }
       
     ```
 

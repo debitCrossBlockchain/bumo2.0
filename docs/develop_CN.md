@@ -1276,11 +1276,11 @@ POST /getTransactionBlob
 #### 设置权限
 |参数|描述
 |:--- | --- 
-|master_weight |optional，字符串类型，default ""。 "" ：不设置该值；"0": 设置 master 权重为 0；("0", "MAX(UINT32)"]：设置权重值为该值；其他：非法。
+|master_weight |optional，字符串类型，default ""，表示该账号的 master 权重。 "" ：不设置该值；"0": 设置 master 权重为 0；("0", "MAX(UINT32)"]：设置权重值为该值；其他：非法。
 |signers |optional，需要操作的 signer 列表，default 为空对象。空对象不设置，非空设置 signer 列表
 |address|需要操作的 signer 地址，符合地址校验规则。
 |weight | optional，default 0。0 ：删除该 signer; (0, MAX(UINT32)]：设置权重值为该值，其他：非法
-|tx_threshold |optional，字符串类型, default ""。""，不设置该值；"0": 设置 tx_threshold 权重为 0；("0", "MAX(INT64)"]：设置权重值为该值；其他：非法。
+|tx_threshold |optional，字符串类型, default ""，表示该账号的最低权限。""，不设置该值；"0": 设置 tx_threshold 权重为 0；("0", "MAX(INT64)"]：设置权重值为该值；其他：非法。
 |type |表示某种类型的操作  (0, 100]
 |threshold | optional，default 0。 0 ：删除该类型操作；(0, MAX(INT64)]：设置权重值为该值；其他：非法
 
