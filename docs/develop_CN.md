@@ -1313,8 +1313,8 @@ POST /getTransactionBlob
                 "threshold": 9
               }
             ]
-            },
-	    "type": 9
+          },
+          "type": 9
       }
     ```
 
