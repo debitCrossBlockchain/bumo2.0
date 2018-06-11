@@ -1276,15 +1276,13 @@ POST /getTransactionBlob
 #### 设置权限
 |参数|描述
 |:--- | --- 
-|master_weight_enable |required，default 0， 1：设置 master_weight 字段，0：不设置 master_weight 字段，其他：非法。用于防止对 master_weight 字段的错误操作
-|master_weight |required，default 0， -1 ：不设置该值，0：设置 master 权重值为 0， >0 && <= MAX(UINT32)：设置权重值为该值，其他：非法。需要与 master_weight_enable 配对使用，master_weight_enable 等于 1 时，该值必须填非负数。master_weight_enable 等于 0 时，该值必须填负数，如 -1，即不设置.
-|address |需要操作的 signer 地址，符合地址校验规则。
-|weight | optional，default 0, 0 ：删除该 signer，>0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
-|tx_threshold_enable |required，default 0， 1：设置 thresholds.tx_threshold 字段，0：不设置 thresholds.tx_threshold 字段。用于防止对 thresholds.tx_threshold 字段的错误操作
-|thresholds |optional，默认为空对象
-|tx_threshold |required，default 0, 表示该账号的最低权限，-1: 表示不设置该值，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法。该字段必须与 tx_threshold_enable 配合使用，当 tx_threshold_enable 等于 1 时，该值必须为非负数，tx_threshold_enable 等于 0 时，thresholds 对象可以不填充，如果填充了，该值必须填负数，如 -1，即不设置.
+|master_weight |optional，字符串类型，default ""。 "" ：不设置该值；"0": 设置 master 权重为 0；("0", "MAX(UINT32)"]：设置权重值为该值；其他：非法。
+|signers |optional，需要操作的 signer 列表，default 为空对象。空对象不设置，非空设置 signer 列表
+|address|需要操作的 signer 地址，符合地址校验规则。
+|weight | optional，default 0。0 ：删除该 signer; (0, MAX(UINT32)]：设置权重值为该值，其他：非法
+|tx_threshold |optional，字符串类型, 默认不填写为 ""。""，不设置该值；"0": 设置 tx_threshold 权限为 0；("0", "MAX(INT64)"]：设置门限值为该值；其他：非法。
 |type |表示某种类型的操作  (0, 100]
-|threshold | optional，default 0, 0 ：删除该类型操作，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
+|threshold | optional，default 0。 0 ：删除该类型操作；(0, MAX(INT64)]：设置权重值为该值；其他：非法
 
 - 功能
   设置签名者拥有的权重，设置各个操作所需要的门限。
@@ -1292,64 +1290,61 @@ POST /getTransactionBlob
   - 各项参数合法
 - json格式
     ```json
-    {
-        "set_privilege": {
-          "master_weight_enable": 1,
-          "master_weight": 10,
-          "signers": [{
-            "address": "buQqfssWJjyKfFHZYx8WcSgLVUdXPT3VNwJG",
-            "weight": 8
-          }
-          ],
-          "tx_threshold_enable":1,
-          "thresholds": {
-            "tx_threshold": 7,
-            "type_thresholds": [{
-              "type": 1,
-              "threshold": 8
-              }, {
-              "type": 2,
-              "threshold": 9
+      {
+          "set_privilege": 
+          {
+            "master_weight": "10",
+            "signers": 
+            [
+              {
+              "address": "buQqfssWJjyKfFHZYx8WcSgLVUdXPT3VNwJG",
+              "weight": 8
+              }
+            ],
+            "tx_threshold": "2",
+            "type_thresholds": 
+            [
+              {
+                "type": 1,
+                "threshold": 8
+              }, 
+              {
+                "type": 2,
+                "threshold": 9
               }
             ]
-          }
-        },
-        "type": 9
-    }
+            },
+		    "type": 9
+      }
     ```
 
 - protocol buffer 结构
     ```text
-      message AccountPrivilege
-      {
-          int64 master_weight = 1;
-          repeated Signer signers = 2;
-          AccountThreshold thresholds = 3;
-      }
+     message OperationSetPrivilege
+     {
+        string master_weight = 1;
+        repeated Signer signers = 2;
+        string tx_threshold = 3;
+        repeated OperationTypeThreshold type_thresholds = 4;
+     }
 
-      message AccountThreshold
-      {
-          int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
-          repeated OperationTypeThreshold type_thresholds = 2; //如果这个设置，则操作门限以这个为准
-      }
+     message OperationTypeThreshold
+     {
+        Operation.Type type = 1;
+        int64 threshold = 2;
+     }
 
-      message OperationTypeThreshold
-      {
-          Operation.Type type = 1;
-          int64 threshold = 2;
-      }
-
-      message Signer
-      {
-          enum Limit
-          {
-              SIGNER_NONE = 0;
-              SIGNER = 100;
-          };
-          string address = 1;
-          int64 weight = 2;
-      }
-      
+     message Signer 
+     {
+        enum Limit
+        {
+            SIGNER_NONE = 0;
+            SIGNER = 100;
+        };
+        string address = 1;
+        int64 weight = 2;
+     }
+  
     ```
 
 #### 转移BU资产
