@@ -1280,7 +1280,7 @@ POST /getTransactionBlob
 |signers |optional，需要操作的 signer 列表，default 为空对象。空对象不设置，非空设置 signer 列表
 |address|需要操作的 signer 地址，符合地址校验规则。
 |weight | optional，default 0。0 ：删除该 signer; (0, MAX(UINT32)]：设置权重值为该值，其他：非法
-|tx_threshold |optional，字符串类型, 默认不填写为 ""。""，不设置该值；"0": 设置 tx_threshold 权限为 0；("0", "MAX(INT64)"]：设置门限值为该值；其他：非法。
+|tx_threshold |optional，字符串类型, default ""。""，不设置该值；"0": 设置 tx_threshold 权重为 0；("0", "MAX(INT64)"]：设置权重值为该值；其他：非法。
 |type |表示某种类型的操作  (0, 100]
 |threshold | optional，default 0。 0 ：删除该类型操作；(0, MAX(INT64)]：设置权重值为该值；其他：非法
 
@@ -1314,7 +1314,7 @@ POST /getTransactionBlob
               }
             ]
             },
-		    "type": 9
+	    "type": 9
       }
     ```
 
