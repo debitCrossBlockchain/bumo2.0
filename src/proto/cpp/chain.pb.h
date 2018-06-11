@@ -1906,11 +1906,16 @@ class OperationSetPrivilege : public ::google::protobuf::Message /* @@protoc_ins
 
   // accessors -------------------------------------------------------
 
-  // optional int64 master_weight = 1;
+  // optional string master_weight = 1;
   void clear_master_weight();
   static const int kMasterWeightFieldNumber = 1;
-  ::google::protobuf::int64 master_weight() const;
-  void set_master_weight(::google::protobuf::int64 value);
+  const ::std::string& master_weight() const;
+  void set_master_weight(const ::std::string& value);
+  void set_master_weight(const char* value);
+  void set_master_weight(const char* value, size_t size);
+  ::std::string* mutable_master_weight();
+  ::std::string* release_master_weight();
+  void set_allocated_master_weight(::std::string* master_weight);
 
   // repeated .protocol.Signer signers = 2;
   int signers_size() const;
@@ -1924,37 +1929,38 @@ class OperationSetPrivilege : public ::google::protobuf::Message /* @@protoc_ins
   const ::google::protobuf::RepeatedPtrField< ::protocol::Signer >&
       signers() const;
 
-  // optional .protocol.AccountThreshold thresholds = 3;
-  bool has_thresholds() const;
-  void clear_thresholds();
-  static const int kThresholdsFieldNumber = 3;
-  const ::protocol::AccountThreshold& thresholds() const;
-  ::protocol::AccountThreshold* mutable_thresholds();
-  ::protocol::AccountThreshold* release_thresholds();
-  void set_allocated_thresholds(::protocol::AccountThreshold* thresholds);
+  // optional string tx_threshold = 3;
+  void clear_tx_threshold();
+  static const int kTxThresholdFieldNumber = 3;
+  const ::std::string& tx_threshold() const;
+  void set_tx_threshold(const ::std::string& value);
+  void set_tx_threshold(const char* value);
+  void set_tx_threshold(const char* value, size_t size);
+  ::std::string* mutable_tx_threshold();
+  ::std::string* release_tx_threshold();
+  void set_allocated_tx_threshold(::std::string* tx_threshold);
 
-  // optional int64 master_weight_enable = 4;
-  void clear_master_weight_enable();
-  static const int kMasterWeightEnableFieldNumber = 4;
-  ::google::protobuf::int64 master_weight_enable() const;
-  void set_master_weight_enable(::google::protobuf::int64 value);
-
-  // optional int64 tx_threshold_enable = 5;
-  void clear_tx_threshold_enable();
-  static const int kTxThresholdEnableFieldNumber = 5;
-  ::google::protobuf::int64 tx_threshold_enable() const;
-  void set_tx_threshold_enable(::google::protobuf::int64 value);
+  // repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+  int type_thresholds_size() const;
+  void clear_type_thresholds();
+  static const int kTypeThresholdsFieldNumber = 4;
+  const ::protocol::OperationTypeThreshold& type_thresholds(int index) const;
+  ::protocol::OperationTypeThreshold* mutable_type_thresholds(int index);
+  ::protocol::OperationTypeThreshold* add_type_thresholds();
+  ::google::protobuf::RepeatedPtrField< ::protocol::OperationTypeThreshold >*
+      mutable_type_thresholds();
+  const ::google::protobuf::RepeatedPtrField< ::protocol::OperationTypeThreshold >&
+      type_thresholds() const;
 
   // @@protoc_insertion_point(class_scope:protocol.OperationSetPrivilege)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::int64 master_weight_;
+  ::google::protobuf::internal::ArenaStringPtr master_weight_;
   ::google::protobuf::RepeatedPtrField< ::protocol::Signer > signers_;
-  ::protocol::AccountThreshold* thresholds_;
-  ::google::protobuf::int64 master_weight_enable_;
-  ::google::protobuf::int64 tx_threshold_enable_;
+  ::google::protobuf::internal::ArenaStringPtr tx_threshold_;
+  ::google::protobuf::RepeatedPtrField< ::protocol::OperationTypeThreshold > type_thresholds_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -5415,18 +5421,48 @@ OperationLog::mutable_datas() {
 
 // OperationSetPrivilege
 
-// optional int64 master_weight = 1;
+// optional string master_weight = 1;
 inline void OperationSetPrivilege::clear_master_weight() {
-  master_weight_ = GOOGLE_LONGLONG(0);
+  master_weight_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::google::protobuf::int64 OperationSetPrivilege::master_weight() const {
+inline const ::std::string& OperationSetPrivilege::master_weight() const {
   // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.master_weight)
-  return master_weight_;
+  return master_weight_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void OperationSetPrivilege::set_master_weight(::google::protobuf::int64 value) {
+inline void OperationSetPrivilege::set_master_weight(const ::std::string& value) {
   
-  master_weight_ = value;
+  master_weight_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.master_weight)
+}
+inline void OperationSetPrivilege::set_master_weight(const char* value) {
+  
+  master_weight_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.OperationSetPrivilege.master_weight)
+}
+inline void OperationSetPrivilege::set_master_weight(const char* value, size_t size) {
+  
+  master_weight_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationSetPrivilege.master_weight)
+}
+inline ::std::string* OperationSetPrivilege::mutable_master_weight() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.OperationSetPrivilege.master_weight)
+  return master_weight_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* OperationSetPrivilege::release_master_weight() {
+  // @@protoc_insertion_point(field_release:protocol.OperationSetPrivilege.master_weight)
+  
+  return master_weight_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationSetPrivilege::set_allocated_master_weight(::std::string* master_weight) {
+  if (master_weight != NULL) {
+    
+  } else {
+    
+  }
+  master_weight_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), master_weight);
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetPrivilege.master_weight)
 }
 
 // repeated .protocol.Signer signers = 2;
@@ -5459,70 +5495,78 @@ OperationSetPrivilege::signers() const {
   return signers_;
 }
 
-// optional .protocol.AccountThreshold thresholds = 3;
-inline bool OperationSetPrivilege::has_thresholds() const {
-  return !_is_default_instance_ && thresholds_ != NULL;
+// optional string tx_threshold = 3;
+inline void OperationSetPrivilege::clear_tx_threshold() {
+  tx_threshold_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void OperationSetPrivilege::clear_thresholds() {
-  if (GetArenaNoVirtual() == NULL && thresholds_ != NULL) delete thresholds_;
-  thresholds_ = NULL;
+inline const ::std::string& OperationSetPrivilege::tx_threshold() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.tx_threshold)
+  return tx_threshold_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::protocol::AccountThreshold& OperationSetPrivilege::thresholds() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.thresholds)
-  return thresholds_ != NULL ? *thresholds_ : *default_instance_->thresholds_;
-}
-inline ::protocol::AccountThreshold* OperationSetPrivilege::mutable_thresholds() {
+inline void OperationSetPrivilege::set_tx_threshold(const ::std::string& value) {
   
-  if (thresholds_ == NULL) {
-    thresholds_ = new ::protocol::AccountThreshold;
-  }
-  // @@protoc_insertion_point(field_mutable:protocol.OperationSetPrivilege.thresholds)
-  return thresholds_;
+  tx_threshold_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.tx_threshold)
 }
-inline ::protocol::AccountThreshold* OperationSetPrivilege::release_thresholds() {
-  // @@protoc_insertion_point(field_release:protocol.OperationSetPrivilege.thresholds)
+inline void OperationSetPrivilege::set_tx_threshold(const char* value) {
   
-  ::protocol::AccountThreshold* temp = thresholds_;
-  thresholds_ = NULL;
-  return temp;
+  tx_threshold_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.OperationSetPrivilege.tx_threshold)
 }
-inline void OperationSetPrivilege::set_allocated_thresholds(::protocol::AccountThreshold* thresholds) {
-  delete thresholds_;
-  thresholds_ = thresholds;
-  if (thresholds) {
+inline void OperationSetPrivilege::set_tx_threshold(const char* value, size_t size) {
+  
+  tx_threshold_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationSetPrivilege.tx_threshold)
+}
+inline ::std::string* OperationSetPrivilege::mutable_tx_threshold() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.OperationSetPrivilege.tx_threshold)
+  return tx_threshold_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* OperationSetPrivilege::release_tx_threshold() {
+  // @@protoc_insertion_point(field_release:protocol.OperationSetPrivilege.tx_threshold)
+  
+  return tx_threshold_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationSetPrivilege::set_allocated_tx_threshold(::std::string* tx_threshold) {
+  if (tx_threshold != NULL) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetPrivilege.thresholds)
+  tx_threshold_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tx_threshold);
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetPrivilege.tx_threshold)
 }
 
-// optional int64 master_weight_enable = 4;
-inline void OperationSetPrivilege::clear_master_weight_enable() {
-  master_weight_enable_ = GOOGLE_LONGLONG(0);
+// repeated .protocol.OperationTypeThreshold type_thresholds = 4;
+inline int OperationSetPrivilege::type_thresholds_size() const {
+  return type_thresholds_.size();
 }
-inline ::google::protobuf::int64 OperationSetPrivilege::master_weight_enable() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.master_weight_enable)
-  return master_weight_enable_;
+inline void OperationSetPrivilege::clear_type_thresholds() {
+  type_thresholds_.Clear();
 }
-inline void OperationSetPrivilege::set_master_weight_enable(::google::protobuf::int64 value) {
-  
-  master_weight_enable_ = value;
-  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.master_weight_enable)
+inline const ::protocol::OperationTypeThreshold& OperationSetPrivilege::type_thresholds(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.type_thresholds)
+  return type_thresholds_.Get(index);
 }
-
-// optional int64 tx_threshold_enable = 5;
-inline void OperationSetPrivilege::clear_tx_threshold_enable() {
-  tx_threshold_enable_ = GOOGLE_LONGLONG(0);
+inline ::protocol::OperationTypeThreshold* OperationSetPrivilege::mutable_type_thresholds(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.OperationSetPrivilege.type_thresholds)
+  return type_thresholds_.Mutable(index);
 }
-inline ::google::protobuf::int64 OperationSetPrivilege::tx_threshold_enable() const {
-  // @@protoc_insertion_point(field_get:protocol.OperationSetPrivilege.tx_threshold_enable)
-  return tx_threshold_enable_;
+inline ::protocol::OperationTypeThreshold* OperationSetPrivilege::add_type_thresholds() {
+  // @@protoc_insertion_point(field_add:protocol.OperationSetPrivilege.type_thresholds)
+  return type_thresholds_.Add();
 }
-inline void OperationSetPrivilege::set_tx_threshold_enable(::google::protobuf::int64 value) {
-  
-  tx_threshold_enable_ = value;
-  // @@protoc_insertion_point(field_set:protocol.OperationSetPrivilege.tx_threshold_enable)
+inline ::google::protobuf::RepeatedPtrField< ::protocol::OperationTypeThreshold >*
+OperationSetPrivilege::mutable_type_thresholds() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.OperationSetPrivilege.type_thresholds)
+  return &type_thresholds_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::protocol::OperationTypeThreshold >&
+OperationSetPrivilege::type_thresholds() const {
+  // @@protoc_insertion_point(field_list:protocol.OperationSetPrivilege.type_thresholds)
+  return type_thresholds_;
 }
 
 // -------------------------------------------------------------------

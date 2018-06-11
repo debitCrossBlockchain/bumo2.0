@@ -108,11 +108,10 @@ message OperationLog{
 }
 
 message OperationSetPrivilege{
-	int64 master_weight = 1;
+	string master_weight = 1;
 	repeated Signer signers = 2;
-	AccountThreshold thresholds = 3;
-	int64 master_weight_enable = 4;	// set 0, do not use master_weight, set 1 will use master_weight
-	int64 tx_threshold_enable = 5;	// set 0, do not use tx_threshold, set 1 will use tx_threshold
+	string tx_threshold = 3;
+	repeated OperationTypeThreshold type_thresholds = 4;
 }
 
 message Operation {
