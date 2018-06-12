@@ -1049,7 +1049,7 @@ POST /getTransactionBlob
         "contract": {
           "payload": ""
         },
-        "init_balance": 100000,  //give the init_balance to this account
+        "init_balance": 100000,  //init_balance to this account
         "init_input" : "",  // if create contract , then init with this input
         "metadatas": [{
             "key": "111",
@@ -1070,7 +1070,7 @@ POST /getTransactionBlob
       }
     }
 ```
-创建智能合约账号
+创建合约账号
 ```json
     {
       "type": 1,
@@ -1125,7 +1125,7 @@ GET /getTransactionHistory?hash=150dbbf1beaaae23bb3b7148cf65279d7de46a76d7ec8e48
             "actual_fee": 1000402000,
             "close_time": 1528725055019893,
             "error_code": 0,
-            "error_desc": "\"contract_address\":\"buQfFcsf1NUGY1o25sp8mQuaP6W8jahwZPmX\",\"operation_index\":0}]]", //创建合约结果，包括合约地址和操作索引值
+            "error_desc": "[{\"contract_address\":\"buQfFcsf1NUGY1o25sp8mQuaP6W8jahwZPmX\",\"operation_index\":0}]", //创建合约结果，包括合约地址和操作索引值
             "hash": "4cbf50e03645f1075d7e5c450ced93e26e3153cf7b88ea8003b2fda39e618e64",
             "ledger_seq": 14671,
             "signatures": [{
@@ -1539,7 +1539,7 @@ GET /getTransactionHistory?hash=150dbbf1beaaae23bb3b7148cf65279d7de46a76d7ec8e48
 
 ```json
 {
-    "master_weight": 70,//本地址私钥拥有的权力值 70
+    "master_weight": "70",//本地址私钥拥有的权力值 70
     "signers": [//分配出去的权力
         {
             "address": "buQc39cgJDBaFGiiAsRtYKuaiSFdbVGheWWk",
@@ -1550,36 +1550,33 @@ GET /getTransactionHistory?hash=150dbbf1beaaae23bb3b7148cf65279d7de46a76d7ec8e48
             "weight": 100    //上面这个地址拥有权力值100
         }
     ],
-    "thresholds"://不同的操作所需的权力阈值
-    {
-        "tx_threshold": 8,//发起交易需要权力值 8
-        "type_thresholds": [
-            {
-                "type": 1,//创建账号需要权利值 11
-                "threshold": 11
-            },
-            {//发行资产需要权利值 21
-                "type": 2,
-                "threshold": 21
-            },
-            {//转移资产需要权力值 31
-                "type": 3,
-                "threshold": 31
-            },
-            {//设置metadata需要权利值 41
-                "type": 4,
-                "threshold": 41
-            },
-            {//变更控制人的权力值需要权利值 51
-                "type": 5,
-                "threshold": 51
-            },
-            {//变更各种操作的阈值需要权利值 61
-                "type": 6,
-                "threshold": 61
-            }
-        ]
-    }
+    "tx_threshold": "8",//发起交易需要权力值 8
+    "type_thresholds": [
+        {
+            "type": 1,//创建账号需要权利值 11
+            "threshold": 11
+        },
+        {//发行资产需要权利值 21
+            "type": 2,
+            "threshold": 21
+        },
+        {//转移资产需要权力值 31
+            "type": 3,
+            "threshold": 31
+        },
+        {//设置metadata需要权利值 41
+            "type": 4,
+            "threshold": 41
+        },
+        {//变更控制人的权力值需要权利值 51
+            "type": 5,
+            "threshold": 51
+        },
+        {//变更各种操作的阈值需要权利值 61
+            "type": 6,
+            "threshold": 61
+        }
+    ]
 }
 ```
 
