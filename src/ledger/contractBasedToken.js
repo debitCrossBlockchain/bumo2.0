@@ -1,3 +1,13 @@
+/*
+  Contract based Token template
+  OBSERVING CTP 1.0
+  
+STATEMENT:
+  Any organizations or individuals that intend to issue contract based token on BU chain,
+  should abide by Contractbased-Token-Protocol(ctp). Therefore, any contract that created
+  on BU chain including global attribute of ctp, we treat it as Contract based Token.
+ */
+
 'use strict';
 
 let globalAttribute = {};
@@ -149,6 +159,10 @@ function totalSupply(){
     return globalAttribute.totalSupply;
 }
 
+function ctp(){
+    return globalAttribute.ctp;
+}
+
 function contractInfo(){
     return globalAttribute;
 }
@@ -171,9 +185,11 @@ function init(input_str){
            stoI64Check(input.params.totalSupply) === true &&
            typeof input.params.name === 'string' &&
            typeof input.params.symbol === 'string' &&
-           typeof input.params.decimals === 'number',
+           typeof input.params.decimals === 'number' &&
+           typeof input.params.ctp === 'string',
            'Args check failed.');
 
+    globalAttribute.ctp = input.params.ctp;
     globalAttribute.name = input.params.name;
     globalAttribute.symbol = input.params.symbol;
     globalAttribute.decimals = input.params.decimals;
@@ -212,6 +228,7 @@ function query(input_str){
 
     let result = {};
     let input  = JSON.parse(input_str);
+
     if(input.method === 'name'){
         result.name = name();
     }
@@ -223,6 +240,9 @@ function query(input_str){
     }
     else if(input.method === 'totalSupply'){
         result.totalSupply = totalSupply();
+    }
+    else if(input.method === 'ctp'){
+        result.ctp = ctp();
     }
     else if(input.method === 'contractInfo'){
         result.contractInfo = contractInfo();
