@@ -794,12 +794,12 @@ namespace bumo {
 					utils::String::BinToHexString(hash_).c_str(), processing_operation_, result_.code(), result_.desc().c_str());
 				break;
 			}
-			
-			if (result.code() == 0 && !result.desc().empty()) {
+			else if (!result.desc().empty()) {
 				apply_success_desc[apply_success_desc.size()] = Json::Value(result.desc());
+				result_.set_desc(apply_success_desc.toFastString());
 			}
 		}
-		result_.set_desc(apply_success_desc.toFastString());
+		
 		return bSucess;
 	}
 
