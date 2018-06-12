@@ -27,6 +27,7 @@ namespace bumo {
 	public:
 		const static uint32_t OVERLAY_VERSION;
 		const static uint32_t OVERLAY_MIN_VERSION;
+		const static uint32_t LEDGER_VERSION_HISTORY_1000;
 		const static uint32_t LEDGER_VERSION;
 		const static uint32_t LEDGER_MIN_VERSION;
 		const static uint32_t MONITOR_VERSION;
@@ -281,6 +282,8 @@ namespace bumo {
 	std::string ComposePrefix(const std::string &prefix, const std::string &value);
 	std::string ComposePrefix(const std::string &prefix, int64_t value);
 	int64_t GetBlockReward(const int64_t cur_block_height);
+
+#define CHECK_VERSION_GT_1000 (LedgerManager::Instance().GetLastClosedLedger().version() > General::LEDGER_VERSION_HISTORY_1000)
 }
 
 #endif

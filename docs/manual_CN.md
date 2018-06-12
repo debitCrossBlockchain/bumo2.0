@@ -13,7 +13,7 @@
         - [__使用编译方式安装__](#使用编译方式安装)
         - [__使用安装包安装__](#使用安装包安装)
     - [__目录结构__](#目录结构)
-    - [__切换测试环境__](#切换测试环境)
+    - [__切换运行环境__](#切换运行环境)
     - [__运行__](#运行)
     - [__运行状态__](#运行状态)
     - [__配置__](#配置)
@@ -47,7 +47,7 @@
 __如果不想编译源码，可以直接使用安装包部署，[安装包下载]( https://github.com/bumoproject/bumo/releases/ "download")，下载完成后参考[__使用安装包安装__](#使用安装包安装)__
 
 ### Linux
-支持 Ubuntu、Centos 等大多数操作系统编译，下面编译步骤以 Ubuntu 14.04 示例
+支持 Ubuntu、Centos 等大多数操作系统编译，推荐使用版本Ubuntu 14.04，Centos 7。下面编译步骤以 Ubuntu 14.04 示例
 - 安装依赖
 
 ```bash
@@ -106,6 +106,7 @@ make
 生成的可执行文件目录：bumo/bin/
 
 ### Windows
+- 支持 WinXP/2003/Vista/7/8/10平台编译，推荐使用 Win10
 - 安装 Visual Studio Ulimate 2013
 - 打开 buchain\build\win32\Bumo.vs12.sln, 使用 VS 自带编译器编译即可。生成的可执行文件在bumo\build\win32\dbin 目录下。
 - 首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库，进入 build目录，双击执行 install-build-deps-win32.bat 脚本。
@@ -122,9 +123,13 @@ make install
 ```
 服务将安装在/usr/local/buchain/目录下
 
+安装完成。
+
 #### __使用安装包安装__
 
-__解压__
+这里介绍另外一种安装方式，使用安装包安装：
+
+解压
 
 拷贝 buchain-`1.0.0.x`-linux-x64.tar.gz 到 /usr/local/
 
@@ -132,12 +137,12 @@ __解压__
     //需要注意用实际版本包 1.0.0.x 的名字
     tar xzvf buchain-1.0.0.x-linux-x64.tar.gz
 
-__注册服务__
+注册服务
 
     ln -s /usr/local/buchain/scripts/bumo /etc/init.d/bumo 
     ln -s /usr/local/buchain/scripts/bumod /etc/init.d/bumod 
 
-__修改服务启动路径__
+修改服务启动路径
 
 打开 ./buchain/scripts/bumo 和 ./buchain/scripts/bumod 
 
@@ -145,7 +150,7 @@ __修改服务启动路径__
 
     install_dir=/usr/local/buchain 
 
- __设置开机启动__
+设置开机启动
 
     #分别执行如下命令（级别1~5）
     ln -s -f /etc/init.d/bumod /etc/rc1.d/S99bumod 
@@ -162,6 +167,7 @@ __修改服务启动路径__
 
     chmod +x /etc/rc.local
 
+安装完成。
 ### __目录结构__
 
 目录 | 描述 
@@ -174,7 +180,7 @@ __修改服务启动路径__
 | log | 运行日志存储目录
 
 
-### __切换测试环境__
+### __切换运行环境__
 
 如果需要切换 BUMO 的运行环境，需要手动替换配置文件。步骤如下：
 
@@ -190,8 +196,9 @@ __修改服务启动路径__
 
     #配置文件环境说明
     bumo.json           ##默认调试环境
-    bumo-mainnet.json   ##主网环境配置文件，尚未启用
+    bumo-mainnet.json   ##主网环境配置文件
     bumo-testnet.json   ##测试网配置文件
+    bumo-single.json    ##单机节点调试环境
 ```
 3、并清空数据库并启动服务
 ```bash
@@ -391,7 +398,8 @@ e2ba44bf0b27f0acbe7b5857e3bc6348
     },
     "storage_hash": "ad67d57ae19de8068dbcd47282146bd553fe9f684c57c8c114453863ee41abc3"
   }
-} [root@centos7x64-201 ~]#
+} 
+[root@centos7x64-201 ~]#
 
 ```
 ### 清空数据库

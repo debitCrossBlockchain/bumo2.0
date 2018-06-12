@@ -150,6 +150,7 @@ namespace bumo {
 			LedgerManager::Instance().context_manager_.SyncPreProcess(propose_value, true, propose_result);
 
 			if (propose_result.block_timeout_) {
+				LOG_ERROR("Pre execute block timeout, tx size:%d, propose value block num:(" FMT_I64 ")", txset_raw.txs_size(), propose_value.ledger_seq());
 				//remove the time out tx
 				//reduct to 1/2
 				protocol::TransactionEnvSet tmp_raw;
@@ -206,7 +207,7 @@ namespace bumo {
 				//dont't reply the tx, then break;
 				err.set_code(protocol::ERRCODE_ALREADY_EXIST);
 				err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
-				LOG_INFO("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
+				LOG_TRACE("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
 				break;
 			}
 

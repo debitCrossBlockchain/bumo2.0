@@ -41,7 +41,7 @@ namespace bumo {
 
 		void FileNotFound(const http::server::request &request, std::string &reply);
 		void Hello(const http::server::request &request, std::string &reply);
-		void CreateAccount(const http::server::request &request, std::string &reply);
+		void CreateKeyPair(const http::server::request &request, std::string &reply);
 		void GetAccountBase(const http::server::request &request, std::string &reply);
 		void GetAccount(const http::server::request &request, std::string &reply);
 		void GetGenesisAccount(const http::server::request &request, std::string &reply);
@@ -75,12 +75,11 @@ namespace bumo {
 		void MultiQuery(const http::server::request &request, std::string &reply);
 		void SubmitTransaction(const http::server::request &request, std::string &reply);
 
-		void ContractQuery(const http::server::request &request, std::string &reply);
 		void CallContract(const http::server::request &request, std::string &reply);
 		void TestTransaction(const http::server::request &request, std::string &reply);
 		bool MakeTransactionHelper(const Json::Value &object, protocol::Transaction *tran, Result& result);
 
-        bool EvaluateFee(protocol::Transaction *tran, Result& result);
+		bool EvaluateFee(protocol::TransactionEnv &tran_env, Result& result, int64_t& max, int64_t& min);
 
 	public:
 		bool Initialize(WebServerConfigure &webserver_configure);

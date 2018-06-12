@@ -11,6 +11,7 @@ namespace bumo{
 	const int64_t OperationGasConfigure::pay_coin = 0;
 	const int64_t OperationGasConfigure::log = 0;
 	const int64_t OperationGasConfigure::create_contract = 1000000;
+	const int64_t OperationGasConfigure::set_privilege = 0;
 
     int64_t FeeCalculate::CaculateFee(const int64_t& price, const int64_t& gas){
 		return price*gas;
@@ -44,6 +45,8 @@ namespace bumo{
 			return OperationGasConfigure::pay_coin;
 		case protocol::Operation_Type_LOG:
 			return OperationGasConfigure::log;
+		case protocol::Operation_Type_SET_PRIVILEGE:
+			return OperationGasConfigure::set_privilege;
 		default:
 			return 0;
 		}

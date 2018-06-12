@@ -22,10 +22,17 @@
 namespace bumo {
 	const uint32_t General::OVERLAY_VERSION = 1000;
 	const uint32_t General::OVERLAY_MIN_VERSION = 1000;
-	const uint32_t General::LEDGER_VERSION = 1000;
+	/*
+		Based on ledger 1000, the following changes have been modified.
+		1.Create a common or contract account without signers
+		2.Add set privilege opt
+		3.Create a contract account without dest address, it's will be created automatically.
+	*/
+	const uint32_t General::LEDGER_VERSION_HISTORY_1000 = 1000;
+	const uint32_t General::LEDGER_VERSION = 1001;
 	const uint32_t General::LEDGER_MIN_VERSION = 1000;
 	const uint32_t General::MONITOR_VERSION = 1000;
-	const char *General::BUMO_VERSION = "1.0.0.4";
+	const char *General::BUMO_VERSION = "1.0.0.5";
 
 #ifdef WIN32
 	const char *General::DEFAULT_KEYVALUE_DB_PATH = "data/keyvalue.db";

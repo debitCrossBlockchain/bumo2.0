@@ -462,7 +462,6 @@ namespace bumo {
 		}
 		else {
 			LOG_ERROR("Test type(%d) error",type);
-			delete ledger_context;
 			return false;
 		}
 
@@ -497,7 +496,10 @@ namespace bumo {
 
 		//add tx
 		LedgerFrm::pointer ledger = ledger_context->closing_ledger_;
-		const std::vector<TransactionFrm::pointer> &apply_tx_frms = ledger->apply_tx_frms_;
+		std::vector<TransactionFrm::pointer> &apply_tx_frms = ledger->apply_tx_frms_;
+		if (apply_tx_frms.size() == 0)
+			apply_tx_frms = ledger->dropped_tx_frms_;
+
 		for (size_t i = 0; i < apply_tx_frms.size(); i++) {
 			const TransactionFrm::pointer ptr = apply_tx_frms[i];
 
@@ -507,15 +509,16 @@ namespace bumo {
 			env_store.set_close_time(ledger->GetProtoHeader().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
+			int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
 			if (ptr->GetResult().code() != 0)
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else{
 				if (type == LedgerContext::AT_TEST_V8)
 					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
 				else if (LedgerContext::AT_TEST_TRANSACTION){
-					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
-					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76) + 20))*gas_price);//pub:64, sig:76
+					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76) + 20))*gas_price);//pub:64, sig:76 + key
 
+					result = ptr->GetResult();
 					Json::Value jtx = Proto2Json(env_store);
 					jtx["gas"] = env_store.actual_fee() / gas_price;
 					txs[txs.size()] = jtx;
@@ -537,6 +540,13 @@ namespace bumo {
 		//add stat
 		if (ledger_context->transaction_stack_.size() > 0) {
 			TransactionFrm::pointer ptr = ledger_context->transaction_stack_[0];
+			stat["step"] = ptr->GetContractStep();
+			stat["memory_usage"] = ptr->GetMemoryUsage();
+			stat["stack_usage"] = ptr->GetStackUsage();
+			stat["apply_time"] = ptr->GetApplyTime();
+		}
+		if (type == LedgerContext::AT_TEST_TRANSACTION){
+			TransactionFrm::pointer ptr = apply_tx_frms[0];
 			stat["step"] = ptr->GetContractStep();
 			stat["memory_usage"] = ptr->GetMemoryUsage();
 			stat["stack_usage"] = ptr->GetStackUsage();

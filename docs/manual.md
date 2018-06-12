@@ -12,7 +12,7 @@ English | [中文](manual_CN.md)
         - [__Use compile mode deploy__](#use-compile-mode-deploy)
         - [__Use archive packet deploy__](#use-archive-packet-deploy)
     - [__Catalog Structure__](#catalog-structure)
-    - [__Switch to Test Network__](#switch-to-test-network)
+    - [__Switch to Target Network__](#switch-to-target-network)
     - [__Operation__](#operation)
     - [__Operating Status__](#operating-status)
     - [__Configuration__](#configuration)
@@ -41,8 +41,11 @@ English | [中文](manual_CN.md)
 <!-- /TOC -->
 
 ## __Compile__ 
+
+If you don't want to compile the source code, you can use the archive package directly, [archive package download](https://github.com/bumoproject/bumo/releases/ "download")，[use archive packet deploy](#use-archive-packet-deploy)
+
 ### Linux
-BUMO is currently available for Ubuntu, Centos and most of the operating systems. The following demo is based on Ubuntu 14.04 .
+BUMO is currently available for Ubuntu, Centos and most of the operating systems, it is recommended that you have Ubuntu 14.04 or Centos 7. The following demo is based on Ubuntu 14.04 .
 
 - Dependencies
 
@@ -102,6 +105,7 @@ Temporary executable program dir:bumo/bulid/mac/
 Executable program dir:bumo/bin/
 
 ### Windows
+- Supports WinXP/2003/Vista/7/8/10 to building，Recommended Win10
 - Install Visual Studio Ultimate 2013
 - Compile `buchain\build\win32\Bumo.vs12.sln` with VS, then get the executable program in the dir `bumo\build\win32\dbin`
 - After the first download of the code, you have to install related dependencies from the server to initialize the development environment. Enter the dir `build`, and double click the following:`install-build-deps-win32.bat`.
@@ -118,9 +122,13 @@ make install
 
 Install under `/usr/local/buchain/`
 
+Deploy ok!
+
 #### __Use archive packet deploy__
 
-__Extract files__
+This is another deployment, using the archive packet.
+
+Extract files
 
 Copy buchain-`1.0.0.x`-linux-x64.tar.gz to /usr/local/
 
@@ -128,12 +136,12 @@ Copy buchain-`1.0.0.x`-linux-x64.tar.gz to /usr/local/
     //Note the name of the actual version of the package 1.0.0.x.
     tar xzvf buchain-1.0.0.x-linux-x64.tar.gz
 
-__Registration service__
+Registration service
 
     ln -s /usr/local/buchain/scripts/bumo /etc/init.d/bumo 
     ln -s /usr/local/buchain/scripts/bumod /etc/init.d/bumod 
 
-__Modify startup path__
+Modify startup path
 
 Open ./buchain/scripts/bumo 和 ./buchain/scripts/bumod 
 
@@ -141,7 +149,7 @@ Modify `install_dir` to Buchain's deployment path
 
     install_dir=/usr/local/buchain 
 
- __Setup startup__
+Setup startup
 
     #Execute the following commands separately.（level: 1~5）
     ln -s -f /etc/init.d/bumod /etc/rc1.d/S99bumod 
@@ -158,6 +166,8 @@ Save and add executable permissions.：
 
     chmod +x /etc/rc.local
 
+Deploy ok!
+
 ### __Catalog Structure__
 
 Catalog | Description 
@@ -170,7 +180,7 @@ Catalog | Description
 | log | Running log
 
 
-### __Switch to Test Network__
+### __Switch to Target Network__
 
 Switch runtime environment of BUMO manually:
 
@@ -188,8 +198,9 @@ Switch runtime environment of BUMO manually:
 
     #About configuration profile
     bumo.json           ##debugging environment is default
-    bumo-mainnet.json   ##nonactivated, configuration profile of main network
+    bumo-mainnet.json   ##configuration profile of main network
     bumo-testnet.json   ##configuration profile of test network
+    bumo-single.json    ##configuration profile of single network for debug
 ```
 3. Drop database and restart service
 
@@ -390,7 +401,8 @@ Running status:service bumo status
     },
     "storage_hash": "ad67d57ae19de8068dbcd47282146bd553fe9f684c57c8c114453863ee41abc3"
   }
-} [root@centos7x64-201 ~]#
+} 
+[root@centos7x64-201 ~]#
 
 ```
 ### Drop Database

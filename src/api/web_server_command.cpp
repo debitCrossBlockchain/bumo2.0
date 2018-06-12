@@ -163,7 +163,7 @@ namespace bumo {
 		reply = reply_json.toStyledString();
 	}
 
-	void WebServer::CreateAccount(const http::server::request &request, std::string &reply) {
+	void WebServer::CreateKeyPair(const http::server::request &request, std::string &reply) {
 		std::string error_desc;
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		Json::Value reply_json = Json::Value(Json::objectValue);
@@ -322,6 +322,8 @@ namespace bumo {
 			Result result;
 			result.set_code(protocol::ERRCODE_SUCCESS);
 			result.set_desc("");
+			int64_t max = 0;
+			int64_t min = 0;
 
 			protocol::TransactionEnv tran_env;
 			do {
@@ -346,8 +348,10 @@ namespace bumo {
 					tran->set_gas_price(gas_price);
 					tran->set_fee_limit(0);
 
-					if (!EvaluateFee(tran, result))
+					if (!EvaluateFee(tran_env, result, max, min))
 						break;
+
+					tran->set_fee_limit(max);
 
 					std::string content = tran->SerializeAsString();
 					result_json["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
@@ -365,8 +369,10 @@ namespace bumo {
 					tran->set_gas_price(gas_price);
 					tran->set_fee_limit(0);
 
-					if (!EvaluateFee(tran, result))
+					if (!EvaluateFee(tran_env, result, max, min))
 						break;
+
+					tran->set_fee_limit(max);
 
 					std::string content = tran->SerializeAsString();
 					const Json::Value &private_keys = json_item["private_keys"];					
@@ -384,19 +390,112 @@ namespace bumo {
 
 			if (result.code() == protocol::ERRCODE_SUCCESS) {
 				TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-				//...TODO
+				
 				*tx_set->add_txs() = tran_env;
 				Result exe_result;
 				if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
 					(TestParameter*)&test_parameter,
 					utils::MICRO_UNITS_PER_SEC,
-					exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"],result_json["stat"], signature_number)) {
+					exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["stat"], signature_number)) {
 					reply_json["error_code"] = exe_result.code();
 					reply_json["error_desc"] = exe_result.desc();
 					LOG_ERROR("%s", exe_result.desc().c_str());
 					break;
 				}
-				//if (result.code() == protocol::ERRCODE_SUCCESS) success_count++;
+				if (exe_result.code() == protocol::ERRCODE_SUCCESS){
+					int i = 0;
+					int64_t actual_fee1 = result_json["txs"][i]["actual_fee"].asInt64();
+					int64_t actual_fee2 = 0;
+					Result exe_result2;
+					do{
+						protocol::Transaction *tran = tran_env.mutable_transaction();
+						tran->set_fee_limit(actual_fee1);
+						tx_set->clear_txs();
+						*tx_set->add_txs() = tran_env;
+						Json::Value logs;
+						Json::Value txs;
+						Json::Value query_rets;
+						Json::Value stat;
+						if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
+							(TestParameter*)&test_parameter,
+							utils::MICRO_UNITS_PER_SEC,
+							exe_result2, logs, txs, query_rets, stat, signature_number)) {
+							break;
+						}
+						actual_fee2 = txs[i]["actual_fee"].asInt64();
+						if (exe_result2.code() == protocol::ERRCODE_SUCCESS){
+							result_json["logs"] = logs;
+							result_json["txs"] = txs;
+							result_json["query_rets"] = query_rets;
+							result_json["stat"] = stat;
+							if (actual_fee1 != actual_fee2){
+								actual_fee1 = actual_fee2;
+								continue;
+							}
+							else{
+								break;
+							}
+						}
+					} while (exe_result2.code() == protocol::ERRCODE_SUCCESS);
+				}
+				result = exe_result;
+				
+				//bool skip_flag = false;
+				//int try_count = 0;
+				//int64_t last_mid = min;
+				//while (!skip_flag && min <= max){
+				//	//...TODO
+				//	result_json["txs"].clear();
+				//	tx_set->clear_txs();
+				//	*tx_set->add_txs() = tran_env;
+				//	Result exe_result;
+				//	if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
+				//		(TestParameter*)&test_parameter,
+				//		utils::MICRO_UNITS_PER_SEC,
+				//		exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["stat"], signature_number)) {
+				//		reply_json["error_code"] = exe_result.code();
+				//		reply_json["error_desc"] = exe_result.desc();
+				//		LOG_ERROR("%s", exe_result.desc().c_str());
+				//		skip_flag = true;
+				//		break;
+				//	}
+				//	else{
+				//		int i = 0;
+				//		result = exe_result;
+				//		if (result_json["txs"][i].isMember("error_code")){
+				//			if (result_json["txs"][i]["error_code"].asInt() == (int)protocol::ERRCODE_FEE_NOT_ENOUGH){
+				//				int64_t actual_fee =result_json["txs"][i]["actual_fee"].asInt64();
+				//				protocol::Transaction *tran = tran_env.mutable_transaction();
+				//				int64_t mid = (actual_fee + max) / 2;
+				//				tran->set_fee_limit(mid);
+				//				min = last_mid+1;
+				//				last_mid = mid;
+				//				try_count++;
+				//				LOG_INFO("reset actual_fee(" FMT_I64 ") %d", actual_fee, try_count);
+				//				continue;
+				//			}
+				//			else if (result_json["txs"][i]["error_code"].asInt() == (int)protocol::ERRCODE_ACCOUNT_LOW_RESERVE){
+				//				int64_t actual_fee = result_json["txs"][i]["actual_fee"].asInt64();
+				//				protocol::Transaction *tran = tran_env.mutable_transaction();
+				//				int64_t mid = (actual_fee + min) / 2;
+				//				tran->set_fee_limit(mid);
+				//				max = last_mid-1;
+				//				last_mid = mid;
+				//				try_count++;
+				//				LOG_INFO("reset actual_fee(" FMT_I64 ") %d", actual_fee, try_count);
+				//				continue;
+				//			}
+				//			else{
+				//				skip_flag = true;
+				//			}
+				//		}
+				//		else{
+				//			skip_flag = true;
+				//		}
+				//	}
+				//};
+				
+				
 			}
 			reply_json["error_code"] = result.code();
 			reply_json["error_desc"] = result.desc();
@@ -407,7 +506,8 @@ namespace bumo {
 		reply = reply_json.toStyledString();
 	}
 
-	bool WebServer::EvaluateFee(protocol::Transaction *tran, Result& result){
+	bool WebServer::EvaluateFee(protocol::TransactionEnv &tran_env, Result& result, int64_t& max, int64_t& min){
+		protocol::Transaction *tran = tran_env.mutable_transaction();
 		int64_t pay_amount = 0;
 		std::string tx_source_address = tran->source_address();
 		AccountFrm::pointer source_account;
@@ -481,10 +581,11 @@ namespace bumo {
 			LOG_ERROR("%s", result.desc().c_str());
 			return false;
 		}
+		tran->set_fee_limit(fee);
 
 		int64_t bytes_fee = 0;
 		if (tran->gas_price() > 0) {
-			if (!utils::SafeIntMul(tran->gas_price(), (int64_t)tran->ByteSize(), bytes_fee)){
+			if (!utils::SafeIntMul(tran->gas_price(), (int64_t)tran_env.ByteSize(), bytes_fee)){
 				result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				result.set_desc(utils::String::Format("Source account(%s) overflow for fee, gas_price:(" FMT_I64 "), ByteSize:%d",
 					tx_source_address.c_str(), tran->gas_price(), tran->ByteSize()));
@@ -508,7 +609,9 @@ namespace bumo {
 			LOG_ERROR("%s", result.desc().c_str());
 			return false;
 		}
-		tran->set_fee_limit(fee);
+
+		min = total_fee;
+		max = fee;
 		return true;
 	}
 }

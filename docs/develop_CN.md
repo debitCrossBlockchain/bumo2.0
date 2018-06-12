@@ -13,7 +13,7 @@
         - [交易执行的基本过程](#交易执行的基本过程)
         - [试一试](#试一试)
     - [HTTP接口](#http接口)
-        - [生成账号-测试用](#生成账号-测试用)
+        - [生成公私钥对-测试用](#生成公私钥对-测试用)
         - [查询账号](#查询账号)
         - [查询交易](#查询交易)
         - [查询缓存队列交易](#查询缓存队列交易)
@@ -30,8 +30,7 @@
             - [发行资产](#发行资产)
             - [转移资产](#转移资产)
             - [设置metadata](#设置metadata)
-            - [设置权重](#设置权重)
-            - [设置门限](#设置门限)
+            - [设置权限](#设置权限)
             - [转移BU资产](#转移bu资产)
             - [记录日志](#记录日志)
     - [高级功能](#高级功能)
@@ -139,13 +138,13 @@ HTTP GET host:36002/getAccount?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 
 ## HTTP接口
 
-### 生成账号-测试用
+### 生成公私钥对-测试用
 
 ```text
-HTTP GET /createAccount
+HTTP GET /createKeyPair
 ```
 
-功能：该接口只为方便测试使用，**请勿在生产环境使用该接口（生产环境下请用SDK或者命令行生成）**，因为调用该接口后，如果节点服务器作恶会导致账户私钥泄露。
+功能：该接口只为方便测试使用，**请勿在生产环境使用该接口（生产环境下请用SDK或者命令行生成）**，因为调用该接口后，如果节点服务器作恶会导致账户私钥泄露。该接口仅产生一个公私钥对，不会写入全网区块链。如需要上链，需对该新账号执行任意一次[创建账号](#创建账号)、[转移资产](#转移资产)、[转移BU资产](#转移bu资产)操作。
 
 返回内容
 
@@ -1019,16 +1018,15 @@ POST /getTransactionBlob
 | 2      | ISSUE_ASSET       | 发行资产     |
 | 3      | PAY_ASSET         | 转移资产     |
 | 4      | SET_METADATA      | 设置metadata |
-| 5      | SET_SIGNER_WEIGHT | 设置权重     |
-| 6      | SET_THRESHOLD     | 设置门限     |
 | 7      | PAY_COIN          | 支付BU COIN  |
+| 9      | SET_PRIVILEGE     | 设置权限     |
 
 #### 创建账号
 
 |参数|描述
 |:--- | --- 
-|dest_address |  账号的地址
-|contract|  如果不填写，那么这是一个普通的账号。如果填写，那么这是一个合约账号
+|dest_address |  目标账号的地址。创建普通账号时，不能为空。创建智能合约账号，必须为空。如需创建选举和费用合约，请参考 [验证者节点选举](#验证者节点选举) 和 [费用选举合约](#费用选举合约) 章节
+|contract|  如果不填写，表示普通的账号。如果填写，表示合约账号
 | priv|  该账号的权限信息
 |init_balance | 初始化账户 BU 值 
 |init_input | 给合约传初始化参数
@@ -1038,19 +1036,20 @@ POST /getTransactionBlob
 - 成功条件
   - 各项参数合法
   - 要创建的账号不存在
-- **注意：如果目标为合约账户，则priv配置必须符合 {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}**
+  - **注意：如果目标为合约账户，则priv配置必须符合   {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}，如果是普通账号需要配置 {"master_weight" : 1 , "thresholds": {"tx_threshold":1}}**
+
 - json格式
 
-
+创建普通账号
 ```json
     {
       "type": 1,
       "create_account": {
         "dest_address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
         "contract": {
-          "payload": "function main(input) { /*do what ever you want*/ }"
+          "payload": ""
         },
-        "init_balance": 100000,  //give the init_balance to this account
+        "init_balance": 100000,  //init_balance to this account
         "init_input" : "",  // if create contract , then init with this input
         "metadatas": [{
             "key": "111",
@@ -1062,28 +1061,120 @@ POST /getTransactionBlob
             "version": 0
           }
         ],
-        "priv": {
-          "master_weight": 10,
-          "signers": [{
-              "address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
-              "weight": 6
-            }
-          ],
+        "priv":  {
+          "master_weight": 1,
           "thresholds": {
-            "tx_threshold": 7,
-            "type_thresholds": [{
-                "type": 1,
-                "threshold": 8
-              }, {
-                "type": 2,
-                "threshold": 5
-              }
-            ]
+              "tx_threshold": 1
           }
         }
       }
     }
 ```
+创建合约账号
+```json
+    {
+      "type": 1,
+      "create_account": 
+      {
+        "dest_address": "",
+        "contract": 
+        {
+          "payload": "
+            'use strict';
+            function init(bar)
+            {
+              return;
+            }
+
+            function main(input)
+            {
+              return;
+            }
+
+            function query()
+            {
+              return;
+            }
+          "
+        },
+        "init_balance": 100000,  //init_balance to this account
+        "init_input" : "{\"method\":\"toWen\",\"params\":{\"feeType\":0}}",
+        "priv":  {
+          "master_weight": 0,
+          "thresholds": {
+              "tx_threshold": 1
+          }
+        }
+      }
+    }
+```
+合约账号自动生成，并储存在交易记录里，可以通过交易hash查询，如下：
+
+```
+GET /getTransactionHistory?hash=150dbbf1beaaae23bb3b7148cf65279d7de46a76d7ec8e480ef745f5708beb16
+```
+返回结果
+``` json
+{
+    "error_code": 0,
+    "result": {
+        "total_count": 1,
+        "transactions": 
+		[
+			{
+            "actual_fee": 1000402000,
+            "close_time": 1528725055019893,
+            "error_code": 0,
+            "error_desc": "[{\"contract_address\":\"buQfFcsf1NUGY1o25sp8mQuaP6W8jahwZPmX\",\"operation_index\":0}]", //创建合约结果，包括合约地址和操作索引值
+            "hash": "4cbf50e03645f1075d7e5c450ced93e26e3153cf7b88ea8003b2fda39e618e64",
+            "ledger_seq": 14671,
+            "signatures": [{
+                "public_key": "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                "sign_data": "87fdcad0d706479e1a3f75fac2238763cd15fd93f81f1b8889fb798cefbe1752c192bbd3b5da6ebdb31ae47d8b62bb1166dcceca8d96020708f3ac5434838604"
+            }],
+            "transaction": {
+                "fee_limit": 20004420000,
+                "gas_price": 1000,
+                "nonce": 30,
+                "operations": [{
+                    "create_account": {
+                        "contract": {
+                            "payload": "\n\t\t          \n\t\t        \t'use strict';\n\t\t\t\t\tfunction init(bar)\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\tfunction main(input)\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t     function query()\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t      \n\t\t          "
+                        },
+                        "init_balance": 10000000,
+                        "priv": {
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                }],
+                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+            },
+            "tx_size": 402
+        }]
+    }
+}
+
+```
+创建合约结果描述
+
+```transactions.error_code```:  0: 交易成功；非 0：交易失败
+
+```transactions.error_desc```：失败时为错误描述内容；成功时，如果有创建合约账号交易，会存储一个字符串格式的Json数组。
+
+创建合约结果 Json 数组描述
+
+  ``` json
+  [
+    {
+      "contract_address": "buQm5RazrT9QYjbTPDwMkbVqjkVqa7WinbjM", //合约账号
+      "operation_index": 0                                        //交易数组中的操作索引值，0 表示第一笔交易
+    }
+  ]
+  ```
+
 
 - protocol buffer 结构
 
@@ -1099,22 +1190,29 @@ POST /getTransactionBlob
   }
   ```
 
-  - dest_address:要创建的账号的地址
+  - dest_address:要创建的账号的地址。创建普通账号时，非空。创建智能合约账号，空。如需创建选举和费用合约，请参考 [验证者节点选举](#验证者节点选举) 和 [费用选举合约](#费用选举合约) 章节
   - contract:合约。若你想要创建一个不具有合约功能的账号，可以不填写这部分。若您想创建具有合约功能的账号，请参照[合约](#合约)
   - priv: 账号的初始权力分配。相关的数据结构定义:
       ```text
-        message OperationTypeThreshold
-        {
-            Operation.Type type = 1;
-            int64 threshold = 2;
-        }
-
         message AccountPrivilege
         {
             int64 master_weight = 1;
             repeated Signer signers = 2;
             AccountThreshold thresholds = 3;
         }
+
+        message AccountThreshold
+        {
+            int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
+            repeated OperationTypeThreshold type_thresholds = 2; //如果这个设置，则操作门限以这个为准
+        }
+
+        message OperationTypeThreshold
+        {
+            Operation.Type type = 1;
+            int64 threshold = 2;
+        }
+
         message Signer
         {
             enum Limit
@@ -1125,14 +1223,10 @@ POST /getTransactionBlob
             string address = 1;
             int64 weight = 2;
         }
-        message AccountThreshold
-        {
-            int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: 表示不设置
-            repeated OperationTypeThreshold type_thresholds = 2; //如果这个设置，则操作门限以这个为准
-        }
+        
       ```
 
-    若你想创建一个不受其他账号控制的账号。将priv.master_weight设置为1，将`priv.thresholds.tx_threshold`设为1即可。若您想创建一个受其他账号控制的账号，参见[控制权的分配](#控制权的分配)
+     若您想设置账号受别人控制、设置分配给其他控制账号操作权重、设置操作门限等，可以通过 [设置权限](#设置权限) 操作
 
   - metadatas:metadata列表。您可以为新建的账号设置一批初始的metadata。其数据类型为KeyPair,结构如下
 
@@ -1284,101 +1378,79 @@ POST /getTransactionBlob
     - value: 值。长度范围[0,256K]
     - version: 版本号，可以不填写。若您想使用这个高级功能，参见[版本化控制](#版本化控制)
 
-#### 设置权重
+#### 设置权限
 |参数|描述
 |:--- | --- 
-|master_weight |optional，default 0， -1 ： 不设置该值，0：设置master权重值为0， >0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
-|address |需要操作的 signer 地址，符合地址校验规则。
-|weight | optional，default 0, 0 ：删除该signer，>0 && <= MAX(UINT32)：设置权重值为该值，其他：非法
-
-- 功能
-  设置签名者拥有的权重
-- 成功条件
-  - 各项参数合法
-- json格式
-  ```json
-  {
-    "type": 5,
-    "set_signer_weight": {
-      "master_weight": 2,
-      "signers": [{
-          "address": "buQgmhhxLwhdUvcWijzxumUHaNqZtJpWvNsf",
-          "weight": 2
-        }
-      ]
-    }
-  }
-    ```
-
-- protocol buffer 结构
-    ```text
-    message OperationSetSignerWeight
-    {
-         int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: 表示不设置
-         repeated Signer signers = 2; //address:weight, 如果weight 为0 表示删除这个signer
-    }
-    ```
-    - master_weight:本账号地址拥有的权力值
-    - 各个签名者的权力值, Signer的定义如下
-    ```text
-    message Signer
-    {
-    enum Limit{
-            SIGNER_NONE = 0;
-            SIGNER = 100;
-    };
-         string address = 1;
-         int64 weight = 2;
-    }
-    ```
-
-#### 设置门限
-|参数|描述
-|:--- | --- 
-|tx_threshold |optional，default 0, 表示该账号的最低权限，-1: 表示不设置该值，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
+|master_weight |optional，字符串类型，default ""，表示该账号的 master 权重。 "" ：不设置该值；"0": 设置 master 权重为 0；("0", "MAX(UINT32)"]：设置权重值为该值；其他：非法。
+|signers |optional，需要操作的 signer 列表，default 为空对象。空对象不设置，非空设置 signer 列表
+|address|需要操作的 signer 地址，符合地址校验规则。
+|weight | optional，default 0。0 ：删除该 signer; (0, MAX(UINT32)]：设置权重值为该值，其他：非法
+|tx_threshold |optional，字符串类型, default ""，表示该账号的最低权限。""，不设置该值；"0": 设置 tx_threshold 权重为 0；("0", "MAX(INT64)"]：设置权重值为该值；其他：非法。
 |type |表示某种类型的操作  (0, 100]
-|threshold | optional，default 0, 0 ：删除该类型操作，>0 && <= MAX(INT64)：设置权重值为该值，其他：非法
+|threshold | optional，default 0。 0 ：删除该类型操作；(0, MAX(INT64)]：设置权重值为该值；其他：非法
 
 - 功能
-  设置各个操作所需要的门限
+  设置签名者拥有的权重，设置各个操作所需要的门限。
 - 成功条件
   - 各项参数合法
 - json格式
     ```json
-    {
-      "type": 6,
-      "set_threshold": {
-        "tx_threshold": 7,
-        "type_thresholds": [{
-            "type": 1,
-            "threshold": 8
-          }, {
-            "type": 2,
-            "threshold": 5
-          }
-        ]
+      {
+          "set_privilege": 
+          {
+            "master_weight": "10",
+            "signers": 
+            [
+              {
+              "address": "buQqfssWJjyKfFHZYx8WcSgLVUdXPT3VNwJG",
+              "weight": 8
+              }
+            ],
+            "tx_threshold": "2",
+            "type_thresholds": 
+            [
+              {
+                "type": 1,
+                "threshold": 8
+              }, 
+              {
+                "type": 2,
+                "threshold": 9
+              }
+            ]
+          },
+          "type": 9
       }
-    }
     ```
 
 - protocol buffer 结构
+    ```text
+     message OperationSetPrivilege
+     {
+        string master_weight = 1;
+        repeated Signer signers = 2;
+        string tx_threshold = 3;
+        repeated OperationTypeThreshold type_thresholds = 4;
+     }
 
-  ```text
-  message OperationSetThreshold
-  {
-          int64 tx_threshold = 1;
-          repeated OperationTypeThreshold type_thresholds = 4; //type:threshold ，threshold:0 表示删除这个类型的type
-  }
-  ```
+     message OperationTypeThreshold
+     {
+        Operation.Type type = 1;
+        int64 threshold = 2;
+     }
 
-  OperationTypeThreshold的结构定义如下
-
-  ```text
-  message OperationTypeThreshold{
-        Operation.Type type = 1;  //操作码，哪种操作
-        int64 threshold = 2;    //代表这种操作所需的权重门限
-  }
-  ```
+     message Signer 
+     {
+        enum Limit
+        {
+            SIGNER_NONE = 0;
+            SIGNER = 100;
+        };
+        string address = 1;
+        int64 weight = 2;
+     }
+  
+    ```
 
 #### 转移BU资产
 
@@ -1467,7 +1539,7 @@ POST /getTransactionBlob
 
 ```json
 {
-    "master_weight": 70,//本地址私钥拥有的权力值 70
+    "master_weight": "70",//本地址私钥拥有的权力值 70
     "signers": [//分配出去的权力
         {
             "address": "buQc39cgJDBaFGiiAsRtYKuaiSFdbVGheWWk",
@@ -1478,36 +1550,33 @@ POST /getTransactionBlob
             "weight": 100    //上面这个地址拥有权力值100
         }
     ],
-    "thresholds"://不同的操作所需的权力阈值
-    {
-        "tx_threshold": 8,//发起交易需要权力值 8
-        "type_thresholds": [
-            {
-                "type": 1,//创建账号需要权利值 11
-                "threshold": 11
-            },
-            {//发行资产需要权利值 21
-                "type": 2,
-                "threshold": 21
-            },
-            {//转移资产需要权力值 31
-                "type": 3,
-                "threshold": 31
-            },
-            {//设置metadata需要权利值 41
-                "type": 4,
-                "threshold": 41
-            },
-            {//变更控制人的权力值需要权利值 51
-                "type": 5,
-                "threshold": 51
-            },
-            {//变更各种操作的阈值需要权利值 61
-                "type": 6,
-                "threshold": 61
-            }
-        ]
-    }
+    "tx_threshold": "8",//发起交易需要权力值 8
+    "type_thresholds": [
+        {
+            "type": 1,//创建账号需要权利值 11
+            "threshold": 11
+        },
+        {//发行资产需要权利值 21
+            "type": 2,
+            "threshold": 21
+        },
+        {//转移资产需要权力值 31
+            "type": 3,
+            "threshold": 31
+        },
+        {//设置metadata需要权利值 41
+            "type": 4,
+            "threshold": 41
+        },
+        {//变更控制人的权力值需要权利值 51
+            "type": 5,
+            "threshold": 51
+        },
+        {//变更各种操作的阈值需要权利值 61
+            "type": 6,
+            "threshold": 61
+        }
+    ]
 }
 ```
 
@@ -1569,7 +1638,18 @@ function query(input)
   
 
 - ##### 返回值介绍
-   所有内部函数的调用，如果失败则返回 false 或者直接抛出异常执行终止，成功则为其他对象。
+   所有内部函数的调用，如果失败则返回 false 或者直接抛出异常执行终止，成功则为其他对象。如果遇到参数错误，会在错误描述中提示参数位置出错，这里的位置指参数的索引号，即从 __0__ 开始计数。例如 `parameter 1` 表示第 __2__ 个参数错误。如下例子：
+
+   ```
+   issueAsset("CNY", 10000);
+   /*
+      错误描述：
+      Contract execute error,issueAsset parameter 1 should be a string
+
+      指第 2 个参数应该为字符串
+   */
+   ```
+   
 
 - ##### 获取账号信息(不包含metada和资产)
 
