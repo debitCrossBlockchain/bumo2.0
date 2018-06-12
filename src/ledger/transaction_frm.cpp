@@ -795,7 +795,9 @@ namespace bumo {
 				break;
 			}
 			else if (!result.desc().empty()) {
-				apply_success_desc[apply_success_desc.size()] = Json::Value(result.desc());
+				Json::Value opt_result;
+				opt_result.fromString(result.desc());
+				apply_success_desc[apply_success_desc.size()] = opt_result;
 				result_.set_desc(apply_success_desc.toFastString());
 			}
 		}
