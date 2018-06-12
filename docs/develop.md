@@ -1581,7 +1581,7 @@ As you are creating a new account, you can assign the weight for this account fr
 
 ```json
 {
-    "master_weight": 70,// the weight of local address
+    "master_weight": "70",// the weight of local address
     "signers": [//distribute weight
         {
             "address": "buQc39cgJDBaFGiiAsRtYKuaiSFdbVGheWWk",
@@ -1592,36 +1592,33 @@ As you are creating a new account, you can assign the weight for this account fr
             "weight": 100    //the weight value of this address is 100
         }
     ],
-    "thresholds"://threshold for different operation
-    {
-        "tx_threshold": 8,//required thresholds for transaction is 8 
-        "type_thresholds": [
-            {
-                "type": 1,//required thresholds for creating account is 11
-                "threshold": 11
-            },
-            {//required thresholds for issuing asset is 21
-                "type": 2,
-                "threshold": 21
-            },
-            {//required thresholds for transferring assets is 31
-                "type": 3,
-                "threshold": 31
-            },
-            {//required thresholds for setting metadata is 41
-                "type": 4,
-                "threshold": 41
-            },
-            {//required thresholds for changing controler's weight is 51
-                "type": 5,
-                "threshold": 51
-            },
-            {//required thresholds for altering every operations is 51
-                "type": 6,
-                "threshold": 61
-            }
-        ]
-    }
+    "tx_threshold": "8",//required thresholds for transaction is 8 
+    "type_thresholds": [
+        {
+            "type": 1,//required thresholds for creating account is 11
+            "threshold": 11
+        },
+        {//required thresholds for issuing asset is 21
+            "type": 2,
+            "threshold": 21
+        },
+        {//required thresholds for transferring assets is 31
+            "type": 3,
+            "threshold": 31
+        },
+        {//required thresholds for setting metadata is 41
+            "type": 4,
+            "threshold": 41
+        },
+        {//required thresholds for changing controler's weight is 51
+            "type": 5,
+            "threshold": 51
+        },
+        {//required thresholds for altering every operations is 51
+            "type": 6,
+            "threshold": 61
+        }
+    ]
 }
 ```
 

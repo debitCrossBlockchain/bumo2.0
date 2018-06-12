@@ -1097,7 +1097,7 @@ POST /getTransactionBlob
             }
           "
         },
-        "init_balance": 100000,  //give the init_balance to this account
+        "init_balance": 100000,  //init_balance to this account
         "init_input" : "{\"method\":\"toWen\",\"params\":{\"feeType\":0}}",
         "priv":  {
           "master_weight": 0,
