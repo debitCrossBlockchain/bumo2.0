@@ -53,15 +53,40 @@ namespace bumo {
 		switch (type) {
 		case protocol::Operation_Type_CREATE_ACCOUNT:
 		{
-			if (!bumo::PublicKey::IsAddressValid(create_account.dest_address())) {
-				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-				result.set_desc(utils::String::Format("Dest account address(%s) invalid", create_account.dest_address().c_str()));
-				break;
+			bool is_create_contract = !create_account.contract().payload().empty();
+			const std::string dest_address = create_account.dest_address();
+			if (CHECK_VERSION_GT_1000) 
+			{
+				//if version greater than 1000, the dest address of contract must empty
+				bool has_dest_address = !dest_address.empty();
+				if (is_create_contract && has_dest_address)
+				{
+					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+					result.set_desc(utils::String::Format("Create contract account dest address(%s) must set empty", dest_address.c_str()));
+					break;
+				}
+
+				if (has_dest_address && !bumo::PublicKey::IsAddressValid(dest_address))
+				{
+					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+					result.set_desc(utils::String::Format("Dest account address(%s) invalid", dest_address.c_str()));
+					break;
+				}
+			}
+			else 
+			{
+				//version 1000 need to check all address
+				if (!bumo::PublicKey::IsAddressValid(dest_address))  
+				{
+					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+					result.set_desc(utils::String::Format("Dest account address(%s) invalid", dest_address.c_str()));
+					break;
+				}
 			}
 
 			if (!create_account.has_priv()) {
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc(utils::String::Format("Dest account address(%s) has no priv object", create_account.dest_address().c_str()));
+				result.set_desc(utils::String::Format("Dest account address(%s) has no priv object", dest_address.c_str()));
 				break;
 			} 
 
@@ -75,8 +100,8 @@ namespace bumo {
 			//for signers
 			std::set<std::string> duplicate_set;
 			bool shouldBreak = false;
-			//version 1000 use to check singer
-			if (LAST_CLOSED_LEDGER_VERSION == General::LEDGER_VERSION_HISTORY_1000) {
+			if (!CHECK_VERSION_GT_1000) {
+				//version 1000 use to check singer
 				for (int32_t i = 0; i < priv.signers_size(); i++) {
 					const protocol::Signer &signer = priv.signers(i);
 					if (signer.weight() < 0 || signer.weight() > UINT32_MAX) {
@@ -86,7 +111,7 @@ namespace bumo {
 						break;
 					}
 
-					if (signer.address() == create_account.dest_address()) {
+					if (signer.address() == dest_address) {
 						result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
 						result.set_desc(utils::String::Format("Signer address(%s) can't be equal to the source address", signer.address().c_str()));
 						shouldBreak = true;
@@ -116,7 +141,7 @@ namespace bumo {
 			//for threshold
 			if (!priv.has_thresholds()) {
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc(utils::String::Format("dest account address(%s) has no threshold object", create_account.dest_address().c_str()));
+				result.set_desc(utils::String::Format("dest account address(%s) has no threshold object", dest_address.c_str()));
 				break;
 			}
 
@@ -152,7 +177,7 @@ namespace bumo {
 			}
 
 			//if it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
-			if (create_account.contract().payload() != ""){
+			if (is_create_contract){
  				if (create_account.contract().payload().size() > General::CONTRACT_CODE_LIMIT) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 					result.set_desc(utils::String::Format("Contract payload size(" FMT_SIZE ") > limit(%d)",
@@ -174,9 +199,8 @@ namespace bumo {
 				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, src);
 			}
 			
-			//if it's common and version > 1000,  then must set master_weight 1, tx_threshold:1	
-			if (create_account.contract().payload() == "" && 
-				LAST_CLOSED_LEDGER_VERSION > General::LEDGER_VERSION_HISTORY_1000)
+			//if it's common and version greater than 1000,  then must set master_weight 1, tx_threshold:1	
+			if (CHECK_VERSION_GT_1000 && !is_create_contract)
 			{
 				if (!(priv.master_weight() == 1 &&
 					priv.signers_size() == 0 &&
@@ -576,21 +600,31 @@ namespace bumo {
 	}
 
 	void OperationFrm::CreateAccount(std::shared_ptr<Environment> environment) {
-		//auto &environment = LedgerManager::Instance().execute_environment_;
-		const protocol::OperationCreateAccount& createaccount = operation_.create_account();
+		const protocol::OperationCreateAccount& create_account = operation_.create_account();
 		do {
 			std::shared_ptr<AccountFrm> dest_account;
+			std::string dest_address = create_account.dest_address();
 
-			if (environment->GetEntry(createaccount.dest_address(), dest_account)) {
+			//above version 1000, the address of the smart contract must be empty and an address will be created automatically
+			bool is_create_contract = !create_account.contract().payload().empty();
+			if (CHECK_VERSION_GT_1000 && is_create_contract){
+				bumo::PublicKey pub_key;
+				std::string raw_pkey = utils::String::Format("%s-" FMT_I64 "-%d", 
+					source_account_->GetAccountAddress().c_str(), source_account_->GetAccountNonce(), index_);
+				pub_key.Init(raw_pkey);
+				dest_address = pub_key.GetEncAddress();
+			}
+
+			if (environment->GetEntry(dest_address, dest_account)) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_DEST_EXIST);
-				result_.set_desc(utils::String::Format("Dest address(%s) already exist", createaccount.dest_address().c_str()));
+				result_.set_desc(utils::String::Format("Dest address(%s) already exist", dest_address.c_str()));
 				break;
 			}
 
 			int64_t base_reserve = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
-			if (createaccount.init_balance() < base_reserve) {
+			if (create_account.init_balance() < base_reserve) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_INIT_LOW_RESERVE);
-				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") not enough for base_reserve (" FMT_I64 ")", createaccount.init_balance(), base_reserve);
+				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") not enough for base_reserve (" FMT_I64 ")", create_account.init_balance(), base_reserve);
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
@@ -604,34 +638,34 @@ namespace bumo {
 				break;
 			}
 
-			if (limit_balance < createaccount.init_balance()) {
+			if (limit_balance < create_account.init_balance()) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
 				std::string error_desc = utils::String::Format("Source account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for init balance(" FMT_I64 ")", 
-				source_account_->GetAccountAddress().c_str(),source_account_->GetAccountBalance(), base_reserve, createaccount.init_balance());
+					source_account_->GetAccountAddress().c_str(), source_account_->GetAccountBalance(), base_reserve, create_account.init_balance());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
-			if (!source_account_->AddBalance(-1 * createaccount.init_balance())){
+			if (!source_account_->AddBalance(-1 * create_account.init_balance())){
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				std::string error_desc = utils::String::Format("Source account(%s) balance overflow (" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for init balance(" FMT_I64 ")",
-					source_account_->GetAccountAddress().c_str(), source_account_->GetAccountBalance(), base_reserve, createaccount.init_balance());
+					source_account_->GetAccountAddress().c_str(), source_account_->GetAccountBalance(), base_reserve, create_account.init_balance());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
 
 			protocol::Account account;
-			account.set_balance(createaccount.init_balance());
-			account.mutable_priv()->CopyFrom(createaccount.priv());
-			account.set_address(createaccount.dest_address());
-			account.mutable_contract()->CopyFrom(createaccount.contract());
+			account.set_balance(create_account.init_balance());
+			account.mutable_priv()->CopyFrom(create_account.priv());
+			account.set_address(dest_address);
+			account.mutable_contract()->CopyFrom(create_account.contract());
 			dest_account = std::make_shared<AccountFrm>(account);
 
 			bool success = true;
-			for (int i = 0; i < createaccount.metadatas_size(); i++) {
+			for (int i = 0; i < create_account.metadatas_size(); i++) {
 				protocol::KeyPair kp;
-				kp.CopyFrom(createaccount.metadatas(i));
+				kp.CopyFrom(create_account.metadatas(i));
 				if (kp.version() != 0 && kp.version() != 1){
 					success = false;
 					break;
@@ -650,13 +684,12 @@ namespace bumo {
 
 			environment->AddEntry(dest_account->GetAccountAddress(), dest_account);
 
-			std::string javascript = dest_account->GetProtoAccount().contract().payload();
-			if (!javascript.empty()) {
+			if (is_create_contract) {
 
 				ContractParameter parameter;
-				parameter.code_ = javascript;
-				parameter.input_ = createaccount.init_input();
-				parameter.this_address_ = createaccount.dest_address();
+				parameter.code_ = dest_account->GetProtoAccount().contract().payload();
+				parameter.input_ = create_account.init_input();
+				parameter.this_address_ = dest_address;
 				parameter.sender_ = source_account_->GetAccountAddress();
 				parameter.ope_index_ = index_;
 				parameter.timestamp_ = transaction_->ledger_->value_->close_time();
@@ -666,6 +699,13 @@ namespace bumo {
 
 				std::string err_msg;
 				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter, true);
+
+				if (CHECK_VERSION_GT_1000 && result_.code() == 0){
+					Json::Value contract_result;
+					contract_result["contract_address"] = dest_address;
+					contract_result["operation_index"] = index_;
+					result_.set_desc(contract_result.toFastString());
+				}
 			}
 
 		} while (false);

@@ -763,7 +763,8 @@ namespace bumo {
 
 		bool bSucess = true;
 		const protocol::Transaction &tran = transaction_env_.transaction();
-	
+		Json::Value apply_success_desc = Json::Value(Json::arrayValue);
+
 		for (processing_operation_ = 0; processing_operation_ < tran.operations_size(); processing_operation_++) {
 			const protocol::Operation &ope = tran.operations(processing_operation_);
 			std::shared_ptr<OperationFrm> opt = std::make_shared< OperationFrm>(ope, this, processing_operation_);
@@ -793,8 +794,12 @@ namespace bumo {
 					utils::String::BinToHexString(hash_).c_str(), processing_operation_, result_.code(), result_.desc().c_str());
 				break;
 			}
+			
+			if (result.code() == 0 && !result.desc().empty()) {
+				apply_success_desc[apply_success_desc.size()] = Json::Value(result.desc());
+			}
 		}
-
+		result_.set_desc(apply_success_desc.toFastString());
 		return bSucess;
 	}
 
