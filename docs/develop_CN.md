@@ -1025,8 +1025,8 @@ POST /getTransactionBlob
 
 |参数|描述
 |:--- | --- 
-|dest_address |  目标账号的地址。创建普通账号时，非空。创建合约账号，空。如果创建特殊合约，请参考 [验证者节点选举](#验证者节点选举) 和 [费用选举合约](#费用选举合约) 章节
-|contract|  如果不填写，那么这是一个普通的账号。如果填写，那么这是一个合约账号
+|dest_address |  目标账号的地址。创建普通账号时，非空。创建智能合约账号，空。如需创建选举和费用合约，请参考 [验证者节点选举](#验证者节点选举) 和 [费用选举合约](#费用选举合约) 章节
+|contract|  如果不填写，表示普通的账号。如果填写，表示合约账号
 | priv|  该账号的权限信息
 |init_balance | 初始化账户 BU 值 
 |init_input | 给合约传初始化参数
@@ -1160,18 +1160,19 @@ GET /getTransactionHistory?hash=150dbbf1beaaae23bb3b7148cf65279d7de46a76d7ec8e48
 ```
 创建合约结果描述
 
-  - ```transactions.error_code```:  0: 交易成功；非 0：交易失败
+```transactions.error_code```:  0: 交易成功；非 0：交易失败
 
-  - ```transactions.error_desc```：失败时为错误描述内容；成功时，如果有创建合约账号交易，会存储一个字符串格式的Json数组。
+```transactions.error_desc```：失败时为错误描述内容；成功时，如果有创建合约账号交易，会存储一个字符串格式的Json数组。
 
-创建合约结果 Json 数组格式
+创建合约结果 Json 数组描述
+
   ``` json
-    [
-      {
-        "contract_address": "buQm5RazrT9QYjbTPDwMkbVqjkVqa7WinbjM", //合约账号
-        "operation_index": 0                                        //交易数组中的操作索引值，0 表示第一笔交易
-      }
-    ]
+  [
+    {
+      "contract_address": "buQm5RazrT9QYjbTPDwMkbVqjkVqa7WinbjM", //合约账号
+      "operation_index": 0                                        //交易数组中的操作索引值，0 表示第一笔交易
+    }
+  ]
   ```
 
 
@@ -1189,7 +1190,7 @@ GET /getTransactionHistory?hash=150dbbf1beaaae23bb3b7148cf65279d7de46a76d7ec8e48
   }
   ```
 
-  - dest_address:要创建的账号的地址
+  - dest_address:要创建的账号的地址。创建普通账号时，非空。创建智能合约账号，空。如需创建选举和费用合约，请参考 [验证者节点选举](#验证者节点选举) 和 [费用选举合约](#费用选举合约) 章节
   - contract:合约。若你想要创建一个不具有合约功能的账号，可以不填写这部分。若您想创建具有合约功能的账号，请参照[合约](#合约)
   - priv: 账号的初始权力分配。相关的数据结构定义:
       ```text
