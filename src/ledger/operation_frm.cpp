@@ -477,10 +477,8 @@ namespace bumo {
 		do {
 			std::shared_ptr<AccountFrm> dest_account;
 			std::string dest_address = create_account.dest_address();
-
-			//above version 1000, the address of the smart contract must be empty and an address will be created automatically
-			bool is_create_contract = !create_account.contract().payload().empty();
-			if (CHECK_VERSION_GT_1000 && is_create_contract){
+			if (dest_address.empty()){
+				//above version 1000, the address of the smart contract must be empty and an address will be created automatically
 				bumo::PublicKey pub_key;
 				std::string raw_pkey = utils::String::Format("%s-" FMT_I64 "-%d", 
 					transaction_->GetSourceAddress().c_str(), transaction_->GetNonce(), index_);
@@ -557,7 +555,7 @@ namespace bumo {
 
 			environment->AddEntry(dest_account->GetAccountAddress(), dest_account);
 
-			if (is_create_contract) {
+			if (!create_account.contract().payload().empty()) {
 				ContractParameter parameter;
 				parameter.code_ = dest_account->GetProtoAccount().contract().payload();
 				parameter.input_ = create_account.init_input();
@@ -921,16 +919,19 @@ namespace bumo {
 			const std::string dest_address = create_account.dest_address();
 			//if version greater than 1000, the dest address of contract must empty
 			bool has_dest_address = !dest_address.empty();
-			if (is_create_contract && has_dest_address) {
+			bool unimportant_address = (dest_address != General::CONTRACT_VALIDATOR_ADDRESS) && (dest_address != General::CONTRACT_FEE_ADDRESS);
+			if (is_create_contract && has_dest_address && unimportant_address) {
 				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
 				result.set_desc(utils::String::Format("Create contract account dest address(%s) must set empty", dest_address.c_str()));
 				break;
 			}
 
-			if (has_dest_address && !bumo::PublicKey::IsAddressValid(dest_address)) {
-				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-				result.set_desc(utils::String::Format("Dest account address(%s) invalid", dest_address.c_str()));
-				break;
+			if (!is_create_contract) {
+				if (!bumo::PublicKey::IsAddressValid(dest_address)) {
+					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+					result.set_desc(utils::String::Format("Dest account address(%s) invalid", dest_address.c_str()));
+					break;
+				}
 			}
 
 			if (!create_account.has_priv()) {
