@@ -524,7 +524,8 @@ namespace bumo {
 					txs[txs.size()] = jtx;
 				}
 			}
-				
+			if (LedgerContext::AT_TEST_TRANSACTION)
+				result = ptr->GetResult();
 			//batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 
 			for (size_t j = 0; j < ptr->instructions_.size(); j++) {
