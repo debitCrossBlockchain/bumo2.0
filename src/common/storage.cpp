@@ -22,6 +22,10 @@
 #define BUMO_ROCKSDB_MAX_OPEN_FILES 5000
 
 namespace bumo {
+
+	std::string DBBatch::s_db_type = "KVDB";
+
+
 	KeyValueDb::KeyValueDb() {}
 
 	KeyValueDb::~KeyValueDb() {}
@@ -115,7 +119,7 @@ namespace bumo {
 
 		leveldb::WriteOptions opt;
 		opt.sync = true;
-		leveldb::Status status = db_->Write(opt, &write_batch);
+		leveldb::Status status = db_->Write(opt, &write_batch.m_leveldb_batch);
 		if (!status.ok()) {
 			utils::MutexGuard guard(mutex_);
 			error_desc_ = status.ToString();
@@ -131,7 +135,7 @@ namespace bumo {
 		return true;
 	}
 
-#elif ROCKSDB 
+#else 
 
 	RocksDbDriver::RocksDbDriver() {
 		db_ = NULL;
@@ -209,7 +213,7 @@ namespace bumo {
 
 		rocksdb::WriteOptions opt;
 		opt.sync = true;
-		rocksdb::Status status = db_->Write(opt, &write_batch);
+		rocksdb::Status status = db_->Write(opt, &write_batch.m_rocksdb_batch);
 		if (!status.ok()) {
 			utils::MutexGuard guard(mutex_);
 			error_desc_ = status.ToString();
@@ -365,7 +369,8 @@ namespace bumo {
 	}
 
 	bool Storage::Initialize_Tidb(const DbConfigure &db_config, bool bdropdb) {
-#ifndef WIN32
+		DBBatch::s_db_type = TIDB;
+
 		do {
 			
 			if (bdropdb) {
@@ -373,6 +378,7 @@ namespace bumo {
 				do {
 					//check the db if opened only for linux or mac
 					TidbDriver *db_handle = new TidbDriver(db_config.tidb_address_,db_config.tidb_user_,db_config.tidb_pwd_,db_config.tidb_port_);
+					//todo
 					db_handle->DropDB("abc");
 
 					LOG_INFO("Drop db successful");
@@ -405,7 +411,7 @@ namespace bumo {
 		} while (false);
 
 		CloseDb();
-#endif
+
 		return false;
 	}
 
@@ -454,15 +460,70 @@ namespace bumo {
 
 	KeyValueDb *Storage::NewKeyValueDb(const DbConfigure &db_config) {
 		KeyValueDb *db = NULL;
+		if (db_config.db_type_ == TIDB)
+		{
+			db = new TidbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
+			return db;
+		}
 #ifdef WIN32
 		db = new LevelDbDriver();
 #else	
-		if (db_config.db_type_ == TIDB)
-			db = new TidbDriver(db_config.tidb_address_,db_config.tidb_user_,db_config.tidb_pwd_,db_config.tidb_port_);
-//		else
-//ROCKSDB			db = new RocksDbDriver();
+		db = new RocksDbDriver();
 #endif
 
 		return db;
 	}
+
+	DBBatch::DBBatch()
+	{
+		if (TIDB == DBBatch::s_db_type)
+			isTidb = true;
+		else
+			isTidb = false;
+	}
+	
+	void DBBatch::Put(const std::string& key, const std::string& value)
+	{
+		if (isTidb)
+			m_tidb_batch.Put(key, value);
+		else
+		{
+#ifdef WIN32
+			m_leveldb_batch.Put(key, value);
+#else
+			m_rocksdb_batch.Put(key, value);
+#endif
+		}
+	}
+
+	void DBBatch::Delete(const std::string& key)
+	{
+		if (isTidb)
+			m_tidb_batch.Delete(key);
+		else
+		{
+#ifdef WIN32
+			m_leveldb_batch.Delete(key);
+#else
+			m_rocksdb_batch.Delete(key);
+#endif
+		}
+	}
+
+	void DBBatch::Clear()
+	{
+		if (isTidb)
+			m_tidb_batch.Clear();
+		else
+		{
+#ifdef WIN32
+			m_leveldb_batch.Clear();
+#else
+			m_rocksdb_batch.Clear();
+#endif
+		}
+	}
+
+
+
 }

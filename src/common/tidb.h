@@ -11,6 +11,7 @@
 #include <map>
 #include <utils/headers.h>
 
+using namespace std;
 
 #define TIDB_KV_DB		"KVDB"
 #define TIDB_LEDGER_DB	"LEDGERDB"
@@ -161,6 +162,8 @@ namespace bumo{
 		}
 
 		bool Put(WriteTidbBatch &value);
+
+		int64_t Get_All_Ledger(std::map<string, string> &_out_map);
 
 		
 	private:

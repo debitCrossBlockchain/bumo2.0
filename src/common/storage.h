@@ -26,10 +26,11 @@
 #include <leveldb/leveldb.h>
 #else
 #include <rocksdb/db.h>
-#include "tidb.h"
 #endif
+#include "tidb.h"
 
 namespace bumo {
+	/*
 #ifdef WIN32
 #define KVDB leveldb
 #define WRITE_BATCH leveldb::WriteBatch
@@ -43,10 +44,37 @@ namespace bumo {
 #define WRITE_BATCH_DATA_SIZE(batch) (batch.GetDataSize())
 #define SLICE       rocksdb::Slice
 #else
+	*/
+#define WRITE_BATCH DBBatch
 
-#define WRITE_BATCH WriteTidbBatch
+//#endif
 
+	class DBBatch
+	{
+	public:
+		DBBatch();
+		~DBBatch() {}
+
+		static std::string s_db_type;
+
+
+#ifdef WIN32
+		leveldb::WriteBatch m_leveldb_batch;
+#else
+		rocksdb::WriteBatch m_rocksdb_batch;
 #endif
+		WriteTidbBatch m_tidb_batch;
+
+		bool isTidb;
+
+	public:
+		// Store the mapping "key->value" in the database.
+		void Put(const std::string& key, const std::string& value);
+
+		void Delete(const std::string& key);
+
+		void Clear();
+	};
 
 	class KeyValueDb {
 	protected:
@@ -88,7 +116,7 @@ namespace bumo {
 
 		void* NewIterator();
 	};
-#elif ROCKSDB 
+#else  
 	class RocksDbDriver : public KeyValueDb {
 	private:
 		rocksdb::DB* db_;
@@ -108,8 +136,7 @@ namespace bumo {
 		void* NewIterator();
 	};
 
-
-#else
+#endif
 	class TidbDriver : public KeyValueDb {
 	private:
 		tidb * db_;
@@ -138,10 +165,10 @@ namespace bumo {
 		bool Close()	{return db_->Close();}
 
 		int32_t Get(const std::string &key, std::string &value)	{
-			int32_t ret =  db_->Get(key,value);
+			int64_t ret =  db_->Get(key,value);
 			if(ret<0)
 				error_desc_ = db_->get_error();
-			return ret;
+			return (int32_t)ret;
 		}
 		bool Put(const std::string &key, const std::string &value)	{
 			bool ret =  db_->Put(key,value);
@@ -161,13 +188,18 @@ namespace bumo {
 		}
 		//todo »ñÈ¡Êý¾Ý¿â×´Ì¬
 		bool GetOptions(Json::Value &options)	{return true;}
-		bool WriteBatch(WriteTidbBatch &values)	{
-			return db_->Put(values);
+		bool WriteBatch(WRITE_BATCH &values)	{
+			return db_->Put(values.m_tidb_batch);
 		}
 		//todo ´òÓ¡ËùÓÐ¼ÇÂ¼
 		void* NewIterator() {return NULL;}
+
+		tidb * GetTiDBInstance()	{ return db_; }
 	};
-#endif
+
+
+
+	
 
 	class Storage : public utils::Singleton<bumo::Storage>, public TimerNotify {
 		friend class utils::Singleton<Storage>;

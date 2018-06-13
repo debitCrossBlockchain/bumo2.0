@@ -35,6 +35,19 @@ namespace bumo {
 		}
 	}
 
+	void get_all_data(MYSQL_ROW row, int n_column, unsigned long * len, void * param)
+	{
+		
+		if (row)
+		{
+			std::map<string, string> *out_map = (std::map<string, string> *)param;
+			string str_data;
+			str_data.append(IsNull(row[1]), len[1]);
+			(*out_map)[string(IsNull(row[0]))] = str_data;
+			//out_map->insert(std::make_pair(str_key, str_data));
+		}
+	}
+
 	void get_count(MYSQL_ROW row, int n_column, unsigned long * len, void * param)
 	{
 		int* iCount = (int*)param;
@@ -464,6 +477,18 @@ namespace bumo {
 		return true;
 	}
 
+	int64_t tidb::Get_All_Ledger(std::map<std::string, std::string> &_out_map)
+	{
+		int64_t time_start = utils::Timestamp::HighResolution();
 
+		char *sql = "select kv_key,kv_data from kv_table;";
+
+		int64_t iRet = m_pMysqlDriver->mysql_exec(sql, get_all_data, (void*)&_out_map);
+
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
+		
+		return iRet;
+
+	}
 
 }

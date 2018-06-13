@@ -17,30 +17,41 @@
             "heartbeat_interval": 60,
             "listen_port": 36001,
             "target_peer_connection": 50,
-            "known_peers": ["bumo.chinacloudapp.cn:36001"]
+			"max_connection": 20000,
+			"connect_timeout": 5,
+            "known_peers": ["192.168.2.131:36001"]
         }
     },
     "webserver": {
-        "listen_addresses": "0.0.0.0:36002"
+        "listen_addresses": "0.0.0.0:36002",
+		"index_name": "",
+		"directory": "web/",
+		"ssl_enable": false,
+		"query_limit": 1000,
+		"multiquery_limit": 100,
+		"thread_count": 8
     },
     "wsserver": {
         "listen_address": "0.0.0.0:36003"
     },
     "ledger": {
+	"validation_address": "buQX7xXSahWQuByDZehBxCenaCYgiigUiLCi",
+        "validation_private_key": "e5378cf11f18ff3a2fdd690070acae41a95c87c4c0148319d70bb56f188d404b67bcfa19038539b83c1e9ce7859d280b5cb006b33463e8e00c05331f1643082a",
         "max_trans_per_ledger": 10000,
         "hardfork_points": [],
-        "tx_pool":{
-            "queue_limit":10240,
-            "queue_per_account_txs_limit":64
-        }
+		"tx_pool":{
+			"queue_limit": 10240,
+			"queue_per_account_txs_limit": 64
+		}
     },
     "genesis": {
-        "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+        "account": "buQiJpxs7VeyVG9GiTGCm1ofCrFyWFWktdcq",
+	"slogan" : "a new era of value",
         "fees": {
             "base_reserve": 10000000,
-            "gas_price": 1000
+            "byte_fee": 1000
         },
-        "validators": ["buQmKvHXJZYDdx4wWap3aQ27miWZnneti22f", "buQoWvx4YZtShfJKAJ9EPK7j3VY3o9ejyXyF", "buQjprDac98CemsqXgGC9dKegoLDAdpSGSMJ", "buQYoyrr5XhTsS8Jx9K6itvBCfopntCNSQqG"]
+        "validators": ["buQiJpxs7VeyVG9GiTGCm1ofCrFyWFWktdcq", "buQX7xXSahWQuByDZehBxCenaCYgiigUiLCi"]
     },
     "logger": {
         "path": "log/bumo.log",

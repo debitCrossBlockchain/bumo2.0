@@ -56,7 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_SCL_SECURE_NO_WARNINGS;ASIO_STANDALONE;_WEBSOCKETPP_CPP11_STL_;WIN32_LEAN_AND_MEAN;_SHARED_PTR_H;PCRE_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../src;../../src/3rd/basic/include;../../src/3rd/asio/include;../../src/3rd/soci/include/;../../src/3rd\basic\include\postgresql;../../src\3rd\websocketpp;../../src/3rd/basic/include/mysql;../../src/3rd/basic/include/pcre;../../src/3rd/basic/include/mongoc-1.0;../../src/3rd/http</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../src;../../src/3rd/basic/include;../../src/3rd/asio/include;../../src/3rd/soci/include/;../../src/3rd\basic\include\postgresql;../../src\3rd\websocketpp;../../src/3rd/basic/include/pcre;../../src/3rd/basic/include/mongoc-1.0;../../src/3rd/http</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,6 +92,7 @@
     <ClCompile Include="..\..\src\common\pb2json.cpp" />
     <ClCompile Include="..\..\src\common\private_key.cpp" />
     <ClCompile Include="..\..\src\common\storage.cpp" />
+    <ClCompile Include="..\..\src\common\tidb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\common\argument.h" />
@@ -103,6 +104,7 @@
     <ClInclude Include="..\..\src\common\pb2json.h" />
     <ClInclude Include="..\..\src\common\private_key.h" />
     <ClInclude Include="..\..\src\common\storage.h" />
+    <ClInclude Include="..\..\src\common\tidb.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

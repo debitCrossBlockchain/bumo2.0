@@ -18,6 +18,7 @@
 #include "private_key.h"
 #include "key_store.h"
 #include "argument.h"
+#include "main/configure.h"
 #include <sstream>
 
 namespace bumo {
@@ -33,6 +34,57 @@ namespace bumo {
 		console_(false),
 		create_hardfork_(false){}
 	Argument::~Argument() {}
+
+	bool do_tidb_dbtool(const DbConfigure &db_config)
+	{
+		printf("input database name:\n");
+
+		std::string db_name;
+		std::cin >> db_name;
+
+		TidbDriver * ledger_db_ = new TidbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
+		
+
+		if (!ledger_db_->Open(TIDB_LEDGER_DB, -1)) {
+			printf("open TIDB_LEDGER_DB error!");
+			return false ;
+		}
+
+		printf("1:list all key and values\n");
+		printf("2:query one key\n");
+		char ch;
+		std::cin >> ch;
+		if (ch == '1'){
+			std::map<std::string, std::string> _out_map;
+			int64_t iCount = ledger_db_->GetTiDBInstance()->Get_All_Ledger(_out_map);
+			if (iCount < 0)
+			{
+				printf("Get_All_Ledger error!\n");
+				return false;
+			}
+			std::map<std::string, std::string>::iterator iter = _out_map.begin();
+			for (; iter != _out_map.end(); iter++)
+			{
+				cout << iter->first << ":" << iter->second << endl;
+			}
+
+		}
+		else if (ch == '2')
+		while (true){
+			printf("\ninput key(hex):");
+			std::string hexkey, buff;
+			std::cin >> hexkey;
+			auto binkey = utils::String::HexStringToBin(hexkey);
+			if (ledger_db_->Get(binkey, buff)){
+				printf("%s", utils::String::BinToHexString(buff).c_str());
+			}
+			else{
+				printf("%s", ledger_db_->error_desc().c_str());
+			}
+		}
+		return true;
+
+	}
 
 	bool Argument::Parse(int argc, char *argv[]) {
 		if (argc > 1) {
@@ -461,7 +513,13 @@ namespace bumo {
 				return false;
 			}
 			else if (s == "--dbtool") {
+				bumo::Configure &config = bumo::Configure::Instance();
+				if (config.db_configure_.db_type_ == TIDB)
+				{
+					return do_tidb_dbtool(config.db_configure_);
+				}
 				printf("input database path:\n");
+			
 				std::string path;
 				std::cin >> path;
 				KeyValueDb* ledger_db_ = nullptr;
@@ -469,8 +527,7 @@ namespace bumo {
 				ledger_db_ = new LevelDbDriver();
 #else 
 				ledger_db_ = new RocksDbDriver();
-//#else 
-//				ledger_db_ = new TidbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
+
 #endif
 				if (!ledger_db_->Open(path, -1)) {
 					return false;

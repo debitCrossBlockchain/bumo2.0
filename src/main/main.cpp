@@ -30,6 +30,7 @@
 #include <monitor/monitor_manager.h>
 #include "configure.h"
 
+
 void SaveWSPort();
 void RunLoop();
 int main(int argc, char *argv[]){
@@ -144,7 +145,7 @@ int main(int argc, char *argv[]){
 			config.db_configure_.keyvalue_db_path_.c_str(),
 			config.db_configure_.account_db_path_.c_str(),
 			config.db_configure_.ledger_db_path_.c_str());
-#ifndef WIN32
+
 		if (TIDB == config.db_configure_.db_type_)
 		{
 			if (!bumo::g_enable_ || !storage.Initialize_Tidb(config.db_configure_, arg.drop_db_)) {
@@ -153,14 +154,14 @@ int main(int argc, char *argv[]){
 			}
 		}
 		else
-#else		
+		
 		{
 			if (!bumo::g_enable_ || !storage.Initialize(config.db_configure_, arg.drop_db_)) {
 				LOG_ERROR("Initialize db failed");
 				break;
 			}
 		}
-#endif
+
 		object_exit.Push(std::bind(&bumo::Storage::Exit, &storage));
 		LOG_INFO("Initialize db successful");
 
