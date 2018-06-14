@@ -390,19 +390,27 @@ namespace bumo {
 
 			if (result.code() == protocol::ERRCODE_SUCCESS) {
 				TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-				
+				Json::Value logs;
+				Json::Value txs;
+				Json::Value query_rets;
+				Json::Value stat;
 				*tx_set->add_txs() = tran_env;
 				Result exe_result;
 				if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
 					(TestParameter*)&test_parameter,
 					utils::MICRO_UNITS_PER_SEC,
-					exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["stat"], signature_number)) {
+					exe_result, logs, txs, query_rets, stat, signature_number)) {
 					reply_json["error_code"] = exe_result.code();
 					reply_json["error_desc"] = exe_result.desc();
 					LOG_ERROR("%s", exe_result.desc().c_str());
 					break;
 				}
 				if (exe_result.code() == protocol::ERRCODE_SUCCESS){
+					result_json["logs"] = logs;
+					result_json["txs"] = txs;
+					result_json["query_rets"] = query_rets;
+					result_json["stat"] = stat;
+
 					int i = 0;
 					int64_t actual_fee1 = result_json["txs"][i]["actual_fee"].asInt64();
 					int64_t actual_fee2 = 0;
@@ -412,10 +420,10 @@ namespace bumo {
 						tran->set_fee_limit(actual_fee1);
 						tx_set->clear_txs();
 						*tx_set->add_txs() = tran_env;
-						Json::Value logs;
-						Json::Value txs;
-						Json::Value query_rets;
-						Json::Value stat;
+						logs.clear();
+						txs.clear();;
+						query_rets.clear();
+						stat.clear();
 						if (!LedgerManager::Instance().context_manager_.SyncTestProcess(LedgerContext::AT_TEST_TRANSACTION,
 							(TestParameter*)&test_parameter,
 							utils::MICRO_UNITS_PER_SEC,
