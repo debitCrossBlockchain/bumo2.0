@@ -42,10 +42,10 @@ namespace bumo {
 		std::string db_name;
 		std::cin >> db_name;
 
-		TidbDriver * ledger_db_ = new TidbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
+		TidbDriver * db_ = new TidbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
 		
 
-		if (!ledger_db_->Open(TIDB_LEDGER_DB, -1)) {
+		if (!db_->Open(db_name, -1)) {
 			printf("open TIDB_LEDGER_DB error!");
 			return false ;
 		}
@@ -56,10 +56,15 @@ namespace bumo {
 		std::cin >> ch;
 		if (ch == '1'){
 			std::map<std::string, std::string> _out_map;
-			int64_t iCount = ledger_db_->GetTiDBInstance()->Get_All_Ledger(_out_map);
+			int64_t iCount = db_->GetTiDBInstance()->Get_All_Ledger(_out_map);
 			if (iCount < 0)
 			{
 				printf("Get_All_Ledger error!\n");
+				return false;
+			}
+			if (iCount > 500)
+			{
+				printf("more than 500 record,stop print!\n");
 				return false;
 			}
 			std::map<std::string, std::string>::iterator iter = _out_map.begin();
@@ -71,15 +76,15 @@ namespace bumo {
 		}
 		else if (ch == '2')
 		while (true){
-			printf("\ninput key(hex):");
+			printf("\ninput key(string):");
 			std::string hexkey, buff;
 			std::cin >> hexkey;
-			auto binkey = utils::String::HexStringToBin(hexkey);
-			if (ledger_db_->Get(binkey, buff)){
-				printf("%s", utils::String::BinToHexString(buff).c_str());
+			//auto binkey = utils::String::HexStringToBin(hexkey);
+			if (db_->Get(hexkey, buff)){
+				printf("%s", buff.c_str());
 			}
 			else{
-				printf("%s", ledger_db_->error_desc().c_str());
+				printf("%s", db_->error_desc().c_str());
 			}
 		}
 		return true;
@@ -513,11 +518,21 @@ namespace bumo {
 				return false;
 			}
 			else if (s == "--dbtool") {
+				/*check local database is tidb??*/
 				bumo::Configure &config = bumo::Configure::Instance();
+				std::string config_path = bumo::General::CONFIG_FILE;
+				if (!utils::File::IsAbsolute(config_path)){
+					config_path = utils::String::Format("%s/%s", utils::File::GetBinHome().c_str(), config_path.c_str());
+				}
+				if (!config.Load(config_path)){
+					LOG_STD_ERRNO("Load configure failed", STD_ERR_CODE, STD_ERR_DESC);
+					return false;
+				}
 				if (config.db_configure_.db_type_ == TIDB)
 				{
 					return do_tidb_dbtool(config.db_configure_);
 				}
+				//check over tidb
 				printf("input database path:\n");
 			
 				std::string path;

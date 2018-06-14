@@ -210,6 +210,7 @@ namespace bumo {
 						{
 							call_back(row, n_column, lengths, param);
 							row = mysql_fetch_row(res);
+							lengths = mysql_fetch_lengths(res);
 						}
 					}
 				}
