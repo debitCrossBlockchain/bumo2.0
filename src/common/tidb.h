@@ -17,6 +17,7 @@ using namespace std;
 #define TIDB_LEDGER_DB	"LEDGERDB"
 #define TIDB_ACCOUNT_DB	"ACCOUNTDB"
 
+#define STMT_NUM	20
 
 namespace bumo{
 
@@ -43,6 +44,8 @@ namespace bumo{
 	class MysqlDriver   {
 	private:
 		MYSQL * m_pMysql;
+		//0~9 = replace(10)¡£10=select
+		MYSQL_STMT *stmt[STMT_NUM];
 		
 	public:
 		//
@@ -99,12 +102,12 @@ namespace bumo{
 		long format_blob_string(char *sv_str, const char *orgStr, int iLen);
 
 
+		bool init_stmt(const char* stmt_sql, int iPos);
+
+		int64_t stmt_exec(MYSQL_BIND *param, int stmt_series);
+
 	private:
 		int64_t do_sql(const char *sql, Call_back  call_back = NULL, void *param = NULL);
-
-	//	int do_count_sql(const std::string &sql);
-
-	//	int do_trans_sql(const std::string &sql);
 
 		int64_t mysql_select(const char *sql, Call_back  call_back, void *param);
 
@@ -146,6 +149,8 @@ namespace bumo{
 	
 	class tidb /*: public KeyValueDb*/ {
 
+#define STMT_NUM_REPLACE	10
+
 	public:
 		tidb(const std::string host_ip, const std::string user_name, const std::string pwd,int32_t port );
 		~tidb();
@@ -176,11 +181,18 @@ namespace bumo{
 		//init config
 		bool initialize();
 
+		//create database
+		bool init_stmt();
+
+		int64_t do_replace_stmt(std::map<std::string, std::string> &in_map);
+
+		int64_t do_replace_stmt(const std::string &key, const std::string &value);
 		
 
 	private:
 		//mysql driver
 		MysqlDriver *m_pMysqlDriver;
+
 		//tidb host
 		std::string m_Host_ip ;
 		//tidb user

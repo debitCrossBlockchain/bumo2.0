@@ -17,7 +17,14 @@ using namespace std;
 
 namespace bumo {
 
+#define M_UNIT					1024*1024
+#define SINGLE_TRANS_SIZE		6*M_UNIT
+#define TRANS_SIZE_LIMIT		100*M_UNIT
+#define TRANS_NUMBER_LIMIT		30*10000
 
+
+
+#define REPLACE_STMT_SQL	"replace into kv_table(kv_key,kv_data) values (?,?)"
 
 	const char *IsNull(char *source)
 	{
@@ -37,7 +44,7 @@ namespace bumo {
 
 	void get_all_data(MYSQL_ROW row, int n_column, unsigned long * len, void * param)
 	{
-		
+
 		if (row)
 		{
 			std::map<string, string> *out_map = (std::map<string, string> *)param;
@@ -97,14 +104,23 @@ namespace bumo {
 	MysqlDriver::MysqlDriver()
 	{
 		m_pMysql = NULL;
+		for (int i = 0; i < STMT_NUM; i++)
+			stmt[i] = NULL;
 	}
 
 	MysqlDriver::~MysqlDriver()
 	{
-		cout << "~MysqlDriver:m_pMysql" << m_pMysql << endl;
+		//cout << "~MysqlDriver:m_pMysql" << m_pMysql << endl;
+		//mysql_stmt_close(stmt_i);
+		for (int i = 0; i < STMT_NUM; i++)
+		{
+			mysql_stmt_close(stmt[i]);
+			stmt[i] = NULL;
+		}
 		if (m_pMysql)
 			close_mysql();
 		m_pMysql = NULL;
+
 	}
 
 	int MysqlDriver::mysql_connect(const char *host, const char *username, const char *password,
@@ -143,6 +159,27 @@ namespace bumo {
 		return 0;
 	}
 
+	bool MysqlDriver::init_stmt(const char* stmt_sql, int iPos)
+	{
+		if (stmt[iPos])
+			mysql_stmt_close(stmt[iPos]);
+		//init stmt
+		stmt[iPos] = mysql_stmt_init(m_pMysql);
+		if (!stmt[iPos])
+		{
+			int iErrorCode = mysql_errno(m_pMysql);
+			//unknown database,maybe new db
+			cout << "mysql_stmt_init errorcode=" << iErrorCode << ",error :" << mysql_error(m_pMysql) << endl;
+			return false;
+		}
+		if (mysql_stmt_prepare(stmt[iPos], stmt_sql, strlen(stmt_sql)))
+		{
+			cout << "mysql_stmt_prepare  error :" << mysql_error(m_pMysql) << endl;
+			return false;
+		}
+		return true;
+	}
+	
 
 	int64_t MysqlDriver::mysql_exec(const char *sql, Call_back  call_back, void *param)
 	{
@@ -166,7 +203,8 @@ namespace bumo {
 		MYSQL_RES *res;
 		MYSQL_ROW row;
 
-		high_resolution_clock::time_point beginTime = high_resolution_clock::now();
+		//high_resolution_clock::time_point beginTime = high_resolution_clock::now();
+		int64_t time_start = utils::Timestamp::HighResolution();
 		ret = mysql_real_query(m_pMysql, sql, strlen(sql));
 		if (ret)
 		{
@@ -184,17 +222,18 @@ namespace bumo {
 				return -1 * ret;
 			}
 		}
-		high_resolution_clock::time_point endTime = high_resolution_clock::now();
-		milliseconds timeInterval = std::chrono::duration_cast<milliseconds>(endTime - beginTime);
-		//cout << "mysql_real_query cost time=" << timeInterval.count() << " ms" << endl;
+		//high_resolution_clock::time_point endTime = high_resolution_clock::now();
+		//milliseconds timeInterval = std::chrono::duration_cast<milliseconds>(endTime - beginTime);
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
+		//LOG_INFO("mysql_real_query one key use time(" FMT_I64 "ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
 
 
 		do {
 			res = mysql_store_result(m_pMysql);
 			int n_column = mysql_field_count(m_pMysql);
-			
+
 			//must (select、show，，，，),/
-			if (res )
+			if (res)
 			{
 				row = mysql_fetch_row(res);
 				unsigned long *lengths = mysql_fetch_lengths(res);
@@ -216,9 +255,9 @@ namespace bumo {
 				}
 				else
 				{
-					LOG_ERROR("sql:%s,\nHave res but no call_back,err_str=%s ", sql,  mysql_error(m_pMysql));
+					LOG_ERROR("sql:%s,\nHave res but no call_back,err_str=%s ", sql, mysql_error(m_pMysql));
 					mysql_free_result(res);
-					return -1 ;
+					return -1;
 				}
 				ret = mysql_num_rows(res);
 				mysql_free_result(res);
@@ -278,6 +317,29 @@ namespace bumo {
 	}
 
 
+	int64_t MysqlDriver::stmt_exec(MYSQL_BIND *param, int stmt_series)
+	{
+		MYSQL_STMT * _stmt = stmt[stmt_series];
+		if (!param || !_stmt)
+		{
+			cout << "stmt_exec param/stmt is NULL" << endl;
+			return -1;
+		}
+
+		if (mysql_stmt_bind_param(_stmt, param))
+		{
+			cout << "mysql_stmt_bind_param  error :" << mysql_stmt_error(_stmt) << endl;
+			return -1;
+		}
+
+		if (mysql_stmt_execute(_stmt))
+		{
+			cout << "mysql_stmt_execute  error :" << mysql_stmt_error(_stmt) << endl;
+			return -1;
+		}
+		return 0;
+	}
+
 	/***********   tidb *******************/
 
 	tidb::tidb(const std::string host_ip, const std::string user_name, const std::string pwd, int32_t port)
@@ -326,13 +388,13 @@ namespace bumo {
 	{
 
 		const char* sql = "CREATE TABLE IF NOT EXISTS kv_table ( \
-						  						  		id BIGINT UNSIGNED  PRIMARY KEY AUTO_INCREMENT ,\
-																								kv_key VARCHAR(255) NOT NULL UNIQUE  ,\
-																																				kv_data MEDIUMBLOB ,\
-																																																		index idx_key(kv_key))  \
-																																																																		ENGINE = InnoDB DEFAULT CHARACTER SET utf8mb4;";
+						  						  						  						  		id BIGINT UNSIGNED  PRIMARY KEY AUTO_INCREMENT ,\
+																																																																						kv_key VARCHAR(255) NOT NULL UNIQUE  ,\
+																																																																																																																																																						kv_data MEDIUMBLOB ,\
+																																																																																																																																																																																																																																																																																								index idx_key(kv_key))  \
+																																																																																																																																																																																																																																																																																																																																																																																																																																																																																												ENGINE = InnoDB DEFAULT CHARACTER SET utf8mb4;";
 
-		
+
 		if (m_pMysqlDriver->mysql_exec(sql) < 0)
 			return false;
 		return true;
@@ -354,15 +416,28 @@ namespace bumo {
 				{
 					iRet = m_pMysqlDriver->select_db(db_name.c_str());
 					create_kv_table();
-					return true;
+					return init_stmt();
 				}
 
 			}
 			return false;
 		}
 
-		return true;
+		return init_stmt();
 
+	}
+
+	bool tidb::init_stmt()
+	{
+		//bool bRet = false;
+		std::string stmt_sql = REPLACE_STMT_SQL;
+		for (int i = 0; i < 10; i++)
+		{
+			if (!m_pMysqlDriver->init_stmt(stmt_sql.c_str(), i))
+				return false;
+			stmt_sql += ",(?,?)";
+		}
+		return true;
 	}
 
 
@@ -391,8 +466,12 @@ namespace bumo {
 		*end++ = ')';
 		*end++ = 0x00;
 
+		std::string tmpStr = "select kv_key,kv_data from kv_table where kv_key='";
+		tmpStr += utils::encode_b64(key);
+		tmpStr += "'";
 
-		int64_t iRet = m_pMysqlDriver->mysql_exec(sql, get_table_value, (void *)&value);
+
+		int64_t iRet = m_pMysqlDriver->mysql_exec(tmpStr.c_str(), get_table_value, (void *)&value);
 		delete[]sql;
 
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
@@ -405,32 +484,10 @@ namespace bumo {
 		//replace statement require   have >=1 unique/primary column��otherwise insert(ignore update) 
 		/*kv_data <= 16M ,but tidb:single KV entry <= 6MB*/
 		int64_t time_start = utils::Timestamp::HighResolution();
-
-		//allocate space
-		int iLen = 100 + (key.length() * 2 * 8 + 1) + (value.length() * 2 + 1);
-		char *sql = new char[iLen];
-		if (!sql)
-		{
-			cout << "tidb.cpp new char error,not enough size=" << iLen << endl;
-			return false;
-		}
-		memset(sql, 0x00, 100);
-
-		char *end = strcpy(sql, "replace into kv_table(kv_key,kv_data) values (TO_BASE64(\'");
-		end += strlen(sql);
-		end += m_pMysqlDriver->format_blob_string(end, key.c_str(), key.length());
-		*end++ = '\'';
-		*end++ = ')';
-		*end++ = ',';
-		*end++ = '\'';
-		end += m_pMysqlDriver->format_blob_string(end, value.c_str(), value.length());
-		*end++ = '\'';
-		*end++ = ')';
-		*end++ = 0x00;
-
-		int64_t iRet = m_pMysqlDriver->mysql_exec(sql);
-		delete[]sql;
-
+		int64_t iRet = -1;
+		
+		std::string tmpStr = utils::encode_b64(key);
+		iRet = do_replace_stmt(tmpStr, value);
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
 		LOG_INFO("Put one key use time(" FMT_I64 "ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
 		if (iRet < 0)
@@ -441,18 +498,19 @@ namespace bumo {
 	bool tidb::Put(WriteTidbBatch &value)
 	{
 		//todo: real write batch
+		int64_t time_start = utils::Timestamp::HighResolution();
 		std::map<std::string, std::string> batch_map = value.get_put_map();
 		std::string sql_str;
 		bool bRet = true;
-		for (std::map<std::string, std::string>::iterator it = batch_map.begin(); it != batch_map.end(); ++it)
-		{
-			Put(it->first, it->second);
-		}
+		int64_t sql_len = 0;
 
+		do_replace_stmt(batch_map);
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
+		LOG_INFO("Batch_Put one key use time(" FMT_I64 "ms),sql count=%d", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), batch_map.size());
 		//todo: do real batch
 		return bRet;
 	}
-
+	
 	bool tidb::Delete(const std::string &key)
 	{
 		int iLen = 36 + (key.length() * 2 + 1);
@@ -487,9 +545,87 @@ namespace bumo {
 		int64_t iRet = m_pMysqlDriver->mysql_exec(sql, get_all_data, (void*)&_out_map);
 
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
-		
+
 		return iRet;
 
+	}
+
+	int64_t tidb::do_replace_stmt(std::map<std::string, std::string> &in_map)
+	{
+
+		int iCount = in_map.size();
+		if (iCount <= 0)
+			return 0;
+
+		int iBatch_num = 10;
+		int iRemain = iCount % iBatch_num;
+
+		std::map<std::string, std::string>::iterator iter = in_map.begin();
+
+
+		for (int i = 0; i < iCount / iBatch_num + 1; i++)
+		{
+			int iParm_num = iBatch_num;
+			//MYSQL_BIND *params = NULL;
+
+			if (i == iCount / iBatch_num)
+			{
+				if (iRemain != 0)
+				{
+					//params = (MYSQL_BIND *)malloc(iRemain * sizeof(MYSQL_BIND));
+					iParm_num = iRemain;
+				}
+				else
+					break;
+			}
+			//MYSQL_BIND *params = new MYSQL_BIND[iParm_num * 2];
+			//memset(params, 0, sizeof(params));
+			MYSQL_BIND params[STMT_NUM_REPLACE * 2];
+			memset(params, 0, sizeof(params));
+			std::string tmpStr[STMT_NUM_REPLACE * 2];
+			for (int j = 0; j < iParm_num * 2; j++)
+			{
+
+				params[j].buffer_type = MYSQL_TYPE_STRING;
+				tmpStr[j] = utils::encode_b64(iter->first);
+				params[j].buffer = (void *)tmpStr[j].c_str();
+				params[j].buffer_length = tmpStr[j].length();
+				j++;
+				params[j].buffer_type = MYSQL_TYPE_MEDIUM_BLOB;
+				params[j].buffer = (void *)iter->second.c_str();
+				params[j].buffer_length = iter->second.length();
+				iter++;
+			}
+			if (m_pMysqlDriver->stmt_exec(params, iParm_num - 1) < 0)
+			{
+				cout << "stmt_exec error!" << endl;
+				return -1;
+			}
+		}
+		return 0;
+	}
+
+	int64_t tidb::do_replace_stmt(const std::string &key, const std::string &value)
+	{
+		MYSQL_BIND params[2];
+		memset(params, 0, sizeof(params));
+
+		params[0].buffer_type = MYSQL_TYPE_STRING;
+		params[0].buffer = (void *)key.c_str();
+		params[0].buffer_length = key.length();
+
+		params[1].buffer_type = MYSQL_TYPE_MEDIUM_BLOB;
+		params[1].buffer = (void *)value.c_str();
+		params[1].buffer_length = value.length();
+
+
+		if (m_pMysqlDriver->stmt_exec(params, 0) < 0)
+		{
+			cout << "stmt_exec error!" << endl;
+			return -1;
+		}
+
+		return 0;
 	}
 
 }
