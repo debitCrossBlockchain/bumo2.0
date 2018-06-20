@@ -1063,7 +1063,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 
 |Parameters|Description
 |:--- | --- 
-|dest_address |  Address of the account 
+|dest_address |  Address of the account, create common account: address, create contract account: null. If create specific contract, refer to [Validator Nodes Election](#validator-nodes-election) and [Election Contract of Transaction Fee](#election-contract-of-transaction-fee)
 |contract|  Setting null as a normal account. Otherwise, it is a contract account.  
 | priv|  Weight information of the account 
 |init_balance | Initializing BU value
@@ -1081,7 +1081,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 
 - json format
 
-
+Create common account
 ```json
     {
       "type": 1,
@@ -1090,7 +1090,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
         "contract": {
           "payload": ""
         },
-        "init_balance": 100000,  //give the init_balance to this account
+        "init_balance": 100000,  //init_balance to this account
         "init_input" : "",  // if create contract , then init with this input
         "metadatas": [{
             "key": "111",
@@ -1111,6 +1111,111 @@ Evaluating transaction fee would not alter the account balance. Related sender a
       }
     }
 ```
+
+create contract account
+```json
+    {
+      "type": 1,
+      "create_account": 
+      {
+        "dest_address": "",
+        "contract": 
+        {
+          "payload": "
+            'use strict';
+            function init(bar)
+            {
+              return;
+            }
+
+            function main(input)
+            {
+              return;
+            }
+
+            function query()
+            {
+              return;
+            }
+          "
+        },
+        "init_balance": 100000,  //init balance to this account
+        "init_input" : "{\"method\":\"toWen\",\"params\":{\"feeType\":0}}",
+        "priv":  {
+          "master_weight": 0,
+          "thresholds": {
+              "tx_threshold": 1
+          }
+        }
+      }
+    }
+```
+Contract account will be created automatically, and store in transaction which can be search by hash：
+
+```
+GET /getTransactionHistory?hash=150dbbf1beaaae23bb3b7148cf65279d7de46a76d7ec8e480ef745f5708beb16
+```
+return result
+``` json
+{
+    "error_code": 0,
+    "result": {
+        "total_count": 1,
+        "transactions": 
+		[
+			{
+            "actual_fee": 1000402000,
+            "close_time": 1528725055019893,
+            "error_code": 0,
+            "error_desc": "[{\"contract_address\":\"buQfFcsf1NUGY1o25sp8mQuaP6W8jahwZPmX\",\"operation_index\":0}]", //create contract result with contract address and opration index
+            "hash": "4cbf50e03645f1075d7e5c450ced93e26e3153cf7b88ea8003b2fda39e618e64",
+            "ledger_seq": 14671,
+            "signatures": [{
+                "public_key": "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                "sign_data": "87fdcad0d706479e1a3f75fac2238763cd15fd93f81f1b8889fb798cefbe1752c192bbd3b5da6ebdb31ae47d8b62bb1166dcceca8d96020708f3ac5434838604"
+            }],
+            "transaction": {
+                "fee_limit": 20004420000,
+                "gas_price": 1000,
+                "nonce": 30,
+                "operations": [{
+                    "create_account": {
+                        "contract": {
+                            "payload": "\n\t\t          \n\t\t        \t'use strict';\n\t\t\t\t\tfunction init(bar)\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\tfunction main(input)\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t     function query()\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t      \n\t\t          "
+                        },
+                        "init_balance": 10000000,
+                        "priv": {
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                }],
+                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+            },
+            "tx_size": 402
+        }]
+    }
+}
+
+```
+create contract result
+
+```transactions.error_code```:  0: sucess; other: error
+
+```transactions.error_desc```: when error, error description; success, if have create contract, save the 
+
+create contract result with json desciption 
+
+  ``` json
+  [
+    {
+      "contract_address": "buQm5RazrT9QYjbTPDwMkbVqjkVqa7WinbjM", //contract address
+      "operation_index": 0                                        //transaction index, 0 is the first
+    }
+  ]
+  ```
 
 - protocol buffer structure
 
@@ -1476,7 +1581,7 @@ As you are creating a new account, you can assign the weight for this account fr
 
 ```json
 {
-    "master_weight": 70,// the weight of local address
+    "master_weight": "70",// the weight of local address
     "signers": [//distribute weight
         {
             "address": "buQc39cgJDBaFGiiAsRtYKuaiSFdbVGheWWk",
@@ -1487,36 +1592,33 @@ As you are creating a new account, you can assign the weight for this account fr
             "weight": 100    //the weight value of this address is 100
         }
     ],
-    "thresholds"://threshold for different operation
-    {
-        "tx_threshold": 8,//required thresholds for transaction is 8 
-        "type_thresholds": [
-            {
-                "type": 1,//required thresholds for creating account is 11
-                "threshold": 11
-            },
-            {//required thresholds for issuing asset is 21
-                "type": 2,
-                "threshold": 21
-            },
-            {//required thresholds for transferring assets is 31
-                "type": 3,
-                "threshold": 31
-            },
-            {//required thresholds for setting metadata is 41
-                "type": 4,
-                "threshold": 41
-            },
-            {//required thresholds for changing controler's weight is 51
-                "type": 5,
-                "threshold": 51
-            },
-            {//required thresholds for altering every operations is 51
-                "type": 6,
-                "threshold": 61
-            }
-        ]
-    }
+    "tx_threshold": "8",//required thresholds for transaction is 8 
+    "type_thresholds": [
+        {
+            "type": 1,//required thresholds for creating account is 11
+            "threshold": 11
+        },
+        {//required thresholds for issuing asset is 21
+            "type": 2,
+            "threshold": 21
+        },
+        {//required thresholds for transferring assets is 31
+            "type": 3,
+            "threshold": 31
+        },
+        {//required thresholds for setting metadata is 41
+            "type": 4,
+            "threshold": 41
+        },
+        {//required thresholds for changing controler's weight is 51
+            "type": 5,
+            "threshold": 51
+        },
+        {//required thresholds for altering every operations is 51
+            "type": 6,
+            "threshold": 61
+        }
+    ]
 }
 ```
 
