@@ -1,6 +1,7 @@
 #/bin/bash
 
 cd linux/
+rm -rf linux.zip
 wget bumo.chinacloudapp.cn:36002/v8_target/linux.zip
 
 down_md5_nums=`md5sum linux.zip | cut -d ' ' -f1`
