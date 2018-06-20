@@ -4,7 +4,7 @@ English | [中文](develop_CN.md)
 
 <!-- TOC -->
 
-- [BUMO Blockchain Development Kit](#BUMO区块链开发文档)
+- [BUMO Blockchain Development Kit](#bumo-blockchain-development-kit)
     - [Basic Knowledge](#basic-knowledge)
         - [What is Protocol Buffer3](#what-is-protocol-buffer3)
         - [Protocol Buffer3 and JSON](#protocol-buffer3-and-json)
@@ -697,11 +697,11 @@ If you do not have a protocol buffer tool, you may serialize transaction with th
 | Parameters               | Description                                                  |
 | :----------------------- | ------------------------------------------------------------ |
 | source_address(required) | Address of the transaction sender                            |
-| nonce(required)          | The value must be equal to the present nonce of source address + 1.  You can get this value by [Querying Account](#查询账号) function. |
+| nonce(required)          | The value must be equal to the present nonce of source address + 1.  You can get this value by [Querying Account](#querying-account) function. |
 | ceil_ledger_seq          | Block height limitation. If the value is larger than 0, it means the transaction is valid in less or equal block height. Otherwise,  it is meaningless if the value is 0. |
 | metadata(optional)       | User-defined post in hexadecimal format.                     |
 
-Getting more information of operations data types in json, please refer to [Operation](#操作). 
+Getting more information of operations data types in json, please refer to [Operation](#operation). 
 
 ```http
 POST /getTransactionBlob
@@ -713,7 +713,7 @@ POST /getTransactionBlob
     "nonce":2, //nonce value
     "ceil_ledger_seq": 0, //(selected)
     "fee_limit":1000, //transaction fee
-    "gas_price": 1000, //gas price (must greater or qual to the minimun value) (不小于配置的最低值)
+    "gas_price": 1000, //gas price (must greater or qual to the minimun value)
     "metadata":"0123456789abcdef", //user-defined post in hexadecimal format. （selected）
     "operations":[
     {
@@ -734,8 +734,8 @@ return,
     "error_code": 0,
     "error_desc": "",
     "result": {
-        "hash": "474210d69cf0a797a24be65e187eddc7f15de626d38f8b49446b21ddd12247f8",//transaction hash  交易的hash
-        "transaction_blob": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" //serialization of a transaction in hexadecimal format. 交易序列化之后的16进制表示
+        "hash": "474210d69cf0a797a24be65e187eddc7f15de626d38f8b49446b21ddd12247f8",//transaction hash
+        "transaction_blob": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" //serialization of a transaction in hexadecimal format.
     }
 }
 ```
@@ -1232,7 +1232,7 @@ create contract result with json desciption
   ```
 
   - dest_address: Address of the new account
-  - contract: If you would like to create an account with smart contract functions, please refer to [Contract](#合约). Otherwise, if you would like to create a normal account, you can set the value null. 
+  - contract: If you would like to create an account with smart contract functions, please refer to [Contract](#contract). Otherwise, if you would like to create a normal account, you can set the value null. 
   - priv: Distribute the weight of account. Some related definition as following,
       ```text
         message OperationTypeThreshold
@@ -1418,7 +1418,7 @@ create contract result with json desciption
     ```
     - key: Unique for the account, length [1, 1024] 
     - value: length [0,256K]
-    - version: Set null.  If you would like to get more advanced function, please refer to [Control Version](#版本化控制). 
+    - version: Set null.  If you would like to get more advanced function, please refer to [Control Version](#control-version). 
 
 #### Setting Privilege
 |Parameters|Description
