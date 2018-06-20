@@ -1025,8 +1025,8 @@ POST /getTransactionBlob
 
 |参数|描述
 |:--- | --- 
-|dest_address |  账号的地址
-|contract|  如果不填写，那么这是一个普通的账号。如果填写，那么这是一个合约账号
+|dest_address |  目标账号的地址。创建普通账号时，不能为空。创建智能合约账号，必须为空。如需创建选举和费用合约，请参考 [验证者节点选举](#验证者节点选举) 和 [费用选举合约](#费用选举合约) 章节
+|contract|  如果不填写，表示普通的账号。如果填写，表示合约账号
 | priv|  该账号的权限信息
 |init_balance | 初始化账户 BU 值 
 |init_input | 给合约传初始化参数
@@ -1036,11 +1036,11 @@ POST /getTransactionBlob
 - 成功条件
   - 各项参数合法
   - 要创建的账号不存在
-- **注意：如果目标为合约账户，则priv配置必须符合   {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}，如果是普通账号需要配置 {"master_weight" : 1 , "thresholds": {"tx_threshold":1}}**
+  - **注意：如果目标为合约账户，则priv配置必须符合   {"master_weight" : 0 , "thresholds": {"tx_threshold":1}}，如果是普通账号需要配置 {"master_weight" : 1 , "thresholds": {"tx_threshold":1}}**
 
 - json格式
 
-
+创建普通账号
 ```json
     {
       "type": 1,
@@ -1049,7 +1049,7 @@ POST /getTransactionBlob
         "contract": {
           "payload": ""
         },
-        "init_balance": 100000,  //give the init_balance to this account
+        "init_balance": 100000,  //init_balance to this account
         "init_input" : "",  // if create contract , then init with this input
         "metadatas": [{
             "key": "111",
@@ -1070,6 +1070,111 @@ POST /getTransactionBlob
       }
     }
 ```
+创建合约账号
+```json
+    {
+      "type": 1,
+      "create_account": 
+      {
+        "dest_address": "",
+        "contract": 
+        {
+          "payload": "
+            'use strict';
+            function init(bar)
+            {
+              return;
+            }
+
+            function main(input)
+            {
+              return;
+            }
+
+            function query()
+            {
+              return;
+            }
+          "
+        },
+        "init_balance": 100000,  //init_balance to this account
+        "init_input" : "{\"method\":\"toWen\",\"params\":{\"feeType\":0}}",
+        "priv":  {
+          "master_weight": 0,
+          "thresholds": {
+              "tx_threshold": 1
+          }
+        }
+      }
+    }
+```
+合约账号自动生成，并储存在交易记录里，可以通过交易hash查询，如下：
+
+```
+GET /getTransactionHistory?hash=150dbbf1beaaae23bb3b7148cf65279d7de46a76d7ec8e480ef745f5708beb16
+```
+返回结果
+``` json
+{
+    "error_code": 0,
+    "result": {
+        "total_count": 1,
+        "transactions": 
+		[
+			{
+            "actual_fee": 1000402000,
+            "close_time": 1528725055019893,
+            "error_code": 0,
+            "error_desc": "[{\"contract_address\":\"buQfFcsf1NUGY1o25sp8mQuaP6W8jahwZPmX\",\"operation_index\":0}]", //创建合约结果，包括合约地址和操作索引值
+            "hash": "4cbf50e03645f1075d7e5c450ced93e26e3153cf7b88ea8003b2fda39e618e64",
+            "ledger_seq": 14671,
+            "signatures": [{
+                "public_key": "b00180c2007082d1e2519a0f2d08fd65ba607fe3b8be646192a2f18a5fa0bee8f7a810d011ed",
+                "sign_data": "87fdcad0d706479e1a3f75fac2238763cd15fd93f81f1b8889fb798cefbe1752c192bbd3b5da6ebdb31ae47d8b62bb1166dcceca8d96020708f3ac5434838604"
+            }],
+            "transaction": {
+                "fee_limit": 20004420000,
+                "gas_price": 1000,
+                "nonce": 30,
+                "operations": [{
+                    "create_account": {
+                        "contract": {
+                            "payload": "\n\t\t          \n\t\t        \t'use strict';\n\t\t\t\t\tfunction init(bar)\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t\t\t\t\n\t\t\t\t\tfunction main(input)\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t     function query()\n\t\t\t\t\t{\n\t\t\t\t\t  return;\n\t\t\t\t\t}\n\t\t      \n\t\t          "
+                        },
+                        "init_balance": 10000000,
+                        "priv": {
+                            "thresholds": {
+                                "tx_threshold": 1
+                            }
+                        }
+                    },
+                    "type": 1
+                }],
+                "source_address": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+            },
+            "tx_size": 402
+        }]
+    }
+}
+
+```
+创建合约结果描述
+
+```transactions.error_code```:  0: 交易成功；非 0：交易失败
+
+```transactions.error_desc```：失败时为错误描述内容；成功时，如果有创建合约账号交易，会存储一个字符串格式的Json数组。
+
+创建合约结果 Json 数组描述
+
+  ``` json
+  [
+    {
+      "contract_address": "buQm5RazrT9QYjbTPDwMkbVqjkVqa7WinbjM", //合约账号
+      "operation_index": 0                                        //交易数组中的操作索引值，0 表示第一笔交易
+    }
+  ]
+  ```
+
 
 - protocol buffer 结构
 
@@ -1085,7 +1190,7 @@ POST /getTransactionBlob
   }
   ```
 
-  - dest_address:要创建的账号的地址
+  - dest_address:要创建的账号的地址。创建普通账号时，非空。创建智能合约账号，空。如需创建选举和费用合约，请参考 [验证者节点选举](#验证者节点选举) 和 [费用选举合约](#费用选举合约) 章节
   - contract:合约。若你想要创建一个不具有合约功能的账号，可以不填写这部分。若您想创建具有合约功能的账号，请参照[合约](#合约)
   - priv: 账号的初始权力分配。相关的数据结构定义:
       ```text
@@ -1434,7 +1539,7 @@ POST /getTransactionBlob
 
 ```json
 {
-    "master_weight": 70,//本地址私钥拥有的权力值 70
+    "master_weight": "70",//本地址私钥拥有的权力值 70
     "signers": [//分配出去的权力
         {
             "address": "buQc39cgJDBaFGiiAsRtYKuaiSFdbVGheWWk",
@@ -1445,36 +1550,33 @@ POST /getTransactionBlob
             "weight": 100    //上面这个地址拥有权力值100
         }
     ],
-    "thresholds"://不同的操作所需的权力阈值
-    {
-        "tx_threshold": 8,//发起交易需要权力值 8
-        "type_thresholds": [
-            {
-                "type": 1,//创建账号需要权利值 11
-                "threshold": 11
-            },
-            {//发行资产需要权利值 21
-                "type": 2,
-                "threshold": 21
-            },
-            {//转移资产需要权力值 31
-                "type": 3,
-                "threshold": 31
-            },
-            {//设置metadata需要权利值 41
-                "type": 4,
-                "threshold": 41
-            },
-            {//变更控制人的权力值需要权利值 51
-                "type": 5,
-                "threshold": 51
-            },
-            {//变更各种操作的阈值需要权利值 61
-                "type": 6,
-                "threshold": 61
-            }
-        ]
-    }
+    "tx_threshold": "8",//发起交易需要权力值 8
+    "type_thresholds": [
+        {
+            "type": 1,//创建账号需要权利值 11
+            "threshold": 11
+        },
+        {//发行资产需要权利值 21
+            "type": 2,
+            "threshold": 21
+        },
+        {//转移资产需要权力值 31
+            "type": 3,
+            "threshold": 31
+        },
+        {//设置metadata需要权利值 41
+            "type": 4,
+            "threshold": 41
+        },
+        {//变更控制人的权力值需要权利值 51
+            "type": 5,
+            "threshold": 51
+        },
+        {//变更各种操作的阈值需要权利值 61
+            "type": 6,
+            "threshold": 61
+        }
+    ]
 }
 ```
 
