@@ -1,5 +1,6 @@
 syntax = "proto3";
 package protocol;
+option java_package = "io.bumo.sdk.core.extend.protobuf";
 
 import "common.proto";
 
