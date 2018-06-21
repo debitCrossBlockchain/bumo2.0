@@ -1,5 +1,5 @@
-const chain = require('./chain_pb.js')
-const Long = require('./long.js')
+const chain = require('./protocol/chain_pb.js')
+const Long = require('./protocol/long.js')
 
 let tx = new chain.Transaction();
 tx.setSourceAddress('buQiu6i3aVP4SXBNmPsvJZxwYEcEBHUZd4Wj');
