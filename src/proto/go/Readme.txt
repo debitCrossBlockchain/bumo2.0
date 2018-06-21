@@ -1,0 +1,1 @@
+Copy the goout to the $GOPATH
