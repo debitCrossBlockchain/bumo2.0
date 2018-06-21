@@ -20,6 +20,10 @@ LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_TAGS := samples
 
+$(info $(shell (cp $(TOP_PATH)/pcre_chartables.c.dist $(TOP_PATH)/pcre_chartables.c)))
+$(info $(shell (cp $(TOP_PATH)/pcre.h.generic $(TOP_PATH)/pcre.h)))
+$(info $(shell (cp $(TOP_PATH)/config.h.generic $(TOP_PATH)/config.h)))
+
 intermediates := $(call local-intermediates-dir)
 
 LOCAL_SRC_FILES :=  \
@@ -39,27 +43,12 @@ LOCAL_SRC_FILES :=  \
   $(TOP_PATH)/pcre_ucd.c \
   $(TOP_PATH)/pcre_valid_utf8.c \
   $(TOP_PATH)/pcre_version.c \
-  $(TOP_PATH)/pcre_xclass.c 
+  $(TOP_PATH)/pcre_xclass.c \
+  $(TOP_PATH)/pcre_chartables.c
 
 LOCAL_COPY_HEADERS := pcre.h
 
 LOCAL_CFLAGS += -O3 -I. -DHAVE_CONFIG_H
-
-GEN := $(TOP_PATH)/pcre_chartables.c
-$(GEN): $(TOP_PATH)/pcre_chartables.c.dist
-	$(hide) cp $(TOP_PATH)/pcre_chartables.c.dist $@
-#LOCAL_GENERATED_SOURCES += $(GEN)
-LOCAL_SRC_FILES += $(TOP_PATH)/pcre_chartables.c
-
-GEN := $(TOP_PATH)/pcre.h
-$(GEN): $(TOP_PATH)/pcre.h.generic
-	$(hide) cp $(TOP_PATH)/pcre.h.generic $@
-LOCAL_GENERATED_SOURCES += $(GEN)
-
-GEN := $(TOP_PATH)/config.h
-$(GEN): $(TOP_PATH)/config.h.generic
-	$(hide) cp $(TOP_PATH)/config.h.generic $@
-LOCAL_GENERATED_SOURCES += $(GEN)
 
 #include $(BUILD_SHARED_LIBRARY)
 include $(BUILD_STATIC_LIBRARY)
