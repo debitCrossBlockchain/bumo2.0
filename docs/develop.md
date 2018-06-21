@@ -685,7 +685,7 @@ Data Format
 
 | Parameters       | Description                                                  |
 | :--------------- | ------------------------------------------------------------ |
-| transaction_blob | Serialization of a transaction in hexadecimal format. Please fill in the transaction contents referring to [`the definition of transactions`](#定义交易). |
+| transaction_blob | Serialization of a transaction in hexadecimal format. Please fill in the transaction contents referring to [`the definition of transactions`](#the-definition-of-transactions). |
 | sign_data        | Signature data in hexadecimal format. You can get this value by signing `transaction_blob`.         Note: Please **DO NOT** sign the `transaction_blob` before it is transferred into bytes stream. |
 | public_key       | Public key in hexadecimal format.                            |
 
@@ -980,7 +980,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 
     
 
-  - nonce: The value must be equal to the present nonce of source address + 1. It is designed to prevent **Replay Attack**. ( How to query the nonce of an account. Click [Querying Account](#Quering-account). If the nonce is NULL, it means the present nonce is “0”. 
+  - nonce: The value must be equal to the present nonce of source address + 1. It is designed to prevent **Replay Attack**. ( How to query the nonce of an account. Click [Querying Account](#quering-account). If the nonce is NULL, it means the present nonce is “0”. 
 
   
 
@@ -996,7 +996,7 @@ Evaluating transaction fee would not alter the account balance. Related sender a
 
   
 
-  - operations: Manipulation list. The tasks in this transaction. Click [Operation](#操作). 
+  - operations: Manipulation list. The tasks in this transaction. Click [Operation](#operation). 
 
     
 
@@ -2084,7 +2084,7 @@ Referenced Documents: [Smart Contract Rules](../src/web/jslint/ContractRules.md)
 #### Creating Election Contract Account
 Before you create an election contract account, you cannot complete the following operations. The new account should be global and without space repetition. 
 
-- Creating a [contract account](#创建账号), and the address of this contract should be `buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ`.  
+- Creating a [contract account](#contract-account), and the address of this contract should be `buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ`.  
 - Copying all the source codes from `src\ledger\validators_vote.js`as a section in parameter `payload` of the contract account.  
 
 example,
@@ -2117,7 +2117,7 @@ You can alter the following variables from the contract codes which is assigned 
 
 Any account with network nodes may apply as a validator candidate. This is done through transferring an amount of a pledger as deposit to the validator nodes account to formally apply. However, decision on successful application depends on votes from other validators.  
 
-- Appliers have to  transfer a pledger to election validator  nodes account (refer to [Transfer BU Asset](#转移BU资产)). The pledge can be taken back by [Forfeit the Pledge](##收回押金). 
+- Appliers have to  transfer a pledger to election validator  nodes account (refer to [Transfer BU Asset](#transfer-bu-asset)). The pledge can be taken back by [Forfeit the Pledge](##forfeit-the-pledge). 
 - Fill in the section { "method" : "pledgeCoin"} as the input of transferring coin. Remember to escape characters.
 
 example,
@@ -2132,13 +2132,13 @@ example,
   }
 ```
 
-Validators nodes will vote on the appliers (refer to [Vote on the Validator Nodes Appliers](#对验证节点候选人申请者投票)). If validator nodes vote for the Applier, they can become a formal candidate of validator nodes. 
+Validators nodes will vote on the appliers (refer to [Vote on the Validator Nodes Appliers](#vote-on-the-validator-nodes-appliers)). If validator nodes vote for the Applier, they can become a formal candidate of validator nodes. 
 
 It depends on the pledge amount for becoming a formal validator nodes. Suppose that the net needs 100 validator nodes (`validatorSettingSize`= 100),  the candidates whose pledge are among top 100 can become the formal validators. The pledge can be added as many times as they want (refer to Candidates of Validator Nodes)
 
 #### Voting on Validator Nodes Appliers
 
-If validator nodes vote for the Appliers, they can become formal candidates of validator nodes. The pledge can be taken back (refer to [Forfeit the Pledge](#Forfeit the Pledge) ) if the candidates would not vote through becoming formal validator nodes. 
+If validator nodes vote for the Appliers, they can become formal candidates of validator nodes. The pledge can be taken back (refer to [Forfeit the Pledge](#forfeit-the-pledge) ) if the candidates would not vote through becoming formal validator nodes. 
 
 - Transfer any number of asset (including 0) to election validator nodes contract account. 
 - Fill in the section { "method" : "voteForApplicant", "params" : { "address" : "applier's address" } }as the input of transferring asset or coin. Remember to escape characters. 
@@ -2615,12 +2615,12 @@ error list:
 | 102               | ERRCODE_ACCOUNT_DEST_EXIST             | The target account already exists                                                                 |
 | 103               | ERRCODE_ACCOUNT_NOT_EXIST              | Accounts do not exist***                                                                                  |
 | 104               | ERRCODE_ACCOUNT_ASSET_LOW_RESERVE      | Low reserve in the account                                                                           |
-| 105               | ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE | Amount of assets exceeds the limitation*** ( int64 )资产数量过大，超出了int64的范围                                                              |
-| 106               | ERRCODE_ACCOUNT_INIT_LOW_RESERVE       | Insufficient initial reserve for account creation***     创建账号初始化资金不足                                                                       |
+| 105               | ERRCODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE | Amount of assets exceeds the limitation*** ( int64 )                                                              |
+| 106               | ERRCODE_ACCOUNT_INIT_LOW_RESERVE       | Insufficient initial reserve for account creation***                                                                            |
 | 111               | ERRCODE_FEE_NOT_ENOUGH                 | Low transaction fee                                                                                    |
-| 114               | ERRCODE_OUT_OF_TXCACHE                 | TX buffer is full    TX 缓存队列已满                                                                              |
-| 120               | ERRCODE_WEIGHT_NOT_VALID               | Invalid weight 权重值不在有效范围内                                                                         |
-| 121               | ERRCODE_THRESHOLD_NOT_VALID            | Invalid threshold 门限值不在有效范围内                                                                         |
+| 114               | ERRCODE_OUT_OF_TXCACHE                 | TX buffer is full                                                                                |
+| 120               | ERRCODE_WEIGHT_NOT_VALID               | Invalid weight                                                                        |
+| 121               | ERRCODE_THRESHOLD_NOT_VALID            | Invalid threshold                                                                         |
 | 144               | ERRCODE_INVALID_DATAVERSION            | Invalid data version of metadata                                      |
 | 146               | ERRCODE_TX_SIZE_TOO_BIG                | TX exceeds upper limitation                                |
 | 151               | ERRCODE_CONTRACT_EXECUTE_FAIL          | Failure in contract execution                                                                                 |
