@@ -4,7 +4,7 @@
 //  of patent rights can be found in the PATENTS file in the same directory.
 //
 #pragma once
-#if !defined(IOS_CROSS_COMPILE)
+#if !defined(IOS_CROSS_COMPILE) && !defined(OS_ANDROID)
 // if we compile with Xcode, we don't run build_detect_vesion, so we don't
 // generate these variables
 // this variable tells us about the git revision
