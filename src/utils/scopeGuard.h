@@ -27,7 +27,8 @@ namespace bumo
                 dismissed_ = other.dismissed_;
                 other.Dismiss();
             }
-            ~ScopeGuardBase(){} //note: no virtual
+			//note: no virtual
+            ~ScopeGuardBase(){}
 
             virtual void Execute() = 0;
 
