@@ -28,14 +28,14 @@ int main(int argc, char * argv[]) {
         operation.createAccount = createAccount;
         
         [transaction.operationsArray addObject: operation];
-        NSLog(@"before: %lld--%lld--%@", transaction.feeLimit, transaction.nonce, transaction.sourceAddress);
+        NSLog(@"before: %@", transaction);
         
         // 序列化操作
         NSData *serialData = transaction.data;
         
         // 反序列化操作
         Transaction *tran = [Transaction parseFromData:serialData error:NULL];
-        NSLog(@"after: %lld--%lld--%@", tran.feeLimit, tran.nonce, tran.sourceAddress);
+        NSLog(@"after: %@", tran);
         
         
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
