@@ -4102,7 +4102,7 @@ void DBImpl::EraseThreadStatusDbInfo() const {
 //
 // A global method that can dump out the build version
 void DumpRocksDBBuildVersion(Logger * log) {
-#if !defined(IOS_CROSS_COMPILE)
+#if !defined(IOS_CROSS_COMPILE) && !defined(OS_ANDROID)
   // if we compile with Xcode, we don't run build_detect_vesion, so we don't
   // generate util/build_version.cc
   Log(InfoLogLevel::INFO_LEVEL, log,
