@@ -6,14 +6,6 @@
 #include <asio.hpp>
 #include <algorithm>
 
-/*
-#include "ledger.h"
-#include "utils.h"
-#include "serializer.h"
-#include "rocksdb_imp.h"
-#include "sqlite_imp.h"
-*/
-
 #include <utils/headers.h>
 #include <overlay/peer.h>
 #include <common/private_key.h>
