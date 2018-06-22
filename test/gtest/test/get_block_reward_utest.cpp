@@ -2,14 +2,14 @@
 #include "common/general.h"
 
 /*
-总量5亿，每年递减 1/4 
-第一周期总量是： 1.25 亿， 125,000,000 BU COIN
-十秒一个块，一年 3153600块，五年 3153600 * 5 = 15768000块
+total reward is five hundred million, decreasing 1/4 each year.
+the reward for first periord: 1.25 hundred million， 125,000,000 BU COIN
+a block per 10 seconds, 3153600 blocks per year, five years: 3153600 * 5 = 15768000 block
 
-每块的奖励：125,000,000  / 15768000 = 7.927447995941147
+reward per block: 125,000,000  / 15768000 = 7.927447995941147
 
-反推第一个周期的总量过程，
-每个块奖励8个币，8 * 3153600 * 5  = 126144000
+the process of inferencing for the reward of first periord:
+8 bu per block, 8 * 3153600 * 5  = 126144000
 */
 class decrement_value_utest : public testing::Test
 {
