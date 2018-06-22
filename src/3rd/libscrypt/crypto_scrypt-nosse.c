@@ -41,6 +41,13 @@
 
 #include "libscrypt.h"
 
+#ifdef ANDROID
+#if ! defined SIZE_MAX
+#define SIZE_MAX (4294967295U)
+#endif
+#endif
+
+
 static void blkcpy(void *, void *, size_t);
 static void blkxor(void *, void *, size_t);
 static void salsa20_8(uint32_t[16]);
