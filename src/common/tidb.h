@@ -75,18 +75,7 @@ namespace bumo{
 		int64_t mysql_exec(const char *sql, Call_back  call_back = NULL, void *param = NULL);
 
 		//desc£ºget the last mysql error msg
-		std::string get_err_str()
-		{
-			char err_code[256];
-#ifdef WIN32
-			_snprintf(err_code, 256, "error_code:%d,error_string:%s\n", mysql_errno(m_pMysql), mysql_error(m_pMysql));
-			err_code[255] = '\0';
-#else
-			snprintf(err_code, 256,"error_code:%d,error_string:%s\n", mysql_errno(m_pMysql), mysql_error(m_pMysql));
-#endif
-			std::string ret_str = err_code;
-			return ret_str;
-		}
+		std::string get_err_str();
 
 		//desc£ºswitch database
 		//input£ºdb_name			database name
@@ -100,6 +89,10 @@ namespace bumo{
 		//output£ºsv_str		saved string for escaped str, at leaset (2*iLen+1) space have been allocate
 		//return£ºescaped string length.
 		long format_blob_string(char *sv_str, const char *orgStr, int iLen);
+
+		int32_t do_commit();
+
+		int32_t roll_back();
 
 
 		bool init_stmt(const char* stmt_sql, int iPos);
@@ -149,7 +142,7 @@ namespace bumo{
 	
 	class tidb /*: public KeyValueDb*/ {
 
-#define STMT_NUM_REPLACE	10
+
 
 	public:
 		tidb(const std::string host_ip, const std::string user_name, const std::string pwd,int32_t port );

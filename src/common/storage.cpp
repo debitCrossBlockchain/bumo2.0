@@ -119,7 +119,10 @@ namespace bumo {
 
 		leveldb::WriteOptions opt;
 		opt.sync = true;
+		int64_t time_start = utils::Timestamp::HighResolution();
 		leveldb::Status status = db_->Write(opt, &write_batch.m_leveldb_batch);
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
+		LOG_INFO("RocksDbDriver::WriteBatch use time(" FMT_I64 "ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
 		if (!status.ok()) {
 			utils::MutexGuard guard(mutex_);
 			error_desc_ = status.ToString();
@@ -171,7 +174,10 @@ namespace bumo {
 
 	int32_t RocksDbDriver::Get(const std::string &key, std::string &value) {
 		assert(db_ != NULL);
+		int64_t time_start = utils::Timestamp::HighResolution();
 		rocksdb::Status status = db_->Get(rocksdb::ReadOptions(), key, &value);
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
+		LOG_INFO("RocksDbDriver::get_one use time( " FMT_I64 " ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
 		if (status.ok()) {
 			return 1;
 		}
@@ -189,7 +195,10 @@ namespace bumo {
 		assert(db_ != NULL);
 		rocksdb::WriteOptions opt;
 		opt.sync = true;
+		int64_t time_start = utils::Timestamp::HighResolution();
 		rocksdb::Status status = db_->Put(opt, key, value);
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
+		LOG_INFO("RocksDbDriver::Put_onekey use time( " FMT_I64 " ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
 		if (!status.ok()) {
 			utils::MutexGuard guard(mutex_);
 			error_desc_ = status.ToString();
@@ -213,7 +222,10 @@ namespace bumo {
 
 		rocksdb::WriteOptions opt;
 		opt.sync = true;
+		int64_t time_start = utils::Timestamp::HighResolution();
 		rocksdb::Status status = db_->Write(opt, &write_batch.m_rocksdb_batch);
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
+		LOG_INFO("RocksDbDriver::WriteBatch use time(" FMT_I64 "ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
 		if (!status.ok()) {
 			utils::MutexGuard guard(mutex_);
 			error_desc_ = status.ToString();
