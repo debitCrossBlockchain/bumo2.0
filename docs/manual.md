@@ -72,6 +72,7 @@ make
 Executable program dir:bumo/bin
 
 ### MAC
+- Depending on MAC OS X 10.11.4 or later
 - Install the latest version of Xcode and Command Tools(8.0 version or later). You can get it from [Apple's website](https://developer.apple.com/download/more/) or [Apple's app store](https://itunes.apple.com/us/app/xcode/id497799835).
 - Install **brew**: Get more information [here](https://brew.sh/index.html)
 - Install dependencies with **brew**
