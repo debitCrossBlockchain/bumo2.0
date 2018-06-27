@@ -56,7 +56,7 @@ namespace bumo {
 		bool verifyCheckAuthority(const std::string& checkerAddr, const std::string& beCheckedAddr);
 		
 		// do full node check 
-		bool check();
+		void check();
 		bool checkResponse(protocol::WsMessage &msg);
 		bool OnCheck(protocol::WsMessage &msg);
 

@@ -38,7 +38,6 @@ namespace bumo {
 		lastCheckTime_ = utils::Timestamp::Now().timestamp();
 	}
 	
-	// update impeach info when someone impeached me
 	bool FullNode::updateImpeach(std::string& report_addr, int64_t ledger_seq) {
 		int64_t now = utils::Timestamp::Now().timestamp();
 		auto range = impeachInfo_.equal_range(report_addr);
@@ -49,6 +48,7 @@ namespace bumo {
 			}
 		}
 		impeachInfo_.insert(std::make_pair(report_addr, ledger_seq));
+        return ture;
 	}
 
 	bool FullNode::verifyAddressHash() {

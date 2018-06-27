@@ -127,7 +127,7 @@ namespace bumo {
 		return false;
 	}
 
-	bool FullNodeManager::check()
+	void FullNodeManager::check()
 	{
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
 
@@ -158,7 +158,7 @@ namespace bumo {
 			});
 		} while (false);
 		
-		return true;
+		return;
 	}
 
 	bool FullNodeManager::OnCheck(protocol::WsMessage &msg)
