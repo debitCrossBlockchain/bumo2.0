@@ -23,7 +23,7 @@
 
 namespace bumo {
 
-	std::string DBBatch::s_db_type = "KVDB";
+	//std::string DBBatch::s_db_type = "KVDB";
 
 
 	KeyValueDb::KeyValueDb() {}
@@ -256,12 +256,18 @@ namespace bumo {
 		ledger_db_ = NULL;
 		account_db_ = NULL;
 		check_interval_ = utils::MICRO_UNITS_PER_SEC;
+		db_type = "kvdb";
 	}
 
 	Storage::~Storage() {}
 
 	bool Storage::Initialize(const DbConfigure &db_config, bool bdropdb) {
-	
+		
+		db_type = db_config.db_type_;
+		//tidb initialize
+		if (TIDB == db_type)
+			return Initialize_Tidb(db_config,bdropdb);
+
 		do {
 			std::string strConnect = "";
 			std::string str_dbname = "";
@@ -381,7 +387,6 @@ namespace bumo {
 	}
 
 	bool Storage::Initialize_Tidb(const DbConfigure &db_config, bool bdropdb) {
-		DBBatch::s_db_type = TIDB;
 
 		do {
 			
@@ -427,6 +432,10 @@ namespace bumo {
 		return false;
 	}
 
+	std::string Storage::get_db_type()
+	{
+		return db_type;
+	}
 
 	bool  Storage::CloseDb() {
 		bool ret1 = true, ret2 = true, ret3 = true;
@@ -488,7 +497,7 @@ namespace bumo {
 
 	DBBatch::DBBatch()
 	{
-		if (TIDB == DBBatch::s_db_type)
+		if (TIDB == Storage::GetInstance()->get_db_type())
 			isTidb = true;
 		else
 			isTidb = false;

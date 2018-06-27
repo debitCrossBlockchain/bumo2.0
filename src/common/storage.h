@@ -211,6 +211,9 @@ namespace bumo {
 		KeyValueDb *ledger_db_;
 		KeyValueDb *account_db_;
 
+		//tidb?rocksdb/leveldb from conf file
+		std::string db_type;
+
 		bool CloseDb();
 		bool DescribeTable(const std::string &name, const std::string &sql_create_table);
 		bool ManualDescribeTables();
@@ -220,6 +223,7 @@ namespace bumo {
 		bool Initialize(const DbConfigure &db_config, bool bdropdb);
 		bool Initialize_Tidb(const DbConfigure &db_config, bool bdropdb);
 		bool Exit();
+		std::string get_db_type();
 
 		KeyValueDb *keyvalue_db();   //storage others
 		KeyValueDb *account_db();   //storage account tree

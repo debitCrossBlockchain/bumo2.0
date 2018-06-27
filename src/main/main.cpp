@@ -146,21 +146,11 @@ int main(int argc, char *argv[]){
 			config.db_configure_.account_db_path_.c_str(),
 			config.db_configure_.ledger_db_path_.c_str());
 
-		if (TIDB == config.db_configure_.db_type_)
-		{
-			if (!bumo::g_enable_ || !storage.Initialize_Tidb(config.db_configure_, arg.drop_db_)) {
-				LOG_ERROR("Initialize tidb failed");
-				break;
-			}
+		if (!bumo::g_enable_ || !storage.Initialize(config.db_configure_, arg.drop_db_)) {
+			LOG_ERROR("Initialize db failed");
+			break;
 		}
-		else
 		
-		{
-			if (!bumo::g_enable_ || !storage.Initialize(config.db_configure_, arg.drop_db_)) {
-				LOG_ERROR("Initialize db failed");
-				break;
-			}
-		}
 
 		object_exit.Push(std::bind(&bumo::Storage::Exit, &storage));
 		LOG_INFO("Initialize db successful");
