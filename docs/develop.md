@@ -21,7 +21,7 @@ English | [中文](develop_CN.md)
         - [Querying Block Header](#querying-block-header)
         - [Submitting Transaction](#submitting-transaction)
         - [Serializing Transaction](#serializing-transaction)
-        - [Debugging Smart Contract](#debugging-smart-contract)
+        - [Call Smart Contract](#call-smart-contract)
         - [Evaluating Transaction Fee](#evaluating-transaction-fee)
     - [Transaction Definition](#transaction-definition)
         - [Basic Structure of Transaction](#basic-structure-of-transactions)
@@ -786,7 +786,7 @@ return,
    }
 }
 ```
-### Debugging Smart Contract
+### Call Smart Contract
 In the smart contract module, we designed a sandbox for debugging the contract. You won't alter any real status of blockchain or smart contract in the debugging process. BUMO Blockchain offers `callContract`api to help developers debug the smart contract. The smart contract can be stored on the blockchain or uploaded from localhost. Calling `callContract`api won't send any transactions, so there is no transaction fee to pay.
 
 ```text
