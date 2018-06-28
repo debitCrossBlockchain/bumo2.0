@@ -29,9 +29,22 @@ function storeGlobalAttribute(){
     storageStore(globalAttributeKey(), value);
 }
 
+function powerOfBase10(exponent){
+    let i = 0;
+    let power = 1;
+
+    while(i < exponent){
+        power = power * 10;
+        i = i + 1;
+    }
+
+    return power;
+}
+
 function makeBalanceKey(address){
     return 'balance_' + address;
 }
+
 function makeAllowanceKey(owner, spender){
     return 'allow_' + owner + '_to_' + spender;
 }
@@ -193,7 +206,7 @@ function init(input_str){
     globalAttribute.name = input.params.name;
     globalAttribute.symbol = input.params.symbol;
     globalAttribute.decimals = input.params.decimals;
-    globalAttribute.totalSupply = int64Mul(input.params.totalSupply, 10 ** globalAttribute.decimals);
+    globalAttribute.totalSupply = int64Mul(input.params.totalSupply, powerOfBase10(globalAttribute.decimals));
     globalAttribute.contractOwner = input.params.contractOwner;
     globalAttribute.balance = globalAttribute.totalSupply;
 
