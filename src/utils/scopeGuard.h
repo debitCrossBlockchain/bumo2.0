@@ -109,7 +109,6 @@ namespace bumo
         return ObjScopeGuardParm1<OBJ, M_FUN, PARM>(obj, fun, parm);
     }
 
-
     template<class OBJ, typename M_FUN, typename PARM0, typename PARM1>
     class ObjScopeGuardParm2: public ScopeGuardBase
     {
