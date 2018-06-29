@@ -19,6 +19,8 @@ using namespace std;
 
 #define STMT_NUM	20
 
+#define REPLACE_BATCH_NUM	10
+
 namespace bumo{
 
 	typedef void(*Call_back)(MYSQL_ROW, int, unsigned long *,void *);
@@ -44,7 +46,7 @@ namespace bumo{
 	class MysqlDriver   {
 	private:
 		MYSQL * m_pMysql;
-		//0~9 = replace(10)¡£10=select
+		//0~9 = replace()¡£10~14=select
 		MYSQL_STMT *stmt[STMT_NUM];
 		
 	public:
@@ -99,10 +101,13 @@ namespace bumo{
 
 		int64_t stmt_exec(MYSQL_BIND *param, int stmt_series);
 
+
 	private:
 		int64_t do_sql(const char *sql, Call_back  call_back = NULL, void *param = NULL);
 
 		int64_t mysql_select(const char *sql, Call_back  call_back, void *param);
+
+		
 
 	};
 

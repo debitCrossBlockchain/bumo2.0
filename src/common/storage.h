@@ -55,7 +55,6 @@ namespace bumo {
 		DBBatch();
 		~DBBatch() {}
 
-		static std::string s_db_type;
 
 
 #ifdef WIN32
