@@ -154,8 +154,11 @@ bool utils::LogWriter::Write(
 			}
 		}
 	}
-
+#ifdef OS_ANDROID
+	fprintf(file_ptr_, "[%s - %s] <%08X> ", current_time, GetLogPrefix(logLevel).c_str(), utils::Thread::current_thread_id());
+#else
 	fprintf(file_ptr_, "[%s - %s] <%lX> ", current_time, GetLogPrefix(logLevel).c_str(), utils::Thread::current_thread_id());
+#endif
 	fprintf(file_ptr_, "%s(%d):", file, lineNum);
 	//fprintf(file_ptr_, "%s(%s:%d):", file, funcName, lineNum);
 	// under linux, va_list can't been reused

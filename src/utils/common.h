@@ -15,9 +15,26 @@
 
 #ifndef UTILS_COMMON_H_
 #define UTILS_COMMON_H_
-
+#include <dirent.h>
+#ifndef OS_ANDROID
 #include <stdio.h>
 #include <stdlib.h>
+#include <algorithm>
+#ifndef MIN
+#define MIN(a,b) ((a)<(b)) ? (a) : (b)
+#endif
+#ifndef MAX
+#define MAX(a,b) ((a)>(b)) ? (a) : (b)
+#endif
+#else
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstdio>
+#include <cstdlib>
+#include<android_ifaddrs/ifaddrs.h>
+#endif
+
 #include <stdint.h>
 #include <memory>
 #include <functional>
@@ -34,7 +51,7 @@
 #include <queue>
 #include <map>
 #include <set>
-#include <algorithm>
+
 
 
 #ifndef NDEBUG
@@ -80,7 +97,6 @@ typedef CRITICAL_SECTION pthread_mutex_t;
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <ifaddrs.h>
-#include <dirent.h>
 
 #define ERROR_SUCCESS            0
 #define ERROR_ALREADY_EXISTS     EEXIST
@@ -148,12 +164,7 @@ namespace utils {
         p = NULL;             \
 	    }
 
-#ifndef MIN
-#define MIN(a,b) ((a)<(b)) ? (a) : (b)
-#endif
-#ifndef MAX
-#define MAX(a,b) ((a)>(b)) ? (a) : (b)
-#endif
+
 
 #define CHECK_ERROR_RET(func, ecode, ret) \
 	if( func )\
