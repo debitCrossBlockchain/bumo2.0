@@ -67,6 +67,8 @@ namespace utils {
 
 	bool Daemon::Exit() {
 #ifdef WIN32
+
+#elif defined OS_ANDROID
 #else
 		//把共享内存从当前进程中分离
 		if (shmdt(shm) == -1) {
