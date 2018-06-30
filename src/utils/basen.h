@@ -24,8 +24,9 @@
 **/
 #ifndef BASEN_HPP
 #define BASEN_HPP
-
+#ifndef OS_ANDROID
 #include <algorithm>
+#endif
 #include <cctype>
 #include <cassert>
 #include <cstring>

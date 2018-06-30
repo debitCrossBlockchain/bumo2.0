@@ -22,6 +22,8 @@
 
 #ifdef OS_LINUX
 #include <sys/sysinfo.h>
+#elif defined OS_ANDROID
+#include <sys/sysinfo.h>
 #elif defined OS_MAC
 #include <sys/sysctl.h>
 #endif
@@ -68,6 +70,9 @@ namespace utils {
 #elif defined OS_LINUX
 #define LOCK_CAS(mem, with, cmp) __sync_val_compare_and_swap(mem, cmp, with)
 #define LOCK_YIELD()             pthread_yield();
+#elif defined OS_ANDROID
+#define LOCK_CAS(mem, with, cmp) __sync_val_compare_and_swap(mem, cmp, with)
+#define LOCK_YIELD()             sched_yield();
 #elif defined OS_MAC
 #define LOCK_CAS(mem, with, cmp) __sync_val_compare_and_swap(mem, cmp, with)
 #define LOCK_YIELD()             pthread_yield_np();
@@ -78,6 +83,11 @@ namespace utils {
 		return InterlockedIncrement(value);
 	}
 #elif defined OS_LINUX
+	inline int32_t AtomicInc(volatile int32_t *value) {
+		__sync_fetch_and_add(value, 1);
+		return *value;
+	}
+#elif defined OS_ANDROID
 	inline int32_t AtomicInc(volatile int32_t *value) {
 		__sync_fetch_and_add(value, 1);
 		return *value;
@@ -98,6 +108,11 @@ namespace utils {
 		__sync_fetch_and_add(value, 1);
 		return *value;
 	}
+#elif defined OS_ANDROID
+    inline int64_t AtomicInc(volatile int64_t *value) {
+		__sync_fetch_and_add(value, 1);
+		return *value;
+	}
 #elif defined OS_MAC
 	inline int64_t AtomicInc(volatile int64_t *value) {
 		__sync_fetch_and_add(value, 1);
@@ -114,6 +129,11 @@ namespace utils {
 		__sync_fetch_and_sub(value, 1);
 		return *value;
 	}
+#elif defined OS_ANDROID
+    inline int32_t AtomicDec(volatile int32_t *value) {
+		__sync_fetch_and_sub(value, 1);
+		return *value;
+	}
 #elif defined OS_MAC
 	inline int32_t AtomicDec(volatile long *value) {
 		__sync_fetch_and_sub(value, 1);
@@ -126,6 +146,11 @@ namespace utils {
 		return InterlockedDecrement64(value);
 	}
 #elif defined OS_LINUX
+	inline int64_t AtomicDec(volatile int64_t *value) {
+		__sync_fetch_and_sub(value, 1);
+		return *value;
+	}
+#elif defined OS_ANDROID
 	inline int64_t AtomicDec(volatile int64_t *value) {
 		__sync_fetch_and_sub(value, 1);
 		return *value;

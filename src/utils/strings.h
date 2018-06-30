@@ -15,10 +15,23 @@
 
 #ifndef UTILS_STRING_UTIL_H_
 #define UTILS_STRING_UTIL_H_
-
+#ifndef OS_ANDROID
 #include <string.h>
 #include "common.h"
 #include "stdio.h"
+#else 
+#include<sys/types.h>
+#include <string>
+#include <sstream>
+#include <list>
+#include "common.h"
+#include "stdlibs.h"
+#include <vector> 
+#include<map>
+#include <cmath>    // ensure std::abs(float) is declared
+using namespace std;
+using std::abs;
+#endif
 
 #define IS_BLANK(c) ((c) == ' ' || (c) == '\t')  
 #define IS_DIGIT(c) ((c) >= '0' && (c) <= '9')  
@@ -26,7 +39,38 @@
 #define IS_HEX_DIGIT(c) (((c) >= 'A' && (c) <= 'F') || ((c) >= 'a' && (c) <= 'f'))  
 
 namespace utils {
+#ifdef OS_ANDROID
+template<class InputIt, class UnaryPredicate>
+InputIt find_if_(InputIt first, InputIt last, UnaryPredicate p)
+{
+    for (; first != last; ++first) {
+		        if (p(*first)) {
+				     return first;
+							    }
+									}
+						 return last;
+}
 
+template <class BidirectionalIterator>
+void reversePlus (BidirectionalIterator first, BidirectionalIterator last)
+  {
+    while ((first!=last)&&(first!=--last)) {
+	    std::iter_swap (first,last);
+		    ++first;
+			  }
+  }
+
+template<class ForwardIt, class UnaryPredicate>
+ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
+{
+    first = find_if_(first, last, p);
+	    if (first != last)
+		        for(ForwardIt i = first; ++i != last; )
+				            if (!p(*i))
+							 *first++ = std::move(*i);
+		 return first;
+}
+#endif
 	typedef std::vector<std::string> StringVector;
 	typedef std::list<std::string> StringList;
 	typedef std::map<std::string, std::string> StringMap;
@@ -101,7 +145,12 @@ namespace utils {
 			if (0 == str.length()) {
 				return 0;
 			}
+#ifndef OS_ANDROID
 			return atoi(str.c_str());
+#else
+	         return Stdlib::atoi(str.c_str());
+#endif
+
 		}
 		
 		/// @brief 转换成unsigned int
@@ -134,6 +183,8 @@ namespace utils {
 			int64_t v = 0;
 #ifdef WIN32
 			v = _atoi64(str.c_str());
+#elif defined 	OS_ANDROID
+            v = Stdlib::atoll(str.c_str());
 #else
 			v = atoll(str.c_str());
 #endif
@@ -168,7 +219,11 @@ namespace utils {
 			if (0 == str.length()) {
 				return 0L;
 			} 
+#ifndef OS_ANDROID
 			return atol(str.c_str());
+#else
+            return Stdlib::atol(str.c_str());
+#endif 
 		}
 
 		/// @brief 转换成float
@@ -176,7 +231,11 @@ namespace utils {
 			if (0 == str.length()) {
 				return 0.0F;
 			}
+#ifndef OS_ANDROID
 			return static_cast<float>(atof(str.c_str()));
+#else
+            return static_cast<float>(Stdlib::atof(str.c_str()));
+#endif
 		}
 
 		/// @brief 转换成double
@@ -184,7 +243,12 @@ namespace utils {
 			if (0 == str.length()) {
 				return 0.0;
 			}
+#ifndef OS_ANDROID
 			return atof(str.c_str());
+#else
+            return Stdlib::atof(str.c_str());
+#endif
+
 		}
 
 		/// @brief 转换成bool
@@ -344,7 +408,11 @@ namespace utils {
 					free(buf);
 					nTimes = nTimes * 2;
 				}
+#ifndef OS_ANDROID
 				else abort();
+#else
+                else Stdlib::abort();
+#endif				
 			}
 			return str;
 		}
@@ -401,7 +469,11 @@ namespace utils {
 					nTimes = nTimes * 2;
 					free(buf);
 				}
+#ifndef OS_ANDROID
 				else abort();
+#else
+                else Stdlib::abort();
+#endif
 			}
 
 			return str;
@@ -418,7 +490,12 @@ namespace utils {
 
 				char *buf = (char *)malloc(nMalloc);
 				if (!buf)
+#ifndef OS_ANDROID
 					abort();
+#else
+                    Stdlib::abort();
+#endif
+					 
 
 				va_start(ap, format);
 				int nCopy = vsnprintf(buf, nMalloc, format, ap);
@@ -737,14 +814,21 @@ namespace utils {
 			}
 
 			struct tm nTimeValue = { 0 };
-
+#ifndef OS_ANDROID
 			nTimeValue.tm_year = atoi(nValues[0].c_str()) - 1900;
 			nTimeValue.tm_mon = atoi(nValues[1].c_str()) - 1;
 			nTimeValue.tm_mday = atoi(nValues[2].c_str());
 			nTimeValue.tm_hour = atoi(nValues[3].c_str());
 			nTimeValue.tm_min = atoi(nValues[4].c_str());
 			nTimeValue.tm_sec = atoi(nValues[5].c_str());
-
+#else
+            nTimeValue.tm_year = Stdlib::atoi(nValues[0].c_str()) - 1900;
+			nTimeValue.tm_mon = Stdlib::atoi(nValues[1].c_str()) - 1;
+			nTimeValue.tm_mday = Stdlib::atoi(nValues[2].c_str());
+			nTimeValue.tm_hour = Stdlib::atoi(nValues[3].c_str());
+			nTimeValue.tm_min = Stdlib::atoi(nValues[4].c_str());
+			nTimeValue.tm_sec = Stdlib::atoi(nValues[5].c_str());
+#endif
 			time_t nLocalTimestamp = mktime(&nTimeValue);
 
 			return nLocalTimestamp;
@@ -775,7 +859,11 @@ namespace utils {
 					result_decimal.push_back(result[rev_index]);
 				}
 			}
+#ifndef OS_ANDROID
 			std::reverse(result_decimal.begin(), result_decimal.end());
+#else
+            reversePlus(result_decimal.begin(), result_decimal.end());
+#endif
 			return result_decimal;
 		}
 
@@ -974,7 +1062,9 @@ namespace utils {
 			if (l.size() != r.size() || r.size() != x.size()) {
 				return false;
 			}
-
+#ifdef OS_ANDROID
+using std::string;
+#endif
 			std::string v1, v2;
 			v1.resize(l.size(), 0);
 			v2.resize(l.size(), 0);

@@ -15,7 +15,9 @@
 
 #ifndef CRYPTO_H
 #define CRYPTO_H
-
+#ifndef OS_ANDROID
+#include<sys/types.h>
+#endif
 #include <vector>
 #include <string>
 

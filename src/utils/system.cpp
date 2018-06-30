@@ -446,7 +446,11 @@ namespace utils{
 			int rc = pclose(p);
 			if (rc == -1)  break;
 			cpu_id.assign(result_buf);
+#ifndef OS_ANDROID
 			cpu_id.erase(std::remove_if(cpu_id.begin(), cpu_id.end(), isspace), cpu_id.end()); // delete space
+#else
+	//cpu_id.erase(_remove_if_(cpu_id.begin(), cpu_id.end(),isspace, cpu_id.end()); // delete space
+#endif
 			cpu_id.erase(0, 3); // delete ID:
 			bret = true;
 		} while (false);
@@ -740,6 +744,7 @@ namespace utils{
 			}
 			break;
 		}
+#elif defined OS_ANDROID
 #else
 		struct utsname unix_name;
 

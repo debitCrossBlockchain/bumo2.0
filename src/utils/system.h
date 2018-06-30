@@ -41,6 +41,14 @@
 #include <sys/statfs.h>
 #include <sys/utsname.h>
 #include <shadow.h>
+#elif defined OS_ANDROID
+#include <cstring>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <sys/statvfs.h>
+#include <sys/statfs.h>
+#include <sys/utsname.h>
 #elif defined OS_MAC
 #include <cstring>
 #include <algorithm>

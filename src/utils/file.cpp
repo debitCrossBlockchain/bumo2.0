@@ -29,6 +29,22 @@
 #include <libproc.h>
 #endif
 
+#ifdef OS_ANDROID
+#include <unistd.h>
+#include <sys/file.h>
+#define F_LOCK   LOCK_EX  
+#define F_TLOCK  LOCK_EX | LOCK_NB
+#define F_ULOCK LOCK_UN
+inline int lockf(int fd, int cmd, off_t ignored_len) {
+	return flock(fd, cmd);
+}
+#endif
+
+
+#ifndef MIN
+#define MIN(a,b) ((a)<(b)) ? (a) : (b)
+#endif
+
 #ifdef WIN32
 const char *utils::File::PATH_SEPARATOR = "\\";
 const char  utils::File::PATH_CHAR = '\\';
@@ -152,6 +168,27 @@ bool utils::File::LockRange(uint64_t offset, uint64_t size, bool try_lock /* = f
 	nOverlapped.OffsetHigh = (DWORD)((offset >> 32) & utils::LOW32_BITS_MASK);
 
 	result = (::LockFileEx((HANDLE)_get_osfhandle(file_no), dwFlags, 0, dwSizeLow, dwSizeHigh, &nOverlapped) == TRUE);
+#elif defined OS_ANDROID
+
+
+	uint64_t nOldPosition = GetPosition();
+	if (nOldPosition != offset && !Seek(offset, File::FILE_S_BEGIN)) {
+		return false;
+	}
+
+	int nFlags = try_lock ? F_TLOCK : F_LOCK;
+	off_t nUnlockSize = (utils::LOW32_BITS_MASK == size) ? 0 : (off_t)size;
+	result = (lockf(file_no, nFlags, nUnlockSize) == 0);
+
+	if (nOldPosition != offset && !Seek(nOldPosition, File::FILE_S_BEGIN)) {
+		uint32_t nErrorCode = utils::error_code();
+
+		// unlock
+		//result = false;
+		result = (lockf(file_no, F_ULOCK, nUnlockSize) == 0);
+
+		utils::set_error_code(nErrorCode);
+	}
 #else
 
 
