@@ -4,7 +4,9 @@
 #define INTERNAL_SUPPRESS_PROTOBUF_FIELD_DEPRECATION
 #include "common.pb.h"
 
+#ifndef OS_ANDROID
 #include <algorithm>
+#endif
 
 #include <google/protobuf/stubs/common.h>
 #include <google/protobuf/stubs/port.h>
