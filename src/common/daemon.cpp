@@ -33,6 +33,7 @@ namespace utils {
 		bumo::TimerNotify::RegisterModule(this);
 #ifdef WIN32
 
+#elif defined OS_ANDROID
 #else
 		//ª•≥‚À¯≥ı ºªØ
 		int fd;
