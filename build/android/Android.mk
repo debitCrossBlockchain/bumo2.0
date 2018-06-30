@@ -26,7 +26,6 @@ include $(CLEAR_VARS)
 LOCAL_ARM_MODE := arm
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_TAGS := optional
-NDK_TOOLCHAIN_VERSION := clang
 
 
 LOCAL_SRC_MAIN_FILES := \
@@ -117,7 +116,8 @@ LOCAL_SRC_UTILS_FILES := \
 			$(SRC_PATH)/src/utils/exprparser.cpp\
 			$(SRC_PATH)/src/utils/sm3.cpp\
 			$(SRC_PATH)/src/utils/ecc_sm2.cpp\
-			$(SRC_PATH)/src/utils/random.cpp
+			$(SRC_PATH)/src/utils/random.cpp\
+			$(SRC_PATH)/src/utils/stdlibs.cpp
 
 			
 LOCAL_SRC_FILES := \
