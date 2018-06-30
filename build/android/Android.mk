@@ -20,6 +20,41 @@ LOCAL_MODULE:=libssl
 LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libssl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libjson
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/jsoncpp/android/obj/local/armeabi-v7a/libjson.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libbz2
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/bzip2-1.0.6/android/obj/local/armeabi-v7a/libbz2.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libzlib
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/zlib-1.2.8/android/obj/local/armeabi-v7a/libzlib.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libscrypt
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/libscrypt/android/obj/local/armeabi-v7a/libscrypt.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libpcre
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/pcre-8.39/android/obj/local/armeabi-v7a/libpcre.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libprotobuf
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/protobuf/android/obj/local/armeabi-v7a/libprotobuf.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=librocksdb
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/rocksdb/android/obj/local/armeabi-v7a/librocksdb.a
+include $(PREBUILT_STATIC_LIBRARY)
+
 
 include $(CLEAR_VARS)
 
@@ -160,7 +195,7 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/libscrypt/ \
     $(SRC_PATH)/src/3rd/basic/include/v8/ \
 
-LOCAL_STATIC_LIBRARIES:=libcurl libcrypto libssl
+LOCAL_STATIC_LIBRARIES:=libcurl libcrypto libssl libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb
 
 LOCAL_LDLIBS += -llog -landroid
 
