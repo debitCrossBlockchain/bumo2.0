@@ -3,7 +3,12 @@
 #ifndef _CRYPTO_SCRYPT_H_
 #define _CRYPTO_SCRYPT_H_
 
+#ifdef OS_ANDROID
+#include <cstdlib>
+#else
 #include <stdlib.h>
+#endif
+
 #include <stdint.h>
 
 #ifdef __cplusplus

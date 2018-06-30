@@ -19,7 +19,9 @@
 
 #if !defined(ASIO_NO_IOSTREAM)
 
+#ifndef OS_ANDROID
 #include <algorithm>
+#endif
 #include <cstring>
 #include <stdexcept>
 #include <streambuf>

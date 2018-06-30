@@ -87,7 +87,11 @@ don't change existing definitions of PCRE_EXP_DECL and PCRECPP_EXP_DECL. */
 /* Have to include stdlib.h in order to ensure that size_t is defined;
 it is needed here for malloc. */
 
+#ifdef OS_ANDROID
+#include <cstdlib>
+#else
 #include <stdlib.h>
+#endif
 
 /* Allow for C++ users */
 

@@ -49,7 +49,9 @@ namespace grpc {
 
 typedef GRPC_CUSTOM_STRING string;
 
+#ifndef OS_ANDROID
 using std::to_string;
+#endif
 
 }  // namespace grpc
 

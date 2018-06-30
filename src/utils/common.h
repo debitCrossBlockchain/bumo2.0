@@ -22,6 +22,7 @@
 #else
 #include <stdio.h>
 #include <stdlib.h>
+#include <algorithm>
 #endif
 
 #include <stdint.h>
@@ -39,7 +40,7 @@
 #include <queue>
 #include <map>
 #include <set>
-//#include <algorithm>
+
 
 
 #ifndef NDEBUG
