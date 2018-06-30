@@ -115,8 +115,13 @@
 # include <openssl/e_os2.h>
 
 # ifndef OPENSSL_NO_FP_API
+#ifdef OS_ANDROID
+#  include <cstdio>
+#  include <cstdlib>
+#else
 #  include <stdio.h>
 #  include <stdlib.h>
+#endif
 # endif
 
 # include <openssl/ossl_typ.h>

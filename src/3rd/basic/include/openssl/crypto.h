@@ -117,7 +117,11 @@
 #ifndef HEADER_CRYPTO_H
 # define HEADER_CRYPTO_H
 
+#ifdef OS_ANDROID
+# include <cstdlib>
+#else
 # include <stdlib.h>
+#endif
 
 # include <openssl/e_os2.h>
 
