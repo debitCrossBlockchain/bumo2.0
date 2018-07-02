@@ -417,7 +417,7 @@ server::handle_request(const request& req, reply& rep)
         rep.status = reply::ok;
         rep.headers.resize(3);
         rep.headers[0].name = "Content-Length";
-        rep.headers[0].value = std::to_string(rep.content.size());
+        rep.headers[0].value = InternalToString(rep.content.size());
         rep.headers[1].name = "Content-Type";
 		rep.headers[1].value = "application/json";
 		rep.headers[2].name = "Connection";
@@ -520,7 +520,7 @@ server::handle_request(const request& req, reply& rep)
 				rep.status = reply::ok;
 				rep.headers.resize(3);
 				rep.headers[0].name = "Content-Length";
-				rep.headers[0].value = std::to_string(rep.content.size());
+				rep.headers[0].value = InternalToString(rep.content.size());
 				rep.headers[1].name = "Content-Type";
 				rep.headers[1].value = "text/html";
 				rep.headers[2].name = "Connection";
@@ -572,7 +572,7 @@ server::handle_request(const request& req, reply& rep)
 			rep.status = reply::ok;
 			rep.headers.resize(4);
 			rep.headers[0].name = "Content-Length";
-			rep.headers[0].value = std::to_string(rep.content.size());
+			rep.headers[0].value = InternalToString(rep.content.size());
 			rep.headers[1].name = "Content-Type";
 			rep.headers[1].value = strContentType;
 			rep.headers[2].name = "Content-Encoding";
