@@ -11,13 +11,13 @@ LOCAL_SRC_FILES:=/bumo_3rd/curl/lib/libcurl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE:=libcrypto
-LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libcrypto.a
+LOCAL_MODULE:=libssl
+LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libssl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE:=libssl
-LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libssl.a
+LOCAL_MODULE:=libcrypto
+LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libcrypto.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
@@ -195,7 +195,7 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/libscrypt/ \
     $(SRC_PATH)/src/3rd/basic/include/v8/ \
 
-LOCAL_STATIC_LIBRARIES:=libcurl libcrypto libssl libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb
+LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb
 
 LOCAL_LDLIBS += -llog -landroid
 
@@ -218,7 +218,7 @@ LOCAL_LDFLAGS += -pie -fPIE
 
 
 LOCAL_CFLAGS := -fexpensive-optimizations -fexceptions -pthread -DHAVE_NEON=1 -mfpu=neon -mfloat-abi=softfp -flax-vector-conversions \
- -fPIC -D__STDC_CONSTANT_MACROS -Wno-sign-compare -Wno-switch -std=c++11 -std=c++0x
+ -fPIC -D__STDC_CONSTANT_MACROS -Wno-sign-compare -Wno-switch -std=c++11 -std=c++0x 
 
 LOCAL_MODULE:= bumo
 
