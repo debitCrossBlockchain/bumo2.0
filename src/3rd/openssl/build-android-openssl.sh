@@ -231,3 +231,12 @@ if [ ! -z "$VERBOSE" ] && [ "$VERBOSE" != "0" ]; then
   echo "CROSS_COMPILE: $CROSS_COMPILE"
   echo "ANDROID_DEV: $ANDROID_DEV"
 fi
+
+make clean
+perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
+./config no-shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=/bumo_3rd/openssl/$ANDROID_API --prefix=/bumo_3rd/openssl/
+
+make depend
+make all -j8
+sudo -E make install CC=$ANDROID_TOOLCHAIN/arm-linux-androideabi-gcc RANLIB=$ANDROID_TOOLCHAIN/arm-linux-androideabi-ranlib
+
