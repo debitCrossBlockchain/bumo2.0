@@ -285,6 +285,7 @@ namespace bumo {
 			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
 			return ret;
 		}
+		return true;
 	}
 
 	void LedgerContext::Cancel() {

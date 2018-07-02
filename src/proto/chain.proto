@@ -12,6 +12,8 @@ message Account{
 	bytes assets_hash = 5;    //assets_hash = merkelhash(assets)
 	Contract contract = 6;
 	int64 balance = 7;
+	string support_who = 8;
+	int64 self_popularity = 9;
 }
 
 message AssetKey{

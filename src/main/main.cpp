@@ -23,6 +23,7 @@
 #include <ledger/ledger_manager.h>
 #include <consensus/consensus_manager.h>
 #include <glue/glue_manager.h>
+#include <glue/fullnode_manager.h>
 #include <api/web_server.h>
 #include <api/websocket_server.h>
 #include <api/console.h>
@@ -80,6 +81,7 @@ int main(int argc, char *argv[]){
 	bumo::WebServer::InitInstance();
 	bumo::MonitorManager::InitInstance();
 	bumo::ContractManager::InitInstance();
+	bumo::FullNodeManager::InitInstance();
 
 	bumo::Argument arg;
 	if (arg.Parse(argc, argv)){
@@ -197,6 +199,11 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::ConsensusManager::Exit, &consensus_manager));
 		LOG_INFO("Initialize consensus manager successful");
 
+		bumo::FullNodeManager &fullnodemgr = bumo::FullNodeManager::Instance();
+		if (!bumo::g_enable_ || !fullnodemgr.Initialize()) {
+			LOG_ERROR("Initialize full node manager failed");
+			break;
+		}
 		bumo::LedgerManager &ledgermanger = bumo::LedgerManager::Instance();
 		if (!bumo::g_enable_ || !ledgermanger.Initialize()) {
 			LOG_ERROR("Initialize ledger manager failed");
@@ -276,6 +283,7 @@ int main(int argc, char *argv[]){
 	bumo::SlowTimer::ExitInstance();
 	bumo::GlueManager::ExitInstance();
 	bumo::LedgerManager::ExitInstance();
+	bumo::FullNodeManager::ExitInstance();
 	bumo::PeerManager::ExitInstance();
 	bumo::WebSocketServer::ExitInstance();
 	bumo::WebServer::ExitInstance();

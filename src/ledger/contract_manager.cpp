@@ -209,6 +209,7 @@ namespace bumo{
 		js_func_read_["getBlockHash"] = V8Contract::CallBackGetBlockHash;
 		js_func_read_["contractQuery"] = V8Contract::CallBackContractQuery;
 		js_func_read_["getValidators"] = V8Contract::CallBackGetValidators;
+		js_func_read_["getFullNodes"] = V8Contract::CallBackGetFullNodes;
 		js_func_read_[General::CHECK_TIME_FUNCTION] = V8Contract::InternalCheckTime;
 		js_func_read_["stoI64Check"] = V8Contract::CallBackStoI64Check;
 		js_func_read_["int64Add"] = V8Contract::CallBackInt64Add;
@@ -227,6 +228,7 @@ namespace bumo{
 		//js_func_write_["doTransaction"] = V8Contract::CallBackDoTransaction;
 		js_func_write_["configFee"] = V8Contract::CallBackConfigFee;
 		js_func_write_["setValidators"] = V8Contract::CallBackSetValidators;
+		js_func_write_["setFullNodes"] = V8Contract::CallBackSetFullNodes;
 		js_func_write_["payCoin"] = V8Contract::CallBackPayCoin;
 		js_func_write_["issueAsset"] = V8Contract::CallBackIssueAsset;
 		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
@@ -1181,6 +1183,80 @@ namespace bumo{
 
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			ledger_context->GetTopTx()->environment_->UpdateNewValidators(json);
+			args.GetReturnValue().Set(true);
+			return;
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	void V8Contract::CallBackGetFullNodes(const v8::FunctionCallbackInfo<v8::Value>& args)
+	{
+		do {
+			if (args.Length() != 0)
+			{
+				LOG_TRACE("parameter error");
+				args.GetReturnValue().Set(false);
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+
+			Json::Value jsonFullNodes;
+		
+			// get fullnode list
+
+
+			std::string strvalue = jsonFullNodes.toFastString();
+			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
+
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackSetFullNodes(const v8::FunctionCallbackInfo<v8::Value>& args)
+	{
+		std::string error_desc;
+		do
+		{
+			if (args.Length() != 1)
+			{
+				error_desc = "parameter number error";
+				break;
+			}
+
+			if (!args[0]->IsString()) {
+				error_desc = "arg0 should be string";
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				error_desc = "Can't find contract object by isolate id";
+				break;
+			}
+
+			if (v8_contract->parameter_.this_address_ != General::CONTRACT_FULLNODE_ADDRESS)
+			{
+				error_desc = utils::String::Format("contract(%s) has no permission to call callBackSetFullNodes interface", v8_contract->parameter_.this_address_.c_str());
+				break;
+			}
+
+			v8::String::Utf8Value  utf8(args[0]);
+			Json::Value json;
+			if (!json.fromCString(ToCString(utf8))) {
+				error_desc = "fromCString fail, fatal error";
+				break;
+			}
+
+			// update fullnode list
+
+
 			args.GetReturnValue().Set(true);
 			return;
 		} while (false);

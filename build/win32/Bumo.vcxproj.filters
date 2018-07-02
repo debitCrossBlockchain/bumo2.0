@@ -135,6 +135,12 @@
     <ClCompile Include="..\..\src\ledger\fee_calculate.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\glue\fullnode.cpp">
+      <Filter>glue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\glue\fullnode_manager.cpp">
+      <Filter>glue</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -235,6 +241,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ledger\fee_calculate.h">
       <Filter>ledger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\glue\fullnode.h">
+      <Filter>glue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\glue\fullnode_manager.h">
+      <Filter>glue</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

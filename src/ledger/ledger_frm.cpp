@@ -19,6 +19,7 @@
 #include <common/storage.h>
 #include <common/pb2json.h>
 #include <glue/glue_manager.h>
+#include <glue/fullnode_manager.h>
 #include "ledger_manager.h"
 #include "ledger_frm.h"
 #include "ledgercontext_manager.h"
@@ -544,10 +545,10 @@ namespace bumo {
 			return false;
 		}
 
-		int64_t left_reward = total_reward;
+		int64_t validators_reward = (total_reward * 9) / 10;
+		int64_t validators_left_reward = validators_reward;
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = ledger_.header().seq() % set.validators_size();
-		int64_t average_fee = total_reward / set.validators_size();
 		LOG_INFO("total reward(" FMT_I64 ") = total fee(" FMT_I64 ") + block reward(" FMT_I64 ") in ledger(" FMT_I64 ")", total_reward, total_fee_, block_reward, ledger_.header().seq());
 		for (int32_t i = 0; i < set.validators_size(); i++) {
 			std::shared_ptr<AccountFrm> account;
@@ -558,28 +559,45 @@ namespace bumo {
 			if (random_index == i) {
 				random_account = account;
 			}
+			int64_t reward_amount = 0;
+			int64_t total_popularity_ = -1;
+			int64_t reward_ratio = account->GetProtoAccount().self_popularity() / total_popularity_; // TODO: get total_popularity from all validators popularity
+			if (!utils::SafeIntMul(validators_reward, reward_ratio, reward_amount)) {
+				LOG_ERROR("AllocateReward math overflow validators reward:(" FMT_I64 "), reward_ratio:(" FMT_I64 ")", validators_reward, reward_ratio);
+				return false;
+			}
+			
+			
+			validators_left_reward -= reward_amount;
 
-			left_reward -= average_fee;
-
-			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), average_fee, left_reward, ledger_.header().seq());
+			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), reward_amount, validators_left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
-			int64_t new_balance = 0;;
-			if (!utils::SafeIntAdd(proto_account.balance(), average_fee, new_balance)){
-				LOG_ERROR("AllocateReward math overflow balance:(" FMT_I64 "), average_fee:(" FMT_I64 ")", proto_account.balance(), average_fee);
+			if (!account->AddBalance(reward_amount)) {
+				LOG_ERROR("Account(%s) allocate reward failed", account->GetAccountAddress().c_str());
 				return false;
 			}
-			proto_account.set_balance(new_balance);
 		}
-		if (left_reward > 0) {
+		if (validators_left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
-			int64_t new_balance = 0;
-			if (!utils::SafeIntAdd(proto_account.balance(), left_reward, new_balance)){
-				LOG_ERROR("AllocateReward math overflow balance:(" FMT_I64 "), reward:(" FMT_I64 ")", proto_account.balance(), left_reward);
+			if (!random_account->AddBalance(validators_left_reward)) {
+				LOG_ERROR("Account(%s) allocate left reward failed", random_account->GetAccountAddress().c_str());
 				return false;
 			}
-			proto_account.set_balance(new_balance);
-			LOG_TRACE("Account(%s) allocate last reward(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
+
+			LOG_TRACE("Account(%s) allocate last reward(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), validators_left_reward, ledger_.header().seq());
 		}
+
+		// allocate full nodes reward
+		int64_t fullnodes_reward = 0;
+		if (!utils::SafeIntSub(total_reward, validators_reward, fullnodes_reward)) {
+			LOG_ERROR("AllocateReward math overflow total reward:(" FMT_I64 "), validators reward:(" FMT_I64 ")", total_reward, validators_reward);
+			return false;
+		}
+		if (!FullNodeManager::Instance().reward(environment_, fullnodes_reward)) {
+			LOG_ERROR("Failed to allocate full nodes reward in ledger(" FMT_I64 ")", ledger_.header().seq());
+			return false;
+		}
+
 		if (environment_->useAtomMap_)
 			environment_->Commit();
 		return true;

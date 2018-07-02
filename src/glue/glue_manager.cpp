@@ -354,7 +354,7 @@ namespace bumo {
 		std::string consensus_value_hash = HashWrapper::Crypto(consensus_value);
 		std::set<std::string>::const_iterator iter = hardfork_points_.find(consensus_value_hash);
 		return CheckValueHelper(proto_value, -1) == Consensus::CHECK_VALUE_VALID &&   //-1 not check time
-			(consensus_->CheckProof(set, HashWrapper::Crypto(consensus_value), proof)
+			(consensus_->CheckProof(set, consensus_value_hash, proof)
 			|| iter != hardfork_points_.end());
 	}
 

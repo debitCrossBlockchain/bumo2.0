@@ -101,6 +101,8 @@ namespace bumo {
 		request_methods_[protocol::CHAIN_PEER_MESSAGE] = std::bind(&WebSocketServer::OnChainPeerMessage, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_SUBMITTRANSACTION] = std::bind(&WebSocketServer::OnSubmitTransaction, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_SUBSCRIBE_TX] = std::bind(&WebSocketServer::OnSubscribeTx, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::CHAIN_GET_LEDGER] = std::bind(&WebSocketServer::OnGetLedger, this, std::placeholders::_1, std::placeholders::_2);
+		
 		thread_ptr_ = NULL;
 	}
 
@@ -285,5 +287,37 @@ namespace bumo {
 		tls_server *tls_server_h, tls_client *tls_client_h,
 		connection_hdl con, const std::string &uri, int64_t id) {
 		return new WsPeer(server_h, client_, tls_server_h, tls_client_h, con, uri, id);
+	}
+
+	bool WebSocketServer::OnGetLedger(protocol::WsMessage &message, int64_t conn_id) {
+		utils::MutexGuard guard_(conns_list_lock_);
+		WsPeer *conn = (WsPeer *)GetConnection(conn_id);
+		if (!conn) {
+			return false;
+		}
+
+		protocol::ChainGetLedgerResp resp;
+		do {
+			LOG_INFO("Recv chain ledger message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			protocol::ChainGetLedgerReq req;
+			if (!req.ParseFromString(message.data())) {
+				resp.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				resp.set_error_desc("ChainGetLedgerReq FromString fail");
+				LOG_ERROR("%s", resp.error_desc());
+				break;
+			}
+			LedgerFrm frm;
+			utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
+			if (!frm.LoadFromDb(req.ledger_seq())) {
+				resp.set_error_code(protocol::ERRCODE_NOT_EXIST);
+				resp.set_error_desc("ChainGetLedgerReq get ledger from db fail");
+				LOG_ERROR("%s", resp.error_desc());
+				break;
+			}
+		} while (false);
+
+		std::error_code ec;
+		conn->SendResponse(message, resp.SerializeAsString(), ec);
+		return resp.error_code() == protocol::ERRCODE_SUCCESS;
 	}
 }

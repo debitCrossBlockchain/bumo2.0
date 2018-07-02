@@ -15,6 +15,7 @@
 
 #include <overlay/peer_manager.h>
 #include <glue/glue_manager.h>
+#include <glue/fullnode_manager.h>
 #include <api/websocket_server.h>
 #include <monitor/monitor_manager.h>
 #include "ledger_manager.h"
@@ -707,6 +708,9 @@ namespace bumo {
 		ledger_status.set_account_count(GetAccountNum());
 		ledger_status.set_timestamp(utils::Timestamp::HighResolution());
 		MonitorManager::Instance().SendMonitor(monitor::MONITOR_MSGTYPE_LEDGER, ledger_status.SerializeAsString());
+
+		// full nodes check
+		FullNodeManager::Instance().check();
 	}
 
 

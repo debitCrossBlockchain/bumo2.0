@@ -18,6 +18,8 @@
     <ClCompile Include="..\..\src\api\web_server_helper.cpp" />
     <ClCompile Include="..\..\src\api\web_server_query.cpp" />
     <ClCompile Include="..\..\src\api\web_server_update.cpp" />
+    <ClCompile Include="..\..\src\glue\fullnode.cpp" />
+    <ClCompile Include="..\..\src\glue\fullnode_manager.cpp" />
     <ClCompile Include="..\..\src\glue\ledger_upgrade.cpp" />
     <ClCompile Include="..\..\src\glue\transaction_set.cpp" />
     <ClCompile Include="..\..\src\glue\transaction_queue.cpp" />
@@ -53,6 +55,8 @@
     <ClInclude Include="..\..\src\api\console.h" />
     <ClInclude Include="..\..\src\api\websocket_server.h" />
     <ClInclude Include="..\..\src\api\web_server.h" />
+    <ClInclude Include="..\..\src\glue\fullnode.h" />
+    <ClInclude Include="..\..\src\glue\fullnode_manager.h" />
     <ClInclude Include="..\..\src\glue\ledger_upgrade.h" />
     <ClInclude Include="..\..\src\glue\transaction_queue.h" />
     <ClInclude Include="..\..\src\glue\transaction_set.h" />
