@@ -21,3 +21,9 @@ rm android.zip -rf
 mkdir -p ../../bin/
 
 cp ../../src/3rd/v8_target/android/*.bin .
+
+cd $BUMO_SRC_PATH/build/android/
+
+chmod 777 -R ./
+
+sh 3rd_android.sh
