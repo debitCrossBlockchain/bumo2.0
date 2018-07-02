@@ -55,6 +55,26 @@ LOCAL_MODULE:=librocksdb
 LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/rocksdb/android/obj/local/armeabi-v7a/librocksdb.a
 include $(PREBUILT_STATIC_LIBRARY)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libed25519
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/ed25519-donna/android/obj/local/armeabi-v7a/libed25519.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libhttp
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/http/android/obj/local/armeabi-v7a/libhttp.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libv8
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libv8_external
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8_external_snapshot.a
+include $(PREBUILT_STATIC_LIBRARY)
+
 
 include $(CLEAR_VARS)
 
@@ -152,7 +172,8 @@ LOCAL_SRC_UTILS_FILES := \
 			$(SRC_PATH)/src/utils/sm3.cpp\
 			$(SRC_PATH)/src/utils/ecc_sm2.cpp\
 			$(SRC_PATH)/src/utils/random.cpp\
-			$(SRC_PATH)/src/utils/stdlibs.cpp
+			$(SRC_PATH)/src/utils/stdlibs.cpp\
+			$(SRC_PATH)/src/utils/android_ifaddrs/ifaddrs.cc
 
 			
 LOCAL_SRC_FILES := \
@@ -180,6 +201,7 @@ LOCAL_C_INCLUDES += \
 	$(SRC_PATH)/src/common/ \
 	$(SRC_PATH)/src/consensus/ \
 	$(SRC_PATH)/src/utils/ \
+	$(SRC_PATH)/src/utils/android_ifaddrs/ \
     $(SRC_PATH)/src/3rd/basic/include/ \
     $(SRC_PATH)/src/3rd/protobuf/src/ \
     $(SRC_PATH)/src/3rd/basic/include/ \
@@ -195,9 +217,9 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/libscrypt/ \
     $(SRC_PATH)/src/3rd/basic/include/v8/ \
 
-LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb
+LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb libed25519 libhttp libv8 libv8_external
 
-LOCAL_LDLIBS += -llog -landroid
+LOCAL_LDLIBS += -llog 
 
 LOCAL_CPPFLAGS := -DHAMMER_TIME=1 \
 		  -DHASHNAMESPACE=__gnu_cxx \
