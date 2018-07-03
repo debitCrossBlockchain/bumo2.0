@@ -70,7 +70,7 @@ namespace bumo {
 		// do full node check 
 		void check();
 		bool checkResponse(protocol::WsMessage &msg);
-		bool OnCheck(protocol::WsMessage &msg);
+		bool OnInspected(protocol::WsMessage &msg, int64_t conn_id);
 
 		// impeach inactive or out-sync full node
 		bool impeach(const std::string& impeach_addr, const std::string& reason);
