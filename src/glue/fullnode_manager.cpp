@@ -14,6 +14,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <utils/headers.h>
+#include <proto/cpp/overlay.pb.h>
 #include <proto/cpp/chain.pb.h>
 #include <ledger/ledger_manager.h>
 #include <common/network.h>
@@ -42,7 +43,25 @@ namespace bumo {
 		}
 		local_address_ = priv_key_.GetEncAddress();
 
+		StatusModule::RegisterModule(this);
+		TimerNotify::RegisterModule(this);
 		return true;
+	}
+
+	void FullNodeManager::GetModuleStatus(Json::Value &data) {
+		return;
+	}
+
+	void FullNodeManager::OnTimer(int64_t current_time){
+		return;
+	}
+
+	void FullNodeManager::OnSlowTimer(int64_t current_time){
+		return;
+	}
+
+	void FullNodeManager::Run(utils::Thread *this_thread){
+		return;
 	}
 
 	FullNodePointer FullNodeManager::get(std::string& key) {

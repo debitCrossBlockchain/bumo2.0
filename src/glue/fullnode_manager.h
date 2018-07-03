@@ -44,6 +44,11 @@ namespace bumo {
 		FullNodeManager();
 		~FullNodeManager();
 
+		virtual void GetModuleStatus(Json::Value &data);
+		virtual void OnTimer(int64_t current_time);
+		virtual void OnSlowTimer(int64_t current_time);
+		virtual void Run(utils::Thread *this_thread);
+
 		bool Initialize();
 		bool Exit();
 
