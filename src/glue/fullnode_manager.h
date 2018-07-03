@@ -53,8 +53,9 @@ namespace bumo {
 		bool Exit();
 
 		FullNodePointer get(std::string& key);
+		bool add(FullNode& fn);
 		bool add(FullNodePointer fp);
-		bool remove(std::string& key);
+		void remove(std::string& key);
 
 		// head of 1/1000 check tail of 1/1000
 		bool isHead1In1000(const std::string& addr);
