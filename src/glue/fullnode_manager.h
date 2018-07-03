@@ -27,8 +27,8 @@ namespace bumo {
 
 	class FullNodeManager : public utils::Singleton<bumo::FullNodeManager> {
 	private:
-		std::map<std::string, FullNodePointer> fullNodeInfo_;
-		std::vector<std::string> sortedFullNodes_;
+		std::map<std::string, FullNodePointer> full_node_info_;
+		std::vector<std::string> sorted_full_nodes_;
 		int64_t last_ledger_seq_;
 		int64_t fullnode_check_timer_;
 		std::string local_address_;
@@ -42,12 +42,13 @@ namespace bumo {
 		bool Exit();
 
 		FullNodePointer get(std::string& key);
-		bool add(FullNode& fn);
+		bool add(FullNodePointer fp);
 		bool remove(std::string& key);
 
 		// head of 1/1000 check tail of 1/1000
-		bool isHead1In1000(const std::string& addr, std::string& peer);
-		bool isTail1In1000(const std::string& addr, std::string& peer);
+		bool isHead1In1000(const std::string& addr);
+		bool isTail1In1000(const std::string& addr);
+		bool getPeerAddr(const std::string& addr, std::string& peer);
 
 		// sorted by latest block hash
 		bool sortFullNode(const std::string& blockHash);

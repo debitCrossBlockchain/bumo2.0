@@ -27,7 +27,7 @@ namespace bumo {
 	FullNodeManager::FullNodeManager() :
 		last_ledger_seq_(0),
 		fullnode_check_timer_(0),
-		priv_key_(SIGNTYPE_CFCASM2),
+		priv_key_(SIGNTYPE_ED25519),
 		local_address_("") {}
 
 	FullNodeManager::~FullNodeManager() {}
@@ -43,8 +43,8 @@ namespace bumo {
 	}
 
 	FullNodePointer FullNodeManager::get(std::string& key) {
-		auto it = fullNodeInfo_.find(key);
-		if (it != fullNodeInfo_.end()) {
+		auto it = full_node_info_.find(key);
+		if (it != full_node_info_.end()) {
 			return it->second;
 		}
 		else {
@@ -52,22 +52,21 @@ namespace bumo {
 		}
 	}
 
-	bool FullNodeManager::add(FullNode& fn) {
-		if (fullNodeInfo_.find(fn.getAddress()) != fullNodeInfo_.end()) {
-			FullNodePointer fp(&fn);
-			fullNodeInfo_.insert(std::make_pair(fn.getAddress(), fp));
+	bool FullNodeManager::add(FullNodePointer fp) {
+		if (full_node_info_.find(fp->getAddress()) != full_node_info_.end()) {
+			full_node_info_.insert(std::make_pair(fp->getAddress(), fp));
 		}
 		else {
-			LOG_ERROR("Node address(%s) already exist", fn.getAddress().c_str());
+			LOG_ERROR("Node address(%s) already exist", fp->getAddress().c_str());
 			return false;
 		}
 		return true;
 	}
 
 	bool FullNodeManager::remove(std::string& key) {
-		auto it = fullNodeInfo_.find(key);
-		if (it != fullNodeInfo_.end()) {
-			fullNodeInfo_.erase(it);
+		auto it = full_node_info_.find(key);
+		if (it != full_node_info_.end()) {
+			full_node_info_.erase(it);
 		}
 		else {
 			LOG_ERROR("FullNode address(%s) not exist", key.c_str());
@@ -76,51 +75,66 @@ namespace bumo {
 		return true;
 	}
 
-	bool FullNodeManager::isHead1In1000(const std::string& addr, std::string& peer) {
-		int32_t size = sortedFullNodes_.size();
+	bool FullNodeManager::isHead1In1000(const std::string& addr) {
+		int32_t size = sorted_full_nodes_.size();
 		if (size < 2) return false;
 		int32_t index_range = size < 1000 ? 1 : size / 1000;
 		for (int32_t i = 0; i < index_range; ++i) {
-			if (sortedFullNodes_[i] == addr) {
-				peer = sortedFullNodes_[size - 1 - i];
+			if (sorted_full_nodes_[i] == addr) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	bool FullNodeManager::isTail1In1000(const std::string& addr, std::string& peer) {
-		int32_t size = sortedFullNodes_.size();
+	bool FullNodeManager::isTail1In1000(const std::string& addr) {
+		int32_t size = sorted_full_nodes_.size();
 		if (size < 2) return false;
 		int32_t index_range = size < 1000 ? 1 : size / 1000;
 		for (int32_t i = 0; i < index_range; ++i) {
-			if (sortedFullNodes_[size - 1 - i] == addr) {
-				peer = sortedFullNodes_[i];
+			if (sorted_full_nodes_[size - 1 - i] == addr) {
 				return true;
 			}
+		}
+		return false;
+	} 
+
+	bool FullNodeManager::getPeerAddr(const std::string& addr, std::string& peer) {
+		int32_t size = sorted_full_nodes_.size();
+		if (size < 2) return false;
+		int32_t index_range = size < 1000 ? 1 : size / 1000;
+		for (int32_t i = 0; i < index_range; ++i) {
+			if (sorted_full_nodes_[i] == addr) {
+				peer = sorted_full_nodes_[size - 1 - i];
+				return true;
+			}
+			else if (sorted_full_nodes_[size - 1 - i] == addr){
+				peer = sorted_full_nodes_[i];
+				return true;
+			} else continue;
 		}
 		return false;
 	}
 
 	bool FullNodeManager::sortFullNode(const std::string& blockHash){
-		sortedFullNodes_.clear();
+		sorted_full_nodes_.clear();
 		std::map<std::string, std::string> sorted_map;
-		for (auto it = fullNodeInfo_.begin(); it != fullNodeInfo_.end(); ++it) {
+		for (auto it = full_node_info_.begin(); it != full_node_info_.end(); ++it) {
 			std::string key = HashWrapper::Crypto(HashWrapper::Crypto(it->first) + blockHash);
 			sorted_map.insert(std::make_pair(key, it->first));
 		}
 		for (auto it = sorted_map.begin(); it != sorted_map.end(); ++it) {
-			sortedFullNodes_.push_back(it->second);
+			sorted_full_nodes_.push_back(it->second);
 		}
 		return true;
 	}
 
 	bool FullNodeManager::verifyCheckAuthority(const std::string& checker, const std::string& target) {
-		int32_t size = sortedFullNodes_.size();
+		int32_t size = sorted_full_nodes_.size();
 		if (size < 2) return false;
 		int32_t index_range = size < 1000 ? 1 : size / 1000;
 		for (int32_t i = 0; i < index_range; ++i) {
-			if (sortedFullNodes_[i] == checker && sortedFullNodes_[size - 1 - i] == target) {
+			if (sorted_full_nodes_[i] == checker && sorted_full_nodes_[size - 1 - i] == target) {
 				return true;
 			}
 		}
@@ -139,17 +153,22 @@ namespace bumo {
 			}
 			last_ledger_seq_ = lcl.seq();
 
-			auto it = fullNodeInfo_.find(local_address_);
-			std::string peer;
-			if (it == fullNodeInfo_.end() || !isHead1In1000(local_address_, peer)){
+			auto it = full_node_info_.find(local_address_);
+			if (it == full_node_info_.end() || !isHead1In1000(local_address_)){
 				LOG_INFO("Local address not in full node list or not in the head part");
 				break;
 			}
+			std::string peer;
+			if (getPeerAddr(local_address_, peer)) {
+				LOG_INFO("Failed to get full node check peer address");
+				break;
+			}
+			// Randomly get the ledger header from the target address
+			int64_t random_seq = lcl.seq() - lcl.seq() % full_node_info_.size();
 		
-			// get ledger header randomly from target address
-			int64_t random_seq = lcl.seq() - lcl.seq() % fullNodeInfo_.size();
-		
-			// TODO: send GetLedger request to peer
+			// TODO: send the GetLedger request to peer
+			// std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", address.ToIpPort().c_str());
+			// Connect(uri);
 
 			// TODO: add timer and set impeach func as callback 
 			std::string reason = "timeout";
@@ -222,6 +241,12 @@ namespace bumo {
 
 	bool FullNodeManager::impeach(const std::string& impeach_addr, const std::string& reason)
 	{
+		auto it = full_node_info_.find(impeach_addr);
+		if (it == full_node_info_.end()) {
+			LOG_ERROR("Impeach node address %s not exist", impeach_addr.c_str());
+			return false;
+		}
+
 		protocol::TransactionEnv tran_env;
 		Result result;
 		result.set_code(protocol::ERRCODE_SUCCESS);
@@ -230,8 +255,9 @@ namespace bumo {
 		
 		protocol::Transaction *tx = tran_env.mutable_transaction();
 		tx->set_source_address(local_address_);
-		tx->set_fee_limit(100000);
-		tx->set_gas_price(1000);
+		int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+		tx->set_gas_price(gas_price);
+		tx->set_fee_limit(10000);
 
 		protocol::Operation *ope = tx->add_operations();
 		ope->set_type(protocol::Operation_Type_PAY_COIN);
@@ -243,11 +269,7 @@ namespace bumo {
 		Json::Value impeach_json;
 		impeach_json["method"] = "impeach";
 		impeach_json["params"]["address"] = impeach_addr;
-		auto it = fullNodeInfo_.find(impeach_addr);
-		if (it == fullNodeInfo_.end()) {
-			LOG_ERROR("Impeach node address %s not exist", impeach_addr.c_str());
-			return false;
-		}
+
 
 		impeach_json["params"]["ledger_seq"] = last_ledger_seq_;
 		impeach_json["params"]["reason"] = reason;
@@ -269,7 +291,7 @@ namespace bumo {
 	}
 
 	bool FullNodeManager::reward(std::shared_ptr<Environment> env, int64_t fullnode_reward) {
-		std::string reward_node = sortedFullNodes_[0]; // top one of sorted full nodes list
+		std::string reward_node = sorted_full_nodes_[0]; // top one of sorted full nodes list
 		std::shared_ptr<AccountFrm> account;
 		if (!env->GetEntry(reward_node, account)) {
 			LOG_ERROR("Failed to get full node account %s", reward_node.c_str());
