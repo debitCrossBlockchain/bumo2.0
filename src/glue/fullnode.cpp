@@ -48,7 +48,7 @@ namespace bumo {
 			}
 		}
 		impeachInfo_.insert(std::make_pair(report_addr, ledger_seq));
-        return ture;
+        return true;
 	}
 
 	bool FullNode::verifyAddressHash() {
