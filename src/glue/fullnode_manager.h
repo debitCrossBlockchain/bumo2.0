@@ -25,7 +25,12 @@ namespace bumo {
 
 	typedef std::shared_ptr<FullNode> FullNodePointer;
 
-	class FullNodeManager : public utils::Singleton<bumo::FullNodeManager> {
+	class FullNodeManager : 
+		public utils::Singleton<bumo::FullNodeManager>,
+		public StatusModule,
+		public TimerNotify,
+		public Network,
+		public utils::Runnable{
 	private:
 		std::map<std::string, FullNodePointer> fullNodeInfo_;
 		std::vector<std::string> sortedFullNodes_;
@@ -33,6 +38,7 @@ namespace bumo {
 		int64_t fullnode_check_timer_;
 		std::string local_address_;
 		PrivateKey priv_key_;
+		utils::Thread *thread_ptr_;    /* The pointer of the thread */
 		
 	public:
 		FullNodeManager();

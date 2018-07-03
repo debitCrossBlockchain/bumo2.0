@@ -28,7 +28,10 @@ namespace bumo {
 		last_ledger_seq_(0),
 		fullnode_check_timer_(0),
 		priv_key_(SIGNTYPE_CFCASM2),
-		local_address_("") {}
+		local_address_(""),
+		Network(SslParameter()) {
+		thread_ptr_ = NULL;
+	}
 
 	FullNodeManager::~FullNodeManager() {}
 
