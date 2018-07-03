@@ -163,6 +163,30 @@ inline bool ChainMessageType_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<ChainMessageType>(
     ChainMessageType_descriptor(), name, value);
 }
+enum FULL_NODE_MSG_TYPE {
+  FULL_NODE_MSG_TYPE_NONE = 0,
+  FULL_NODE_MSG_TYPE_HELLO = 1,
+  FULL_NODE_MSG_TYPE_INSPECT = 2,
+  FULL_NODE_MSG_TYPE_FEEDBACK = 3,
+  FULL_NODE_MSG_TYPE_ERROR = 4,
+  FULL_NODE_MSG_TYPE_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  FULL_NODE_MSG_TYPE_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool FULL_NODE_MSG_TYPE_IsValid(int value);
+const FULL_NODE_MSG_TYPE FULL_NODE_MSG_TYPE_MIN = FULL_NODE_MSG_TYPE_NONE;
+const FULL_NODE_MSG_TYPE FULL_NODE_MSG_TYPE_MAX = FULL_NODE_MSG_TYPE_ERROR;
+const int FULL_NODE_MSG_TYPE_ARRAYSIZE = FULL_NODE_MSG_TYPE_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* FULL_NODE_MSG_TYPE_descriptor();
+inline const ::std::string& FULL_NODE_MSG_TYPE_Name(FULL_NODE_MSG_TYPE value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    FULL_NODE_MSG_TYPE_descriptor(), value);
+}
+inline bool FULL_NODE_MSG_TYPE_Parse(
+    const ::std::string& name, FULL_NODE_MSG_TYPE* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<FULL_NODE_MSG_TYPE>(
+    FULL_NODE_MSG_TYPE_descriptor(), name, value);
+}
 // ===================================================================
 
 class Hello : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.Hello) */ {
@@ -3651,6 +3675,11 @@ template <> struct is_proto_enum< ::protocol::ChainMessageType> : ::google::prot
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::protocol::ChainMessageType>() {
   return ::protocol::ChainMessageType_descriptor();
+}
+template <> struct is_proto_enum< ::protocol::FULL_NODE_MSG_TYPE> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::protocol::FULL_NODE_MSG_TYPE>() {
+  return ::protocol::FULL_NODE_MSG_TYPE_descriptor();
 }
 
 }  // namespace protobuf
