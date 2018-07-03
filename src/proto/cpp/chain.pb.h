@@ -327,6 +327,23 @@ class Account : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::int64 balance() const;
   void set_balance(::google::protobuf::int64 value);
 
+  // optional string support_who = 8;
+  void clear_support_who();
+  static const int kSupportWhoFieldNumber = 8;
+  const ::std::string& support_who() const;
+  void set_support_who(const ::std::string& value);
+  void set_support_who(const char* value);
+  void set_support_who(const char* value, size_t size);
+  ::std::string* mutable_support_who();
+  ::std::string* release_support_who();
+  void set_allocated_support_who(::std::string* support_who);
+
+  // optional int64 self_popularity = 9;
+  void clear_self_popularity();
+  static const int kSelfPopularityFieldNumber = 9;
+  ::google::protobuf::int64 self_popularity() const;
+  void set_self_popularity(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.Account)
  private:
 
@@ -339,6 +356,8 @@ class Account : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::internal::ArenaStringPtr assets_hash_;
   ::protocol::Contract* contract_;
   ::google::protobuf::int64 balance_;
+  ::google::protobuf::internal::ArenaStringPtr support_who_;
+  ::google::protobuf::int64 self_popularity_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -4000,6 +4019,64 @@ inline void Account::set_balance(::google::protobuf::int64 value) {
   
   balance_ = value;
   // @@protoc_insertion_point(field_set:protocol.Account.balance)
+}
+
+// optional string support_who = 8;
+inline void Account::clear_support_who() {
+  support_who_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Account::support_who() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.support_who)
+  return support_who_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Account::set_support_who(const ::std::string& value) {
+  
+  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Account.support_who)
+}
+inline void Account::set_support_who(const char* value) {
+  
+  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Account.support_who)
+}
+inline void Account::set_support_who(const char* value, size_t size) {
+  
+  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.Account.support_who)
+}
+inline ::std::string* Account::mutable_support_who() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.Account.support_who)
+  return support_who_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Account::release_support_who() {
+  // @@protoc_insertion_point(field_release:protocol.Account.support_who)
+  
+  return support_who_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Account::set_allocated_support_who(::std::string* support_who) {
+  if (support_who != NULL) {
+    
+  } else {
+    
+  }
+  support_who_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), support_who);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Account.support_who)
+}
+
+// optional int64 self_popularity = 9;
+inline void Account::clear_self_popularity() {
+  self_popularity_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Account::self_popularity() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.self_popularity)
+  return self_popularity_;
+}
+inline void Account::set_self_popularity(::google::protobuf::int64 value) {
+  
+  self_popularity_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Account.self_popularity)
 }
 
 // -------------------------------------------------------------------
