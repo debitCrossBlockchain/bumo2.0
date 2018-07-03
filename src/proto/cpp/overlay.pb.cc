@@ -76,6 +76,7 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
   ChainGetLedgerResp_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* OVERLAY_MESSAGE_TYPE_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ChainMessageType_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* FULL_NODE_MSG_TYPE_descriptor_ = NULL;
 
 }  // namespace
 
@@ -384,6 +385,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainGetLedgerResp, _is_default_instance_));
   OVERLAY_MESSAGE_TYPE_descriptor_ = file->enum_type(0);
   ChainMessageType_descriptor_ = file->enum_type(1);
+  FULL_NODE_MSG_TYPE_descriptor_ = file->enum_type(2);
 }
 
 namespace {
@@ -541,8 +543,12 @@ void protobuf_AddDesc_overlay_2eproto() {
     "\027CHAIN_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDG"
     "ER_HEADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022C"
     "HAIN_TX_ENV_STORE\020\022\022\024\n\020CHAIN_GET_LEDGER\020"
-    "\023B\"\n io.bumo.sdk.core.extend.protobufb\006p"
-    "roto3", 2405);
+    "\023*\256\001\n\022FULL_NODE_MSG_TYPE\022\033\n\027FULL_NODE_MS"
+    "G_TYPE_NONE\020\000\022\034\n\030FULL_NODE_MSG_TYPE_HELL"
+    "O\020\001\022\036\n\032FULL_NODE_MSG_TYPE_INSPECT\020\002\022\037\n\033F"
+    "ULL_NODE_MSG_TYPE_FEEDBACK\020\003\022\034\n\030FULL_NOD"
+    "E_MSG_TYPE_ERROR\020\004B\"\n io.bumo.sdk.core.e"
+    "xtend.protobufb\006proto3", 2582);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -625,6 +631,23 @@ bool ChainMessageType_IsValid(int value) {
     case 17:
     case 18:
     case 19:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* FULL_NODE_MSG_TYPE_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return FULL_NODE_MSG_TYPE_descriptor_;
+}
+bool FULL_NODE_MSG_TYPE_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
       return true;
     default:
       return false;

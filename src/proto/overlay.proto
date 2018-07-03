@@ -160,6 +160,15 @@ message ChainTxStatus {
 }
 
 // for full nodes check 
+enum FULL_NODE_MSG_TYPE{
+    FULL_NODE_MSG_TYPE_NONE = 0;
+    FULL_NODE_MSG_TYPE_HELLO = 1;
+    FULL_NODE_MSG_TYPE_INSPECT = 2;
+    FULL_NODE_MSG_TYPE_FEEDBACK = 3;
+    FULL_NODE_MSG_TYPE_ERROR = 4;
+
+};
+
 message ChainGetLedgerReq {
 	int64 ledger_seq  = 1;
 }

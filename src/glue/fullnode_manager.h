@@ -58,8 +58,8 @@ namespace bumo {
 		void remove(std::string& key);
 
 		// head of 1/1000 check tail of 1/1000
-		bool isHead1In1000(const std::string& addr);
-		bool isTail1In1000(const std::string& addr);
+		bool isInspector(const std::string& addr);
+		bool isUnderInspection(const std::string& addr);
 		bool getPeerAddr(const std::string& addr, std::string& peer);
 
 		// sorted by latest block hash

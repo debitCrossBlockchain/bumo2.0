@@ -107,7 +107,7 @@ namespace bumo {
 		return;
 	}
 
-	bool FullNodeManager::isHead1In1000(const std::string& addr) {
+	bool FullNodeManager::isInspector(const std::string& addr) {
 		int32_t size = sorted_full_nodes_.size();
 		if (size < 2) return false;
 		int32_t index_range = size < 1000 ? 1 : size / 1000;
@@ -119,7 +119,7 @@ namespace bumo {
 		return false;
 	}
 
-	bool FullNodeManager::isTail1In1000(const std::string& addr) {
+	bool FullNodeManager::isUnderInspection(const std::string& addr) {
 		int32_t size = sorted_full_nodes_.size();
 		if (size < 2) return false;
 		int32_t index_range = size < 1000 ? 1 : size / 1000;
@@ -186,7 +186,7 @@ namespace bumo {
 			last_ledger_seq_ = lcl.seq();
 
 			auto it = full_node_info_.find(local_address_);
-			if (it == full_node_info_.end() || !isHead1In1000(local_address_)){
+			if (it == full_node_info_.end() || !isInspector(local_address_)){
 				LOG_INFO("Local address not in full node list or not in the head part");
 				break;
 			}
