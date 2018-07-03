@@ -17,6 +17,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <proto/cpp/overlay.pb.h>
 #include <proto/cpp/chain.pb.h>
 #include <ledger/ledger_manager.h>
+#include <overlay/peer_manager.h>
 #include <common/network.h>
 
 #include "fullnode.h"
@@ -98,27 +99,36 @@ namespace bumo {
 		}
 	}
 
+	bool FullNodeManager::add(FullNode& fn) {
+		FullNodePointer fp = std::make_shared<FullNode>(fn);
+		return add(fp);
+	}
+
 	bool FullNodeManager::add(FullNodePointer fp) {
 		if (full_node_info_.find(fp->getAddress()) != full_node_info_.end()) {
+			LOG_INFO("Full node address %s already exist", fp->getAddress());
+			return true;
+		}
+		try
+		{
 			full_node_info_.insert(std::make_pair(fp->getAddress(), fp));
 		}
-		else {
-			LOG_ERROR("Node address(%s) already exist", fp->getAddress().c_str());
+		catch (std::exception& e) {
+			LOG_ERROR("Insert %s to full node info map exception, %s", fp->getAddress().c_str(), e.what());
 			return false;
 		}
 		return true;
 	}
 
-	bool FullNodeManager::remove(std::string& key) {
+	void FullNodeManager::remove(std::string& key) {
 		auto it = full_node_info_.find(key);
 		if (it != full_node_info_.end()) {
 			full_node_info_.erase(it);
 		}
 		else {
-			LOG_ERROR("FullNode address(%s) not exist", key.c_str());
-			return false;
+			LOG_INFO("The full node address(%s) to remove not exist", key);
 		}
-		return true;
+		return;
 	}
 
 	bool FullNodeManager::isInspector(const std::string& addr) {
@@ -298,7 +308,6 @@ namespace bumo {
 		result.set_code(protocol::ERRCODE_SUCCESS);
 		result.set_desc("");
 
-		
 		protocol::Transaction *tx = tran_env.mutable_transaction();
 		tx->set_source_address(local_address_);
 		int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
@@ -315,8 +324,6 @@ namespace bumo {
 		Json::Value impeach_json;
 		impeach_json["method"] = "impeach";
 		impeach_json["params"]["address"] = impeach_addr;
-
-
 		impeach_json["params"]["ledger_seq"] = last_ledger_seq_;
 		impeach_json["params"]["reason"] = reason;
 		
@@ -329,7 +336,9 @@ namespace bumo {
 		sign->set_sign_data(sign_data);
 
 		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-		GlueManager::Instance().OnTransaction(ptr, result);
+		if (GlueManager::Instance().OnTransaction(ptr, result)) {
+			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
+		}
 		if (result.code() != protocol::ERRCODE_SUCCESS) {
 			LOG_ERROR("Failed to impeach full node address %s in ledger seq(" FMT_I64 ")", local_address_.c_str(), last_ledger_seq_);
 		}
