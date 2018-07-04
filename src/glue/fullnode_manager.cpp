@@ -32,10 +32,17 @@ namespace bumo {
 		priv_key_(SIGNTYPE_CFCASM2),
 		local_address_(""),
 		Network(SslParameter()) {
+		request_methods_[protocol::FULL_NODE_MSG_TYPE_INSPECT] = std::bind(&FullNodeManager::OnInspected, this, std::placeholders::_1, std::placeholders::_2);
+
 		thread_ptr_ = NULL;
 	}
 
-	FullNodeManager::~FullNodeManager() {}
+	FullNodeManager::~FullNodeManager() {
+		if (thread_ptr_){
+			delete thread_ptr_;
+			thread_ptr_ = NULL;
+		}
+	}
 
 	bool FullNodeManager::Initialize() {
 		if (!priv_key_.From(Configure::Instance().p2p_configure_.node_private_key_)) {
@@ -44,8 +51,16 @@ namespace bumo {
 		}
 		local_address_ = priv_key_.GetEncAddress();
 
+		// Start the thread of FullNodeManager
+		thread_ptr_ = new utils::Thread(this);
+		if (!thread_ptr_->Start("full_node_manager")) {
+			return false;
+		}
+
 		StatusModule::RegisterModule(this);
 		TimerNotify::RegisterModule(this);
+
+		LOG_INFO("Full node manager initialized");
 		return true;
 	}
 
@@ -62,7 +77,16 @@ namespace bumo {
 	}
 
 	void FullNodeManager::Run(utils::Thread *this_thread){
+		Start(utils::InetAddress::None());
 		return;
+	}
+
+	bool FullNodeManager::Exit(){
+		Stop();
+		if (thread_ptr_) {
+			thread_ptr_->JoinWithStop();
+		}
+		return true;
 	}
 
 	FullNodePointer FullNodeManager::get(std::string& key) {
@@ -264,7 +288,7 @@ namespace bumo {
 		return;
 	}
 
-	bool FullNodeManager::OnCheck(protocol::WsMessage &msg)
+	bool FullNodeManager::OnInspected(protocol::WsMessage &msg, int64_t conn_id)
 	{
 		std::string checker_addr = ""; // TODO: get from msg
 		

@@ -51,7 +51,7 @@ namespace bumo {
 		int64_t apply_time_;
 		int64_t last_check_time_;
 		
-		std::unordered_multimap<std::string, ImpeachInfo> impeach_info_; // key: impeach address, value: ledger_seq
+		std::unordered_multimap<std::string, ImpeachInfo> impeach_info_; // key: impeach address, value: ImpeachInfo
 	};
 }
 #endif
