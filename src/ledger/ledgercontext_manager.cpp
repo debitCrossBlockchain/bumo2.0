@@ -271,6 +271,9 @@ namespace bumo {
 			parameter.ope_index_ = 0;
 			parameter.consensus_value_ = Proto2Json(consensus_value_).toFastString();
 			parameter.ledger_context_ = this;
+			parameter.timestamp_ = consensus_value_.close_time();
+			parameter.blocknumber_ = consensus_value_.ledger_seq();
+
 			//do query
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
 			tx_frm->environment_ = environment;
