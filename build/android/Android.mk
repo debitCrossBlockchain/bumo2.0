@@ -20,14 +20,29 @@ LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libcrypto.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE:=libv8
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8.a
-include $(PREBUILT_STATIC_LIBRARY)
+LOCAL_MODULE:=libv8_libbase
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8_libbase.so
+include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE:=libv8_external
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8_external_snapshot.a
-include $(PREBUILT_STATIC_LIBRARY)
+LOCAL_MODULE:=libv8
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libv8_libplatform
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8_libplatform.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libicui18n
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libicui18n.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE:=libicuuc
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libicuuc.so
+include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
@@ -171,7 +186,8 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/libscrypt/ \
     $(SRC_PATH)/src/3rd/basic/include/v8/ \
 
-LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb libed25519 libhttp libv8 libv8_external
+LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb libed25519 libhttp 
+LOCAL_SHARED_LIBRARIES:=libv8 libv8_libbase libv8_libplatform  libicui18n  libicuuc
 
 LOCAL_LDLIBS += -llog 
 LOCAL_CPPFLAGS := -DHAMMER_TIME=1 \
