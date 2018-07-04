@@ -226,8 +226,8 @@ namespace bumo{
 		static void CallBackInt64Compare(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 		// FullNode incentive
-		static void CallBackSetFullNodes(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void CallBackGetFullNodes(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackSetFullNode(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackGetFullNode(const v8::FunctionCallbackInfo<v8::Value>& args);
     private:
         bool ExecuteCode(const char* fname);
 	};

@@ -19,6 +19,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <utils/headers.h>
 #include <ledger/environment.h>
 #include <common/private_key.h>
+#include <common/network.h>
 #include "fullnode.h"
 
 namespace bumo {
@@ -56,6 +57,8 @@ namespace bumo {
 		bool add(FullNode& fn);
 		bool add(FullNodePointer fp);
 		void remove(std::string& key);
+		Json::Value& getFullNode(std::string& addr);
+		bool setFullNode(Json::Value& node, std::string& operation);
 
 		// head of 1/1000 check tail of 1/1000
 		bool isInspector(const std::string& addr);

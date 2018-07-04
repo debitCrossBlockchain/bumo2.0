@@ -17,6 +17,7 @@
 #include <utils/logger.h>
 #include <common/pb2json.h>
 #include <common/private_key.h>
+#include <glue/fullnode_manager.h>
 #include "ledger_frm.h"
 #include "ledger_manager.h"
 #include "contract_manager.h"
@@ -209,7 +210,7 @@ namespace bumo{
 		js_func_read_["getBlockHash"] = V8Contract::CallBackGetBlockHash;
 		js_func_read_["contractQuery"] = V8Contract::CallBackContractQuery;
 		js_func_read_["getValidators"] = V8Contract::CallBackGetValidators;
-		js_func_read_["getFullNodes"] = V8Contract::CallBackGetFullNodes;
+		js_func_read_["getFullNode"] = V8Contract::CallBackGetFullNode;
 		js_func_read_[General::CHECK_TIME_FUNCTION] = V8Contract::InternalCheckTime;
 		js_func_read_["stoI64Check"] = V8Contract::CallBackStoI64Check;
 		js_func_read_["int64Add"] = V8Contract::CallBackInt64Add;
@@ -228,7 +229,7 @@ namespace bumo{
 		//js_func_write_["doTransaction"] = V8Contract::CallBackDoTransaction;
 		js_func_write_["configFee"] = V8Contract::CallBackConfigFee;
 		js_func_write_["setValidators"] = V8Contract::CallBackSetValidators;
-		js_func_write_["setFullNodes"] = V8Contract::CallBackSetFullNodes;
+		js_func_write_["setFullNode"] = V8Contract::CallBackSetFullNode;
 		js_func_write_["payCoin"] = V8Contract::CallBackPayCoin;
 		js_func_write_["issueAsset"] = V8Contract::CallBackIssueAsset;
 		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
@@ -1192,45 +1193,51 @@ namespace bumo{
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
-	void V8Contract::CallBackGetFullNodes(const v8::FunctionCallbackInfo<v8::Value>& args)
-	{
-		do {
-			if (args.Length() != 0)
-			{
-				LOG_TRACE("parameter error");
-				args.GetReturnValue().Set(false);
-				break;
-			}
-			v8::HandleScope handle_scope(args.GetIsolate());
-			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-
-			Json::Value jsonFullNodes;
-		
-			// get fullnode list
-
-
-			std::string strvalue = jsonFullNodes.toFastString();
-			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
-			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
-
-			return;
-		} while (false);
-		args.GetReturnValue().Set(false);
-	}
-
-	void V8Contract::CallBackSetFullNodes(const v8::FunctionCallbackInfo<v8::Value>& args)
+	void V8Contract::CallBackGetFullNode(const v8::FunctionCallbackInfo<v8::Value>& args)
 	{
 		std::string error_desc;
-		do
-		{
-			if (args.Length() != 1)
-			{
+		do {
+			if (args.Length() != 1){
 				error_desc = "parameter number error";
 				break;
 			}
 
 			if (!args[0]->IsString()) {
 				error_desc = "arg0 should be string";
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+
+			std::string address = std::string(ToCString(v8::String::Utf8Value(args[0])));
+
+			Json::Value jsonFullNode;
+			jsonFullNode = FullNodeManager::Instance().getFullNode(address);
+
+			std::string strvalue = jsonFullNode.toFastString();
+			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
+
+			return;
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackSetFullNode(const v8::FunctionCallbackInfo<v8::Value>& args)
+	{
+		std::string error_desc;
+		do
+		{
+			if (args.Length() != 2)
+			{
+				error_desc = "parameter number error";
+				break;
+			}
+
+			if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
+				error_desc = "arg0 and arg1 and arg2 should be string";
 				break;
 			}
 
@@ -1254,8 +1261,13 @@ namespace bumo{
 				break;
 			}
 
-			// update fullnode list
-
+			// update full node list
+			std::string operation = std::string(ToCString(v8::String::Utf8Value(args[1])));
+			std::string sender = std::string(ToCString(v8::String::Utf8Value(args[2])));
+			if (!FullNodeManager::Instance().setFullNode(json, operation)) {
+				error_desc = "set full node fail";
+				break;
+			}
 
 			args.GetReturnValue().Set(true);
 			return;

@@ -26,22 +26,32 @@ namespace bumo {
 		~FullNode();
 
 	public:
-		bool updateImpeach(std::string& report_addr, int64_t ledger_seq); // update impeach info list
+		struct ImpeachInfo
+		{
+			int64_t ledger_seq;
+			std::string reason;
+		};
+
+		bool FullNode::updateImpeach(std::string& report_addr, ImpeachInfo info); // update impeach info list
 		void updateCheckTime();
 		bool verifyAddressHash(); // validate hash
-		bool verifySignature();
 
 		std::string& getAddress();
+		std::string& getAddressHash();
 		std::string& getEndPoint();
 		int64_t getLastCheckTime();
+		Json::Value& toJson();
+		bool loadFromJson(Json::Value& node);
+
 		// ...
 	private:
 		std::string addr_;
+		std::string addr_hash_; // hash of addr_
 		std::string endpoint_;
-		int64_t applyTime_;
-		int64_t lastCheckTime_;
-		std::string signature_;
-		std::unordered_multimap<std::string, int64_t> impeachInfo_; // key: impeach address, value: ledger_seq
+		int64_t apply_time_;
+		int64_t last_check_time_;
+		
+		std::unordered_multimap<std::string, ImpeachInfo> impeach_info_; // key: impeach address, value: ledger_seq
 	};
 }
 #endif

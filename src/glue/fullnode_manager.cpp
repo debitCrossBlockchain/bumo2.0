@@ -107,6 +107,58 @@ namespace bumo {
 		return;
 	}
 
+	Json::Value& FullNodeManager::getFullNode(std::string& addr) {
+		std::shared_ptr<Json::Value> node;
+		FullNodePointer fp = get(addr);
+		if (fp) {
+			*node = fp->toJson();
+		}
+		else {
+			LOG_ERROR("Failed to get full node %s", addr.c_str());
+		}
+		return *node;
+	}
+
+	bool FullNodeManager::setFullNode(Json::Value& node, std::string& operation) {
+		if (operation == "add") {
+			FullNodePointer fp = std::make_shared<FullNode>();
+			if (fp->loadFromJson(node)) {
+				return add(fp);
+			}
+			else {
+				LOG_ERROR("Failed to full node info from json, %s", node.toFastString().c_str());
+				return false;
+			}
+		} else if (operation == "edit") {
+			FullNodePointer fp = get(node["addr"].asString());
+			if (!fp) {
+				LOG_WARN("The full node to edit not exist, add it(%s)", node["addr"].asCString());
+				FullNodePointer fp_new = std::make_shared<FullNode>();
+				if (!fp_new->loadFromJson(node))
+				{
+					LOG_ERROR("Failed to load full node info from json, %s", node.toFastString().c_str());
+					return false;
+				}
+				return add(fp_new);
+			}
+			else {
+				// update impeach list
+				if (fp->loadFromJson(node)) {
+					LOG_ERROR("Failed to update full node impeach info, %s", node.toFastString().c_str());
+					return false;
+				}
+			}
+		}
+		else if (operation == "remove") {
+			remove(node["addr"].asString());
+		}
+		else {
+			LOG_ERROR("Unknown full node operation, %s", operation.c_str());
+			return false;
+		}
+		return true;
+	}
+
 	bool FullNodeManager::isInspector(const std::string& addr) {
 		int32_t size = sorted_full_nodes_.size();
 		if (size < 2) return false;
@@ -152,7 +204,7 @@ namespace bumo {
 		sorted_full_nodes_.clear();
 		std::map<std::string, std::string> sorted_map;
 		for (auto it = full_node_info_.begin(); it != full_node_info_.end(); ++it) {
-			std::string key = HashWrapper::Crypto(HashWrapper::Crypto(it->first) + blockHash);
+			std::string key = HashWrapper::Crypto(it->second->getAddressHash() + blockHash);
 			sorted_map.insert(std::make_pair(key, it->first));
 		}
 		for (auto it = sorted_map.begin(); it != sorted_map.end(); ++it) {
