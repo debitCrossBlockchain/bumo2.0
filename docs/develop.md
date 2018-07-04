@@ -261,7 +261,7 @@ return,
     "assets_hash" : "9696b03e4c3169380882e0217a986717adfc5877b495068152e6aa25370ecf4a",
     "balance" : 899671600,
     "contract" : null,
-    "address of the accountnonce" : 1, // Count of the transactions from the source account. It would be concealed if the nonce is 0.
+    "nonce" : 1, // Count of the transactions from the source account. It would be concealed if the nonce is 0.
     "priv" : {
       "master_weight" : 1,
       "thresholds" : {
