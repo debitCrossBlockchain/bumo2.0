@@ -18,6 +18,6 @@ unzip android.zip
 rm ../../src/3rd/v8_target/android/ -rf
 mv  android ../../src/3rd/v8_target/android -f
 rm android.zip -rf
-mkdir -p ../../bin/
+mkdir -p v8_target
 
-cp ../../src/3rd/v8_target/android/*.bin .
+cp ../../src/3rd/v8_target/android/* v8_target/
