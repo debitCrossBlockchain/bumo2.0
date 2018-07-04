@@ -1,6 +1,6 @@
 Android build
 Compilation needs to configure the environment variable
-export BUMO_SRC_PATH=../bumo/src/
-export ANDROID_NDK_NAME="android-ndk-r10e"
-export ANDROID_NDK_ROOT=/opt/android-ndk-r10e
+export BUMO_SRC_PATH=/mnt/d/bumo/src/
+export ANDROID_NDK_NAME="android-ndk-r12b"
+export ANDROID_NDK_ROOT=/opt/android-ndk-r12b
 sh 3rd_android.sh

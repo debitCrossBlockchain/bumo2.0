@@ -210,7 +210,7 @@ if [ ! -z "$VERBOSE" ] && [ "$VERBOSE" != "0" ]; then
 fi
 
 
-./configure \
+    ./configure \
     --prefix=$PREFIX \
     --enable-static \
     --disable-shared \

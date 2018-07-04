@@ -3,7 +3,6 @@ LOCAL_PATH:= $(call my-dir)
 TOP_PATH:= $(LOCAL_PATH)/../../
 SRC_PATH:= $(TOP_PATH)/
 
-
 #static_libs
 include $(CLEAR_VARS)
 LOCAL_MODULE:=libcurl
@@ -21,51 +20,6 @@ LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libcrypto.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE:=libjson
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/jsoncpp/android/obj/local/armeabi-v7a/libjson.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE:=libbz2
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/bzip2-1.0.6/android/obj/local/armeabi-v7a/libbz2.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE:=libzlib
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/zlib-1.2.8/android/obj/local/armeabi-v7a/libzlib.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE:=libscrypt
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/libscrypt/android/obj/local/armeabi-v7a/libscrypt.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE:=libpcre
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/pcre-8.39/android/obj/local/armeabi-v7a/libpcre.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE:=libprotobuf
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/protobuf/android/obj/local/armeabi-v7a/libprotobuf.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE:=librocksdb
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/rocksdb/android/obj/local/armeabi-v7a/librocksdb.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE:=libed25519
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/ed25519-donna/android/obj/local/armeabi-v7a/libed25519.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE:=libhttp
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/http/android/obj/local/armeabi-v7a/libhttp.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE:=libv8
 LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8.a
 include $(PREBUILT_STATIC_LIBRARY)
@@ -75,12 +29,12 @@ LOCAL_MODULE:=libv8_external
 LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8_external_snapshot.a
 include $(PREBUILT_STATIC_LIBRARY)
 
-
 include $(CLEAR_VARS)
 
 LOCAL_ARM_MODE := arm
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_TAGS := optional
+LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 
 
 LOCAL_SRC_MAIN_FILES := \
@@ -220,7 +174,6 @@ LOCAL_C_INCLUDES += \
 LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb libed25519 libhttp libv8 libv8_external
 
 LOCAL_LDLIBS += -llog 
-
 LOCAL_CPPFLAGS := -DHAMMER_TIME=1 \
 		  -DHASHNAMESPACE=__gnu_cxx \
 		  -D_REENTRANT \
@@ -245,4 +198,15 @@ LOCAL_CFLAGS := -fexpensive-optimizations -fexceptions -pthread -DHAVE_NEON=1 -m
 LOCAL_MODULE:= bumo
 
 include $(BUILD_EXECUTABLE)
+include $(BUMO_SRC_PATH)3rd/bzip2-1.0.6/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/ed25519-donna/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/http/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/jsoncpp/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/libscrypt/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/pcre-8.39/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/protobuf/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/rocksdb/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/zlib-1.2.8/android/Android.mk
+
+
 

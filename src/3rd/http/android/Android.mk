@@ -29,7 +29,7 @@ LOCAL_C_INCLUDES += \
 	$(TOP_PATH)/../../ \
 	$(TOP_PATH)/../../utils
 
-LOCAL_LDLIBS += -L$(SYSROOT)/usr/lib -llog 
+#LOCAL_LDLIBS += -L$(SYSROOT)/usr/lib -llog 
 
 LOCAL_CPPFLAGS := -DHAMMER_TIME=1 \
 		  -DHASHNAMESPACE=__gnu_cxx \
