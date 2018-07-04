@@ -21,7 +21,6 @@ LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_TAGS := samples
 
 $(info $(shell (cp $(TOP_PATH)/pcre_chartables.c.dist $(TOP_PATH)/pcre_chartables.c)))
-$(info $(shell (cp $(TOP_PATH)/pcre.h.generic $(TOP_PATH)/pcre.h)))
 $(info $(shell (cp $(TOP_PATH)/config.h.generic $(TOP_PATH)/config.h)))
 
 intermediates := $(call local-intermediates-dir)
