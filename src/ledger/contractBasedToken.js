@@ -50,8 +50,8 @@ function makeAllowanceKey(owner, spender){
 }
 
 function approve(spender, value){
-    assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
-    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
+    assert(addressCheck(spender) === true, 'Arg-spender is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
 
     let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
@@ -62,8 +62,8 @@ function approve(spender, value){
 }
 
 function allowance(owner, spender){
-    assert(addressCheck(owner) === true, 'Arg-owner is not valid adress.');
-    assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
+    assert(addressCheck(owner) === true, 'Arg-owner is not a valid address.');
+    assert(addressCheck(spender) === true, 'Arg-spender is not a valid address.');
 
     let key = makeAllowanceKey(owner, spender);
     let value = storageLoad(key);
@@ -73,8 +73,8 @@ function allowance(owner, spender){
 }
 
 function transfer(to, value){
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
+    assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
 
     let senderKey = makeBalanceKey(sender);
     let senderValue = storageLoad(senderKey);
@@ -95,11 +95,11 @@ function transfer(to, value){
 }
 
 function assign(to, value){
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
+    assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
 
     loadGlobalAttribute();
-    assert(sender === globalAttribute.contractOwner, sender + ' has no permission transfer contract balance.');
+    assert(sender === globalAttribute.contractOwner, sender + ' has no permission to transfer contract balance.');
     assert(int64Compare(globalAttribute.balance, value) >= 0, 'Balance of contract:' + globalAttribute.balance + ' < transfer value:' + value + '.');
 
     let toKey = makeBalanceKey(to);
@@ -115,9 +115,9 @@ function assign(to, value){
     return true;
 }
 function transferFrom(from, to, value){
-    assert(addressCheck(from) === true, 'Arg-from is not valid adress.');
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
+    assert(addressCheck(from) === true, 'Arg-from is not a valid address.');
+    assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
 
     let fromKey = makeBalanceKey(from);
     let fromValue = storageLoad(fromKey);
@@ -145,10 +145,10 @@ function transferFrom(from, to, value){
 }
 
 function changeOwner(address){
-    assert(addressCheck(address) === true, 'Arg-address is not valid adress.');
+    assert(addressCheck(address) === true, 'Arg-address is not a valid address.');
 
     loadGlobalAttribute();
-    assert(sender === globalAttribute.contractOwner, sender + ' has no permission modify contract ownership.');
+    assert(sender === globalAttribute.contractOwner, sender + ' has no permission to modify contract ownership.');
 
     globalAttribute.contractOwner = address;
     storeGlobalAttribute();
@@ -181,7 +181,7 @@ function contractInfo(){
 }
 
 function balanceOf(address){
-    assert(addressCheck(address) === true, 'Arg-address is not valid address.');
+    assert(addressCheck(address) === true, 'Arg-address is not a valid address.');
 
     let key = makeBalanceKey(address);
     let value = storageLoad(key);
@@ -232,7 +232,7 @@ function main(input_str){
         changeOwner(input.params.address);
     }
     else{
-        throw '<undidentified operation type>';
+        throw '<unidentified operation type>';
     }
 }
 
