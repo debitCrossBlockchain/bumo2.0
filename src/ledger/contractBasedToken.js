@@ -50,7 +50,7 @@ function makeAllowanceKey(owner, spender){
 }
 
 function approve(spender, value){
-    assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
+    assert(addressCheck(spender) === true, 'Arg-spender is not valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be number string.');
 
     let key = makeAllowanceKey(sender, spender);
@@ -62,8 +62,8 @@ function approve(spender, value){
 }
 
 function allowance(owner, spender){
-    assert(addressCheck(owner) === true, 'Arg-owner is not valid adress.');
-    assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
+    assert(addressCheck(owner) === true, 'Arg-owner is not valid address.');
+    assert(addressCheck(spender) === true, 'Arg-spender is not valid address.');
 
     let key = makeAllowanceKey(owner, spender);
     let value = storageLoad(key);
@@ -73,7 +73,7 @@ function allowance(owner, spender){
 }
 
 function transfer(to, value){
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
+    assert(addressCheck(to) === true, 'Arg-to is not valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be number string.');
 
     let senderKey = makeBalanceKey(sender);
@@ -95,7 +95,7 @@ function transfer(to, value){
 }
 
 function assign(to, value){
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
+    assert(addressCheck(to) === true, 'Arg-to is not valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be number string.');
 
     loadGlobalAttribute();
@@ -115,8 +115,8 @@ function assign(to, value){
     return true;
 }
 function transferFrom(from, to, value){
-    assert(addressCheck(from) === true, 'Arg-from is not valid adress.');
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
+    assert(addressCheck(from) === true, 'Arg-from is not valid address.');
+    assert(addressCheck(to) === true, 'Arg-to is not valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be number string.');
 
     let fromKey = makeBalanceKey(from);
@@ -145,7 +145,7 @@ function transferFrom(from, to, value){
 }
 
 function changeOwner(address){
-    assert(addressCheck(address) === true, 'Arg-address is not valid adress.');
+    assert(addressCheck(address) === true, 'Arg-address is not valid address.');
 
     loadGlobalAttribute();
     assert(sender === globalAttribute.contractOwner, sender + ' has no permission modify contract ownership.');
