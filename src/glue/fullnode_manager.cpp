@@ -106,7 +106,7 @@ namespace bumo {
 
 	bool FullNodeManager::add(FullNodePointer fp) {
 		if (full_node_info_.find(fp->getAddress()) != full_node_info_.end()) {
-			LOG_INFO("Full node address %s already exist", fp->getAddress());
+			LOG_INFO("Full node address %s already exist", fp->getAddress().c_str());
 			return true;
 		}
 		try
@@ -126,7 +126,7 @@ namespace bumo {
 			full_node_info_.erase(it);
 		}
 		else {
-			LOG_INFO("The full node address(%s) to remove not exist", key);
+			LOG_INFO("The full node address(%s) to remove not exist", key.c_str());
 		}
 		return;
 	}
@@ -154,7 +154,8 @@ namespace bumo {
 				return false;
 			}
 		} else if (operation == "edit") {
-			FullNodePointer fp = get(node["addr"].asString());
+			std::string addr = node["addr"].asString();
+			FullNodePointer fp = get(addr);
 			if (!fp) {
 				LOG_WARN("The full node to edit not exist, add it(%s)", node["addr"].asCString());
 				FullNodePointer fp_new = std::make_shared<FullNode>();
@@ -167,14 +168,12 @@ namespace bumo {
 			}
 			else {
 				// update impeach list
-				if (fp->loadFromJson(node)) {
-					LOG_ERROR("Failed to update full node impeach info, %s", node.toFastString().c_str());
-					return false;
-				}
+				return fp->loadFromJson(node);
 			}
 		}
 		else if (operation == "remove") {
-			remove(node["addr"].asString());
+			std::string addr = node["addr"].asString();
+			remove(addr);
 		}
 		else {
 			LOG_ERROR("Unknown full node operation, %s", operation.c_str());

@@ -39,7 +39,7 @@ namespace bumo {
 			auto keys = impeach.getMemberNames();
 			std::string impeach_addr = keys[0];
 			Json::Value impeach_info = impeach[impeach_addr];
-			FullNode::ImpeachInfo info;
+			ImpeachInfo info;
 			info.ledger_seq = impeach_info["seq"].asInt64();
 			info.reason = impeach_info["reason"].asString();
 			try {
@@ -99,7 +99,7 @@ namespace bumo {
 		auto range = impeach_info_.equal_range(report_addr);
 		for (auto it = range.first; it != range.second; ++it) {
 			if (info.ledger_seq <= it->second.ledger_seq) {
-				LOG_ERROR("Old impeach info from address(%s) with ledger seq(" FMT_I64 ")", report_addr, info.ledger_seq);
+				LOG_ERROR("Old impeach info from address(%s) with ledger seq(" FMT_I64 ")", report_addr.c_str(), info.ledger_seq);
 				return false;
 			}
 		}

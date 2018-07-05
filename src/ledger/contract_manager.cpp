@@ -1236,8 +1236,8 @@ namespace bumo{
 				break;
 			}
 
-			if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
-				error_desc = "arg0 and arg1 and arg2 should be string";
+			if (!args[0]->IsString() || !args[1]->IsString()) {
+				error_desc = "arg0 and arg1 should be string";
 				break;
 			}
 
@@ -1263,7 +1263,6 @@ namespace bumo{
 
 			// update full node list
 			std::string operation = std::string(ToCString(v8::String::Utf8Value(args[1])));
-			std::string sender = std::string(ToCString(v8::String::Utf8Value(args[2])));
 			if (!FullNodeManager::Instance().setFullNode(json, operation)) {
 				error_desc = "set full node fail";
 				break;

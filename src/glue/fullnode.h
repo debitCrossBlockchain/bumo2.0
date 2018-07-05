@@ -32,7 +32,7 @@ namespace bumo {
 			std::string reason;
 		};
 
-		bool FullNode::updateImpeach(std::string& report_addr, ImpeachInfo info); // update impeach info list
+		bool updateImpeach(std::string& report_addr, ImpeachInfo info); // update impeach info list
 		void updateCheckTime();
 		bool verifyAddressHash(); // validate hash
 
