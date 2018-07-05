@@ -191,7 +191,7 @@ E.g.
 
 ### transferFrom
 
-从地址from发送数量为 value 的token到地址 to，必须触发 log 事件。 在 transferFrom 之前，form 必须已经调用过 approve 向 to 授权了额度。如果 from 帐户余额没有足够的token来支出或者 from 授权给 to 的额度不足，该函数应该被 throw。入口函数 main。
+从地址from发送数量为 value 的token到地址 to，必须触发 log 事件。 在 transferFrom 之前，from 必须已经调用过 approve 向 to 授权了额度。如果 from 帐户余额没有足够的token来支出或者 from 授权给 to 的额度不足，该函数应该被 throw。入口函数 main。
 
 参数json结构:
 ```json
