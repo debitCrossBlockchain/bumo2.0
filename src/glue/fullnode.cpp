@@ -31,6 +31,8 @@ namespace bumo {
 		endpoint_ = node["endpoint"].asString();
 		apply_time_ = node["apply_time"].asInt64();
 		last_check_time_ = node["last_check_time"].asInt64();
+		pledge_amount_ = node["pledge_amount"].asInt64();
+
 		Json::Value impeach_list = node["impeach"];
 		for (unsigned int i = 0; i < impeach_list.size(); ++i)
 		{
@@ -76,6 +78,8 @@ namespace bumo {
 		(*node)["endpoint"] = endpoint_;
 		(*node)["apply_time"] = apply_time_;
 		(*node)["last_check_time"] = last_check_time_;
+		(*node)["pledge_amount"] = pledge_amount_;
+
 		Json::Value impeach;
 		Json::Value kv;
 		for (auto it = impeach_info_.begin(); it != impeach_info_.end(); ++it)

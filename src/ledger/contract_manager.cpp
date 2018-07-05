@@ -222,6 +222,7 @@ namespace bumo{
 		js_func_read_["toBaseUnit"] = V8Contract::CallBackToBaseUnit;
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
+		js_func_read_["verifyCheckAuthority"] = V8Contract::CallBackVerifyCheckAuthority;
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
@@ -1275,6 +1276,38 @@ namespace bumo{
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
 			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	void V8Contract::CallBackVerifyCheckAuthority(const v8::FunctionCallbackInfo<v8::Value>& args)
+	{
+		std::string error_desc;
+		do {
+			if (args.Length() != 2){
+				error_desc = "parameter number error";
+				break;
+			}
+
+			if (!args[0]->IsString() || !args[1]->IsString()) {
+				error_desc = "arg0 and arg1 should be string";
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+
+			std::string checker = std::string(ToCString(v8::String::Utf8Value(args[0])));
+			std::string target = std::string(ToCString(v8::String::Utf8Value(args[1])));
+
+			if (!FullNodeManager::Instance().verifyCheckAuthority(checker, target)) {
+				error_desc = "Verify full node check authority failed, ";
+				error_desc += checker + "->" + target;
+				break;
+			}
+
+			args.GetReturnValue().Set(true);
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetReturnValue().Set(false);
 	}
 
 	void V8Contract::CallBackAddressValidCheck(const v8::FunctionCallbackInfo<v8::Value>& args)
