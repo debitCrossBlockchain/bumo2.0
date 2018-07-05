@@ -11,7 +11,7 @@ CTP1.0(Contract Token Protocol) 指基于 BUMO 合约发行 token 的标准协�
 
 ## 规则
 
-Bumo 智能合约由 javascript 实现,包含两个入口函数 init、main 和 query 。init 函数用于合约创建时初始化、main 函数主要负责数据写入，query 函数负责数据查询。
+Bumo 智能合约由 javascript 实现,包含初始化函数 init 和两个入口函数 main、query 。init 函数用于合约创建时初始化、main 函数主要负责数据写入，query 函数负责数据查询。
 
 
 ## 智能合约变量
@@ -45,7 +45,7 @@ E.g.
 {
     "result":{
 		"type": "string",
-		"value": "{
+		"value": {
 			"contractInfo": {
 				"ctp": "1.0.0.1",
 				"name": "cccpt-bu",
@@ -55,7 +55,7 @@ E.g.
 				"contractOwner": "buQBv4pqtNMs6ueBhx7mJULhAFYV3rSHo2Zg",
 				"balance": "100000"
 			}
-		}"
+		}
     }
 } 
 ```
@@ -175,7 +175,7 @@ E.g.
 
 ### transfer
 
-转移 value 的token数量到的地址 to，并且必须触发 log 事件。 如果 资金转出账户余额没有足够的token来支出，该函数应该被throw, from 为发送交易的账户地址。入口函数 main。
+转移 value 的token数量到的地址 to，并且必须触发 log 事件。 如果资金转出账户余额没有足够的token来支出，该函数应该被throw, from 为发送交易的账户地址。入口函数 main。
 
 - 参数 json 结构:
 ```json
