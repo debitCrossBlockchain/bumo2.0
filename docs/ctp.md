@@ -100,7 +100,7 @@ E.g.
 
 ### decimals
 
-返回 token 使用的小数点后几位， 比如 5,表示分配 token 数量为100000。入口函数q uery。
+返回 token 使用的小数点后几位， 比如 5,表示分配 token 数量为100000。入口函数query。
 
 E.g.
 
@@ -307,6 +307,28 @@ function init(input_str){
 }
 
 ```
+
+参数 json 结构:
+```json
+{
+    "params":{
+        "name":"RMB",
+        "symbol":"CNY",
+        "decimals":8,
+        "totalSupply":"1500000000",
+        "contractOwner":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj",
+        "ctp":"1.0.0.0"
+    }
+}
+```
+参数：name 资产名称；
+参数：symbol 资产符号；
+参数：decimals 小数位数；
+参数：totalSupply 发型总量；
+参数：contractOwner 合约资产归属人；
+参数：ctp 合约资产协议(Contract Token Protocol)版本。
+
+- 返回值：true或者抛异常
 
 ### 入口函数 main
 
