@@ -191,7 +191,6 @@ function balanceOf(address){
 }
 
 function init(input_str){
-    assert(input_str !== undefined, 'Arg-input_str is undefined.');
     let input = JSON.parse(input_str);
 
     assert(addressCheck(input.params.contractOwner) === true &&
