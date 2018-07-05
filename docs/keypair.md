@@ -6,6 +6,7 @@ English | [中文](keypair_CN.md)
    This document describes in detail the process of generating Keypairs (public and private key pairs) and how to generate an address and sign a transaction based on keypairs. It introduces two interface methods and related processes for executing the transaction call. It provides reference information for ProtoBuf data structures. Finally, it illustrates two methods to submit transactions by showing how to generate transaction_blob with interface call and how to generate transaction_blob by yourself.
 
 ## Terminology
+This section gives details about the terms used in this document.
 ### Keypair
 In the BUMO project, the keypair is the interface that generates the public key, private key, address, and signature . Only the ED25519 signature algorithm is supported during the signing process.
 ### Private Key
