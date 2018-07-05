@@ -44,18 +44,18 @@ E.g.
 ```json
 {
     "result":{
-		"type": "string",
-		"value": {
-			"contractInfo": {
-				"ctp": "1.0.0.1",
-				"name": "cccpt-bu",
-				"symbol": "CBG",
-				"decimals": 0,
-				"totalSupply": "100000",
-				"contractOwner": "buQBv4pqtNMs6ueBhx7mJULhAFYV3rSHo2Zg",
-				"balance": "100000"
-			}
-		}
+        "type": "string",
+        "value": {
+            "contractInfo": {
+                "ctp": "1.0.0.1",
+                "name": "cccpt-bu",
+                "symbol": "CBG",
+                "decimals": 0,
+                "totalSupply": "100000",
+                "contractOwner": "buQBv4pqtNMs6ueBhx7mJULhAFYV3rSHo2Zg",
+                "balance": "100000"
+            }
+        }
     }
 } 
 ```
