@@ -340,6 +340,12 @@ std::string utils::File::GetBinPath() {
 		szpath[path_len] = '\0';
 		path = szpath;
 	}
+#elif defined OS_ANDROID
+	ssize_t path_len = readlink("/proc/self/exe", szpath, File::MAX_PATH_LEN * 4 - 1);
+	if (path_len >= 0) {
+		szpath[path_len] = '\0';
+		path = szpath;
+	}
 #elif defined OS_MAC
 	int ret;
 	pid_t pid;
