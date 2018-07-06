@@ -33,7 +33,7 @@ namespace bumo {
 		last_check_time_ = node["last_check_time"].asInt64();
 		pledge_amount_ = node["pledge_amount"].asInt64();
 
-		Json::Value impeach_list = node["impeach"];
+		Json::Value impeach_list = node["impeach_list"];
 		for (unsigned int i = 0; i < impeach_list.size(); ++i)
 		{
 			Json::Value impeach;
@@ -42,7 +42,7 @@ namespace bumo {
 			std::string impeach_addr = keys[0];
 			Json::Value impeach_info = impeach[impeach_addr];
 			ImpeachInfo info;
-			info.ledger_seq = impeach_info["seq"].asInt64();
+			info.ledger_seq = impeach_info["ledger_seq"].asInt64();
 			info.reason = impeach_info["reason"].asString();
 			try {
 				impeach_info_.insert(std::make_pair(impeach_addr, info));
@@ -80,17 +80,17 @@ namespace bumo {
 		(*node)["last_check_time"] = last_check_time_;
 		(*node)["pledge_amount"] = pledge_amount_;
 
+		Json::Value impeach_list;
 		Json::Value impeach;
-		Json::Value kv;
 		for (auto it = impeach_info_.begin(); it != impeach_info_.end(); ++it)
 		{
 			Json::Value value;
-			value["seq"] = it->second.ledger_seq;
+			value["ledger_seq"] = it->second.ledger_seq;
 			value["reason"] = it->second.reason;
-			kv[it->first] = value;
-			impeach.append(kv);
+			impeach[it->first] = value;
+			impeach_list.append(impeach);
 		}
-		(*node)["impeach"] = impeach;
+		(*node)["impeach_list"] = impeach_list;
 		return *node;
 	}
 
