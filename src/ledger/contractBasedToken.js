@@ -49,10 +49,18 @@ function makeAllowanceKey(owner, spender){
     return 'allow_' + owner + '_to_' + spender;
 }
 
+function valueCheck(value) {
+    if (value.startsWith("-") || value === '0') {
+        return false;
+    }
+    return true;
+}
+
 function approve(spender, value){
     assert(addressCheck(spender) === true, 'Arg-spender is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
-
+    assert(valueCheck(value) === true, 'Arg-value must be positive number.');
+    
     let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
 
@@ -75,6 +83,7 @@ function allowance(owner, spender){
 function transfer(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(valueCheck(value) === true, 'Arg-value must be positive number.');
     if(sender === to) { 
         return true;
     }
@@ -100,6 +109,8 @@ function transfer(to, value){
 function assign(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(valueCheck(value) === true, 'Arg-value must be positive number.');
+    
     if(thisAddress === to) {
         return true;
     }
@@ -124,7 +135,8 @@ function transferFrom(from, to, value){
     assert(addressCheck(from) === true, 'Arg-from is not a valid address.');
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
-
+    assert(valueCheck(value) === true, 'Arg-value must be positive number.');
+    
     if(from === to) {
         return true;
     }
