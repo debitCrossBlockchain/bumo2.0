@@ -149,7 +149,7 @@ function transferFrom(from, to, value){
     assert(fromValue !== false, 'Get value failed, maybe ' + from + ' has no value.');
     assert(int64Compare(fromValue, value) >= 0, from + ' balance:' + fromValue + ' < transfer value:' + value + '.');
 
-    let allowValue = allowance(from, to);
+    let allowValue = allowance(from, sender);
     assert(int64Compare(allowValue, value) >= 0, 'Allowance value:' + allowValue + ' < transfer value:' + value + ' from ' + from + ' to ' + to  + '.');
 
     let toKey = makeBalanceKey(to);
@@ -160,7 +160,7 @@ function transferFrom(from, to, value){
     fromValue = int64Sub(fromValue, value);
     storageStore(fromKey, fromValue);
 
-    let allowKey = makeAllowanceKey(from, to);
+    let allowKey = makeAllowanceKey(from, sender);
     allowValue   = int64Sub(allowValue, value);
     storageStore(allowKey, allowValue);
 
