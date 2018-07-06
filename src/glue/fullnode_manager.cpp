@@ -30,10 +30,7 @@ namespace bumo {
 		last_ledger_seq_(0),
 		fullnode_check_timer_(0),
 		priv_key_(SIGNTYPE_CFCASM2),
-		local_address_(""),
-		Network(SslParameter()) {
-		request_methods_[protocol::FULL_NODE_MSG_TYPE_INSPECT] = std::bind(&FullNodeManager::OnInspected, this, std::placeholders::_1, std::placeholders::_2);
-
+		local_address_(""){
 		thread_ptr_ = NULL;
 	}
 
@@ -77,12 +74,10 @@ namespace bumo {
 	}
 
 	void FullNodeManager::Run(utils::Thread *this_thread){
-		Start(utils::InetAddress::None());
 		return;
 	}
 
 	bool FullNodeManager::Exit(){
-		Stop();
 		if (thread_ptr_) {
 			thread_ptr_->JoinWithStop();
 		}

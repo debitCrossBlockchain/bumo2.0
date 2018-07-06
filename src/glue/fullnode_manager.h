@@ -30,7 +30,6 @@ namespace bumo {
 		public utils::Singleton<bumo::FullNodeManager>,
 		public StatusModule,
 		public TimerNotify,
-		public Network,
 		public utils::Runnable{
 	private:
 		std::map<std::string, FullNodePointer> full_node_info_;
