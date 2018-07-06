@@ -85,7 +85,7 @@ function transfer(to, value){
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
     assert(valueCheck(value) === true, 'Arg-value must be positive number.');
     if(sender === to) {
-        tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.');
+        tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.');    
         return true;
     }
     
@@ -118,8 +118,8 @@ function assign(to, value){
     }
     
     loadGlobalAttribute();
-    assert(sender === globalAttribute.contractOwner, sender + ' has no permission to transfer contract balance.');
-    assert(int64Compare(globalAttribute.balance, value) >= 0, 'Balance of contract:' + globalAttribute.balance + ' < transfer value:' + value + '.');
+    assert(sender === globalAttribute.contractOwner, sender + ' has no permission to assign contract balance.');
+    assert(int64Compare(globalAttribute.balance, value) >= 0, 'Balance of contract:' + globalAttribute.balance + ' < assign value:' + value + '.');
 
     let toKey = makeBalanceKey(to);
     let toValue = storageLoad(toKey);
