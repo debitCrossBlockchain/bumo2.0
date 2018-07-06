@@ -18,7 +18,6 @@
 
 #include <unordered_map>
 #include <utils/headers.h>
-#include <utils/sqlparser.h>
 #include <json/json.h>
 #include "general.h"
 #include "configure_base.h"
