@@ -85,7 +85,7 @@ function transfer(to, value){
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
     assert(valueCheck(value) === true, 'Arg-value must be positive number.');
     if(sender === to) {
-        tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.')
+        tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.');
         return true;
     }
     
