@@ -2,7 +2,7 @@
 
 ## 简介
 
-CTP1.0(Contract Token Protocol) 指基于 BUMO 合约发行 token 的标准协议。该协议提供了转移 token 的基本功能，并允许 token 授权给第三方使用。
+CTP1.0(Contract Token Protocol) 指基于 BUMO 合约发行 token 的标准协议。该协议提供了转移 token 的基本功能，并允许 token 授权给第三方使用。此外，合约中的ctp变量需赋值为1.0。
 
 ## 目标
 
@@ -47,7 +47,7 @@ E.g.
         "type": "string",
         "value": {
             "contractInfo": {
-                "ctp": "1.0.0.1",
+                "ctp": "1.0",
                 "name": "cccpt-bu",
                 "symbol": "CBG",
                 "decimals": 0,
@@ -321,7 +321,7 @@ function init(input_str){
         "decimals":8,
         "totalSupply":"1500000000",
         "contractOwner":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj",
-        "ctp":"1.0.0.0"
+        "ctp":"1.0"
     }
 }
 ```
