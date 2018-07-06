@@ -75,7 +75,10 @@ function allowance(owner, spender){
 function transfer(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
-
+    if(sender === to) { 
+        return true;
+    }
+    
     let senderKey = makeBalanceKey(sender);
     let senderValue = storageLoad(senderKey);
     assert(senderValue !== false, 'Get balance of ' + sender + ' from metadata failed.');
@@ -97,7 +100,10 @@ function transfer(to, value){
 function assign(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
-
+    if(thisAddress === to) {
+        return true;
+    }
+    
     loadGlobalAttribute();
     assert(sender === globalAttribute.contractOwner, sender + ' has no permission to transfer contract balance.');
     assert(int64Compare(globalAttribute.balance, value) >= 0, 'Balance of contract:' + globalAttribute.balance + ' < transfer value:' + value + '.');
@@ -119,6 +125,10 @@ function transferFrom(from, to, value){
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
 
+    if(from === to) {
+        return true;
+    }
+    
     let fromKey = makeBalanceKey(from);
     let fromValue = storageLoad(fromKey);
     assert(fromValue !== false, 'Get value failed, maybe ' + from + ' has no value.');
