@@ -50,7 +50,7 @@ function makeAllowanceKey(owner, spender){
 }
 
 function valueCheck(value) {
-    if (value.startsWith("-") || value === '0') {
+    if (value.startsWith('-') || value === '0') {
         return false;
     }
     return true;
@@ -84,7 +84,8 @@ function transfer(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
     assert(valueCheck(value) === true, 'Arg-value must be positive number.');
-    if(sender === to) { 
+    if(sender === to) {
+        tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.')
         return true;
     }
     
@@ -112,6 +113,7 @@ function assign(to, value){
     assert(valueCheck(value) === true, 'Arg-value must be positive number.');
     
     if(thisAddress === to) {
+        tlog('assign', 'assign ' + value + ' to ' + to + ' succeed.');
         return true;
     }
     
@@ -127,7 +129,7 @@ function assign(to, value){
     globalAttribute.balance = int64Sub(globalAttribute.balance, value);
     storeGlobalAttribute();
 
-    tlog('assign', 'transfer ' + value + ' to ' + to + ' succeed.');
+    tlog('assign', 'assign ' + value + ' to ' + to + ' succeed.');
 
     return true;
 }
@@ -138,6 +140,7 @@ function transferFrom(from, to, value){
     assert(valueCheck(value) === true, 'Arg-value must be positive number.');
     
     if(from === to) {
+        tlog('transferFrom', sender + ' triggering ' + from + ' transfer ' + value + ' to ' + to + ' succeed.');
         return true;
     }
     
