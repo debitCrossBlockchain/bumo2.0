@@ -1,7 +1,7 @@
 [English](keypair.md) | 中文
 
 # Bumo Keypair 文档
-[TOC]
+
 ## 概述
 本文档详细介绍了Keypair（公、私钥对）的生成过程以及在此基础上如何生成地址（address）并对交易签名，介绍了执行交易调用的两种接口方式以及相关流程，提供了多种ProtoBuf数据结构参考信息，最后以示例的方式详细介绍了两种交易提交方式，即调用接口生成transaction_blob和自己生成transaction_blob。
 
