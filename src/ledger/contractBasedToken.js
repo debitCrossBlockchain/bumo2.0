@@ -222,11 +222,10 @@ function init(input_str){
            stoI64Check(input.params.totalSupply) === true &&
            typeof input.params.name === 'string' &&
            typeof input.params.symbol === 'string' &&
-           typeof input.params.decimals === 'number' &&
-           typeof input.params.ctp === 'string',
+           typeof input.params.decimals === 'number',
            'Args check failed.');
 
-    globalAttribute.ctp = input.params.ctp;
+    globalAttribute.ctp = '1.0';
     globalAttribute.name = input.params.name;
     globalAttribute.symbol = input.params.symbol;
     globalAttribute.decimals = input.params.decimals;
