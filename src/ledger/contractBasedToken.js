@@ -1,3 +1,13 @@
+/*
+  Contract based Token template
+  OBSERVING CTP 1.0
+  
+STATEMENT:
+  Any organizations or individuals that intend to issue contract based token on BU chain,
+  should abide by Contractbased-Token-Protocol(ctp). Therefore, any contract that created
+  on BU chain including global attribute of ctp, we treat it as Contract based Token.
+ */
+
 'use strict';
 
 let globalAttribute = {};
@@ -19,17 +29,38 @@ function storeGlobalAttribute(){
     storageStore(globalAttributeKey(), value);
 }
 
+function powerOfBase10(exponent){
+    let i = 0;
+    let power = 1;
+
+    while(i < exponent){
+        power = power * 10;
+        i = i + 1;
+    }
+
+    return power;
+}
+
 function makeBalanceKey(address){
     return 'balance_' + address;
 }
+
 function makeAllowanceKey(owner, spender){
     return 'allow_' + owner + '_to_' + spender;
 }
 
-function approve(spender, value){
-    assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
-    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
+function valueCheck(value) {
+    if (value.startsWith('-') || value === '0') {
+        return false;
+    }
+    return true;
+}
 
+function approve(spender, value){
+    assert(addressCheck(spender) === true, 'Arg-spender is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(valueCheck(value) === true, 'Arg-value must be positive number.');
+    
     let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
 
@@ -39,8 +70,8 @@ function approve(spender, value){
 }
 
 function allowance(owner, spender){
-    assert(addressCheck(owner) === true, 'Arg-owner is not valid adress.');
-    assert(addressCheck(spender) === true, 'Arg-spender is not valid adress.');
+    assert(addressCheck(owner) === true, 'Arg-owner is not a valid address.');
+    assert(addressCheck(spender) === true, 'Arg-spender is not a valid address.');
 
     let key = makeAllowanceKey(owner, spender);
     let value = storageLoad(key);
@@ -50,9 +81,14 @@ function allowance(owner, spender){
 }
 
 function transfer(to, value){
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
-
+    assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(valueCheck(value) === true, 'Arg-value must be positive number.');
+    if(sender === to) {
+        tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.');    
+        return true;
+    }
+    
     let senderKey = makeBalanceKey(sender);
     let senderValue = storageLoad(senderKey);
     assert(senderValue !== false, 'Get balance of ' + sender + ' from metadata failed.');
@@ -72,12 +108,18 @@ function transfer(to, value){
 }
 
 function assign(to, value){
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
-
+    assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(valueCheck(value) === true, 'Arg-value must be positive number.');
+    
+    if(thisAddress === to) {
+        tlog('assign', 'assign ' + value + ' to ' + to + ' succeed.');
+        return true;
+    }
+    
     loadGlobalAttribute();
-    assert(sender === globalAttribute.contractOwner, sender + ' has no permission transfer contract balance.');
-    assert(int64Compare(globalAttribute.balance, value) >= 0, 'Balance of contract:' + globalAttribute.balance + ' < transfer value:' + value + '.');
+    assert(sender === globalAttribute.contractOwner, sender + ' has no permission to assign contract balance.');
+    assert(int64Compare(globalAttribute.balance, value) >= 0, 'Balance of contract:' + globalAttribute.balance + ' < assign value:' + value + '.');
 
     let toKey = makeBalanceKey(to);
     let toValue = storageLoad(toKey);
@@ -87,21 +129,27 @@ function assign(to, value){
     globalAttribute.balance = int64Sub(globalAttribute.balance, value);
     storeGlobalAttribute();
 
-    tlog('assign', 'transfer ' + value + ' to ' + to + ' succeed.');
+    tlog('assign', 'assign ' + value + ' to ' + to + ' succeed.');
 
     return true;
 }
 function transferFrom(from, to, value){
-    assert(addressCheck(from) === true, 'Arg-from is not valid adress.');
-    assert(addressCheck(to) === true, 'Arg-to is not valid adress.');
-    assert(stoI64Check(value) === true, 'Arg-value must be number string.');
-
+    assert(addressCheck(from) === true, 'Arg-from is not a valid address.');
+    assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(valueCheck(value) === true, 'Arg-value must be positive number.');
+    
+    if(from === to) {
+        tlog('transferFrom', sender + ' triggering ' + from + ' transfer ' + value + ' to ' + to + ' succeed.');
+        return true;
+    }
+    
     let fromKey = makeBalanceKey(from);
     let fromValue = storageLoad(fromKey);
     assert(fromValue !== false, 'Get value failed, maybe ' + from + ' has no value.');
     assert(int64Compare(fromValue, value) >= 0, from + ' balance:' + fromValue + ' < transfer value:' + value + '.');
 
-    let allowValue = allowance(from, to);
+    let allowValue = allowance(from, sender);
     assert(int64Compare(allowValue, value) >= 0, 'Allowance value:' + allowValue + ' < transfer value:' + value + ' from ' + from + ' to ' + to  + '.');
 
     let toKey = makeBalanceKey(to);
@@ -112,7 +160,7 @@ function transferFrom(from, to, value){
     fromValue = int64Sub(fromValue, value);
     storageStore(fromKey, fromValue);
 
-    let allowKey = makeAllowanceKey(from, to);
+    let allowKey = makeAllowanceKey(from, sender);
     allowValue   = int64Sub(allowValue, value);
     storageStore(allowKey, allowValue);
 
@@ -122,10 +170,10 @@ function transferFrom(from, to, value){
 }
 
 function changeOwner(address){
-    assert(addressCheck(address) === true, 'Arg-address is not valid adress.');
+    assert(addressCheck(address) === true, 'Arg-address is not a valid address.');
 
     loadGlobalAttribute();
-    assert(sender === globalAttribute.contractOwner, sender + ' has no permission modify contract ownership.');
+    assert(sender === globalAttribute.contractOwner, sender + ' has no permission to modify contract ownership.');
 
     globalAttribute.contractOwner = address;
     storeGlobalAttribute();
@@ -149,12 +197,16 @@ function totalSupply(){
     return globalAttribute.totalSupply;
 }
 
+function ctp(){
+    return globalAttribute.ctp;
+}
+
 function contractInfo(){
     return globalAttribute;
 }
 
 function balanceOf(address){
-    assert(addressCheck(address) === true, 'Arg-address is not valid address.');
+    assert(addressCheck(address) === true, 'Arg-address is not a valid address.');
 
     let key = makeBalanceKey(address);
     let value = storageLoad(key);
@@ -164,7 +216,6 @@ function balanceOf(address){
 }
 
 function init(input_str){
-    assert(input_str !== undefined, 'Arg-input_str is undefined.');
     let input = JSON.parse(input_str);
 
     assert(addressCheck(input.params.contractOwner) === true &&
@@ -174,10 +225,11 @@ function init(input_str){
            typeof input.params.decimals === 'number',
            'Args check failed.');
 
+    globalAttribute.ctp = '1.0';
     globalAttribute.name = input.params.name;
     globalAttribute.symbol = input.params.symbol;
     globalAttribute.decimals = input.params.decimals;
-    globalAttribute.totalSupply = int64Mul(input.params.totalSupply, 10 ** globalAttribute.decimals);
+    globalAttribute.totalSupply = int64Mul(input.params.totalSupply, powerOfBase10(globalAttribute.decimals));
     globalAttribute.contractOwner = input.params.contractOwner;
     globalAttribute.balance = globalAttribute.totalSupply;
 
@@ -203,7 +255,7 @@ function main(input_str){
         changeOwner(input.params.address);
     }
     else{
-        throw '<undidentified operation type>';
+        throw '<unidentified operation type>';
     }
 }
 
@@ -212,6 +264,7 @@ function query(input_str){
 
     let result = {};
     let input  = JSON.parse(input_str);
+
     if(input.method === 'name'){
         result.name = name();
     }
@@ -223,6 +276,9 @@ function query(input_str){
     }
     else if(input.method === 'totalSupply'){
         result.totalSupply = totalSupply();
+    }
+    else if(input.method === 'ctp'){
+        result.ctp = ctp();
     }
     else if(input.method === 'contractInfo'){
         result.contractInfo = contractInfo();

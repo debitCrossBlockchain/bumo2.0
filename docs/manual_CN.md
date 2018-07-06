@@ -73,6 +73,7 @@ make
 生成的可执行文件目录：bumo/bin
 
 ### MAC
+- 支持 MAC OS X 10.11.4 及以上系统版本
 - 安装最新的Xcode 和 Command Tools，至少在8.0以上版本， 可以通过[苹果官网下载](https://developer.apple.com/download/more/)或者[苹果APP商城下载](https://itunes.apple.com/us/app/xcode/id497799835)
 - 安装brew，参考 [brew安装](https://brew.sh/index_zh-cn.html)
 - 使用brew执行安装依赖包

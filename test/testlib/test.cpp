@@ -6,14 +6,6 @@
 #include <asio.hpp>
 #include <algorithm>
 
-/*
-#include "ledger.h"
-#include "utils.h"
-#include "serializer.h"
-#include "rocksdb_imp.h"
-#include "sqlite_imp.h"
-*/
-
 #include <utils/headers.h>
 #include <overlay/peer.h>
 #include <common/private_key.h>
@@ -130,17 +122,6 @@ void TestAsio(){
 	addre.SetPort(80);
 	utils::InetAddress local_address("0.0.0.0", 8081);
 
-	/*
-	utils::AsyncSocketTcp new_socket1(&io);
-	utils::AsyncSocketAcceptor acceptor(&io);
-	acceptor.Bind(local_address);
-	acceptor.Listen(100);
-	acceptor.Accept(&new_socket1);
-
-	LOG_TRACE("local %s, remote: %s", acceptor.local_address().ToIpPort().c_str(), new_socket1.peer_address().ToIpPort().c_str());
-
-	*/
-
 	utils::AsyncSocketTcp sockettcp(&io);
 	bool result = sockettcp.Bind(local_address);
 	LOG_TRACE_ERRNO("bind result", STD_ERR_CODE, STD_ERR_DESC);
@@ -189,14 +170,6 @@ void OnTimer(){
 }
 
 void TestTimer(){
-	/*
-	utils::VirtualClock a;
-	utils::VirtualTimer t(a);
-	LOG_INFO("Time is start ");
-	t.expires_from_now(std::chrono::seconds(2));
-	t.async_wait(OnTimer, utils::VirtualTimer::onFailureNoop);
-	a.crank(false);
-	*/
 }
 
 void TestSsl(){

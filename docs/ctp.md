@@ -11,18 +11,19 @@ CTP1.0(Contract Token Protocol) 指基于 BUMO 合约发行 token 的标准协�
 
 ## 规则
 
-Bumo 智能合约由 javascript 实现,包含两个入口函数 init、main 和 query 。init 函数用于合约创建时初始化、main 函数主要负责数据写入，query 函数负责数据查询。
+Bumo 智能合约由 javascript 实现,包含初始化函数 init 和两个入口函数 main、query 。init 函数用于合约创建时初始化、main 函数主要负责数据写入，query 函数负责数据查询。
 
 
 ## 智能合约变量
 
 | 变量        | 描述                    |  
-| :--------- | ------------------------ |
-|name        | Token 名称                |
-|symbol      | Token 符号                |
-|decimals    | Token 小数位数             |
-|totalSupply | Token 总量                |
-
+| :----------- | --------------------------- |
+|ctp           | Contract Token Protocol版本 |
+|name          | Token 名称                  |
+|symbol        | Token 符号                  |
+|decimals      | Token 小数位数              |
+|totalSupply   | Token 总量                  |
+|contractOwner | Token 所有者                |
 
 ## 函数
 
@@ -35,8 +36,7 @@ E.g.
 - 参数json结构:
 ```json
 {
-    "method":"contractInfo",
-    "params":""
+    "method":"contractInfo"
 }
 ```
 - 函数：function contractInfo()
@@ -44,10 +44,18 @@ E.g.
 ```json
 {
     "result":{
-        "symbol":"XXX",
-        "decimals":5,
-        "totalSupply":"10000000000000000000",
-        "name":"XXXCOIN",
+        "type": "string",
+        "value": {
+            "contractInfo": {
+                "ctp": "1.0",
+                "name": "cccpt-bu",
+                "symbol": "CBG",
+                "decimals": 0,
+                "totalSupply": "100000",
+                "contractOwner": "buQBv4pqtNMs6ueBhx7mJULhAFYV3rSHo2Zg",
+                "balance": "100000"
+            }
+        }
     }
 } 
 ```
@@ -61,8 +69,7 @@ E.g.
 - 参数json结构:
 ```json
 {
-    "method":"name",
-    "params":""
+    "method":"name"
 }
 ```
 - 函数：function name()
@@ -84,8 +91,7 @@ E.g.
 - 参数json结构:
 ```json
 {
-    "method":"symbol",
-    "params":""
+    "method":"symbol"
 }
 ```
 - 函数：function symbol()
@@ -100,15 +106,14 @@ E.g.
 
 ### decimals
 
-返回 token 使用的小数点后几位， 比如 5,表示分配 token 数量为100000。入口函数q uery。
+返回 token 使用的小数点后几位， 比如 5,表示分配 token 数量为100000。入口函数query。
 
 E.g.
 
 - 参数json结构:
 ```json
 {
-    "method":"decimals",
-    "params":""
+    "method":"decimals"
 }
 ```
 - 函数：function decimals()
@@ -130,8 +135,7 @@ E.g.
 - 参数 json 结构:
 ```json
 {
-    "method":"totalSupply",
-    "params":""
+    "method":"totalSupply"
 }
 ```
 - 函数：function totalSupply()
@@ -171,7 +175,7 @@ E.g.
 
 ### transfer
 
-转移 value 的token数量到的地址 to，并且必须触发 log 事件。 如果 from 帐户余额没有足够的token来支出，该函数应该被throw, from 为发送交易的账户地址。入口函数 main。
+转移 value 数量的 token 到的地址 to，并且必须触发 log 事件。 如果资金转出账户余额没有足够的token来支出，该函数应该被throw。入口函数 main。
 
 - 参数 json 结构:
 ```json
@@ -191,7 +195,7 @@ E.g.
 
 ### transferFrom
 
-从地址from发送数量为 value 的token到地址 to，必须触发 log 事件。 在 transferFrom 之前，form 必须已经调用过 approve 向 to 授权了额度。如果 from 帐户余额没有足够的token来支出或者 from 授权给 to 的额度不足，该函数应该被 throw。入口函数 main。
+从地址from发送数量为 value 的 token 到地址 to，必须触发 log 事件。 在 transferFrom 之前，from 必须已经调用过 approve 向 to 授权了额度。如果 from 账户余额没有足够的 token 来支出或者 from 授权给 to 的额度不足，该函数应该被 throw。入口函数 main。
 
 参数json结构:
 ```json
@@ -307,6 +311,26 @@ function init(input_str){
 }
 
 ```
+
+参数 json 结构:
+```json
+{
+    "params":{
+        "name":"RMB",
+        "symbol":"CNY",
+        "decimals":8,
+        "totalSupply":"1500000000",
+        "contractOwner":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj",
+    }
+}
+```
+参数：name 资产名称；
+参数：symbol 资产符号；
+参数：decimals 小数位数；
+参数：totalSupply 发型总量；
+参数：contractOwner 合约资产归属人；
+
+- 返回值：true或者抛异常
 
 ### 入口函数 main
 

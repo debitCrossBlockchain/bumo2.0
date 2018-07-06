@@ -271,6 +271,9 @@ namespace bumo {
 			parameter.ope_index_ = 0;
 			parameter.consensus_value_ = Proto2Json(consensus_value_).toFastString();
 			parameter.ledger_context_ = this;
+			parameter.timestamp_ = consensus_value_.close_time();
+			parameter.blocknumber_ = consensus_value_.ledger_seq();
+
 			//do query
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
 			tx_frm->environment_ = environment;
@@ -524,7 +527,8 @@ namespace bumo {
 					txs[txs.size()] = jtx;
 				}
 			}
-				
+			if (LedgerContext::AT_TEST_TRANSACTION)
+				result = ptr->GetResult();
 			//batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 
 			for (size_t j = 0; j < ptr->instructions_.size(); j++) {

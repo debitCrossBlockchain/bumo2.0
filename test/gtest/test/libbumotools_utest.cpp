@@ -5,14 +5,11 @@
 class bumo_tools_utest : public testing::Test
 {
 protected:
-
-    // Sets up the test fixture.
     virtual void SetUp()
     {
 		InitBumoTools();
     }
 
-    // Tears down the test fixture.
     virtual void TearDown()
     {
 		UnInitBumoTools();

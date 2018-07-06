@@ -153,11 +153,17 @@ namespace bumo {
 		int64_t last_block_seq = LedgerManager::Instance().GetLastClosedLedger().seq();
 		utils::WriteLockGuard g(lock_);
 		uint32_t i = 0;
+		int64_t set_size = 0;
 		
 		for (auto t = queue_.begin(); set.txs().size() < limit && t != queue_.end(); ++t) {
 			const TransactionFrm::pointer& tx = *t;
-			if (set.ByteSize() + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE)
-				break;
+
+			if (i + set_size + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE){
+				if (set.ByteSize() + tx->GetTransactionEnv().ByteSize() >= General::TXSET_LIMIT_SIZE)
+					break;
+			}
+
+			set_size += tx->GetTransactionEnv().ByteSize();
 			
 			if (break_nonce_accounts.find(tx->GetSourceAddress()) == break_nonce_accounts.end()) {
 

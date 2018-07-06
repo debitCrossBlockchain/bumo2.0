@@ -83,22 +83,104 @@ namespace bumo {
 		bool SendMonitor(int64_t type, const std::string &data);
 		
 	protected:
+		/*************************************************
+		Function:       Run
+		Description:    Start monitor thread
+		Calls:          Start
+		Input:          thread utils::Thread The handle of thread
+		*************************************************/
 		virtual void Run(utils::Thread *thread) override;
 
 	private:
+		/*************************************************
+		Function:       OnDisconnect
+		Description:    Disconnect the monitor
+		Calls:          SetActiveTime
+		Input:          conn Connection The connection to monitor
+		*************************************************/
 		virtual void OnDisconnect(Connection *conn);
+
+		/*************************************************
+		Function:       CreateConnectObject
+		Description:    Create connection to monitor
+		Input:          server_h bumo::server* The http server
+						client_ bumo::client* The http client
+						tls_server_h bumo::tls_server* The tls server
+						tls_client_h bumo::tls_client* The tis client
+						con bumo::connection_hdl The handle of connection
+						uri const std::string The url
+						id int64_t The id of connection
+		Return:         The connection of websocket
+		*************************************************/
 		virtual bumo::Connection *CreateConnectObject(bumo::server *server_h, bumo::client *client_,
 			bumo::tls_server *tls_server_h, bumo::tls_client *tls_client_h,
 			bumo::connection_hdl con, const std::string &uri, int64_t id);
 
 		// Handlers
+		/*************************************************
+		Function:       OnMonitorHello
+		Description:    The monitor to hello message
+		Calls:          SendRequest
+		Input:          message protocol::WsMessage The message of monitor
+		                conn_id int64_t The id of connection
+		Return:         bool success or failure
+		*************************************************/
 		bool OnMonitorHello(protocol::WsMessage &message, int64_t conn_id);
+
+		/*************************************************
+		Function:       OnMonitorRegister
+		Description:    The monitor to register message
+		Calls:          SendRequest
+		Input:          message protocol::WsMessage The message of monitor
+		                conn_id int64_t The id of connection
+		Return:         bool success or failure
+		*************************************************/
 		bool OnMonitorRegister(protocol::WsMessage &message, int64_t conn_id);
+
+		/*************************************************
+		Function:       OnBumoStatus
+		Description:    The monitor to bumo status message
+		Calls:          SendRequest
+		Input:          message protocol::WsMessage The message of monitor
+		                conn_id int64_t The id of connection
+		Return:         bool success or failure
+		*************************************************/
 		bool OnBumoStatus(protocol::WsMessage &message, int64_t conn_id);
+
+		/*************************************************
+		Function:       OnLedgerStatus
+		Description:    The monitor to ledger status message
+		Calls:          SendRequest
+		Input:          message protocol::WsMessage The message of monitor
+		                conn_id int64_t The id of connection
+		Return:         bool success or failure
+		*************************************************/
 		bool OnLedgerStatus(protocol::WsMessage &message, int64_t conn_id);
+
+		/*************************************************
+		Function:       OnSystemStatus
+		Description:    The monitor to system status message
+		Calls:          SendRequest
+		Input:          message protocol::WsMessage The message of monitor
+		                conn_id int64_t The id of connection
+		Return:         bool success or failure
+		*************************************************/
 		bool OnSystemStatus(protocol::WsMessage &message, int64_t conn_id);
 
+		/*************************************************
+		Function:       GetBumoStatus
+		Description:    Get the status of bumo
+		Calls:          GetPeers
+		Input:          bumo_status monitor::BumoStatus The status of bumo
+		Return:         bool success or failure
+		*************************************************/
 		bool GetBumoStatus(monitor::BumoStatus &bumo_status);
+
+		/*************************************************
+		Function:       GetClientConnection
+		Description:    Get the Connection of client
+		Return:         The connection of client
+		*************************************************/
 		Connection * GetClientConnection();
 
 	private:

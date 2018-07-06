@@ -26,15 +26,15 @@ namespace bumo {
 	class Monitor : public bumo::Connection {
 	private:
 
-		bool state_changed_;
-		int64_t active_time_;
-		std::string session_id_;
-		std::string peer_node_address_;
-		//bubi пео╒
-		std::string bumo_version_;
-		int64_t monitor_version_;
-		int64_t bubi_ledger_version_;
-		std::string bubi_node_address_;
+		bool state_changed_;              /* state changed */
+		int64_t active_time_;             /* the active time of monitor */
+		std::string session_id_;          /* session id */
+		std::string peer_node_address_;   /* peer node address */
+		
+		std::string bumo_version_;        /* bubi version */
+		int64_t monitor_version_;         /* monitor version */
+		int64_t bubi_ledger_version_;     /* bubi ledger version */
+		std::string bubi_node_address_;   /* bubi node address */
 
 	public:
 		Monitor(bumo::server *server_h, bumo::client *client_h, bumo::tls_server *tls_server_h, bumo::tls_client *tls_client_h, 
