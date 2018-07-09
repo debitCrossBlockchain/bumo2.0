@@ -13,7 +13,6 @@
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <pcrecpp.h>
 #include <utils/strings.h>
 #include <utils/logger.h>
 #include <utils/file.h>
