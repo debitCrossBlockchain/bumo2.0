@@ -108,6 +108,17 @@ namespace bumo {
 		void NonceIncrease();
 		int64_t GetAccountBalance() const;
 		bool AddBalance(int64_t amount);
+		void SetVoteFor(const std::string& address);
+		bool DecreasePopularity(int64_t votes);
+		bool IncreasePopularity(int64_t votes);
+
+		const std::string& GetVoteFor(){
+			return vote_for_;
+		}
+		int64_t GetSelfPopularity(){
+			return self_popularity_;
+		}
+
 		static AccountFrm::pointer CreatAccountFrm(const std::string& account_address, int64_t balance);
 	public:
 
@@ -121,6 +132,8 @@ namespace bumo {
 		std::map<std::string, DataCache<protocol::KeyPair>> metadata_;
 	private:
 		protocol::Account	account_info_;
+		std::string vote_for_; //support who as validator
+		int64_t self_popularity_;
 	};
 
 }
