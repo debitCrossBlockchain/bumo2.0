@@ -50,7 +50,7 @@ void utils::set_error_code(uint32_t code) {
 void utils::Sleep(int time_milli) {
 #ifdef WIN32
 	::Sleep(time_milli);
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 	::usleep(((__useconds_t)time_milli) * 1000);
 #elif defined OS_MAC
 	::usleep(time_milli * 1000);
@@ -140,7 +140,7 @@ time_t utils::GetStartupTime(time_t time_now) {
 	}
 
 	nStartupTime = time_now - (time_t)(nCount.QuadPart / nFreq.QuadPart);
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 	struct sysinfo nInfo;
 
 	memset(&nInfo, 0, sizeof(nInfo));
