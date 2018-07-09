@@ -465,7 +465,7 @@ namespace bumo {
 				std::string path;
 				std::cin >> path;
 				KeyValueDb* ledger_db_ = nullptr;
-#ifdef WIN32
+#if defined(WIN32)||defined(OS_ANDROID)
 				ledger_db_ = new LevelDbDriver();
 #else
 				ledger_db_ = new RocksDbDriver();
@@ -479,7 +479,7 @@ namespace bumo {
 				char ch;
 				std::cin >> ch;
 				if (ch == '1'){
-#ifdef WIN32
+#if defined(WIN32)||defined(OS_ANDROID)
 					auto it = (leveldb::Iterator*)ledger_db_->NewIterator();
 #else
 					auto it = (rocksdb::Iterator*)ledger_db_->NewIterator();

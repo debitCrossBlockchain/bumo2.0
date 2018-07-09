@@ -30,6 +30,7 @@
 #include "kv_trie.h"
 #include "proto/cpp/consensus.pb.h"
 
+
 #if defined(WIN32)||defined(OS_ANDROID)
 #include <leveldb/leveldb.h>
 #include <leveldb/slice.h>

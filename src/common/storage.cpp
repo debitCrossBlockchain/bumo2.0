@@ -13,6 +13,7 @@
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <pcrecpp.h>
 #include <utils/strings.h>
 #include <utils/logger.h>
 #include <utils/file.h>
@@ -25,7 +26,7 @@ namespace bumo {
 
 	KeyValueDb::~KeyValueDb() {}
 
-#ifdef WIN32
+#if defined(WIN32)||defined(OS_ANDROID)
 	LevelDbDriver::LevelDbDriver() {
 		db_ = NULL;
 	}
@@ -267,7 +268,7 @@ namespace bumo {
 				bool do_success = false;
 				do {
 					//check the db if opened only for linux or mac
-#ifndef WIN32
+#if defined(WIN32)||defined(OS_ANDROID)
 					KeyValueDb *account_db = NewKeyValueDb(db_config);
 					if (!account_db->Open(db_config.account_db_path_, -1)) {
 						LOG_ERROR("Drop failed, error desc(%s)", account_db->error_desc().c_str());
@@ -408,7 +409,7 @@ namespace bumo {
 
 	KeyValueDb *Storage::NewKeyValueDb(const DbConfigure &db_config) {
 		KeyValueDb *db = NULL;
-#ifdef WIN32
+#if defined(WIN32)||defined(OS_ANDROID)
 		db = new LevelDbDriver();
 #else
 		db = new RocksDbDriver();

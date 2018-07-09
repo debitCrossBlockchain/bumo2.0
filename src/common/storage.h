@@ -18,17 +18,18 @@
 
 #include <unordered_map>
 #include <utils/headers.h>
+#include <utils/sqlparser.h>
 #include <json/json.h>
 #include "general.h"
 #include "configure_base.h"
-#ifdef WIN32
+#if defined(WIN32)||defined(OS_ANDROID)
 #include <leveldb/leveldb.h>
 #else
 #include <rocksdb/db.h>
 #endif
 
 namespace bumo {
-#ifdef WIN32
+#if defined(WIN32)||defined(OS_ANDROID)
 #define KVDB leveldb
 #define WRITE_BATCH leveldb::WriteBatch
 #define WRITE_BATCH_DATA(batch) (((std::string*)(&batch))->c_str())
@@ -63,7 +64,7 @@ namespace bumo {
 		virtual void* NewIterator() = 0;
 	};
 
-#ifdef WIN32
+#if defined(WIN32)||defined(OS_ANDROID)
 	class LevelDbDriver : public KeyValueDb {
 	private:
 		leveldb::DB* db_;
