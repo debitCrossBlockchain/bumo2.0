@@ -16,11 +16,11 @@ class Stdlib
 public:
 	Stdlib();
 	~Stdlib();
-	static int atoi(const char *_Str);
-	static long long atoll(const char *_Str);
-	static long  atol(const char *_Str);
-	static double atof(const char *_String);
-	static void abort(void);
+	static int Bumoatoi(const std::string &str);
+	static long long Bumoatoll(const std::string &str);
+	static long  Bumoatol(const std::string &str);
+	static double Bumoatof(const std::string &str);
+	static void Bumoabort(void);
 private:
 
 };

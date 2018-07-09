@@ -1,16 +1,14 @@
 ﻿/*
-	bumo is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	bumo is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
+bumo is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+bumo is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef UTILS_STRING_UTIL_H_
@@ -40,36 +38,36 @@ using std::abs;
 
 namespace utils {
 #ifdef OS_ANDROID
-template<class InputIt, class UnaryPredicate>
-InputIt find_if_(InputIt first, InputIt last, UnaryPredicate p)
-{
-    for (; first != last; ++first) {
-		        if (p(*first)) {
-				     return first;
-							    }
-									}
-						 return last;
-}
+	template<class InputIt, class UnaryPredicate>
+	InputIt find_if_(InputIt first, InputIt last, UnaryPredicate p)
+	{
+		for (; first != last; ++first) {
+			if (p(*first)) {
+				return first;
+			}
+		}
+		return last;
+	}
 
-template <class BidirectionalIterator>
-void reversePlus (BidirectionalIterator first, BidirectionalIterator last)
-  {
-    while ((first!=last)&&(first!=--last)) {
-	    std::iter_swap (first,last);
-		    ++first;
-			  }
-  }
+	template <class BidirectionalIterator>
+	void reversePlus(BidirectionalIterator first, BidirectionalIterator last)
+	{
+		while ((first != last) && (first != --last)) {
+			std::iter_swap(first, last);
+			++first;
+		}
+	}
 
-template<class ForwardIt, class UnaryPredicate>
-ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
-{
-    first = find_if_(first, last, p);
-	    if (first != last)
-		        for(ForwardIt i = first; ++i != last; )
-				            if (!p(*i))
-							 *first++ = std::move(*i);
-		 return first;
-}
+	template<class ForwardIt, class UnaryPredicate>
+	ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
+	{
+		first = find_if_(first, last, p);
+		if (first != last)
+			for (ForwardIt i = first; ++i != last;)
+				if (!p(*i))
+					*first++ = std::move(*i);
+		return first;
+	}
 #endif
 	typedef std::vector<std::string> StringVector;
 	typedef std::list<std::string> StringList;
@@ -148,11 +146,11 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 #ifndef OS_ANDROID
 			return atoi(str.c_str());
 #else
-	         return Stdlib::atoi(str.c_str());
+			return Stdlib::Bumoatoi(str.c_str());
 #endif
 
 		}
-		
+
 		/// @brief 转换成unsigned int
 		static unsigned int Stoui(const std::string &str) {
 			if (0 == str.length()) {
@@ -184,7 +182,7 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 #ifdef WIN32
 			v = _atoi64(str.c_str());
 #elif defined 	OS_ANDROID
-            v = Stdlib::atoll(str.c_str());
+			v = Stdlib::Bumoatoll(str.c_str());
 #else
 			v = atoll(str.c_str());
 #endif
@@ -218,11 +216,11 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 		static long Stol(const std::string &str) {
 			if (0 == str.length()) {
 				return 0L;
-			} 
+			}
 #ifndef OS_ANDROID
 			return atol(str.c_str());
 #else
-            return Stdlib::atol(str.c_str());
+			return Stdlib::Bumoatol(str.c_str());
 #endif 
 		}
 
@@ -234,7 +232,7 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 #ifndef OS_ANDROID
 			return static_cast<float>(atof(str.c_str()));
 #else
-            return static_cast<float>(Stdlib::atof(str.c_str()));
+			return static_cast<float>(Stdlib::Bumoatof(str.c_str()));
 #endif
 		}
 
@@ -246,7 +244,7 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 #ifndef OS_ANDROID
 			return atof(str.c_str());
 #else
-            return Stdlib::atof(str.c_str());
+			return Stdlib::Bumoatof(str.c_str());
 #endif
 
 		}
@@ -411,7 +409,7 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 #ifndef OS_ANDROID
 				else abort();
 #else
-                else Stdlib::abort();
+				else Stdlib::Bumoabort();
 #endif				
 			}
 			return str;
@@ -472,7 +470,7 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 #ifndef OS_ANDROID
 				else abort();
 #else
-                else Stdlib::abort();
+				else Stdlib::Bumoabort();
 #endif
 			}
 
@@ -493,9 +491,9 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 #ifndef OS_ANDROID
 					abort();
 #else
-                    Stdlib::abort();
+					Stdlib::Bumoabort();
 #endif
-					 
+
 
 				va_start(ap, format);
 				int nCopy = vsnprintf(buf, nMalloc, format, ap);
@@ -730,41 +728,41 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 			return result;
 		}
 
-	static std::string HexStringToBin(const std::string &hex_string, bool force_little = false){
-		if (hex_string.size() % 2 != 0 || hex_string.empty() ){
-			return "";
-		}
-		std::string result;
-		result.resize(hex_string.size()/2);
-		for (size_t i = 0; i < hex_string.size() - 1; i = i + 2){
-			uint8_t high = 0;
-            if (hex_string[i] >= '0' && hex_string[i] <= '9')
-                high = (hex_string[i] - '0');
-            else if (hex_string[i] >= 'a' && hex_string[i] <= 'f')
-                high = (hex_string[i] - 'a' + 10);
-			else if (hex_string[i] >= 'A' && hex_string[i] <= 'F'  && !force_little) {
-				high = (hex_string[i] - 'A' + 10);
-			}
-			else {
+		static std::string HexStringToBin(const std::string &hex_string, bool force_little = false){
+			if (hex_string.size() % 2 != 0 || hex_string.empty()){
 				return "";
 			}
+			std::string result;
+			result.resize(hex_string.size() / 2);
+			for (size_t i = 0; i < hex_string.size() - 1; i = i + 2){
+				uint8_t high = 0;
+				if (hex_string[i] >= '0' && hex_string[i] <= '9')
+					high = (hex_string[i] - '0');
+				else if (hex_string[i] >= 'a' && hex_string[i] <= 'f')
+					high = (hex_string[i] - 'a' + 10);
+				else if (hex_string[i] >= 'A' && hex_string[i] <= 'F'  && !force_little) {
+					high = (hex_string[i] - 'A' + 10);
+				}
+				else {
+					return "";
+				}
 
-			uint8_t low = 0;
-            if (hex_string[i + 1] >= '0' && hex_string[i + 1] <= '9')
-                low = (hex_string[i + 1] - '0');
-            else if (hex_string[i + 1] >= 'a' && hex_string[i + 1] <= 'f')
-                low = (hex_string[i + 1] - 'a' + 10);
-			else  if (hex_string[i + 1] >= 'A' && hex_string[i + 1] <= 'F' && !force_little) {
-                low = (hex_string[i + 1] - 'A' + 10);
-			}
-			else {
-				return "";
-			}
+				uint8_t low = 0;
+				if (hex_string[i + 1] >= '0' && hex_string[i + 1] <= '9')
+					low = (hex_string[i + 1] - '0');
+				else if (hex_string[i + 1] >= 'a' && hex_string[i + 1] <= 'f')
+					low = (hex_string[i + 1] - 'a' + 10);
+				else  if (hex_string[i + 1] >= 'A' && hex_string[i + 1] <= 'F' && !force_little) {
+					low = (hex_string[i + 1] - 'A' + 10);
+				}
+				else {
+					return "";
+				}
 
-			int valuex = (high << 4) + low;
-			//sscanf(hex_string.substr(i, 2).c_str(), "%x", &valuex);
-			result.at(i/2) = (char)valuex;
-		}
+				int valuex = (high << 4) + low;
+				//sscanf(hex_string.substr(i, 2).c_str(), "%x", &valuex);
+				result.at(i / 2) = (char)valuex;
+			}
 
 			return result;
 		}
@@ -822,12 +820,12 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 			nTimeValue.tm_min = atoi(nValues[4].c_str());
 			nTimeValue.tm_sec = atoi(nValues[5].c_str());
 #else
-            nTimeValue.tm_year = Stdlib::atoi(nValues[0].c_str()) - 1900;
-			nTimeValue.tm_mon = Stdlib::atoi(nValues[1].c_str()) - 1;
-			nTimeValue.tm_mday = Stdlib::atoi(nValues[2].c_str());
-			nTimeValue.tm_hour = Stdlib::atoi(nValues[3].c_str());
-			nTimeValue.tm_min = Stdlib::atoi(nValues[4].c_str());
-			nTimeValue.tm_sec = Stdlib::atoi(nValues[5].c_str());
+			nTimeValue.tm_year = Stdlib::Bumoatoi(nValues[0].c_str()) - 1900;
+			nTimeValue.tm_mon = Stdlib::Bumoatoi(nValues[1].c_str()) - 1;
+			nTimeValue.tm_mday = Stdlib::Bumoatoi(nValues[2].c_str());
+			nTimeValue.tm_hour = Stdlib::Bumoatoi(nValues[3].c_str());
+			nTimeValue.tm_min = Stdlib::Bumoatoi(nValues[4].c_str());
+			nTimeValue.tm_sec = Stdlib::Bumoatoi(nValues[5].c_str());
 #endif
 			time_t nLocalTimestamp = mktime(&nTimeValue);
 
@@ -862,7 +860,7 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 #ifndef OS_ANDROID
 			std::reverse(result_decimal.begin(), result_decimal.end());
 #else
-            reversePlus(result_decimal.begin(), result_decimal.end());
+			reversePlus(result_decimal.begin(), result_decimal.end());
 #endif
 			return result_decimal;
 		}
@@ -905,7 +903,7 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 				else {
 					value.erase(dot_pos, 1);
 					value.insert(dot_pos + decimals, 1, '.');
-				}			
+				}
 			}
 
 			size_t i = 0;
@@ -1063,7 +1061,7 @@ ForwardIt _remove_if_(ForwardIt first, ForwardIt last, UnaryPredicate p)
 				return false;
 			}
 #ifdef OS_ANDROID
-using std::string;
+			using std::string;
 #endif
 			std::string v1, v2;
 			v1.resize(l.size(), 0);
