@@ -13,7 +13,7 @@
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef OS_LINUX
+#if (defined OS_LINUX)||(defined OS_ANDROID)
 #include <sys/prctl.h>
 #elif defined OS_MAC
 #include <semaphore.h>
@@ -67,7 +67,7 @@ bool utils::Thread::Start(std::string name) {
 	handle_ = ::CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)threadProc, (LPVOID)this, 0, (LPDWORD)&thread_id_);
 	result = (NULL != handle_);
 
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 	pthread_attr_t object_attr;
 	pthread_attr_init(&object_attr);
 	pthread_attr_setdetachstate(&object_attr, PTHREAD_CREATE_DETACHED);
@@ -169,6 +169,10 @@ bool utils::Thread::Terminate() {
 	if (0 != pthread_cancel(thread_id_)) {
 		result = false;
 	}
+#elif defined OS_ANDROID
+	if (0 !=   pthread_kill(thread_id_,SIGKILL)) {
+		result = false;
+	}
 #elif defined OS_MAC
 	if (0 != pthread_cancel((pthread_t)thread_id_)) {
 		result = false;
@@ -204,7 +208,7 @@ bool utils::Thread::SetCurrentThreadName(std::string name) {
 #ifdef WIN32
 	//not supported
 	return true;
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 	return 0 == prctl(PR_SET_NAME, name.c_str(), 0, 0, 0);
 #elif defined OS_MAC
 	pthread_setname_np(name.c_str());
@@ -324,7 +328,7 @@ bool utils::Semaphore::Wait(uint32_t millisecond) {
 	else {
 		return false;
 	}
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 	int32_t ret = 0;
 
 	if (kInfinite == millisecond) {
