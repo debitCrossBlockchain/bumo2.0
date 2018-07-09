@@ -20,6 +20,11 @@ LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libcrypto.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE:=libleveldb
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/leveldb/libleveldb.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
 LOCAL_MODULE:=libv8_libbase
 LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8_libbase.so
 include $(PREBUILT_SHARED_LIBRARY)
@@ -173,10 +178,8 @@ LOCAL_C_INCLUDES += \
 	$(SRC_PATH)/src/utils/android_ifaddrs/ \
     $(SRC_PATH)/src/3rd/basic/include/ \
     $(SRC_PATH)/src/3rd/protobuf/src/ \
-    $(SRC_PATH)/src/3rd/basic/include/ \
     $(SRC_PATH)/src/3rd/jsoncpp/include/ \
     $(SRC_PATH)/src/3rd/sqlite/ \
-    $(SRC_PATH)/src/3rd/rocksdb/include/ \
     $(SRC_PATH)/src/3rd/pcre-8.39/ \
     $(SRC_PATH)/src/3rd/websocketpp/ \
     $(SRC_PATH)/src/3rd/bzip2-1.0.6/ \
@@ -185,8 +188,9 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/http/ \
     $(SRC_PATH)/src/3rd/libscrypt/ \
     $(SRC_PATH)/src/3rd/basic/include/v8/ \
+	#$(SRC_PATH)/src/3rd/rocksdb/include/ \
 
-LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf librocksdb libed25519 libhttp 
+LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf  libed25519 libhttp libleveldb
 LOCAL_SHARED_LIBRARIES:=libv8 libv8_libbase libv8_libplatform  libicui18n  libicuuc
 
 LOCAL_LDLIBS += -llog 
@@ -221,7 +225,7 @@ include $(BUMO_SRC_PATH)3rd/jsoncpp/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/libscrypt/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/pcre-8.39/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/protobuf/android/Android.mk
-include $(BUMO_SRC_PATH)3rd/rocksdb/android/Android.mk
+#include $(BUMO_SRC_PATH)3rd/rocksdb/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/zlib-1.2.8/android/Android.mk
 
 
