@@ -106,6 +106,11 @@ namespace bumo {
 		return true;
 	}
 
+	bool PeerManager::SendRequest(std::string uri, int64_t type, const std::string &data){
+		if (consensus_network_) consensus_network_->SendRequest(uri, type, data);
+		return true;
+	}
+
 	void PeerManager::GetModuleStatus(Json::Value &data) {
 		data["name"] = "peer_manager";
 		data["peer_node_address"] = peer_node_address_;

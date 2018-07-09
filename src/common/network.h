@@ -102,6 +102,7 @@ namespace bumo {
 	};
 
 	typedef std::map<int64_t, Connection *> ConnectionMap;
+	typedef std::map<std::string, Connection *> UriConnectionMap;
 	typedef std::map<connection_hdl, int64_t, std::owner_less<connection_hdl>> ConnectHandleMap;
 
 	typedef std::function<bool(protocol::WsMessage &message, int64_t conn_id)> MessageConnPoc;
@@ -133,15 +134,18 @@ namespace bumo {
 
 		ConnectionMap connections_;
 		ConnectionMap connections_delete_;
+		UriConnectionMap uri_connections_;
 		ConnectHandleMap connection_handles_;
 
 		int64_t next_id_;
+		int64_t next_uri_id_;
 		bool enabled_;
 
 		SslParameter ssl_parameter_;
 
 		std::error_code ec_;
 		utils::Mutex conns_list_lock_;
+		utils::Mutex uri_conns_lock_;
         uint16_t listen_port_;
 	public:
 		Network(const SslParameter &ssl_parameter);
@@ -151,6 +155,7 @@ namespace bumo {
 		void Stop();
 		//for client
 		bool Connect(std::string const & uri);
+		bool uriConnect(const std::string &uri);
 		uint16_t GetListenPort() const;
 	protected:
 		//for server
@@ -179,6 +184,7 @@ namespace bumo {
 		//Get peer object not thread safe
 		Connection *GetConnection(int64_t id);
 		Connection *GetConnection(connection_hdl hdl);
+		Connection *GetConnection(std::string uri);
 
 		//remove peer,  not thread safe
 		void RemoveConnection(Connection *conn);
