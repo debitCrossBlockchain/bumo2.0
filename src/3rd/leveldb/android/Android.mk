@@ -7,13 +7,14 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-include common.mk
+include $(BUMO_SRC_PATH)3rd/leveldb/common.mk
 
-LOCAL_MODULE := leveldb
-LOCAL_C_INCLUDES := $(C_INCLUDES)
+LOCAL_MODULE := libleveldb
+LOCAL_C_INCLUDES :=  $(BUMO_SRC_PATH)3rd/leveldb/include/ \
+                     $(BUMO_SRC_PATH)3rd/leveldb/
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_CFLAGS := -DLEVELDB_PLATFORM_ANDROID -std=gnu++0x
-LOCAL_SRC_FILES := $(SOURCES:%.cc=../%.cc) ../port/port_android.cc
+LOCAL_SRC_FILES := $(SOURCES:%.cc=../%.cc) $(BUMO_SRC_PATH)3rd/leveldb/port/port_android.cc
 
 include $(BUILD_STATIC_LIBRARY)
 #include $(BUILD_SHARED_LIBRARY)

@@ -20,11 +20,6 @@ LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libcrypto.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE:=libleveldb
-LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/leveldb/libleveldb.a
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE:=libv8_libbase
 LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/v8_target/android/libv8_libbase.so
 include $(PREBUILT_SHARED_LIBRARY)
@@ -225,7 +220,7 @@ include $(BUMO_SRC_PATH)3rd/jsoncpp/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/libscrypt/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/pcre-8.39/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/protobuf/android/Android.mk
-#include $(BUMO_SRC_PATH)3rd/rocksdb/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/leveldb/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/zlib-1.2.8/android/Android.mk
 
 

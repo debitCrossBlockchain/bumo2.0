@@ -13,13 +13,12 @@
 #ifndef STORAGE_LEVELDB_INCLUDE_STATUS_H_
 #define STORAGE_LEVELDB_INCLUDE_STATUS_H_
 
-#include "win32exports.h"
 #include <string>
 #include "leveldb/slice.h"
 
 namespace leveldb {
 
-class LEVELDB_EXPORT Status {
+class Status {
  public:
   // Create a success status.
   Status() : state_(NULL) { }

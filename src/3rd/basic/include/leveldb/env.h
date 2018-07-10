@@ -13,7 +13,6 @@
 #ifndef STORAGE_LEVELDB_INCLUDE_ENV_H_
 #define STORAGE_LEVELDB_INCLUDE_ENV_H_
 
-#include "win32exports.h"
 #include <cstdarg>
 #include <string>
 #include <vector>
@@ -29,7 +28,7 @@ class SequentialFile;
 class Slice;
 class WritableFile;
 
-class LEVELDB_EXPORT Env {
+class Env {
  public:
   Env() { }
   virtual ~Env();
@@ -153,7 +152,7 @@ class LEVELDB_EXPORT Env {
 };
 
 // A file abstraction for reading sequentially through a file
-class LEVELDB_EXPORT SequentialFile {
+class SequentialFile {
  public:
   SequentialFile() { }
   virtual ~SequentialFile();
@@ -177,7 +176,7 @@ class LEVELDB_EXPORT SequentialFile {
 };
 
 // A file abstraction for randomly reading the contents of a file.
-class LEVELDB_EXPORT RandomAccessFile {
+class RandomAccessFile {
  public:
   RandomAccessFile() { }
   virtual ~RandomAccessFile();
@@ -196,7 +195,7 @@ class LEVELDB_EXPORT RandomAccessFile {
 // A file abstraction for sequential writing.  The implementation
 // must provide buffering since callers may append small fragments
 // at a time to the file.
-class LEVELDB_EXPORT WritableFile {
+class WritableFile {
  public:
   WritableFile() { }
   virtual ~WritableFile();
@@ -213,7 +212,7 @@ class LEVELDB_EXPORT WritableFile {
 };
 
 // An interface for writing log messages.
-class LEVELDB_EXPORT Logger {
+class Logger {
  public:
   Logger() { }
   virtual ~Logger();
@@ -229,7 +228,7 @@ class LEVELDB_EXPORT Logger {
 
 
 // Identifies a locked file.
-class LEVELDB_EXPORT FileLock {
+class FileLock {
  public:
   FileLock() { }
   virtual ~FileLock();
