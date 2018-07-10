@@ -322,8 +322,11 @@ namespace bumo {
 			int64_t random_seq = lcl.seq() - lcl.seq() % full_node_info_.size();
 		
 			// TODO: send the GetLedger request to peer
-			// std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", address.ToIpPort().c_str());
-			// Connect(uri);
+			protocol::ChainGetLedgerReq req;
+			req.set_ledger_seq(random_seq);
+			std::string uri = utils::String::Format("ws://%s:", peer.c_str());//include IP and port
+			PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_LEDGERS, req.SerializeAsString());
+			
 
 			// TODO: add timer and set impeach func as callback 
 			std::string reason = "timeout";

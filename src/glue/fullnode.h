@@ -45,7 +45,7 @@ namespace bumo {
 
 		// ...
 	private:
-		std::string addr_;
+		std::string addr_;//include IP and port
 		std::string addr_hash_; // hash of addr_
 		std::string endpoint_;
 		int64_t apply_time_;

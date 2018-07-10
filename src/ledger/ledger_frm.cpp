@@ -545,28 +545,45 @@ namespace bumo {
 			return false;
 		}
 
+		int64_t total_vote = 0;
+		std::vector<std::shared_ptr<AccountFrm>> validator_accounts;
+		for (int32_t i = 0; i < set.validators_size(); i++){
+			std::shared_ptr<AccountFrm> account;
+
+			if (!environment_->GetEntry(set.validators(i).address(), account)) {
+				account = AccountFrm::CreatAccountFrm(set.validators(i).address(), 0);
+				environment_->AddEntry(account->GetAccountAddress(), account);
+			}
+
+			int64_t temp_sum = 0;
+			if (!utils::SafeIntAdd(total_vote, account->GetSelfPopularity(), temp_sum)){
+				LOG_ERROR("Count of votes overflow (" FMT_I64 ") + (" FMT_I64 ")", total_vote, account->GetSelfPopularity());
+				return false;
+			}
+
+			total_vote = temp_sum;
+			validator_accounts.push_back(account);
+		}
+
 		int64_t validators_reward = (total_reward * 9) / 10;
 		int64_t validators_left_reward = validators_reward;
 		std::shared_ptr<AccountFrm> random_account;
 		int64_t random_index = ledger_.header().seq() % set.validators_size();
 		LOG_INFO("total reward(" FMT_I64 ") = total fee(" FMT_I64 ") + block reward(" FMT_I64 ") in ledger(" FMT_I64 ")", total_reward, total_fee_, block_reward, ledger_.header().seq());
-		for (int32_t i = 0; i < set.validators_size(); i++) {
-			std::shared_ptr<AccountFrm> account;
-			if (!environment_->GetEntry(set.validators(i).address(), account)) {
-				account = AccountFrm::CreatAccountFrm(set.validators(i).address(), 0);
-				environment_->AddEntry(account->GetAccountAddress(), account);
-			}
+
+		for (int32_t i = 0; i < validator_accounts.size(); i++) {
+			auto account = validator_accounts[i];
+
 			if (random_index == i) {
 				random_account = account;
 			}
+
 			int64_t reward_amount = 0;
-			int64_t total_popularity_ = -1;
-			int64_t reward_ratio = account->GetProtoAccount().self_popularity() / total_popularity_; // TODO: get total_popularity from all validators popularity
+			int64_t reward_ratio = account->GetProtoAccount().self_popularity() / total_vote;
 			if (!utils::SafeIntMul(validators_reward, reward_ratio, reward_amount)) {
 				LOG_ERROR("AllocateReward math overflow validators reward:(" FMT_I64 "), reward_ratio:(" FMT_I64 ")", validators_reward, reward_ratio);
 				return false;
 			}
-			
 			
 			validators_left_reward -= reward_amount;
 
@@ -577,6 +594,7 @@ namespace bumo {
 				return false;
 			}
 		}
+
 		if (validators_left_reward > 0) {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
 			if (!random_account->AddBalance(validators_left_reward)) {
@@ -593,6 +611,7 @@ namespace bumo {
 			LOG_ERROR("AllocateReward math overflow total reward:(" FMT_I64 "), validators reward:(" FMT_I64 ")", total_reward, validators_reward);
 			return false;
 		}
+
 		if (!FullNodeManager::Instance().reward(environment_, fullnodes_reward)) {
 			LOG_ERROR("Failed to allocate full nodes reward in ledger(" FMT_I64 ")", ledger_.header().seq());
 			return false;

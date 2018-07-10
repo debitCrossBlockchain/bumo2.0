@@ -45,6 +45,8 @@ namespace bumo {
 		//bool SendMessage(int64_t peer_id, protocol::WsMessage &message);
 		bool SendRequest(int64_t peer_id, int64_t type, const std::string &data);
 
+		bool SendRequest(std::string uri, int64_t type, const std::string &data);
+
 		inline PeerNetwork& ConsensusNetwork() {
 			return *consensus_network_;
 		}

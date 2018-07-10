@@ -587,6 +587,66 @@ namespace bumo {
 		return true;
 	}
 
+	bool Network::uriConnect(const std::string &uri) {
+		websocketpp::lib::error_code ec;
+
+		tls_client::connection_ptr tls_con = NULL;
+		client::connection_ptr con = NULL;
+		connection_hdl handle;
+		if (ssl_parameter_.enable_) {
+			tls_con = tls_client_.get_connection(uri, ec);
+			if (tls_con) {
+				tls_con->set_open_handler(bind(&Network::OnClientOpen, this, _1));
+				tls_con->set_close_handler(bind(&Network::OnClose, this, _1));
+				tls_con->set_message_handler(bind(&Network::OnMessage, this, _1, _2));
+				tls_con->set_fail_handler(bind(&Network::OnFailed, this, _1));
+				tls_con->set_pong_handler(bind(&Network::OnPong, this, _1, _2));
+				handle = tls_con->get_handle();
+			}
+			else {
+				LOG_ERROR("Get uri(%s) initialization error(%s)", uri.c_str(), ec.message().c_str());
+				return false;
+			}
+		}
+		else {
+			con = client_.get_connection(uri, ec);
+			if (con) {
+				con->set_open_handler(bind(&Network::OnClientOpen, this, _1));
+				con->set_close_handler(bind(&Network::OnClose, this, _1));
+				con->set_message_handler(bind(&Network::OnMessage, this, _1, _2));
+				con->set_fail_handler(bind(&Network::OnFailed, this, _1));
+				con->set_pong_handler(bind(&Network::OnPong, this, _1, _2));
+				handle = con->get_handle();
+			}
+			else {
+				LOG_ERROR("Get uri(%s) initialization error(%s)", uri.c_str(), ec.message().c_str());
+				return false;
+			}
+		}
+
+		if (ec) {
+			LOG_INFO("Connect uri(%s) initialization error(%s)", uri.c_str(), ec.message().c_str());
+			return false;
+		}
+
+		utils::MutexGuard guard_(uri_conns_lock_);
+		int64_t new_id = next_uri_id_++;
+		Connection *peer = CreateConnectObject(NULL, ssl_parameter_.enable_ ? NULL : &client_,
+			NULL, ssl_parameter_.enable_ ? &tls_client_ : NULL,
+			handle, uri, new_id);
+		uri_connections_.insert(std::make_pair(uri, peer));
+
+		if (ssl_parameter_.enable_) {
+			tls_client_.connect(tls_con);
+		}
+		else {
+			client_.connect(con);
+		}
+
+		LOG_INFO("Connecting uri(%s), id(" FMT_I64 ")", uri.c_str(), new_id);
+		return true;
+	}
+
 	Connection *Network::GetConnection(int64_t id) {
 		ConnectionMap::iterator iter = connections_.find(id);
 		if (iter != connections_.end()){
@@ -603,6 +663,15 @@ namespace bumo {
 		}
 
 		return GetConnection(iter->second);
+	}
+
+	Connection *Network::GetConnection(std::string uri) {
+		UriConnectionMap::iterator iter = uri_connections_.find(uri);
+		if (iter != uri_connections_.end()){
+			return iter->second;
+		}
+
+		return NULL;
 	}
 
 	void Network::RemoveConnection(int64_t conn_id) {

@@ -810,6 +810,16 @@ namespace bumo {
 		return false;
 	}
 
+	bool PeerNetwork::SendRequest(std::string uri, int64_t type, const std::string &data){
+		utils::MutexGuard guard(uri_conns_lock_);
+		Peer *peer = (Peer *)GetConnection(uri);
+		if (peer && peer->IsActive()) {
+			return peer->SendRequest(type, data, last_ec_);
+		}
+
+		return false;
+	}
+
 	std::set<int64_t> PeerNetwork::GetActivePeerIds() {
 		std::set<int64_t> ids;
 		utils::MutexGuard guard(conns_list_lock_);
