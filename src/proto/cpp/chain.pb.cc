@@ -69,6 +69,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* OperationSetPrivilege_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   OperationSetPrivilege_reflection_ = NULL;
+const ::google::protobuf::Descriptor* OperationSetVoteFor_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  OperationSetVoteFor_reflection_ = NULL;
 const ::google::protobuf::Descriptor* Operation_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Operation_reflection_ = NULL;
@@ -137,7 +140,7 @@ void protobuf_AssignDesc_chain_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, assets_hash_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, contract_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, balance_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, support_who_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, vote_for_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, self_popularity_),
   };
   Account_reflection_ =
@@ -410,8 +413,23 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(OperationSetPrivilege),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetPrivilege, _is_default_instance_));
-  Operation_descriptor_ = file->message_type(16);
-  static const int Operation_offsets_[12] = {
+  OperationSetVoteFor_descriptor_ = file->message_type(16);
+  static const int OperationSetVoteFor_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetVoteFor, address_),
+  };
+  OperationSetVoteFor_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      OperationSetVoteFor_descriptor_,
+      OperationSetVoteFor::default_instance_,
+      OperationSetVoteFor_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(OperationSetVoteFor),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetVoteFor, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetVoteFor, _is_default_instance_));
+  Operation_descriptor_ = file->message_type(17);
+  static const int Operation_offsets_[13] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, metadata_),
@@ -424,6 +442,7 @@ void protobuf_AssignDesc_chain_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, pay_coin_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, log_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_privilege_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, set_vote_for_),
   };
   Operation_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -437,7 +456,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Operation, _is_default_instance_));
   Operation_Type_descriptor_ = Operation_descriptor_->enum_type(0);
-  OperationSetThreshold_descriptor_ = file->message_type(17);
+  OperationSetThreshold_descriptor_ = file->message_type(18);
   static const int OperationSetThreshold_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, tx_threshold_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, type_thresholds_),
@@ -453,7 +472,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(OperationSetThreshold),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetThreshold, _is_default_instance_));
-  Transaction_descriptor_ = file->message_type(18);
+  Transaction_descriptor_ = file->message_type(19);
   static const int Transaction_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, nonce_),
@@ -475,7 +494,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Transaction, _is_default_instance_));
   Transaction_Limit_descriptor_ = Transaction_descriptor_->enum_type(0);
-  Signer_descriptor_ = file->message_type(19);
+  Signer_descriptor_ = file->message_type(20);
   static const int Signer_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signer, address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signer, weight_),
@@ -492,7 +511,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signer, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signer, _is_default_instance_));
   Signer_Limit_descriptor_ = Signer_descriptor_->enum_type(0);
-  Trigger_descriptor_ = file->message_type(20);
+  Trigger_descriptor_ = file->message_type(21);
   static const int Trigger_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trigger, transaction_type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trigger, ledger_seq_),
@@ -526,7 +545,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trigger_OperationTrigger, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Trigger_OperationTrigger, _is_default_instance_));
   Trigger_TransactionType_descriptor_ = Trigger_descriptor_->enum_type(0);
-  TransactionEnv_descriptor_ = file->message_type(21);
+  TransactionEnv_descriptor_ = file->message_type(22);
   static const int TransactionEnv_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, transaction_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, signatures_),
@@ -543,7 +562,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(TransactionEnv),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnv, _is_default_instance_));
-  TransactionEnvStore_descriptor_ = file->message_type(22);
+  TransactionEnvStore_descriptor_ = file->message_type(23);
   static const int TransactionEnvStore_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, transaction_env_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, error_code_),
@@ -564,7 +583,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(TransactionEnvStore),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvStore, _is_default_instance_));
-  TransactionEnvSet_descriptor_ = file->message_type(23);
+  TransactionEnvSet_descriptor_ = file->message_type(24);
   static const int TransactionEnvSet_offsets_[1] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, txs_),
   };
@@ -579,7 +598,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(TransactionEnvSet),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TransactionEnvSet, _is_default_instance_));
-  ConsensusValueValidation_descriptor_ = file->message_type(24);
+  ConsensusValueValidation_descriptor_ = file->message_type(25);
   static const int ConsensusValueValidation_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, expire_tx_ids_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, error_tx_ids_),
@@ -595,7 +614,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(ConsensusValueValidation),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, _is_default_instance_));
-  ConsensusValue_descriptor_ = file->message_type(25);
+  ConsensusValue_descriptor_ = file->message_type(26);
   static const int ConsensusValue_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, txset_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, close_time_),
@@ -616,7 +635,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(ConsensusValue),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, _is_default_instance_));
-  Contract_descriptor_ = file->message_type(26);
+  Contract_descriptor_ = file->message_type(27);
   static const int Contract_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, payload_),
@@ -633,7 +652,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Contract, _is_default_instance_));
   Contract_ContractType_descriptor_ = Contract_descriptor_->enum_type(0);
-  OperationCreateAccount_descriptor_ = file->message_type(27);
+  OperationCreateAccount_descriptor_ = file->message_type(28);
   static const int OperationCreateAccount_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, dest_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, contract_),
@@ -653,7 +672,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       sizeof(OperationCreateAccount),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationCreateAccount, _is_default_instance_));
-  OperationSetMetadata_descriptor_ = file->message_type(28);
+  OperationSetMetadata_descriptor_ = file->message_type(29);
   static const int OperationSetMetadata_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetMetadata, key_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OperationSetMetadata, value_),
@@ -717,6 +736,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
       OperationLog_descriptor_, &OperationLog::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       OperationSetPrivilege_descriptor_, &OperationSetPrivilege::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      OperationSetVoteFor_descriptor_, &OperationSetVoteFor::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       Operation_descriptor_, &Operation::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -782,6 +803,8 @@ void protobuf_ShutdownFile_chain_2eproto() {
   delete OperationLog_reflection_;
   delete OperationSetPrivilege::default_instance_;
   delete OperationSetPrivilege_reflection_;
+  delete OperationSetVoteFor::default_instance_;
+  delete OperationSetVoteFor_reflection_;
   delete Operation::default_instance_;
   delete Operation_reflection_;
   delete OperationSetThreshold::default_instance_;
@@ -821,116 +844,119 @@ void protobuf_AddDesc_chain_2eproto() {
 
   ::protocol::protobuf_AddDesc_common_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\013chain.proto\022\010protocol\032\014common.proto\"\345\001"
+    "\n\013chain.proto\022\010protocol\032\014common.proto\"\342\001"
     "\n\007Account\022\017\n\007address\030\001 \001(\t\022\r\n\005nonce\030\002 \001("
     "\003\022(\n\004priv\030\003 \001(\0132\032.protocol.AccountPrivil"
     "ege\022\026\n\016metadatas_hash\030\004 \001(\014\022\023\n\013assets_ha"
     "sh\030\005 \001(\014\022$\n\010contract\030\006 \001(\0132\022.protocol.Co"
-    "ntract\022\017\n\007balance\030\007 \001(\003\022\023\n\013support_who\030\010"
-    " \001(\t\022\027\n\017self_popularity\030\t \001(\003\"6\n\010AssetKe"
-    "y\022\016\n\006issuer\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\014\n\004type\030"
-    "\003 \001(\005\"8\n\005Asset\022\037\n\003key\030\001 \001(\0132\022.protocol.A"
-    "ssetKey\022\016\n\006amount\030\002 \001(\003\"u\n\rAssetProperty"
-    "\022\017\n\007decimal\030\001 \001(\005\022\023\n\013description\030\002 \001(\t\022\022"
-    "\n\nmax_supply\030\003 \001(\003\022\025\n\rissued_amount\030\004 \001("
-    "\003\022\023\n\013fee_percent\030\005 \001(\005\"h\n\nAssetStore\022\037\n\003"
-    "key\030\001 \001(\0132\022.protocol.AssetKey\022\016\n\006amount\030"
-    "\002 \001(\003\022)\n\010property\030\003 \001(\0132\027.protocol.Asset"
-    "Property\"\355\001\n\014LedgerHeader\022\013\n\003seq\030\001 \001(\003\022\014"
-    "\n\004hash\030\002 \001(\014\022\025\n\rprevious_hash\030\003 \001(\014\022\031\n\021a"
-    "ccount_tree_hash\030\004 \001(\014\022\022\n\nclose_time\030\005 \001"
-    "(\003\022\034\n\024consensus_value_hash\030\006 \001(\014\022\017\n\007vers"
-    "ion\030\007 \001(\003\022\020\n\010tx_count\030\010 \001(\003\022\027\n\017validator"
-    "s_hash\030\t \001(\014\022\021\n\tfees_hash\030\n \001(\014\022\017\n\007reser"
-    "ve\030\013 \001(\t\"d\n\006Ledger\022&\n\006header\030\001 \001(\0132\026.pro"
-    "tocol.LedgerHeader\0222\n\020transaction_envs\030\002"
-    " \003(\0132\030.protocol.TransactionEnv\"X\n\021Operat"
-    "ionPayAsset\022\024\n\014dest_address\030\001 \001(\t\022\036\n\005ass"
-    "et\030\002 \001(\0132\017.protocol.Asset\022\r\n\005input\030\003 \001(\t"
-    "\"S\n\026OperationTypeThreshold\022&\n\004type\030\001 \001(\016"
-    "2\030.protocol.Operation.Type\022\021\n\tthreshold\030"
-    "\002 \001(\003\"|\n\020AccountPrivilege\022\025\n\rmaster_weig"
-    "ht\030\001 \001(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Sig"
-    "ner\022.\n\nthresholds\030\003 \001(\0132\032.protocol.Accou"
-    "ntThreshold\"c\n\020AccountThreshold\022\024\n\014tx_th"
-    "reshold\030\001 \001(\003\0229\n\017type_thresholds\030\002 \003(\0132 "
-    ".protocol.OperationTypeThreshold\"3\n\023Oper"
-    "ationIssueAsset\022\014\n\004code\030\001 \001(\t\022\016\n\006amount\030"
-    "\002 \001(\003\"G\n\020OperationPayCoin\022\024\n\014dest_addres"
-    "s\030\001 \001(\t\022\016\n\006amount\030\002 \001(\003\022\r\n\005input\030\003 \001(\t\"T"
-    "\n\030OperationSetSignerWeight\022\025\n\rmaster_wei"
-    "ght\030\001 \001(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Si"
-    "gner\",\n\014OperationLog\022\r\n\005topic\030\001 \001(\t\022\r\n\005d"
-    "atas\030\002 \003(\t\"\242\001\n\025OperationSetPrivilege\022\025\n\r"
-    "master_weight\030\001 \001(\t\022!\n\007signers\030\002 \003(\0132\020.p"
-    "rotocol.Signer\022\024\n\014tx_threshold\030\003 \001(\t\0229\n\017"
-    "type_thresholds\030\004 \003(\0132 .protocol.Operati"
-    "onTypeThreshold\"\343\005\n\tOperation\022&\n\004type\030\001 "
-    "\001(\0162\030.protocol.Operation.Type\022\026\n\016source_"
-    "address\030\002 \001(\t\022\020\n\010metadata\030\003 \001(\014\0228\n\016creat"
-    "e_account\030\004 \001(\0132 .protocol.OperationCrea"
-    "teAccount\0222\n\013issue_asset\030\005 \001(\0132\035.protoco"
-    "l.OperationIssueAsset\022.\n\tpay_asset\030\006 \001(\013"
-    "2\033.protocol.OperationPayAsset\0224\n\014set_met"
-    "adata\030\007 \001(\0132\036.protocol.OperationSetMetad"
-    "ata\022=\n\021set_signer_weight\030\010 \001(\0132\".protoco"
-    "l.OperationSetSignerWeight\0226\n\rset_thresh"
-    "old\030\t \001(\0132\037.protocol.OperationSetThresho"
-    "ld\022,\n\010pay_coin\030\n \001(\0132\032.protocol.Operatio"
-    "nPayCoin\022#\n\003log\030\013 \001(\0132\026.protocol.Operati"
-    "onLog\0226\n\rset_privilege\030\014 \001(\0132\037.protocol."
-    "OperationSetPrivilege\"\255\001\n\004Type\022\013\n\007UNKNOW"
-    "N\020\000\022\022\n\016CREATE_ACCOUNT\020\001\022\017\n\013ISSUE_ASSET\020\002"
-    "\022\r\n\tPAY_ASSET\020\003\022\020\n\014SET_METADATA\020\004\022\025\n\021SET"
-    "_SIGNER_WEIGHT\020\005\022\021\n\rSET_THRESHOLD\020\006\022\014\n\010P"
-    "AY_COIN\020\007\022\007\n\003LOG\020\010\022\021\n\rSET_PRIVILEGE\020\t\"h\n"
-    "\025OperationSetThreshold\022\024\n\014tx_threshold\030\001"
-    " \001(\003\0229\n\017type_thresholds\030\002 \003(\0132 .protocol"
-    ".OperationTypeThreshold\"\325\001\n\013Transaction\022"
-    "\026\n\016source_address\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021"
-    "\n\tfee_limit\030\003 \001(\003\022\021\n\tgas_price\030\004 \001(\003\022\027\n\017"
-    "ceil_ledger_seq\030\005 \001(\003\022\020\n\010metadata\030\006 \001(\014\022"
-    "\'\n\noperations\030\007 \003(\0132\023.protocol.Operation"
-    "\"%\n\005Limit\022\013\n\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350\007\""
-    "O\n\006Signer\022\017\n\007address\030\001 \001(\t\022\016\n\006weight\030\002 \001"
-    "(\003\"$\n\005Limit\022\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER\020d"
-    "\"\211\002\n\007Trigger\022;\n\020transaction_type\030\001 \001(\0162!"
-    ".protocol.Trigger.TransactionType\022\022\n\nled"
-    "ger_seq\030\002 \001(\003\0227\n\013transaction\030\003 \001(\0132\".pro"
-    "tocol.Trigger.OperationTrigger\032/\n\020Operat"
-    "ionTrigger\022\014\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001(\003\""
-    "C\n\017TransactionType\022\026\n\022NORMAL_TRANSACTION"
-    "\020\000\022\030\n\024CONTRACT_TRANSACTION\020\001\"\211\001\n\016Transac"
-    "tionEnv\022*\n\013transaction\030\001 \001(\0132\025.protocol."
-    "Transaction\022\'\n\nsignatures\030\002 \003(\0132\023.protoc"
-    "ol.Signature\022\"\n\007trigger\030\003 \001(\0132\021.protocol"
-    ".Trigger\"\272\001\n\023TransactionEnvStore\0221\n\017tran"
-    "saction_env\030\001 \001(\0132\030.protocol.Transaction"
-    "Env\022\022\n\nerror_code\030\002 \001(\005\022\022\n\nerror_desc\030\003 "
-    "\001(\t\022\022\n\nledger_seq\030\004 \001(\003\022\022\n\nclose_time\030\005 "
-    "\001(\003\022\014\n\004hash\030\006 \001(\014\022\022\n\nactual_fee\030\007 \001(\003\":\n"
-    "\021TransactionEnvSet\022%\n\003txs\030\002 \003(\0132\030.protoc"
-    "ol.TransactionEnv\"G\n\030ConsensusValueValid"
-    "ation\022\025\n\rexpire_tx_ids\030\001 \003(\005\022\024\n\014error_tx"
-    "_ids\030\002 \003(\005\"\203\002\n\016ConsensusValue\022*\n\005txset\030\001"
-    " \001(\0132\033.protocol.TransactionEnvSet\022\022\n\nclo"
-    "se_time\030\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n"
-    "\nledger_seq\030\004 \001(\003\022\034\n\024previous_ledger_has"
-    "h\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001(\0132\027.protoc"
-    "ol.LedgerUpgrade\0226\n\nvalidation\030\007 \001(\0132\".p"
-    "rotocol.ConsensusValueValidation\"j\n\010Cont"
-    "ract\022-\n\004type\030\001 \001(\0162\037.protocol.Contract.C"
-    "ontractType\022\017\n\007payload\030\002 \001(\t\"\036\n\014Contract"
-    "Type\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026OperationCreate"
-    "Account\022\024\n\014dest_address\030\001 \001(\t\022$\n\010contrac"
-    "t\030\002 \001(\0132\022.protocol.Contract\022(\n\004priv\030\003 \001("
-    "\0132\032.protocol.AccountPrivilege\022$\n\tmetadat"
-    "as\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014init_bala"
-    "nce\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024Operati"
-    "onSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001("
-    "\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*"
-    "#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\"\n "
-    "io.bumo.sdk.core.extend.protobufb\006proto3", 4400);
+    "ntract\022\017\n\007balance\030\007 \001(\003\022\020\n\010vote_for\030\010 \001("
+    "\t\022\027\n\017self_popularity\030\t \001(\003\"6\n\010AssetKey\022\016"
+    "\n\006issuer\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\014\n\004type\030\003 \001"
+    "(\005\"8\n\005Asset\022\037\n\003key\030\001 \001(\0132\022.protocol.Asse"
+    "tKey\022\016\n\006amount\030\002 \001(\003\"u\n\rAssetProperty\022\017\n"
+    "\007decimal\030\001 \001(\005\022\023\n\013description\030\002 \001(\t\022\022\n\nm"
+    "ax_supply\030\003 \001(\003\022\025\n\rissued_amount\030\004 \001(\003\022\023"
+    "\n\013fee_percent\030\005 \001(\005\"h\n\nAssetStore\022\037\n\003key"
+    "\030\001 \001(\0132\022.protocol.AssetKey\022\016\n\006amount\030\002 \001"
+    "(\003\022)\n\010property\030\003 \001(\0132\027.protocol.AssetPro"
+    "perty\"\355\001\n\014LedgerHeader\022\013\n\003seq\030\001 \001(\003\022\014\n\004h"
+    "ash\030\002 \001(\014\022\025\n\rprevious_hash\030\003 \001(\014\022\031\n\021acco"
+    "unt_tree_hash\030\004 \001(\014\022\022\n\nclose_time\030\005 \001(\003\022"
+    "\034\n\024consensus_value_hash\030\006 \001(\014\022\017\n\007version"
+    "\030\007 \001(\003\022\020\n\010tx_count\030\010 \001(\003\022\027\n\017validators_h"
+    "ash\030\t \001(\014\022\021\n\tfees_hash\030\n \001(\014\022\017\n\007reserve\030"
+    "\013 \001(\t\"d\n\006Ledger\022&\n\006header\030\001 \001(\0132\026.protoc"
+    "ol.LedgerHeader\0222\n\020transaction_envs\030\002 \003("
+    "\0132\030.protocol.TransactionEnv\"X\n\021Operation"
+    "PayAsset\022\024\n\014dest_address\030\001 \001(\t\022\036\n\005asset\030"
+    "\002 \001(\0132\017.protocol.Asset\022\r\n\005input\030\003 \001(\t\"S\n"
+    "\026OperationTypeThreshold\022&\n\004type\030\001 \001(\0162\030."
+    "protocol.Operation.Type\022\021\n\tthreshold\030\002 \001"
+    "(\003\"|\n\020AccountPrivilege\022\025\n\rmaster_weight\030"
+    "\001 \001(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer"
+    "\022.\n\nthresholds\030\003 \001(\0132\032.protocol.AccountT"
+    "hreshold\"c\n\020AccountThreshold\022\024\n\014tx_thres"
+    "hold\030\001 \001(\003\0229\n\017type_thresholds\030\002 \003(\0132 .pr"
+    "otocol.OperationTypeThreshold\"3\n\023Operati"
+    "onIssueAsset\022\014\n\004code\030\001 \001(\t\022\016\n\006amount\030\002 \001"
+    "(\003\"G\n\020OperationPayCoin\022\024\n\014dest_address\030\001"
+    " \001(\t\022\016\n\006amount\030\002 \001(\003\022\r\n\005input\030\003 \001(\t\"T\n\030O"
+    "perationSetSignerWeight\022\025\n\rmaster_weight"
+    "\030\001 \001(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signe"
+    "r\",\n\014OperationLog\022\r\n\005topic\030\001 \001(\t\022\r\n\005data"
+    "s\030\002 \003(\t\"\242\001\n\025OperationSetPrivilege\022\025\n\rmas"
+    "ter_weight\030\001 \001(\t\022!\n\007signers\030\002 \003(\0132\020.prot"
+    "ocol.Signer\022\024\n\014tx_threshold\030\003 \001(\t\0229\n\017typ"
+    "e_thresholds\030\004 \003(\0132 .protocol.OperationT"
+    "ypeThreshold\"&\n\023OperationSetVoteFor\022\017\n\007a"
+    "ddress\030\001 \001(\t\"\252\006\n\tOperation\022&\n\004type\030\001 \001(\016"
+    "2\030.protocol.Operation.Type\022\026\n\016source_add"
+    "ress\030\002 \001(\t\022\020\n\010metadata\030\003 \001(\014\0228\n\016create_a"
+    "ccount\030\004 \001(\0132 .protocol.OperationCreateA"
+    "ccount\0222\n\013issue_asset\030\005 \001(\0132\035.protocol.O"
+    "perationIssueAsset\022.\n\tpay_asset\030\006 \001(\0132\033."
+    "protocol.OperationPayAsset\0224\n\014set_metada"
+    "ta\030\007 \001(\0132\036.protocol.OperationSetMetadata"
+    "\022=\n\021set_signer_weight\030\010 \001(\0132\".protocol.O"
+    "perationSetSignerWeight\0226\n\rset_threshold"
+    "\030\t \001(\0132\037.protocol.OperationSetThreshold\022"
+    ",\n\010pay_coin\030\n \001(\0132\032.protocol.OperationPa"
+    "yCoin\022#\n\003log\030\013 \001(\0132\026.protocol.OperationL"
+    "og\0226\n\rset_privilege\030\014 \001(\0132\037.protocol.Ope"
+    "rationSetPrivilege\0223\n\014set_vote_for\030\r \001(\013"
+    "2\035.protocol.OperationSetVoteFor\"\277\001\n\004Type"
+    "\022\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_ACCOUNT\020\001\022\017\n\013ISS"
+    "UE_ASSET\020\002\022\r\n\tPAY_ASSET\020\003\022\020\n\014SET_METADAT"
+    "A\020\004\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\rSET_THRESH"
+    "OLD\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\022\021\n\rSET_PRIV"
+    "ILEGE\020\t\022\020\n\014SET_VOTE_FOR\020\n\"h\n\025OperationSe"
+    "tThreshold\022\024\n\014tx_threshold\030\001 \001(\003\0229\n\017type"
+    "_thresholds\030\002 \003(\0132 .protocol.OperationTy"
+    "peThreshold\"\325\001\n\013Transaction\022\026\n\016source_ad"
+    "dress\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_limit\030"
+    "\003 \001(\003\022\021\n\tgas_price\030\004 \001(\003\022\027\n\017ceil_ledger_"
+    "seq\030\005 \001(\003\022\020\n\010metadata\030\006 \001(\014\022\'\n\noperation"
+    "s\030\007 \003(\0132\023.protocol.Operation\"%\n\005Limit\022\013\n"
+    "\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Signer\022\017\n"
+    "\007address\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005Limit\022"
+    "\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007Trigger"
+    "\022;\n\020transaction_type\030\001 \001(\0162!.protocol.Tr"
+    "igger.TransactionType\022\022\n\nledger_seq\030\002 \001("
+    "\003\0227\n\013transaction\030\003 \001(\0132\".protocol.Trigge"
+    "r.OperationTrigger\032/\n\020OperationTrigger\022\014"
+    "\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017Transacti"
+    "onType\022\026\n\022NORMAL_TRANSACTION\020\000\022\030\n\024CONTRA"
+    "CT_TRANSACTION\020\001\"\211\001\n\016TransactionEnv\022*\n\013t"
+    "ransaction\030\001 \001(\0132\025.protocol.Transaction\022"
+    "\'\n\nsignatures\030\002 \003(\0132\023.protocol.Signature"
+    "\022\"\n\007trigger\030\003 \001(\0132\021.protocol.Trigger\"\272\001\n"
+    "\023TransactionEnvStore\0221\n\017transaction_env\030"
+    "\001 \001(\0132\030.protocol.TransactionEnv\022\022\n\nerror"
+    "_code\030\002 \001(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n\nledge"
+    "r_seq\030\004 \001(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n\004hash\030"
+    "\006 \001(\014\022\022\n\nactual_fee\030\007 \001(\003\":\n\021Transaction"
+    "EnvSet\022%\n\003txs\030\002 \003(\0132\030.protocol.Transacti"
+    "onEnv\"G\n\030ConsensusValueValidation\022\025\n\rexp"
+    "ire_tx_ids\030\001 \003(\005\022\024\n\014error_tx_ids\030\002 \003(\005\"\203"
+    "\002\n\016ConsensusValue\022*\n\005txset\030\001 \001(\0132\033.proto"
+    "col.TransactionEnvSet\022\022\n\nclose_time\030\002 \001("
+    "\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\nledger_seq\030"
+    "\004 \001(\003\022\034\n\024previous_ledger_hash\030\005 \001(\014\022/\n\016l"
+    "edger_upgrade\030\006 \001(\0132\027.protocol.LedgerUpg"
+    "rade\0226\n\nvalidation\030\007 \001(\0132\".protocol.Cons"
+    "ensusValueValidation\"j\n\010Contract\022-\n\004type"
+    "\030\001 \001(\0162\037.protocol.Contract.ContractType\022"
+    "\017\n\007payload\030\002 \001(\t\"\036\n\014ContractType\022\016\n\nJAVA"
+    "SCRIPT\020\000\"\316\001\n\026OperationCreateAccount\022\024\n\014d"
+    "est_address\030\001 \001(\t\022$\n\010contract\030\002 \001(\0132\022.pr"
+    "otocol.Contract\022(\n\004priv\030\003 \001(\0132\032.protocol"
+    ".AccountPrivilege\022$\n\tmetadatas\030\004 \003(\0132\021.p"
+    "rotocol.KeyPair\022\024\n\014init_balance\030\005 \001(\003\022\022\n"
+    "\ninit_input\030\006 \001(\t\"X\n\024OperationSetMetadat"
+    "a\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version"
+    "\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Limit\022\013\n\007"
+    "UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\"\n io.bumo.sdk."
+    "core.extend.protobufb\006proto3", 4508);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -949,6 +975,7 @@ void protobuf_AddDesc_chain_2eproto() {
   OperationSetSignerWeight::default_instance_ = new OperationSetSignerWeight();
   OperationLog::default_instance_ = new OperationLog();
   OperationSetPrivilege::default_instance_ = new OperationSetPrivilege();
+  OperationSetVoteFor::default_instance_ = new OperationSetVoteFor();
   Operation::default_instance_ = new Operation();
   OperationSetThreshold::default_instance_ = new OperationSetThreshold();
   Transaction::default_instance_ = new Transaction();
@@ -979,6 +1006,7 @@ void protobuf_AddDesc_chain_2eproto() {
   OperationSetSignerWeight::default_instance_->InitAsDefaultInstance();
   OperationLog::default_instance_->InitAsDefaultInstance();
   OperationSetPrivilege::default_instance_->InitAsDefaultInstance();
+  OperationSetVoteFor::default_instance_->InitAsDefaultInstance();
   Operation::default_instance_->InitAsDefaultInstance();
   OperationSetThreshold::default_instance_->InitAsDefaultInstance();
   Transaction::default_instance_->InitAsDefaultInstance();
@@ -1027,7 +1055,7 @@ const int Account::kMetadatasHashFieldNumber;
 const int Account::kAssetsHashFieldNumber;
 const int Account::kContractFieldNumber;
 const int Account::kBalanceFieldNumber;
-const int Account::kSupportWhoFieldNumber;
+const int Account::kVoteForFieldNumber;
 const int Account::kSelfPopularityFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -1062,7 +1090,7 @@ void Account::SharedCtor() {
   assets_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   contract_ = NULL;
   balance_ = GOOGLE_LONGLONG(0);
-  support_who_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  vote_for_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   self_popularity_ = GOOGLE_LONGLONG(0);
 }
 
@@ -1075,7 +1103,7 @@ void Account::SharedDtor() {
   address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   metadatas_hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   assets_hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  support_who_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  vote_for_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
     delete priv_;
     delete contract_;
@@ -1118,7 +1146,7 @@ void Account::Clear() {
   if (GetArenaNoVirtual() == NULL && contract_ != NULL) delete contract_;
   contract_ = NULL;
   balance_ = GOOGLE_LONGLONG(0);
-  support_who_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  vote_for_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   self_popularity_ = GOOGLE_LONGLONG(0);
 }
 
@@ -1226,20 +1254,20 @@ bool Account::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(66)) goto parse_support_who;
+        if (input->ExpectTag(66)) goto parse_vote_for;
         break;
       }
 
-      // optional string support_who = 8;
+      // optional string vote_for = 8;
       case 8: {
         if (tag == 66) {
-         parse_support_who:
+         parse_vote_for:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_support_who()));
+                input, this->mutable_vote_for()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->support_who().data(), this->support_who().length(),
+            this->vote_for().data(), this->vote_for().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.Account.support_who"));
+            "protocol.Account.vote_for"));
         } else {
           goto handle_unusual;
         }
@@ -1330,14 +1358,14 @@ void Account::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(7, this->balance(), output);
   }
 
-  // optional string support_who = 8;
-  if (this->support_who().size() > 0) {
+  // optional string vote_for = 8;
+  if (this->vote_for().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->support_who().data(), this->support_who().length(),
+      this->vote_for().data(), this->vote_for().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.Account.support_who");
+      "protocol.Account.vote_for");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      8, this->support_who(), output);
+      8, this->vote_for(), output);
   }
 
   // optional int64 self_popularity = 9;
@@ -1400,15 +1428,15 @@ void Account::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(7, this->balance(), target);
   }
 
-  // optional string support_who = 8;
-  if (this->support_who().size() > 0) {
+  // optional string vote_for = 8;
+  if (this->vote_for().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->support_who().data(), this->support_who().length(),
+      this->vote_for().data(), this->vote_for().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.Account.support_who");
+      "protocol.Account.vote_for");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        8, this->support_who(), target);
+        8, this->vote_for(), target);
   }
 
   // optional int64 self_popularity = 9;
@@ -1473,11 +1501,11 @@ int Account::ByteSize() const {
         this->balance());
   }
 
-  // optional string support_who = 8;
-  if (this->support_who().size() > 0) {
+  // optional string vote_for = 8;
+  if (this->vote_for().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->support_who());
+        this->vote_for());
   }
 
   // optional int64 self_popularity = 9;
@@ -1539,9 +1567,9 @@ void Account::MergeFrom(const Account& from) {
   if (from.balance() != 0) {
     set_balance(from.balance());
   }
-  if (from.support_who().size() > 0) {
+  if (from.vote_for().size() > 0) {
 
-    support_who_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.support_who_);
+    vote_for_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.vote_for_);
   }
   if (from.self_popularity() != 0) {
     set_self_popularity(from.self_popularity());
@@ -1579,7 +1607,7 @@ void Account::InternalSwap(Account* other) {
   assets_hash_.Swap(&other->assets_hash_);
   std::swap(contract_, other->contract_);
   std::swap(balance_, other->balance_);
-  support_who_.Swap(&other->support_who_);
+  vote_for_.Swap(&other->vote_for_);
   std::swap(self_popularity_, other->self_popularity_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -1832,48 +1860,48 @@ void Account::clear_balance() {
   // @@protoc_insertion_point(field_set:protocol.Account.balance)
 }
 
-// optional string support_who = 8;
-void Account::clear_support_who() {
-  support_who_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional string vote_for = 8;
+void Account::clear_vote_for() {
+  vote_for_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- const ::std::string& Account::support_who() const {
-  // @@protoc_insertion_point(field_get:protocol.Account.support_who)
-  return support_who_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+ const ::std::string& Account::vote_for() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.vote_for)
+  return vote_for_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void Account::set_support_who(const ::std::string& value) {
+ void Account::set_vote_for(const ::std::string& value) {
   
-  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Account.support_who)
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Account.vote_for)
 }
- void Account::set_support_who(const char* value) {
+ void Account::set_vote_for(const char* value) {
   
-  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Account.support_who)
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Account.vote_for)
 }
- void Account::set_support_who(const char* value, size_t size) {
+ void Account::set_vote_for(const char* value, size_t size) {
   
-  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Account.support_who)
+  // @@protoc_insertion_point(field_set_pointer:protocol.Account.vote_for)
 }
- ::std::string* Account::mutable_support_who() {
+ ::std::string* Account::mutable_vote_for() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.Account.support_who)
-  return support_who_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:protocol.Account.vote_for)
+  return vote_for_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* Account::release_support_who() {
-  // @@protoc_insertion_point(field_release:protocol.Account.support_who)
+ ::std::string* Account::release_vote_for() {
+  // @@protoc_insertion_point(field_release:protocol.Account.vote_for)
   
-  return support_who_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return vote_for_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void Account::set_allocated_support_who(::std::string* support_who) {
-  if (support_who != NULL) {
+ void Account::set_allocated_vote_for(::std::string* vote_for) {
+  if (vote_for != NULL) {
     
   } else {
     
   }
-  support_who_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), support_who);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Account.support_who)
+  vote_for_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), vote_for);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Account.vote_for)
 }
 
 // optional int64 self_popularity = 9;
@@ -8403,6 +8431,290 @@ OperationSetPrivilege::type_thresholds() const {
 
 // ===================================================================
 
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int OperationSetVoteFor::kAddressFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+OperationSetVoteFor::OperationSetVoteFor()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.OperationSetVoteFor)
+}
+
+void OperationSetVoteFor::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+OperationSetVoteFor::OperationSetVoteFor(const OperationSetVoteFor& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.OperationSetVoteFor)
+}
+
+void OperationSetVoteFor::SharedCtor() {
+    _is_default_instance_ = false;
+  ::google::protobuf::internal::GetEmptyString();
+  _cached_size_ = 0;
+  address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+OperationSetVoteFor::~OperationSetVoteFor() {
+  // @@protoc_insertion_point(destructor:protocol.OperationSetVoteFor)
+  SharedDtor();
+}
+
+void OperationSetVoteFor::SharedDtor() {
+  address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != default_instance_) {
+  }
+}
+
+void OperationSetVoteFor::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* OperationSetVoteFor::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return OperationSetVoteFor_descriptor_;
+}
+
+const OperationSetVoteFor& OperationSetVoteFor::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_chain_2eproto();
+  return *default_instance_;
+}
+
+OperationSetVoteFor* OperationSetVoteFor::default_instance_ = NULL;
+
+OperationSetVoteFor* OperationSetVoteFor::New(::google::protobuf::Arena* arena) const {
+  OperationSetVoteFor* n = new OperationSetVoteFor;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void OperationSetVoteFor::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.OperationSetVoteFor)
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+bool OperationSetVoteFor::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.OperationSetVoteFor)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional string address = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_address()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->address().data(), this->address().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "protocol.OperationSetVoteFor.address"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.OperationSetVoteFor)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.OperationSetVoteFor)
+  return false;
+#undef DO_
+}
+
+void OperationSetVoteFor::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.OperationSetVoteFor)
+  // optional string address = 1;
+  if (this->address().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->address().data(), this->address().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.OperationSetVoteFor.address");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      1, this->address(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.OperationSetVoteFor)
+}
+
+::google::protobuf::uint8* OperationSetVoteFor::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.OperationSetVoteFor)
+  // optional string address = 1;
+  if (this->address().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->address().data(), this->address().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.OperationSetVoteFor.address");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->address(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.OperationSetVoteFor)
+  return target;
+}
+
+int OperationSetVoteFor::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.OperationSetVoteFor)
+  int total_size = 0;
+
+  // optional string address = 1;
+  if (this->address().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->address());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void OperationSetVoteFor::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.OperationSetVoteFor)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const OperationSetVoteFor* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const OperationSetVoteFor>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.OperationSetVoteFor)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.OperationSetVoteFor)
+    MergeFrom(*source);
+  }
+}
+
+void OperationSetVoteFor::MergeFrom(const OperationSetVoteFor& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.OperationSetVoteFor)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.address().size() > 0) {
+
+    address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.address_);
+  }
+}
+
+void OperationSetVoteFor::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.OperationSetVoteFor)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void OperationSetVoteFor::CopyFrom(const OperationSetVoteFor& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.OperationSetVoteFor)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool OperationSetVoteFor::IsInitialized() const {
+
+  return true;
+}
+
+void OperationSetVoteFor::Swap(OperationSetVoteFor* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void OperationSetVoteFor::InternalSwap(OperationSetVoteFor* other) {
+  address_.Swap(&other->address_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata OperationSetVoteFor::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = OperationSetVoteFor_descriptor_;
+  metadata.reflection = OperationSetVoteFor_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// OperationSetVoteFor
+
+// optional string address = 1;
+void OperationSetVoteFor::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& OperationSetVoteFor::address() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationSetVoteFor.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void OperationSetVoteFor::set_address(const ::std::string& value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.OperationSetVoteFor.address)
+}
+ void OperationSetVoteFor::set_address(const char* value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.OperationSetVoteFor.address)
+}
+ void OperationSetVoteFor::set_address(const char* value, size_t size) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationSetVoteFor.address)
+}
+ ::std::string* OperationSetVoteFor::mutable_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.OperationSetVoteFor.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* OperationSetVoteFor::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.OperationSetVoteFor.address)
+  
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void OperationSetVoteFor::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
+    
+  } else {
+    
+  }
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetVoteFor.address)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
 const ::google::protobuf::EnumDescriptor* Operation_Type_descriptor() {
   protobuf_AssignDescriptorsOnce();
   return Operation_Type_descriptor_;
@@ -8419,6 +8731,7 @@ bool Operation_Type_IsValid(int value) {
     case 7:
     case 8:
     case 9:
+    case 10:
       return true;
     default:
       return false;
@@ -8436,6 +8749,7 @@ const Operation_Type Operation::SET_THRESHOLD;
 const Operation_Type Operation::PAY_COIN;
 const Operation_Type Operation::LOG;
 const Operation_Type Operation::SET_PRIVILEGE;
+const Operation_Type Operation::SET_VOTE_FOR;
 const Operation_Type Operation::Type_MIN;
 const Operation_Type Operation::Type_MAX;
 const int Operation::Type_ARRAYSIZE;
@@ -8453,6 +8767,7 @@ const int Operation::kSetThresholdFieldNumber;
 const int Operation::kPayCoinFieldNumber;
 const int Operation::kLogFieldNumber;
 const int Operation::kSetPrivilegeFieldNumber;
+const int Operation::kSetVoteForFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Operation::Operation()
@@ -8472,6 +8787,7 @@ void Operation::InitAsDefaultInstance() {
   pay_coin_ = const_cast< ::protocol::OperationPayCoin*>(&::protocol::OperationPayCoin::default_instance());
   log_ = const_cast< ::protocol::OperationLog*>(&::protocol::OperationLog::default_instance());
   set_privilege_ = const_cast< ::protocol::OperationSetPrivilege*>(&::protocol::OperationSetPrivilege::default_instance());
+  set_vote_for_ = const_cast< ::protocol::OperationSetVoteFor*>(&::protocol::OperationSetVoteFor::default_instance());
 }
 
 Operation::Operation(const Operation& from)
@@ -8498,6 +8814,7 @@ void Operation::SharedCtor() {
   pay_coin_ = NULL;
   log_ = NULL;
   set_privilege_ = NULL;
+  set_vote_for_ = NULL;
 }
 
 Operation::~Operation() {
@@ -8518,6 +8835,7 @@ void Operation::SharedDtor() {
     delete pay_coin_;
     delete log_;
     delete set_privilege_;
+    delete set_vote_for_;
   }
 }
 
@@ -8569,6 +8887,8 @@ void Operation::Clear() {
   log_ = NULL;
   if (GetArenaNoVirtual() == NULL && set_privilege_ != NULL) delete set_privilege_;
   set_privilege_ = NULL;
+  if (GetArenaNoVirtual() == NULL && set_vote_for_ != NULL) delete set_vote_for_;
+  set_vote_for_ = NULL;
 }
 
 bool Operation::MergePartialFromCodedStream(
@@ -8739,6 +9059,19 @@ bool Operation::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(106)) goto parse_set_vote_for;
+        break;
+      }
+
+      // optional .protocol.OperationSetVoteFor set_vote_for = 13;
+      case 13: {
+        if (tag == 106) {
+         parse_set_vote_for:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_set_vote_for()));
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -8843,6 +9176,12 @@ void Operation::SerializeWithCachedSizes(
       12, *this->set_privilege_, output);
   }
 
+  // optional .protocol.OperationSetVoteFor set_vote_for = 13;
+  if (this->has_set_vote_for()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      13, *this->set_vote_for_, output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.Operation)
 }
 
@@ -8936,6 +9275,13 @@ void Operation::SerializeWithCachedSizes(
         12, *this->set_privilege_, false, target);
   }
 
+  // optional .protocol.OperationSetVoteFor set_vote_for = 13;
+  if (this->has_set_vote_for()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        13, *this->set_vote_for_, false, target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Operation)
   return target;
 }
@@ -9027,6 +9373,13 @@ int Operation::ByteSize() const {
         *this->set_privilege_);
   }
 
+  // optional .protocol.OperationSetVoteFor set_vote_for = 13;
+  if (this->has_set_vote_for()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->set_vote_for_);
+  }
+
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -9093,6 +9446,9 @@ void Operation::MergeFrom(const Operation& from) {
   if (from.has_set_privilege()) {
     mutable_set_privilege()->::protocol::OperationSetPrivilege::MergeFrom(from.set_privilege());
   }
+  if (from.has_set_vote_for()) {
+    mutable_set_vote_for()->::protocol::OperationSetVoteFor::MergeFrom(from.set_vote_for());
+  }
 }
 
 void Operation::CopyFrom(const ::google::protobuf::Message& from) {
@@ -9131,6 +9487,7 @@ void Operation::InternalSwap(Operation* other) {
   std::swap(pay_coin_, other->pay_coin_);
   std::swap(log_, other->log_);
   std::swap(set_privilege_, other->set_privilege_);
+  std::swap(set_vote_for_, other->set_vote_for_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -9588,6 +9945,44 @@ void Operation::set_allocated_set_privilege(::protocol::OperationSetPrivilege* s
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_privilege)
+}
+
+// optional .protocol.OperationSetVoteFor set_vote_for = 13;
+bool Operation::has_set_vote_for() const {
+  return !_is_default_instance_ && set_vote_for_ != NULL;
+}
+void Operation::clear_set_vote_for() {
+  if (GetArenaNoVirtual() == NULL && set_vote_for_ != NULL) delete set_vote_for_;
+  set_vote_for_ = NULL;
+}
+const ::protocol::OperationSetVoteFor& Operation::set_vote_for() const {
+  // @@protoc_insertion_point(field_get:protocol.Operation.set_vote_for)
+  return set_vote_for_ != NULL ? *set_vote_for_ : *default_instance_->set_vote_for_;
+}
+::protocol::OperationSetVoteFor* Operation::mutable_set_vote_for() {
+  
+  if (set_vote_for_ == NULL) {
+    set_vote_for_ = new ::protocol::OperationSetVoteFor;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.Operation.set_vote_for)
+  return set_vote_for_;
+}
+::protocol::OperationSetVoteFor* Operation::release_set_vote_for() {
+  // @@protoc_insertion_point(field_release:protocol.Operation.set_vote_for)
+  
+  ::protocol::OperationSetVoteFor* temp = set_vote_for_;
+  set_vote_for_ = NULL;
+  return temp;
+}
+void Operation::set_allocated_set_vote_for(::protocol::OperationSetVoteFor* set_vote_for) {
+  delete set_vote_for_;
+  set_vote_for_ = set_vote_for;
+  if (set_vote_for) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_vote_for)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

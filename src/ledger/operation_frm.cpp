@@ -424,17 +424,17 @@ namespace bumo {
 		std::shared_ptr<AccountFrm> destAccount,
 		int64_t amount){
 		
-		std::shared_ptr<AccountFrm> src_support_account;
 		std::string src_support_addr = srcAccount->GetVoteFor();
 		if (!src_support_addr.empty()){
+			std::shared_ptr<AccountFrm> src_support_account;
 			if (env->GetEntry(src_support_addr, src_support_account)){
 				src_support_account->DecreasePopularity(amount);
 			}
 		}
 
-		std::shared_ptr<AccountFrm> dest_support_account;
-		auto dest_support_addr = destAccount->GetVoteFor();
+		std::string dest_support_addr = destAccount->GetVoteFor();
 		if (!dest_support_addr.empty()){
+			std::shared_ptr<AccountFrm> dest_support_account;
 			if (env->GetEntry(dest_support_addr, dest_support_account)){
 				dest_support_account->IncreasePopularity(amount);
 			}
@@ -482,6 +482,9 @@ namespace bumo {
 			break;
 		case protocol::Operation_Type_SET_PRIVILEGE:
 			SetPrivilege(environment);
+			break;
+		case protocol::Operation_Type_SET_VOTE_FOR:
+			SetVoteFor(environment);
 			break;
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
@@ -933,6 +936,28 @@ namespace bumo {
 		for (int32_t i = 0; i < set_priv_opt.type_thresholds_size(); i++) {
 			source_account_->UpdateTypeThreshold(set_priv_opt.type_thresholds(i).type(),
 				set_priv_opt.type_thresholds(i).threshold());
+		}
+	}
+
+	void OperationFrm::SetVoteFor(std::shared_ptr<Environment> environment){
+
+		const protocol::OperationSetVoteFor &ope = operation_.set_vote_for();
+
+		std::string old_vote_for_addr = source_account_->GetVoteFor();
+		source_account_->SetVoteFor(ope.address());
+
+		if (!old_vote_for_addr.empty()){
+			std::shared_ptr<AccountFrm> old_vote_for = nullptr;
+			if (environment->GetEntry(old_vote_for_addr, old_vote_for)){
+				old_vote_for->DecreasePopularity(source_account_->GetAccountBalance());
+			}
+		}
+		
+		if (!ope.address().empty()){
+			std::shared_ptr<AccountFrm> new_vote_for = nullptr;
+			if (environment->GetEntry(ope.address(), new_vote_for)){
+				new_vote_for->IncreasePopularity(source_account_->GetAccountBalance());
+			}
 		}
 	}
 

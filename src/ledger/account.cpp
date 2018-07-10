@@ -27,11 +27,11 @@ namespace bumo {
 	//	storage_ = nullptr;
 	//}
 
-	AccountFrm::AccountFrm(protocol::Account account_info) : self_popularity_(0), account_info_(account_info) {
+	AccountFrm::AccountFrm(protocol::Account account_info) : account_info_(account_info) {
 		utils::AtomicInc(&bumo::General::account_new_count);
 	}
 
-	AccountFrm::AccountFrm(std::shared_ptr<AccountFrm> account) : self_popularity_(0){
+	AccountFrm::AccountFrm(std::shared_ptr<AccountFrm> account){
 		account_info_.CopyFrom(account->ProtocolAccount());
 		assets_ = account->assets_;
 		metadata_ = account->metadata_;
@@ -360,15 +360,15 @@ namespace bumo {
 
 	void AccountFrm::SetVoteFor(const std::string& address){
 		if (PublicKey::IsAddressValid(address)){
-			vote_for_ = address;
+			account_info_.set_vote_for(address);
 		}
 	}
 
 	bool AccountFrm::IncreasePopularity(int64_t votes){
 		int64_t result = 0;
 
-		if (utils::SafeIntAdd(self_popularity_, votes, result)){
-			self_popularity_ = result;
+		if (utils::SafeIntAdd(account_info_.self_popularity(), votes, result)){
+			account_info_.set_self_popularity(result);
 			return true;
 		}
 
@@ -378,8 +378,8 @@ namespace bumo {
 	bool AccountFrm::DecreasePopularity(int64_t votes){
 		int64_t result = 0;
 
-		if (utils::SafeIntSub(self_popularity_, votes, result)){
-			self_popularity_ = result;
+		if (utils::SafeIntSub(account_info_.self_popularity(), votes, result)){
+			account_info_.set_self_popularity(result);
 			return true;
 		}
 

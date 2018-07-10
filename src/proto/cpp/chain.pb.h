@@ -60,6 +60,7 @@ class OperationSetMetadata;
 class OperationSetPrivilege;
 class OperationSetSignerWeight;
 class OperationSetThreshold;
+class OperationSetVoteFor;
 class OperationTypeThreshold;
 class Signer;
 class Transaction;
@@ -80,12 +81,13 @@ enum Operation_Type {
   Operation_Type_PAY_COIN = 7,
   Operation_Type_LOG = 8,
   Operation_Type_SET_PRIVILEGE = 9,
+  Operation_Type_SET_VOTE_FOR = 10,
   Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   Operation_Type_Operation_Type_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool Operation_Type_IsValid(int value);
 const Operation_Type Operation_Type_Type_MIN = Operation_Type_UNKNOWN;
-const Operation_Type Operation_Type_Type_MAX = Operation_Type_SET_PRIVILEGE;
+const Operation_Type Operation_Type_Type_MAX = Operation_Type_SET_VOTE_FOR;
 const int Operation_Type_Type_ARRAYSIZE = Operation_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Operation_Type_descriptor();
@@ -327,16 +329,16 @@ class Account : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::int64 balance() const;
   void set_balance(::google::protobuf::int64 value);
 
-  // optional string support_who = 8;
-  void clear_support_who();
-  static const int kSupportWhoFieldNumber = 8;
-  const ::std::string& support_who() const;
-  void set_support_who(const ::std::string& value);
-  void set_support_who(const char* value);
-  void set_support_who(const char* value, size_t size);
-  ::std::string* mutable_support_who();
-  ::std::string* release_support_who();
-  void set_allocated_support_who(::std::string* support_who);
+  // optional string vote_for = 8;
+  void clear_vote_for();
+  static const int kVoteForFieldNumber = 8;
+  const ::std::string& vote_for() const;
+  void set_vote_for(const ::std::string& value);
+  void set_vote_for(const char* value);
+  void set_vote_for(const char* value, size_t size);
+  ::std::string* mutable_vote_for();
+  ::std::string* release_vote_for();
+  void set_allocated_vote_for(::std::string* vote_for);
 
   // optional int64 self_popularity = 9;
   void clear_self_popularity();
@@ -356,7 +358,7 @@ class Account : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::internal::ArenaStringPtr assets_hash_;
   ::protocol::Contract* contract_;
   ::google::protobuf::int64 balance_;
-  ::google::protobuf::internal::ArenaStringPtr support_who_;
+  ::google::protobuf::internal::ArenaStringPtr vote_for_;
   ::google::protobuf::int64 self_popularity_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -1990,6 +1992,93 @@ class OperationSetPrivilege : public ::google::protobuf::Message /* @@protoc_ins
 };
 // -------------------------------------------------------------------
 
+class OperationSetVoteFor : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.OperationSetVoteFor) */ {
+ public:
+  OperationSetVoteFor();
+  virtual ~OperationSetVoteFor();
+
+  OperationSetVoteFor(const OperationSetVoteFor& from);
+
+  inline OperationSetVoteFor& operator=(const OperationSetVoteFor& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const OperationSetVoteFor& default_instance();
+
+  void Swap(OperationSetVoteFor* other);
+
+  // implements Message ----------------------------------------------
+
+  inline OperationSetVoteFor* New() const { return New(NULL); }
+
+  OperationSetVoteFor* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const OperationSetVoteFor& from);
+  void MergeFrom(const OperationSetVoteFor& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(OperationSetVoteFor* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string address = 1;
+  void clear_address();
+  static const int kAddressFieldNumber = 1;
+  const ::std::string& address() const;
+  void set_address(const ::std::string& value);
+  void set_address(const char* value);
+  void set_address(const char* value, size_t size);
+  ::std::string* mutable_address();
+  ::std::string* release_address();
+  void set_allocated_address(::std::string* address);
+
+  // @@protoc_insertion_point(class_scope:protocol.OperationSetVoteFor)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr address_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_chain_2eproto();
+  friend void protobuf_AssignDesc_chain_2eproto();
+  friend void protobuf_ShutdownFile_chain_2eproto();
+
+  void InitAsDefaultInstance();
+  static OperationSetVoteFor* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.Operation) */ {
  public:
   Operation();
@@ -2069,6 +2158,8 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
     Operation_Type_LOG;
   static const Type SET_PRIVILEGE =
     Operation_Type_SET_PRIVILEGE;
+  static const Type SET_VOTE_FOR =
+    Operation_Type_SET_VOTE_FOR;
   static inline bool Type_IsValid(int value) {
     return Operation_Type_IsValid(value);
   }
@@ -2201,6 +2292,15 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::protocol::OperationSetPrivilege* release_set_privilege();
   void set_allocated_set_privilege(::protocol::OperationSetPrivilege* set_privilege);
 
+  // optional .protocol.OperationSetVoteFor set_vote_for = 13;
+  bool has_set_vote_for() const;
+  void clear_set_vote_for();
+  static const int kSetVoteForFieldNumber = 13;
+  const ::protocol::OperationSetVoteFor& set_vote_for() const;
+  ::protocol::OperationSetVoteFor* mutable_set_vote_for();
+  ::protocol::OperationSetVoteFor* release_set_vote_for();
+  void set_allocated_set_vote_for(::protocol::OperationSetVoteFor* set_vote_for);
+
   // @@protoc_insertion_point(class_scope:protocol.Operation)
  private:
 
@@ -2217,6 +2317,7 @@ class Operation : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::protocol::OperationPayCoin* pay_coin_;
   ::protocol::OperationLog* log_;
   ::protocol::OperationSetPrivilege* set_privilege_;
+  ::protocol::OperationSetVoteFor* set_vote_for_;
   int type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
@@ -4021,48 +4122,48 @@ inline void Account::set_balance(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.Account.balance)
 }
 
-// optional string support_who = 8;
-inline void Account::clear_support_who() {
-  support_who_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// optional string vote_for = 8;
+inline void Account::clear_vote_for() {
+  vote_for_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& Account::support_who() const {
-  // @@protoc_insertion_point(field_get:protocol.Account.support_who)
-  return support_who_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+inline const ::std::string& Account::vote_for() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.vote_for)
+  return vote_for_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Account::set_support_who(const ::std::string& value) {
+inline void Account::set_vote_for(const ::std::string& value) {
   
-  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.Account.support_who)
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Account.vote_for)
 }
-inline void Account::set_support_who(const char* value) {
+inline void Account::set_vote_for(const char* value) {
   
-  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.Account.support_who)
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Account.vote_for)
 }
-inline void Account::set_support_who(const char* value, size_t size) {
+inline void Account::set_vote_for(const char* value, size_t size) {
   
-  support_who_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.Account.support_who)
+  // @@protoc_insertion_point(field_set_pointer:protocol.Account.vote_for)
 }
-inline ::std::string* Account::mutable_support_who() {
+inline ::std::string* Account::mutable_vote_for() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.Account.support_who)
-  return support_who_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:protocol.Account.vote_for)
+  return vote_for_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* Account::release_support_who() {
-  // @@protoc_insertion_point(field_release:protocol.Account.support_who)
+inline ::std::string* Account::release_vote_for() {
+  // @@protoc_insertion_point(field_release:protocol.Account.vote_for)
   
-  return support_who_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return vote_for_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Account::set_allocated_support_who(::std::string* support_who) {
-  if (support_who != NULL) {
+inline void Account::set_allocated_vote_for(::std::string* vote_for) {
+  if (vote_for != NULL) {
     
   } else {
     
   }
-  support_who_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), support_who);
-  // @@protoc_insertion_point(field_set_allocated:protocol.Account.support_who)
+  vote_for_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), vote_for);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Account.vote_for)
 }
 
 // optional int64 self_popularity = 9;
@@ -5648,6 +5749,54 @@ OperationSetPrivilege::type_thresholds() const {
 
 // -------------------------------------------------------------------
 
+// OperationSetVoteFor
+
+// optional string address = 1;
+inline void OperationSetVoteFor::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& OperationSetVoteFor::address() const {
+  // @@protoc_insertion_point(field_get:protocol.OperationSetVoteFor.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationSetVoteFor::set_address(const ::std::string& value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.OperationSetVoteFor.address)
+}
+inline void OperationSetVoteFor::set_address(const char* value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.OperationSetVoteFor.address)
+}
+inline void OperationSetVoteFor::set_address(const char* value, size_t size) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.OperationSetVoteFor.address)
+}
+inline ::std::string* OperationSetVoteFor::mutable_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.OperationSetVoteFor.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* OperationSetVoteFor::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.OperationSetVoteFor.address)
+  
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void OperationSetVoteFor::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
+    
+  } else {
+    
+  }
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.OperationSetVoteFor.address)
+}
+
+// -------------------------------------------------------------------
+
 // Operation
 
 // optional .protocol.Operation.Type type = 1;
@@ -6092,6 +6241,44 @@ inline void Operation::set_allocated_set_privilege(::protocol::OperationSetPrivi
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_privilege)
+}
+
+// optional .protocol.OperationSetVoteFor set_vote_for = 13;
+inline bool Operation::has_set_vote_for() const {
+  return !_is_default_instance_ && set_vote_for_ != NULL;
+}
+inline void Operation::clear_set_vote_for() {
+  if (GetArenaNoVirtual() == NULL && set_vote_for_ != NULL) delete set_vote_for_;
+  set_vote_for_ = NULL;
+}
+inline const ::protocol::OperationSetVoteFor& Operation::set_vote_for() const {
+  // @@protoc_insertion_point(field_get:protocol.Operation.set_vote_for)
+  return set_vote_for_ != NULL ? *set_vote_for_ : *default_instance_->set_vote_for_;
+}
+inline ::protocol::OperationSetVoteFor* Operation::mutable_set_vote_for() {
+  
+  if (set_vote_for_ == NULL) {
+    set_vote_for_ = new ::protocol::OperationSetVoteFor;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.Operation.set_vote_for)
+  return set_vote_for_;
+}
+inline ::protocol::OperationSetVoteFor* Operation::release_set_vote_for() {
+  // @@protoc_insertion_point(field_release:protocol.Operation.set_vote_for)
+  
+  ::protocol::OperationSetVoteFor* temp = set_vote_for_;
+  set_vote_for_ = NULL;
+  return temp;
+}
+inline void Operation::set_allocated_set_vote_for(::protocol::OperationSetVoteFor* set_vote_for) {
+  delete set_vote_for_;
+  set_vote_for_ = set_vote_for;
+  if (set_vote_for) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.Operation.set_vote_for)
 }
 
 // -------------------------------------------------------------------
@@ -7537,6 +7724,8 @@ inline void OperationSetMetadata::set_delete_flag(bool value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
