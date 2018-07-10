@@ -14,6 +14,7 @@
 */
 
 #include <common/storage.h>
+#include <glue/fullnode_manager.h>
 #include "ledger_manager.h"
 #include "environment.h"
 
@@ -65,10 +66,10 @@ namespace bumo{
 
 	bool Environment::Commit(){
 		if (useAtomMap_){
-			return settings_.Commit() && AtomMap<std::string, AccountFrm>::Commit();
+			return settings_.Commit() && fullnodes_.Commit() && AtomMap<std::string, AccountFrm>::Commit();
 		}
 
-		parent_->entries_ = entries_;
+		parent_->entries_ = entries_; 
 		parent_->settings_ = settings_;
 		return true;
 	}
@@ -199,6 +200,23 @@ namespace bumo{
 
 	bool Environment::UpdateNewValidators(const Json::Value& validators) {
 		return settings_.Set(validatorsKey, std::make_shared<Json::Value>(validators));
+	}
+
+	Json::Value& Environment::GetFullNode(const std::string& address){
+		std::shared_ptr<Json::Value> fullnode;
+		fullnodes_.Get(address, fullnode);
+
+		if (!fullnode){
+			return FullNodeManager::Instance().getFullNode(address);
+		}
+		return *fullnode;
+	}
+
+	bool Environment::SetFullNode(const Json::Value& fullnode, const std::string& operation) {
+		Json::Value item;
+		item["operation"] = operation;
+		item["fullnode"] = fullnode;
+		return fullnodes_.Set(fullnode["addr"].asString(), std::make_shared<Json::Value>(item));
 	}
 
 	bool Environment::GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator){

@@ -54,6 +54,41 @@ namespace bumo {
 			return false;
 		}
 
+		// Load full nodes from db
+		full_node_info_.clear();
+		bool load_fullnodes_done = true;
+		do 
+		{
+			auto db = Storage::Instance().account_db();
+			std::string str;
+			std::string key = "fullnodes";
+			if (!db->Get(key, str)) {
+				LOG_ERROR("Failed to get full nodes from db");
+				load_fullnodes_done = false;
+				break;
+			}
+
+			Json::Value fullnodes;
+			if (!fullnodes.fromString(str)) {
+				LOG_ERROR("Failed to parse full nodes from json string, %s", fullnodes.toFastString().c_str());
+				load_fullnodes_done = false;
+			}
+
+			for (unsigned int i = 0; i <= fullnodes.size(); ++i) {
+				FullNodePointer fp = std::make_shared<FullNode>();
+				if (fp->loadFromJson(fullnodes[i])) {
+					LOG_ERROR("Failed to load full node info from json, %s", fullnodes[i].toFastString().c_str());
+					load_fullnodes_done = false;
+					break;
+				}
+			}
+		} while (false);
+		
+		if (!load_fullnodes_done) {
+			full_node_info_.clear();
+			return false;
+		}
+
 		StatusModule::RegisterModule(this);
 		TimerNotify::RegisterModule(this);
 
@@ -84,7 +119,7 @@ namespace bumo {
 		return true;
 	}
 
-	FullNodePointer FullNodeManager::get(std::string& key) {
+	FullNodePointer FullNodeManager::get(const std::string& key) {
 		auto it = full_node_info_.find(key);
 		if (it != full_node_info_.end()) {
 			return it->second;
@@ -115,7 +150,7 @@ namespace bumo {
 		return true;
 	}
 
-	void FullNodeManager::remove(std::string& key) {
+	void FullNodeManager::remove(const std::string& key) {
 		auto it = full_node_info_.find(key);
 		if (it != full_node_info_.end()) {
 			full_node_info_.erase(it);
@@ -126,7 +161,7 @@ namespace bumo {
 		return;
 	}
 
-	Json::Value& FullNodeManager::getFullNode(std::string& addr) {
+	Json::Value& FullNodeManager::getFullNode(const std::string& addr) {
 		std::shared_ptr<Json::Value> node;
 		FullNodePointer fp = get(addr);
 		if (fp) {
@@ -138,17 +173,18 @@ namespace bumo {
 		return *node;
 	}
 
-	bool FullNodeManager::setFullNode(Json::Value& node, std::string& operation) {
+	bool FullNodeManager::setFullNode(Json::Value& node, const std::string& operation) {
 		if (operation == "add") {
 			FullNodePointer fp = std::make_shared<FullNode>();
 			if (fp->loadFromJson(node)) {
-				return add(fp);
+				if (!add(fp)) return false;
 			}
 			else {
-				LOG_ERROR("Failed to full node info from json, %s", node.toFastString().c_str());
+				LOG_ERROR("Failed to load full node info from json, %s", node.toFastString().c_str());
 				return false;
 			}
-		} else if (operation == "edit") {
+		}
+		else if (operation == "edit") {
 			std::string addr = node["addr"].asString();
 			FullNodePointer fp = get(addr);
 			if (!fp) {
@@ -159,7 +195,7 @@ namespace bumo {
 					LOG_ERROR("Failed to load full node info from json, %s", node.toFastString().c_str());
 					return false;
 				}
-				return add(fp_new);
+				if (!add(fp_new)) return false;
 			}
 			else {
 				// update impeach list
@@ -172,6 +208,23 @@ namespace bumo {
 		}
 		else {
 			LOG_ERROR("Unknown full node operation, %s", operation.c_str());
+			return false;
+		}
+
+		return updateDb();
+	}
+
+	bool FullNodeManager::updateDb() {
+		// update db
+		std::shared_ptr<WRITE_BATCH> batch = std::make_shared<WRITE_BATCH>();
+
+		Json::Value fullnodes;
+		for (auto it = full_node_info_.begin(); it != full_node_info_.end(); ++it) {
+			fullnodes.append(it->second->toJson());
+		}
+		batch->Put(bumo::General::FULLNODES, fullnodes.toFastString());
+		if (!Storage::Instance().keyvalue_db()->WriteBatch(*batch)) {
+			PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().keyvalue_db()->error_desc().c_str());
 			return false;
 		}
 		return true;
@@ -373,8 +426,10 @@ namespace bumo {
 		Json::Value impeach_json;
 		impeach_json["method"] = "impeach";
 		impeach_json["params"]["address"] = impeach_addr;
-		impeach_json["params"]["ledger_seq"] = last_ledger_seq_;
-		impeach_json["params"]["reason"] = reason;
+		Json::Value info;
+		info["ledger_seq"] = last_ledger_seq_;
+		info["reason"] = reason;
+		impeach_json["impeach"] = info;
 		
 		paycoin->set_input(impeach_json.toFastString());
 		
@@ -395,6 +450,7 @@ namespace bumo {
 	}
 
 	bool FullNodeManager::reward(std::shared_ptr<Environment> env, int64_t fullnode_reward) {
+		if (sorted_full_nodes_.empty()) return true;
 		std::string reward_node = sorted_full_nodes_[0]; // top one of sorted full nodes list
 		std::shared_ptr<AccountFrm> account;
 		if (!env->GetEntry(reward_node, account)) {

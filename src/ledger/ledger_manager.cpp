@@ -25,7 +25,7 @@
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
 		check_interval_ = 500 * utils::MICRO_UNITS_PER_MILLI;
-		timer_name_ = "Ledger Mananger";
+		timer_name_ = "Ledger Manager";
 		chain_max_ledger_probaly_ = 0;
 	}
 
@@ -651,6 +651,16 @@ namespace bumo {
 			GlueManager::Instance().UpdateValidators(tmp_v, tmp_proof);
 			if (has_upgrade) GlueManager::Instance().LedgerHasUpgrade();
 		});
+
+		// update fullnode map
+		AtomMap<std::string, Json::Value>::mapKV map = closing_ledger->environment_->fullnodes_.GetData();
+		for (auto it = map.begin(); it != map.end(); ++it) {
+			std::shared_ptr<Json::Value> item;
+			std::string operation = (*item)["operation"].asString();
+			FullNodeManager::Instance().setFullNode((*item)["fullnode"], operation);
+		}
+		FullNodeManager::Instance().updateDb();
+		
 
 		context_manager_.RemoveCompleted(tmp_lcl_header.seq());
 
