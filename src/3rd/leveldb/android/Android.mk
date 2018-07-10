@@ -3,7 +3,9 @@
 # To build for Android, add the Android NDK to your path and type 'ndk-build'.
 
 LOCAL_PATH := $(call my-dir)
-
+LOCAL_ARM_MODE := arm
+LOCAL_PRELINK_MODULE := false
+LOCAL_MODULE_TAGS := optional
 
 include $(CLEAR_VARS)
 
