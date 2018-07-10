@@ -15,7 +15,7 @@
 
 #include "system.h"
 
-#ifdef OS_LINUX
+#if (defined OS_LINUX)||(defined OS_ANDROID)
 #include <mntent.h>
 #elif defined OS_MAC
 #include <sys/statvfs.h>
@@ -151,7 +151,7 @@ namespace utils{
 			}
 			free(pBuffer);
 		}
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 		File proce_file;
 
 		if (!proce_file.Open("/proc/stat", File::FILE_M_READ))
@@ -222,7 +222,7 @@ namespace utils{
 		disk.total_bytes_ = total.QuadPart;
 		disk.free_bytes_ = free.QuadPart;
 		disk.available_bytes_ = available.QuadPart;
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 		struct statfs ndisk_stat;
 
 		if (statfs(path.c_str(), &ndisk_stat) != 0) {
@@ -265,7 +265,7 @@ namespace utils{
 		memory.available_bytes_ = status.ullTotalPhys - status.ullAvailPhys;
 		memory.cached_bytes_ = 0;
 		memory.buffers_bytes_ = 0;
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 		File proc_file;
 
 		if (!proc_file.Open("/proc/meminfo", File::FILE_M_READ)) {
@@ -321,7 +321,7 @@ namespace utils{
 			return 0;
 		}
 		startup_time = time_now - (time_t)(count.QuadPart / freq.QuadPart);
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 		struct sysinfo info;
 
 		memset(&info, 0, sizeof(info));
@@ -495,7 +495,7 @@ namespace utils{
 				pinfo = pinfo->Next;
 			}
 		} while (false);
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 		int fd;
 		do {
 			int interfaceNum = 0;
@@ -874,7 +874,7 @@ namespace utils{
 			nPartitionList.push_back(nPartition);
 			total_bytes += nPartition.total_bytes_;
 		}
-#elif defined OS_LINUX
+#elif (defined OS_LINUX)||(defined OS_ANDROID)
 		FILE* mount_table;
 		struct mntent *mount_entry;
 		struct statfs s;
