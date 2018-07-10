@@ -29,11 +29,13 @@ namespace bumo {
 	public:
 		typedef AtomMap<std::string, Json::Value>::mapKV settingKV;
 		const std::string validatorsKey = "validators";
+		const std::string fullnodesKey = "fullnodes";
 		const std::string feesKey = "configFees";
 
 		AtomMap<std::string, Json::Value> settings_;
+		AtomMap<std::string, Json::Value> fullnodes_;
 		std::map<std::string, AccountFrm::pointer> entries_;
-
+		
 		Environment *parent_;
 		bool useAtomMap_;
 
@@ -52,6 +54,9 @@ namespace bumo {
 
 		Json::Value& GetValidators();
 		bool UpdateNewValidators(const Json::Value& validators);
+		bool SetFullNode(const Json::Value& fullnode, const std::string& operation);
+		Json::Value& GetFullNode(const std::string& value);
+		
 		bool GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator);
 
 		bool Commit();

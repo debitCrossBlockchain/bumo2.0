@@ -87,6 +87,7 @@ namespace bumo {
 		const static char *KEY_LEDGER_SEQ;
 		const static char *KEY_GENE_ACCOUNT;
 		const static char *VALIDATORS;
+		const static char *FULLNODES;
 
 		const static char *ACCOUNT_PREFIX;
 		const static char *ASSET_PREFIX;

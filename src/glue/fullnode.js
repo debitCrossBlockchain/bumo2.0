@@ -154,15 +154,15 @@ function main(input_str){
 	let address = input.params.address;
     
     if(input.method === 'apply'){
-        assert(typeof input.params.address !== 'string' &&
-               typeof input.params.endpoint !== 'string',
+        assert(typeof input.params.address === 'string' &&
+               typeof input.params.endpoint === 'string',
                'Arg-endpoint and arg-address should be string');
         applyAsFullNode(input.params);
         tlog('apply', sender + ' apply as fullnode succeed');
     }
     else if(input.method === 'impeach'){
-        assert(typeof input.params.address !== 'string', 'Arg-address should be string');
-        assert(typeof input.params.impeach !== 'object', 'Arg-impeach should be object');
+        assert(typeof input.params.address === 'string', 'Arg-address should be string');
+        assert(typeof input.params.impeach === 'object', 'Arg-impeach should be object');
         impeachFullNode(input.params);
         tlog('impeach', sender + 'impeach ' + input.params.address + ' succeed');
 	}
@@ -172,8 +172,5 @@ function main(input_str){
 }
 
 function init(){
-    let fullnode = getFullNode();
-    assert(fullnode !== false, 'Get fullnode failed.');
-
     return true;
 }

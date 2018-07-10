@@ -919,7 +919,9 @@ namespace bumo {
 			const std::string dest_address = create_account.dest_address();
 			//if version greater than 1000, the dest address of contract must empty
 			bool has_dest_address = !dest_address.empty();
-			bool unimportant_address = (dest_address != General::CONTRACT_VALIDATOR_ADDRESS) && (dest_address != General::CONTRACT_FEE_ADDRESS);
+			bool unimportant_address = (dest_address != General::CONTRACT_VALIDATOR_ADDRESS) && 
+									   (dest_address != General::CONTRACT_FEE_ADDRESS) &&
+									   (dest_address != General::CONTRACT_FULLNODE_ADDRESS);
 			if (is_create_contract && has_dest_address && unimportant_address) {
 				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
 				result.set_desc(utils::String::Format("Create contract account dest address(%s) must set empty", dest_address.c_str()));

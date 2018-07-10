@@ -261,7 +261,7 @@ namespace bumo{
 
 		v8::Context::Scope context_scope(context);
 
-		//block number, timestamp, orginal
+		//block number, timestamp, original
 
 		auto string_sender = v8::String::NewFromUtf8(isolate_, parameter_.sender_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 		context->Global()->Set(context,
@@ -1214,7 +1214,9 @@ namespace bumo{
 			std::string address = std::string(ToCString(v8::String::Utf8Value(args[0])));
 
 			Json::Value jsonFullNode;
-			jsonFullNode = FullNodeManager::Instance().getFullNode(address);
+
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			jsonFullNode = ledger_context->GetTopTx()->environment_->GetFullNode(address);
 
 			std::string strvalue = jsonFullNode.toFastString();
 			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
@@ -1264,10 +1266,9 @@ namespace bumo{
 
 			// update full node list
 			std::string operation = std::string(ToCString(v8::String::Utf8Value(args[1])));
-			if (!FullNodeManager::Instance().setFullNode(json, operation)) {
-				error_desc = "set full node fail";
-				break;
-			}
+
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetTopTx()->environment_->SetFullNode(json, operation);
 
 			args.GetReturnValue().Set(true);
 			return;
