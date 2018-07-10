@@ -3,11 +3,11 @@
 # To build for Android, add the Android NDK to your path and type 'ndk-build'.
 
 LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
 LOCAL_ARM_MODE := arm
 LOCAL_PRELINK_MODULE := false
 LOCAL_MODULE_TAGS := optional
-
-include $(CLEAR_VARS)
 
 include $(BUMO_SRC_PATH)3rd/leveldb/common.mk
 
