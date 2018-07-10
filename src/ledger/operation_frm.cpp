@@ -418,6 +418,29 @@ namespace bumo {
 		return true;
 	}
 
+	void OperationFrm::UpdateAssociatedPopularity(
+		std::shared_ptr<Environment> env,
+		std::shared_ptr<AccountFrm> srcAccount,
+		std::shared_ptr<AccountFrm> destAccount,
+		int64_t amount){
+		
+		std::shared_ptr<AccountFrm> src_support_account;
+		std::string src_support_addr = srcAccount->GetVoteFor();
+		if (!src_support_addr.empty()){
+			if (env->GetEntry(src_support_addr, src_support_account)){
+				src_support_account->DecreasePopularity(amount);
+			}
+		}
+
+		std::shared_ptr<AccountFrm> dest_support_account;
+		auto dest_support_addr = destAccount->GetVoteFor();
+		if (!dest_support_addr.empty()){
+			if (env->GetEntry(dest_support_addr, dest_support_account)){
+				dest_support_account->IncreasePopularity(amount);
+			}
+		}
+	}
+
 
 	Result OperationFrm::Apply(std::shared_ptr<Environment>  environment) {
 		std::string source_address = operation_.source_address();
@@ -872,6 +895,8 @@ namespace bumo {
 				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter);
 
 			}
+
+			UpdateAssociatedPopularity(environment, source_account_, dest_account_ptr, ope.amount());
 		} while (false);
 	}
 

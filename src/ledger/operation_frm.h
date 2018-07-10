@@ -41,6 +41,11 @@ namespace bumo{
 		Result Apply(std::shared_ptr<Environment> txenvironment);
 
 		bool CheckSignature(std::shared_ptr<Environment> txenvironment);
+		void UpdateAssociatedPopularity(
+			std::shared_ptr<Environment> env,
+			std::shared_ptr<AccountFrm> srcAccount, 
+			std::shared_ptr<AccountFrm> destAccount,
+			int64_t amount);
 
 		Result GetResult() const;
 		int64_t GetOpeFee() const;
@@ -54,6 +59,7 @@ namespace bumo{
 		void SetSignerWeight(std::shared_ptr<Environment> environment);
 		void SetThreshold(std::shared_ptr<Environment> environment);
 		void PayCoin(std::shared_ptr<Environment> environment);
+		
 		void Log(std::shared_ptr<Environment> environment);
 		void SetPrivilege(std::shared_ptr<Environment> environment);
 		void Exit(std::shared_ptr<Environment> environment);
