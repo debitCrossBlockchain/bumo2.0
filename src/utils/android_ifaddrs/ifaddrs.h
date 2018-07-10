@@ -1,54 +1,60 @@
 /*
- * Copyright (c) 1995, 1999
- *	Berkeley Software Design, Inc.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * THIS SOFTWARE IS PROVIDED BY Berkeley Software Design, Inc. ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL Berkeley Software Design, Inc. BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	BSDI ifaddrs.h,v 2.5 2000/02/23 14:51:59 dab Exp
- */
+	bumo is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	bumo is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #ifndef	_IFADDRS_H_
 #define	_IFADDRS_H_
 
-struct ifaddrs {
-	struct ifaddrs  *ifa_next;
-	char		     *ifa_name;
-	unsigned int	 ifa_flags;
-	struct sockaddr	*ifa_addr;
-	struct sockaddr	*ifa_netmask;
-	struct sockaddr	*ifa_dstaddr;
-	void		    *ifa_data;
-};
+#include <arpa/inet.h>
+#include <errno.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h>
+#include <linux/netlink.h>
+#include <linux/rtnetlink.h>
 
-/*
- * This may have been defined in <net/if.h>.  Note that if <net/if.h> is
- * to be included it must be included before this header file.
- */
-#ifndef	ifa_broadaddr
-#define	ifa_broadaddr	ifa_dstaddr	/* broadcast address interface */
+// Android (bionic) doesn't have getifaddrs(3)/freeifaddrs(3).
+// We fake it here, so java_net_NetworkInterface.cpp can use that API
+// with all the non-portable code being in this file.
+
+// Source-compatible subset of the BSD struct.
+typedef struct ifaddrs {
+    // Pointer to next struct in list, or NULL at end.
+    struct ifaddrs* ifa_next;
+
+    // Interface name.
+    char* ifa_name;
+
+    // Interface flags.
+    unsigned int ifa_flags;
+
+    // Interface network address.
+    struct sockaddr* ifa_addr;
+
+    // Interface netmask.
+    struct sockaddr* ifa_netmask;
+} ifaddrs;
+
+#ifdef __cplusplus
+extern "C" {
 #endif
-
-#include <sys/cdefs.h>
-
-__BEGIN_DECLS
-extern int getifaddrs(struct ifaddrs **ifap);
-extern void freeifaddrs(struct ifaddrs *ifa);
-__END_DECLS
-
+    int getifaddrs(ifaddrs** result);
+    void freeifaddrs(ifaddrs* addresses);
+#ifdef __cplusplus
+}
+#endif
 #endif
