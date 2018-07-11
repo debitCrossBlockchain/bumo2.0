@@ -211,8 +211,7 @@ namespace bumo {
 			LOG_ERROR("Unknown full node operation, %s", operation.c_str());
 			return false;
 		}
-
-		return updateDb();
+		return true;
 	}
 
 	bool FullNodeManager::updateDb() {
@@ -303,6 +302,7 @@ namespace bumo {
 
 		do 
 		{
+			// sort by hash of last close ledger
 			if (!sortFullNode(lcl.hash())) {
 				LOG_ERROR("Failed to sorted FullNode list by hash value %s", lcl.hash().c_str());
 				break;
@@ -311,23 +311,23 @@ namespace bumo {
 
 			auto it = full_node_info_.find(local_address_);
 			if (it == full_node_info_.end() || !isInspector(local_address_)){
-				LOG_ERROR("Local address not in full node list or not in the head part");
+				LOG_INFO("Local address not in full node list or not in the head part");
 				break;
 			}
 			std::string peer;
-			if (getPeerAddr(local_address_, peer)) {
-				LOG_ERROR("Failed to get full node check peer address");
+			if (!getPeerAddr(local_address_, peer)) {
+				LOG_ERROR("Failed to get full node check peer of local address");
 				break;
 			}
 
 			// check balance of peer
 			AccountFrm::pointer peer_account;
 			if (!Environment::AccountFromDB(peer, peer_account)) {
-				LOG_ERROR("Source account(%s) not exist", peer.c_str());
+				LOG_ERROR("Peer account(%s) not exist", peer.c_str());
 				break;
 			}
-			if (peer_account->GetAccountBalance() < 10000) {
-				LOG_ERROR("The account balance (" FMT_I64 ") less than 10000", peer_account->GetAccountBalance());
+			if (peer_account->GetAccountBalance() < General::FULLNODE_MIN_LOCK_AMOUNT) {
+				LOG_ERROR("The peer account balance (" FMT_I64 ") less than (" FMT_I64 ") ", peer_account->GetAccountBalance(), General::FULLNODE_MIN_LOCK_AMOUNT);
 				break;
 			}
 
@@ -337,12 +337,7 @@ namespace bumo {
 			// Send the full node check request to peer
 			protocol::FullNodeCheckReq req;
 			req.set_ledger_seq(random_seq_);
-
-			it = full_node_info_.find(peer);
-			if (it == full_node_info_.end()) {
-				LOG_ERROR("Failed to get peer node info of %s", peer.c_str());
-				break;
-			}
+			req.set_sender(local_address_);
 	
 			// Impeach when check process timeout
 			std::string reason = "timeout";
@@ -350,10 +345,14 @@ namespace bumo {
 				impeach(peer, reason);
 			});
 
+			// Connect to peer and send check request, connect or send request failed will cause timeout and trigger impeach
+			it = full_node_info_.find(peer);
+			if (it == full_node_info_.end()) {
+				LOG_ERROR("Internal error, full node check peer not exist");
+				break;
+			}
 			FullNodePointer fp = it->second;
 			std::string uri = utils::String::Format("ws://%s:", fp->getEndPoint().c_str());
-
-			// Connect to peer and send check request, connect or send request failed will cause timeout and trigger impeach
 			PeerManager::Instance().ConsensusNetwork().Connect(uri); 
 			PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString());
 		} while (false);
@@ -365,44 +364,52 @@ namespace bumo {
 	{
 		protocol::FullNodeCheckReq req;
 		if (!req.ParseFromString(msg.data())){
-			LOG_ERROR("Parse ping failed");
+			LOG_ERROR("Parse full node check request failed");
 			return false;
 		}
 		
-		const std::string& checker_addr = req.sender();
-		
+		std::string checker_addr = req.sender();
 		protocol::FullNodeCheckResp resp;
-		// Verify authority of checker address  
-		if (!verifyCheckAuthority(checker_addr, local_address_)) {
-			resp.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-			resp.set_error_desc(utils::String::Format("Verify check authority failed, source address %s has no permission", checker_addr.c_str()));
-			LOG_ERROR("%s", resp.error_desc().c_str());
-			return false;
-		}
+		resp.set_error_code(protocol::ERRCODE_SUCCESS);
+		resp.set_error_desc("");
 
-		// Get ledger header of seq
-		int64_t seq = req.ledger_seq();
-		LedgerFrm frm;
-		utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
-		if (!frm.LoadFromDb(seq)) {
-			resp.set_error_code(protocol::ERRCODE_NOT_EXIST);
-			resp.set_error_desc(utils::String::Format("Failed to get ledger (" FMT_I64 ") from db", seq));
-			LOG_ERROR("%s", resp.error_desc().c_str());
-			return false;
-		}
+		do 
+		{
+			// Verify authority of checker address  
+			if (!verifyCheckAuthority(checker_addr, local_address_)) {
+				resp.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				resp.set_error_desc(utils::String::Format("Verify check authority failed, peer address %s has no permission", checker_addr.c_str()));
+				LOG_ERROR("%s", resp.error_desc().c_str());
+				break;
+			}
+
+			// Get ledger header of seq
+			LedgerFrm frm;
+			utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
+			if (!frm.LoadFromDb(req.ledger_seq())) {
+				resp.set_error_code(protocol::ERRCODE_NOT_EXIST);
+				resp.set_error_desc(utils::String::Format("Failed to get ledger (" FMT_I64 ") from db", req.ledger_seq()));
+				LOG_ERROR("%s", resp.error_desc().c_str());
+				break;
+			}
+
+			protocol::LedgerHeader* header = resp.mutable_header();
+			header->CopyFrom(frm.GetProtoHeader());
+		} while (false);
 		
-		bumo::WsMessagePointer ws = std::make_shared<protocol::WsMessage>();
-		ws->set_data(resp.SerializeAsString());
-		ws->set_type(protocol::OVERLAY_MSGTYPE_LEDGERS);
-		ws->set_request(false);
-		LOG_TRACE("Send ledger header (" FMT_I64 ") response to %s", seq, checker_addr.c_str());
-		PeerManager::Instance().ConsensusNetwork().SendMsgToPeer(conn_id, ws);
+		PeerManager::Instance().SendRequest(conn_id, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, resp.SerializeAsString());
 
 		return true;
 	}
 
 	bool FullNodeManager::OnInspectResponse(protocol::WsMessage &msg, int64_t conn_id)
 	{
+		protocol::FullNodeCheckResp resp;
+		if (!resp.ParseFromString(msg.data())) {
+			LOG_ERROR("Parse full node check response failed");
+			return false;
+		}
+
 		// close full node check timer
 		utils::Timer::Instance().DelTimer(fullnode_check_timer_);
 
@@ -414,34 +421,32 @@ namespace bumo {
 		}
 		
 		std::string peer;
-		if (getPeerAddr(local_address_, peer)) {
+		if (!getPeerAddr(local_address_, peer)) {
 			LOG_ERROR("Failed to get full node check peer address");
 			return false;
 		}
 
-		if (local_frm.GetProtoHeader().SerializeAsString() != msg.data()) {
+		if (local_frm.GetProtoHeader().SerializeAsString() != resp.header().SerializeAsString()) {
 			LOG_ERROR("Full node address %s has different block hash in ledger seq(" FMT_I64 ")", peer.c_str(), random_seq_);
 			std::string reason = "out-sync";
 			return impeach(peer, reason);
 		}
-		else {
-			// remove the earliest one from impeach list
-			auto it = full_node_info_.find(peer);
-			if (it != full_node_info_.end()) {
-				std::string addr = it->second->getEarliestImpeachAddr();
-				if (!addr.empty()) {
-					return unimpeach(peer, addr);
-				}
-			}
-			else {
-				LOG_ERROR("Internal error, full node %s not exist", peer.c_str());
-				return false;
-			}
-		}
-		
-		// disconnect to peer
-		PeerManager::Instance().ConsensusNetwork().Disconnect(conn_id);
 
+		// remove the earliest one from impeach list
+		auto it = full_node_info_.find(peer);
+		if (it == full_node_info_.end()) {
+			LOG_ERROR("Internal error, full node check peer %s not exist", peer.c_str());
+			return false;
+		}
+
+		std::string addr = it->second->getEarliestImpeachAddr();
+		if (!addr.empty()) {
+			return unimpeach(peer, addr);
+		}
+		else {
+			// disconnect
+			PeerManager::Instance().ConsensusNetwork().Disconnect(conn_id);
+		}
 		return true;
 	}
 
@@ -491,7 +496,7 @@ namespace bumo {
 		if (GlueManager::Instance().OnTransaction(ptr, result)) {
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
 		}
-		if (result.code() != protocol::ERRCODE_SUCCESS) {
+		else {
 			LOG_ERROR("Failed to impeach full node address %s in ledger seq(" FMT_I64 ")", local_address_.c_str(), last_ledger_seq_);
 			return false;
 		}
@@ -535,8 +540,8 @@ namespace bumo {
 		if (GlueManager::Instance().OnTransaction(ptr, result)) {
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
 		}
-		if (result.code() != protocol::ERRCODE_SUCCESS) {
-			LOG_ERROR("Failed to impeach full node address %s in ledger seq(" FMT_I64 ")", local_address_.c_str(), last_ledger_seq_);
+		else {
+			LOG_ERROR("Failed to unimpeach full node address %s from %s", unimpeach_addr.c_str(), address.c_str());
 			return false;
 		}
 		return true;

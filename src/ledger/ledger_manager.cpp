@@ -652,16 +652,18 @@ namespace bumo {
 			if (has_upgrade) GlueManager::Instance().LedgerHasUpgrade();
 		});
 
-		// update fullnode map
+		// update full node map
 		AtomMap<std::string, Json::Value>::mapKV map = closing_ledger->environment_->fullnodes_.GetData();
 		for (auto it = map.begin(); it != map.end(); ++it) {
 			std::shared_ptr<Json::Value> item;
+			item = it->second.value_;
 			std::string operation = (*item)["operation"].asString();
-			FullNodeManager::Instance().setFullNode((*item)["fullnode"], operation);
+			if (FullNodeManager::Instance().setFullNode((*item)["fullnode"], operation)) {
+				LOG_ERROR("Failed to set full node %s when notify ledger close", (*item)["fullnode"].asCString());
+			}
 		}
 		FullNodeManager::Instance().updateDb();
 		
-
 		context_manager_.RemoveCompleted(tmp_lcl_header.seq());
 
 		//notice ledger closed
