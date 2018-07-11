@@ -150,7 +150,7 @@ function main(input)
 
 - Prohibit to use 'eval', 'void' and 'this' keywords
 
-- Prohibit to use 'new' to create 'Number', 'String' and 'Boolean' objects, which objects can be obtained by calling their constructors.
+- Prohibit to use 'new' to create 'Number', 'String' and 'Boolean' objects, which objects can be obtained by calling their constructors
 
 - Prohibit to create an array with array keywords
 
