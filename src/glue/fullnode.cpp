@@ -33,6 +33,7 @@ namespace bumo {
 		last_check_time_ = node["last_check_time"].asInt64();
 
 		Json::Value impeach_list = node["impeach_list"];
+		impeach_info_.clear();
 		for (unsigned int i = 0; i < impeach_list.size(); ++i)
 		{
 			Json::Value impeach;

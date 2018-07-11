@@ -185,11 +185,11 @@ namespace bumo {
 				return false;
 			}
 		}
-		else if (operation == "edit") {
+		else if (operation == "update") {
 			std::string addr = node["addr"].asString();
 			FullNodePointer fp = get(addr);
 			if (!fp) {
-				LOG_WARN("The full node to edit not exist, add it(%s)", node["addr"].asCString());
+				LOG_WARN("The full node to update not exist, add it(%s)", node["addr"].asCString());
 				FullNodePointer fp_new = std::make_shared<FullNode>();
 				if (!fp_new->loadFromJson(node))
 				{
