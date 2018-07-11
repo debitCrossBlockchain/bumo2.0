@@ -113,10 +113,11 @@ namespace bumo {
 		bool IncreasePopularity(int64_t votes);
 
 		const std::string& GetVoteFor(){
-			return vote_for_;
+			return account_info_.vote_for();
 		}
+
 		int64_t GetSelfPopularity(){
-			return self_popularity_;
+			return account_info_.self_popularity();
 		}
 
 		static AccountFrm::pointer CreatAccountFrm(const std::string& account_address, int64_t balance);
@@ -132,8 +133,6 @@ namespace bumo {
 		std::map<std::string, DataCache<protocol::KeyPair>> metadata_;
 	private:
 		protocol::Account	account_info_;
-		std::string vote_for_; //support who as validator
-		int64_t self_popularity_;
 	};
 
 }

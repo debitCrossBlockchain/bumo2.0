@@ -62,6 +62,7 @@ namespace bumo{
 		
 		void Log(std::shared_ptr<Environment> environment);
 		void SetPrivilege(std::shared_ptr<Environment> environment);
+		void SetVoteFor(std::shared_ptr<Environment> environment);
 		void Exit(std::shared_ptr<Environment> environment);
 		//void OperationDeployContract(Environment *environment);
 		//void InvokeContract(Environment *environment);

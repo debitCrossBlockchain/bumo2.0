@@ -12,7 +12,7 @@ message Account{
 	bytes assets_hash = 5;    //assets_hash = merkelhash(assets)
 	Contract contract = 6;
 	int64 balance = 7;
-	string support_who = 8;
+	string vote_for = 8;
 	int64 self_popularity = 9;
 }
 
@@ -116,6 +116,10 @@ message OperationSetPrivilege{
 	repeated OperationTypeThreshold type_thresholds = 4;
 }
 
+message OperationSetVoteFor{
+    string address = 1;
+}
+
 message Operation {
 	enum Type {
 			UNKNOWN = 0;
@@ -128,6 +132,7 @@ message Operation {
 			PAY_COIN                = 7;
 			LOG						= 8;
 			SET_PRIVILEGE			= 9;
+            SET_VOTE_FOR            = 10;
 	};
 	Type type = 1;
 	string source_address = 2;
@@ -143,6 +148,7 @@ message Operation {
 	OperationPayCoin			pay_coin           = 10;
 	OperationLog				log				   = 11;
 	OperationSetPrivilege		set_privilege	   = 12;
+    OperationSetVoteFor         set_vote_for       = 13;
 }
 
 message OperationSetThreshold{
