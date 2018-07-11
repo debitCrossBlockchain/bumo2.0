@@ -39,8 +39,6 @@ void protobuf_AddDesc_overlay_2eproto();
 void protobuf_AssignDesc_overlay_2eproto();
 void protobuf_ShutdownFile_overlay_2eproto();
 
-class ChainGetLedgerReq;
-class ChainGetLedgerResp;
 class ChainHello;
 class ChainPeerMessage;
 class ChainResponse;
@@ -49,6 +47,8 @@ class ChainSubscribeTx;
 class ChainTxStatus;
 class DontHave;
 class EntryList;
+class FullNodeCheckReq;
+class FullNodeCheckResp;
 class GetLedgers;
 class Hello;
 class HelloResponse;
@@ -115,12 +115,13 @@ enum OVERLAY_MESSAGE_TYPE {
   OVERLAY_MSGTYPE_LEDGERS = 5,
   OVERLAY_MSGTYPE_PBFT = 6,
   OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY = 7,
+  OVERLAY_MSGTYPE_FULLNODE_CHECK = 8,
   OVERLAY_MESSAGE_TYPE_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   OVERLAY_MESSAGE_TYPE_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool OVERLAY_MESSAGE_TYPE_IsValid(int value);
 const OVERLAY_MESSAGE_TYPE OVERLAY_MESSAGE_TYPE_MIN = OVERLAY_MSGTYPE_NONE;
-const OVERLAY_MESSAGE_TYPE OVERLAY_MESSAGE_TYPE_MAX = OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY;
+const OVERLAY_MESSAGE_TYPE OVERLAY_MESSAGE_TYPE_MAX = OVERLAY_MSGTYPE_FULLNODE_CHECK;
 const int OVERLAY_MESSAGE_TYPE_ARRAYSIZE = OVERLAY_MESSAGE_TYPE_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* OVERLAY_MESSAGE_TYPE_descriptor();
@@ -144,13 +145,12 @@ enum ChainMessageType {
   CHAIN_LEDGER_HEADER = 16,
   CHAIN_SUBSCRIBE_TX = 17,
   CHAIN_TX_ENV_STORE = 18,
-  CHAIN_GET_LEDGER = 19,
   ChainMessageType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   ChainMessageType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool ChainMessageType_IsValid(int value);
 const ChainMessageType ChainMessageType_MIN = CHAIN_TYPE_NONE;
-const ChainMessageType ChainMessageType_MAX = CHAIN_GET_LEDGER;
+const ChainMessageType ChainMessageType_MAX = CHAIN_TX_ENV_STORE;
 const int ChainMessageType_ARRAYSIZE = ChainMessageType_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* ChainMessageType_descriptor();
@@ -162,30 +162,6 @@ inline bool ChainMessageType_Parse(
     const ::std::string& name, ChainMessageType* value) {
   return ::google::protobuf::internal::ParseNamedEnum<ChainMessageType>(
     ChainMessageType_descriptor(), name, value);
-}
-enum FULL_NODE_MSG_TYPE {
-  FULL_NODE_MSG_TYPE_NONE = 0,
-  FULL_NODE_MSG_TYPE_HELLO = 1,
-  FULL_NODE_MSG_TYPE_INSPECT = 2,
-  FULL_NODE_MSG_TYPE_FEEDBACK = 3,
-  FULL_NODE_MSG_TYPE_ERROR = 4,
-  FULL_NODE_MSG_TYPE_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
-  FULL_NODE_MSG_TYPE_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
-};
-bool FULL_NODE_MSG_TYPE_IsValid(int value);
-const FULL_NODE_MSG_TYPE FULL_NODE_MSG_TYPE_MIN = FULL_NODE_MSG_TYPE_NONE;
-const FULL_NODE_MSG_TYPE FULL_NODE_MSG_TYPE_MAX = FULL_NODE_MSG_TYPE_ERROR;
-const int FULL_NODE_MSG_TYPE_ARRAYSIZE = FULL_NODE_MSG_TYPE_MAX + 1;
-
-const ::google::protobuf::EnumDescriptor* FULL_NODE_MSG_TYPE_descriptor();
-inline const ::std::string& FULL_NODE_MSG_TYPE_Name(FULL_NODE_MSG_TYPE value) {
-  return ::google::protobuf::internal::NameOfEnum(
-    FULL_NODE_MSG_TYPE_descriptor(), value);
-}
-inline bool FULL_NODE_MSG_TYPE_Parse(
-    const ::std::string& name, FULL_NODE_MSG_TYPE* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<FULL_NODE_MSG_TYPE>(
-    FULL_NODE_MSG_TYPE_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -1865,32 +1841,32 @@ class ChainTxStatus : public ::google::protobuf::Message /* @@protoc_insertion_p
 };
 // -------------------------------------------------------------------
 
-class ChainGetLedgerReq : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainGetLedgerReq) */ {
+class FullNodeCheckReq : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.FullNodeCheckReq) */ {
  public:
-  ChainGetLedgerReq();
-  virtual ~ChainGetLedgerReq();
+  FullNodeCheckReq();
+  virtual ~FullNodeCheckReq();
 
-  ChainGetLedgerReq(const ChainGetLedgerReq& from);
+  FullNodeCheckReq(const FullNodeCheckReq& from);
 
-  inline ChainGetLedgerReq& operator=(const ChainGetLedgerReq& from) {
+  inline FullNodeCheckReq& operator=(const FullNodeCheckReq& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ChainGetLedgerReq& default_instance();
+  static const FullNodeCheckReq& default_instance();
 
-  void Swap(ChainGetLedgerReq* other);
+  void Swap(FullNodeCheckReq* other);
 
   // implements Message ----------------------------------------------
 
-  inline ChainGetLedgerReq* New() const { return New(NULL); }
+  inline FullNodeCheckReq* New() const { return New(NULL); }
 
-  ChainGetLedgerReq* New(::google::protobuf::Arena* arena) const;
+  FullNodeCheckReq* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ChainGetLedgerReq& from);
-  void MergeFrom(const ChainGetLedgerReq& from);
+  void CopyFrom(const FullNodeCheckReq& from);
+  void MergeFrom(const FullNodeCheckReq& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -1909,7 +1885,7 @@ class ChainGetLedgerReq : public ::google::protobuf::Message /* @@protoc_inserti
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(ChainGetLedgerReq* other);
+  void InternalSwap(FullNodeCheckReq* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -1931,48 +1907,60 @@ class ChainGetLedgerReq : public ::google::protobuf::Message /* @@protoc_inserti
   ::google::protobuf::int64 ledger_seq() const;
   void set_ledger_seq(::google::protobuf::int64 value);
 
-  // @@protoc_insertion_point(class_scope:protocol.ChainGetLedgerReq)
+  // optional string sender = 2;
+  void clear_sender();
+  static const int kSenderFieldNumber = 2;
+  const ::std::string& sender() const;
+  void set_sender(const ::std::string& value);
+  void set_sender(const char* value);
+  void set_sender(const char* value, size_t size);
+  ::std::string* mutable_sender();
+  ::std::string* release_sender();
+  void set_allocated_sender(::std::string* sender);
+
+  // @@protoc_insertion_point(class_scope:protocol.FullNodeCheckReq)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::int64 ledger_seq_;
+  ::google::protobuf::internal::ArenaStringPtr sender_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
   friend void protobuf_ShutdownFile_overlay_2eproto();
 
   void InitAsDefaultInstance();
-  static ChainGetLedgerReq* default_instance_;
+  static FullNodeCheckReq* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class ChainGetLedgerResp : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ChainGetLedgerResp) */ {
+class FullNodeCheckResp : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.FullNodeCheckResp) */ {
  public:
-  ChainGetLedgerResp();
-  virtual ~ChainGetLedgerResp();
+  FullNodeCheckResp();
+  virtual ~FullNodeCheckResp();
 
-  ChainGetLedgerResp(const ChainGetLedgerResp& from);
+  FullNodeCheckResp(const FullNodeCheckResp& from);
 
-  inline ChainGetLedgerResp& operator=(const ChainGetLedgerResp& from) {
+  inline FullNodeCheckResp& operator=(const FullNodeCheckResp& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const ChainGetLedgerResp& default_instance();
+  static const FullNodeCheckResp& default_instance();
 
-  void Swap(ChainGetLedgerResp* other);
+  void Swap(FullNodeCheckResp* other);
 
   // implements Message ----------------------------------------------
 
-  inline ChainGetLedgerResp* New() const { return New(NULL); }
+  inline FullNodeCheckResp* New() const { return New(NULL); }
 
-  ChainGetLedgerResp* New(::google::protobuf::Arena* arena) const;
+  FullNodeCheckResp* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const ChainGetLedgerResp& from);
-  void MergeFrom(const ChainGetLedgerResp& from);
+  void CopyFrom(const FullNodeCheckResp& from);
+  void MergeFrom(const FullNodeCheckResp& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -1991,7 +1979,7 @@ class ChainGetLedgerResp : public ::google::protobuf::Message /* @@protoc_insert
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(ChainGetLedgerResp* other);
+  void InternalSwap(FullNodeCheckResp* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -2033,7 +2021,7 @@ class ChainGetLedgerResp : public ::google::protobuf::Message /* @@protoc_insert
   ::protocol::LedgerHeader* release_header();
   void set_allocated_header(::protocol::LedgerHeader* header);
 
-  // @@protoc_insertion_point(class_scope:protocol.ChainGetLedgerResp)
+  // @@protoc_insertion_point(class_scope:protocol.FullNodeCheckResp)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -2047,7 +2035,7 @@ class ChainGetLedgerResp : public ::google::protobuf::Message /* @@protoc_insert
   friend void protobuf_ShutdownFile_overlay_2eproto();
 
   void InitAsDefaultInstance();
-  static ChainGetLedgerResp* default_instance_;
+  static FullNodeCheckResp* default_instance_;
 };
 // ===================================================================
 
@@ -3498,112 +3486,156 @@ inline void ChainTxStatus::set_timestamp(::google::protobuf::int64 value) {
 
 // -------------------------------------------------------------------
 
-// ChainGetLedgerReq
+// FullNodeCheckReq
 
 // optional int64 ledger_seq = 1;
-inline void ChainGetLedgerReq::clear_ledger_seq() {
+inline void FullNodeCheckReq::clear_ledger_seq() {
   ledger_seq_ = GOOGLE_LONGLONG(0);
 }
-inline ::google::protobuf::int64 ChainGetLedgerReq::ledger_seq() const {
-  // @@protoc_insertion_point(field_get:protocol.ChainGetLedgerReq.ledger_seq)
+inline ::google::protobuf::int64 FullNodeCheckReq::ledger_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.FullNodeCheckReq.ledger_seq)
   return ledger_seq_;
 }
-inline void ChainGetLedgerReq::set_ledger_seq(::google::protobuf::int64 value) {
+inline void FullNodeCheckReq::set_ledger_seq(::google::protobuf::int64 value) {
   
   ledger_seq_ = value;
-  // @@protoc_insertion_point(field_set:protocol.ChainGetLedgerReq.ledger_seq)
+  // @@protoc_insertion_point(field_set:protocol.FullNodeCheckReq.ledger_seq)
+}
+
+// optional string sender = 2;
+inline void FullNodeCheckReq::clear_sender() {
+  sender_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& FullNodeCheckReq::sender() const {
+  // @@protoc_insertion_point(field_get:protocol.FullNodeCheckReq.sender)
+  return sender_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void FullNodeCheckReq::set_sender(const ::std::string& value) {
+  
+  sender_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.FullNodeCheckReq.sender)
+}
+inline void FullNodeCheckReq::set_sender(const char* value) {
+  
+  sender_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.FullNodeCheckReq.sender)
+}
+inline void FullNodeCheckReq::set_sender(const char* value, size_t size) {
+  
+  sender_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.FullNodeCheckReq.sender)
+}
+inline ::std::string* FullNodeCheckReq::mutable_sender() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.FullNodeCheckReq.sender)
+  return sender_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* FullNodeCheckReq::release_sender() {
+  // @@protoc_insertion_point(field_release:protocol.FullNodeCheckReq.sender)
+  
+  return sender_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void FullNodeCheckReq::set_allocated_sender(::std::string* sender) {
+  if (sender != NULL) {
+    
+  } else {
+    
+  }
+  sender_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), sender);
+  // @@protoc_insertion_point(field_set_allocated:protocol.FullNodeCheckReq.sender)
 }
 
 // -------------------------------------------------------------------
 
-// ChainGetLedgerResp
+// FullNodeCheckResp
 
 // optional .protocol.ERRORCODE error_code = 1;
-inline void ChainGetLedgerResp::clear_error_code() {
+inline void FullNodeCheckResp::clear_error_code() {
   error_code_ = 0;
 }
-inline ::protocol::ERRORCODE ChainGetLedgerResp::error_code() const {
-  // @@protoc_insertion_point(field_get:protocol.ChainGetLedgerResp.error_code)
+inline ::protocol::ERRORCODE FullNodeCheckResp::error_code() const {
+  // @@protoc_insertion_point(field_get:protocol.FullNodeCheckResp.error_code)
   return static_cast< ::protocol::ERRORCODE >(error_code_);
 }
-inline void ChainGetLedgerResp::set_error_code(::protocol::ERRORCODE value) {
+inline void FullNodeCheckResp::set_error_code(::protocol::ERRORCODE value) {
   
   error_code_ = value;
-  // @@protoc_insertion_point(field_set:protocol.ChainGetLedgerResp.error_code)
+  // @@protoc_insertion_point(field_set:protocol.FullNodeCheckResp.error_code)
 }
 
 // optional string error_desc = 2;
-inline void ChainGetLedgerResp::clear_error_desc() {
+inline void FullNodeCheckResp::clear_error_desc() {
   error_desc_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& ChainGetLedgerResp::error_desc() const {
-  // @@protoc_insertion_point(field_get:protocol.ChainGetLedgerResp.error_desc)
+inline const ::std::string& FullNodeCheckResp::error_desc() const {
+  // @@protoc_insertion_point(field_get:protocol.FullNodeCheckResp.error_desc)
   return error_desc_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ChainGetLedgerResp::set_error_desc(const ::std::string& value) {
+inline void FullNodeCheckResp::set_error_desc(const ::std::string& value) {
   
   error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.ChainGetLedgerResp.error_desc)
+  // @@protoc_insertion_point(field_set:protocol.FullNodeCheckResp.error_desc)
 }
-inline void ChainGetLedgerResp::set_error_desc(const char* value) {
+inline void FullNodeCheckResp::set_error_desc(const char* value) {
   
   error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.ChainGetLedgerResp.error_desc)
+  // @@protoc_insertion_point(field_set_char:protocol.FullNodeCheckResp.error_desc)
 }
-inline void ChainGetLedgerResp::set_error_desc(const char* value, size_t size) {
+inline void FullNodeCheckResp::set_error_desc(const char* value, size_t size) {
   
   error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.ChainGetLedgerResp.error_desc)
+  // @@protoc_insertion_point(field_set_pointer:protocol.FullNodeCheckResp.error_desc)
 }
-inline ::std::string* ChainGetLedgerResp::mutable_error_desc() {
+inline ::std::string* FullNodeCheckResp::mutable_error_desc() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.ChainGetLedgerResp.error_desc)
+  // @@protoc_insertion_point(field_mutable:protocol.FullNodeCheckResp.error_desc)
   return error_desc_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* ChainGetLedgerResp::release_error_desc() {
-  // @@protoc_insertion_point(field_release:protocol.ChainGetLedgerResp.error_desc)
+inline ::std::string* FullNodeCheckResp::release_error_desc() {
+  // @@protoc_insertion_point(field_release:protocol.FullNodeCheckResp.error_desc)
   
   return error_desc_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void ChainGetLedgerResp::set_allocated_error_desc(::std::string* error_desc) {
+inline void FullNodeCheckResp::set_allocated_error_desc(::std::string* error_desc) {
   if (error_desc != NULL) {
     
   } else {
     
   }
   error_desc_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), error_desc);
-  // @@protoc_insertion_point(field_set_allocated:protocol.ChainGetLedgerResp.error_desc)
+  // @@protoc_insertion_point(field_set_allocated:protocol.FullNodeCheckResp.error_desc)
 }
 
 // optional .protocol.LedgerHeader header = 3;
-inline bool ChainGetLedgerResp::has_header() const {
+inline bool FullNodeCheckResp::has_header() const {
   return !_is_default_instance_ && header_ != NULL;
 }
-inline void ChainGetLedgerResp::clear_header() {
+inline void FullNodeCheckResp::clear_header() {
   if (GetArenaNoVirtual() == NULL && header_ != NULL) delete header_;
   header_ = NULL;
 }
-inline const ::protocol::LedgerHeader& ChainGetLedgerResp::header() const {
-  // @@protoc_insertion_point(field_get:protocol.ChainGetLedgerResp.header)
+inline const ::protocol::LedgerHeader& FullNodeCheckResp::header() const {
+  // @@protoc_insertion_point(field_get:protocol.FullNodeCheckResp.header)
   return header_ != NULL ? *header_ : *default_instance_->header_;
 }
-inline ::protocol::LedgerHeader* ChainGetLedgerResp::mutable_header() {
+inline ::protocol::LedgerHeader* FullNodeCheckResp::mutable_header() {
   
   if (header_ == NULL) {
     header_ = new ::protocol::LedgerHeader;
   }
-  // @@protoc_insertion_point(field_mutable:protocol.ChainGetLedgerResp.header)
+  // @@protoc_insertion_point(field_mutable:protocol.FullNodeCheckResp.header)
   return header_;
 }
-inline ::protocol::LedgerHeader* ChainGetLedgerResp::release_header() {
-  // @@protoc_insertion_point(field_release:protocol.ChainGetLedgerResp.header)
+inline ::protocol::LedgerHeader* FullNodeCheckResp::release_header() {
+  // @@protoc_insertion_point(field_release:protocol.FullNodeCheckResp.header)
   
   ::protocol::LedgerHeader* temp = header_;
   header_ = NULL;
   return temp;
 }
-inline void ChainGetLedgerResp::set_allocated_header(::protocol::LedgerHeader* header) {
+inline void FullNodeCheckResp::set_allocated_header(::protocol::LedgerHeader* header) {
   delete header_;
   header_ = header;
   if (header) {
@@ -3611,7 +3643,7 @@ inline void ChainGetLedgerResp::set_allocated_header(::protocol::LedgerHeader* h
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.ChainGetLedgerResp.header)
+  // @@protoc_insertion_point(field_set_allocated:protocol.FullNodeCheckResp.header)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3675,11 +3707,6 @@ template <> struct is_proto_enum< ::protocol::ChainMessageType> : ::google::prot
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::protocol::ChainMessageType>() {
   return ::protocol::ChainMessageType_descriptor();
-}
-template <> struct is_proto_enum< ::protocol::FULL_NODE_MSG_TYPE> : ::google::protobuf::internal::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::protocol::FULL_NODE_MSG_TYPE>() {
-  return ::protocol::FULL_NODE_MSG_TYPE_descriptor();
 }
 
 }  // namespace protobuf

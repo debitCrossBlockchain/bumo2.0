@@ -157,6 +157,7 @@ namespace bumo {
 		bool Connect(std::string const & uri);
 		bool uriConnect(const std::string &uri);
 		uint16_t GetListenPort() const;
+		void Disconnect(int64_t conn_id);
 	protected:
 		//for server
 		void OnOpen(connection_hdl hdl);

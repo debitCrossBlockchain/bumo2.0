@@ -55,7 +55,6 @@ namespace bumo {
 		bool OnChainPeerMessage(protocol::WsMessage &message, int64_t conn_id);
 		bool OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id);
 		bool OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id);
-		bool OnGetLedger(protocol::WsMessage &Message, int64_t conn_id);
 
 		void BroadcastMsg(int64_t type, const std::string &data);
 		void BroadcastChainTxMsg(const protocol::TransactionEnvStore& txMsg);

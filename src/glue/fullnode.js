@@ -72,31 +72,6 @@ function verifyImpeachInfo(impeachedAddr, impeachInfo){
     return true;
 }
 
-function abolishFullNode(impeachedAddr) {
-    let fullnode = getFullNode(impeachedAddr);
-    assert(typeof fullnode === 'object', 'Failed to get full node info of ' + impeachedAddr);
-    
-    let forfeit = int64Div(fullnode.pledge_amount, 10);
-    let leftCoin = int64Sub(fullnode.pledge_amount, forfeit);
-    
-    transferCoin(impeachedAddr, leftCoin);
-    
-    let len = fullnode.impeach_list.length;
-    let award   = int64Mod(forfeit, len);
-    let average = int64Div(forfeit, len);
-    
-    let i;
-    for(i = 0; i < len; i += 1) {
-        let impeach_item = fullnode.impeach_list[i];
-        let impeach_addr = Object.keys(impeach_item)[0];
-        transferCoin(impeach_addr, average);
-    }
-    
-    if(award !== '0'){
-        transferCoin(sender, award);
-    }
-}
-
 function impeachFullNode(params){
     let impeachedAddr = params.address;
     let impeachInfo = params.impeach;
@@ -126,12 +101,33 @@ function impeachFullNode(params){
         impeach_array.push(impeach);
     
         if(impeach_array.length >= 8) {
-            abolishFullNode(impeachedAddr);
             assert(setFullNode(fullnode, 'remove') === true, 'Failed to remove invalid full node');
         }
-        assert(setFullNode(fullnode, 'remove') === true, 'Failed to update full node ' + impeachedAddr);
+        assert(setFullNode(fullnode, 'update') === true, 'Failed to update full node ' + impeachedAddr);
     }
     return true;
+}
+
+function unimpeachFullNode(input.params) {
+	let impeachedAddr = params.address;
+    let unimpeachAddr = params.unimpeachAddr;
+    assert(verifyCheckAuthority(sender, impeachedAddr) === true, 'Verify check authority failed');
+	
+	let fullnode = getFullNode(impeachedAddr);
+    assert(typeof fullnode === 'object', 'Failed to get full node info of ' + impeachedAddr);
+	
+	let i;
+    for(i = 0; i < fullnode.impeach_list.length; i += 1) {
+        let item = fullnode.impeach_list[i];
+        let address = Object.keys(item)[0];
+        if(address === unimpeachAddr) {
+			break;
+        }
+    }
+	if(i !== impeach_array.length) {
+		fullnode.impeach_list.splice(i, 1);
+		assert(setFullNode(fullnode, 'update') === true, 'Failed to update full node ' + impeachedAddr);
+	}
 }
 
 function query(input_str){
@@ -164,8 +160,13 @@ function main(input_str){
         assert(typeof input.params.address === 'string', 'Arg-address should be string');
         assert(typeof input.params.impeach === 'object', 'Arg-impeach should be object');
         impeachFullNode(input.params);
-        tlog('impeach', sender + 'impeach ' + input.params.address + ' succeed');
+        tlog('impeach', sender + ' impeach ' + input.params.address + ' succeed');
 	}
+	else if(input.method === 'unimpeach'){
+		assert(typeof input.params.address === 'string', 'Arg-address should be string');
+		assert(typeof input.params.unimpeach_addr === 'string', 'Arg-impeach should be string');
+		unimpeachFullNode(input.params);
+		tlog('Unimpeach', sender + ' unimpeach ' + input.params.unimpeach_addr + ' from ' + input.params.address + ' succeed');
     else{
         throw '<unidentified operation type>';
     }

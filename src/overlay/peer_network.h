@@ -80,6 +80,10 @@ namespace bumo {
 		bool OnMethodPbft(protocol::WsMessage &message, int64_t conn_id);
 		bool OnMethodLedgerUpNotify(protocol::WsMessage &message, int64_t conn_id);
 		bool OnMethodHelloResponse(protocol::WsMessage &message, int64_t conn_id);
+		
+		// for full node check
+		bool OnFullNodeCheck(protocol::WsMessage &message, int64_t conn_id);
+		bool OnFullNodeCheckResponse(protocol::WsMessage &message, int64_t conn_id);
 
 		//Operate the ip list
 		int32_t QueryItem(const utils::InetAddress &address, protocol::Peers &records);
