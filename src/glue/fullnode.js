@@ -1,16 +1,6 @@
 'use strict';
 
-const minPledgeAmount = 10000 * 100000000;
 const minImpeachSize = 8;
-
-function transferCoin(dest, amount)
-{
-    assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string.');
-    if(amount === '0' || amount.startsWith('-')) { return true; }
-
-    payCoin(dest, amount);
-    log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
-}
 
 function ipv4Check(ip) {
     let block = ip.split('.');
@@ -30,9 +20,6 @@ function verifyFullNodeInfo(applyInfo) {
     assert(typeof applyInfo.address === 'string' && typeof applyInfo.endpoint === 'string', 'Parameters type error');
     assert(addressCheck(applyInfo.address) === true, 'Invalid apply address');
     assert(ipv4Check(applyInfo.endpoint.split(':')[0]) === true, 'Invalid endpoint');
-	
-    let comp = int64Compare(thisPayCoinAmount, minPledgeAmount);
-    assert(comp === 1 || comp === 0, 'Pledge coin amount must more than ' + minPledgeAmount);
     
     return true;
 }
@@ -47,7 +34,6 @@ function applyAsFullNode(params){
     fullnode.endpoint = params.endpoint;
     fullnode.apply_time = blockTimestamp;
     fullnode.last_check_time = blockTimestamp;
-    fullnode.pledge_amount = thisPayCoinAmount;
     fullnode.impeach_list = [];
 	
     let fullnodeStr = JSON.stringify(fullnode);
@@ -63,7 +49,7 @@ function verifyImpeachInfo(impeachedAddr, impeachInfo){
     assert(addressCheck(impeachedAddr), 'Invalid impeach address.');
     
     let comp = int64Compare(blockNumber, int64Add(impeachInfo.ledger_seq, 1));
-    assert(comp === 0, 'Impeach on ledger seq: ' + impeachInfo.ledger_seq + ', latest ledger seq: ' + blockNumber);
+    assert(comp === 0 || comp === 1, 'Impeach on ledger seq: ' + impeachInfo.ledger_seq + ', latest ledger seq: ' + blockNumber);
     let reason = impeachInfo.reason;
     assert(reason === 'out-sync' || reason === 'timeout', 'Invalid impeach reason');
 	
@@ -100,15 +86,16 @@ function impeachFullNode(params){
         impeach[sender] = impeachInfo;
         impeach_array.push(impeach);
     
-        if(impeach_array.length >= 8) {
+        if(impeach_array.length >= minImpeachSize) {
             assert(setFullNode(fullnode, 'remove') === true, 'Failed to remove invalid full node');
-        }
-        assert(setFullNode(fullnode, 'update') === true, 'Failed to update full node ' + impeachedAddr);
+        } else {
+			assert(setFullNode(fullnode, 'update') === true, 'Failed to update full node ' + impeachedAddr);
+		}
     }
     return true;
 }
 
-function unimpeachFullNode(input.params) {
+function unimpeachFullNode(params) {
 	let impeachedAddr = params.address;
     let unimpeachAddr = params.unimpeachAddr;
     assert(verifyCheckAuthority(sender, impeachedAddr) === true, 'Verify check authority failed');
@@ -124,7 +111,7 @@ function unimpeachFullNode(input.params) {
 			break;
         }
     }
-	if(i !== impeach_array.length) {
+	if(i !== fullnode.impeach_list.length) {
 		fullnode.impeach_list.splice(i, 1);
 		assert(setFullNode(fullnode, 'update') === true, 'Failed to update full node ' + impeachedAddr);
 	}
@@ -167,7 +154,8 @@ function main(input_str){
 		assert(typeof input.params.unimpeach_addr === 'string', 'Arg-impeach should be string');
 		unimpeachFullNode(input.params);
 		tlog('Unimpeach', sender + ' unimpeach ' + input.params.unimpeach_addr + ' from ' + input.params.address + ' succeed');
-    else{
+    }
+	else {
         throw '<unidentified operation type>';
     }
 }
