@@ -222,7 +222,7 @@ namespace bumo {
 		
 		} while (false);
 
-		//notice WebSocketServer Tx status
+		//Broadcasting the WebSocketServer transaction(Tx) status.
 		std::string hash = HashWrapper::Crypto(tran_env.transaction().SerializeAsString());
 		protocol::ChainTxStatus cts;
 		cts.set_tx_hash(utils::String::BinToHexString(hash));
