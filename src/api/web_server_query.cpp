@@ -334,7 +334,7 @@ namespace bumo {
 			utils::ReadLockGuard guard(Storage::Instance().account_ledger_lock_);
 
 			protocol::EntryList list;
-			//avoid scan the whole table
+			//This avoids scanning the whole table.
 			protocol::LedgerHeader header = LedgerManager::Instance().GetLastClosedLedger();
 			if (!seq.empty()) {
 				std::string hashlist;
