@@ -615,7 +615,8 @@ namespace bumo {
 			}
 		}
 
-		return NULL;
+		Connect(uri);
+		return GetConnection(uri);
 	}
 
 	void Network::RemoveConnection(int64_t conn_id) {
