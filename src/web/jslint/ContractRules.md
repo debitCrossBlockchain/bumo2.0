@@ -1,12 +1,12 @@
 # **Syntax in the Smart Contract**
 Bumo smart contracts are written in the 'JaveScript' language. In order to facilitate developers to develop a more standardized, safer contract, JSLint is used to check the syntax in smart contracts. [Please refer to JSLint GitHub](./). When editing a contract, you first need to ensure that the contract passes the JSLint detection before it can be detected as a legal contract by the Bumo system.
 
-The standard syntax of JSLint is described in detail on the official website. The purpose of this document is to refine the original JSLint grammar rules as a complete document, and to supplement Bumo's modified rules. The documentation will illustrate its usage. For parts not mentioned in this article, please refer to the [JsLint help manual](http://bumo.chinacloudapp.cn:36002/help.html)。
+The standard syntax of JSLint is described in detail on the official website. The purpose of this document is to refine the original JSLint grammar rules as a complete document, and to supplement Bumo's modified rules. The documentation will illustrate its usage. For parts not mentioned in this article, please refer to the [JsLint help manual](http://bumo.chinacloudapp.cn:36002/help.html).
 
 Or you can visit the manual site 127.0.0.1:36002/jslint/help.html by node servers or wallet addresses.
 
 ## **Detection Tool**
-   JSLint detection tool address:[JSLint syntax dection tool](http://bumo.chinacloudapp.cn:36002/jslint.html "JSLint syntax detection tool")
+   JSLint detection tool address: [JSLint syntax dection tool](http://bumo.chinacloudapp.cn:36002/jslint.html "JSLint syntax detection tool").
 
    Or you can visit 127.0.0.1:36002/jslint/index.html by node servers or wallet addresses. 
 
