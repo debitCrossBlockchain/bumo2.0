@@ -619,6 +619,10 @@ namespace bumo {
 		return GetConnection(uri);
 	}
 
+	void Network::Disconnect(int64_t conn_id) {
+		RemoveConnection(conn_id);
+	}
+
 	void Network::RemoveConnection(int64_t conn_id) {
 		utils::MutexGuard guard(conns_list_lock_);
 		Connection *conn = GetConnection(conn_id);

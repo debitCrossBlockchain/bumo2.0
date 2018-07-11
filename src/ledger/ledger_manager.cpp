@@ -720,7 +720,7 @@ namespace bumo {
 		MonitorManager::Instance().SendMonitor(monitor::MONITOR_MSGTYPE_LEDGER, ledger_status.SerializeAsString());
 
 		// full nodes check
-		FullNodeManager::Instance().check();
+		FullNodeManager::Instance().inspect();
 	}
 
 

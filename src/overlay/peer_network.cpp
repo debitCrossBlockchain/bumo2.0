@@ -20,6 +20,7 @@
 #include <common/private_key.h>
 #include <main/configure.h>
 #include <glue/glue_manager.h>
+#include <glue/fullnode_manager.h>
 #include <proto/cpp/overlay.pb.h>
 #include <ledger/ledger_manager.h>
 
@@ -43,10 +44,11 @@ namespace bumo {
 		request_methods_[protocol::OVERLAY_MSGTYPE_LEDGERS] = std::bind(&PeerNetwork::OnMethodGetLedgers, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::OVERLAY_MSGTYPE_PBFT] = std::bind(&PeerNetwork::OnMethodPbft, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY] = std::bind(&PeerNetwork::OnMethodLedgerUpNotify, this, std::placeholders::_1, std::placeholders::_2);
-
+		request_methods_[protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK] = std::bind(&PeerNetwork::OnFullNodeCheck, this, std::placeholders::_1, std::placeholders::_2);
 
 		response_methods_[protocol::OVERLAY_MSGTYPE_LEDGERS] = std::bind(&PeerNetwork::OnMethodLedgers, this, std::placeholders::_1, std::placeholders::_2);
 		response_methods_[protocol::OVERLAY_MSGTYPE_HELLO] = std::bind(&PeerNetwork::OnMethodHelloResponse, this, std::placeholders::_1, std::placeholders::_2);
+		response_methods_[protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK] = std::bind(&PeerNetwork::OnFullNodeCheckResponse, this, std::placeholders::_1, std::placeholders::_2);
 		last_update_peercache_time_ = 0;
 	}
 
@@ -357,6 +359,14 @@ namespace bumo {
 			GlueManager::Instance().OnRecvLedgerUpMsg(notify);
 		}
 		return true;
+	}
+
+	bool PeerNetwork::OnFullNodeCheck(protocol::WsMessage &message, int64_t conn_id) {
+		return FullNodeManager::Instance().OnInspect(message, conn_id);
+	}
+
+	bool PeerNetwork::OnFullNodeCheckResponse(protocol::WsMessage &message, int64_t conn_id) {
+		return FullNodeManager::Instance().OnInspectResponse(message, conn_id);
 	}
 
 	bool PeerNetwork::OnConnectOpen(Connection *conn) { 

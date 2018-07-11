@@ -32,7 +32,8 @@ namespace bumo {
 			std::string reason;
 		};
 
-		bool updateImpeach(std::string& report_addr, ImpeachInfo info); // update impeach info list
+		bool updateImpeach(std::string& report_addr, ImpeachInfo& info); // update impeach info list
+		std::string getEarliestImpeachAddr();
 		void updateCheckTime();
 		bool verifyAddressHash(); // validate hash
 
@@ -50,7 +51,6 @@ namespace bumo {
 		std::string endpoint_;
 		int64_t apply_time_;
 		int64_t last_check_time_;
-		int64_t pledge_amount_;
 		
 		std::unordered_multimap<std::string, ImpeachInfo> impeach_info_; // key: impeach address, value: ImpeachInfo
 	};

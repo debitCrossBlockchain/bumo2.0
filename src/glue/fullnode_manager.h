@@ -22,6 +22,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <common/network.h>
 #include "fullnode.h"
 
+
 namespace bumo {
 
 	typedef std::shared_ptr<FullNode> FullNodePointer;
@@ -35,6 +36,7 @@ namespace bumo {
 		std::map<std::string, FullNodePointer> full_node_info_;
 		std::vector<std::string> sorted_full_nodes_;
 		int64_t last_ledger_seq_;
+		int64_t random_seq_;
 		int64_t fullnode_check_timer_;
 		std::string local_address_;
 		PrivateKey priv_key_;
@@ -74,12 +76,15 @@ namespace bumo {
 		bool verifyCheckAuthority(const std::string& checkerAddr, const std::string& beCheckedAddr);
 		
 		// do full node check 
-		void check();
-		bool checkResponse(protocol::WsMessage &msg);
-		bool OnInspected(protocol::WsMessage &msg, int64_t conn_id);
+		void inspect();
+		bool OnInspectResponse(protocol::WsMessage &msg, int64_t conn_id);
+		bool OnInspect(protocol::WsMessage &msg, int64_t conn_id);
 
 		// impeach inactive or out-sync full node
 		bool impeach(const std::string& impeach_addr, const std::string& reason);
+		
+		// unImpeach active full node
+		bool unimpeach(const std::string& address, const std::string& unimpeach_addr);
 
 		// reward the top one of sorted full nodes list with 10% of block reward and tx fee
 		bool reward(std::shared_ptr<Environment> env, int64_t fullnode_reward);

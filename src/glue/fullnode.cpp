@@ -31,7 +31,6 @@ namespace bumo {
 		endpoint_ = node["endpoint"].asString();
 		apply_time_ = node["apply_time"].asInt64();
 		last_check_time_ = node["last_check_time"].asInt64();
-		pledge_amount_ = node["pledge_amount"].asInt64();
 
 		Json::Value impeach_list = node["impeach_list"];
 		for (unsigned int i = 0; i < impeach_list.size(); ++i)
@@ -78,7 +77,6 @@ namespace bumo {
 		(*node)["endpoint"] = endpoint_;
 		(*node)["apply_time"] = apply_time_;
 		(*node)["last_check_time"] = last_check_time_;
-		(*node)["pledge_amount"] = pledge_amount_;
 
 		Json::Value impeach_list;
 		Json::Value impeach;
@@ -98,8 +96,7 @@ namespace bumo {
 		last_check_time_ = utils::Timestamp::Now().timestamp();
 	}
 	
-	bool FullNode::updateImpeach(std::string& report_addr, ImpeachInfo info) {
-		int64_t now = utils::Timestamp::Now().timestamp();
+	bool FullNode::updateImpeach(std::string& report_addr, ImpeachInfo& info) {
 		auto range = impeach_info_.equal_range(report_addr);
 		for (auto it = range.first; it != range.second; ++it) {
 			if (info.ledger_seq <= it->second.ledger_seq) {
@@ -109,6 +106,18 @@ namespace bumo {
 		}
 		impeach_info_.insert(std::make_pair(report_addr, info));
         return true;
+	}
+
+	std::string FullNode::getEarliestImpeachAddr() {
+		std::string addr;
+		int64_t min_seq = utils::MAX_INT64;
+		for (auto it = impeach_info_.begin(); it != impeach_info_.end(); ++it) {
+			if (it->second.ledger_seq < min_seq) {
+				min_seq = it->second.ledger_seq;
+				addr = it->first;
+			}
+		}
+		return addr;
 	}
 
 	bool FullNode::verifyAddressHash() {

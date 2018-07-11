@@ -14,6 +14,7 @@ enum OVERLAY_MESSAGE_TYPE{
 	OVERLAY_MSGTYPE_LEDGERS = 5;
 	OVERLAY_MSGTYPE_PBFT = 6;
 	OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY = 7; //broadcast the ledger upgrade status
+	OVERLAY_MSGTYPE_FULLNODE_CHECK = 8; // full node check
 }
 
 message Hello {
@@ -104,7 +105,6 @@ enum ChainMessageType {
 	CHAIN_LEDGER_HEADER = 16; //bumo notify the client ledger(protocol::LedgerHeader) when closed
 	CHAIN_SUBSCRIBE_TX = 17; //response with CHAIN_RESPONSE
 	CHAIN_TX_ENV_STORE = 18;
-	CHAIN_GET_LEDGER = 19;
 }
 
 //register notification events
@@ -160,20 +160,13 @@ message ChainTxStatus {
 }
 
 // for full nodes check 
-enum FULL_NODE_MSG_TYPE{
-    FULL_NODE_MSG_TYPE_NONE = 0;
-    FULL_NODE_MSG_TYPE_HELLO = 1;
-    FULL_NODE_MSG_TYPE_INSPECT = 2;
-    FULL_NODE_MSG_TYPE_FEEDBACK = 3;
-    FULL_NODE_MSG_TYPE_ERROR = 4;
-
-};
-
-message ChainGetLedgerReq {
+message FullNodeCheckReq {
 	int64 ledger_seq  = 1;
+	string sender = 2;
+
 }
 
-message ChainGetLedgerResp {
+message FullNodeCheckResp {
 	ERRORCODE error_code = 1;
 	string error_desc = 2;
 	LedgerHeader header = 3;
