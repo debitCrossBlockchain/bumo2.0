@@ -519,7 +519,7 @@ namespace bumo {
 				if (type == LedgerContext::AT_TEST_V8)
 					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
 				else if (LedgerContext::AT_TEST_TRANSACTION){
-					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76) + 20))*gas_price);//pub:64, sig:76 + key
+					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76 + 5) + 20))*gas_price);//pub:64, sig:76 + key
 
 					result = ptr->GetResult();
 					Json::Value jtx = Proto2Json(env_store);
