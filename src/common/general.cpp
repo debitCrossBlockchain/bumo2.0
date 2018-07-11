@@ -324,7 +324,7 @@ namespace bumo {
 	int64_t GetBlockReward(const int64_t cur_block_height) {
 		int64_t period_index = cur_block_height / General::REWARD_PERIOD;
 
-		//decrease 1/4 every period
+		//Decrease by 1/4 every period.
 		int64_t result = General::REWARD_INIT_VALUE;
 		for (int64_t i = 0; i < period_index; i++)
 		{
