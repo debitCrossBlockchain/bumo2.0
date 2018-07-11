@@ -343,17 +343,19 @@ namespace bumo {
 				LOG_ERROR("Failed to get peer node info of %s", peer.c_str());
 				break;
 			}
-			FullNodePointer fp = it->second;
-			std::string uri = utils::String::Format("ws://%s:", fp->getEndPoint().c_str());
-			PeerManager::Instance().ConsensusNetwork().Connect(uri);
-
-			PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString());
-			
+	
 			// Impeach when check process timeout
 			std::string reason = "timeout";
 			fullnode_check_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this, peer, reason](int64_t data) {
 				impeach(peer, reason);
 			});
+
+			FullNodePointer fp = it->second;
+			std::string uri = utils::String::Format("ws://%s:", fp->getEndPoint().c_str());
+
+			// Connect to peer and send check request, connect or send request failed will cause timeout and trigger impeach
+			PeerManager::Instance().ConsensusNetwork().Connect(uri); 
+			PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString());
 		} while (false);
 		
 		return;
