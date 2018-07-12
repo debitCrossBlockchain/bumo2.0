@@ -94,7 +94,7 @@ namespace bumo {
 		websocketpp::lib::error_code GetErrorCode() const;
 		bool InBound() const;
 
-		//get status
+		//Get status
 		bool IsConnectExpired(int64_t time_out) const;
 		bool IsDataExpired(int64_t time_out) const;
 		virtual void ToJson(Json::Value &status) const;
@@ -153,17 +153,17 @@ namespace bumo {
 		bool Connect(std::string const & uri);
 		uint16_t GetListenPort() const;
 	protected:
-		//for server
+		//For server
 		void OnOpen(connection_hdl hdl);
 		void OnClose(connection_hdl hdl);
 		virtual void OnMessage(connection_hdl hdl, server::message_ptr msg);
 		void OnFailed(connection_hdl hdl);
 
-		//for client
+		//For client
 		void OnClientOpen(connection_hdl hdl);
 		//void OnClientMessage(connection_hdl hdl, server::message_ptr msg);
 
-		//for tls
+		//For TLS
 		context_ptr OnTlsInit(tls_mode mode, websocketpp::connection_hdl hdl);
 		virtual bool OnValidate(websocketpp::connection_hdl hdl);
 		virtual bool OnVerifyCallback(
@@ -173,26 +173,26 @@ namespace bumo {
 
 		void OnPong(connection_hdl hdl, std::string payload);
 		
-		//get password
+		//Get password
 		std::string GetCertPassword();
 
-		//Get peer object not thread safe
+		//Get peer object. Not thread safe.
 		Connection *GetConnection(int64_t id);
 		Connection *GetConnection(connection_hdl hdl);
 
-		//remove peer,  not thread safe
+		//Remove peer. Not thread safe.
 		void RemoveConnection(Connection *conn);
 		void RemoveConnection(int64_t conn_id);
 
-		//message type to function
+		//Message type to function.
 		MessageConnPocMap request_methods_;
 		MessageConnPocMap response_methods_;
 
-		//send custom message
+		//Send custom message.
 		bool OnRequestPing(protocol::WsMessage &message, int64_t conn_id);
 		bool OnResponsePing(protocol::WsMessage &message, int64_t conn_id);
 
-		//could be drived
+		//Could be drived.
 		virtual Connection *CreateConnectObject(server *server_h, client *client_h, 
 			tls_server *tls_server_h, tls_client *tls_client_h,
 			connection_hdl con, const std::string &uri, int64_t id);
