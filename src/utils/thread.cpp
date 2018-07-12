@@ -72,7 +72,7 @@ bool utils::Thread::Start(std::string name) {
 	pthread_attr_init(&object_attr);
 	pthread_attr_setdetachstate(&object_attr, PTHREAD_CREATE_DETACHED);
 
-   	//checking and keep min stack 2 Mb on linux
+   	//Check and keep min stack 2 Mb on linux
 	size_t stacksize = 0;
 	ret = pthread_attr_getstacksize(&object_attr, &stacksize);
 	if(ret != 0) {
@@ -105,7 +105,7 @@ bool utils::Thread::Start(std::string name) {
 	pthread_attr_init(&object_attr);
 	pthread_attr_setdetachstate(&object_attr, PTHREAD_CREATE_DETACHED);
 
-	//warning mac default set 512Kb, we need set larger
+	//Warning, the default mac is set to 512Kb. It should be set larger
 	size_t stacksize = 0;
 	ret = pthread_attr_getstacksize(&object_attr, &stacksize);
 	if(ret != 0) {
@@ -202,7 +202,7 @@ void utils::Thread::Run() {
 
 bool utils::Thread::SetCurrentThreadName(std::string name) {
 #ifdef WIN32
-	//not supported
+	//Not supported
 	return true;
 #elif defined OS_LINUX
 	return 0 == prctl(PR_SET_NAME, name.c_str(), 0, 0, 0);
@@ -348,7 +348,7 @@ bool utils::Semaphore::Wait(uint32_t millisecond) {
 		ret = sem_wait(&sem_);
 	}
 	else {
-		//waring, mac 10.13 has no sem_timedwait?
+		//Waring, mac 10.13 has no sem_timedwait?
 		usleep(1000 * millisecond);
 	}
 
