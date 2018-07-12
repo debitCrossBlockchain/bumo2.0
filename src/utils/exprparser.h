@@ -15,9 +15,9 @@ namespace utils {
 			NAME,
 			NUMBER,
 			INTEGER64,
-			STRING, //add by zhao,
-			BOOL, //add by zhao for detect
-			UNSURE, //add by zhao for syntax parsing
+			STRING, //Added by zhao
+			BOOL, //Added by zhao for detection
+			UNSURE, //Added by zhao for syntax parsing
 			END,
 			PLUS = '+',
 			MINUS = '-',
@@ -29,7 +29,7 @@ namespace utils {
 			COMMA = ',',
 			NOT = '!',
 
-			// comparisons
+			// Comparisons
 			LT = '<',
 			GT = '>',
 			LE,     // <=
@@ -39,7 +39,7 @@ namespace utils {
 			AND,    // &&
 			OR,      // ||
 
-			// special assignments
+			// Special assignments
 
 			ASSIGN_ADD,  //  +=
 			ASSIGN_SUB,  //  +-
@@ -108,7 +108,7 @@ namespace utils {
 		std::string program_;
 		const char * pWord_;
 		const char * pWordStart_;
-		// last token parsed
+		// Last token parsed
 		ExprValue::TokenType type_;
 		std::string word_;
 		double value_;
@@ -119,20 +119,20 @@ namespace utils {
 		// ctor
 		ExprParser(const std::string & program)
 			: program_(program), detect_(false){
-			// insert pre-defined names:
+			// Insert pre-defined names:
 			symbols_["pi"] = 3.1415926535897932385;
 			symbols_["e"] = 2.7182818284590452354;
 		}
 
-		const ExprValue Evaluate();  // get result
-		const ExprValue Evaluate(const std::string & program);  // get result
-		const ExprValue Parse(const std::string & program);  // parse
-		const ExprValue Parse();  // parse
+		const ExprValue Evaluate();  // Get result
+		const ExprValue Evaluate(const std::string & program);  // Get result
+		const ExprValue Parse(const std::string & program);  // Parse
+		const ExprValue Parse();  // Parse
 
-		// access symbols with operator []
+		// Access symbols with operator []
 		ExprValue & operator[] (const std::string & key) { return symbols_[key]; }
 
-		// symbol table - can be accessed directly (eg. to copy a batch in)
+		// Symbol table - can be accessed directly (eg. to copy a batch in)
 		std::map<std::string, ExprValue> symbols_;
 
 	private:
@@ -142,8 +142,8 @@ namespace utils {
 		const ExprValue Expression(const bool get);
 		const ExprValue Comparison(const bool get);
 		const ExprValue AddSubtract(const bool get);
-		const ExprValue Term(const bool get);      // multiply and divide
-		const ExprValue Primary(const bool get);   // primary (base) tokens
+		const ExprValue Term(const bool get);      // Multiply and divide
+		const ExprValue Primary(const bool get);   // Primary (base) tokens
 
 		inline void CheckToken(const ExprValue::TokenType wanted){
 			if (type_ != wanted)
@@ -153,7 +153,7 @@ namespace utils {
 				throw std::runtime_error(s.str());
 			}
 		}
-	};  // end of Parser
+	};  // End of Parser
 
 }
 #endif // EXPRPARSER_H
