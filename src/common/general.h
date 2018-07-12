@@ -110,7 +110,7 @@ namespace bumo {
 		const static int64_t REWARD_PERIOD = (5 * 365 * 24 * 60 * 60) / 10;
 		const static int64_t REWARD_INIT_VALUE = 8 * 100000000;
 
-		const static int64_t FULLNODE_MIN_LOCK_AMOUNT = 10000 * 100000000;
+		const static int64_t FULLNODE_MIN_LOCK_AMOUNT = (int64_t)10000 * 100000000;
 
 		typedef enum WARNINGCODE_ {
 			WARNING,
