@@ -220,7 +220,7 @@ namespace utils {
 				return true;
 			}
 			else {
-				//there is a same key , repteated
+				//There is a same key, so it is repteated
 				return false;
 			}
 		}
