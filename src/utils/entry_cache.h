@@ -155,7 +155,7 @@ namespace utils {
 		usage:
 		pointer pt;
 		if(GetEntry(key,pv)){
-		//TODO modify the value whic pt pointed to
+		//TODO modify the value which pt pointed to
 		ps!!!:
 		don't use pt=xxx
 		}
