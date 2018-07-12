@@ -408,11 +408,11 @@ namespace bumo {
 				proc = iter->second;
 			}
 
-			if (proc(message, conn_id)) break; //return true, break;
+			if (proc(message, conn_id)) break; //Break if returned true;
 
 			LOG_ERROR("The method type(" FMT_I64 ") request(%s), return false, delete it",
 				message.type(), message.request() ? "true" : "false");
-			// return false, delete it
+			// Delete it if returned false.
 			do {
 				utils::MutexGuard guard(conns_list_lock_);
 				Connection *conn = GetConnection(hdl);
@@ -435,16 +435,16 @@ namespace bumo {
 		//try {
 			if (!ip.IsNone()) {
 				if (ssl_parameter_.enable_) {
-					// listen on specified port
+					// Listen on a specified port.
 					tls_server_.listen(ip.tcp_endpoint());
-					// Start the server accept loop
+					// Start the server accept loop.
 					tls_server_.start_accept();
 					listen_port_ = tls_server_.get_local_endpoint().port();
 				}
 				else {
-					// listen on specified port
+					// Listen on a specified port.
 					server_.listen(ip.tcp_endpoint());
-					// Start the server accept loop
+					// Start the server accept loop.
 					server_.start_accept();
 					listen_port_ = server_.get_local_endpoint().port();
 				}
@@ -453,7 +453,7 @@ namespace bumo {
 			enabled_ = true;
 
 			asio::io_service::work work(io_);
-			// Start the ASIO io_service run loop
+			// Start the ASIO io_service run loop.
 			int64_t last_check_time = 0;
 			while (enabled_) {
 				io_.poll();
@@ -464,7 +464,7 @@ namespace bumo {
 				if (now - last_check_time > utils::MICRO_UNITS_PER_SEC) {
 
 					utils::MutexGuard guard_(conns_list_lock_);
-					//check ping
+					//Check ping
 					std::list<Connection *> delete_list;
 					for (ConnectionMap::iterator iter = connections_.begin();
 						iter != connections_.end();
@@ -480,14 +480,14 @@ namespace bumo {
 							LOG_ERROR("Peer(%s) data receive timeout", iter->second->GetPeerAddress().ToIpPort().c_str());
 						}
 
-						//check application timer
+						//Check application timer.
 						if (!iter->second->OnNetworkTimer(now)) {
 							iter->second->Close("app error");
 							delete_list.push_back(iter->second);
 						} 
 					}
 
-					//move current connection to delete array
+					//Remove current connection to delete array.
 					for (std::list<Connection *>::iterator iter = delete_list.begin();
 						iter != delete_list.end();
 						iter++) {
@@ -496,7 +496,7 @@ namespace bumo {
 						RemoveConnection(*iter);
 					}
 
-					//check delete the connections
+					//Check if the connections are deleted.
 					for (ConnectionMap::iterator iter = connections_delete_.begin();
 						iter != connections_delete_.end();) {
 						if (iter->first < now) {
