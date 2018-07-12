@@ -579,7 +579,10 @@ namespace bumo {
 			}
 
 			int64_t reward_amount = 0;
-			int64_t reward_ratio = account->GetProtoAccount().self_popularity() / total_vote;
+			int64_t reward_ratio = 0;
+			if (total_vote > 0 && account->GetProtoAccount().self_popularity() < total_vote) {
+				reward_ratio = account->GetProtoAccount().self_popularity() / total_vote;
+			}
 			if (!utils::SafeIntMul(validators_reward, reward_ratio, reward_amount)) {
 				LOG_ERROR("AllocateReward math overflow validators reward:(" FMT_I64 "), reward_ratio:(" FMT_I64 ")", validators_reward, reward_ratio);
 				return false;

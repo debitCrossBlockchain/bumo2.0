@@ -154,6 +154,7 @@ namespace bumo {
 			*node = fp->toJson();
 		}
 		else {
+			node = std::make_shared<Json::Value>();
 			LOG_ERROR("Failed to get full node %s", addr.c_str());
 		}
 		return *node;
@@ -297,7 +298,7 @@ namespace bumo {
 
 			auto it = full_node_info_.find(local_address_);
 			if (it == full_node_info_.end() || !isInspector(local_address_)){
-				LOG_INFO("Local address not in full node list or not in the head part");
+				LOG_INFO("Local address %s not in full node list or not in the head part", local_address_.c_str());
 				break;
 			}
 			std::string peer;
