@@ -87,11 +87,11 @@ namespace bumo {
 		const static char *KEY_LEDGER_SEQ;
 		const static char *KEY_GENE_ACCOUNT;
 		const static char *VALIDATORS;
-		const static char *FULLNODES;
 
 		const static char *ACCOUNT_PREFIX;
 		const static char *ASSET_PREFIX;
 		const static char *METADATA_PREFIX;
+		const static char *FULLNODE_PREFIX;
 
 		const static char *CHECK_TIME_FUNCTION;
 
@@ -110,7 +110,7 @@ namespace bumo {
 		const static int64_t REWARD_PERIOD = (5 * 365 * 24 * 60 * 60) / 10;
 		const static int64_t REWARD_INIT_VALUE = 8 * 100000000;
 
-		const static int64_t FULLNODE_MIN_LOCK_AMOUNT = 10000;
+		const static int64_t FULLNODE_MIN_LOCK_AMOUNT = 10000 * 100000000;
 
 		typedef enum WARNINGCODE_ {
 			WARNING,

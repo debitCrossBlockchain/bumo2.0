@@ -58,11 +58,15 @@ namespace bumo {
 		bool add(FullNode& fn);
 		bool add(FullNodePointer fp);
 		void remove(const std::string& key);
+		bool update(FullNodePointer fp);
 		
 		// called in LedgerManager::CloseLedger after AtomMap commit
 		Json::Value& getFullNode(const std::string& addr);
-		bool setFullNode(Json::Value& node, const std::string& operation);
-		bool updateDb();
+		bool setFullNode(Json::Value& node, const std::string& operation, std::shared_ptr<WRITE_BATCH> batch);
+		bool updateDb(std::shared_ptr<WRITE_BATCH> batch);
+
+		// reload or update full nodes list from db
+		bool loadAllFullNode();
 
 		// head of 1/1000 check tail of 1/1000
 		bool isInspector(const std::string& addr);

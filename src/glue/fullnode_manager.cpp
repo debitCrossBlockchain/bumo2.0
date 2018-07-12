@@ -57,36 +57,8 @@ namespace bumo {
 
 		// Load full nodes from db
 		full_node_info_.clear();
-		bool load_fullnodes_done = true;
-		do 
-		{
-			auto db = Storage::Instance().account_db();
-			std::string str;
-			std::string key = "fullnodes";
-			if (!db->Get(key, str)) {
-				LOG_ERROR("Failed to get full nodes from db");
-				load_fullnodes_done = false;
-				break;
-			}
-
-			Json::Value fullnodes;
-			if (!fullnodes.fromString(str)) {
-				LOG_ERROR("Failed to parse full nodes from json string, %s", fullnodes.toFastString().c_str());
-				load_fullnodes_done = false;
-			}
-
-			for (unsigned int i = 0; i <= fullnodes.size(); ++i) {
-				FullNodePointer fp = std::make_shared<FullNode>();
-				if (fp->loadFromJson(fullnodes[i])) {
-					LOG_ERROR("Failed to load full node info from json, %s", fullnodes[i].toFastString().c_str());
-					load_fullnodes_done = false;
-					break;
-				}
-			}
-		} while (false);
-		
-		if (!load_fullnodes_done) {
-			full_node_info_.clear();
+		if (!loadAllFullNode()) {
+			LOG_ERROR("Initialize full node list failed");
 			return false;
 		}
 
@@ -162,6 +134,19 @@ namespace bumo {
 		return;
 	}
 
+	bool FullNodeManager::update(FullNodePointer fp) {
+		std::string addr = fp->getAddress();
+		auto it = full_node_info_.find(addr);
+		if (it != full_node_info_.end()) {
+			it->second = fp;
+		}
+		else {
+			// add full node if not exist
+			if (!add(fp)) return false;
+		}
+		return true;
+	}
+
 	Json::Value& FullNodeManager::getFullNode(const std::string& addr) {
 		std::shared_ptr<Json::Value> node;
 		FullNodePointer fp = get(addr);
@@ -174,38 +159,29 @@ namespace bumo {
 		return *node;
 	}
 
-	bool FullNodeManager::setFullNode(Json::Value& node, const std::string& operation) {
+	bool FullNodeManager::setFullNode(Json::Value& node, const std::string& operation, std::shared_ptr<WRITE_BATCH> batch) {
 		if (operation == "add") {
 			FullNodePointer fp = std::make_shared<FullNode>();
-			if (fp->loadFromJson(node)) {
-				if (!add(fp)) return false;
-			}
-			else {
+			if (!fp->loadFromJson(node)) {
 				LOG_ERROR("Failed to load full node info from json, %s", node.toFastString().c_str());
 				return false;
 			}
+			if (!add(fp)) return false;
+			batch->Put(utils::String::Format("%s-%s", General::FULLNODE_PREFIX, utils::String::BinToHexString(fp->getAddress()).c_str()), node.toFastString());
 		}
 		else if (operation == "update") {
-			std::string addr = node["addr"].asString();
-			FullNodePointer fp = get(addr);
-			if (!fp) {
-				LOG_WARN("The full node to update not exist, add it(%s)", node["addr"].asCString());
-				FullNodePointer fp_new = std::make_shared<FullNode>();
-				if (!fp_new->loadFromJson(node))
-				{
-					LOG_ERROR("Failed to load full node info from json, %s", node.toFastString().c_str());
-					return false;
-				}
-				if (!add(fp_new)) return false;
+			FullNodePointer fp = std::make_shared<FullNode>();
+			if (!fp->loadFromJson(node)) {
+				LOG_ERROR("Failed to load full node info from json, %s", node.toFastString().c_str());
+				return false;
 			}
-			else {
-				// update impeach list
-				return fp->loadFromJson(node);
-			}
+			if (!update(fp)) return false;
+			batch->Put(utils::String::Format("%s-%s", General::FULLNODE_PREFIX, utils::String::BinToHexString(fp->getAddress()).c_str()), node.toFastString());
 		}
 		else if (operation == "remove") {
 			std::string addr = node["addr"].asString();
 			remove(addr);
+			batch->Delete(utils::String::Format("%s-%s", General::FULLNODE_PREFIX, utils::String::BinToHexString(node["addr"].asString()).c_str()));
 		}
 		else {
 			LOG_ERROR("Unknown full node operation, %s", operation.c_str());
@@ -214,21 +190,31 @@ namespace bumo {
 		return true;
 	}
 
-	bool FullNodeManager::updateDb() {
-		// update db
-		std::shared_ptr<WRITE_BATCH> batch = std::make_shared<WRITE_BATCH>();
-
-		Json::Value fullnodes;
-		for (auto it = full_node_info_.begin(); it != full_node_info_.end(); ++it) {
-			fullnodes.append(it->second->toJson());
-		}
-		batch->Put(bumo::General::FULLNODES, fullnodes.toFastString());
+	bool FullNodeManager::updateDb(std::shared_ptr<WRITE_BATCH> batch) {
 		if (!Storage::Instance().keyvalue_db()->WriteBatch(*batch)) {
-			PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().keyvalue_db()->error_desc().c_str());
+			LOG_ERROR("Write full node batch failed, %s", Storage::Instance().keyvalue_db()->error_desc().c_str());
 			return false;
 		}
 		return true;
 	}
+
+	bool FullNodeManager::loadAllFullNode() {
+		KVTrie trie;
+		auto batch = std::make_shared<WRITE_BATCH>();
+		trie.Init(Storage::Instance().keyvalue_db(), batch, General::FULLNODE_PREFIX, 1);
+		std::vector<std::string> values;
+		trie.GetAll("", values);
+		std::map<std::string, FullNodePointer> fullnodes;
+		for (size_t i = 0; i < values.size(); i++){
+			Json::Value fn_json;
+			fn_json.fromString(values[i]);
+			FullNodePointer fp = std::make_shared<FullNode>();
+			fp->loadFromJson(fn_json);
+			if (!update(fp)) return false;
+		}
+		return true;
+	}
+
 
 	bool FullNodeManager::isInspector(const std::string& addr) {
 		int32_t size = sorted_full_nodes_.size();

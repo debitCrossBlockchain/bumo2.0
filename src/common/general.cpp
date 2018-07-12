@@ -67,7 +67,6 @@ namespace bumo {
 	const char *General::KEY_LEDGER_SEQ = "max_seq";
 	const char *General::KEY_GENE_ACCOUNT = "genesis_account";
 	const char *General::VALIDATORS = "validators";
-	const char *General::FULLNODES = "fullnodes";
 	const char *General::PEERS_TABLE = "peers_table";
 	const char *General::LAST_TX_HASHS = "last_tx_hashs";
 	const char *General::LAST_PROOF = "last_proof";
@@ -82,6 +81,7 @@ namespace bumo {
 	const char *General::ACCOUNT_PREFIX = "acc";
 	const char *General::ASSET_PREFIX = "ast";
 	const char *General::METADATA_PREFIX = "meta";
+	const char *General::FULLNODE_PREFIX = "fn";
 
 	const char *General::CHECK_TIME_FUNCTION = "internal_check_time";
 

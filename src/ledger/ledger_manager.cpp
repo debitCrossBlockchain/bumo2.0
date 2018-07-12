@@ -653,16 +653,24 @@ namespace bumo {
 		});
 
 		// update full node map
+		std::shared_ptr<WRITE_BATCH> batch = std::make_shared<WRITE_BATCH>();
 		AtomMap<std::string, Json::Value>::mapKV map = closing_ledger->environment_->fullnodes_.GetData();
+		bool update_done = true;
 		for (auto it = map.begin(); it != map.end(); ++it) {
 			std::shared_ptr<Json::Value> item;
 			item = it->second.value_;
 			std::string operation = (*item)["operation"].asString();
-			if (FullNodeManager::Instance().setFullNode((*item)["fullnode"], operation)) {
+			if (FullNodeManager::Instance().setFullNode((*item)["fullnode"], operation, batch)) {
 				LOG_ERROR("Failed to set full node %s when notify ledger close", (*item)["fullnode"].asCString());
+				update_done = false;
 			}
 		}
-		FullNodeManager::Instance().updateDb();
+		if (!update_done) {
+			FullNodeManager::Instance().loadAllFullNode();
+		}
+		else {
+			FullNodeManager::Instance().updateDb(batch);
+		}
 		
 		context_manager_.RemoveCompleted(tmp_lcl_header.seq());
 
