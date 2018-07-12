@@ -7,10 +7,10 @@ set(UTILS_SRC
     exprparser.cpp sm3.cpp ecc_sm2.cpp random.cpp
 )
 
-#generate static library file
+#Generate a static library file
 add_library(${LIB_BUMO_UTILS} ${UTILS_SRC}) 
 
-#specify compile options for target obj
+#Specify compiling options for target obj(s)
 target_compile_options(${LIB_BUMO_UTILS}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE
