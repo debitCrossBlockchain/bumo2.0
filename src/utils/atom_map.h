@@ -198,7 +198,7 @@ namespace bumo
 			data_->swap(copyBuf);
 
 			//CAUTION: now the pointers in actionBuf_ and dataCopy_ are overlapped with data_,
-			//so must be clear, otherwise the later modification to them will aslo directly act on data_.
+			//so it must be clear, otherwise the later modification to them will aslo directly act on data_.
 			actionBuf_.clear(); 
 			return true;
 		}
@@ -209,7 +209,7 @@ namespace bumo
 			return CopyCommit();
 		}
 
-		//call ClearChange to discard the modification if Commit failed
+		//Call ClearChange to discard the modification if Commit failed
 		void ClearChangeBuf()
 		{
 			actionBuf_.clear();
