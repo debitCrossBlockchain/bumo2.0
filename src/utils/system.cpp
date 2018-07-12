@@ -101,7 +101,7 @@ namespace utils{
 		}
 
 #ifdef WIN32
-		//get cpu information
+		//Get cpu information
 		SYSTEM_INFO system_info;
 		GetSystemInfo(&system_info);
 
@@ -191,7 +191,7 @@ namespace utils{
 		}
 		proce_file.Close();
 #elif defined OS_MAC
-		//how to get freebsd cpu info. //sysctl hw.model hw.machine hw.ncpu ?
+		//How to get freebsd cpu info. //sysctl hw.model hw.machine hw.ncpu ?
 #endif
 		if (nold_processer.system_time_ > 0) {
 			int64_t totalTime1 = nold_processer.GetTotalTime();
@@ -231,7 +231,7 @@ namespace utils{
 
 		disk.total_bytes_ = (uint64_t)(ndisk_stat.f_blocks) * (uint64_t)(ndisk_stat.f_frsize);
 		disk.available_bytes_ = (uint64_t)(ndisk_stat.f_bavail) * (uint64_t)(ndisk_stat.f_bsize);
-		// default as root
+		// Default as root
 		disk.free_bytes_ = disk.available_bytes_;
 #elif defined OS_MAC
 		struct statvfs ndisk_stat;
@@ -243,7 +243,7 @@ namespace utils{
 
 		disk.total_bytes_ = (uint64_t)(ndisk_stat.f_blocks) * (uint64_t)(ndisk_stat.f_bsize);
 		disk.available_bytes_ = (uint64_t)(ndisk_stat.f_bavail) * (uint64_t)(ndisk_stat.f_bsize);
-		// default as root
+		// Default as root
 		disk.free_bytes_ = disk.available_bytes_;
 #endif
 		if (disk.total_bytes_ > disk.free_bytes_) {
@@ -380,17 +380,17 @@ namespace utils{
 	bool System::GetCpuId(std::string& cpu_id) {
 		bool bret = false;
 #ifdef WIN32
-		HANDLE hReadPipe = NULL; // pipe for read
-		HANDLE hWritePipe = NULL; // pipe for write
+		HANDLE hReadPipe = NULL; // Pipe for read
+		HANDLE hWritePipe = NULL; // Pipe for write
 		PROCESS_INFORMATION pi;
 		do  {
-			const long MAX_COMMAND_SIZE = 10000; // command buffer size
+			const long MAX_COMMAND_SIZE = 10000; // Command buffer size
 			char fetch_cmd[] = "wmic cpu get processorid";
-			const std::string en_search = "ProcessorId"; // search for this info
-			STARTUPINFO	si;	  // command windows attribute
+			const std::string en_search = "ProcessorId"; // Search for this info
+			STARTUPINFO	si;	  // Command windows attribute
 			SECURITY_ATTRIBUTES sa;
 
-			char buffer[MAX_COMMAND_SIZE + 1] = { 0 }; // ouput command
+			char buffer[MAX_COMMAND_SIZE + 1] = { 0 }; // Ouput command
 			unsigned long count = 0;
 			long ipos = 0;
 			memset(&pi, 0, sizeof(pi));
@@ -402,23 +402,23 @@ namespace utils{
 			sa.nLength = sizeof(SECURITY_ATTRIBUTES);
 			sa.lpSecurityDescriptor = NULL;
 			sa.bInheritHandle = TRUE;
-			// create pipe
+			// Create a pipe
 			bret = CreatePipe(&hReadPipe, &hWritePipe, &sa, 0) ? true : false;
 			if (!bret) break;
-			// set the pipe for command info
+			// Set the pipe for command info
 			GetStartupInfo(&si);
 			si.hStdError = hWritePipe;
 			si.hStdOutput = hWritePipe;
-			si.wShowWindow = SW_HIDE; // hide command window
+			si.wShowWindow = SW_HIDE; // Hide the command window
 			si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
-			// create command process
+			// Create a command process
 			bret = CreateProcessA(NULL, fetch_cmd, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi) ? true : false;
 			if (!bret) break;
-			// read data
+			// Read data
 			WaitForSingleObject(pi.hProcess, 500);
 			bret = ReadFile(hReadPipe, buffer, MAX_COMMAND_SIZE, &count, 0) ? true : false;
 			if (!bret) break;
-			// search cpu serial
+			// Search cpu serial
 			bret = FALSE;
 			cpu_id = buffer;
 			ipos = cpu_id.find(en_search);
@@ -427,7 +427,7 @@ namespace utils{
 			cpu_id.erase(std::remove_if(cpu_id.begin(), cpu_id.end(), isspace), cpu_id.end()); // delete space
 			bret = true;
 		} while (false);
-		// �ر����еľ��
+		// ¹Ø±ÕËùÓÐµÄ¾ä±ú
 		if (hWritePipe) CloseHandle(hWritePipe);
 		if (hReadPipe) CloseHandle(hReadPipe);
 		if (pi.hProcess) CloseHandle(pi.hProcess);
@@ -463,7 +463,7 @@ namespace utils{
 			char ac_mac[32] = { 0 };
 			ULONG ulSize = sizeof(IP_ADAPTER_INFO);
 			PIP_ADAPTER_INFO pinfo = NULL;
-			// get necessary size
+			// Get necessary size
 			GetAdaptersInfo(pinfo, &ulSize);
 			pinfo = (PIP_ADAPTER_INFO)malloc(ulSize);
 			if (NULL == pinfo) break;
@@ -505,10 +505,10 @@ namespace utils{
 			while (interfaceNum-- > 0) {
 				char ac_mac[32] = { 0 };
 				struct ifreq ifrcopy;
-				//ignore the interface that not up or not runing
+				//Ignore the interface that is not up or not runing
 				ifrcopy = buf[interfaceNum];
 				if (ioctl(fd, SIOCGIFFLAGS, &ifrcopy)) continue;
-				//get the mac of this interface
+				//Get the mac of this interface
 				if (ioctl(fd, SIOCGIFHWADDR, (char *)(&buf[interfaceNum]))) continue;
 				snprintf(ac_mac, sizeof(ac_mac), "%02x%02x%02x%02x%02x%02x",
 					(unsigned char)buf[interfaceNum].ifr_hwaddr.sa_data[0],
@@ -626,7 +626,7 @@ namespace utils{
 			else
 				os_version = String::Format("Windows NT(%u.%u)", osvi.dwMajorVersion, osvi.dwMinorVersion);
 
-			// Test for specific product on Windows NT 4.0 SP6 and later.
+			// Test for a specific product on Windows NT 4.0 SP6 and later.
 			if (os_version_info_ex) {
 				// Test for the workstation type.
 				switch (osvi.dwMajorVersion){
@@ -687,7 +687,7 @@ namespace utils{
 					os_version += "";
 				}
 			}
-			// Test for specific product on Windows NT 4.0 SP5 and earlier
+			// Test for a specific product on Windows NT 4.0 SP5 and earlier
 			else {
 				HKEY hkey;
 				CHAR product_type[product_buffer_size];
@@ -714,7 +714,7 @@ namespace utils{
 				String::AppendFormat(os_version, "%u.%u", osvi.dwMajorVersion, osvi.dwMinorVersion);
 			}
 
-			// Display service pack (if any) and build number.
+			// Display the service pack (if any) and the build number.
 			if (osvi.dwMajorVersion == 4 &&
 				stricmp(osvi.szCSDVersion, "Service Pack 6") == 0) {
 				HKEY hkey = NULL;
