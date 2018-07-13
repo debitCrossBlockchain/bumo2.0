@@ -46,14 +46,9 @@ include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_ARM_MODE := arm
-LOCAL_PRELINK_MODULE := false
-LOCAL_MODULE_TAGS := optional
-LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
-
 
 LOCAL_SRC_MAIN_FILES := \
-			$(LOCAL_PATH)/src/android_loop.cpp\
+			$(LOCAL_PATH)/src/bu.cpp\
 			$(SRC_PATH)/src/main/configure.cpp
 
 LOCAL_SRC_API_FILES := \
@@ -183,13 +178,11 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/basic/include/v8/ \
     $(LOCAL_PATH)/src/ \
 
-LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libprotobuf librocksdb libed25519 libhttp 
+LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libprotobuf libed25519 libhttp libleveldb 
 LOCAL_SHARED_LIBRARIES:=libv8 libv8_libbase libv8_libplatform  libicui18n  libicuuc
 
 LOCAL_LDLIBS += -llog 
-LOCAL_CPPFLAGS := -DHAMMER_TIME=1 \
-		  -DHASHNAMESPACE=__gnu_cxx \
-		  -D_REENTRANT \
+LOCAL_CPPFLAGS := -D_REENTRANT \
 		  -DOS_ANDROID \
 		  -DASIO_STANDALONE \
 		  -DASIO_HAS_STD_ADDRESSOF \
@@ -201,14 +194,10 @@ LOCAL_CPPFLAGS := -DHAMMER_TIME=1 \
 		  -D_WEBSOCKETPP_CPP11_STL_
 
 
-LOCAL_CFLAGS += -pie -fPIE
-LOCAL_LDFLAGS += -pie -fPIE
 
 
-LOCAL_CFLAGS := -fexpensive-optimizations -fexceptions -pthread -DHAVE_NEON=1 -mfpu=neon -mfloat-abi=softfp -flax-vector-conversions \
- -fPIC -D__STDC_CONSTANT_MACROS -Wno-sign-compare -Wno-switch -std=c++11 -std=c++0x 
 
-LOCAL_MODULE:= libbumo
+LOCAL_MODULE:= libbu
 
 include $(BUILD_SHARED_LIBRARY)
 include $(BUMO_SRC_PATH)3rd/bzip2-1.0.6/android/Android.mk
@@ -217,7 +206,7 @@ include $(BUMO_SRC_PATH)3rd/http/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/jsoncpp/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/libscrypt/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/protobuf/android/Android.mk
-include $(BUMO_SRC_PATH)3rd/rocksdb/android/Android.mk
+include $(BUMO_SRC_PATH)3rd/leveldb/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/zlib-1.2.8/android/Android.mk
 
 
