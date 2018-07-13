@@ -20,6 +20,11 @@
 #include "strings.h"
 #include "logger.h"
 
+#ifdef OS_ANDROID
+#include <android/log.h>
+#endif
+
+
 utils::LogWriter::LogWriter() {
 	file_ptr_ = NULL;
 }
@@ -325,6 +330,10 @@ int utils::Logger::LogStub(utils::LogLevel log_Level,
 			file_name.c_str(), funcName, lineNum,
 			fmt, ap);
 	}
+#ifdef OS_ANDROID
+	__android_log_vprint(ANDROID_LOG_DEBUG, "TraceLog", fmt, ap);
+#endif
+
 	return ret_val;
 }
 
@@ -385,3 +394,18 @@ bool utils::Logger::GetBackupNameTime(const std::string &strBackupName, time_t &
 	nTimeTo = utils::String::ToTimestamp(strLogTimeTo);
 	return true;
 }
+
+#ifdef OS_ANDROID
+void utils::android_log(const char* file_name, const char * format, ...)
+{
+	va_list apptr;
+	va_start(apptr, format);
+	__android_log_vprint(ANDROID_LOG_DEBUG, file_name, format, apptr);
+	va_end(apptr);
+}
+#else
+void utils::android_log(const char* file_name, const char * format, ...)
+{
+}
+#endif
+
