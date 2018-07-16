@@ -38,6 +38,7 @@
 inline int lockf(int fd, int cmd, off_t ignored_len) {
 	return flock(fd, cmd);
 }
+static std::string bin_home_path_;
 #endif
 
 
@@ -374,7 +375,20 @@ std::string utils::File::GetBinDirecotry() {
 }
 
 std::string utils::File::GetBinHome() {
+#ifdef OS_ANDROID
+	if (bin_home_path_.size() > 0){
+		return bin_home_path_;
+	}
+#endif
 	return GetUpLevelPath(GetBinDirecotry());
+}
+
+bool utils::File::SetBinHome(const std::string & binHome){
+#ifdef OS_ANDROID
+	bin_home_path_ = binHome;
+	return true;
+#endif
+	return false;
 }
 
 std::string utils::File::GetUpLevelPath(const std::string &path) {
