@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //Test API
-
                 for(int i = 0 ; i < 5; i ++){
                     buInit();
                     delay(10 * 1000);
@@ -63,11 +62,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void button3_click(View view)
-    {
-        String str="3";
-        textview.setText(str);
-    }
     public native String  buInit();
     public native String  buUnInit();
     TextView textview;

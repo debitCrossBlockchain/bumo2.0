@@ -396,3 +396,19 @@ void SaveWSPort(){
 		file.Close();
 	}
 }
+
+
+#ifdef OS_ANDROID
+void utils::android_log(const char* file_name, const char * format, ...)
+{
+	va_list apptr;
+	va_start(apptr, format);
+	__android_log_vprint(ANDROID_LOG_DEBUG, file_name, format, apptr);
+	va_end(apptr);
+}
+#else
+void utils::android_log(const char* file_name, const char * format, ...)
+{
+}
+#endif
+

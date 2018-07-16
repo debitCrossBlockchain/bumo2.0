@@ -34,4 +34,8 @@ private:
 
 	std::string bu_home_path_;
 };
+namespace utils {
+	void android_log(const char* file_name, const char * format, ...);
+}
+
 

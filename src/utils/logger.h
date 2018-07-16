@@ -147,7 +147,5 @@ namespace utils {
 		std::string log_path_;
 		int64_t m_nCheckRunLogTime;
 	};
-
-	void android_log(const char* file_name, const char * format, ...);
 }
 #endif
