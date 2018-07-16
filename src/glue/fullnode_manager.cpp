@@ -27,8 +27,9 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace bumo {
 	FullNodeManager::FullNodeManager() :
-		last_ledger_seq_(0),
+		last_inspect_seq_(0),
 		random_seq_(0),
+		last_on_inspect_seq_(0),
 		fullnode_check_timer_(0),
 		priv_key_(SIGNTYPE_CFCASM2),
 		local_address_(""){
@@ -70,6 +71,23 @@ namespace bumo {
 	}
 
 	void FullNodeManager::GetModuleStatus(Json::Value &data) {
+		data["name"] = "fullnode_manager";
+		data["local_address"] = local_address_;
+		data["last_inspect_seq"] = last_inspect_seq_;
+		data["last_on_inspect_seq"] = last_on_inspect_seq_;
+		data["random_seq"] = utils::String::ToString(random_seq_);
+		Json::Value fullnodes;
+		for (auto it = full_node_info_.begin(); it != full_node_info_.end(); it++)
+		{
+			fullnodes.append(it->second->toJson());
+		}
+		data["full_nodes"] = fullnodes;
+		Json::Value sorted_addr_list;
+		for (auto it = sorted_full_nodes_.begin(); it != sorted_full_nodes_.end(); it++)
+		{
+			sorted_addr_list.append(*it);
+		}
+		data["sorted_addr_list"] = sorted_addr_list;
 		return;
 	}
 
@@ -294,7 +312,7 @@ namespace bumo {
 				LOG_ERROR("Failed to sorted FullNode list by hash value %s", lcl.hash().c_str());
 				break;
 			}
-			last_ledger_seq_ = lcl.seq();
+			last_inspect_seq_ = lcl.seq();
 
 			auto it = full_node_info_.find(local_address_);
 			if (it == full_node_info_.end() || !isInspector(local_address_)){
@@ -359,6 +377,8 @@ namespace bumo {
 		protocol::FullNodeCheckResp resp;
 		resp.set_error_code(protocol::ERRCODE_SUCCESS);
 		resp.set_error_desc("");
+
+		last_on_inspect_seq_ = req.ledger_seq();
 
 		do 
 		{
@@ -467,7 +487,7 @@ namespace bumo {
 		impeach_json["method"] = "impeach";
 		impeach_json["params"]["address"] = impeach_addr;
 		Json::Value info;
-		info["ledger_seq"] = last_ledger_seq_;
+		info["ledger_seq"] = last_inspect_seq_;
 		info["reason"] = reason;
 		impeach_json["impeach"] = info;
 		
@@ -484,7 +504,7 @@ namespace bumo {
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
 		}
 		else {
-			LOG_ERROR("Failed to impeach full node address %s in ledger seq(" FMT_I64 ")", local_address_.c_str(), last_ledger_seq_);
+			LOG_ERROR("Failed to impeach full node address %s in ledger seq(" FMT_I64 ")", local_address_.c_str(), last_inspect_seq_);
 			return false;
 		}
 		return true;

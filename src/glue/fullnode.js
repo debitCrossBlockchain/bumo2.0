@@ -33,11 +33,10 @@ function applyAsFullNode(params){
     fullnode.addr = params.address;
     fullnode.endpoint = params.endpoint;
     fullnode.apply_time = blockTimestamp;
-    fullnode.last_check_time = blockTimestamp;
     fullnode.impeach_list = [];
 	
     let fullnodeStr = JSON.stringify(fullnode);
-    assert(setFullNode(fullnode, 'add') === true, 'Failed to add full node info');
+    assert(setFullNode(fullnodeStr, 'add') === true, 'Failed to add full node info');
     log('Set new full node (' + fullnodeStr + ') succeed.');
 } 
 
@@ -119,7 +118,7 @@ function unimpeachFullNode(params) {
 
 function query(input_str){
     let input  = JSON.parse(input_str);
-
+	assert(typeof input.address === 'string', 'Arg-endpoint and arg-address should be string');
     let result = {};
     if(input.method === 'getFullNode'){
         result.info = getFullNode(input.address);

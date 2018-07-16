@@ -35,8 +35,9 @@ namespace bumo {
 	private:
 		std::map<std::string, FullNodePointer> full_node_info_;
 		std::vector<std::string> sorted_full_nodes_;
-		int64_t last_ledger_seq_;
+		int64_t last_inspect_seq_;
 		int64_t random_seq_;
+		int64_t last_on_inspect_seq_;
 		int64_t fullnode_check_timer_;
 		std::string local_address_;
 		PrivateKey priv_key_;

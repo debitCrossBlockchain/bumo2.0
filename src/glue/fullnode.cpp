@@ -20,8 +20,7 @@ namespace bumo {
 		addr_(""),
 		addr_hash_(""),
 		endpoint_(""),
-		apply_time_(0),
-		last_check_time_(0) {}
+		apply_time_(0) {}
 
 	FullNode::~FullNode() {}
 
@@ -30,7 +29,6 @@ namespace bumo {
 		addr_hash_ = HashWrapper::Crypto(addr_);
 		endpoint_ = node["endpoint"].asString();
 		apply_time_ = node["apply_time"].asInt64();
-		last_check_time_ = node["last_check_time"].asInt64();
 
 		Json::Value impeach_list = node["impeach_list"];
 		impeach_info_.clear();
@@ -67,17 +65,12 @@ namespace bumo {
 		return endpoint_;
 	}
 
-	int64_t FullNode::getLastCheckTime() {
-		return last_check_time_;
-	}
-
 	Json::Value& FullNode::toJson() {
-		std::shared_ptr<Json::Value> node;;
+		std::shared_ptr<Json::Value> node;
 		(*node)["addr"] = addr_;
 		(*node)["addr_hash"] = addr_hash_;
 		(*node)["endpoint"] = endpoint_;
 		(*node)["apply_time"] = apply_time_;
-		(*node)["last_check_time"] = last_check_time_;
 
 		Json::Value impeach_list;
 		Json::Value impeach;
@@ -91,10 +84,6 @@ namespace bumo {
 		}
 		(*node)["impeach_list"] = impeach_list;
 		return *node;
-	}
-
-	void FullNode::updateCheckTime() {
-		last_check_time_ = utils::Timestamp::Now().timestamp();
 	}
 	
 	bool FullNode::updateImpeach(std::string& report_addr, ImpeachInfo& info) {
