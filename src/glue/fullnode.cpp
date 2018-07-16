@@ -66,7 +66,7 @@ namespace bumo {
 	}
 
 	Json::Value& FullNode::toJson() {
-		std::shared_ptr<Json::Value> node;
+		std::shared_ptr<Json::Value> node = std::make_shared<Json::Value>();
 		(*node)["addr"] = addr_;
 		(*node)["addr_hash"] = addr_hash_;
 		(*node)["endpoint"] = endpoint_;
