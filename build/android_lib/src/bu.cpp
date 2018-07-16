@@ -11,6 +11,10 @@
 #define BU_EXPORT
 #endif
 
+#ifdef OS_ANDROID
+#include <android/log.h>
+#endif
+
 BU_EXPORT int Init(char *bu_home_path)
 {
 	utils::android_log("TraceLog", "Buchain Init ...");
