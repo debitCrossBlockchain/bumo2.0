@@ -302,7 +302,7 @@ namespace bumo {
 	}
 
 	void Console::PayCoin(const utils::StringVector &args) {
-		if (args.size() < 4) {
+		if (args.size() < 5) {
 			std::cout << "error params" << std::endl;
 			return;
 		}
