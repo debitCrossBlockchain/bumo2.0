@@ -239,6 +239,7 @@ namespace bumo{
 		if (nullptr == platform_){
 			v8::V8::InitializeICUDefaultLocation(argv[0]);
 			v8::V8::InitializeExternalStartupData(argv[0]);
+			platform_ = v8::platform::CreateDefaultPlatform();
 			v8::V8::InitializePlatform(platform_);
 			if (!v8::V8::Initialize()) {
 				LOG_ERROR("V8 Initialize failed");

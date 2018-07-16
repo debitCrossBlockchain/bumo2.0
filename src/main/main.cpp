@@ -99,7 +99,7 @@ int main(int argc, char *argv[]){
 
 		srand((uint32_t)time(NULL));
 		bumo::StatusModule::modules_status_ = new Json::Value;
-#if (defined WIN32)||(defined OS_LINUX)
+#ifdef OS_LINUX
 		utils::Daemon &daemon = utils::Daemon::Instance();
 		if (!bumo::g_enable_ || !daemon.Initialize((int32_t)1234))
 		{

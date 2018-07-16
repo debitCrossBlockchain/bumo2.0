@@ -166,7 +166,7 @@ int BuMaster::MainLoop(int argc, char *argv[]){
 
 		srand((uint32_t)time(NULL));
 		bumo::StatusModule::modules_status_ = new Json::Value;
-#if (defined WIN32)||(defined OS_LINUX)
+#ifdef OS_LINUX
 		utils::Daemon &daemon = utils::Daemon::Instance();
 		if (!bumo::g_enable_ || !daemon.Initialize((int32_t)1234))
 		{
@@ -413,6 +413,19 @@ void utils::android_log(const char* file_name, const char * format, ...)
 #else
 void utils::android_log(const char* file_name, const char * format, ...)
 {
+}
+#endif
+
+#if 1
+int main(int argc, char *argv[]){
+
+	for (int i = 0; i < 5; i++){
+		Init("D:\\workspace\\github\\bumo\\build\\win32\\");
+		utils::Sleep(10 * 1000);
+		UnInit();
+		utils::Sleep(10 * 1000);
+	}
+
 }
 #endif
 
