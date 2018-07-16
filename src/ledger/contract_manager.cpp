@@ -177,6 +177,7 @@ namespace bumo{
 	}
 
 	bool V8Contract::LoadJslintGlobalString(){
+		user_global_string_.clear();
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, "%s", sender_name_.c_str());
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", this_address_.c_str());
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", trigger_tx_name_.c_str());
@@ -234,16 +235,19 @@ namespace bumo{
 
 		LoadJsLibSource();
 		LoadJslintGlobalString();
-		v8::V8::InitializeICUDefaultLocation(argv[0]);
-		v8::V8::InitializeExternalStartupData(argv[0]);
-		platform_ = v8::platform::CreateDefaultPlatform();
-		v8::V8::InitializePlatform(platform_);
-		if (!v8::V8::Initialize()) {
-			LOG_ERROR("V8 Initialize failed");
-			return false;
+
+		if (nullptr == platform_){
+			v8::V8::InitializeICUDefaultLocation(argv[0]);
+			v8::V8::InitializeExternalStartupData(argv[0]);
+			v8::V8::InitializePlatform(platform_);
+			if (!v8::V8::Initialize()) {
+				LOG_ERROR("V8 Initialize failed");
+				return false;
+			}
+			create_params_.array_buffer_allocator =
+				v8::ArrayBuffer::Allocator::NewDefaultAllocator();
 		}
-		create_params_.array_buffer_allocator =
-			v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+		
 
 		return true;
 	}

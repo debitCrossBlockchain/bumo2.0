@@ -32,15 +32,44 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = new TextView(this);
         String path=getApplicationContext().getPackageResourcePath();
         tv.setText( path );
-        tv.setText( stringFromJNI() );
+        tv.setText( "hello, buchain" );
         setContentView(tv);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //Test API
+
+                for(int i = 0 ; i < 5; i ++){
+                    buInit();
+                    delay(10 * 1000);
+
+                    buUnInit();
+                    delay(10 * 1000);
+                }
+
+
+                buInit();
+            }
+        }).start();
+
     }
+    private void delay(int ms){
+        try {
+            Thread.currentThread();
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void button3_click(View view)
     {
         String str="3";
         textview.setText(str);
     }
-    public native String  stringFromJNI();
+    public native String  buInit();
+    public native String  buUnInit();
     TextView textview;
     Button button;
     static {

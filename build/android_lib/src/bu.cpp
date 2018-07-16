@@ -1,5 +1,7 @@
 #include "bu.h"
 #include "bu-internal.h"
+#include "configure.h"
+#include "common/general.h"
 
 #if defined(__GNUC__) && __GNUC__ >= 4
 #define BU_EXPORT __attribute__((visibility("default")))
@@ -11,22 +13,27 @@
 
 BU_EXPORT int Init(char *bu_home_path)
 {
+	utils::android_log("TraceLog", "Buchain Init ...");
 	BuMaster::InitInstance();
 	BuMaster &bu_master = BuMaster::Instance();
 	if (!bu_master.Initialize(bu_home_path))
 	{
+		utils::android_log("TraceLog", "Buchain Init ERROR");
 		return -1;
 	}
+	utils::android_log("TraceLog", "Buchain Init OK");
 	return 0;
 }
 BU_EXPORT int UnInit()
 {
+	utils::android_log("TraceLog", "UnInit ...");
 	BuMaster &bu_master = BuMaster::Instance();
 	if (!bu_master.Exit())
 	{
+		utils::android_log("TraceLog", "UnInit error...");
 		return -1;
 	}
-
+	utils::android_log("TraceLog", "UnInit OK");
 	return 0;
 }
 
@@ -65,14 +72,14 @@ bool BuMaster::Initialize(const std::string &bu_home_path)
 bool BuMaster::Exit()
 {
 	bumo::g_enable_ = false;
-	LOG_INFO("BuMaster stoping...");
+	utils::android_log("TraceLog", "BuMaster stoping...");
 	if (thread_ptr_) 
 	{
 		thread_ptr_->JoinWithStop();
 		delete thread_ptr_;
 		thread_ptr_ = NULL;
 	}
-	LOG_INFO("BuMaster stop [OK]");
+	utils::android_log("TraceLog", "BuMaster stop [OK]");
 	return true;
 }
 
@@ -289,11 +296,11 @@ int BuMaster::MainLoop(int argc, char *argv[]){
 
 		bumo::WebSocketServer &ws_server = bumo::WebSocketServer::Instance();
 		if (!bumo::g_enable_ || !ws_server.Initialize(bumo::Configure::Instance().wsserver_configure_)) {
-			LOG_ERROR("Initialize web server failed");
+			LOG_ERROR("Initialize web socket server failed");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::WebSocketServer::Exit, &ws_server));
-		LOG_INFO("Initialize web server successful");
+		LOG_INFO("Initialize web socket server successful");
 
 		bumo::WebServer &web_server = bumo::WebServer::Instance();
 		if (!bumo::g_enable_ || !web_server.Initialize(bumo::Configure::Instance().webserver_configure_)) {
@@ -330,6 +337,9 @@ int BuMaster::MainLoop(int argc, char *argv[]){
 
 	} while (false);
 
+	bumo::StatusModule::ClearAll();
+	bumo::TimerNotify::ClearAll();
+
 	bumo::ContractManager::ExitInstance();
 	bumo::SlowTimer::ExitInstance();
 	bumo::GlueManager::ExitInstance();
@@ -344,7 +354,7 @@ int BuMaster::MainLoop(int argc, char *argv[]){
 	utils::Logger::ExitInstance();
 	utils::Daemon::ExitInstance();
 	
-	printf("process exit\n");
+	return 0;
 }
 
 void RunLoop(){

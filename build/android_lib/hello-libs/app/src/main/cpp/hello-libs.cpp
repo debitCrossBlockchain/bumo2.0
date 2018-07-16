@@ -18,27 +18,35 @@
 #include <jni.h>
 #include <cinttypes>
 #include <android/log.h>
-//#include <gmath.h>
 #include <bu.h>
 #include <string>
 
-#define LOGI(...) \
-  ((void)__android_log_print(ANDROID_LOG_INFO, "hello-libs::", __VA_ARGS__))
+void android_log(const char* file_name, const char * format, ...)
+{
+    va_list apptr;
+    va_start(apptr, format);
+    __android_log_vprint(ANDROID_LOG_DEBUG, file_name, format, apptr);
+    va_end(apptr);
+}
 
-/* This is a trivial JNI example where we use a native method
- * to return a new VM String. See the corresponding Java source
- * file located at:
- *
- *   app/src/main/java/com/example/hellolibs/MainActivity.java
- */
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_hellolibs_MainActivity_stringFromJNI(JNIEnv *env, jobject thiz) {
-    // Just for simplicity, we do this right away; correct way would do it in
-    // another thread...
-    auto ticks = Init("/sdcard/bumo");
-
-   // LOGI("calculation time: %" PRIu64, ticks);
+Java_com_example_hellolibs_MainActivity_buInit(JNIEnv *env, jobject thiz) {
+    android_log("TraceLog", "bu init in");
+    int result = Init("/sdcard/bumo");
     char temp[1000] = {0};
-    sprintf(temp, "Hello from JNI LIBS! %d", ticks);
+    sprintf(temp, "Init buchain: %d", result);
+    android_log("TraceLog", "bu init out");
     return env->NewStringUTF(temp);
 }
+
+extern "C" JNIEXPORT jstring JNICALL
+Java_com_example_hellolibs_MainActivity_buUnInit(JNIEnv *env, jobject thiz) {
+    android_log("TraceLog", "bu uninit in");
+    int result = UnInit();
+    android_log("TraceLog", "bu uninit in-1");
+    char temp[1000] = {0};
+    sprintf(temp, "UnInit buchain: %d", result);
+    android_log("TraceLog", "bu uninit out");
+    return env->NewStringUTF(temp);
+}
+

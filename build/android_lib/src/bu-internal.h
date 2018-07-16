@@ -13,7 +13,6 @@
 #include <api/console.h>
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
-#include "configure.h"
 
 #include <time.h>
 
