@@ -219,7 +219,7 @@ function init(input_str){
     let input = JSON.parse(input_str);
 
     assert(addressCheck(input.params.contractOwner) === true &&
-           stoI64Check(input.params.totalSupply) === true &&
+           stoI64Check(input.params.supply) === true &&
            typeof input.params.name === 'string' &&
            typeof input.params.symbol === 'string' &&
            typeof input.params.decimals === 'number',
@@ -229,7 +229,7 @@ function init(input_str){
     globalAttribute.name = input.params.name;
     globalAttribute.symbol = input.params.symbol;
     globalAttribute.decimals = input.params.decimals;
-    globalAttribute.totalSupply = int64Mul(input.params.totalSupply, powerOfBase10(globalAttribute.decimals));
+    globalAttribute.totalSupply = int64Mul(input.params.supply, powerOfBase10(globalAttribute.decimals));
     globalAttribute.contractOwner = input.params.contractOwner;
     globalAttribute.balance = globalAttribute.totalSupply;
 

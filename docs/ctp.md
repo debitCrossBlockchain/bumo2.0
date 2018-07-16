@@ -319,7 +319,7 @@ function init(input_str){
         "name":"RMB",
         "symbol":"CNY",
         "decimals":8,
-        "totalSupply":"1500000000",
+        "supply":"1500000000",
         "contractOwner":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj",
     }
 }
@@ -327,7 +327,7 @@ function init(input_str){
 参数：name 资产名称；
 参数：symbol 资产符号；
 参数：decimals 小数位数；
-参数：totalSupply 发型总量；
+参数：supply 发型总量(整数部分)；
 参数：contractOwner 合约资产归属人；
 
 - 返回值：true或者抛异常
