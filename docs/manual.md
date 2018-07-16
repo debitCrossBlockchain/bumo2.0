@@ -8,6 +8,7 @@ English | [中文](manual_CN.md)
     - [MAC](#mac)
     - [Windows](#windows)
 - [__Deployment__](#deployment)
+    - [__Requirement__](#requirement)
     - [__Installation on Linux__](#installation-on-linux)
         - [__Use compile mode deploy__](#use-compile-mode-deploy)
         - [__Use archive packet deploy__](#use-archive-packet-deploy)
@@ -113,6 +114,10 @@ Executable program dir:bumo/bin/
 
 ## Deployment
 The deployment on Windows is almost identical to Linux. (Subject to Linux)
+
+### __Requirement__
+- Recommended configuration: CPU 8 core, memory 32 G, bandwidth 20 M, SSD disk 500 G. Or higher.
+- Minimum configuration: CPU 4 core, memory 16 G, bandwidth 10 M, SSD disk 500 G.
 
 ### __Installation on Linux__
 #### __Use compile mode deploy__
