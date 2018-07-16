@@ -177,6 +177,7 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/libscrypt/ \
     $(SRC_PATH)/src/3rd/basic/include/v8/ \
     $(LOCAL_PATH)/src/ \
+	$(LOCAL_PATH)/interface/ \
 
 LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libprotobuf libed25519 libhttp libleveldb 
 LOCAL_SHARED_LIBRARIES:=libv8 libv8_libbase libv8_libplatform  libicui18n  libicuuc
