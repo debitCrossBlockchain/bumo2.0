@@ -207,6 +207,13 @@ int BuMaster::MainLoop(int argc, char *argv[]){
 		LOG_INFO("Load configure successful");
 		LOG_INFO("Initialize logger successful");
 
+		utils::Timer &timer = utils::Timer::Instance();
+		if (!bumo::g_enable_ || !timer.Initialize()){
+			LOG_STD_ERR("Initialize Timer failed");
+			break;
+		}
+		object_exit.Push(std::bind(&utils::Timer::Exit, &timer));
+
 		// end run command
 		bumo::Storage &storage = bumo::Storage::Instance();
 		LOG_INFO("keyvalue(%s),account(%s),ledger(%s)", 
@@ -356,6 +363,7 @@ int BuMaster::MainLoop(int argc, char *argv[]){
 	bumo::Global::ExitInstance();
 	bumo::Storage::ExitInstance();
 	utils::Logger::ExitInstance();
+	utils::Timer::ExitInstance();
 	utils::Daemon::ExitInstance();
 	
 	return 0;
@@ -413,19 +421,6 @@ void utils::android_log(const char* file_name, const char * format, ...)
 #else
 void utils::android_log(const char* file_name, const char * format, ...)
 {
-}
-#endif
-
-#if 1
-int main(int argc, char *argv[]){
-
-	for (int i = 0; i < 5; i++){
-		Init("D:\\workspace\\github\\bumo\\build\\win32\\");
-		utils::Sleep(10 * 1000);
-		UnInit();
-		utils::Sleep(10 * 1000);
-	}
-
 }
 #endif
 

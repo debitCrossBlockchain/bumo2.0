@@ -38,6 +38,8 @@ namespace utils {
 	}
 
 	bool Timer::Exit() {
+		time_ele_.clear();
+		exeute_list_.clear();
 		return true;
 	}
 
