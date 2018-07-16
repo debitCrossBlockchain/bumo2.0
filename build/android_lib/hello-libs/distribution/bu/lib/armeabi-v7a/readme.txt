@@ -1,0 +1,1 @@
+cp bumo/build/android_lib/libs/armeabi-v7a/*.lib .
