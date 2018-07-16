@@ -26,13 +26,13 @@ public:
 	BuMaster();
 	~BuMaster();
 
-	bool Initialize(const std::string &process_full_path);
+	bool Initialize(const std::string &bu_home_path);
 	bool Exit();
 private:
 	utils::Thread *thread_ptr_;
 	virtual void Run(utils::Thread *thread);
 	int MainLoop(int argc, char *argv[]);
 
-	std::string process_full_path_;
+	std::string bu_home_path_;
 };
 

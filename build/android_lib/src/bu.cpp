@@ -9,11 +9,11 @@
 #define BU_EXPORT
 #endif
 
-BU_EXPORT int Init(char *process_full_path)
+BU_EXPORT int Init(char *bu_home_path)
 {
 	BuMaster::InitInstance();
 	BuMaster &bu_master = BuMaster::Instance();
-	if (!bu_master.Initialize(process_full_path))
+	if (!bu_master.Initialize(bu_home_path))
 	{
 		return -1;
 	}
@@ -39,13 +39,22 @@ BuMaster::~BuMaster()
 {
 }
 
-bool BuMaster::Initialize(const std::string &process_full_path)
+bool BuMaster::Initialize(const std::string &bu_home_path)
 {
-	process_full_path_.clear();
+	bu_home_path_ = bu_home_path;
+	utils::File::SetBinHome(bu_home_path);
 	bumo::g_enable_ = true;
-	utils::Thread *thread_p = new utils::Thread(this);
-	if (!thread_p->Start("BuMaster"))
+	if (thread_ptr_ != nullptr)
 	{
+		utils::android_log("TraceLog", "Start thread error, ptr is not null");
+		return false;
+	}
+
+	thread_ptr_ = new utils::Thread(this);
+	if (!thread_ptr_->Start("BuMaster")) 
+	{
+		delete thread_ptr_;
+		thread_ptr_ = nullptr;
 		utils::android_log("TraceLog", "start thread error");
 		return false;
 	}
@@ -57,23 +66,23 @@ bool BuMaster::Exit()
 {
 	bumo::g_enable_ = false;
 	LOG_INFO("BuMaster stoping...");
-	if (thread_ptr_)
+	if (thread_ptr_) 
 	{
 		thread_ptr_->JoinWithStop();
 		delete thread_ptr_;
 		thread_ptr_ = NULL;
 	}
-	LOG_INFO("SlowTimer stop [OK]");
+	LOG_INFO("BuMaster stop [OK]");
 	return true;
 }
 
 void BuMaster::Run(utils::Thread *thread)
 {
 	char* argv[1];
-	size_t buffer_len = process_full_path_.size() + 1;
+	size_t buffer_len = bu_home_path_.size() + 10;
 	argv[0] = new char[buffer_len];
 	memset(argv[0], 0, buffer_len);
-	memcpy(argv[0], process_full_path_.c_str(), process_full_path_.size());
+	sprintf(argv[0], "%s/bin/bu", bu_home_path_.c_str());
 	MainLoop(1, argv);
 	char * p_argv = argv[0];
 	delete []p_argv;
@@ -146,7 +155,7 @@ int BuMaster::MainLoop(int argc, char *argv[]){
 
 		srand((uint32_t)time(NULL));
 		bumo::StatusModule::modules_status_ = new Json::Value;
-#ifndef OS_MAC
+#if (defined WIN32)||(defined OS_LINUX)
 		utils::Daemon &daemon = utils::Daemon::Instance();
 		if (!bumo::g_enable_ || !daemon.Initialize((int32_t)1234))
 		{
@@ -162,9 +171,10 @@ int BuMaster::MainLoop(int argc, char *argv[]){
 			utils::android_log("TraceLog", "bin home:%s", utils::File::GetBinHome().c_str());
 			config_path = utils::String::Format("%s/%s", utils::File::GetBinHome().c_str(), config_path.c_str());
 		}
-		utils::android_log("TraceLog", "config_path:%s", config_path.c_str());
+		utils::android_log("TraceLog", "Config path:%s", config_path.c_str());
 		if (!config.Load(config_path)){
 			LOG_STD_ERRNO("Load configure failed", STD_ERR_CODE, STD_ERR_DESC);
+			utils::android_log("TraceLog", "Load configure failed:%s", config_path.c_str());
 			break;
 		}
 
