@@ -25,6 +25,17 @@ android {
                           'proguard-rules.pro'
         }
     }
+    android.applicationVariants.all { variant ->
+        def appName
+        if (project.hasProperty("applicationName")){
+            appName = applicationName
+        }else{
+            appName = parent.name
+        }
+        variant.outputs.all { output ->
+            outputFileName = "bu-1.0.0.6.apk"
+        }
+    }
     sourceSets {
         main {
             // let gradle pack the shared library into apk
