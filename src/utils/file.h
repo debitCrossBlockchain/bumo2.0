@@ -84,6 +84,7 @@ namespace utils {
 		static std::string GetBinPath();
 		static std::string GetBinDirecotry();
 		static std::string GetBinHome();
+		static bool SetBinHome(const std::string & binHome);
 		static std::string GetUpLevelPath(const std::string &path);
 		static bool GetAttribue(const std::string &strFile0, FileAttribute &nAttr);
 		static bool GetFileList(const std::string &strDirectory, utils::FileAttributes &nFiles, bool bFillAttr = true, size_t nMaxCount = 0);
