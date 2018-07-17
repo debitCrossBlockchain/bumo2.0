@@ -164,7 +164,7 @@ E.g.
 参数：address 账户地址
 
 - 函数：function balanceOf(owner)
-- 返回值：
+- 返回值：指定地址的余额，如果参数 address 是资产合约地址或者合约拥有者地址，则返回值是尚未分配的合约资产数额
 ```json
 {
     "result":{

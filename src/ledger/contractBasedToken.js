@@ -208,6 +208,10 @@ function contractInfo(){
 function balanceOf(address){
     assert(addressCheck(address) === true, 'Arg-address is not a valid address.');
 
+    if(address === globalAttribute.contractOwner || address === thisAddress){
+        return globalAttribute.balance;
+    }
+
     let key = makeBalanceKey(address);
     let value = storageLoad(key);
     assert(value !== false, 'Get balance of ' + address + ' from metadata failed.');
