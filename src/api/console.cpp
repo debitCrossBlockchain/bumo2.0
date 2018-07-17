@@ -198,6 +198,7 @@ namespace bumo {
 			CreateKestore(args, private_key);
 		}
 		else {
+			std::cout << "error params" << std::endl;
 			return;
 		}
 	}
