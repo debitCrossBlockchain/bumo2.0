@@ -42,11 +42,12 @@ mkdir buchain/data
 mkdir buchain/jslib
 mkdir buchain/bin
 mkdir buchain/log
+mkdir buchain/web
 cp ../build/win32/jslib/jslint.js buchain/jslib/
 cp ../build/win32/config/bumo-single.json  buchain/config/bumo.json
 cp ../src/3rd/v8_target/android/*.bin buchain/bin/
 cp ../build/android/libs/armeabi-v7a/* buchain/bin/
-
+cp ../src/web/jslint/* buchain/web/
 
 tar czvf buchain-android-$DATE-$v.tar.gz buchain/
 rm -rf buchain/ 
