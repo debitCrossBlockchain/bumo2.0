@@ -113,7 +113,7 @@ namespace bumo {
 		//load proof
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof_);
 
-		//update consensus configure
+		//Update consensus configuration.
 		Global::Instance().GetIoService().post([this]() {
 			GlueManager::Instance().UpdateValidators(validators_, proof_);
 		});
@@ -249,14 +249,14 @@ namespace bumo {
 	bool LedgerManager::CreateGenesisAccount() {
 		LOG_INFO("There is no ledger exist,then create a init ledger");
 
-		//set global hash caculate
+		//Set the calculated hash values in the global ledger header.
 		int32_t account_count = 0;
-		//create account of genesis
+		//Create the genesis account.
 		AccountFrm::pointer acc_frm =AccountFrm::CreatAccountFrm(Configure::Instance().genesis_configure_.account_, 100000000000000000);
 		tree_->Set(DecodeAddress(acc_frm->GetAccountAddress()), acc_frm->Serializer());
 		account_count++;
 
-		//load validators config,create account of validators
+		//Load the list of validators. Create validators' accounts.
 		const utils::StringList &list = Configure::Instance().genesis_configure_.validators_;
 		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
 			auto validator = validators_.add_validators();
@@ -588,7 +588,7 @@ namespace bumo {
 		}
 		header->set_fees_hash(HashWrapper::Crypto(fees_.SerializeAsString()));
 		
-		//must be last
+		//This header must be for the latest block.
 		header->set_hash(HashWrapper::Crypto(closing_ledger->ProtoLedger().SerializeAsString()));
 
 		//proof
@@ -613,7 +613,7 @@ namespace bumo {
 
 		} while (false);
 
-		//write successful, then update the variable
+		//Update the variable when the write is successful.
 		last_closed_ledger_ = closing_ledger;
 
 		int64_t time3 = utils::Timestamp().HighResolution();
@@ -653,10 +653,10 @@ namespace bumo {
 
 		context_manager_.RemoveCompleted(tmp_lcl_header.seq());
 
-		//notice ledger closed
+		//Broadcast that the ledger is closed.
 		WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_LEDGER_HEADER, tmp_lcl_header.SerializeAsString());
 
-		// notice applied
+		// The broadcast message is applied.
 		for (size_t i = 0; i < closing_ledger->apply_tx_frms_.size(); i++) {
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
 			protocol::TransactionEnvStore apply_tx_msg;
