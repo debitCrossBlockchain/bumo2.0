@@ -195,7 +195,6 @@ export CFLAGS="-pie -fPIE"
 export LDFLAGS="-pie -fPIE"
 #####################################################################
 
-export PREFIX=/bumo_3rd/curl/
 export CC="$AOSP_TOOLCHAIN_PATH/$TOOLNAME_BASE-gcc --sysroot=$AOSP_SYSROOT"
 
 
@@ -211,7 +210,6 @@ fi
 
 
     ./configure \
-    --prefix=$PREFIX \
     --enable-static \
     --disable-shared \
     --host=$TOOLNAME_BASE
