@@ -6,17 +6,17 @@ SRC_PATH:= $(TOP_PATH)/
 #static_libs
 include $(CLEAR_VARS)
 LOCAL_MODULE:=libcurl
-LOCAL_SRC_FILES:=/bumo_3rd/curl/lib/libcurl.a
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/curl/lib/.libs/libcurl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE:=libssl
-LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libssl.a
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/openssl/libssl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE:=libcrypto
-LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libcrypto.a
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/openssl/libcrypto.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
@@ -100,8 +100,6 @@ LOCAL_SRC_PROTO_FILES := \
  			$(SRC_PATH)/src/proto/cpp/chain.pb.cc\
 			$(SRC_PATH)/src/proto/cpp/common.pb.cc\
 			$(SRC_PATH)/src/proto/cpp/consensus.pb.cc\
-			$(SRC_PATH)/src/proto/cpp/helloworld.grpc.pb.cc\
-			$(SRC_PATH)/src/proto/cpp/helloworld.pb.cc\
 			$(SRC_PATH)/src/proto/cpp/merkeltrie.pb.cc\
 			$(SRC_PATH)/src/proto/cpp/monitor.pb.cc\
 			$(SRC_PATH)/src/proto/cpp/overlay.pb.cc
@@ -136,7 +134,6 @@ LOCAL_SRC_UTILS_FILES := \
 			$(SRC_PATH)/src/utils/crypto.cpp\
 			$(SRC_PATH)/src/utils/timer.cpp\
 			$(SRC_PATH)/src/utils/system.cpp\
-			$(SRC_PATH)/src/utils/sqlparser.cpp\
 			$(SRC_PATH)/src/utils/exprparser.cpp\
 			$(SRC_PATH)/src/utils/sm3.cpp\
 			$(SRC_PATH)/src/utils/ecc_sm2.cpp\
@@ -173,9 +170,9 @@ LOCAL_C_INCLUDES += \
 	$(SRC_PATH)/src/utils/android_ifaddrs/ \
     $(SRC_PATH)/src/3rd/basic/include/ \
     $(SRC_PATH)/src/3rd/protobuf/src/ \
+    $(SRC_PATH)/src/3rd/basic/include/ \
     $(SRC_PATH)/src/3rd/jsoncpp/include/ \
     $(SRC_PATH)/src/3rd/sqlite/ \
-    $(SRC_PATH)/src/3rd/pcre-8.39/ \
     $(SRC_PATH)/src/3rd/websocketpp/ \
     $(SRC_PATH)/src/3rd/bzip2-1.0.6/ \
     $(SRC_PATH)/src/3rd/zlib-1.2.8/ \
@@ -183,9 +180,8 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/http/ \
     $(SRC_PATH)/src/3rd/libscrypt/ \
     $(SRC_PATH)/src/3rd/basic/include/v8/ \
-	#$(SRC_PATH)/src/3rd/rocksdb/include/ \
 
-LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libpcre libprotobuf  libed25519 libhttp libleveldb
+LOCAL_STATIC_LIBRARIES:=libcurl libssl libcrypto libjson libbz2 libzlib libscrypt libprotobuf libed25519 libhttp libleveldb 
 LOCAL_SHARED_LIBRARIES:=libv8 libv8_libbase libv8_libplatform  libicui18n  libicuuc
 
 LOCAL_LDLIBS += -llog 
@@ -218,7 +214,6 @@ include $(BUMO_SRC_PATH)3rd/ed25519-donna/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/http/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/jsoncpp/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/libscrypt/android/Android.mk
-include $(BUMO_SRC_PATH)3rd/pcre-8.39/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/protobuf/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/leveldb/android/Android.mk
 include $(BUMO_SRC_PATH)3rd/zlib-1.2.8/android/Android.mk
