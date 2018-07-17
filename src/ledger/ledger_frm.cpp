@@ -100,7 +100,7 @@ namespace bumo {
 			batch.Put(ComposePrefix(General::TRANSACTION_PREFIX, ptr->GetContentHash()), env_store.SerializeAsString());
 			list.add_entry(ptr->GetContentHash());
 
-			//a transaction success so the transactions trigger by it can store
+			//If a transaction succeeds, the transactions tiggerred by it can be stored in db.
 			if (ptr->GetResult().code() == protocol::ERRCODE_SUCCESS)
 				for (size_t j = 0; j < ptr->instructions_.size(); j++){
 					protocol::TransactionEnvStore &env_sto = ptr->instructions_[j];
@@ -233,7 +233,7 @@ namespace bumo {
 		total_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
-		//init the txs map
+		//init the txs map (transaction map).
 		std::set<int32_t> expire_txs, error_txs;
 
 		if (request.has_validation()) {
@@ -267,7 +267,7 @@ namespace bumo {
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
 			bool ret = tx_frm->Apply(this, environment_);
-			//caculate byte fee ,do not store when fee not enough 
+			//Caculate the required mininum fee by calculting the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
 				LOG_ERROR("Transaction(%s) apply failed. %s, %s",
@@ -317,7 +317,7 @@ namespace bumo {
 		total_fee_ = 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
-		//init the txs map
+		//init the txs map (transaction map).
 		std::set<int32_t> expire_txs_check,  error_txs_check;
 		std::set<int32_t> expire_txs,  error_txs;
 		if (!CheckConsValueValidation(request, expire_txs_check,  error_txs_check)) {
@@ -349,7 +349,7 @@ namespace bumo {
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
 			bool ret = tx_frm->Apply(this, environment_);
-			//caculate byte fee ,do not store when fee not enough 
+			//Caculate the required mininum fee by calculting the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
 				LOG_ERROR("Transaction(%s) apply failed. %s, %s",
@@ -402,7 +402,7 @@ namespace bumo {
 		total_fee_= 0;
 		environment_ = std::make_shared<Environment>(nullptr);
 
-		//init the txs map
+		//Init the txs map (transaction map).
 		std::set<int32_t> expire_txs_check, error_txs_check;
 		std::set<int32_t> expire_txs, error_txs;
 		if (!CheckConsValueValidation(request, expire_txs_check, error_txs_check)) {
@@ -432,7 +432,7 @@ namespace bumo {
 
 
 			if ( expire_txs_check.find(i) != expire_txs_check.end()) {
-				// follow the consensus value and do not apply
+				//Follow the consensus value, and do not apply the transaction set.
 				tx_frm->ApplyExpireResult();
 			}
 			else {
@@ -494,7 +494,7 @@ namespace bumo {
 			for (auto it = entries.begin(); it != entries.end(); it++){
 
 				if (it->second.type_ == Environment::DEL)
-					continue; //there is no delete account function now, not yet
+					continue; //There is no delete account function now, not yet.
 
 				std::shared_ptr<AccountFrm> account = it->second.value_;
 				account->UpdateHash(batch);
