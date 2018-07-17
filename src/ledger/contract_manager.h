@@ -89,7 +89,7 @@ namespace bumo{
 		Result result_;
 		//int32_t error_code_;  //enum 0, FEE_NO_ENOUGH, MAX_TX
 		//std::string error_msg_;
-		int32_t tx_do_count_;  //transactions trigger by one contract
+		int32_t tx_do_count_;  //Transactions triggerred by one contract.
 		utils::StringList logs_;
 	public:
 		Contract();
@@ -185,7 +185,7 @@ namespace bumo{
 		static bool JsValueToCppJson(v8::Handle<v8::Context>& context, v8::Local<v8::Value>& jsvalue, Json::Value& jsonvalue);
 		static bool CppJsonToJsValue(v8::Isolate* isolate, Json::Value& jsonvalue, v8::Local<v8::Value>& jsvalue);
 		static void CallBackConfigFee(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//assert a express
+		//Assert an expression.
 		static void CallBackAssert(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 		//to base unit, equal to * pow(10, 8)
