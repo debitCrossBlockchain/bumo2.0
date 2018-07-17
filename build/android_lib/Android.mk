@@ -11,12 +11,12 @@ include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE:=libssl
-LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libssl.a
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/openssl/libssl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE:=libcrypto
-LOCAL_SRC_FILES:=/bumo_3rd/openssl/lib/libcrypto.a
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/openssl/libcrypto.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)

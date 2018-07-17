@@ -232,14 +232,16 @@ if [ ! -z "$VERBOSE" ] && [ "$VERBOSE" != "0" ]; then
   echo "ANDROID_DEV: $ANDROID_DEV"
 fi
 
-chmod 777 -R ./
+chmod +x config
+chmod +x ./util/*
 
 make clean
 perl -pi -e 's/install: all install_docs install_sw/install: install_docs install_sw/g' Makefile.org
-./config no-shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=/bumo_3rd/openssl/$ANDROID_API --prefix=/bumo_3rd/openssl/
+./config no-shared no-ssl2 no-ssl3 no-comp no-hw no-engine
 
-chmod 777 -R ./
+chmod +x config
+chmod +x ./util/*
 make depend
 make all -j8
 #sudo -E make install CC=$ANDROID_TOOLCHAIN/arm-linux-androideabi-gcc RANLIB=$ANDROID_TOOLCHAIN/arm-linux-androideabi-ranlib
-make install
+#make install
