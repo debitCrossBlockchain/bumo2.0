@@ -18,7 +18,7 @@
 #include "contract_manager.h"
 
 namespace bumo {
-	//for sync process
+	//For syncing blocks.
 	LedgerContext::LedgerContext(const std::string &chash, const protocol::ConsensusValue &consvalue) :
 		type_(AT_NORMAL),
 		lpmanager_(NULL),
@@ -32,7 +32,7 @@ namespace bumo {
 	}
 
 
-	//for sync pre process
+	//For syncing the block before the current block.
 	LedgerContext::LedgerContext(LedgerContextManager *lpmanager, const std::string &chash, const protocol::ConsensusValue &consvalue, bool propose) :
 		type_(AT_NORMAL),
 		lpmanager_(lpmanager),
@@ -123,7 +123,7 @@ namespace bumo {
 	}
 
 	bool LedgerContext::TestV8() {
-		//if address not exist, then create temporary account
+		//If the source address for starting the contract does not exist, a temporary account will be created.
 		std::shared_ptr<Environment> environment = std::make_shared<Environment>(nullptr);
 		if (parameter_.contract_address_.empty()) {
 			//create a temporary account
