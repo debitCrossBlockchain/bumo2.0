@@ -168,7 +168,6 @@ LOCAL_C_INCLUDES += \
     $(SRC_PATH)/src/3rd/basic/include/ \
     $(SRC_PATH)/src/3rd/jsoncpp/include/ \
     $(SRC_PATH)/src/3rd/sqlite/ \
-    $(SRC_PATH)/src/3rd/rocksdb/include/ \
     $(SRC_PATH)/src/3rd/websocketpp/ \
     $(SRC_PATH)/src/3rd/bzip2-1.0.6/ \
     $(SRC_PATH)/src/3rd/zlib-1.2.8/ \

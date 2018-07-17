@@ -4,6 +4,11 @@
 #git reset --hard origin/release/1.0.0.0
 #git reset --hard origin/develop
 
+cd ../
+./install-build-deps-android.sh
+
+cd -
+
 DATE=$(date +%Y_%m%d_%H%M)
 
 cd ../../
