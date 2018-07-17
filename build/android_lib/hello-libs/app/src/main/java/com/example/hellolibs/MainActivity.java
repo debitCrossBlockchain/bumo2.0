@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 //Test API
+				/*
                 for(int i = 0 ; i < 5; i ++){
                     buInit();
                     delay(10 * 1000);
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     buUnInit();
                     delay(10 * 1000);
                 }
-
+				*/
 
                 buInit();
             }
