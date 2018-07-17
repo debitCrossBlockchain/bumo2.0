@@ -139,7 +139,7 @@ namespace bumo {
 			return new PrivateKey(restore_priv_key);
 		}
 		else {
-			std::cout << "error" << std::endl;
+			std::cout << "error, load private key with password failed" << std::endl;
 			return NULL;
 		}
 	}
