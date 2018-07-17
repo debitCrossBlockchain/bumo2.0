@@ -6,7 +6,7 @@ SRC_PATH:= $(TOP_PATH)/
 #static_libs
 include $(CLEAR_VARS)
 LOCAL_MODULE:=libcurl
-LOCAL_SRC_FILES:=/bumo_3rd/curl/lib/libcurl.a
+LOCAL_SRC_FILES:=$(SRC_PATH)/src/3rd/curl/lib/.libs/libcurl.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
