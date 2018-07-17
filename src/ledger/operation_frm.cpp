@@ -379,7 +379,16 @@ namespace bumo {
 			result = CheckSetPrivilege(operation.set_privilege(), source_address);
 			break;
 		}
-
+		case protocol::Operation_Type_SET_VOTE_FOR:
+		{
+			const protocol::OperationSetVoteFor &votefor = operation.set_vote_for();
+			if (!bumo::PublicKey::IsAddressValid(votefor.address())) {
+				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
+				result.set_desc(utils::String::Format("Vote for address should be a valid account address"));
+				break;
+			}
+			break;
+		}
 		case protocol::Operation_Type_Operation_Type_INT_MIN_SENTINEL_DO_NOT_USE_:
 			break;
 		case protocol::Operation_Type_Operation_Type_INT_MAX_SENTINEL_DO_NOT_USE_:

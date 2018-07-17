@@ -17,6 +17,7 @@ namespace bumo{
 		const static int64_t log;
 		const static int64_t create_contract;
 		const static int64_t set_privilege;
+		const static int64_t set_vote_for;
 	};
 
     class FeeCalculate {
