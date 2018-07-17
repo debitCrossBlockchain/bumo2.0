@@ -478,7 +478,7 @@ namespace bumo {
 			std::shared_ptr<AccountFrm> dest_account;
 			std::string dest_address = create_account.dest_address();
 			if (dest_address.empty()){
-				//above version 1000, the address of the smart contract must be empty and an address will be created automatically
+				//If the ledger version is greater than 1000, you must leave the address of the smart contract empty. An address will be created automatically.
 				bumo::PublicKey pub_key;
 				std::string raw_pkey = utils::String::Format("%s-" FMT_I64 "-%d", 
 					transaction_->GetSourceAddress().c_str(), transaction_->GetNonce(), index_);
@@ -917,7 +917,7 @@ namespace bumo {
 		do {
 			bool is_create_contract = !create_account.contract().payload().empty();
 			const std::string dest_address = create_account.dest_address();
-			//if version greater than 1000, the dest address of contract must empty
+			//If the ledger version is greater than 1000, you must leave the dest address of the smart contract empty. An address will be created automatically.
 			bool has_dest_address = !dest_address.empty();
 			bool unimportant_address = (dest_address != General::CONTRACT_VALIDATOR_ADDRESS) && (dest_address != General::CONTRACT_FEE_ADDRESS);
 			if (is_create_contract && has_dest_address && unimportant_address) {
