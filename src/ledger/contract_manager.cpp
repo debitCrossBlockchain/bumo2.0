@@ -354,11 +354,11 @@ namespace bumo{
 
 			v8::Local<v8::Value> callresult;
 			if (!process->Call(context, context->Global(), argc, argv).ToLocal(&callresult)) {
-				if (result_.code() == 0) { //if not set the code,then set it
+				if (result_.code() == 0) { //Set the code if it is not set.
 					result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_FAIL);
 					result_.set_desc(ReportException(isolate_, &try_catch).toFastString());
 				}
-				//otherwise has set it other way, for example doTransaction has set it
+				//Otherwise break. For example doTransaction has set the code.
 				break;
 			}
 
@@ -2104,7 +2104,7 @@ namespace bumo{
 				utils::MutexGuard guard(contracts_lock_);
 				contract = new V8Contract(false, paramter);
 				//paramter->ledger_context_ 
-				//add the contract id for cancel
+				//Add the contract id. Use this ID when cancelling the contract in the future. 
 
 				contracts_[contract->GetId()] = contract;
 			}
@@ -2140,7 +2140,7 @@ namespace bumo{
 				utils::MutexGuard guard(contracts_lock_);
 				contract = new V8Contract(true, paramter);
 				//paramter->ledger_context_ 
-				//add the contract id for cancel
+				//Add the contract id. Use this ID when cancelling the contract in the future.
 
 				contracts_[contract->GetId()] = contract;
 			}
@@ -2167,7 +2167,7 @@ namespace bumo{
 	}
 
 	bool ContractManager::Cancel(int64_t contract_id) {
-		//another thread cancel the vm
+		//Start another thread to delete the contract sandbox after running the contract.
 		Contract *contract = NULL;
 		do {
 			utils::MutexGuard guard(contracts_lock_);
