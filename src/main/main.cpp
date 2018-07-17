@@ -287,7 +287,7 @@ int main(int argc, char *argv[]){
 	utils::Daemon::ExitInstance();
 	
 	if (arg.console_ && !bumo::g_ready_) {
-		printf("Initialize failed, check log for detail\n");
+		printf("Initialize failed, please check log for detail\n");
 	}
 	printf("process exit\n");
 }
