@@ -279,7 +279,7 @@ namespace bumo {
 		return false;
 	}
 	
-	//must bottom tx use this function
+	//Use this function to calculate the total fee.
 	bool TransactionFrm::ReturnFee(int64_t& total_fee) {
 		int64_t actual_fee=0;
 		if (!utils::SafeIntMul(GetActualGas(), GetGasPrice(), actual_fee)){
@@ -355,7 +355,7 @@ namespace bumo {
 				break;
 			}
 
-			//判断序号是否正确
+			//Check if the account nonce is correct.
 			int64_t last_seq = source_account->GetAccountNonce();
 			if (last_seq + 1 != GetNonce()) {
 				result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
@@ -526,7 +526,7 @@ namespace bumo {
 		}
 
 		bool check_valid = true; 
-		//判断operation的参数合法性
+		//Check whether the operation has valid input parameters.
 		int64_t t8 = utils::Timestamp::HighResolution();
 		for (int i = 0; i < tran.operations_size(); i++) {
 			protocol::Operation ope = tran.operations(i);
