@@ -197,7 +197,7 @@ LOCAL_CPPFLAGS := -D_REENTRANT \
 
 
 
-LOCAL_MODULE:= libbu
+LOCAL_MODULE:= libbuchain
 
 include $(BUILD_SHARED_LIBRARY)
 include $(BUMO_SRC_PATH)3rd/bzip2-1.0.6/android/Android.mk
