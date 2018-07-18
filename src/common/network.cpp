@@ -412,7 +412,7 @@ namespace bumo {
 
 			LOG_ERROR("The method type(" FMT_I64 ") request(%s), return false, delete it",
 				message.type(), message.request() ? "true" : "false");
-			// Delete it if returned false.
+			// Delete the connection if returned false.
 			do {
 				utils::MutexGuard guard(conns_list_lock_);
 				Connection *conn = GetConnection(hdl);
@@ -437,14 +437,14 @@ namespace bumo {
 				if (ssl_parameter_.enable_) {
 					// Listen on a specified port.
 					tls_server_.listen(ip.tcp_endpoint());
-					// Start the server accept loop.
+					// Start the TLS server.
 					tls_server_.start_accept();
 					listen_port_ = tls_server_.get_local_endpoint().port();
 				}
 				else {
 					// Listen on a specified port.
 					server_.listen(ip.tcp_endpoint());
-					// Start the server accept loop.
+					// Start the TLS server.
 					server_.start_accept();
 					listen_port_ = server_.get_local_endpoint().port();
 				}
@@ -464,7 +464,7 @@ namespace bumo {
 				if (now - last_check_time > utils::MICRO_UNITS_PER_SEC) {
 
 					utils::MutexGuard guard_(conns_list_lock_);
-					//Check ping
+					//Ping the client to see if the connectin is timed out.
 					std::list<Connection *> delete_list;
 					for (ConnectionMap::iterator iter = connections_.begin();
 						iter != connections_.end();
