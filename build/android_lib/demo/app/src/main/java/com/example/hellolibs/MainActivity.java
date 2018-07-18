@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("v8_libbase");
         System.loadLibrary("v8_libplatform");
         System.loadLibrary("v8");
-        System.loadLibrary("bu");
+        System.loadLibrary("buchain");
         System.loadLibrary("hello-libs");
     }
 }
