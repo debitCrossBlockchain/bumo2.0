@@ -43,6 +43,13 @@ namespace bumo {
 	const char *General::MONITOR_CONFIG_FILE = "config/monitor.json";
 	const char *General::LOGGER_FILE = "log/bumo.log";
 
+#elif defined OS_ANDROID
+	const char *General::DEFAULT_KEYVALUE_DB_PATH = "data/keyvalue.db";
+	const char *General::DEFAULT_LEDGER_DB_PATH = "data/ledger.db";
+	const char *General::DEFAULT_ACCOUNT_DB_PATH = "data/account.db";
+
+	const char *General::CONFIG_FILE = "config/buchain.json";
+	const char *General::LOGGER_FILE = "log/buchain.log";
 #else
 	const char *General::DEFAULT_KEYVALUE_DB_PATH = "data/keyvalue.db";
 	const char *General::DEFAULT_LEDGER_DB_PATH = "data/ledger.db";

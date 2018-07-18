@@ -45,7 +45,7 @@ mkdir bu/buchain/bin
 mkdir bu/buchain/log
 mkdir bu/buchain/web
 cp ../build/win32/jslib/jslint.js bu/buchain/jslib/
-cp ../build/win32/config/bumo-single.json  bu/buchain/config/bumo.json
+cp ../build/android_lib/buchain.json  bu/buchain/config/
 cp ../src/3rd/v8_target/android/*.bin bu/buchain/bin/
 cp ../src/web/jslint/*  bu/buchain/web/
 
