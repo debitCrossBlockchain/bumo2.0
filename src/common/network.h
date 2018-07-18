@@ -173,7 +173,7 @@ namespace bumo {
 
 		void OnPong(connection_hdl hdl, std::string payload);
 		
-		//Get password
+		//Get password.
 		std::string GetCertPassword();
 
 		//Get peer object. Not thread safe.
@@ -184,7 +184,7 @@ namespace bumo {
 		void RemoveConnection(Connection *conn);
 		void RemoveConnection(int64_t conn_id);
 
-		//Message type to function.
+		//Mapping for message type to function.
 		MessageConnPocMap request_methods_;
 		MessageConnPocMap response_methods_;
 
@@ -192,7 +192,7 @@ namespace bumo {
 		bool OnRequestPing(protocol::WsMessage &message, int64_t conn_id);
 		bool OnResponsePing(protocol::WsMessage &message, int64_t conn_id);
 
-		//Could be drived.
+		//When requested, create a connection.
 		virtual Connection *CreateConnectObject(server *server_h, client *client_h, 
 			tls_server *tls_server_h, tls_client *tls_client_h,
 			connection_hdl con, const std::string &uri, int64_t id);
