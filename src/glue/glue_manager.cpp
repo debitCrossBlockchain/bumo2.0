@@ -132,7 +132,7 @@ namespace bumo {
 			propose_value.set_previous_ledger_hash(lcl.hash());
 			propose_value.set_previous_proof(proof);
 
-			//judge if we need upgrade the ledger
+			//Check whether we need to upgrade the ledger.
 			protocol::ValidatorSet validator_set;
 			size_t quorum_size = 0;
 			consensus_->GetValidation(validator_set, quorum_size);
@@ -204,14 +204,14 @@ namespace bumo {
 
 		do {
 			if (tx_pool_->IsExist(tx->GetContentHash())){
-				//dont't reply the tx, then break;
+				//Break when a transaction is replayed;
 				err.set_code(protocol::ERRCODE_ALREADY_EXIST);
 				err.set_desc(utils::String::Format("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
 				LOG_TRACE("Receive duplicate transaction, source address(%s) hash(%s)", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
 				break;
 			}
 
-			//验证交易有效性
+			//Validate a transaction upon received.
 			int64_t nonce = 0;
 			if (!tx->CheckValid(/*high_sequence*/ -1, true, nonce)) {
 				err = tx->GetResult();
@@ -302,7 +302,7 @@ namespace bumo {
 		//size_t ret1 = RemoveTxset(txset_frm);
 		tx_pool_->RemoveTxs(request.txset(),true);
 
-		//start time
+		//Start calculating the time to start the next block.
 		int64_t next_interval = GetIntervalTime(request.txset().txs_size() == 0);
 		int64_t next_timestamp = next_interval + req.close_time();
 		int64_t seq = req.ledger_seq();
@@ -350,7 +350,7 @@ namespace bumo {
 			return false;
 		}
 		
-		//if it exist in hardfork point, we ignore the proof
+		//If a hardfork point is found on a node, we ignore the proof of the block before the fork point.
 		std::string consensus_value_hash = HashWrapper::Crypto(consensus_value);
 		std::set<std::string>::const_iterator iter = hardfork_points_.find(consensus_value_hash);
 		return CheckValueHelper(proto_value, -1) == Consensus::CHECK_VALUE_VALID &&   //-1 not check time
@@ -455,7 +455,7 @@ namespace bumo {
 
 		//check this proof 
 		if (lcl.seq() > 1) {
-			//get pre pre ledger validator
+			//Get the validator set for the pre pre ledger.
 			protocol::ValidatorSet set;
 			if (!LedgerManager::Instance().GetValidators(consensus_value.ledger_seq() - 2, set)) {
 				LOG_ERROR("Check value failed, get validator failed of ledger seq(" FMT_I64 ")",
