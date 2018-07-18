@@ -32,7 +32,7 @@ void android_log(const char* file_name, const char * format, ...)
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_hellolibs_MainActivity_buInit(JNIEnv *env, jobject thiz) {
     android_log("TraceLog", "bu init in");
-    int result = Init("/sdcard/bumo");
+    int result = Init("/sdcard/buchain");
     char temp[1000] = {0};
     sprintf(temp, "Init buchain: %d", result);
     android_log("TraceLog", "bu init out");
