@@ -1,1 +1,6 @@
-cp bumo/build/android_lib/libs/armeabi-v7a/*.lib .
+libicui18n.so
+libbuchain.so
+libicuuc.so
+libv8.so
+libv8_libbase.so
+libv8_libplatform.so
