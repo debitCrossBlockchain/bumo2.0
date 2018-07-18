@@ -151,7 +151,7 @@ namespace bumo {
 	}
 
 	bool WebSocketServer::OnChainPeerMessage(protocol::WsMessage &message, int64_t conn_id) {
-		// send peer
+		// Send peer status to websocket client.
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(conn_id);
 		if (!conn) {
