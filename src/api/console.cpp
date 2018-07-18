@@ -73,12 +73,16 @@ namespace bumo {
 			std::string input;
 			std::cout << "> ";
 			std::getline(std::cin, input);
-			utils::StringVector args = utils::String::Strtok(input, ' ');
+			
+			utils::StringVector args = utils::String::Strtok(utils::String::Trim(input), ' ');
 			if (args.size() < 1) continue;
 
 			ConsolePocMap::iterator iter = funcs_.find(args[0]);
 			if (iter != funcs_.end()){
 				iter->second(args);
+			}
+			else if (!args[0].empty()) {
+				std::cout << "command not found" << std::endl;
 			}
 		}
 	}
@@ -169,7 +173,7 @@ namespace bumo {
 
 		utils::File file_object;
 		if (!file_object.Open(args[1], utils::File::FILE_M_WRITE)) {
-			errmsg = utils::String::Format("create failed, error desc(%s)", STD_ERR_DESC);
+			errmsg = utils::String::Format("error desc(%s)", STD_ERR_DESC);
 			return;
 		}
 
