@@ -47,7 +47,7 @@ set_target_properties(lib_v8 PROPERTIES IMPORTED_LOCATION
     )
 
 set_target_properties(lib_bu PROPERTIES IMPORTED_LOCATION
-    ${distribution_DIR}/bu/lib/${ANDROID_ABI}/libbu.so
+    ${distribution_DIR}/bu/lib/${ANDROID_ABI}/libbuchain.so
     )
 
 set_target_properties(lib_icui18n PROPERTIES IMPORTED_LOCATION

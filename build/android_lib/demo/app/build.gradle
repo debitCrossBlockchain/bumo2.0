@@ -33,7 +33,7 @@ android {
             appName = parent.name
         }
         variant.outputs.all { output ->
-            outputFileName = "bu-1.0.0.6.apk"
+            outputFileName = "hello-libs.apk"
         }
     }
     sourceSets {
