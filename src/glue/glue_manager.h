@@ -43,7 +43,7 @@ namespace bumo {
 		int64_t ledgerclose_check_timer_;
 		int64_t start_consensus_timer_;
 
-		//for get module status
+		//For getting module status
 		time_t process_uptime_;
 
 		//for temp validation storage, need implement by ledger
