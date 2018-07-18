@@ -62,7 +62,7 @@ namespace bumo {
 	int32_t LevelDbDriver::Get(const std::string &key, std::string &value) {
 		assert(db_ != NULL);
 
-		//retry 10s
+		//Retry 10 times. Interval is 0.1 second.
 		size_t timers = 0;
 		int32_t ret = -1;
 		while (timers < 10) {
@@ -267,7 +267,7 @@ namespace bumo {
 			if (bdropdb) {
 				bool do_success = false;
 				do {
-					//check the db if opened only for linux or mac
+					//Check only for linux or mac that whether the account db can be opened.
 #ifndef WIN32
 					KeyValueDb *account_db = NewKeyValueDb(db_config);
 					if (!account_db->Open(db_config.account_db_path_, -1)) {
