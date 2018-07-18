@@ -89,7 +89,8 @@ namespace bumo {
 			return;
 		}
 
-		PrivateKey *tmp_private = OpenKeystore(args[1]);
+		std::string errmsg;
+		PrivateKey *tmp_private = OpenKeystore(args[1], errmsg);
 		if (tmp_private != NULL) {
 			if (priv_key_) {
 				delete priv_key_;
@@ -99,27 +100,29 @@ namespace bumo {
 			priv_key_ = tmp_private;
 			std::cout << "ok" << std::endl;
 		}
+		else {
+			std::cout << "open wallet error, " << errmsg << std::endl;
+		}
 	}
 
-	PrivateKey *Console::OpenKeystore(const std::string &path) {
+	PrivateKey *Console::OpenKeystore(const std::string &path, std::string& errmsg) {
 		std::string password;
 
 		if (!utils::File::IsExist(path)) {
-			std::cout << "path (" << path << ") not exist" << std::endl;
+			errmsg = "path (" + path + ") not exist";
 			return NULL;
 		}
 
 		password = utils::GetCinPassword("input the password:");
 		std::cout << std::endl;
 		if (password.empty()) {
-			std::cout << "error, empty" << std::endl;
+			errmsg = "no password supplied";
 			return NULL;
 		}
 
 		utils::File file_object;
 		if (!file_object.Open(path, utils::File::FILE_M_READ)) {
-			std::string error_info = utils::String::Format("open failed, error desc(%s)", STD_ERR_DESC);
-			std::cout << error_info << std::endl;
+			errmsg = utils::String::Format("open failed, error desc(%s)", STD_ERR_DESC);
 			return NULL;
 		}
 		std::string serial_str;
@@ -127,7 +130,7 @@ namespace bumo {
 
 		Json::Value key_store_json;
 		if (!key_store_json.fromString(serial_str)) {
-			std::cout << "parse string failed" << std::endl;
+			errmsg = "parse string failed";
 			return NULL;
 		}
 
@@ -139,14 +142,14 @@ namespace bumo {
 			return new PrivateKey(restore_priv_key);
 		}
 		else {
-			std::cout << "error, load private key with password failed" << std::endl;
+			errmsg = "load private key with password failed";
 			return NULL;
 		}
 	}
 
-	void Console::CreateKestore(const utils::StringVector &args, std::string &private_key) {
+	void Console::CreateKestore(const utils::StringVector &args, std::string &private_key, std::string& errmsg) {
 		if (utils::File::IsExist(args[1])) {
-			std::cout << "path (" << args[1] << ") exist" << std::endl;
+			errmsg = "path ("+ args[1] + ") exist";
 			return;
 		}
 
@@ -154,20 +157,19 @@ namespace bumo {
 		password = utils::GetCinPassword("input the password:");
 		std::cout << std::endl;
 		if (password.empty()) {
-			std::cout << "error, empty" << std::endl;
+			errmsg = "no password supplied";
 			return;
 		}
 		std::string password1 = utils::GetCinPassword("input the password again:");
 		std::cout << std::endl;
 		if (password != password1) {
-			std::cout << "error, not match" << std::endl;
+			errmsg = "passwords do not match";
 			return;
 		}
 
 		utils::File file_object;
 		if (!file_object.Open(args[1], utils::File::FILE_M_WRITE)) {
-			std::string error_info = utils::String::Format("create failed, error desc(%s)", STD_ERR_DESC);
-			std::cout << error_info << std::endl;
+			errmsg = utils::String::Format("create failed, error desc(%s)", STD_ERR_DESC);
 			return;
 		}
 
@@ -186,7 +188,7 @@ namespace bumo {
 			priv_key_ = new PrivateKey(private_key);
 		}
 		else {
-			std::cout << "error" << std::endl;
+			errmsg = "generate private key with password failed";
 		}
 	}
 
@@ -195,7 +197,12 @@ namespace bumo {
 		if (args.size() > 1) {
 
 			std::string private_key;
-			CreateKestore(args, private_key);
+			std::string errmsg;
+			CreateKestore(args, private_key, errmsg);
+			if (!errmsg.empty())
+			{
+				std::cout << "create wallet error, " << errmsg << std::endl;
+			}
 		}
 		else {
 			std::cout << "error params" << std::endl;
@@ -212,8 +219,13 @@ namespace bumo {
 			if (!priv_key.IsValid()) {
 				std::cout << "error, private key not valid" << std::endl;
 				return;
-			} 
-			CreateKestore(args, private_key);
+			}
+			std::string errmsg;
+			CreateKestore(args, private_key, errmsg);
+			if (!errmsg.empty())
+			{
+				std::cout << "create wallet error, " << errmsg << std::endl;
+			}
 		}
 		else {
 			return;
@@ -279,7 +291,8 @@ namespace bumo {
 		if (priv_key_ != NULL) {
 
 			//check the password again;
-			PrivateKey *tmp_private = OpenKeystore(keystore_path_);
+			std::string errmsg;
+			PrivateKey *tmp_private = OpenKeystore(keystore_path_, errmsg);
 			if (tmp_private != NULL) {
 				if (tmp_private->GetEncAddress() != priv_key_->GetEncAddress()) {
 					std::cout << "error" << std::endl;
@@ -289,6 +302,7 @@ namespace bumo {
 				delete tmp_private;
 			}
 			else {
+				std::cout << "open wallet error, " << errmsg << std::endl;
 				return;
 			}
 			std::cout << priv_key_->GetEncPrivateKey() << std::endl;
@@ -311,7 +325,8 @@ namespace bumo {
 		if (priv_key_ != NULL) {
 
 			//check the password again;
-			PrivateKey *tmp_private = OpenKeystore(keystore_path_);
+			std::string errmsg;
+			PrivateKey *tmp_private = OpenKeystore(keystore_path_, errmsg);
 			if (tmp_private != NULL ) {
 				if (tmp_private->GetEncAddress() != priv_key_->GetEncAddress()) {
 					std::cout << "error" << std::endl;
@@ -321,7 +336,7 @@ namespace bumo {
 				delete tmp_private;
 			}
 			else {
-				std::cout << "error, wallet not opened" << std::endl;
+				std::cout << "open wallet error, " << errmsg << std::endl;
 				return;
 			}
 

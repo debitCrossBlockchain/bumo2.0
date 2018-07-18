@@ -49,8 +49,8 @@ namespace bumo {
 
 		PrivateKey *priv_key_;
 		std::string keystore_path_;
-		void CreateKestore(const utils::StringVector &args, std::string &private_key);
-		PrivateKey *OpenKeystore( const std::string &path);
+		void CreateKestore(const utils::StringVector &args, std::string &private_key, std::string& errmsg);
+		PrivateKey *OpenKeystore( const std::string &path, std::string& errmsg);
 	};
 }
 
