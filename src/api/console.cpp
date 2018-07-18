@@ -401,13 +401,14 @@ namespace bumo {
 		printf(
 			"OPTIONS:\n"
 			"createWallet <path>                          create wallet\n"
-			"openWallet <path>                            open keystore\n"
-			"closeWallet                                  close current wallet opened\n"
-			"payCoin <to-address> <bu coin> <fee(bu)> <gas price(baseuint)> [metatdata] [contract-input] \n"
-			"getBalance [account]                         get balance of BU \n"
-			"getBlockNumber                               get lastest closed block number\n"
-			"showKey                                      show wallet private key\n"
-			"getState                                     get current state of node\n"
+			"openWallet <path>                            open a wallet\n"
+			"closeWallet                                  close the current wallet\n"
+			"payCoin <to-address> <bu coin> <fee(bu)> <gas price(baseuint)> [metatdata] [contract-input]\n"
+			"                                             pay coin or invoke a contract\n"
+			"getBalance [account]                         get the balance of BU \n"
+			"getBlockNumber                               get the lastest closed block number\n"
+			"showKey                                      show the private key of wallet\n"
+			"getState                                     get the current state of node\n"
 			"exit                                         exit\n"
 			);
 	}
