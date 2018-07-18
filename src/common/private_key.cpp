@@ -86,7 +86,7 @@ namespace bumo {
 		}
 
 		if (ret){
-			//Checksum
+			//Check checksum
 			std::string checksum = buff.substr(buff.size() - 4);
 			std::string hash1 = CalcHash(buff.substr(0, buff.size() - 4), sign_type_tmp);
 			std::string hash2 = CalcHash(hash1, sign_type_tmp);
@@ -297,7 +297,7 @@ namespace bumo {
 		return false;
 	}
 
-	//µØÖ·ÊÇ·ñºÏ·¨
+	//Generate keypair according to signature type.
 	PrivateKey::PrivateKey(SignatureType type) {
 		std::string raw_pub_key = "";
 		type_ = type;
@@ -411,10 +411,10 @@ namespace bumo {
 		//Append private key 32
 		str_result.append(raw_priv_key_);
 
-		//Ñ¹Ëõ±êÖ¾
+		//Append 0X00 to str_result
 		str_result.push_back(0X00);
 
-		//Bitcoin uses 4 byte hash check.
+		//Like Bitcoin, we use 4 byte hash check.
 		std::string hash1, hash2;
 		hash1 = CalcHash(str_result, type_);
 		hash2 = CalcHash(hash1, type_);
