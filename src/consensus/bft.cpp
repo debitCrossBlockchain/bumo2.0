@@ -26,7 +26,7 @@ namespace bumo {
 		last_check_time_(utils::Timestamp::HighResolution()) {
 		name_ = "pbft";
 
-		//should load from the configure
+		//Load from the configuration.
 		ckp_interval_ = 10;
 	}
 
@@ -39,7 +39,7 @@ namespace bumo {
 			return false;
 		}
 
-		//should load from the check point
+		//Load from the check point
 		LoadValues();
 
 		//sequence_ = last_exe_seq_ + 1;
@@ -232,17 +232,17 @@ namespace bumo {
 
 	void Pbft::OnTimer(int64_t current_time) {
 
-		//lock the instances in the child for less trigger
+		
 		utils::MutexGuard guard(lock_);
 
-		//check the lost sequence have not been achieve
+		
 		PbftInstance *last_prepared_instance = NULL;
 		const PbftInstanceIndex *index = NULL;
 		PbftInstanceMap::iterator last_prepared_iter = instances_.end();
 		for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end(); iter++) {
-			//check if we should send the prepare again
+			//Check if we should send the prepare again
 
-			//check if it is timeout
+			//Check if it is timeout
 			if (iter->second.IsExpire(current_time) &&
 				!iter->second.have_send_viewchange_
 				) {
@@ -276,7 +276,7 @@ namespace bumo {
 				index->view_number_, index->sequence_, last_prepared_instance->commit_round_);
 		}
 
-		//check the view change timeout, and get the last new view send
+		//Check the view change timeout, and get the last new view sent.
 		PbftVcInstance *lastvc_instance = NULL;
 		for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end(); iter_vc++) {
 			if (iter_vc->second.NeedSendAgain(current_time) && iter_vc->second.view_change_msg_.has_pbft()) {
@@ -325,11 +325,11 @@ namespace bumo {
 			return false;
 		}
 
-		//lock the instances
+		//Lock the instances
 		utils::MutexGuard lock_guad(lock_);
 		ValueSaver saver;
 
-		//delete the last uncommitted logs
+		//Delete the last uncommitted logs
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
 			) {
@@ -345,10 +345,10 @@ namespace bumo {
 		int64_t sequence = last_exe_seq_ + 1;
 		PbftEnvPointer env = NewPrePrepare(value, sequence);
 
-		//check the index
+		//Check the index
 		PbftInstanceIndex index(view_number_, sequence);
 
-		//insert the instance to map
+		//Insert the instance to map
 		PbftInstance pinstance;
 		pinstance.pre_prepare_msg_ = *env;
 		pinstance.phase_ = PBFT_PHASE_PREPREPARED;
@@ -360,7 +360,7 @@ namespace bumo {
 		saver.Commit();
 		LOG_INFO("Send pre-prepare message, view number(" FMT_I64 "),sequence(" FMT_I64 ") for value(%s)", 
 			view_number_, index.sequence_, notify_->DescConsensusValue(value).c_str());
-		//broadcast the message to other nodes
+		//Broadcast the message to other nodes
 		return SendMessage(env);
 	}
 
@@ -374,14 +374,14 @@ namespace bumo {
 	}
 
 	bool Pbft::CheckMessageItem(const protocol::PbftEnv &env, const ValidatorMap &validators) {
-		//this function should output the error log
+		//This function should output the error log
 		const protocol::Pbft &pbft = env.pbft();
 		const protocol::Signature &sig = env.signature();
 
-		//get the node address
+		//Get the node address
 		PublicKey public_key(sig.public_key());
 
-		//check the node id if exist in the validator' list
+		//Check the node id to see if it exists in the validator' list
 		int64_t should_replica_id = GetValidatorIndex(public_key.GetEncAddress(), validators);
 		if (should_replica_id < 0) {
             LOG_ERROR("Cann't find the validator(%s) in list", public_key.GetEncAddress().c_str());
@@ -458,14 +458,14 @@ namespace bumo {
 			return false;
 		}
 		}
-		//check should replica_id equal be the object id
+		//Check if replica_id is equal to the object id
 		if (replica_id != should_replica_id) {
 			LOG_ERROR("Check received message(type:%s) failed, message replica id(" FMT_I64 ") not equal to the signature id(" FMT_I64")",
 				PbftDesc::GetPbft(pbft).c_str(), replica_id, should_replica_id);
 			return false;
 		}
 
-		//check the signature
+		//Check the signature
 		if (!PublicKey::Verify(pbft.SerializeAsString(), sig.sign_data(), sig.public_key())) {
 			LOG_ERROR("Check received message's signature failed, desc(%s)", PbftDesc::GetPbft(pbft).c_str());
 			return false;
@@ -490,9 +490,9 @@ namespace bumo {
 		std::string value_digest;
 		if (view_change_raw.has_prepared_set() ) {
 			bool error_ret = false;
-			//check the prepared message
+			//Check the prepared message
 			const protocol::PbftPreparedSet &prepared_set = view_change_raw.prepared_set();
-			//check the pre-prepare message
+			//Check the pre-prepared message
 			const protocol::PbftEnv &pre_prepare_env = prepared_set.pre_prepare();
 			const protocol::PbftPrePrepare &pre_prepare = pre_prepare_env.pbft().pre_prepare();
 			if (!CheckMessageItem(pre_prepare_env, validators)) {
@@ -501,7 +501,7 @@ namespace bumo {
 			value_digest = pre_prepare.value_digest();
 
 			std::set<int64_t> replica_ids;
-			//check the prepare message
+			//Check the prepared message
 			for (int32_t m = 0; m < prepared_set.prepare_size(); m++) {
 				const protocol::PbftEnv &prepare_env = prepared_set.prepare(m);
 				if (!CheckMessageItem(prepare_env, validators)) {
@@ -560,7 +560,7 @@ namespace bumo {
 		const protocol::Pbft &pbft = env.pbft();
 		const protocol::PbftCommit &commit = pbft.commit();
 		PbftInstanceIndex index(commit.view_number(), commit.sequence());
-		//check if it exist in normal object
+		//Check if it exists in normal object
 		PbftInstanceMap::iterator iter_normal = instances_.find(index);
 		if (iter_normal != instances_.end()) {
 			LOG_INFO("Receive trace out commit but normal from replica(" FMT_I64 "),  view number(" FMT_I64 "),sequence(" FMT_I64 "),round number(%u)",
@@ -597,7 +597,7 @@ namespace bumo {
 				LOG_INFO("The trace out sequence(" FMT_I64 ") is large than last exe sequence(" FMT_I64 ") for checkpoint interval(" FMT_I64 "), try move watermark",
 					index.sequence_, last_exe_seq_, ckp_interval_);
 
-				//we should move to the new watermark
+				//We should move to the new watermark
 				view_active_ = true;
 				view_number_ = index.view_number_;
 				last_exe_seq_ = index.sequence_;
@@ -606,7 +606,7 @@ namespace bumo {
 			//	saver.SaveValue(PbftDesc::LOW_WATER_MRAK_NAME, low_water_mark_);
 				saver.SaveValue(PbftDesc::VIEW_ACTIVE, view_active_? 1 : 0);
 
-				//clear the view change instance
+				//Clear the view change instance
 				for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end();) {
 					if (iter_vc->second.view_change_msg_.has_pbft()) {
 						vc_instances_.erase(iter_vc++);
@@ -625,7 +625,7 @@ namespace bumo {
 				}
 				//SaveInstance(saver);
 
-				//clear the Out pbft instance
+				//Clear the Out pbft instance
 				out_pbft_instances_.clear();
 
 				notify_->OnResetCloseTimer();
@@ -696,7 +696,7 @@ namespace bumo {
 			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, sequence);
 			instances_.insert(std::make_pair(index, PbftInstance()));
 
-			//delete the seq which not the same view
+			//Delete the seq which not the same view
 			for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 				iter_inst != instances_.end();
 				) {
@@ -725,7 +725,7 @@ namespace bumo {
 		const protocol::Pbft &pbft = env.pbft();
 		const protocol::Signature &sig = env.signature();
 
-		//check the message item 
+		//Check the message item. 
 		if (!CheckMessageItem(env)) {
 			return false;
 		}
@@ -736,7 +736,7 @@ namespace bumo {
 		case protocol::PBFT_TYPE_PREPREPARE:
 		case protocol::PBFT_TYPE_PREPARE:
 		case protocol::PBFT_TYPE_COMMIT:{
-			//the current view must active
+			//The current view must be active.
 			int32_t ret = Consensus::CHECK_VALUE_VALID;
 			if (pbft.type() == protocol::PBFT_TYPE_PREPREPARE) {
 				const protocol::PbftPrePrepare &pre_prepare = pbft.pre_prepare();
@@ -764,13 +764,13 @@ namespace bumo {
 	}
 
 	bool Pbft::OnPrePrepare(const protocol::Pbft &pbft, PbftInstance &pinstance, int32_t check_value_ret) {
-		//if has only one node, then continue
+		//Continue if it has only one node.
 		if (view_number_ % validators_.size() == replica_id_ && validators_.size() != 1) {
 			return true;
 		}
 
 		const protocol::PbftPrePrepare &pre_prepare = pbft.pre_prepare();
-		//check the value digest
+		//Check the value digest
 		if (pre_prepare.value_digest() != HashWrapper::Crypto(pre_prepare.value())) {
 			LOG_ERROR("Check the value digest(%s) not equal(%s)'s digest, desc(%s)",
 				utils::String::BinToHexString(pre_prepare.value_digest()).c_str(),
@@ -778,7 +778,7 @@ namespace bumo {
 			return false;
 		}
 
-		//check the value
+		//Check the value
 		if (check_value_ret == Consensus::CHECK_VALUE_INVALID) {
 			LOG_ERROR("Check the value(%s) failed, desc(%s)", notify_->DescConsensusValue(pre_prepare.value()).c_str(), PbftDesc::GetPbft(pbft).c_str());
 			return false;
@@ -816,7 +816,7 @@ namespace bumo {
 			pre_prepare.replica_id(), pre_prepare.view_number(), pre_prepare.sequence(), pbft.round_number(),
 			notify_->DescConsensusValue(pre_prepare.value()).c_str());
 
-		//insert the instance to map
+		//Insert the instance to map
 		pinstance.phase_ = PBFT_PHASE_PREPREPARED;
 		pinstance.phase_item_ = 0;
 		pinstance.pre_prepare_ = pre_prepare;
@@ -840,7 +840,7 @@ namespace bumo {
 			return false;
 		}
 
-		//start timer
+		//Start timer
 		return true;
 	}
 
@@ -876,7 +876,7 @@ namespace bumo {
 			//SaveInstance(saver);
 			//saver.Commit();
 
-			//send commit
+			//Send commit
 			if (pinstance.check_value_result_ == Consensus::CHECK_VALUE_VALID) {
 				LOG_INFO("Send commit message%s, view number(" FMT_I64 "),sequence(" FMT_I64 "), round number(%u)", exist ? " again" : "",
 					pinstance.pre_prepare_.view_number(), pinstance.pre_prepare_.sequence(), pbft.round_number());
@@ -917,7 +917,7 @@ namespace bumo {
 			pinstance.end_time_ = utils::Timestamp::HighResolution();
 			LOG_INFO("Request commited, view number(" FMT_I64 "),sequence(" FMT_I64 "), try to execute value", pinstance.pre_prepare_.view_number(), pinstance.pre_prepare_.sequence());
 
-			// this consensus has achieve
+			// This consensus has achieved.
 			return TryExecuteValue();
 		}
 
@@ -1008,7 +1008,7 @@ namespace bumo {
 			return false;
 		}
 
-		//delete the response timer
+		//Delete the response timer
 		bool ret = utils::Timer::Instance().DelTimer(new_view_repond_timer_);
 		LOG_INFO("Try to delete new view repond timer id(" FMT_I64 ") %s", new_view_repond_timer_, ret ? "true" : "failed");
 
@@ -1017,7 +1017,7 @@ namespace bumo {
 			return true;
 		}
 
-		//check the view change message
+		//Check the view change message
 		PbftVcInstance vc_instance_tmp;
 		vc_instance_tmp.view_number_ = new_view.view_number();
 
@@ -1054,7 +1054,7 @@ namespace bumo {
 			return false;
 		}
 
-		//delete the other log
+		//Delete the other log
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
 			) {
@@ -1068,7 +1068,7 @@ namespace bumo {
 			}
 		}
 
-		//get max sequence
+		//Get max sequence
 		int64_t max_seq = last_exe_seq_;
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
@@ -1080,7 +1080,7 @@ namespace bumo {
 		}
 
 		LOG_INFO("Replica(id: " FMT_I64 ") enter the new view(number:" FMT_I64 ")", replica_id_, new_view.view_number());
-		//enter to new view
+		//Enter the new view
 		ValueSaver saver;
 		view_number_ = new_view.view_number();
 		view_active_ = true;
@@ -1100,7 +1100,7 @@ namespace bumo {
 	void Pbft::ClearViewChanges() {
 
 		ValueSaver saver;
-		//delete other not ended view change instance
+		//delete other incomplete view change instance
 		for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end();) {
 			if (iter_vc->second.end_time_ == 0) {
 				LOG_INFO("Delete the view change instance (vn:" FMT_I64 ") that is not complete", iter_vc->second.view_number_);
@@ -1144,14 +1144,14 @@ namespace bumo {
 			return true;
 		}
 
-		//new view message
+		//New view message
 		PbftEnvPointer msg = NewNewView(vc_instance);
 
 		LOG_INFO("Send new view message, new view number(" FMT_I64 ")", vc_instance.view_number_);
-		//send new view message
+		//Send new view message
 		vc_instance.SendNewView(this, utils::Timestamp::HighResolution(), msg);
 
-		//get last prepared consensus value
+		//Get last prepared consensus value
 		std::string last_cons_value;
 		if (vc_instance.pre_prepared_env_set.has_pre_prepare()) {
 			const protocol::Pbft &pbft = vc_instance.pre_prepared_env_set.pre_prepare().pbft();
@@ -1159,7 +1159,7 @@ namespace bumo {
 			LOG_INFO("Vc instance get the prepared value, desc(%s)", PbftDesc::GetPbft(pbft).c_str());
 		}
 
-		//delete uncommited  instance
+		//Delete uncommited instances
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
 			) {
@@ -1174,7 +1174,7 @@ namespace bumo {
 		}
 
 		ValueSaver saver;
-		//enter to new view
+		//Enter the new view
 		view_number_ = vc_instance.view_number_;
 		view_active_ = true;
 		saver.SaveValue(PbftDesc::VIEW_ACTIVE, view_active_ ? 1 : 0);
@@ -1224,7 +1224,7 @@ namespace bumo {
 				instance.pre_prepare_.value(), 
 				proof.SerializeAsString(),true);
 
-			//delete the older check point
+			//Delete the old check point
 			for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end();) {
 				if (iter->first.sequence_ <= index.sequence_ - ckp_interval_ / 2) {
 					instances_.erase(iter++);
@@ -1318,7 +1318,7 @@ namespace bumo {
 		
 		protocol::PbftViewChangeWithRawValue *vc_raw = pbft->mutable_view_change_with_rawvalue();
 
-		//add view change
+		//Add view change
 		protocol::PbftEnv *pbft_env_inner = vc_raw->mutable_view_change_env();
 		protocol::Pbft *pbft_inner = pbft_env_inner->mutable_pbft();
 		pbft_inner->set_round_number(0);
@@ -1333,7 +1333,7 @@ namespace bumo {
 			*vc_raw->mutable_prepared_set() = prepared_set;
 			LOG_INFO("Get prepared value again, desc(%s)", PbftDesc::GetPbft(prepared_set.pre_prepare().pbft()).c_str());
 		} else{
-			//add prepared set
+			//Add prepared set
 			for (PbftInstanceMap::reverse_iterator iter_instance = instances_.rbegin();
 				iter_instance != instances_.rend();
 				iter_instance++) {
@@ -1342,10 +1342,10 @@ namespace bumo {
 				if (index.sequence_ > pviewchange->sequence() && instance.phase_ == PBFT_PHASE_PREPARED) {
 					protocol::PbftPreparedSet *prepared_set_inner = vc_raw->mutable_prepared_set();
 
-					//add prepared message,add pre-prepare message
-					*prepared_set_inner->mutable_pre_prepare() = instance.msg_buf_[0][0];//add prepreare message
+					//Add prepared message, add pre-prepared message
+					*prepared_set_inner->mutable_pre_prepare() = instance.msg_buf_[0][0];//Add prepreared message
 
-					//add prepare message
+					//Add prepared message.
 					for (size_t i = 0; i < instance.msg_buf_[1].size(); i++) {
 						*prepared_set_inner->add_prepare() = instance.msg_buf_[1][i];
 					}
@@ -1357,7 +1357,7 @@ namespace bumo {
 		}
 	
 
-		//add view change value digest
+		//Add view change value digest
 		if (vc_raw->has_prepared_set()) {
 			const protocol::PbftEnv &pp_pbft_env = vc_raw->prepared_set().pre_prepare();
 			const protocol::PbftPrePrepare &pp_pbft = pp_pbft_env.pbft().pre_prepare();
@@ -1365,12 +1365,12 @@ namespace bumo {
 		}
 
 
-		//add view change signature
+		//Add view change signature
 		protocol::Signature *sig = pbft_env_inner->mutable_signature();
 		sig->set_public_key(private_key_.GetEncPublicKey());
 		sig->set_sign_data(private_key_.Sign(pbft_inner->SerializeAsString()));
 
-		//add view change raw value signature
+		//Add view change raw value signature
 		protocol::Signature *sig_out = env->mutable_signature();
 		sig_out->set_public_key(private_key_.GetEncPublicKey());
 		sig_out->set_sign_data(private_key_.Sign(pbft->SerializeAsString()));
@@ -1393,7 +1393,7 @@ namespace bumo {
 		for (PbftPhaseVector::iterator iter = vc_instance.msg_buf_.begin(); iter != vc_instance.msg_buf_.end(); iter++) {
 			const protocol::PbftEnv &env_out = *iter;
 
-			//get the inner view change env
+			//Get the inner view change env
 			*pnewview->add_view_changes() = env_out.pbft().view_change_with_rawvalue().view_change_env();
 		}
 
@@ -1629,7 +1629,7 @@ namespace bumo {
 
 	void Pbft::ClearNotCommitedInstance() {
 		ValueSaver saver;
-		//discard the other log
+		//Discard the other log
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
 			) {
@@ -1658,7 +1658,7 @@ namespace bumo {
 				return false;
 			}
 
-			//compare view number
+			//Compare view number
 			if (pbft_proof.commits_size() > 0) {
 				const protocol::PbftEnv &env = pbft_proof.commits(0);
 				const protocol::Pbft &pbft = env.pbft();
@@ -1672,7 +1672,7 @@ namespace bumo {
 			}
 		}
 
-		//compare the validators
+		//Compare the validators.
 		bool validator_changed = (validators.validators_size() != validators_.size());
 		int32_t validator_index = 0;
 		for (int32_t i = 0; i < validators.validators_size(); i++) {
@@ -1726,7 +1726,7 @@ namespace bumo {
 			LOG_INFO("%s enter the new view(number:" FMT_I64 ")", replica_id_ >= 0 ? (IsLeader() ? "Primary" : "replica") : "SynNode", view_number_);
 			saver.SaveValue(PbftDesc::VIEWNUMBER_NAME, view_number_);
 
-			//delete other not ended view change instance or other view change instance which sequence is less than 5
+			//Delete other incomplete view change instances or other view change instances whose sequence is less than 5.
 			for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end();) {
 				if (iter_vc->second.end_time_ == 0) {
 					LOG_INFO("Delete the view change instance (vn:" FMT_I64 ") that is not complete", iter_vc->second.view_number_);
@@ -1745,7 +1745,7 @@ namespace bumo {
 			saver.Commit();
 		}
 
-		//check the view number and validators
+		//Check the view number and validators.
 		return true;
 	}
 
@@ -1758,7 +1758,7 @@ namespace bumo {
 		size_t total_size = temp_vs.size();
 		size_t qsize = GetQuorumSize(temp_vs.size()) + 1;
 		
-		//check proof
+		//Check proof
 		protocol::PbftProof pbft_evidence;
 		if (!pbft_evidence.ParseFromString(proof)) {
 			LOG_ERROR("Parse from proof string failed");
