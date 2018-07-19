@@ -391,7 +391,7 @@ namespace bumo {
 
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
 
-		//check previous ledger sequence
+		//Check the previous ledger sequence.
 		if (consensus_value.ledger_seq() != lcl.seq() + 1) {
 			LOG_ERROR("Check value failed, previous ledger seq(" FMT_I64 ") + 1 not equal to consensus message ledger seq( " FMT_I64 ")",
 				lcl.seq(),
@@ -399,7 +399,7 @@ namespace bumo {
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		//check previous hash
+		//Check the previous hash.
 		if (consensus_value.previous_ledger_hash() != lcl.hash()) {
 			LOG_ERROR("Check value failed, previous ledger(seq:" FMT_I64 ") hash(%s) not equal to consensus message ledger hash(%s)",
 				lcl.seq(),
@@ -439,7 +439,7 @@ namespace bumo {
 				}
 			}
 
-			//normal block should not exit the upgarde
+			//The 'upgrade' field should not exist in normal blocks.
 			bool new_validator_exist = !upgrade.new_validator().empty();
 			std::string consensus_value_hash = HashWrapper::Crypto(consensus_value.SerializeAsString());
 			if (hardfork_points_.end() == hardfork_points_.find(consensus_value_hash) && new_validator_exist) {
