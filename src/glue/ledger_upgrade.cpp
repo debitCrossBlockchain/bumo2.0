@@ -42,7 +42,7 @@ namespace bumo {
 		do {
 			utils::MutexGuard guard(lock_);
 
-			//delete the expire
+			//Delete the expired
 			for (LedgerUpgradeFrmMap::iterator iter = current_states_.begin();
 				iter != current_states_.end();
 				) {
@@ -57,7 +57,7 @@ namespace bumo {
 
 		} while (false);
 
-		//send the current state every 30s'
+		//Send the current state every 30s'
 		protocol::LedgerUpgradeNotify *notify = NULL;
 		do {
 			utils::MutexGuard guard(lock_);
