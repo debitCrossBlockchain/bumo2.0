@@ -259,6 +259,11 @@ namespace bumo {
 		//load validators config,create account of validators
 		const utils::StringList &list = Configure::Instance().genesis_configure_.validators_;
 		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
+			if (*iter == Configure::Instance().genesis_configure_.account_){
+				LOG_ERROR("Validator can't be the Genesis account.");
+				return false;
+			}
+
 			auto validator = validators_.add_validators();
 			validator->set_address(*iter);
 			validator->set_pledge_coin_amount(0);
