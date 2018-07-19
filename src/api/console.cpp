@@ -61,6 +61,45 @@ namespace bumo {
 		return true;
 	}
 
+	bool Console::ParseCmdline(const std::string &str, std::vector<std::string>& arr, std::string& errmsg) {
+		std::string arg;
+		bool in_double_quotes = false;
+		bool in_single_quotes = false;
+		for (std::string::size_type i = 0; i < str.length(); i++) {
+			if (str[i] == '\"') {
+				in_double_quotes = !in_double_quotes;
+				continue;
+			}
+			if (str[i] == '\'') {
+				in_single_quotes = !in_single_quotes;
+				continue;
+			}
+
+			if (str[i] == ' ' && !in_double_quotes && !in_single_quotes) {
+				arr.push_back(arg);
+				arg.clear();
+				continue;
+			}
+
+			if (str[i] == '\\') {
+				i++;
+				if (i > str.length()) {
+					errmsg = "unexpected occurrence of '\\' at end of string";
+					return false;
+				}
+			}
+			arg += str[i];
+		}
+		if (in_single_quotes || in_double_quotes) {
+			errmsg = "quote is not closed";
+			return false;
+		}
+		if (arg.length() > 0) {
+			arr.push_back(arg);
+		}
+		return true;
+	}
+
 	extern bool g_enable_;
 	extern bool g_ready_;
 	void Console::Run(utils::Thread *thread) {
@@ -74,7 +113,13 @@ namespace bumo {
 			std::cout << "> ";
 			std::getline(std::cin, input);
 			
-			utils::StringVector args = utils::String::Strtok(utils::String::Trim(input), ' ');
+			
+			std::vector<std::string> args;
+			std::string errmsg;
+			if (!ParseCmdline(utils::String::Trim(input), args, errmsg)) {
+				std::cout << "parse command line error, " << errmsg << std::endl;
+				continue;
+			}
 			if (args.size() < 1) continue;
 
 			ConsolePocMap::iterator iter = funcs_.find(args[0]);
