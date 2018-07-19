@@ -233,12 +233,12 @@ namespace bumo {
 			LOG_ERROR("Transaction p2p data size(" FMT_SIZE ") too large", message.data().size());
 			return false;
 		}
-
+		/*
 		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data())) {
 			LOG_TRACE("Transaction from id(" FMT_I64 ") queued", conn_id);
 			return true;
 		}
-
+		*/
 		//if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
 		protocol::TransactionEnv tran;
 		if (!tran.ParseFromString(message.data())) {
