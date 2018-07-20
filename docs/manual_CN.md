@@ -26,20 +26,11 @@
         - [创世区块](#创世区块)
         - [日志配置](#日志配置)
         - [多节点配置说明](#多节点配置说明)
-        - [节点间网络通信](#节点间网络通信)
-        - [共识参数](#共识参数)
-        - [区块参数](#区块参数)
-        - [配置同步节点](#配置同步节点)
-        - [加密数据配置](#加密数据配置)
-        - [节点间网络通信](#节点间网络通信)
-        - [节点间网络通信](#节点间网络通信)
 - [__运维__](#运维)
     - [服务启动与停止](#服务启动与停止)
     - [查看系统详细状态](#查看系统详细状态)
-    - [查看具体数据信息](#查看具体数据信息)
     - [清空数据库](#清空数据库)   
     - [创建硬分叉](#创建硬分叉)   
-    - [数据库存储](#数据库存储)   
 
 <!-- /TOC -->
 
@@ -133,7 +124,7 @@ make install
 
 #### __使用安装包安装__
 
-这里介绍另外一种安装方式，使用安装包安装：
+这里介绍另外一种安装方式，使用安装包安装：[安装包下载]( https://github.com/bumoproject/bumo/releases/ "download")
 
 解压
 
@@ -231,23 +222,27 @@ config.json
 #### 数据存储
 
 ```json
-    "db":{
-		"account_path": "data/account.db", //用来存储账号数据
-		"ledger_path": "data/ledger.db", //存储区块数据
-		"keyvalue_path": "data/keyvalue.db" //存储共识数据
+    "db":
+    {
+        "account_path": "data/account.db", //用来存储账号数据
+        "ledger_path": "data/ledger.db", //存储区块数据
+        "keyvalue_path": "data/keyvalue.db" //存储共识数据
     }
 ```
 #### 节点间网络通信
 ```json
-    "p2p":{
-        "network_id":10000,//网络ID,区分测试路和主网
+    "p2p":
+    {
+        "network_id":30000,//网络 ID
         //共识网络
-        "consensus_network":{
-            "heartbeat_interval":60,
-            "listen_port":16001,//已监听的端口
-            "target_peer_connection":50,
-            "known_peers":[
-                "127.0.0.1:16001"//连接其他节点
+        "consensus_network":
+        {
+            "heartbeat_interval":60, //心跳周期，秒
+            "listen_port":36001,//已监听的端口
+            "target_peer_connection":50,  //最大主动连接节点数
+            "known_peers":
+            [
+                "127.0.0.1:36001"//连接其他节点
             ]
         }
     }
@@ -257,93 +252,228 @@ config.json
 
 ```json
     "webserver":{
-        "listen_addresses":"0.0.0.0:16002"
+        "listen_addresses":"0.0.0.0:16002" 
     }
 ```
 
 #### WebSocket API 配置 
 
 ```json
-    "wsserver":{
-        "listen_address":"0.0.0.0:16003"
+    "wsserver":
+    {
+        "listen_address":"0.0.0.0:36003"
     }
 ```
 
 #### 区块配置
 
 ```json
-    "ledger":{
-        "validation_address":"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",//验证节点地址，同步节点或者钱包不需要配置
-        "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54", //验证节点私钥，同步节点或者钱包不需要配置
+    "ledger":
+    {
+        "validation_address":"buQmtDED9nFcCfRkwAF4TVhg6SL1FupDNhZY",//验证节点地址，同步节点或者钱包不需要配置
+        "validation_private_key": "e174929ecec818c0861aeb168ebb800f6317dae1d439ec85ac0ce4ccdb88487487c3b74a316ee777a3a7a77e5b12efd724cd789b3b57b063b5db0215fc8f3e89", //验证节点私钥，同步节点或者钱包不需要配置
         "max_trans_per_ledger":1000,  //单个区块最大交易个数
-        "tx_pool":{
-            "queue_limit":10240,
-            "queue_per_account_txs_limit":64
+        "tx_pool":                      //交易池配置
+        {
+            "queue_limit":10240,            //交易池总量限制
+            "queue_per_account_txs_limit":64    //单个账号的交易缓冲最大值
         }
     }
 ```
-#### 创世区块
+
+`validation_address` 和 `validation_private_key` 可以通过 bumo 程序命令行工具获得，请妥善保存该账号信息，丢失后将无法找回。
+```
+    [root@bumo ~]# cd /usr/local/buchain/bin
+    [root@bumo bin]#./bumo --create-account
+
+    {
+        "address" : "buQmtDED9nFcCfRkwAF4TVhg6SL1FupDNhZY", //地址
+        "private_key" : "privbsZozNs3q9aixZWEUzL9ft8AYph5DixN1sQccYvLs2zPsPhPK1Pt", //私钥
+        "private_key_aes" : "e174929ecec818c0861aeb168ebb800f6317dae1d439ec85ac0ce4ccdb88487487c3b74a316ee777a3a7a77e5b12efd724cd789b3b57b063b5db0215fc8f3e89", //AES 加密的私钥
+        "public_key" : "b00108d329d5ff69a70177a60bf1b68972576b35a22d99d0b9a61541ab568521db5ee817fea6", //公钥
+        "public_key_raw" : "08d329d5ff69a70177a60bf1b68972576b35a22d99d0b9a61541ab568521db5e", //原始公钥
+        "sign_type" : "ed25519" //ed25519 加密方式
+    }
+```
+
+### 创世区块
 ```json
-   "genesis": {
+   "genesis": 
+   {
         "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3", //创世区块地址
-        "slogan" : "a new era of value",
-        "fees": {
+        "slogan" : "a new era of value",  //存储在创世区块中的标语
+        "fees": 
+        {
             "base_reserve": 10000000,  //账号最低预留费
-            "byte_fee": 1000           //字节费
+            "gas_price": 1000          //字节费
         },
         "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY"] //验证节点区块列表
     }
 ```
-    同一个区块链上的 `genesis` 配置，必须保持一致
+同一个区块链上的 `genesis` 配置，必须保持一致
 
+`account`  可以通过 bumo 程序命令行工具 `./bumo --create-account` 获取，请妥善保存该账号信息，丢失后将无法找回。
 #### 日志配置
 
 ```json
-    "logger":{
-        "path":"log/bumo.log", // 日志目录
+    "logger":
+    {
+        "path":"log/buchain.log", // 日志目录
         "dest":"FILE|STDOUT|STDERR", //输出文件分类
         "level":"TRACE|INFO|WARNING|ERROR|FATAL",//日志级别
-        "time_capacity":1,
-        "size_capacity":10,
-        "expire_days":10
+        "time_capacity":1, //时间容量，天
+        "size_capacity":10, //大小容量，兆
+        "expire_days":10  //清理日志周期，天
     }
 ```
 
 #### 多节点配置说明
 
-- 下面示例是配置多个节点在一条链上运行示例，配置多节点主要修改p2p、validation和ledger这三块的设置
 
-#### 节点间网络通信
+以上章节介绍了配置文件的基本参数。本节以两个验证节点和一个同步节点为例，介绍多节点在一条链的配置，其中需要修改 p2p、validation 和 ledger 这三模块，具体示例如下
 
-- config.p2p.consensus_network.known_peers 填写其他节点的 ip 以及 port
+p2p 的 known_peers 必须为其他已知节点的 IP 和端口，用于节点之间相互连接
+``` json
+验证节点一：
+"p2p":
+{
+    "network_id":30000,
+    "consensus_network":
+    {
+        "heartbeat_interval":60,
+        "listen_port":36001,
+        "target_peer_connection":50,
+        "known_peers":
+        [
+            "192.168.1.102:36001",   //节点二的 IP 和端口
+            "192.168.1.103:36001"   //节点三的 IP 和端口
+        ]
+    }
+}
 
-#### 共识参数
+验证节点二：
+"p2p":
+{
+    "network_id":30000,
+    "consensus_network":
+    {
+        "heartbeat_interval":60,
+        "listen_port":36001,
+        "target_peer_connection":50,
+        "known_peers":
+        [
+            "192.168.1.101:36001",   //节点一的 IP 和端口
+            "192.168.1.103:36001"   //节点三的 IP 和端口
+        ]
+    }
+}
 
-- validators 填写每个节点 validation 的 address
-- address 与 node_private_key是成对应关系
-
-#### 区块参数
-- config.ledger.genesis_account 是创世账号，同一条链上，每个节点配置中 genesis_account 的值必须一致
-
-注意：运行前请确保每个节点的初始数据是一致，否则无法达成共识产生区块
-
-#### 配置同步节点
- - 配置同步节点与验证节点有一点不同的是共识配置中validators不需要填写同步节点validation的address
- 
-#### 加密数据配置
-配置文件中所有隐私数据都是加密存储的，解密密钥都是被硬编码在程序中。所以拿到密码明文后需要经过如下转换才可配置：
-
-- 命令./bin/bumo --aes-crypto [参数]
-
-```bash
-[root@localhost buchain]# ./bin/bumo --aes-crypto root 
-e2ba44bf0b27f0acbe7b5857e3bc6348
+同步节点三：
+"p2p":
+{
+    "network_id":30000,
+    "consensus_network":
+    {
+        "heartbeat_interval":60,
+        "listen_port":36001,
+        "target_peer_connection":50,
+        "known_peers":
+        [
+            "192.168.1.101:36001",   //节点一的 IP 和端口
+            "192.168.1.102:36001"    //节点二的 IP 和端口
+        ]
+    }
+}
 ```
-- 需加密配置项 
 
-名称 | 描述 
-|:--- | --- 
-| config.validation.node_private_key | 共识节点私钥
+验证节点的 ledger 的 validation_address 和 validation_private_key 必须要匹配。并且需要把所有验证节点的 validation_address 填写到 genesis.validators 里
+
+``` json
+验证节点一：
+"ledger":
+{
+    "validation_address":"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",//验证节点一地址，同步节点或者钱包不需要配置
+    "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54", //验证节点二的私钥，同步节点或者钱包不需要配置
+    "max_trans_per_ledger":1000,
+    "tx_pool":
+    {
+        "queue_limit":10240,
+        "queue_per_account_txs_limit":64
+    }
+}
+
+验证节点二：
+"ledger":
+{
+    "validation_address":"buQqkp5SDcsxpwWXQ2QFQbvHKnZ199HY3dHm",//验证节点二地址，同步节点或者钱包不需要配置
+    "validation_private_key": "1cb0151ec2b23cb97bf94d86ee1100582f9f5fbfdfe40a69edae2d2b8711395c40c1da859ac0bc93240a8a70c4a06779ed06d299880417d71fc51c1a0267875f", //验证节点二的私钥，同步节点或者钱包不需要配置
+    "max_trans_per_ledger":1000,
+    "tx_pool":
+    {
+        "queue_limit":10240,
+        "queue_per_account_txs_limit":64
+    }
+}
+
+同步节点三：
+"ledger":
+{
+    "max_trans_per_ledger":1000,
+    "tx_pool":
+    {
+        "queue_limit":10240,
+        "queue_per_account_txs_limit":64
+    }
+}
+```
+
+同一个区块链上的 `genesis` 配置，必须保持保持必须一致
+
+```json
+验证节点一：
+"genesis": 
+{
+    "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+    "slogan" : "a new era of value",
+    "fees": 
+    {
+        "base_reserve": 10000000,
+        "gas_price": 1000
+    },
+    "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY", "buQqkp5SDcsxpwWXQ2QFQbvHKnZ199HY3dHm"]  //需要配置所有的验证节点地址，如果有两个验证节点，则配置两个地址。
+}
+
+验证节点二：
+"genesis": 
+{
+    "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+    "slogan" : "a new era of value",
+    "fees": 
+    {
+        "base_reserve": 10000000,
+        "gas_price": 1000
+    },
+    "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY", "buQqkp5SDcsxpwWXQ2QFQbvHKnZ199HY3dHm"]  //需要配置所有的验证节点地址，如果有两个验证节点，则配置两个地址。
+}
+
+同步节点三：
+"genesis": 
+{
+    "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+    "slogan" : "a new era of value",
+    "fees": 
+    {
+        "base_reserve": 10000000,
+        "gas_price": 1000
+    },
+    "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY", "buQqkp5SDcsxpwWXQ2QFQbvHKnZ199HY3dHm"]  //需要配置所有的验证节点地址，如果有两个验证节点，则配置两个地址。
+}
+```
+
+注意：运行前请确保每个节点的初始数据是一致，否则无法达成共识产生区块。
+
+`account`，`validation_address` 可以通过 bumo 程序命令行工具 `./bumo --create-account` 获取，请妥善保存该账号信息，丢失后将无法找回。
+
 
 ## __运维__
 ### 服务启动与停止
@@ -384,30 +514,7 @@ e2ba44bf0b27f0acbe7b5857e3bc6348
     "web server":Object{...},
 
 ```
-### 查看具体数据信息
 
-```bash
-[root@centos7x64-201~]#curl 127.0.0.1:19333/getAccount?address=a0024111d1cc90ac8ee0abd5f957e08e3e1b442b581e88
-{
-  "error_code": 0,
-  "result": {
-    "address": "a0024111d1cc90ac8ee0abd5f957e08e3e1b442b581e88",
-    "assets": null,
-    "assets_hash": "ad67d57ae19de8068dbcd47282146bd553fe9f684c57c8c114453863ee41abc3",
-    "contract": null,
-    "metadatas": null,
-    "priv": {
-      "master_weight": 1,
-      "thresholds": {
-        "tx_threshold": 1
-      }
-    },
-    "storage_hash": "ad67d57ae19de8068dbcd47282146bd553fe9f684c57c8c114453863ee41abc3"
-  }
-} 
-[root@centos7x64-201 ~]#
-
-```
 ### 清空数据库
 ```bash
 buchain/bin/bumo --dropdb
@@ -438,5 +545,3 @@ Create hard fork ledger successful, seq(20), consensus value hash(**7aa332f05748
 
 - 启动节点服务即可生效
 
-### 数据库存储
-BUMO 区块链存储的数据默认是存放在 buchain/data 目录下，如有需要可修改配置文件中数据存储部分
