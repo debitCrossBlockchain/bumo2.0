@@ -118,7 +118,7 @@ function unimpeachFullNode(params) {
 
 function query(input_str){
     let input  = JSON.parse(input_str);
-	assert(typeof input.address === 'string', 'Arg-endpoint and arg-address should be string');
+	assert(typeof input.address === 'string', 'Arg-address should be string');
     let result = {};
     if(input.method === 'getFullNode'){
         result.info = getFullNode(input.address);

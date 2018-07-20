@@ -26,7 +26,7 @@ namespace bumo {
 
 	bool FullNode::loadFromJson(Json::Value& node) {
 		addr_ = node["addr"].asString();
-		addr_hash_ = HashWrapper::Crypto(addr_);
+		addr_hash_ = utils::String::BinToHexString(HashWrapper::Crypto(addr_));
 		endpoint_ = node["endpoint"].asString();
 		apply_time_ = node["apply_time"].asInt64();
 
@@ -60,17 +60,18 @@ namespace bumo {
 	std::string& FullNode::getAddressHash() {
 		return addr_hash_;
 	}
-
+	void FullNode::setAddressHash() {
+		addr_hash_ = utils::String::BinToHexString(HashWrapper::Crypto(addr_));
+	}
 	std::string& FullNode::getEndPoint() {
 		return endpoint_;
 	}
 
-	Json::Value& FullNode::toJson() {
-		std::shared_ptr<Json::Value> node = std::make_shared<Json::Value>();
-		(*node)["addr"] = addr_;
-		(*node)["addr_hash"] = addr_hash_;
-		(*node)["endpoint"] = endpoint_;
-		(*node)["apply_time"] = apply_time_;
+	void FullNode::toJson(Json::Value& node) {
+		node["addr"] = addr_;
+		node["addr_hash"] = addr_hash_;
+		node["endpoint"] = endpoint_;
+		node["apply_time"] = apply_time_;
 
 		Json::Value impeach_list;
 		Json::Value impeach;
@@ -82,8 +83,7 @@ namespace bumo {
 			impeach[it->first] = value;
 			impeach_list.append(impeach);
 		}
-		(*node)["impeach_list"] = impeach_list;
-		return *node;
+		node["impeach_list"] = impeach_list;
 	}
 	
 	bool FullNode::updateImpeach(std::string& report_addr, ImpeachInfo& info) {

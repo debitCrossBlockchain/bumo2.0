@@ -79,7 +79,9 @@ namespace bumo {
 		Json::Value fullnodes;
 		for (auto it = full_node_info_.begin(); it != full_node_info_.end(); it++)
 		{
-			fullnodes.append(it->second->toJson());
+			Json::Value node;
+			it->second->toJson(node);
+			fullnodes.append(node);
 		}
 		data["full_nodes"] = fullnodes;
 		Json::Value sorted_addr_list;
@@ -130,6 +132,7 @@ namespace bumo {
 			LOG_INFO("Full node address %s already exist", fp->getAddress().c_str());
 			return true;
 		}
+		fp->setAddressHash();
 		try
 		{
 			full_node_info_.insert(std::make_pair(fp->getAddress(), fp));
@@ -165,17 +168,11 @@ namespace bumo {
 		return true;
 	}
 
-	Json::Value& FullNodeManager::getFullNode(const std::string& addr) {
-		std::shared_ptr<Json::Value> node;
+	void FullNodeManager::getFullNode(const std::string& addr, Json::Value& node) {
 		FullNodePointer fp = get(addr);
 		if (fp) {
-			*node = fp->toJson();
+			fp->toJson(node);
 		}
-		else {
-			node = std::make_shared<Json::Value>();
-			LOG_ERROR("Failed to get full node %s", addr.c_str());
-		}
-		return *node;
 	}
 
 	bool FullNodeManager::setFullNode(Json::Value& node, const std::string& operation, std::shared_ptr<WRITE_BATCH> batch) {
@@ -206,6 +203,7 @@ namespace bumo {
 			LOG_ERROR("Unknown full node operation, %s", operation.c_str());
 			return false;
 		}
+		LOG_INFO("Set full node done, %s", node.toFastString().c_str());
 		return true;
 	}
 

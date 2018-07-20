@@ -660,7 +660,7 @@ namespace bumo {
 			std::shared_ptr<Json::Value> item;
 			item = it->second.value_;
 			std::string operation = (*item)["operation"].asString();
-			if (FullNodeManager::Instance().setFullNode((*item)["fullnode"], operation, batch)) {
+			if (!FullNodeManager::Instance().setFullNode((*item)["fullnode"], operation, batch)) {
 				LOG_ERROR("Failed to set full node %s when notify ledger close", (*item)["fullnode"].asCString());
 				update_done = false;
 			}

@@ -1213,12 +1213,16 @@ namespace bumo{
 
 			std::string address = std::string(ToCString(v8::String::Utf8Value(args[0])));
 
-			Json::Value jsonFullNode;
+			std::shared_ptr<Json::Value> jsonFullNode;
 
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			jsonFullNode = ledger_context->GetTopTx()->environment_->GetFullNode(address);
+			ledger_context->GetTopTx()->environment_->GetFullNode(address, jsonFullNode);
+			if (!jsonFullNode) {
+				error_desc = "No such full node, " + address;
+				break;
+			}
 
-			std::string strvalue = jsonFullNode.toFastString();
+			std::string strvalue = jsonFullNode->toFastString();
 			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
 

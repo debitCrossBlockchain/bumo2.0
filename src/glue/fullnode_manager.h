@@ -62,7 +62,7 @@ namespace bumo {
 		bool update(FullNodePointer fp);
 		
 		// called in LedgerManager::CloseLedger after AtomMap commit
-		Json::Value& getFullNode(const std::string& addr);
+		void getFullNode(const std::string& addr, Json::Value& node);
 		bool setFullNode(Json::Value& node, const std::string& operation, std::shared_ptr<WRITE_BATCH> batch);
 		bool updateDb(std::shared_ptr<WRITE_BATCH> batch);
 

@@ -202,14 +202,15 @@ namespace bumo{
 		return settings_.Set(validatorsKey, std::make_shared<Json::Value>(validators));
 	}
 
-	Json::Value& Environment::GetFullNode(const std::string& address){
-		std::shared_ptr<Json::Value> fullnode;
+	void Environment::GetFullNode(const std::string& address, std::shared_ptr<Json::Value> fullnode){
 		fullnodes_.Get(address, fullnode);
 
 		if (!fullnode){
-			return FullNodeManager::Instance().getFullNode(address);
+			Json::Value node;
+			FullNodeManager::Instance().getFullNode(address, node);
+			fullnode = std::make_shared<Json::Value>(node);
+			fullnodes_.Set(address, fullnode);
 		}
-		return *fullnode;
 	}
 
 	bool Environment::SetFullNode(const Json::Value& fullnode, const std::string& operation) {

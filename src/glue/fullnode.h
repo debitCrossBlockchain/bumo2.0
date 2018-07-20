@@ -38,9 +38,10 @@ namespace bumo {
 
 		std::string& getAddress();
 		std::string& getAddressHash();
+		void setAddressHash();
 		std::string& getEndPoint();
 		int64_t getLastCheckTime();
-		Json::Value& toJson();
+		void toJson(Json::Value& node);
 		bool loadFromJson(Json::Value& node);
 
 		// ...
