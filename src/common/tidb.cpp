@@ -4,6 +4,7 @@
 #include <iostream>
 #include <utils/strings.h>
 #include <utils/logger.h>
+#include <utils/thread.h>
 #include <sstream>
 #include <chrono>
 
@@ -11,8 +12,12 @@
 using std::chrono::high_resolution_clock;
 using std::chrono::milliseconds;
 
+utils::ReadWriteLock kv_ledger_lock_;
+utils::ReadWriteLock thread_lock_;
 
 using namespace std;
+
+
 
 
 namespace bumo {
@@ -27,6 +32,17 @@ namespace bumo {
 #define REPLACE_STMT_SQL	"replace into kv_table(kv_key,kv_data) values (?,?)"
 
 #define SELECT_STMT_SQL		"select kv_key,kv_data from kv_table where kv_key=? "
+
+#define INSERT_SQL	    "insert into kv_table(kv_key,kv_data) values (?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?),(?,?) \
+						ON DUPLICATE KEY UPDATE kv_key=VALUES(kv_key),kv_data=VALUES(kv_data)"
+
+
+	struct tempStu
+	{
+		MysqlDriver * m_pMysqlDriver;
+		std::map<std::string, std::string> *p_map;
+	};
+
 
 	const char *IsNull(char *source)
 	{
@@ -238,6 +254,7 @@ namespace bumo {
 			{
 				//show error msg£º
 				LOG_ERROR("error errcode=%d ,sql:%s"  , mysql_errno(m_pMysql),sql);
+				ret = mysql_errno(m_pMysql);
 				LOG_ERROR("Error mysql_real_query failed,ret=%d , error:%s"  , ret,mysql_error(m_pMysql));
 				return -1 * ret;
 			}
@@ -319,6 +336,7 @@ namespace bumo {
 	{
 		mysql_close(m_pMysql);
 		m_pMysql = NULL;
+		LOG_INFO("close_mysql!");
 	}
 
 	int64_t MysqlDriver::select_db(const char*db_name)
@@ -383,6 +401,7 @@ namespace bumo {
 		m_Password = pwd;
 		m_Port = port;
 		m_pMysqlDriver = new MysqlDriver();
+		m_pMysqlDriver2 = new MysqlDriver();
 		initialize();
 	}
 
@@ -393,6 +412,11 @@ namespace bumo {
 			delete m_pMysqlDriver;
 		}
 		m_pMysqlDriver = NULL;
+		if (m_pMysqlDriver2)
+		{
+			delete m_pMysqlDriver2;
+		}
+		m_pMysqlDriver2 = NULL;
 	}
 
 	bool tidb::initialize()
@@ -449,11 +473,21 @@ namespace bumo {
 				if (initDB(db_name.c_str()))
 				{
 					iRet = m_pMysqlDriver->select_db(db_name.c_str());
+					iRet = m_pMysqlDriver2->mysql_connect(m_Host_ip.c_str(), m_User_name.c_str(), m_Password.c_str(), db_name.c_str(), m_Port);
+					if (0 != iRet)
+					{
+						return false;
+					}
 					create_kv_table();
 					return init_stmt();
 				}
 
 			}
+			return false;
+		}
+		iRet = m_pMysqlDriver2->mysql_connect(m_Host_ip.c_str(), m_User_name.c_str(), m_Password.c_str(), db_name.c_str(), m_Port);
+		if (0 != iRet)
+		{
 			return false;
 		}
 
@@ -471,8 +505,10 @@ namespace bumo {
 				return false;
 			stmt_sql += ",(?,?)";
 		}
-//		if (!m_pMysqlDriver->init_stmt(SELECT_STMT_SQL,10))
-//			return false;
+		if (!m_pMysqlDriver->init_stmt(INSERT_SQL,10))
+			return false;
+		if (!m_pMysqlDriver2->init_stmt(INSERT_SQL, 10))
+			return false;
 		return true;
 	}
 
@@ -494,7 +530,7 @@ namespace bumo {
 		int64_t iRet = m_pMysqlDriver->mysql_exec(tmpStr.c_str(), get_table_value, (void *)&value);
 		//int64_t iRet = m_pMysqlDriver->mysql_select2(utils::encode_b64(key).c_str(), get_table_value, (void *)&value);
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
-		LOG_INFO("Get_Mysql key use time( " FMT_I64 " ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
+		LOG_INFO("Get_Mysql key use time( " FMT_I64 " ms),iRet=%d,value_len=%ld", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC),iRet,value.length());
 
 
 		return iRet;
@@ -506,26 +542,78 @@ namespace bumo {
 	{
 		//replace statement require   have >=1 unique/primary column£¬otherwise insert(ignore update) 
 		/*kv_data <= 16M ,but tidb:single KV entry <= 6MB*/
+		utils::WriteLockGuard guard(kv_ledger_lock_);
 		int64_t time_start = utils::Timestamp::HighResolution();
 		int64_t iRet = -1;
 
 		std::string tmpStr = utils::encode_b64(key);
 		iRet = do_replace_stmt(tmpStr, value);
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
-		LOG_INFO("Put_one key use time( " FMT_I64 " ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
+		LOG_INFO("Put_one key use time( " FMT_I64 " ms),iRet=%d,value_len=%ld", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), iRet, value.length());
 		if (iRet < 0)
 			return false;
 		return true;
 	}
 
+	void put_map(std::map<std::string, std::string> &batch_map)
+	{
+		const char * str_key = "bu12345678";
+		string str_value = "916daa78d264b3e2d9cff8aac84c943a834f49a62b7354d4fa228dab65515313";
+		char pKeyTemp[30];
+		int iNum = 0;
+		for (int i = 0; i < 10000; i++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				sprintf(pKeyTemp, "%s_%d_%d\0", str_key, i, iNum);
+				batch_map[string(pKeyTemp)] = str_value;
+				iNum++;
+			}
+		}
+	}
+
 	bool tidb::Put(WriteTidbBatch &value)
 	{
 		//todo: real write batch
-		int64_t time_start = utils::Timestamp::HighResolution();
+		utils::WriteLockGuard guard(kv_ledger_lock_);
 		std::map<std::string, std::string> batch_map = value.get_put_map();
+		//std::map<std::string, std::string> batch_map;
+		LOG_ERROR("start put_map");
+		//put_map(batch_map);
 		bool bRet = true;
+		LOG_ERROR("start do_replace");
+		int64_t time_start = utils::Timestamp::HighResolution();
+		//int64_t iRet = do_replace_stmt(batch_map);
 
-		int64_t iRet = do_replace_stmt(batch_map);
+		tempStu stu_arg[2];
+		stu_arg[0].m_pMysqlDriver = m_pMysqlDriver;
+		stu_arg[0].p_map = &batch_map;
+
+		stu_arg[1].m_pMysqlDriver = m_pMysqlDriver2;
+		stu_arg[1].p_map = &batch_map;
+
+
+		int64_t iRet = 0;
+		{
+			pthread_t id1, id2;
+			iRet = pthread_create(&id1, NULL, do_replace_stmt1, (void *)&stu_arg[0]);
+			if (iRet)
+			{
+				printf("Create pthread error!\n");
+				return 1;
+			}
+
+			iRet = pthread_create(&id2, NULL, do_replace_stmt2, (void *)&stu_arg[1]);
+			if (iRet)
+			{
+				printf("Create pthread error!\n");
+				return 1;
+			}
+
+			pthread_join(id1, NULL);
+			pthread_join(id2, NULL);
+		}
+
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
 
 		LOG_INFO("WriteTidbBatch use time( " FMT_I64 " ms),sql count=%d. data_len=%ld", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), batch_map.size(), iRet);
@@ -574,6 +662,217 @@ namespace bumo {
 
 	}
 	
+	//int64_t do_replace_stmt1(std::map<std::string, std::string> &in_map, MysqlDriver *m_pMysqlDriver)
+	void * do_replace_stmt1(void * st)
+	{
+		tempStu *temp_st = (tempStu *)st;
+		std::map<std::string, std::string> *in_map = temp_st->p_map;
+		MysqlDriver * m_pMysqlDriver = temp_st->m_pMysqlDriver;
+		int iSize = in_map->size() / 2;
+		if (in_map->size() <= 0)
+			return ((void *)0);
+		int64_t iBatchLen = 0;
+		int iSeq = 0;
+		int iCommitlen = strlen(REPLACE_STMT_SQL) + 7 * 9;
+		int iCount = 0;
+		MYSQL_BIND params[REPLACE_BATCH_NUM * 2];
+		memset(params, 0, sizeof(params));
+
+		std::map<std::string, std::string>::iterator iter = in_map->begin();
+		int i = 0;
+		std::string tmpStr[REPLACE_BATCH_NUM * 2];
+
+		int64_t time_start1 = utils::Timestamp::HighResolution();
+
+
+		while (iSize--)
+		{
+			tmpStr[i] = utils::encode_b64(iter->first);
+			//replace error about this data > 6M
+			if (tmpStr[i].length() + iter->second.length() > SINGLE_ENTRY_SIZE)
+			{
+				LOG_ERROR("data:%s length more than 6M ,len=%d!", iter->first.c_str(), tmpStr[i].length() + iter->second.length());
+				
+			}
+			//kv entry limit 100M
+			if (iCommitlen + tmpStr[i].length() + iter->second.length() > TRANS_SIZE_LIMIT)
+			{
+				LOG_INFO("more than TRANS_SIZE_LIMIT!");
+				if (i != 0 && m_pMysqlDriver->stmt_exec(params, (i - 1) / 2) < 0)
+				{
+					m_pMysqlDriver->roll_back();
+					LOG_ERROR("stmt_exec error!");
+					return ((void *)-1);
+				}
+				if (0 != m_pMysqlDriver->do_commit())
+				{
+					m_pMysqlDriver->roll_back();
+					LOG_ERROR("do_commit error:%s", m_pMysqlDriver->get_err_str().c_str());
+					return ((void *)-1);
+				}
+				tmpStr[0] = tmpStr[i];
+				i = 0;
+				iBatchLen += iCommitlen;
+				iCommitlen = strlen(REPLACE_STMT_SQL) + 7 * 9;
+				memset(params, 0, sizeof(params));
+			}
+
+			params[i].buffer_type = MYSQL_TYPE_STRING;
+			params[i].buffer = (void *)tmpStr[i].c_str();
+			params[i].buffer_length = tmpStr[i].length();
+			iCommitlen += params[i].buffer_length;
+			i++;
+			params[i].buffer_type = MYSQL_TYPE_MEDIUM_BLOB;
+			params[i].buffer = (void *)iter->second.c_str();
+			params[i].buffer_length = iter->second.length();
+			iCommitlen += params[i].buffer_length;
+			i++;
+			iCount++;
+			iter++;
+			//collect REPLACE_BATCH_NUM params set. or at the end .now excute sql
+			if (i == REPLACE_BATCH_NUM * 2 || iter == in_map->end() || iSize == 0)
+			{
+				//if (m_pMysqlDriver->stmt_exec(params, (i - 1) / 2) < 0)
+				if (m_pMysqlDriver->stmt_exec(params, 10) < 0)
+				{
+					m_pMysqlDriver->roll_back();
+					m_pMysqlDriver->do_commit();
+					LOG_ERROR("stmt_exec error!");
+					return ((void *)(-1 * iCommitlen));
+				}
+				if (iCount % 5000 == 0)
+				{
+					if (0 != m_pMysqlDriver->do_commit())
+					{
+						LOG_ERROR("do_commit error:%s", m_pMysqlDriver->get_err_str().c_str());
+						return ((void *)-1);
+					}
+					LOG_INFO("WriteTidbBatch_DO %d,%d", iCount, iCount % 5000);
+				}
+				i = 0;
+				memset(params, 0, sizeof(params));
+			}
+
+		}
+		utils::WriteLockGuard guard(thread_lock_);
+		if (0 != m_pMysqlDriver->do_commit())
+		{
+			LOG_ERROR("do_commit error:%s", m_pMysqlDriver->get_err_str().c_str());
+			return ((void *)-1);
+		}
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start1;
+		LOG_INFO("WriteTidbBatch_END use time( " FMT_I64 " ms) size=%d,do_count=%d", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), in_map->size(), in_map->size()/2);
+
+		iBatchLen += iCommitlen;
+		return ((void *)iBatchLen);
+		//return iCount;
+	}
+
+	void* do_replace_stmt2(void * st)
+	{
+		tempStu *temp_st = (tempStu *)st;
+		std::map<std::string, std::string> *in_map = temp_st->p_map;
+		MysqlDriver * m_pMysqlDriver = temp_st->m_pMysqlDriver;
+		int iSize = in_map->size() - in_map->size() / 2;
+		if (in_map->size() <= 0)
+			return ((void *)0);
+		int64_t iBatchLen = 0;
+		int iSeq = 0;
+		int iCommitlen = strlen(REPLACE_STMT_SQL) + 7 * 9;
+		int iCount = 0;
+		MYSQL_BIND params[REPLACE_BATCH_NUM * 2];
+		memset(params, 0, sizeof(params));
+
+		std::map<std::string, std::string>::reverse_iterator riter = in_map->rbegin();
+		int i = 0;
+		std::string tmpStr[REPLACE_BATCH_NUM * 2];
+
+		int64_t time_start1 = utils::Timestamp::HighResolution();
+
+
+		while (iSize--)
+		{
+			tmpStr[i] = utils::encode_b64(riter->first);
+			//replace error about this data > 6M
+			if (tmpStr[i].length() + riter->second.length() > SINGLE_ENTRY_SIZE)
+			{
+				LOG_ERROR("data:%s length more than 6M ,len=%d!", riter->first.c_str(), tmpStr[i].length() + riter->second.length());
+			}
+			//kv entry limit 100M
+			if (iCommitlen + tmpStr[i].length() + riter->second.length() > TRANS_SIZE_LIMIT)
+			{
+				LOG_INFO("more than TRANS_SIZE_LIMIT!");
+				if (i != 0 && m_pMysqlDriver->stmt_exec(params, (i - 1) / 2) < 0)
+				{
+					m_pMysqlDriver->roll_back();
+					LOG_ERROR("stmt_exec error!");
+					return ((void *)-1);
+				}
+				if (0 != m_pMysqlDriver->do_commit())
+				{
+					m_pMysqlDriver->roll_back();
+					LOG_ERROR("do_commit error:%s", m_pMysqlDriver->get_err_str().c_str());
+					return ((void *)-1);
+				}
+				tmpStr[0] = tmpStr[i];
+				i = 0;
+				iBatchLen += iCommitlen;
+				iCommitlen = strlen(REPLACE_STMT_SQL) + 7 * 9;
+				memset(params, 0, sizeof(params));
+			}
+
+			params[i].buffer_type = MYSQL_TYPE_STRING;
+			params[i].buffer = (void *)tmpStr[i].c_str();
+			params[i].buffer_length = tmpStr[i].length();
+			iCommitlen += params[i].buffer_length;
+			i++;
+			params[i].buffer_type = MYSQL_TYPE_MEDIUM_BLOB;
+			params[i].buffer = (void *)riter->second.c_str();
+			params[i].buffer_length = riter->second.length();
+			iCommitlen += params[i].buffer_length;
+			i++;
+			iCount++;
+			riter++;
+			//collect REPLACE_BATCH_NUM params set. or at the end .now excute sql
+			if (i == REPLACE_BATCH_NUM * 2 || riter == in_map->rend() || iSize == 0)
+			{
+				//if (m_pMysqlDriver->stmt_exec(params, (i - 1) / 2) < 0)
+				if (m_pMysqlDriver->stmt_exec(params, 10) < 0)
+				{
+					m_pMysqlDriver->roll_back();
+					m_pMysqlDriver->do_commit();
+					LOG_ERROR("stmt_exec error!");
+					return ((void *)(- 1 * iCommitlen));
+				}
+				if (iCount % 5000 == 0)
+				{
+					if (0 != m_pMysqlDriver->do_commit())
+					{
+						LOG_ERROR("do_commit error:%s", m_pMysqlDriver->get_err_str().c_str());
+						return ((void *)-1);
+					}
+					LOG_INFO("WriteTidbBatch_DO %d,%d", iCount, iCount % 5000);
+				}
+				i = 0;
+				memset(params, 0, sizeof(params));
+			}
+
+		}
+
+		if (0 != m_pMysqlDriver->do_commit())
+		{
+			LOG_ERROR("do_commit error:%s", m_pMysqlDriver->get_err_str().c_str());
+			return ((void *)-1);
+		}
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start1;
+		LOG_INFO("WriteTidbBatch_END use time( " FMT_I64 " ms) size=%d,do_count=%d", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC), in_map->size(), in_map->size()- in_map->size() / 2);
+
+		iBatchLen += iCommitlen;
+		return ((void *)iBatchLen);
+		//return iCount;
+	}
+
+	
 	int64_t tidb::do_replace_stmt(std::map<std::string, std::string> &in_map)
 	{
 		if (in_map.size() <= 0)
@@ -582,12 +881,17 @@ namespace bumo {
 		int iSeq = 0;
 		int iCommitlen = strlen(REPLACE_STMT_SQL)+7*9;
 
+		int iCount = 0;
 		MYSQL_BIND params[REPLACE_BATCH_NUM*2];
 		memset(params, 0, sizeof(params));
 
 		std::map<std::string, std::string>::iterator iter = in_map.begin();
 		int i = 0;
 		std::string tmpStr[REPLACE_BATCH_NUM * 2];
+
+		int64_t time_start1 = utils::Timestamp::HighResolution();
+
+
 		while (iter != in_map.end())
 		{
 			tmpStr[i] = utils::encode_b64(iter->first);
@@ -616,6 +920,7 @@ namespace bumo {
 			//kv entry limit 100M
 			if (iCommitlen + tmpStr[i].length() + iter->second.length() > TRANS_SIZE_LIMIT)
 			{
+				LOG_INFO("more than TRANS_SIZE_LIMIT!");
 				if (i!=0 && m_pMysqlDriver->stmt_exec(params, (i-1)/ 2 ) < 0)
 				{
 					m_pMysqlDriver->roll_back();
@@ -645,23 +950,35 @@ namespace bumo {
 			params[i].buffer_length = iter->second.length();
 			iCommitlen += params[i].buffer_length;
 			i++;
-
+			iCount++;
 			iter++;
 			//collect REPLACE_BATCH_NUM params set. or at the end .now excute sql
-			if (i == REPLACE_BATCH_NUM * 2  || iter == in_map.end())
+			if (i == REPLACE_BATCH_NUM * 2  || iter == in_map.end() )
 			{
-				if (m_pMysqlDriver->stmt_exec(params, (i - 1) / 2) < 0)
+				//if (m_pMysqlDriver->stmt_exec(params, (i - 1) / 2) < 0)
+				if (m_pMysqlDriver->stmt_exec(params, 10) < 0)
 				{
 					m_pMysqlDriver->roll_back();
 					m_pMysqlDriver->do_commit();
 					LOG_ERROR("stmt_exec error!");
-					return -1;
+					return -1 * iCommitlen;
+				}
+				if (iCount % 5000==0)
+				{
+					if (0 != m_pMysqlDriver->do_commit())
+					{
+						LOG_ERROR("do_commit error:%s", m_pMysqlDriver->get_err_str().c_str());
+						return -1;
+					}
+					LOG_INFO("WriteTidbBatch_DO %d,%d", iCount, iCount % 5000);
 				}
 				i = 0;
 				memset(params, 0, sizeof(params));
 			}
 		
 		} 
+		int64_t time_use = utils::Timestamp::HighResolution() - time_start1;
+		LOG_INFO("WriteTidbBatch_END use time( " FMT_I64 " ms)", (int64_t)(time_use / utils::MILLI_UNITS_PER_SEC));
 		if (0 != m_pMysqlDriver->do_commit())
 		{
 			LOG_ERROR("do_commit error:%s", m_pMysqlDriver->get_err_str().c_str());

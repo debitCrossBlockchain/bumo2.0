@@ -190,6 +190,7 @@ namespace bumo{
 	private:
 		//mysql driver
 		MysqlDriver *m_pMysqlDriver;
+		MysqlDriver *m_pMysqlDriver2;
 
 		//tidb host
 		std::string m_Host_ip ;
