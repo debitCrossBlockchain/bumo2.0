@@ -91,7 +91,7 @@ int main(int argc, char *argv[]){
 		bumo::InstallSignal();
 
 		if (arg.console_){
-			arg.log_dest_ = utils::LOG_DEST_FILE; //cancel the std output
+			arg.log_dest_ = utils::LOG_DEST_FILE; //Cancel the std output
 			bumo::Console &console = bumo::Console::Instance();
 			console.Initialize();
 			object_exit.Push(std::bind(&bumo::Console::Exit, &console));
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]){
 		utils::Daemon &daemon = utils::Daemon::Instance();
 		if (!bumo::g_enable_ || !daemon.Initialize((int32_t)1234))
 		{
-			LOG_STD_ERRNO("Initialize daemon failed", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_STD_ERRNO("Failed to initialize daemon", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
 		object_exit.Push(std::bind(&utils::Daemon::Exit, &daemon));
@@ -116,7 +116,7 @@ int main(int argc, char *argv[]){
 		}
 
 		if (!config.Load(config_path)){
-			LOG_STD_ERRNO("Load configure failed", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_STD_ERRNO("Failed to load configuration", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
 
@@ -130,13 +130,13 @@ int main(int argc, char *argv[]){
 		logger.SetExpireDays(logger_config.expire_days_);
 		if (!bumo::g_enable_ || !logger.Initialize((utils::LogDest)(arg.log_dest_ >= 0 ? arg.log_dest_ : logger_config.dest_),
 			(utils::LogLevel)logger_config.level_, log_path, true)){
-			LOG_STD_ERR("Initialize logger failed");
+			LOG_STD_ERR("Failed to initialize logger");
 			break;
 		}
 		object_exit.Push(std::bind(&utils::Logger::Exit, &logger));
-		LOG_INFO("Initialize daemon successful");
-		LOG_INFO("Load configure successful");
-		LOG_INFO("Initialize logger successful");
+		LOG_INFO("Initialize daemon successfully");
+		LOG_INFO("Load configure successfully");
+		LOG_INFO("Initialize logger successfully");
 
 		// end run command
 		bumo::Storage &storage = bumo::Storage::Instance();
@@ -146,11 +146,11 @@ int main(int argc, char *argv[]){
 			config.db_configure_.ledger_db_path_.c_str());
 
 		if (!bumo::g_enable_ || !storage.Initialize(config.db_configure_, arg.drop_db_)) {
-			LOG_ERROR("Initialize db failed");
+			LOG_ERROR("Failed to initialize db");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::Storage::Exit, &storage));
-		LOG_INFO("Initialize db successful");
+		LOG_INFO("Initialize db successfully");
 
 		if (arg.drop_db_) {
 			LOG_INFO("Drop db successfully");
@@ -182,92 +182,92 @@ int main(int argc, char *argv[]){
 
 		bumo::Global &global = bumo::Global::Instance();
 		if (!bumo::g_enable_ || !global.Initialize()){
-			LOG_ERROR_ERRNO("Initialize global variable failed", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_ERROR_ERRNO("Failed to initialize global variable", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::Global::Exit, &global));
-		LOG_INFO("Initialize global variable successful");
+		LOG_INFO("Initialize global variable successfully");
 
-		//consensus manager must be initialized before ledger manager and glue manager
+		//Consensus manager must be initialized before ledger manager and glue manager
 		bumo::ConsensusManager &consensus_manager = bumo::ConsensusManager::Instance();
 		if (!bumo::g_enable_ || !consensus_manager.Initialize(bumo::Configure::Instance().ledger_configure_.validation_type_)) {
-			LOG_ERROR("Initialize consensus manager failed");
+			LOG_ERROR("Failed to initialize consensus manager");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::ConsensusManager::Exit, &consensus_manager));
-		LOG_INFO("Initialize consensus manager successful");
+		LOG_INFO("Initialize consensus manager successfully");
 
 		bumo::LedgerManager &ledgermanger = bumo::LedgerManager::Instance();
 		if (!bumo::g_enable_ || !ledgermanger.Initialize()) {
-			LOG_ERROR("Initialize ledger manager failed");
+			LOG_ERROR("Failed to initialize ledger manager");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::LedgerManager::Exit, &ledgermanger));
-		LOG_INFO("Initialize ledger successful");
+		LOG_INFO("Initialize ledger successfully");
 
 		bumo::GlueManager &glue = bumo::GlueManager::Instance();
 		if (!bumo::g_enable_ || !glue.Initialize()){
-			LOG_ERROR("Initialize glue manager failed");
+			LOG_ERROR("Failed to initialize glue manager");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::GlueManager::Exit, &glue));
-		LOG_INFO("Initialize glue manager successful");
+		LOG_INFO("Initialize glue manager successfully");
 
 		bumo::PeerManager &p2p = bumo::PeerManager::Instance();
 		if (!bumo::g_enable_ || !p2p.Initialize(NULL, false)) {
-			LOG_ERROR("Initialize peer network failed");
+			LOG_ERROR("Failed to initialize peer network");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::PeerManager::Exit, &p2p));
-		LOG_INFO("Initialize peer network successful");
+		LOG_INFO("Initialize peer network successfully");
 
 		bumo::SlowTimer &slow_timer = bumo::SlowTimer::Instance();
 		if (!bumo::g_enable_ || !slow_timer.Initialize(1)){
-			LOG_ERROR_ERRNO("Initialize slow timer failed", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_ERROR_ERRNO("Failed to initialize slow timer", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::SlowTimer::Exit, &slow_timer));
-		LOG_INFO("Initialize slow timer with " FMT_SIZE " successful", utils::System::GetCpuCoreCount());
+		LOG_INFO("Initialize slow timer with " FMT_SIZE " successfully", utils::System::GetCpuCoreCount());
 
 		bumo::WebSocketServer &ws_server = bumo::WebSocketServer::Instance();
 		if (!bumo::g_enable_ || !ws_server.Initialize(bumo::Configure::Instance().wsserver_configure_)) {
-			LOG_ERROR("Initialize web server failed");
+			LOG_ERROR("Failed to initialize web server");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::WebSocketServer::Exit, &ws_server));
-		LOG_INFO("Initialize web server successful");
+		LOG_INFO("Initialize web server successfully");
 
 		bumo::WebServer &web_server = bumo::WebServer::Instance();
 		if (!bumo::g_enable_ || !web_server.Initialize(bumo::Configure::Instance().webserver_configure_)) {
-			LOG_ERROR("Initialize web server failed");
+			LOG_ERROR("Failed to initialize web server");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::WebServer::Exit, &web_server));
-		LOG_INFO("Initialize web server successful");
+		LOG_INFO("Initialize web server successfully");
 
 		SaveWSPort();
 		
 		bumo::MonitorManager &monitor_manager = bumo::MonitorManager::Instance();
 		if (!bumo::g_enable_ || !monitor_manager.Initialize()) {
-			LOG_ERROR("Initialize monitor manager failed");
+			LOG_ERROR("Failed to initialize monitor manager");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::MonitorManager::Exit, &monitor_manager));
-		LOG_INFO("Initialize monitor manager successful");
+		LOG_INFO("Initialize monitor manager successfully");
 
 		bumo::ContractManager &contract_manager = bumo::ContractManager::Instance();
 		if (!contract_manager.Initialize(argc, argv)){
-			LOG_ERROR("Initialize contract manager failed");
+			LOG_ERROR("Failed to initialize contract manager");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::ContractManager::Exit, &contract_manager));
-		LOG_INFO("Initialize contract manager successful");
+		LOG_INFO("Initialize contract manager successfully");
 
 		bumo::g_ready_ = true;
 
 		RunLoop();
 
-		LOG_INFO("Process begin quit...");
+		LOG_INFO("Process begins to quit...");
 		delete bumo::StatusModule::modules_status_;
 
 	} while (false);
@@ -298,7 +298,7 @@ void RunLoop(){
 		for (auto item : bumo::TimerNotify::notifys_){
 			item->TimerWrapper(utils::Timestamp::HighResolution());
 			if (item->IsExpire(utils::MICRO_UNITS_PER_SEC)){
-				LOG_WARN("The timer(%s) execute time(" FMT_I64 " us) is expire than 1s", item->GetTimerName().c_str(), item->GetLastExecuteTime());
+				LOG_WARN("The execution time(" FMT_I64 " us) for the timer(%s) is expired after 1s elapses", item->GetTimerName().c_str(), item->GetLastExecuteTime());
 			}
 		}
 
