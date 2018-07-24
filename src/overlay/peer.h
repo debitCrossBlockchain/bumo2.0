@@ -22,7 +22,7 @@
 namespace bumo {
 	typedef std::shared_ptr<protocol::WsMessage> WsMessagePointer;
 
-	// provide p2p network interface
+	// Provide p2p network interface
 	class IPeerManagerNotify {
 	public:
 		IPeerManagerNotify();
