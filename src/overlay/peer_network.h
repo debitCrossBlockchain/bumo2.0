@@ -43,13 +43,13 @@ namespace bumo {
 		//Peer cach list
 		protocol::Peers db_peer_cache_;
 
-		//peers infomation received
+		//Peers infomation received
 		utils::Mutex peer_lock_;
 		std::list<utils::StringMap> received_peer_list_;
 
 		Broadcast broadcast_;
 
-		// cert is enable or unable
+		// cert is enabled or unabled
 		bool cert_enabled_;
 
 		std::string peer_node_address_;
