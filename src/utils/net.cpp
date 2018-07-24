@@ -23,6 +23,13 @@
 #include <iphlpapi.h>
 #endif
 
+#ifdef OS_ANDROID
+//Android can not use common.h's MIN
+#ifndef MIN
+#define MIN(a,b) ((a)<(b)) ? (a) : (b)
+#endif
+#endif
+
 bool utils::net::Initialize() {
 
 #ifdef WIN32
