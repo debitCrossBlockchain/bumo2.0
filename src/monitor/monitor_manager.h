@@ -58,7 +58,7 @@ namespace bumo {
 
 		/*************************************************
 		Function:       OnSlowTimer
-		Description:    Check alert and send alert
+		Description:    Check alerts and send alerts
 		Calls:          GetLastClosedLedger; GetPeerNodeAddress; GetSystemMonitor; 
 		                GetClientConnection; SendRequest
 		Input:          current_time The current time
@@ -67,7 +67,7 @@ namespace bumo {
 
 		/*************************************************
 		Function:       GetModuleStatus
-		Description:    Get the status of monitor
+		Description:    Get the status of the monitor
 		Input:          data Json::Value The data of status
 		*************************************************/
 		virtual void GetModuleStatus(Json::Value &data);
@@ -85,7 +85,7 @@ namespace bumo {
 	protected:
 		/*************************************************
 		Function:       Run
-		Description:    Start monitor thread
+		Description:    Start the monitor thread
 		Calls:          Start
 		Input:          thread utils::Thread The handle of thread
 		*************************************************/
@@ -102,7 +102,7 @@ namespace bumo {
 
 		/*************************************************
 		Function:       CreateConnectObject
-		Description:    Create connection to monitor
+		Description:    Create a connection to monitor
 		Input:          server_h bumo::server* The http server
 						client_ bumo::client* The http client
 						tls_server_h bumo::tls_server* The tls server
@@ -188,11 +188,11 @@ namespace bumo {
 
 		std::string monitor_id_;  /* The id of the monitor */
 
-		uint64_t last_connect_time_; /* The last time of connection */
-		uint64_t connect_interval_; /* The interval between the time of the two connections */
+		uint64_t last_connect_time_; /* The time of last connection */
+		uint64_t connect_interval_; /* The interval between two connections */
 
-		uint64_t check_alert_interval_; /* The interval between the time of checking alert */
-		uint64_t last_alert_time_; /* The last time of checking alert */
+		uint64_t check_alert_interval_; /* The interval between checking alerts */
+		uint64_t last_alert_time_; /* The time of last checking the alert */
 
 		SystemManager system_manager_; /* The system manager */
 	};
