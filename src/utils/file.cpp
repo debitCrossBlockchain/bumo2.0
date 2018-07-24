@@ -39,11 +39,12 @@ inline int lockf(int fd, int cmd, off_t ignored_len) {
 	return flock(fd, cmd);
 }
 static std::string bin_home_path_;
-#endif
 
-
+//Android cannot use common.h's MIN
 #ifndef MIN
 #define MIN(a,b) ((a)<(b)) ? (a) : (b)
+#endif
+
 #endif
 
 #ifdef WIN32

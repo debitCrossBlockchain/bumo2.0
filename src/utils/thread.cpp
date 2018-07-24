@@ -170,7 +170,7 @@ bool utils::Thread::Terminate() {
 		result = false;
 	}
 #elif defined OS_ANDROID
-	if (0 !=   pthread_kill(thread_id_,SIGKILL)) {
+	if (0 != pthread_kill(thread_id_,SIGKILL)) {
 		result = false;
 	}
 #elif defined OS_MAC

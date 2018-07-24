@@ -23,11 +23,6 @@
 #include <iphlpapi.h>
 #endif
 
-#ifdef OS_ANDROID
-#ifndef MIN
-#define MIN(a,b) ((a)<(b)) ? (a) : (b)
-#endif
-#endif
 bool utils::net::Initialize() {
 
 #ifdef WIN32

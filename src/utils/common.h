@@ -160,11 +160,11 @@ namespace utils {
 		    }
 #ifndef OS_ANDROID
 	 #ifndef MIN
-	 #define MIN(a,b) ((a)<(b)) ? (a) : (b)
+	 	#define MIN(a,b) ((a)<(b)) ? (a) : (b)
 	 #endif
 	 #ifndef MAX
-	 #define MAX(a,b) ((a)>(b)) ? (a) : (b)
-#endif
+	 	#define MAX(a,b) ((a)>(b)) ? (a) : (b)
+	#endif
 #endif
 
 #define CHECK_ERROR_RET(func, ecode, ret) \

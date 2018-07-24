@@ -7,12 +7,12 @@
 	#define LEVELDB_EXPORT 
 #else
 	#if defined LEVELDB_DLL
-	#define LEVELDB_EXPORT __declspec(dllimport)
+		#define LEVELDB_EXPORT __declspec(dllimport)
 	#elif defined DLL_BUILD
-	#define LEVELDB_EXPORT __declspec(dllexport)
+		#define LEVELDB_EXPORT __declspec(dllexport)
 	#else
-	#define LEVELDB_EXPORT 
-#endif
+		#define LEVELDB_EXPORT 
+	#endif
 #endif
 
 #endif

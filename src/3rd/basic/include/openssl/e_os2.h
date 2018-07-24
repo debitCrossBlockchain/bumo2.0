@@ -71,8 +71,10 @@ extern "C" {
 # define OPENSSL_SYS_UNIX
 
 /* ---------------------- Macintosh, before MacOS X ----------------------- */
-# if defined(__MWERKS__) && defined(macintosh) || defined(OPENSSL_SYSNAME_MAC)
+# if defined(__MWERKS__) && defined(macintosh) || defined(OPENSSL_SYSNAME_MAC) || defined(OS_ANDROID)
 #  undef OPENSSL_SYS_UNIX
+#  undef _WIN32
+#  undef OPENSSL_SYSNAME_WIN32
 #  define OPENSSL_SYS_MACINTOSH_CLASSIC
 # endif
 
