@@ -15,7 +15,6 @@
 
 #ifndef UTILS_COMMON_H_
 #define UTILS_COMMON_H_
-//#include "arguments"
 #ifdef OS_ANDROID
 #include <cstdio>
 #include <cstdlib>
@@ -28,6 +27,7 @@
 #include <stdint.h>
 #include <memory>
 #include <functional>
+
 #include <errno.h>
 #include <stdarg.h>
 #include <math.h>
@@ -85,13 +85,13 @@ typedef CRITICAL_SECTION pthread_mutex_t;
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/stat.h>
-#include <dirent.h>
 
 #ifndef OS_ANDROID
 #include <ifaddrs.h>
 #else
 #include<android_ifaddrs/ifaddrs.h>
 #endif
+#include <dirent.h>
 
 #define ERROR_SUCCESS            0
 #define ERROR_ALREADY_EXISTS     EEXIST
@@ -150,7 +150,7 @@ namespace utils {
     if (NULL != p) {          \
         delete p;             \
         p = NULL;             \
-		    }
+	    }
 
 	// delete object array safe
 #define SAFE_DELETE_ARRAY(p)  \
@@ -164,15 +164,15 @@ namespace utils {
 	 #endif
 	 #ifndef MAX
 	 #define MAX(a,b) ((a)>(b)) ? (a) : (b)
-	 #endif
+#endif
 #endif
 
 #define CHECK_ERROR_RET(func, ecode, ret) \
 	if( func )\
-			{\
+		{\
 	utils::set_error_code(ecode); \
 	return ret; \
-			}
+		}
 
 #define DISALLOW_COPY_AND_ASSIGN(cls) private:\
 	cls( const cls & );\

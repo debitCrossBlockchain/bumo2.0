@@ -156,7 +156,7 @@ namespace bumo {
 	public:
 		static std::list<TimerNotify *> notifys_;
 		static bool RegisterModule(TimerNotify *module) { notifys_.push_back(module); return true; };
-		static void ClearAll() { notifys_.clear(); }
+		static void UnregisterAll() { notifys_.clear(); }
 
 		TimerNotify() :last_check_time_(0), 
 			last_slow_check_time_(0), 
@@ -213,7 +213,7 @@ namespace bumo {
 		static Json::Value *modules_status_;
 		static utils::ReadWriteLock status_lock_;
 		static bool RegisterModule(StatusModule *module) { modules_.push_back(module); return true; };
-		static void ClearAll() { modules_.clear(); }
+		static void UnregisterAll() { modules_.clear(); }
 		static void GetModulesStatus(Json::Value &nData);
 
 		StatusModule() {};

@@ -216,6 +216,7 @@ namespace bumo
 		}
 
 		virtual bool GetFromDB(const KEY& key, pointer& val){ return false; }
+
 		virtual void updateToDB(){}
 	};
 }

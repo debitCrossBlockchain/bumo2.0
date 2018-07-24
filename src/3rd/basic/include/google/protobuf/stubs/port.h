@@ -31,13 +31,13 @@
 #ifndef GOOGLE_PROTOBUF_STUBS_PORT_H_
 #define GOOGLE_PROTOBUF_STUBS_PORT_H_
 
+#include <assert.h>
 #ifdef OS_ANDROID
 #include <cstdlib>
 #else
 #include <stdlib.h>
 #endif
 
-#include <assert.h>
 #include <cstddef>
 #include <string>
 #include <string.h>

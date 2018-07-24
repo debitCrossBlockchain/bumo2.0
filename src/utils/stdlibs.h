@@ -23,21 +23,11 @@
 #define FMT_X64 "%llX"
 #define FMT_SIZE "%u"
 #endif
-
-class Stdlib
-{
-public:
-	Stdlib();
-	~Stdlib();
-	static int Bumoatoi(const std::string &str);
-	static long long Bumoatoll(const std::string &str);
-	static long  Bumoatol(const std::string &str);
-	static double Bumoatof(const std::string &str);
-	static void Bumoabort(void);
-private:
-	 // Disallow copy and assignment.
-	 Stdlib(const Stdlib&);
-	 void operator=(const Stdlib&);
-
-};
+namespace utils {
+	static int Atoi(const std::string &str);
+	static long long Atoll(const std::string &str);
+	static long  Atol(const std::string &str);
+	static double Atof(const std::string &str);
+	static void Abort(void);
+}
 #endif

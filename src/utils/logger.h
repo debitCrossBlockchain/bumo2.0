@@ -147,5 +147,6 @@ namespace utils {
 		std::string log_path_;
 		int64_t m_nCheckRunLogTime;
 	};
+
 }
 #endif
