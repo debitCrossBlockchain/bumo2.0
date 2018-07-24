@@ -15,6 +15,8 @@
 #ifndef LOCAL_ARRAY_H_included
 #define LOCAL_ARRAY_H_included
 
+#ifdef OS_ANDROID
+
 #include <cstddef>
 #include <new>
 
@@ -71,3 +73,5 @@ private:
 };
 
 #endif // LOCAL_ARRAY_H_included
+
+#endif

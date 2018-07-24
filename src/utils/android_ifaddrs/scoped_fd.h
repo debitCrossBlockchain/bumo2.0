@@ -15,6 +15,8 @@
 #ifndef SCOPED_FD_H_included
 #define SCOPED_FD_H_included
 
+#ifdef OS_ANDROID
+
 #include <unistd.h>
 
 // A smart pointer that closes the given fd on going out of scope.
@@ -40,5 +42,7 @@ private:
     ScopedFd(const ScopedFd&);
     void operator=(const ScopedFd&);
 };
+
+#endif
 
 #endif  // SCOPED_FD_H_included

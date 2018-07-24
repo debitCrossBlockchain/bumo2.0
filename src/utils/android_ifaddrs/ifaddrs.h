@@ -16,6 +16,8 @@
 #ifndef	_IFADDRS_H_
 #define	_IFADDRS_H_
 
+#ifdef OS_ANDROID
+
 #include <arpa/inet.h>
 #include <errno.h>
 #include <net/if.h>
@@ -57,4 +59,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+#endif
+
 #endif

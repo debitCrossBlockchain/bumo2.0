@@ -13,14 +13,16 @@
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef OS_ANDROID
+
 #include "ifaddrs.h"
 
 #include <string.h>
 #include <cstdlib>
 #include <errno.h>
 #include <unistd.h>
-#include "scopedFd.h"
-#include "localArray.h"
+#include "scoped_fd.h"
+#include "local_array.h"
 
 // Returns a pointer to the first byte in the address data (which is
 // stored in network byte order).
@@ -186,3 +188,6 @@ void freeifaddrs(ifaddrs* addresses) {
         self = next;
     }
 }
+
+#endif
+
