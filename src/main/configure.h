@@ -132,7 +132,7 @@ namespace bumo {
 		LoggerConfigure logger_configure_;
 
 		WebServerConfigure webserver_configure_;
-		WsServerConfigure wsserver_configure_; //websocket server
+		WsServerConfigure wsserver_configure_; //Websocket server
 		
 		P2pConfigure p2p_configure_;
 		LedgerConfigure ledger_configure_;
