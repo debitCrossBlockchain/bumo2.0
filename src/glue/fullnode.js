@@ -42,7 +42,7 @@ function applyAsFullNode(params){
 
 function verifyImpeachInfo(impeachedAddr, impeachInfo){
     assert(typeof impeachInfo.ledger_seq === 'string' && 
-           typeof impeachInfo.result === 'string',
+           typeof impeachInfo.reason === 'string',
            'Parameters type error');
     
     assert(addressCheck(impeachedAddr), 'Invalid impeach address.');

@@ -202,22 +202,33 @@ namespace bumo{
 		return settings_.Set(validatorsKey, std::make_shared<Json::Value>(validators));
 	}
 
-	void Environment::GetFullNode(const std::string& address, std::shared_ptr<Json::Value> fullnode){
-		fullnodes_.Get(address, fullnode);
+	bool Environment::GetFullNode(const std::string& address, Json::Value& fullnode){
+		std::shared_ptr<Json::Value> fnode;
+		fullnodes_.Get(address, fnode);
 
-		if (!fullnode){
-			Json::Value node;
-			FullNodeManager::Instance().getFullNode(address, node);
-			fullnode = std::make_shared<Json::Value>(node);
-			fullnodes_.Set(address, fullnode);
+		if (!fnode){
+			FullNodeManager::Instance().getFullNode(address, fullnode);
+			if (fullnode.isObject()) {
+				return fullnodes_.Set(address, std::make_shared<Json::Value>(fullnode));
+			}
 		}
+		else {
+			fullnode = *fnode;
+		}
+		return true;
 	}
 
 	bool Environment::SetFullNode(const Json::Value& fullnode, const std::string& operation) {
 		Json::Value item;
 		item["operation"] = operation;
 		item["fullnode"] = fullnode;
-		return fullnodes_.Set(fullnode["addr"].asString(), std::make_shared<Json::Value>(item));
+		bool ret = fullnodes_.Set(fullnode["addr"].asString(), std::make_shared<Json::Value>(item));
+		std::shared_ptr<Json::Value> fnode;
+		fullnodes_.Get(fullnode["addr"].asString(), fnode);
+		if (!fnode){
+			LOG_ERROR("Failed to set full node to env");
+		}
+		return ret;
 	}
 
 	bool Environment::GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator){

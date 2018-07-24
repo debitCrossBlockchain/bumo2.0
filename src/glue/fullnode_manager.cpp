@@ -32,14 +32,13 @@ namespace bumo {
 		last_on_inspect_seq_(0),
 		fullnode_check_timer_(0),
 		priv_key_(SIGNTYPE_CFCASM2),
-		local_address_(""){
-		thread_ptr_ = NULL;
-	}
+		local_address_(""),
+		thread_ptr_(nullptr) {}
 
 	FullNodeManager::~FullNodeManager() {
 		if (thread_ptr_){
 			delete thread_ptr_;
-			thread_ptr_ = NULL;
+			thread_ptr_ = nullptr;
 		}
 	}
 
@@ -183,7 +182,7 @@ namespace bumo {
 				return false;
 			}
 			if (!add(fp)) return false;
-			batch->Put(utils::String::Format("%s-%s", General::FULLNODE_PREFIX, utils::String::BinToHexString(fp->getAddress()).c_str()), node.toFastString());
+			batch->Put(utils::String::Format("%s", utils::String::BinToHexString(fp->getAddress()).c_str()), node.toFastString());
 		}
 		else if (operation == "update") {
 			FullNodePointer fp = std::make_shared<FullNode>();
@@ -192,12 +191,12 @@ namespace bumo {
 				return false;
 			}
 			if (!update(fp)) return false;
-			batch->Put(utils::String::Format("%s-%s", General::FULLNODE_PREFIX, utils::String::BinToHexString(fp->getAddress()).c_str()), node.toFastString());
+			batch->Put(utils::String::Format("%s", utils::String::BinToHexString(fp->getAddress()).c_str()), node.toFastString());
 		}
 		else if (operation == "remove") {
 			std::string addr = node["addr"].asString();
 			remove(addr);
-			batch->Delete(utils::String::Format("%s-%s", General::FULLNODE_PREFIX, utils::String::BinToHexString(node["addr"].asString()).c_str()));
+			batch->Delete(utils::String::Format("%s", utils::String::BinToHexString(node["addr"].asString()).c_str()));
 		}
 		else {
 			LOG_ERROR("Unknown full node operation, %s", operation.c_str());
@@ -208,10 +207,9 @@ namespace bumo {
 	}
 
 	bool FullNodeManager::updateDb(std::shared_ptr<WRITE_BATCH> batch) {
-		if (!Storage::Instance().keyvalue_db()->WriteBatch(*batch)) {
-			LOG_ERROR("Write full node batch failed, %s", Storage::Instance().keyvalue_db()->error_desc().c_str());
-			return false;
-		}
+		KVTrie trie;
+		trie.Init(Storage::Instance().keyvalue_db(), batch, General::FULLNODE_PREFIX, 1);
+		trie.UpdateHash();
 		return true;
 	}
 
@@ -336,15 +334,17 @@ namespace bumo {
 
 			// Randomly get the ledger header from the target address
 			random_seq_ = lcl.seq() - lcl.seq() % full_node_info_.size();
-		
+			
+			LOG_INFO("Local address check peer: %s on ledger_seq(" FMT_I64 "), random_seq(" FMT_I64 ")", peer.c_str(), last_inspect_seq_, random_seq_);
 			// Send the full node check request to peer
 			protocol::FullNodeCheckReq req;
 			req.set_ledger_seq(random_seq_);
 			req.set_sender(local_address_);
 	
 			// Impeach when check process timeout
-			std::string reason = "timeout";
-			fullnode_check_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this, peer, reason](int64_t data) {
+			fullnode_check_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this, peer](int64_t data) {
+				std::string reason = "timeout";
+				LOG_ERROR("Full node check timeout, impeach %s", peer.c_str());
 				impeach(peer, reason);
 			});
 
@@ -355,9 +355,14 @@ namespace bumo {
 				break;
 			}
 			FullNodePointer fp = it->second;
-			std::string uri = utils::String::Format("ws://%s:", fp->getEndPoint().c_str());
-			PeerManager::Instance().ConsensusNetwork().Connect(uri); 
-			PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString());
+			std::string uri = utils::String::Format("ws://%s", fp->getEndPoint().c_str());
+			if (!PeerManager::Instance().ConsensusNetwork().Connect(uri)) {
+				LOG_ERROR("Failed to connect to uri:%s", uri.c_str());
+			}
+			if (PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString())) {
+				LOG_ERROR("Failed to send request to uri:%s", uri.c_str());
+				break;
+			}
 		} while (false);
 		
 		return;
@@ -470,9 +475,15 @@ namespace bumo {
 
 		protocol::Transaction *tx = tran_env.mutable_transaction();
 		tx->set_source_address(local_address_);
+		AccountFrm::pointer account_ptr;
+		if (!Environment::AccountFromDB(local_address_, account_ptr)) {
+			LOG_ERROR("Source address %s not exist", local_address_.c_str());
+			return false;
+		}
+		tx->set_nonce(account_ptr->GetAccountNonce() + 1);
 		int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
 		tx->set_gas_price(gas_price);
-		tx->set_fee_limit(10000);
+		tx->set_fee_limit(500000);
 
 		protocol::Operation *ope = tx->add_operations();
 		ope->set_type(protocol::Operation_Type_PAY_COIN);
@@ -485,9 +496,9 @@ namespace bumo {
 		impeach_json["method"] = "impeach";
 		impeach_json["params"]["address"] = impeach_addr;
 		Json::Value info;
-		info["ledger_seq"] = last_inspect_seq_;
+		info["ledger_seq"] = utils::String::ToString(last_inspect_seq_);
 		info["reason"] = reason;
-		impeach_json["impeach"] = info;
+		impeach_json["params"]["impeach"] = info;
 		
 		paycoin->set_input(impeach_json.toFastString());
 		
@@ -496,7 +507,7 @@ namespace bumo {
 		protocol::Signature *sign = tran_env.add_signatures();
 		sign->set_public_key(priv_key_.GetEncPublicKey());
 		sign->set_sign_data(sign_data);
-
+		LOG_ERROR("%s", tran_env.DebugString().c_str());
 		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
 		if (GlueManager::Instance().OnTransaction(ptr, result)) {
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
@@ -517,9 +528,15 @@ namespace bumo {
 
 		protocol::Transaction *tx = tran_env.mutable_transaction();
 		tx->set_source_address(local_address_);
+		AccountFrm::pointer account_ptr;
+		if (!Environment::AccountFromDB(local_address_, account_ptr)) {
+			LOG_ERROR("Source address %s not exist", local_address_.c_str());
+			return false;
+		}
+		tx->set_nonce(account_ptr->GetAccountNonce() + 1);
 		int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
 		tx->set_gas_price(gas_price);
-		tx->set_fee_limit(10000);
+		tx->set_fee_limit(500000);
 
 		protocol::Operation *ope = tx->add_operations();
 		ope->set_type(protocol::Operation_Type_PAY_COIN);

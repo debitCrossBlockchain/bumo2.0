@@ -1213,16 +1213,19 @@ namespace bumo{
 
 			std::string address = std::string(ToCString(v8::String::Utf8Value(args[0])));
 
-			std::shared_ptr<Json::Value> jsonFullNode;
+			Json::Value jsonFullNode;
 
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
-			ledger_context->GetTopTx()->environment_->GetFullNode(address, jsonFullNode);
-			if (!jsonFullNode) {
+			if (!ledger_context->GetTopTx()->environment_->GetFullNode(address, jsonFullNode)) {
+				error_desc = "Failed to get full node, " + address;
+				break;
+			}
+			if (!jsonFullNode.isObject()) {
 				error_desc = "No such full node, " + address;
 				break;
 			}
 
-			std::string strvalue = jsonFullNode->toFastString();
+			std::string strvalue = jsonFullNode.toFastString();
 			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
 			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
 
@@ -1261,7 +1264,7 @@ namespace bumo{
 				break;
 			}
 
-			v8::String::Utf8Value  utf8(args[0]);
+			v8::String::Utf8Value utf8(args[0]);
 			Json::Value json;
 			if (!json.fromCString(ToCString(utf8))) {
 				error_desc = "fromCString fail, fatal error";

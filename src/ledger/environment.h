@@ -55,7 +55,7 @@ namespace bumo {
 		Json::Value& GetValidators();
 		bool UpdateNewValidators(const Json::Value& validators);
 		bool SetFullNode(const Json::Value& fullnode, const std::string& operation);
-		void GetFullNode(const std::string& value, std::shared_ptr<Json::Value> fullnode);
+		bool GetFullNode(const std::string& value, Json::Value& fullnode);
 		
 		bool GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator);
 
