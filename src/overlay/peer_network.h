@@ -40,7 +40,7 @@ namespace bumo {
 		bool dns_seed_inited_;
 		bool cert_is_valid_;
 
-		//Peer cach list
+		//Peer cache list
 		protocol::Peers db_peer_cache_;
 
 		//Peers infomation received
@@ -49,7 +49,7 @@ namespace bumo {
 
 		Broadcast broadcast_;
 
-		// cert is enabled or unabled
+		// cert is enable or unable
 		bool cert_enabled_;
 
 		std::string peer_node_address_;
