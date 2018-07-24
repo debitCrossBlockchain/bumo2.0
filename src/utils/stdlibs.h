@@ -14,20 +14,20 @@
 */
 #ifndef UTILS_STDLIBS_UTIL_H_
 #define UTILS_STDLIBS_UTIL_H_
-#include<cstdlib>
-
 #ifdef OS_ANDROID
+#include<cstdlib>
 #define FMT_I64 "%lld"
 #define FMT_I64_EX(fmt) "%" #fmt "lld"
 #define FMT_U64 "%llu"
 #define FMT_X64 "%llX"
 #define FMT_SIZE "%u"
-#endif
 namespace utils {
-	static int Atoi(const std::string &str);
-	static long long Atoll(const std::string &str);
-	static long  Atol(const std::string &str);
-	static double Atof(const std::string &str);
-	static void Abort(void);
+	//This function appear error in Android build.
+	int Atoi(const std::string &str);
+	long long Atoll(const std::string &str);
+	long  Atol(const std::string &str);
+	double Atof(const std::string &str);
+	void Abort(void);
 }
+#endif
 #endif
