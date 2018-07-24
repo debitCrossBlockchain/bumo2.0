@@ -191,7 +191,7 @@ namespace bumo {
 		uint64_t last_connect_time_; /* The time of last connection */
 		uint64_t connect_interval_; /* The interval between two connections */
 
-		uint64_t check_alert_interval_; /* The interval between checking alerts */
+		uint64_t check_alert_interval_; /* The interval between alerts checking */
 		uint64_t last_alert_time_; /* The time of last checking the alert */
 
 		SystemManager system_manager_; /* The system manager */
