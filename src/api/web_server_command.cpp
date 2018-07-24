@@ -139,10 +139,9 @@ namespace bumo {
 
 			} while (false);
 
-			TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-			GlueManager::Instance().OnTransaction(ptr, result);
-
 			if (result.code() == protocol::ERRCODE_SUCCESS) {
+				TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
+				GlueManager::Instance().OnTransaction(ptr, result);
 				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, ptr->GetFullData());
 			}
 
