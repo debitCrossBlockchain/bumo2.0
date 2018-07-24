@@ -57,7 +57,7 @@ namespace bumo {
 		}
 
 		if (!priv_key_.From(Configure::Instance().p2p_configure_.node_private_key_)) {
-			LOG_ERROR("Initialize node private key failed");
+			LOG_ERROR("Failed to initialize a private key for the node");
 			return false;
 		}
 		peer_node_address_ = priv_key_.GetEncAddress();
