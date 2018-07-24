@@ -252,7 +252,7 @@ config.json
 
 ```json
     "webserver":{
-        "listen_addresses":"0.0.0.0:16002" 
+        "listen_addresses":"0.0.0.0:36002" 
     }
 ```
 
@@ -485,7 +485,7 @@ p2p 的 known_peers 必须为其他已知节点的 IP 和端口，用于节点�
 ### 查看系统详细状态
 
 ```bash
-[root@centos7x64-201 ~]# curl 127.0.0.1:19333/getModulesStatus
+[root@bumo ~]# curl 127.0.0.1:36001/getModulesStatus
 {
     "glue_manager":{
         "cache_topic_size":0,
@@ -533,7 +533,8 @@ Create hard fork ledger successful, seq(20), consensus value hash(**7aa332f05748
 - 把上述 Hash 值配置到本节点或者同步节点的 bumo.json 的hardfork_points
 
 ```json
-    "ledger": {
+    "ledger":
+    {
        	"genesis_account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
         "max_trans_per_ledger": 1000,
         "hardfork_points" : 
