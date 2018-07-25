@@ -115,7 +115,7 @@ namespace bumo {
 
 		batch.Put(ComposePrefix(General::LEDGER_TRANSACTION_PREFIX, ledger_.header().seq()), list.SerializeAsString());
 
-		//save the last tx hash, temporary
+		//save the last tx hash
 		if (list.entry_size() > 0) {
 			protocol::EntryList new_last_hashs;
 			if (list.entry_size() < General::LAST_TX_HASHS_LIMIT) {
@@ -173,14 +173,14 @@ namespace bumo {
 		for (int32_t i = 0; i < validation.expire_tx_ids_size(); i++) {
 			int32_t tid = validation.expire_tx_ids(i);
 			if (tid >= tx_size || tid < 0) {
-				LOG_ERROR("Propose value expire id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
+				LOG_ERROR("Proposed value expire id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
 					tid, tx_size, request.ledger_seq());
 				return false;
 			}
 			expire_txs_status.insert(tid);
 
 			if (totol_error.find(tid) != totol_error.end()){
-				LOG_ERROR("Propose value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
+				LOG_ERROR("Proposed value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
 				return false;
 			}
 
@@ -237,7 +237,7 @@ namespace bumo {
 		std::set<int32_t> expire_txs, error_txs;
 
 		if (request.has_validation()) {
-			LOG_ERROR("Propose value can't hav validation object, consvalue seq(" FMT_I64 ")", request.ledger_seq());
+			LOG_ERROR("Propose value can't have validation object, consvalue seq(" FMT_I64 ")", request.ledger_seq());
 			return false;
 		}
 
@@ -420,7 +420,7 @@ namespace bumo {
 				continue;
 			}*/
 
-			//pay fee
+			//Pay fee
 			if (!tx_frm->PayFee(environment_, total_fee_)) {
 				LOG_WARN("Should not go hear");
 				continue;
@@ -467,7 +467,7 @@ namespace bumo {
 	//		expire_txs.size(), droped_txs.size(), error_txs.size(),
 	//		expire_txs_check.size(), droped_txs_check.size(), error_txs_check.size(),
 	//		validation.expire_tx_ids_size(), validation.droped_tx_ids_size(), validation.error_tx_ids_size());
-		//check
+		//Check
 	}
 
 	bool LedgerFrm::CheckValidation() {
@@ -492,7 +492,7 @@ namespace bumo {
 			for (auto it = entries.begin(); it != entries.end(); it++){
 
 				if (it->second.type_ == Environment::DEL)
-					continue; //There is no delete account function now, not yet.
+					continue; //There is no delete account function now.
 
 				std::shared_ptr<AccountFrm> account = it->second.value_;
 				account->UpdateHash(batch);
