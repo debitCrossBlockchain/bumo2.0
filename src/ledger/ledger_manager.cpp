@@ -216,7 +216,7 @@ namespace bumo {
 	}
 
 	void LedgerManager::ValidatorsSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ValidatorSet& validators) {
-		//should be recode ?
+		//should be recoded
 		std::string hash = HashWrapper::Crypto(validators.SerializeAsString());
 		batch->Put(utils::String::Format("validators-%s", utils::String::BinToHexString(hash).c_str()), validators.SerializeAsString());
 	}
@@ -365,7 +365,7 @@ namespace bumo {
 			PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
             std::string this_node_address = private_key.GetEncAddress();
 
-			//compose the new ledger
+			//Compose the new ledger
 			LedgerFrm::pointer ledger_frm = std::make_shared<LedgerFrm>();
 			protocol::Ledger &ledger = ledger_frm->ProtoLedger();
 			protocol::LedgerHeader *header = ledger.mutable_header();
@@ -395,17 +395,17 @@ namespace bumo {
 			std::string validators_hash = HashWrapper::Crypto(new_validator_set.SerializeAsString());
 			header->set_validators_hash(validators_hash);
 
-			//calc block reward
+			//calculate block reward
 			ProposeTxsResult prop_result;
 			ledger_frm->ApplyPropose(request, NULL, prop_result);
 			int64_t new_count = 0, change_count = 0;
 			ledger_frm->Commit(LedgerManager::GetInstance()->tree_, new_count, change_count);
 
-			//update account hash
+			//Update account hash
 			LedgerManager::GetInstance()->tree_->UpdateHash();
 			header->set_account_tree_hash(LedgerManager::GetInstance()->tree_->GetRootHash());
 
-			//write account db
+			//Write account db
 			auto batch_account = LedgerManager::GetInstance()->tree_->batch_;
 			if (!Storage::Instance().account_db()->WriteBatch(*batch_account)) {
 				PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
@@ -419,7 +419,7 @@ namespace bumo {
 
 			ValidatorsSet(batch, new_validator_set);
 
-			//write ledger db
+			//Write ledger db
 			WRITE_BATCH batch_ledger;
 			batch_ledger.Put(bumo::General::KEY_LEDGER_SEQ, utils::String::ToString(header->seq()));
 			batch_ledger.Put(ComposePrefix(General::LEDGER_PREFIX, header->seq()), header->SerializeAsString());
@@ -428,12 +428,12 @@ namespace bumo {
 				PROCESS_EXIT("Write ledger and transaction failed(%s)", ledger_db->error_desc().c_str());
 			}
 
-			//write acount db
+			//Write acount db
 			if (!Storage::Instance().account_db()->WriteBatch(*batch)) {
 				PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
 			}
 
-			LOG_INFO("Create hard fork ledger successful, seq(" FMT_I64 "), consensus value hash(%s)",
+			LOG_INFO("Create hard fork ledger successfully, seq(" FMT_I64 "), consensus value hash(%s)",
 				header->seq(),
 				utils::String::BinToHexString(header->consensus_value_hash()).c_str());
 
@@ -637,7 +637,7 @@ namespace bumo {
 	}
 
 	void LedgerManager::NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade) {
-		//avoid dead lock
+		//Avoid dead lock
 		protocol::LedgerHeader tmp_lcl_header;
 		do {
 			utils::WriteLockGuard guard(lcl_header_mutex_);
@@ -874,7 +874,7 @@ namespace bumo {
 			if (ledger_context->transaction_stack_.size() > General::CONTRACT_MAX_RECURSIVE_DEPTH) {
 				txfrm->result_.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_RECURSION);
 				txfrm->result_.set_desc("Too many recursion ");
-				//add byte fee
+				//Add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 				bottom_tx->AddActualGas(txfrm->GetSelfGas());
 				break;
@@ -889,7 +889,7 @@ namespace bumo {
 					//break;
 					result.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS);
 					result.set_desc("Too many transaction");
-					LOG_ERROR("Too many transaction called by transaction(hash:%s)", contract->GetParameter().sender_.c_str());
+					LOG_ERROR("Too many transactions called by transaction(hash:%s)", contract->GetParameter().sender_.c_str());
 					return result;
 				}
 			}
@@ -909,7 +909,7 @@ namespace bumo {
 				TransactionFrm::AddActualFee(bottom_tx, txfrm.get());
 			}
 
-			//throw the contract
+			//Throw the contract
 			if (txfrm->GetResult().code() == protocol::ERRCODE_FEE_NOT_ENOUGH ||
 				txfrm->GetResult().code() == protocol::ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS) {
 				result = txfrm->GetResult();
@@ -933,7 +933,7 @@ namespace bumo {
 			   so if txfrm->ValidForParameter() failed, there was no txfrm->environment_,
 			   and txfrm->environment_->ClearChangeBuf() would access nonexistent memory,
 			   so that would be a serious error, and also seriously is that this problem only
-			   exist when operation called by contract, it means only in Dotransaction function,
+			   exists when operation called by the contract, it means only in Dotransaction function,
 			   because there is only one environment in normal operation, txfrm->environment_ is a reference to it*/
 			//txfrm->environment_->ClearChangeBuf();
 			tx_store.set_error_code(txfrm->GetResult().code());
