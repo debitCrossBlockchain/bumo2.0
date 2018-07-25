@@ -153,7 +153,7 @@ namespace bumo {
 				duplicate_type.insert(type_thresholds.type());
 			}
 
-			//if it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
+			//If it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
 			if (create_account.contract().payload() != ""){
  				if (create_account.contract().payload().size() > General::CONTRACT_CODE_LIMIT) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
@@ -211,7 +211,7 @@ namespace bumo {
 				//utils::String::Trim(trim_code);
 				if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE) {
 					result.set_code(protocol::ERRCODE_ASSET_INVALID);
-					result.set_desc(utils::String::Format("asset code length should between (0,64]"));
+					result.set_desc(utils::String::Format("asset code length should be between (0,64]"));
 					break;
 				}
 
@@ -224,7 +224,7 @@ namespace bumo {
 
 			if (source_address == payAsset.dest_address()) {
 				result.set_code(protocol::ERRCODE_ACCOUNT_SOURCEDEST_EQUAL);
-				result.set_desc(utils::String::Format("Source address(%s) equal to dest address", source_address.c_str()));
+				result.set_desc(utils::String::Format("Source address(%s) is equal to dest address", source_address.c_str()));
 				break;
 			} 
 
@@ -249,7 +249,7 @@ namespace bumo {
 			if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE ||
 				trim_code.size() != issue_asset.code().size()) {
 				result.set_code(protocol::ERRCODE_ASSET_INVALID);
-				result.set_desc(utils::String::Format("Asset code length should between (0,64]"));
+				result.set_desc(utils::String::Format("Asset code length should be between (0,64]"));
 				break;
 			}
 
@@ -346,7 +346,7 @@ namespace bumo {
 
 			if (source_address == pay_coin.dest_address()) {
 				result.set_code(protocol::ERRCODE_ACCOUNT_SOURCEDEST_EQUAL);
-				result.set_desc(utils::String::Format("Source address(%s) equal to dest address", source_address.c_str()));
+				result.set_desc(utils::String::Format("Source address(%s) is equal to dest address", source_address.c_str()));
 				break;
 			}
 
@@ -985,7 +985,7 @@ namespace bumo {
 				duplicate_type.insert(type_thresholds.type());
 			}
 
-			//if it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
+			//If it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
 			if (is_create_contract){
 				if (create_account.contract().payload().size() > General::CONTRACT_CODE_LIMIT) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
@@ -1008,7 +1008,7 @@ namespace bumo {
 				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, src);
 			}
 			else {
-				//if it's common and version greater than 1000,  then must set master_weight 1, tx_threshold:1	
+				//If it's common and the version is greater than 1000, then you must set master_weight:1 and tx_threshold:1	
 				if (!(priv.master_weight() == 1 &&
 					priv.signers_size() == 0 &&
 					threshold.tx_threshold() == 1 &&
