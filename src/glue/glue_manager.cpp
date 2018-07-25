@@ -39,7 +39,7 @@ namespace bumo {
 		consensus_ = ConsensusManager::Instance().GetConsensus();
 		consensus_->SetNotify(this);
 
-		//start consensus
+		//Start consensus
 		start_consensus_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this](int64_t data) {
 			StartConsensus("");
 		});
@@ -64,7 +64,7 @@ namespace bumo {
 	}
 
 	void GlueManager::StartLedgerCloseTimer() {
-		//kill the ledger check timer
+		//Kill the ledger check timer
 		utils::Timer::Instance().DelTimer(ledgerclose_check_timer_);
 		ledgerclose_check_timer_ = utils::Timer::Instance().AddTimer(MAX_LEDGER_TIMESPAN_SECONDS + 10 * utils::MICRO_UNITS_PER_SEC, 0,
 			[this](int64_t data) {
@@ -90,7 +90,7 @@ namespace bumo {
 
 		time_start_consenus_ = utils::Timestamp::HighResolution();
 		if (!consensus_->IsLeader()) {
-			LOG_INFO("Start consensus process, but it is not leader, just waiting");
+			LOG_INFO("Start consensus process, but it is not leader, just wait");
 			return true;
 		} 
 		else {
@@ -105,7 +105,7 @@ namespace bumo {
 			next_close_time = lcl.close_time() + Configure::Instance().ledger_configure_.close_interval_;
 		}
 
-		//get previous block proof
+		//Get previous block proof
 		std::string proof;
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof);
 
@@ -151,7 +151,7 @@ namespace bumo {
 
 			if (propose_result.block_timeout_) {
 				LOG_ERROR("Pre execute block timeout, tx size:%d, propose value block num:(" FMT_I64 ")", txset_raw.txs_size(), propose_value.ledger_seq());
-				//remove the time out tx
+				//Remove the timeout tx
 				//reduct to 1/2
 				protocol::TransactionEnvSet tmp_raw;
 				for (int32_t i = 0; i < txset_raw.txs_size() / 2; i ++) {
@@ -163,7 +163,7 @@ namespace bumo {
 				continue;
 			}
 
-			//need drop some tx
+			//Need drop some tx
 			if (propose_result.need_dropped_tx_.size()) {
 				protocol::TransactionEnvSet *txs = propose_value.mutable_txset();
 				txs->clear_txs();
@@ -171,7 +171,7 @@ namespace bumo {
 				protocol::TransactionEnvSet tmp_raw;
 				for (int32_t i = 0; i < txset_raw.txs_size(); i++) {
 					if (propose_result.need_dropped_tx_.find(i) != propose_result.need_dropped_tx_.end()) {
-						//remove from the cache
+						//Remove from the cache
 						*tmp_raw.add_txs() = txset_raw.txs(i);
 					} else{
 						*txs->add_txs() = txset_raw.txs(i);
@@ -219,7 +219,7 @@ namespace bumo {
 				js["action"] = "apply";
 				js["error_code"] = err.code();
 				js["desc"] = err.desc();
-				LOG_ERROR("Check transaction failed, source address(%s) nonce(" FMT_I64 ") hash(%s), return(%s)",
+				LOG_ERROR("Failed to check the transaction, source address(%s) nonce(" FMT_I64 ") hash(%s), return(%s)",
 					address.c_str(), tx->GetNonce(), utils::String::Bin4ToHexString(hash_value).c_str(), js.toFastString().c_str());
 				break;
 			}
@@ -240,7 +240,7 @@ namespace bumo {
 	}
 
 	void GlueManager::OnTimer(int64_t current_time) {
-		//check the timeout transaction
+		//Check the timeout transaction
 
 		std::vector<TransactionFrm::pointer> timeout_txs;
 		tx_pool_->CheckTimeoutAndDel(current_time, timeout_txs);
@@ -284,21 +284,18 @@ namespace bumo {
 		protocol::ConsensusValue request;
 		request.ParseFromString(value);
 
-		//TransactionSetFrm txset_frm(request.txset());
-
-		//temp upgrade the validator, need done by ledger manager
-
-		//write to db
+		
+		//Write to db
 		int64_t time_start = utils::Timestamp::HighResolution();
 		
 		protocol::ConsensusValue req;
 		req.ParseFromString(value);
-		//call consensus
+		//Call consensus
 		LedgerManager::Instance().OnConsent(req, proof);
 
 		int64_t time_use = utils::Timestamp::HighResolution() - time_start;
 
-		//delete the cache 
+		//Delete the cache 
 		//size_t ret1 = RemoveTxset(txset_frm);
 		tx_pool_->RemoveTxs(request.txset(),true);
 
@@ -339,13 +336,13 @@ namespace bumo {
 	bool GlueManager::CheckValueAndProof(const std::string &consensus_value, const std::string &proof) {
 		protocol::ConsensusValue proto_value;
 		if (!proto_value.ParseFromString(consensus_value)) {
-			LOG_ERROR("Parse consensus value failed");
+			LOG_ERROR("Failed to parse consensus value");
 			return false;
 		}
 
 		protocol::ValidatorSet set;
 		if (!LedgerManager::Instance().GetValidators(proto_value.ledger_seq() - 1, set)) {
-			LOG_ERROR("Check valid failed, get validator failed of ledger seq(" FMT_I64 ")",
+			LOG_ERROR("Failed to check validation; failed to get validator of ledger seq(" FMT_I64 ")",
 				proto_value.ledger_seq() - 1);
 			return false;
 		}
@@ -361,7 +358,7 @@ namespace bumo {
 	int32_t GlueManager::CheckValue(const std::string &value) {
 		protocol::ConsensusValue consensus_value;
 		if (!consensus_value.ParseFromString(value)) {
-			LOG_ERROR("Parse consensus value failed");
+			LOG_ERROR("Failed to parse consensus value");
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
@@ -383,7 +380,7 @@ namespace bumo {
 
 	int32_t GlueManager::CheckValueHelper(const protocol::ConsensusValue &consensus_value, int64_t now) {
 		if (consensus_value.ByteSize() >= General::TXSET_LIMIT_SIZE + (int32_t)(2 * utils::BYTES_PER_MEGA)) {
-			LOG_ERROR("Consensus value byte size(%d) will be exceed than limit(%d)",
+			LOG_ERROR("Consensus value byte size(%d) will exceed the limit(%d)",
 				consensus_value.ByteSize(),
 				General::TXSET_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA);
 			return Consensus::CHECK_VALUE_MAYVALID;
@@ -393,7 +390,7 @@ namespace bumo {
 
 		//Check the previous ledger sequence.
 		if (consensus_value.ledger_seq() != lcl.seq() + 1) {
-			LOG_ERROR("Check value failed, previous ledger seq(" FMT_I64 ") + 1 not equal to consensus message ledger seq( " FMT_I64 ")",
+			LOG_ERROR("Failed to check the value, previous ledger seq(" FMT_I64 ") + 1 not equal to consensus message ledger seq( " FMT_I64 ")",
 				lcl.seq(),
 				consensus_value.ledger_seq());
 			return Consensus::CHECK_VALUE_MAYVALID;
@@ -401,14 +398,14 @@ namespace bumo {
 
 		//Check the previous hash.
 		if (consensus_value.previous_ledger_hash() != lcl.hash()) {
-			LOG_ERROR("Check value failed, previous ledger(seq:" FMT_I64 ") hash(%s) not equal to consensus message ledger hash(%s)",
+			LOG_ERROR("Failed to check the value, previous ledger(seq:" FMT_I64 ") hash(%s) not equal to consensus message ledger hash(%s)",
 				lcl.seq(),
 				utils::String::Bin4ToHexString(lcl.hash()).c_str(),
 				utils::String::Bin4ToHexString(consensus_value.previous_ledger_hash()).c_str());
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		//not too closed, can tolerate 1 second 
+		//not closed, can tolerate 1 second 
 		if (now != -1 && 
 			!(
 			now > (consensus_value.close_time() - utils::MICRO_UNITS_PER_SEC)
@@ -426,13 +423,13 @@ namespace bumo {
 			const protocol::LedgerUpgrade &upgrade = consensus_value.ledger_upgrade();
 			if (upgrade.new_ledger_version() != 0) {
 				if (lcl.version() >= upgrade.new_ledger_version()) {
-					LOG_ERROR("Check value failed,  new version(" FMT_I64 ") less or equal than lcl ledger version(" FMT_I64 ")",
+					LOG_ERROR("Failed to check value,  new version(" FMT_I64 ") less or equal than lcl ledger version(" FMT_I64 ")",
 						upgrade.new_ledger_version(), lcl.version());
 					return Consensus::CHECK_VALUE_MAYVALID;
 				}
 
 				if (upgrade.new_ledger_version() > General::LEDGER_VERSION) {
-					LOG_ERROR("Check value failed, new ledger version (" FMT_I64 ") large than program version(%u)",
+					LOG_ERROR("Failed to check value, new ledger version (" FMT_I64 ") larger than program version(%u)",
 						upgrade.new_ledger_version(),
 						General::LEDGER_VERSION);
 					return Consensus::CHECK_VALUE_MAYVALID;
@@ -447,26 +444,26 @@ namespace bumo {
 			} 
 		}
 
-		//check the second block
+		//Check the second block
 		if (lcl.seq() == 1 && consensus_value.previous_proof() != "") {
-			LOG_ERROR("Check value failed, the second consensus value's prevous proof filed must be empty");
+			LOG_ERROR("Failed to check value; the previous proof field in the second consensus must be empty");
 			return Consensus::CHECK_VALUE_MAYVALID;
 		}
 
-		//check this proof 
+		//Check this proof 
 		if (lcl.seq() > 1) {
 			//Get the validator set for the pre pre ledger.
 			protocol::ValidatorSet set;
 			if (!LedgerManager::Instance().GetValidators(consensus_value.ledger_seq() - 2, set)) {
-				LOG_ERROR("Check value failed, get validator failed of ledger seq(" FMT_I64 ")",
+				LOG_ERROR("Failed to check the value; failed to get validator of ledger seq(" FMT_I64 ")",
 					consensus_value.ledger_seq() - 2);
 				return Consensus::CHECK_VALUE_MAYVALID;
 			}
 
-			//check if the consensus value hash is forked
+			//Check if the consensus value hash is forked
 			std::set<std::string>::const_iterator iter = hardfork_points_.find(lcl.consensus_value_hash());
 			if (iter == hardfork_points_.end() && !consensus_->CheckProof(set, lcl.consensus_value_hash(), consensus_value.previous_proof())) {
-					LOG_ERROR("Check value failed, proof not valid");
+					LOG_ERROR("Failed to check the value because the proof is not valid");
 					return Consensus::CHECK_VALUE_MAYVALID;
 			}
 		}
