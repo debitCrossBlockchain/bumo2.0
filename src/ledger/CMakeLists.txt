@@ -8,7 +8,7 @@ aux_source_directory(${BUMO_SRC_DIR}/ledger/ LEDGER_SRC)
 #Generate static library files
 add_library(${LIB_BUMO_LEDGER} ${LEDGER_SRC})
 
-#specify compiling options for target objects
+#Specify compiling options for target objects
 target_compile_options(${LIB_BUMO_LEDGER}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE
