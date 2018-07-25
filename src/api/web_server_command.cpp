@@ -31,7 +31,7 @@ namespace bumo {
 			LOG_ERROR("Parse request body json failed");
 			Json::Value reply_json;
 			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
-			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must being json format";
+			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must be in json format";
 			reply_json["success_count"] = Json::UInt(0);
 			reply = reply_json.toStyledString();
 			return;
@@ -58,7 +58,7 @@ namespace bumo {
 				if (json_item.isMember("transaction_blob")) {
 					if (!json_item.isMember("signatures")) {
 						result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-						result.set_desc("'signatures' value not exist");
+						result.set_desc("'signatures' value is not existed");
 						break;
 					}
 
@@ -94,7 +94,7 @@ namespace bumo {
 						PublicKey pubkey(signa["public_key"].asString());
 						if (!pubkey.IsValid()) {
 							result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-							result.set_desc("'public_key' value not exist or parameter error");
+							result.set_desc("'public_key' value is not existed or parameter error");
 							LOG_ERROR("Invalid publickey (%s)", signa["public_key"].asString().c_str());
 							break;
 						}
@@ -146,7 +146,7 @@ namespace bumo {
 				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, ptr->GetFullData());
 			}
 
-			//force exist to success
+			//Force to exit successfully
 			if (result.code() == protocol::ERRCODE_SUCCESS || result.code() == protocol::ERRCODE_ALREADY_EXIST) {
 				result.set_code(protocol::ERRCODE_SUCCESS);
 				success_count++;
@@ -212,10 +212,10 @@ namespace bumo {
 		
 		Json::Value body;
 		if (!body.fromString(request.body)) {
-			LOG_ERROR("Parse request body json failed");
+			LOG_ERROR("Failed to parse the request body json");
 			Json::Value reply_json;
 			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
-			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must being json format";
+			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must be in json format";
 			reply_json["success_count"] = Json::UInt(0);
 			reply = reply_json.toStyledString();
 			return;
@@ -242,7 +242,7 @@ namespace bumo {
 			if (!test_parameter.contract_address_.empty()) {
 				if (!Environment::AccountFromDB(test_parameter.contract_address_, acc)) {
 					error_code = protocol::ERRCODE_NOT_EXIST;
-					error_desc = utils::String::Format("Account(%s) not exist", test_parameter.contract_address_.c_str());
+					error_desc = utils::String::Format("Account(%s) is not existed", test_parameter.contract_address_.c_str());
 					LOG_ERROR("%s", error_desc.c_str());
 					break;
 				}
@@ -284,7 +284,7 @@ namespace bumo {
 			LOG_ERROR("Parse request body json failed");
 			Json::Value reply_json;
 			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
-			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must being json format";
+			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must be in json format";
 			reply_json["success_count"] = Json::UInt(0);
 			reply = reply_json.toStyledString();
 			return;
@@ -297,7 +297,7 @@ namespace bumo {
 			LOG_ERROR("Test transaction too much(%d)", json_items.size());
 			Json::Value reply_json;
 			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
-			reply_json["results"][Json::UInt(0)]["error_desc"] = "Test transaction too much,just can test only one transaction";
+			reply_json["results"][Json::UInt(0)]["error_desc"] = "Too many test transactions;you can test only one transaction";
 			reply_json["success_count"] = Json::UInt(0);
 			reply = reply_json.toStyledString();
 			return;
