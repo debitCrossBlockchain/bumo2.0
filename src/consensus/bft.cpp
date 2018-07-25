@@ -1718,7 +1718,7 @@ namespace bumo {
 		if ( new_view_number > 0 || new_seq > 0 ){
 			ClearNotCommitedInstance();
 
-			//enter to new view
+			//Enter to new view
 			view_number_ = new_view_number > 0 ? new_view_number : view_number_;
 			view_active_ = true;
 			saver.SaveValue(PbftDesc::VIEW_ACTIVE, true);
