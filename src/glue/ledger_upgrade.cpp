@@ -57,7 +57,7 @@ namespace bumo {
 
 		} while (false);
 
-		//Send the current state every 30s'
+		//Send the current state every 30s
 		protocol::LedgerUpgradeNotify *notify = NULL;
 		do {
 			utils::MutexGuard guard(lock_);
@@ -93,7 +93,7 @@ namespace bumo {
 		raw_data += utils::String::ToString(msg.nonce());
 
 		if (!PublicKey::Verify(raw_data, sig.sign_data(), sig.public_key())) {
-			LOG_ERROR("Verify ledger upgrade failed");
+			LOG_ERROR("Failed to verify ledger upgrade");
 			return;
 		} 
 
