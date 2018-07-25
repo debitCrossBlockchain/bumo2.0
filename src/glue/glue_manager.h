@@ -46,7 +46,7 @@ namespace bumo {
 		//For getting module status
 		time_t process_uptime_;
 
-		//for temp validation storage, need implement by ledger
+		//For temp validation storage, need implementation by ledger
 		//validations
 		protocol::ValidatorSet validations;
 
@@ -76,7 +76,7 @@ namespace bumo {
 		bool OnConsensus(const ConsensusMsg &msg);
 		void NotifyErrTx(std::vector<TransactionFrm::pointer> &txs);
 
-		//Called by the ledger manger once ledger is closed
+		//Called by the ledger manger once the ledger is closed
 		void UpdateValidators(const protocol::ValidatorSet &validators, const std::string &proof);
 		void LedgerHasUpgrade();
 
