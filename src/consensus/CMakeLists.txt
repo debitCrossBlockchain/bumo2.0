@@ -1,13 +1,13 @@
 #bumo consensus module CmakeLists.txt -- libbumo_consensus.a
 
 set(LIB_BUMO_CONSENSUS bumo_consensus)
-#automaticall get src file in specifical dir
+#Automatically get src files from the specified directory
 aux_source_directory(${BUMO_SRC_DIR}/consensus/ CONSENSUS_SRC)
 
-#generate static library file
+#Generate static library files
 add_library(${LIB_BUMO_CONSENSUS} ${CONSENSUS_SRC})
 
-#specify compile options for target obj
+#Specify compiling options for target objects
 target_compile_options(${LIB_BUMO_CONSENSUS}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE
