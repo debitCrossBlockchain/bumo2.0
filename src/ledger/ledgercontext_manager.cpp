@@ -18,7 +18,7 @@
 #include "contract_manager.h"
 
 namespace bumo {
-	//For syncing blocks.
+	//For synchronizing blocks.
 	LedgerContext::LedgerContext(const std::string &chash, const protocol::ConsensusValue &consvalue) :
 		type_(AT_NORMAL),
 		lpmanager_(NULL),
@@ -32,7 +32,7 @@ namespace bumo {
 	}
 
 
-	//For syncing the block before the current block.
+	//For synchronizing the block before the current block.
 	LedgerContext::LedgerContext(LedgerContextManager *lpmanager, const std::string &chash, const protocol::ConsensusValue &consvalue, bool propose) :
 		type_(AT_NORMAL),
 		lpmanager_(lpmanager),
@@ -112,7 +112,7 @@ namespace bumo {
 
 		//async
 		if (lpmanager_) {
-			//move running to complete
+			//Move the finished transactions to the complete list.
 			if (propose_result_.exec_result_) {
 				lpmanager_->MoveRunningToComplete(this);
 			}
@@ -126,7 +126,7 @@ namespace bumo {
 		//If the source address for starting the contract does not exist, a temporary account will be created.
 		std::shared_ptr<Environment> environment = std::make_shared<Environment>(nullptr);
 		if (parameter_.contract_address_.empty()) {
-			//create a temporary account
+			//Create a temporary account
 			PrivateKey priv_key(SIGNTYPE_ED25519);
 			Json::Value account_json = Json::Value(Json::objectValue);
 			protocol::Account account;
@@ -149,7 +149,7 @@ namespace bumo {
 				PrivateKey priv_key(SIGNTYPE_ED25519);
 				parameter_.source_address_ = priv_key.GetEncAddress();
 			}
-			//create a tempory source address
+			//Create a tempory source address
 			protocol::Account account;
 			account.set_address(parameter_.source_address_);
 			account.set_nonce(0);
@@ -206,7 +206,7 @@ namespace bumo {
 			return ret;
 		}
 		else if (ContractTestParameter::MAIN == parameter_.opt_type_) {
-			//construct trigger tx
+			//Construct trigger tx
 			protocol::TransactionEnv env;
 			protocol::Transaction *tx = env.mutable_transaction();
 			tx->set_source_address(parameter_.source_address_);
@@ -274,7 +274,7 @@ namespace bumo {
 			parameter.timestamp_ = consensus_value_.close_time();
 			parameter.blocknumber_ = consensus_value_.ledger_seq();
 
-			//do query
+			//Query
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
 			tx_frm->environment_ = environment;
 			transaction_stack_.push_back(tx_frm);
