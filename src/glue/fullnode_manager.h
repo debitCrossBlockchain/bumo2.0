@@ -94,5 +94,5 @@ namespace bumo {
 		// reward the top one of sorted full nodes list with 10% of block reward and tx fee
 		bool reward(std::shared_ptr<Environment> env, int64_t fullnode_reward);
 	};
-};
+}
 #endif

@@ -52,7 +52,7 @@ function verifyImpeachInfo(impeachedAddr, impeachInfo){
     let reason = impeachInfo.reason;
     assert(reason === 'out-sync' || reason === 'timeout', 'Invalid impeach reason');
 	
-    assert(verifyCheckAuthority(sender, impeachedAddr) === true, 'Verify check authority failed');
+    //assert(verifyCheckAuthority(sender, impeachedAddr) === true, 'Verify check authority failed');
     
     return true;
 }
@@ -64,14 +64,19 @@ function impeachFullNode(params){
 	
     let fullnode = getFullNode(impeachedAddr);
     assert(typeof fullnode === 'object', 'Failed to get full node info of ' + impeachedAddr);
-    
-    let impeach_array = [];
-    impeach_array = fullnode.impeach_list;
-    
+	
+	//assert(false, JSON.stringify(fullnode));
+	let len = 0;
+	if(typeof fullnode.impeach_list === 'object' && fullnode.impeach_list !== null) {
+		len = fullnode.impeach_list.length;
+	} else {
+		fullnode.impeach_list = [];
+	}
+	
     let impeach_valid = true;
     let i;
-    for(i = 0; i < impeach_array.length; i += 1) {
-        let item = impeach_array[i];
+    for(i = 0; i < len; i += 1) {
+        let item = fullnode.impeach_list[i];
         let address = Object.keys(item)[0];
         let info = item[address];
         if (sender === address && impeachInfo.ledger_seq < info.ledger_seq) {
@@ -83,12 +88,12 @@ function impeachFullNode(params){
     if (impeach_valid === true) {
         let impeach = {};
         impeach[sender] = impeachInfo;
-        impeach_array.push(impeach);
+        fullnode.impeach_list.push(impeach);
     
-        if(impeach_array.length >= minImpeachSize) {
-            assert(setFullNode(fullnode, 'remove') === true, 'Failed to remove invalid full node');
+        if(fullnode.impeach_list.length >= minImpeachSize) {
+            assert(setFullNode(JSON.stringify(fullnode), 'remove') === true, 'Failed to remove invalid full node');
         } else {
-			assert(setFullNode(fullnode, 'update') === true, 'Failed to update full node ' + impeachedAddr);
+			assert(setFullNode(JSON.stringify(fullnode), 'update') === true, 'Failed to update full node ' + impeachedAddr);
 		}
     }
     return true;
@@ -97,13 +102,20 @@ function impeachFullNode(params){
 function unimpeachFullNode(params) {
 	let impeachedAddr = params.address;
     let unimpeachAddr = params.unimpeachAddr;
-    assert(verifyCheckAuthority(sender, impeachedAddr) === true, 'Verify check authority failed');
+    //assert(verifyCheckAuthority(sender, impeachedAddr) === true, 'Verify check authority failed');
 	
 	let fullnode = getFullNode(impeachedAddr);
     assert(typeof fullnode === 'object', 'Failed to get full node info of ' + impeachedAddr);
 	
+	let len = 0;
+	if(typeof fullnode.impeach_list === 'object' && fullnode.impeach_list !== null) {
+		len = fullnode.impeach_list.length;
+	} else {
+		fullnode.impeach_list = [];
+		return;
+	}
 	let i;
-    for(i = 0; i < fullnode.impeach_list.length; i += 1) {
+    for(i = 0; i < len; i += 1) {
         let item = fullnode.impeach_list[i];
         let address = Object.keys(item)[0];
         if(address === unimpeachAddr) {
@@ -112,7 +124,7 @@ function unimpeachFullNode(params) {
     }
 	if(i !== fullnode.impeach_list.length) {
 		fullnode.impeach_list.splice(i, 1);
-		assert(setFullNode(fullnode, 'update') === true, 'Failed to update full node ' + impeachedAddr);
+		assert(setFullNode(JSON.stringify(fullnode), 'update') === true, 'Failed to update full node ' + impeachedAddr);
 	}
 }
 

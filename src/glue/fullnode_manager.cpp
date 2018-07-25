@@ -469,9 +469,6 @@ namespace bumo {
 		}
 
 		protocol::TransactionEnv tran_env;
-		Result result;
-		result.set_code(protocol::ERRCODE_SUCCESS);
-		result.set_desc("");
 
 		protocol::Transaction *tx = tran_env.mutable_transaction();
 		tx->set_source_address(local_address_);
@@ -483,7 +480,7 @@ namespace bumo {
 		tx->set_nonce(account_ptr->GetAccountNonce() + 1);
 		int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
 		tx->set_gas_price(gas_price);
-		tx->set_fee_limit(500000);
+		tx->set_fee_limit(5000000);
 
 		protocol::Operation *ope = tx->add_operations();
 		ope->set_type(protocol::Operation_Type_PAY_COIN);
@@ -508,12 +505,16 @@ namespace bumo {
 		sign->set_public_key(priv_key_.GetEncPublicKey());
 		sign->set_sign_data(sign_data);
 		LOG_ERROR("%s", tran_env.DebugString().c_str());
+		
+		Result result;
+		result.set_code(protocol::ERRCODE_SUCCESS);
+		result.set_desc("");
 		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
 		if (GlueManager::Instance().OnTransaction(ptr, result)) {
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
 		}
 		else {
-			LOG_ERROR("Failed to impeach full node address %s in ledger seq(" FMT_I64 ")", local_address_.c_str(), last_inspect_seq_);
+			LOG_ERROR("Failed to impeach full node address %s in ledger seq(" FMT_I64 "), %s", local_address_.c_str(), last_inspect_seq_, result.desc().c_str());
 			return false;
 		}
 		return true;
@@ -522,9 +523,6 @@ namespace bumo {
 	bool FullNodeManager::unimpeach(const std::string& address, const std::string& unimpeach_addr)
 	{
 		protocol::TransactionEnv tran_env;
-		Result result;
-		result.set_code(protocol::ERRCODE_SUCCESS);
-		result.set_desc("");
 
 		protocol::Transaction *tx = tran_env.mutable_transaction();
 		tx->set_source_address(local_address_);
@@ -536,7 +534,7 @@ namespace bumo {
 		tx->set_nonce(account_ptr->GetAccountNonce() + 1);
 		int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
 		tx->set_gas_price(gas_price);
-		tx->set_fee_limit(500000);
+		tx->set_fee_limit(5000000);
 
 		protocol::Operation *ope = tx->add_operations();
 		ope->set_type(protocol::Operation_Type_PAY_COIN);
@@ -558,18 +556,22 @@ namespace bumo {
 		sign->set_public_key(priv_key_.GetEncPublicKey());
 		sign->set_sign_data(sign_data);
 
+		Result result;
+		result.set_code(protocol::ERRCODE_SUCCESS);
+		result.set_desc("");
 		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
 		if (GlueManager::Instance().OnTransaction(ptr, result)) {
 			PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
 		}
 		else {
-			LOG_ERROR("Failed to unimpeach full node address %s from %s", unimpeach_addr.c_str(), address.c_str());
+			LOG_ERROR("Failed to unimpeach full node address %s from %s, %s", unimpeach_addr.c_str(), address.c_str(), result.desc().c_str());
 			return false;
 		}
 		return true;
 	}
 
-	bool FullNodeManager::reward(std::shared_ptr<Environment> env, int64_t fullnode_reward) {
+	bool FullNodeManager::reward(std::shared_ptr<Environment> env, int64_t fullnode_reward)
+	{
 		if (sorted_full_nodes_.empty()) return true;
 		std::string reward_node = sorted_full_nodes_[0]; // top one of sorted full nodes list
 		std::shared_ptr<AccountFrm> account;
@@ -581,7 +583,9 @@ namespace bumo {
 		if (!account->AddBalance(fullnode_reward)) {
 			LOG_ERROR("Account(%s) allocate reward failed", account->GetAccountAddress().c_str());
 			return false;
-		}
+		} else {
+			LOG_ERROR("Account(%s) allocate reward done", account->GetAccountAddress().c_str());
+        }
 		return true;
 	}
 }
