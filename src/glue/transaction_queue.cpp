@@ -70,7 +70,7 @@ namespace bumo {
 	}
 	
 	void TransactionQueue::Insert(TransactionFrm::pointer const& tx){
-		// Insert into queue
+		// Insert into the queue
 		auto inserted = queue_by_address_and_nonce_[tx->GetSourceAddress()].insert(std::make_pair(tx->GetNonce(), std::make_pair(PriorityQueue::iterator(), TimeQueue::iterator())));
 		PriorityQueue::iterator left = queue_.emplace(tx);
 		TimeQueue::iterator right = time_queue_.emplace(tx);
@@ -169,7 +169,7 @@ namespace bumo {
 
 				int64_t last_seq = 0;
 				do {
-					//find this cache
+					//Find this cache
 					auto this_iter = topic_seqs.find(tx->GetSourceAddress());
 					if (this_iter != topic_seqs.end()) {
 						last_seq = this_iter->second;
@@ -213,7 +213,7 @@ namespace bumo {
 			//LOG_TRACE("RemoveTxs close_ledger_flag(%d) (%d) removed(%d) addr(%s) nonce(" FMT_I64 ") fee(" FMT_I64 ") last seq(" FMT_I64 ")",
 			//	(int)close_ledger, i, (int)result.first, source_address.c_str(), nonce, (int64_t)txproto.transaction().fee(), last_seq);
 
-			//update system account nonce
+			//Update system account nonce
 			auto it = account_nonce_.find(source_address);
 			if (close_ledger && it != account_nonce_.end() && it->second < nonce)
 				it->second = nonce;
@@ -238,7 +238,7 @@ namespace bumo {
 				(int)close_ledger, i, (int)result.first, (*it)->GetSourceAddress().c_str(),
 				utils::String::BinToHexString((*it)->GetContentHash()).c_str(), (*it)->GetNonce(), (*it)->GetGasPrice(), last_seq);
 
-			//update system account nonce
+			//Update system account nonce
 			auto iter = account_nonce_.find(source_address);
 			if (close_ledger && iter != account_nonce_.end() && iter->second < nonce)
 				iter->second = nonce;
