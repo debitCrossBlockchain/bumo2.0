@@ -38,7 +38,7 @@
 	} while (false)
 	
 	FILE* fp;
-	time_t   now;         //实例化time_t结构
+	time_t   now;         //Instantiate the time_t structure
 	char tmp[512]; 
 	bool g_enable_ = false;
 
@@ -128,7 +128,7 @@
 			pthread_mutex_init(mptr, &mattr);
 
 			void *shm = NULL;//分配的共享内存的原始首地址
-			int64_t *shared;//指向shm
+			int64_t *shared;//Point to shm
 			int shmid;//共享内存标识符
 			//创建共享内存
 			shmid = shmget((key_t)1234, sizeof(int64_t), 0666 | IPC_CREAT);
