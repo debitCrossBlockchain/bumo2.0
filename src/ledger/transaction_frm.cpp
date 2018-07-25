@@ -249,7 +249,7 @@ namespace bumo {
 
 		do {
 			if (!environment->GetEntry(str_address, source_account)) {
-				LOG_ERROR("Source account(%s) does not exists", str_address.c_str());
+				LOG_ERROR("Source account(%s) does not exist", str_address.c_str());
 				result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
 				break;
 			}
@@ -350,7 +350,7 @@ namespace bumo {
 
 			if (!environment->GetEntry(str_address, source_account)) {				
 				result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
-				result_.set_desc(utils::String::Format("Source account(%s) not exists", str_address.c_str()));
+				result_.set_desc(utils::String::Format("Source account(%s) does not exist", str_address.c_str()));
 				LOG_ERROR("%s", result_.desc().c_str());
 				break;
 			}
@@ -743,7 +743,7 @@ namespace bumo {
 		AccountFrm::pointer source_account;
 		std::string str_address = GetSourceAddress();
 		if (!parent->GetEntry(str_address, source_account)) {
-			LOG_ERROR("Source account(%s) does not exists", str_address.c_str());
+			LOG_ERROR("Source account(%s) does not exist", str_address.c_str());
 			result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
 			return;
 		}
