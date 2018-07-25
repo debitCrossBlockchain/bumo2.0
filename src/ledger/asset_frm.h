@@ -22,7 +22,7 @@
 namespace bubi {
 	class AssetFrm {
 	public:
-		struct Sel //start ext length
+		struct Sel //
 		{
 			Sel(int64_t s, int64_t l, const std::string &e) {
 				start_ = s;
