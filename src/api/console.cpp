@@ -277,7 +277,7 @@ namespace bumo {
 	void Console::ShowKey(const utils::StringVector &args) {
 		if (priv_key_ != NULL) {
 
-			//check the password again;
+			//Check the password again;
 			PrivateKey *tmp_private = OpenKeystore(keystore_path_);
 			if (tmp_private != NULL) {
 				if (tmp_private->GetEncAddress() != priv_key_->GetEncAddress()) {
@@ -309,7 +309,7 @@ namespace bumo {
 
 		if (priv_key_ != NULL) {
 
-			//check the password again;
+			//Check the password again;
 			PrivateKey *tmp_private = OpenKeystore(keystore_path_);
 			if (tmp_private != NULL ) {
 				if (tmp_private->GetEncAddress() != priv_key_->GetEncAddress()) {
