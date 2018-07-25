@@ -88,14 +88,14 @@ namespace bumo{
 		//add or set a k/v
 		bool Set(const std::string &key, const std::string &value);
 
-		//return false if not exists else return true
+		//Return false if it is not existed; otherwise, return true.
 		bool Get(const std::string& key, std::string& value);
 
 		bool Exists(NodeFrm::POINTER node, const Location& key);
 
 		void GetAll(const std::string& key, std::vector<std::string>& values);
 
-		//return false if not exists else return true
+		//Return false if it is not existed; otherwise, return true.
 		bool Delete(const std::string& key);
 
 		HASH GetRootHash();
