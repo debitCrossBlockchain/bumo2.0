@@ -97,7 +97,7 @@ namespace bumo {
 			if (tx_it != account_it->second.end()){
 				int64_t p = (*tx_it->second.first)->GetGasPrice();
 				if ((tx->GetGasPrice() - p)>=(p*0.1)) {
-					//remove transaction for replace ,and after insert
+					//You need to replace the previous transaction by deleting the previous transaction and then inserting a new transaction.
 					std::string drop_hash = (*tx_it->second.first)->GetContentHash();
 					Remove(account_it, tx_it);
 					account_nonce_[tx->GetSourceAddress()] = cur_source_nonce;
