@@ -38,7 +38,7 @@ namespace bumo {
 		std::vector<protocol::TransactionEnvStore> instructions_;
 		std::shared_ptr<Environment> environment_;
 	public:
-		//only valid when the transaction belongs to a txset
+		//Valid only when the transaction belongs to a txset
 		TransactionFrm();
 		TransactionFrm(const protocol::TransactionEnv &env);
 		
@@ -136,7 +136,7 @@ namespace bumo {
 		int64_t actual_gas_;
 		int64_t actual_gas_for_query_;
 
-		//flow the top tx
+		//All the following variables will point to the initial transaction.
 		int64_t max_end_time_;
 		int32_t contract_step_;
 		int64_t contract_memory_usage_;
