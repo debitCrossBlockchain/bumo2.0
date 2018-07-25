@@ -666,7 +666,7 @@ namespace bumo{
 			json_result["exception"] = exec_string;
 			json_result["contract"] = contract_address;
 
-			//print error stack
+			//Print error stack
 			v8::Local<v8::Value> stack_trace_string;
 			if (try_catch->StackTrace(context).ToLocal(&stack_trace_string) &&
 				stack_trace_string->IsString() &&
@@ -852,12 +852,12 @@ namespace bumo{
 			TransactionFrm::pointer ptr = ledger_context->GetBottomTx();
 			ptr->ContractStepInc(1);
 
-			//check the storage
+			//Check the storage
 			v8::HeapStatistics stats;
 			args.GetIsolate()->GetHeapStatistics(&stats);
 			ptr->SetMemoryUsage(stats.used_heap_size());
 
-			//check the stack
+			//Check the stack
 			v8::V8InternalInfo internal_info;
 			args.GetIsolate()->GetV8InternalInfo(internal_info);
 
@@ -931,7 +931,7 @@ namespace bumo{
 			ledger_context->GetBottomTx()->ContractStepInc(100);
 			std::string this_contract = v8_contract->parameter_.this_address_;
 
-			//add to transaction
+			//Add to transaction
 			protocol::TransactionEnv txenv;
 			txenv.mutable_transaction()->set_source_address(this_contract);
 			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
@@ -1095,12 +1095,12 @@ namespace bumo{
 			parameter.blocknumber_ = v8_contract->GetParameter().blocknumber_;
 			parameter.consensus_value_ = v8_contract->GetParameter().consensus_value_;
 			parameter.ledger_context_ = v8_contract->GetParameter().ledger_context_;
-			//do query
+			//Query
 
 			Json::Value query_result;
 			bool ret = ContractManager::Instance().Query(contract.type(), parameter, query_result);
 			
-			//just like this, {"success": true, "result": "abcde"}
+			//Just like this, {"success": true, "result": "abcde"}
 			if (!ret) {
 				v8::Local<v8::Boolean> flag = v8::Boolean::New(args.GetIsolate(), true);
 				obj->Set(v8::String::NewFromUtf8(args.GetIsolate(), "error"), flag);
@@ -1451,7 +1451,7 @@ namespace bumo{
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
-	//get balance of the given account 
+	//Get the balance of the given account 
 	void V8Contract::CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
@@ -1493,7 +1493,7 @@ namespace bumo{
 		args.GetReturnValue().Set(false);
 	}
 
-// 	//get the hash of one of the 1024 most recent complete blocks
+// 	//Get the hash value of one of the 1024 most recent complete blocks
 	void V8Contract::CallBackGetBlockHash(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		do {
 			if (args.Length() != 1) {
@@ -2124,7 +2124,7 @@ namespace bumo{
 			ledger_context->PopContractId();
 			ledger_context->PushLog(contract->GetParameter().this_address_, contract->GetLogs());
 			do {
-				//delete the contract from map
+				//Delete the contract from map
 				contracts_.erase(contract->GetId());
 				delete contract;
 			} while (false);
@@ -2156,7 +2156,7 @@ namespace bumo{
 			ledger_context->PushLog(contract->GetParameter().this_address_, contract->GetLogs());
 			ledger_context->PushRet(contract->GetParameter().this_address_, result);
 			do {
-				//delete the contract from map
+				//Delete the contract from map
 				contracts_.erase(contract->GetId());
 				delete contract;
 			} while (false);
