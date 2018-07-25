@@ -38,7 +38,7 @@ namespace bumo {
 		std::vector<protocol::TransactionEnvStore> instructions_;
 		std::shared_ptr<Environment> environment_;
 	public:
-		//Valid only when the transaction belongs to a txset
+		//Valid only when the transaction belongs to a txset.
 		TransactionFrm();
 		TransactionFrm(const protocol::TransactionEnv &env);
 		
