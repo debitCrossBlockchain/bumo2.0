@@ -177,7 +177,7 @@ namespace bumo{
 		static void CallBackPayAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void Include(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void InternalCheckTime(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//get transaction info from a transaction
+		//Get transaction info from a transaction
 		static void CallBackGetTransactionInfo(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackContractQuery(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//static void CallBackGetThisAddress(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -190,9 +190,9 @@ namespace bumo{
 
 		//to base unit, equal to * pow(10, 8)
 		static void CallBackToBaseUnit(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//get balance of the given account 
+		//Get the balance of the given account 
 		static void CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//get the hash of one of the 1024 most recent complete blocks
+		//Get the hash of one of the 1024 most recent complete blocks
 		static void CallBackGetBlockHash(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 		//Sends a message with arbitrary date to a given address path
