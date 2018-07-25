@@ -127,7 +127,7 @@ function proposalFee(feeType,price) {
 function queryVote(proposalId) {
   let key =voteRecordKeyPrefix+proposalId;
   let result = storageLoad(key);
-  //assert(result !== false,'vote records of proposal(' +proposalId +')not exist');
+  //assert(result !== false,'vote records of proposal(' +proposalId +') are not existed');
   if(result === false){
     result ='vote records of proposal(' +proposalId +')not exist';
   }
@@ -136,7 +136,7 @@ function queryVote(proposalId) {
 
 function queryProposal() {  
   let result = storageLoad(proposalRecordsKey);
-  //assert(result !== false,'proposal not exist');
+  //assert(result !== false,'the proposal is not existed');
   if(result === false){
     result ='proposal not exist';
   }
