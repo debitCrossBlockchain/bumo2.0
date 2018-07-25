@@ -173,7 +173,7 @@ function applyAsValidatorCandidate(){
             applicant[ballotVar] = [];
        }
 
-       /*superaddition pledge coin can update vote expired time*/
+       /*Additional deposit allows you to update the deadline for voting*/
        applicant[expiredTimeVar] = blockTimestamp + effectiveVoteInterval;
        setMetaData(applicantKey, applicant);
    }
@@ -191,7 +191,7 @@ function voteForApplicant(applicant){
     let applicantKey = applicantVar + applicant;
     let applicantStr = storageLoad(applicantKey);
     if(applicantStr === false){
-        log(applicantKey + ' is not exist, maybe voting passed or expired.');
+        log(applicantKey + ' is not existed, voting maybe passed or expired.');
         return false;
     }
 
@@ -205,7 +205,7 @@ function voteForApplicant(applicant){
 
     let candidates = getObjectMetaData(candidatesVar);
     if(candidates.length >= (validatorSetSize * 2)){
-        log('Validator candidates is enough');
+        log('Validator candidates are enough');
         return false;
     }
 
@@ -311,7 +311,7 @@ function voteAbolishValidator(malicious){
     let abolishKey = abolishVar + malicious;
     let abolishStr = storageLoad(abolishKey);
     if(abolishStr === false){
-        log(abolishKey + ' is not exist, maybe voting passed or expired.');
+        log(abolishKey + ' is not existed, voting maybe passed or expired.');
         return false;
     }
 
