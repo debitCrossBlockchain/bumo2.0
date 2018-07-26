@@ -8,7 +8,7 @@ void test_bubikey(){
 	std::string strpkey = skey.GetEncPublicKey();
 	for (int i = 0; i < 10000; i++)
 	{
-		//bubi::PublicKey pkey(strpkey);
+		//bumo::PublicKey pkey(strpkey);
 		std::string sig = skey.Sign("hello");
 		
 		//auto ppp = pkey.GetBase58PublicKey();
