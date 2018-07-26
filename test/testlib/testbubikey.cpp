@@ -1,7 +1,7 @@
 #include <common/private_key.h>
 
 
-void test_bubikey(){
+void test_bumokey(){
 
 
     bumo::PrivateKey skey(bumo::SIGNTYPE_ED25519);

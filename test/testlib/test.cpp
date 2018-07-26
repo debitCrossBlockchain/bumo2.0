@@ -662,7 +662,7 @@ int main(int32_t argc, char *argv[]){
 
 
 /*
-using namespace Bubi;
+using namespace Bumo;
 
 void dfs (RadixMerkleTreeNode::pointer node, int tree_depth){
 //	node->get_hash ().to_string ();	
