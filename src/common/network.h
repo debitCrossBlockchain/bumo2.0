@@ -176,15 +176,15 @@ namespace bumo {
 		//Get password.
 		std::string GetCertPassword();
 
-		//Get peer object. Not thread safe.
+		//The thread is not safe when you get a peer object.
 		Connection *GetConnection(int64_t id);
 		Connection *GetConnection(connection_hdl hdl);
 
-		//Remove peer. Not thread safe.
+		//The thread is not safe when you remove or close a network connection.
 		void RemoveConnection(Connection *conn);
 		void RemoveConnection(int64_t conn_id);
 
-		//Mapp  message type to function.
+		//Mapp message type to function.
 		MessageConnPocMap request_methods_;
 		MessageConnPocMap response_methods_;
 
