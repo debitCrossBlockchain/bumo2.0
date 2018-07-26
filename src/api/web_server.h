@@ -32,7 +32,6 @@ namespace bumo {
 		WebServer();
 		~WebServer();
 	private:
-		utils::AsyncIo *async_io_ptr_;
 		http::server::server *server_ptr_;
 		asio::ssl::context *context_;
 		bool running;
