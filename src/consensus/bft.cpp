@@ -39,7 +39,7 @@ namespace bumo {
 			return false;
 		}
 
-		//Load from the check point
+		//Load from the check point.
 		LoadValues();
 
 		//sequence_ = last_exe_seq_ + 1;
@@ -73,7 +73,7 @@ namespace bumo {
 			std::string str_instance;
 			int32_t ret = LoadValue(PbftDesc::VIEW_CHANGE_NAME, str_instance);
 			if (ret <= 0) {
-				LOG_INFO("Load vc instances nothing");
+				LOG_INFO("Failed to load vc instances");
 				return ret;
 			}
 			else if (ret == 0) {
@@ -82,7 +82,7 @@ namespace bumo {
 
 			Json::Value json_instance;
 			if (!json_instance.fromString(str_instance)) {
-				LOG_ERROR("Parse loaded instances failed, string instances(%s)", str_instance.c_str());
+				LOG_ERROR("Failed to parse loaded instances, string instances(%s)", str_instance.c_str());
 				return -1;
 			}
 
@@ -101,32 +101,32 @@ namespace bumo {
 				instance.new_view_round_ = item["new_view_round"].asUInt();
 
 				if (!instance.view_change_msg_.ParseFromString(utils::String::HexStringToBin(item["view_change_msg"].asString()))) {
-					LOG_ERROR("Consensus load instance, parse view_change_msg message string failed");
+					LOG_ERROR("Consensus load instance, failed to parse view_change_msg message string");
 				}
 
 				if (!instance.newview_.ParseFromString(utils::String::HexStringToBin(item["new_view"].asString()))) {
-					LOG_ERROR("Consensus load instance, parse new_view message string failed");
+					LOG_ERROR("Consensus load instance, failed to parse new_view message string");
 				}
 
-				//for message buffer
+				//For message buffer
 				const Json::Value &msg_buffer_json = item["msg_buffer"];
 				for (uint32_t m = 0; m < msg_buffer_json.size(); m++) {
 					PbftPhaseVector pv;
 					const Json::Value &msg_item_json = msg_buffer_json[m];
 					protocol::PbftEnv env;
 					if (!env.ParseFromString(utils::String::HexStringToBin(msg_item_json.asString()))) {
-						LOG_ERROR("Consensus load vc, parse message buffer string failed");
+						LOG_ERROR("Consensus load vc, failed to parse message buffer string");
 						continue;
 					}
 					instance.msg_buf_.push_back(env);
 				}
 
-				//for view changes message
+				//For view changes message
 				const Json::Value &view_changes_json = item["view_changes"];
 				for (uint32_t m = 0; m < view_changes_json.size(); m++) {
 					protocol::PbftViewChange env;
 					if (!env.ParseFromString(utils::String::HexStringToBin(view_changes_json[m].asString()))) {
-						LOG_ERROR("Consensus load vc, parse vc string failed");
+						LOG_ERROR("Consensus load vc, failed to parse vc string");
 						continue;
 
 					}
@@ -144,7 +144,7 @@ namespace bumo {
 			std::string str_validators;
 			int32_t ret = LoadValue(PbftDesc::VALIDATORS, str_validators);
 			if (ret <= 0) {
-				LOG_INFO("Load validators nothing");
+				LOG_INFO("Failed to load validators");
 				return ret;
 			}
 			else if (ret == 0) {
@@ -153,7 +153,7 @@ namespace bumo {
 
 			Json::Value json_instance;
 			if (!json_instance.fromString(str_validators)) {
-				LOG_ERROR("Parse loaded validators failed, string instances(%s)", str_validators.c_str());
+				LOG_ERROR("Failed to parse loaded validators, string instances(%s)", str_validators.c_str());
 				return -1;
 			}
 
@@ -197,7 +197,7 @@ namespace bumo {
 			item["sequence"] = index;
 			item["view_number"] = instance.view_number_;
 
-			//for tags
+			//For tags
 			item["view_change_round"] = instance.view_change_round_;
 			item["start_time"] = instance.start_time_;
 			item["end_time"] = instance.end_time_;
@@ -208,13 +208,13 @@ namespace bumo {
 			item["view_change_msg"] = utils::String::BinToHexString(instance.view_change_msg_.SerializeAsString());
 			item["new_view"] = utils::String::BinToHexString(instance.newview_.SerializeAsString());
 
-			//for message buffer
+			//For message buffer
 			Json::Value &msg_buffer_json = item["msg_buffer"];
 			for (PbftPhaseVector::const_iterator iter_msg = instance.msg_buf_.begin(); iter_msg != instance.msg_buf_.end(); iter_msg++) {
 				msg_buffer_json[msg_buffer_json.size()] = utils::String::BinToHexString(iter_msg->SerializeAsString());
 			}
 
-			//for view changes
+			//For view changes
 			Json::Value &view_changes = item["view_changes"];
 			for (PbftViewChangeMap::const_iterator iter1 = instance.viewchanges_.begin(); iter1 != instance.viewchanges_.end(); iter1++) {
 				view_changes[view_changes.size()] = utils::String::BinToHexString(iter1->second.SerializeAsString());
@@ -242,7 +242,7 @@ namespace bumo {
 		for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end(); iter++) {
 			//Check if we should send the prepare again
 
-			//Check if it is timeout
+			//Check if it times out
 			if (iter->second.IsExpire(current_time) &&
 				!iter->second.have_send_viewchange_
 				) {
@@ -268,7 +268,7 @@ namespace bumo {
 
 		if (last_prepared_instance != NULL &&
 			last_prepared_instance->check_value_result_ == Consensus::CHECK_VALUE_VALID &&
-			last_prepared_instance->NeedSendCommitAgain(current_time)) { //for broadcast only
+			last_prepared_instance->NeedSendCommitAgain(current_time)) { //For broadcast only
 			PbftEnvPointer commit_msg = NewCommit(last_prepared_instance->prepares_.begin()->second, ++last_prepared_instance->commit_round_);
 			SendMessage(commit_msg);
 			last_prepared_instance->SetLastCommitSendTime(current_time);
@@ -299,7 +299,7 @@ namespace bumo {
 				lastvc_instance->view_number_, lastvc_instance->new_view_round_);
 		}
 
-		//check the view change object should be teminated
+		//Check the view change object that should be teminated
 		//for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end(); ){
 		//	if (iter_vc->second.ShouldTeminated(current_time, g_pbft_vcinstance_terminatedtime_)){
 		//		vc_instances_.erase(iter_vc++);
@@ -388,13 +388,13 @@ namespace bumo {
 			return false;
 		}
 
-		//check pbft type is not large than max
+		//Check pbft type is no larger than max
 		int64_t replica_id = -1;
 		switch (pbft.type()) {
 		case protocol::PBFT_TYPE_PREPREPARE:
 		{
 			if (!pbft.has_pre_prepare()) {
-				LOG_ERROR("Check received message failed, Pre-Prepare message has not related object");
+				LOG_ERROR("Failed to check received message, Pre-Prepare message has not related object");
 				return false;
 			}
 			replica_id = pbft.pre_prepare().replica_id();
@@ -403,7 +403,7 @@ namespace bumo {
 		case protocol::PBFT_TYPE_PREPARE:
 		{
 			if (!pbft.has_prepare()) {
-				LOG_ERROR("Check received message failed, Prepare message has not related object");
+				LOG_ERROR("Failed to check received message, Prepare message has not related object");
 				return false;
 			}
 			replica_id = pbft.prepare().replica_id();
