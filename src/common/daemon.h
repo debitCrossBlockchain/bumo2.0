@@ -55,7 +55,7 @@ namespace utils {
 		void GetModuleStatus(Json::Value &data) {
 
 		};
-		//virtual void GetModuleStatus(Json::Value &data) const;
+		//Virtual void GetModuleStatus(Json::Value &data) const;
 	};
 }
 #endif
