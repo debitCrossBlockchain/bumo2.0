@@ -2,7 +2,7 @@
 //  ViewController.h
 //  ios
 //
-//  Created by 冯瑞明 on 2018/6/22.
+//  Created by Feng Ruiming on 2018/6/22.
 //  Copyright © 2018年 bumo. All rights reserved.
 //
 
