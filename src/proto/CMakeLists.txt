@@ -9,7 +9,7 @@ set(PROTO_SRC
 #Generate static library files
 add_library(${LIB_BUMO_PROTO} ${PROTO_SRC}) 
 
-#Specify compiling options for target obj
+#Specify compiling options for target objects
 target_compile_options(${LIB_BUMO_PROTO}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE
