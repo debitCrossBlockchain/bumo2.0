@@ -49,10 +49,10 @@ namespace bumo {
 		int64_t replica_id_;
 		std::map<std::string, int64_t> validators_;
 
-		//lock the instance
+		//Lock the instance
 		utils::Mutex lock_;
 
-		//notify
+		//Notify
 		IConsensusNotify *notify_;
 
 		int32_t CheckValue(const std::string &value);
