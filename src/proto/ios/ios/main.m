@@ -33,7 +33,7 @@ int main(int argc, char * argv[]) {
         // Serialization
         NSData *serialData = transaction.data;
         
-        // Anti-serialization
+        // De-serialization
         Transaction *tran = [Transaction parseFromData:serialData error:NULL];
         NSLog(@"after: %@", tran);
         
