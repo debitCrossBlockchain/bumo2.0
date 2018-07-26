@@ -394,7 +394,7 @@ namespace bumo {
 		case protocol::PBFT_TYPE_PREPREPARE:
 		{
 			if (!pbft.has_pre_prepare()) {
-				LOG_ERROR("Failed to check received message, Pre-Prepare message has not related object");
+				LOG_ERROR("Pre-Prepare message has no instance");
 				return false;
 			}
 			replica_id = pbft.pre_prepare().replica_id();
@@ -403,7 +403,7 @@ namespace bumo {
 		case protocol::PBFT_TYPE_PREPARE:
 		{
 			if (!pbft.has_prepare()) {
-				LOG_ERROR("Failed to check received message, Prepare message has not related object");
+				LOG_ERROR("Prepare message has no instance");
 				return false;
 			}
 			replica_id = pbft.prepare().replica_id();
@@ -412,7 +412,7 @@ namespace bumo {
 		case protocol::PBFT_TYPE_COMMIT:
 		{
 			if (!pbft.has_commit()) {
-				LOG_ERROR("Check received message failed, Commit message has not related object");
+				LOG_ERROR("Commit message has no instance");
 				return false;
 			}
 			replica_id = pbft.commit().replica_id();
@@ -421,7 +421,7 @@ namespace bumo {
 		case protocol::PBFT_TYPE_VIEWCHANGE:
 		{
 			if (!pbft.has_view_change()) {
-				LOG_ERROR("Check received message failed, View change message has not related object");
+				LOG_ERROR("View change message has no instance");
 				return false;
 			}
 
@@ -431,7 +431,7 @@ namespace bumo {
 		case protocol::PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE:
 		{
 			if (!pbft.has_view_change_with_rawvalue()) {
-				LOG_ERROR("Check received message failed, View change with rawvalue message has not related object");
+				LOG_ERROR("View change with raw value message has no instance");
 				return false;
 			}
 
@@ -446,7 +446,7 @@ namespace bumo {
 		case protocol::PBFT_TYPE_NEWVIEW:
 		{
 			if (!pbft.has_new_view()) {
-				LOG_ERROR("Check received message failed, New view message has not related object");
+				LOG_ERROR("New view message has no instance");
 				return false;
 			}
 			replica_id = pbft.new_view().replica_id();
@@ -454,7 +454,7 @@ namespace bumo {
 		}
 		default:
 		{
-			LOG_ERROR("Check received message failed, Cannot parse the type(%d)", pbft.type());
+			LOG_ERROR("Cannot parse the type(%d)", pbft.type());
 			return false;
 		}
 		}
@@ -467,7 +467,7 @@ namespace bumo {
 
 		//Check the signature
 		if (!PublicKey::Verify(pbft.SerializeAsString(), sig.sign_data(), sig.public_key())) {
-			LOG_ERROR("Check received message's signature failed, desc(%s)", PbftDesc::GetPbft(pbft).c_str());
+			LOG_ERROR("Failed to check received message's signature, desc(%s)", PbftDesc::GetPbft(pbft).c_str());
 			return false;
 		}
 		return true;
@@ -476,13 +476,13 @@ namespace bumo {
 	bool Pbft::CheckViewChangeWithRawValue(const protocol::PbftViewChangeWithRawValue &view_change_raw, const ValidatorMap &validators) {
 
 		if (!view_change_raw.has_view_change_env()) {
-			LOG_ERROR("Check view change raw failed, hash no view change env, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+			LOG_ERROR("Failed to check view change raw, hash no view change env, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
 			return false;
 		}
 
 		if (GetMessageType(view_change_raw.view_change_env()) != protocol::PBFT_TYPE_VIEWCHANGE ||
 			!CheckMessageItem(view_change_raw.view_change_env(), validators)) {
-			LOG_ERROR("Check view change raw failed, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+			LOG_ERROR("Failed to check view change raw, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
 			return false;
 		}
 		std::string p_value_digest = view_change_raw.view_change_env().pbft().view_change().prepred_value_digest();
@@ -505,7 +505,7 @@ namespace bumo {
 			for (int32_t m = 0; m < prepared_set.prepare_size(); m++) {
 				const protocol::PbftEnv &prepare_env = prepared_set.prepare(m);
 				if (!CheckMessageItem(prepare_env, validators)) {
-					LOG_ERROR("Check vc prepared set failed, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+					LOG_ERROR("Failed to check vc prepared set, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
 					return false;
 				}
 
@@ -514,7 +514,7 @@ namespace bumo {
 				if (prepare.view_number() != pre_prepare.view_number() ||
 					prepare.sequence() != pre_prepare.sequence() ||
 					CompareValue(prepare.value_digest(), pre_prepare.value_digest()) != 0) {
-					LOG_ERROR("Check vc prepared set failed, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
+					LOG_ERROR("Failed to check vc prepared set, desc(%s)", PbftDesc::GetViewChangeRawValue(view_change_raw).c_str());
 					return false;
 				}
 
@@ -594,7 +594,7 @@ namespace bumo {
 		if (instance.commits_.size() >= GetQuorumSize() + 1 /*&& instance.pre_prepare_.has_value()*/) {
 			LOG_INFO("Trace out pbft commited, vn(" FMT_I64 "), seq(" FMT_I64 ")", index.view_number_, index.sequence_);
 			if (index.sequence_ - last_exe_seq_ >= ckp_interval_) {
-				LOG_INFO("The trace out sequence(" FMT_I64 ") is large than last exe sequence(" FMT_I64 ") for checkpoint interval(" FMT_I64 "), try move watermark",
+				LOG_INFO("The trace out sequence(" FMT_I64 ") is larger than last exe sequence(" FMT_I64 ") for checkpoint interval(" FMT_I64 "), try move watermark",
 					index.sequence_, last_exe_seq_, ckp_interval_);
 
 				//We should move to the new watermark
@@ -617,7 +617,7 @@ namespace bumo {
 				}
 				SaveViewChange(saver);
 
-				//delete instance
+				//Delete instance
 				for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end();) {
 					const PbftInstanceIndex &index = iter->first;
 					if (index.sequence_ <= last_exe_seq_) instances_.erase(iter++);
@@ -696,7 +696,7 @@ namespace bumo {
 			LOG_INFO("Create pbft instance vn(" FMT_I64 "), seq(" FMT_I64 ")", view_number, sequence);
 			instances_.insert(std::make_pair(index, PbftInstance()));
 
-			//Delete the seq which not the same view
+			//Delete the seq which is not the same view
 			for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 				iter_inst != instances_.end();
 				) {
@@ -718,7 +718,7 @@ namespace bumo {
 
 	bool Pbft::OnRecv(const ConsensusMsg &message) {
 		if (message.GetType() != name_) {
-			LOG_ERROR("The received consensus message may be error, the type is not pbft");
+			LOG_ERROR("The received consensus message may be error, and the type is not pbft");
 			return false;
 		}
 		protocol::PbftEnv env = message.GetPbft();
@@ -792,7 +792,7 @@ namespace bumo {
 					break;
 				}
 
-				LOG_INFO("The message value(%s) receive duplicated, desc(%s)",
+				LOG_INFO("The message value(%s) received is duplicated, desc(%s)",
 					notify_->DescConsensusValue(pre_prepare.value()).c_str(), PbftDesc::GetPbft(pbft).c_str());
 
 				if (check_value_ret != Consensus::CHECK_VALUE_VALID) {
@@ -859,7 +859,7 @@ namespace bumo {
 		bool exist = false;
 		PbftPrepareMap::iterator iter_prepare = pinstance.prepares_.find(prepare.replica_id());
 		if (iter_prepare != pinstance.prepares_.end()) {
-			LOG_INFO("The prepare message view number(" FMT_I64 ") sequence(" FMT_I64 ") round number(%u) has been receive duplicated, desc(%s)",
+			LOG_INFO("The prepare message view number(" FMT_I64 ") sequence(" FMT_I64 ") round number(%u) has been received duplicated, desc(%s)",
 				prepare.view_number(), prepare.sequence(), pbft.round_number(), PbftDesc::GetPbft(pbft).c_str());
 			exist = true;
 		}
@@ -867,7 +867,7 @@ namespace bumo {
 		pinstance.prepares_.insert(std::make_pair(prepare.replica_id(), prepare));
 		if (pinstance.prepares_.size() >= GetQuorumSize()) {
 
-			if (pinstance.phase_ < PBFT_PHASE_PREPARED) {  //detect the receive again
+			if (pinstance.phase_ < PBFT_PHASE_PREPARED) {  //Detect and receive again
 				pinstance.phase_ = PBFT_PHASE_PREPARED;
 				pinstance.phase_item_ = 0;
 			}
@@ -903,7 +903,7 @@ namespace bumo {
 
 		PbftCommitMap::iterator iter_commit = pinstance.commits_.find(commit.replica_id());
 		if (iter_commit != pinstance.commits_.end()) {
-			LOG_INFO("The prepare message view number(" FMT_I64 ") sequence(" FMT_I64 ") has been receive duplicated",
+			LOG_INFO("The prepare message view number(" FMT_I64 ") sequence(" FMT_I64 ") has been received and duplicated",
 				commit.view_number(), commit.sequence());
 			return true;
 		}
@@ -933,7 +933,7 @@ namespace bumo {
 		LOG_INFO("Receive view change message from replica id(" FMT_I64 "), view number(" FMT_I64 "),round number(%u)",
 			view_change.replica_id(), view_change.view_number(), pbft.round_number());
 		if (view_change.view_number() == view_number_) {
-			LOG_INFO("The new view number(" FMT_I64 ") is equal than current view number, do nothing", view_change.view_number());
+			LOG_INFO("The new view number(" FMT_I64 ") is equal to current view number, do nothing", view_change.view_number());
 			return true;
 		}
 		else if (view_change.view_number() < view_number_) {
@@ -947,14 +947,14 @@ namespace bumo {
 
 		ValueSaver saver;
 		PbftVcInstanceMap::iterator iter = vc_instances_.find(view_change.view_number());
-		if (iter == vc_instances_.end()) {   //new instance
+		if (iter == vc_instances_.end()) {   //New instance
 			vc_instances_.insert(std::make_pair(view_change.view_number(), PbftVcInstance(view_change.view_number())));
 			vc_instances_[view_change.view_number()].seq = view_change.sequence();
 		}
 
 		PbftVcInstance &vc_instance = vc_instances_[view_change.view_number()];
 
-		//insert into the msg need to be sent again for timeout
+		//Insert into the msg need to be sent again for timeout
 		if (view_change.replica_id() == replica_id_ && !vc_instance.view_change_msg_.has_pbft()) {
 			//PbftEnvPointer msg = NewViewChange(view_number_ + 1);
 			//*((protocol::PbftEnv *)msg->data_) = pbft_env;
@@ -982,7 +982,7 @@ namespace bumo {
 		}
 
 		if (vc_instance.viewchanges_.size() > GetQuorumSize() && vc_instance.end_time_ == 0) { //for view change, quorum size is 2f
-			//view change have achieve
+			//View changes have achieved
 			bool ret = ProcessQuorumViewChange(vc_instance);
 
 			SaveViewChange(saver);
@@ -1013,7 +1013,7 @@ namespace bumo {
 		LOG_INFO("Try to delete new view repond timer id(" FMT_I64 ") %s", new_view_repond_timer_, ret ? "true" : "failed");
 
 		if (new_view.view_number() % validators_.size() == replica_id_) {
-			LOG_INFO("It's the new primary(replica_id:" FMT_I64 "), so donn't process the new view message", replica_id_);
+			LOG_INFO("It's the new primary(replica_id:" FMT_I64 "), so do not process the new view message", replica_id_);
 			return true;
 		}
 
@@ -1049,7 +1049,7 @@ namespace bumo {
 		}
 
 		if (replica_set.size() <= GetQuorumSize()) {
-			LOG_ERROR("The new view message(number:" FMT_I64 ")'s count(" FMT_SIZE ") is less or equal than qurom size(" FMT_SIZE ")",
+			LOG_ERROR("The new view message(number:" FMT_I64 ")'s count(" FMT_SIZE ") is less than or equal to qurom size(" FMT_SIZE ")",
 				new_view.view_number(), replica_set.size(), GetQuorumSize());
 			return false;
 		}
@@ -1100,7 +1100,7 @@ namespace bumo {
 	void Pbft::ClearViewChanges() {
 
 		ValueSaver saver;
-		//delete other incomplete view change instance
+		//Delete other incomplete view change instances
 		for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end();) {
 			if (iter_vc->second.end_time_ == 0) {
 				LOG_INFO("Delete the view change instance (vn:" FMT_I64 ") that is not complete", iter_vc->second.view_number_);
@@ -1139,7 +1139,7 @@ namespace bumo {
 				}
 			});
 
-			LOG_INFO("It's not the new primary(replica_id:" FMT_I64 "), so don't process the quorum view message, waiting new view message 30s, timer id(" FMT_I64")",
+			LOG_INFO("It's not the new primary(replica_id:" FMT_I64 "), so don't process the quorum view message, waiting for new view message 30s, timer id(" FMT_I64")",
 				vc_instance.view_number_ % validators_.size(), new_view_repond_timer_);
 			return true;
 		}
@@ -1206,7 +1206,7 @@ namespace bumo {
 				break;
 			}
 
-			//get commit env from buf
+			//Get commit env from buf
 			protocol::PbftProof proof;
 			const PbftPhaseVector &vec = instance.msg_buf_[protocol::PBFT_TYPE_COMMIT];
 			std::set<std::string> commit_node;
@@ -1342,10 +1342,10 @@ namespace bumo {
 				if (index.sequence_ > pviewchange->sequence() && instance.phase_ == PBFT_PHASE_PREPARED) {
 					protocol::PbftPreparedSet *prepared_set_inner = vc_raw->mutable_prepared_set();
 
-					//Add prepared message, add pre-prepared message
+					//Add prepared message and pre-prepared message
 					*prepared_set_inner->mutable_pre_prepare() = instance.msg_buf_[0][0];//Add prepreared message
 
-					//Add prepared message.
+					//Add prepared message
 					for (size_t i = 0; i < instance.msg_buf_[1].size(); i++) {
 						*prepared_set_inner->add_prepare() = instance.msg_buf_[1][i];
 					}
@@ -1629,7 +1629,7 @@ namespace bumo {
 
 	void Pbft::ClearNotCommitedInstance() {
 		ValueSaver saver;
-		//Discard the other log
+		//Discard other logs
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
 			) {
@@ -1654,7 +1654,7 @@ namespace bumo {
 		else {
 			protocol::PbftProof pbft_proof;
 			if (!pbft_proof.ParseFromString(proof)) {
-				LOG_ERROR("Parse from proof string failed");
+				LOG_ERROR("Failed to parse proof string");
 				return false;
 			}
 
@@ -1672,7 +1672,7 @@ namespace bumo {
 			}
 		}
 
-		//Compare the validators.
+		//Compare the validators
 		bool validator_changed = (validators.validators_size() != validators_.size());
 		int32_t validator_index = 0;
 		for (int32_t i = 0; i < validators.validators_size(); i++) {
@@ -1689,7 +1689,7 @@ namespace bumo {
 
 		ValueSaver saver;
 		if (validator_changed ){
-			//update the validators
+			//Update the validators
 			Consensus::UpdateValidators(validators);
 
 			if (validators_.size() < 4) {
@@ -1708,7 +1708,7 @@ namespace bumo {
 		} 
 		
 		if (new_seq > 0) {
-			//set the 
+			
 			last_exe_seq_ = new_seq;
 
 			LOG_INFO("Set the last exe sequence(" FMT_I64 ")", last_exe_seq_);
@@ -1761,7 +1761,7 @@ namespace bumo {
 		//Check proof
 		protocol::PbftProof pbft_evidence;
 		if (!pbft_evidence.ParseFromString(proof)) {
-			LOG_ERROR("Parse from proof string failed");
+			LOG_ERROR("Failed to parse proof string");
 			return false;
 		}
 
@@ -1769,7 +1769,7 @@ namespace bumo {
 			const protocol::PbftEnv &env = pbft_evidence.commits(i);
 			const protocol::Pbft &pbft = env.pbft();
 			if (!CheckMessageItem(env, temp_vs)) {
-				LOG_ERROR("Check proof message item failed, validators:(%s), hash(%s), proof(%s), total_size(" FMT_SIZE "), qsize(" FMT_SIZE "), counter(" FMT_I64 ")", 
+				LOG_ERROR("Proof message item failure, validators:(%s), hash(%s), proof(%s), total_size(" FMT_SIZE "), qsize(" FMT_SIZE "), counter(" FMT_I64 ")", 
 					Proto2Json(validators).toFastString().c_str(), utils::String::BinToHexString(previous_value_hash).c_str(), 
 					Proto2Json(pbft_evidence).toFastString().c_str(),
 					total_size, qsize,
@@ -1778,13 +1778,13 @@ namespace bumo {
 			}
 
 			if (pbft.type() != protocol::PBFT_TYPE_COMMIT || !pbft.has_commit()) {
-				LOG_ERROR("Check proof message item failed, type(%s) not valid", PbftDesc::GetMessageTypeDesc(pbft.type()));
+				LOG_ERROR("Proof message item failure, type(%s) not valid", PbftDesc::GetMessageTypeDesc(pbft.type()));
 				return false;
 			}
 
 			const protocol::PbftCommit &commit = pbft.commit();
 			if (commit.value_digest() != previous_value_hash) {
-				LOG_ERROR("Check proof message item failed, message value hash(%s) not equal to previous value hash(%s)",
+				LOG_ERROR("Proof message item failure, message value hash(%s) not equal to previous value hash(%s)",
 					utils::String::BinToHexString(commit.value_digest()).c_str(), utils::String::BinToHexString(previous_value_hash).c_str());
 				return false;
 			}
@@ -1793,7 +1793,7 @@ namespace bumo {
 			PublicKey pub_key(sign.public_key());
             std::string address = pub_key.GetEncAddress();
 			if (temp_vs.find(address) == temp_vs.end()) {
-				LOG_ERROR("Check proof failed, address(%s) not found or duplicated", address.c_str());
+				LOG_ERROR("Proof failure, address(%s) not found or duplicated", address.c_str());
 				return false;
 			}
 
@@ -1804,7 +1804,7 @@ namespace bumo {
 			return true;
 		}
 		else {
-			LOG_ERROR("Check proof failed, message quorum size(" FMT_SIZE ") < quorum size( " FMT_SIZE ") ", 
+			LOG_ERROR("Proof failure, message quorum size(" FMT_SIZE ") < quorum size( " FMT_SIZE ") ", 
 				total_size - temp_vs.size(), qsize);
 			return false;
 		}
