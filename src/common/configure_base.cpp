@@ -97,7 +97,7 @@ namespace bumo {
 		time_capacity_ *= (3600 * 24);
 		size_capacity_ *= utils::BYTES_PER_MEGA;
 
-		// parse type string
+		//Parse the type string
 		utils::StringVector dests, levels;
 		dest_ = utils::LOG_DEST_NONE;
 		dests = utils::String::Strtok(dest_str_, '|');
@@ -111,7 +111,7 @@ namespace bumo {
 			else if (destitem == "FILE")   dest_ |= utils::LOG_DEST_FILE;
 		}
 
-		// parse level string
+		// Parse the level string
 		level_ = utils::LOG_LEVEL_NONE;
 		levels = utils::String::Strtok(level_str_, '|');
 
@@ -200,7 +200,7 @@ namespace bumo {
 			Json::Reader reader;
 			Json::Value values;
 			if (!reader.parse(data, values)) {
-				LOG_STD_ERR("Parse config file failed, (%s)", reader.getFormatedErrorMessages().c_str());
+				LOG_STD_ERR("Failed to parse config file, (%s)", reader.getFormatedErrorMessages().c_str());
 				break;
 			}
 
