@@ -45,7 +45,7 @@ namespace bumo {
 		// The max RECURSIVE DEPTH is 3.
 		const static int CONTRACT_MAX_RECURSIVE_DEPTH = 3;
 
-		//At most 512 transaction can be created when a contract is executed.
+		//At most 512 transactions can be created when a contract is executed.
 		const static int CONTRACT_TRANSACTION_LIMIT = 512;
 
 		const static int CONTRACT_CODE_LIMIT = 256 * utils::BYTES_PER_KILO;
