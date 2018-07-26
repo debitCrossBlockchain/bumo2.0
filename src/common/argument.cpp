@@ -109,7 +109,7 @@ namespace bumo {
 				return true;
 			}
 			//else if (s == "--aes-decrypt"  && argc > 2) {
-			//	printf("%s\n", utils::Aes::HexDecrypto(argv[2], bubi::GetDataSecuretKey()).c_str());
+			//	printf("%s\n", utils::Aes::HexDecrypto(argv[2], bumo::GetDataSecuretKey()).c_str());
 			//	return true;
 			//}
 			else if (s == "--sm3" ) {

@@ -22,7 +22,7 @@
 namespace bumo {
 
 	//AccountFrm::AccountFrm() {
-	//	utils::AtomicInc(&bubi::General::account_new_count);
+	//	utils::AtomicInc(&bumo::General::account_new_count);
 	//	assets_ = nullptr;
 	//	storage_ = nullptr;
 	//}

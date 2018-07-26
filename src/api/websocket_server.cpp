@@ -165,7 +165,7 @@ namespace bumo {
 			return true;
 		}
 
-		//bubi::PeerManager::Instance().BroadcastPayLoad(cpm);
+		//bumo::PeerManager::Instance().BroadcastPayLoad(cpm);
 		return true;
 	}
 

@@ -229,7 +229,7 @@ namespace bumo {
 	std::string PublicKey::GetEncAddress() const {
 		
 		std::string str_result = "";
-		//Append prefix (bubi 0XE6 0X9A 0X73 0XFF)
+		//Append prefix (bumo 0XE6 0X9A 0X73 0XFF)
 		//Append prefix (bu)
 		str_result.push_back((char)0X01);
 		str_result.push_back((char)0X56);
