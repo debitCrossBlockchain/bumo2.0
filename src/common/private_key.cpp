@@ -104,7 +104,7 @@ namespace bumo {
 		PrivateKeyPrefix prefix_tmp;
 		SignatureType sign_type_tmp = SIGNTYPE_NONE;
 		std::string buff = DecodeAddress(encode_key);
-		if (buff.size() == 27 && (uint8_t)buff.at(0) == 0X01 && (uint8_t)buff.at(1) == 0X56){// address
+		if (buff.size() == 27 && (uint8_t)buff.at(0) == 0X01 && (uint8_t)buff.at(1) == 0X56){// Address
 			prefix_tmp = ADDRESS_PREFIX;
 		}
 		else if (buff.size() == 41 && (uint8_t)buff.at(0) == 0XDA && (uint8_t)buff.at(1) == 0X37 && (uint8_t)buff.at(2) == 0X9F){//private key
@@ -229,7 +229,7 @@ namespace bumo {
 	std::string PublicKey::GetEncAddress() const {
 		
 		std::string str_result = "";
-		//Append prefix (bubi 0XE6 0X9A 0X73 0XFF)
+		//Append prefix (bumo 0XE6 0X9A 0X73 0XFF)
 		//Append prefix (bu)
 		str_result.push_back((char)0X01);
 		str_result.push_back((char)0X56);

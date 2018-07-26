@@ -42,7 +42,7 @@ namespace bumo {
 		//for view change 
 		PbftVcInstanceMap vc_instances_;
 
-		//for synchronize
+		//for synchronization
 		PbftInstanceMap out_pbft_instances_;
 
 		//check interval

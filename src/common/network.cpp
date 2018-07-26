@@ -315,10 +315,10 @@ namespace bumo {
 		}
 
 		if (err.value() != 0){
-			LOG_ERROR_ERRNO("Init websocket network failed", err.value(), err.message().c_str());
+			LOG_ERROR_ERRNO("Failed to initiate websocket network", err.value(), err.message().c_str());
 		}
 
-		//register function
+		//Register function
 		request_methods_[OVERLAY_PING] = std::bind(&Network::OnRequestPing, this, std::placeholders::_1, std::placeholders::_2);
 		response_methods_[OVERLAY_PING] = std::bind(&Network::OnResponsePing, this, std::placeholders::_1, std::placeholders::_2);
 	}
@@ -382,7 +382,7 @@ namespace bumo {
 			message.ParseFromString(msg->get_payload());
 		}
 		catch (std::exception const e) {
-			LOG_ERROR("Parse websocket message failed(%s)", e.what());
+			LOG_ERROR("Failed to parse websocket message(%s)", e.what());
 			return;
 		}
 
@@ -418,7 +418,7 @@ namespace bumo {
 				Connection *conn = GetConnection(hdl);
 				if (!conn) {
 					LOG_ERROR("Handle not found");
-					break;  //not found
+					break;  //Not found
 				}
 				OnDisconnect(conn);
 			} while (false);
@@ -464,7 +464,7 @@ namespace bumo {
 				if (now - last_check_time > utils::MICRO_UNITS_PER_SEC) {
 
 					utils::MutexGuard guard_(conns_list_lock_);
-					//Ping the client to see if the connectin is timed out.
+					//Ping the client to see if the connectin times out.
 					std::list<Connection *> delete_list;
 					for (ConnectionMap::iterator iter = connections_.begin();
 						iter != connections_.end();
@@ -487,7 +487,7 @@ namespace bumo {
 						} 
 					}
 
-					//Remove current connection to delete array.
+					//Remove the current connection to delete array.
 					for (std::list<Connection *>::iterator iter = delete_list.begin();
 						iter != delete_list.end();
 						iter++) {
@@ -706,14 +706,14 @@ namespace bumo {
 	bool Network::OnRequestPing(protocol::WsMessage &message, int64_t conn_id) {
 		protocol::Ping ping;
 		if (!ping.ParseFromString(message.data())){
-			LOG_ERROR("Parse ping failed");
+			LOG_ERROR("Failed to parse ping");
 			return false;
 		}
 
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *con = GetConnection(conn_id);
 		if (!con) {
-			LOG_ERROR("Get connection failed by id(" FMT_I64 ")", conn_id);
+			LOG_ERROR("Failed to get connection by id(" FMT_I64 ")", conn_id);
 			return false;
 		} 
 
@@ -725,7 +725,7 @@ namespace bumo {
 	bool Network::OnResponsePing(protocol::WsMessage &message, int64_t conn_id) {
 		protocol::Pong pong;
 		if (!pong.ParseFromString(message.data())) {
-			LOG_ERROR("Parse pong failed");
+			LOG_ERROR("Failed to parse pong");
 			return false;
 		}
 

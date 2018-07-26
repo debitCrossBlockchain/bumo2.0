@@ -56,7 +56,7 @@ namespace bumo {
 		tls_client *tls_client_;
 		connection_hdl handle_;
 
-		//status
+		//Status
 		int64_t connect_end_time_;
 
 		int64_t last_receive_time_;
@@ -149,7 +149,7 @@ namespace bumo {
 
 		void Start(const utils::InetAddress &ip);
 		void Stop();
-		//for client
+		//For client
 		bool Connect(std::string const & uri);
 		uint16_t GetListenPort() const;
 	protected:
@@ -176,15 +176,15 @@ namespace bumo {
 		//Get password.
 		std::string GetCertPassword();
 
-		//Get peer object. Not thread safe.
+		//The thread is not safe when you get a peer object.
 		Connection *GetConnection(int64_t id);
 		Connection *GetConnection(connection_hdl hdl);
 
-		//Remove peer. Not thread safe.
+		//The thread is not safe when you remove or close a network connection.
 		void RemoveConnection(Connection *conn);
 		void RemoveConnection(int64_t conn_id);
 
-		//Mapping for message type to function.
+		//Mapp message type to function.
 		MessageConnPocMap request_methods_;
 		MessageConnPocMap response_methods_;
 

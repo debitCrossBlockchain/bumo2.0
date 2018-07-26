@@ -3,7 +3,7 @@
 #include <common/general.h>
 #include "channel.h"
 
-namespace bubi1 {
+namespace bumo1 {
 
 	Connection::Connection(server *server_h, client *client_h, connection_hdl con, const std::string &uri, int64_t id) :
 		server_(server_h),

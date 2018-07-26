@@ -31,10 +31,10 @@ namespace bumo {
 		std::string session_id_;          /* session id */
 		std::string peer_node_address_;   /* peer node address */
 		
-		std::string bumo_version_;        /* bubi version */
+		std::string bumo_version_;        /* bumo version */
 		int64_t monitor_version_;         /* monitor version */
-		int64_t bubi_ledger_version_;     /* bubi ledger version */
-		std::string bubi_node_address_;   /* bubi node address */
+		int64_t bumo_ledger_version_;     /* bumo ledger version */
+		std::string bumo_node_address_;   /* bumo node address */
 
 	public:
 		Monitor(bumo::server *server_h, bumo::client *client_h, bumo::tls_server *tls_server_h, bumo::tls_client *tls_client_h, 
@@ -49,7 +49,7 @@ namespace bumo {
 		std::string GetPeerNodeAddress() const;
 
 		bool SendHello(int32_t listen_port, const std::string &node_address, std::error_code &ec);
-		void SetBubiInfo(const protocol::ChainStatus &hello);
+		void SetBumoInfo(const protocol::ChainStatus &hello);
 	};
 }
 

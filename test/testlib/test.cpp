@@ -347,8 +347,8 @@ void TestPeer(const std::string &argv1, const std::string &argv2){
 
 	int32_t len = utils::String::Stol(argv2);
 
-// 	bubi::PeerMsgHearder header;
-// 	memset(&header, 0, sizeof(bubi::PeerMsgHearder));
+// 	bumo::PeerMsgHearder header;
+// 	memset(&header, 0, sizeof(bumo::PeerMsgHearder));
 // 	header.type = htons(rand()%32);
 // 	header.data_len = htonl(len);
 // 	tcp.SendSome((void *)&header, sizeof(header));
@@ -536,6 +536,12 @@ int main(int32_t argc, char *argv[]){
 // 	assert(!utils::String::IsDecNumber("x00.012345678", 8));
 // 	assert(!utils::String::IsDecNumber("x00.012345x678", 8));
 // 	assert(!utils::String::IsDecNumber("a00.012345x678", 8));
+//	assert(!utils::String::IsDecNumber("0123", 8));
+// 	assert(utils::String::IsDecNumber("0", 8));
+// 	assert(utils::String::IsDecNumber("0.0", 8));
+// 	assert(utils::String::IsDecNumber("123", 8));
+// 	assert(utils::String::IsDecNumber("1.0002", 8));
+// 	assert(utils::String::IsDecNumber("1000.00", 8));
 // 
 // 	assert(utils::String::MultiplyDecimal("0.01234", 1) == "0.1234");
 // 	assert(utils::String::MultiplyDecimal("0.01234", 2) == "1.234");
@@ -577,17 +583,17 @@ int main(int32_t argc, char *argv[]){
 // 	bumo::KeyStore key_store;
 // 	Json::Value keyss;
 // 	std::string new_private;
-// 	bool ret = key_store.Generate("bubi#07150926", keyss, new_private);
+// 	bool ret = key_store.Generate("bumo#07150926", keyss, new_private);
 // 	printf("%s\n", keyss.toFastString().c_str());
 // 	std::string pk;
 // 	ret = key_store.From(keyss, "bub", pk);
-// 	ret = key_store.From(keyss, "bubi", pk);
-// 	ret = key_store.From(keyss, "bubi#", pk);
-// 	ret = key_store.From(keyss, "bubi#0", pk);
-// 	ret = key_store.From(keyss, "bubi#07", pk);
-// 	ret = key_store.From(keyss, "bubi#071", pk);
-// 	ret = key_store.From(keyss, "bubi#0715092", pk);
-// 	ret = key_store.From(keyss, "bubi#07150926", pk);
+// 	ret = key_store.From(keyss, "bumo", pk);
+// 	ret = key_store.From(keyss, "bumo#", pk);
+// 	ret = key_store.From(keyss, "bumo#0", pk);
+// 	ret = key_store.From(keyss, "bumo#07", pk);
+// 	ret = key_store.From(keyss, "bumo#071", pk);
+// 	ret = key_store.From(keyss, "bumo#0715092", pk);
+// 	ret = key_store.From(keyss, "bumo#07150926", pk);
 
 	//TestSignature();
 	ParseFromProto();
@@ -656,7 +662,7 @@ int main(int32_t argc, char *argv[]){
 
 
 /*
-using namespace Bubi;
+using namespace Bumo;
 
 void dfs (RadixMerkleTreeNode::pointer node, int tree_depth){
 //	node->get_hash ().to_string ();	

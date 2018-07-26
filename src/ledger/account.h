@@ -13,8 +13,8 @@
 	along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BUBI_ACCOUNT_H_
-#define BUBI_ACCOUNT_H_
+#ifndef BUMO_ACCOUNT_H_
+#define BUMO_ACCOUNT_H_
 
 #include <utils/base_int.h>
 #include <utils/crypto.h>

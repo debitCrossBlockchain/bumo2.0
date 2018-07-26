@@ -151,7 +151,7 @@ namespace bumo {
 	}
 
 	bool WebSocketServer::OnChainPeerMessage(protocol::WsMessage &message, int64_t conn_id) {
-		// Send peer status to websocket client.
+		// Send peer status to the websocket client.
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(conn_id);
 		if (!conn) {
@@ -165,7 +165,7 @@ namespace bumo {
 			return true;
 		}
 
-		//bubi::PeerManager::Instance().BroadcastPayLoad(cpm);
+		//bumo::PeerManager::Instance().BroadcastPayLoad(cpm);
 		return true;
 	}
 
@@ -204,9 +204,9 @@ namespace bumo {
 		protocol::TransactionEnv tran_env;
 		do {
 			if (!tran_env.ParseFromString(message.data())) {
-				LOG_ERROR("Parse submit transaction string fail, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+				LOG_ERROR("Failed to parse the submitted transaction string, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc("Parse the transaction failed");
+				result.set_desc("Failed to parse the transaction");
 				break;
 			}
 			Json::Value real_json;
@@ -222,7 +222,7 @@ namespace bumo {
 		
 		} while (false);
 
-		//Broadcasting the WebSocketServer transaction(Tx) status.
+		//Broadcast the WebSocketServer transaction(Tx) status.
 		std::string hash = HashWrapper::Crypto(tran_env.transaction().SerializeAsString());
 		protocol::ChainTxStatus cts;
 		cts.set_tx_hash(utils::String::BinToHexString(hash));

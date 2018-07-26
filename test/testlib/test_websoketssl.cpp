@@ -38,7 +38,7 @@ void on_http(server* s, websocketpp::connection_hdl hdl) {
 }
 
 std::string get_password() {
-	return "bubi";
+	return "bumo";
 }
 
 // See https://wiki.mozilla.org/Security/Server_Side_TLS for more details about

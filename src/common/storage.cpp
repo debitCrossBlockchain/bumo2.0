@@ -267,7 +267,7 @@ namespace bumo {
 			if (bdropdb) {
 				bool do_success = false;
 				do {
-					//Check only for linux or mac that whether the account db can be opened.
+					//Check only for linux or mac whether the account db can be opened.
 #ifndef WIN32
 					KeyValueDb *account_db = NewKeyValueDb(db_config);
 					if (!account_db->Open(db_config.account_db_path_, -1)) {
@@ -279,17 +279,17 @@ namespace bumo {
 					delete account_db;
 #endif
 					if (utils::File::IsExist(db_config.keyvalue_db_path_) && !utils::File::DeleteFolder(db_config.keyvalue_db_path_)) {
-						LOG_ERROR_ERRNO("Delete keyvalue db failed", STD_ERR_CODE, STD_ERR_DESC);
+						LOG_ERROR_ERRNO("Failed to delete keyvalue db", STD_ERR_CODE, STD_ERR_DESC);
 						break;
 					}
 
 					if (utils::File::IsExist(db_config.ledger_db_path_) && !utils::File::DeleteFolder(db_config.ledger_db_path_)) {
-						LOG_ERROR_ERRNO("Delete ledger db failed", STD_ERR_CODE, STD_ERR_DESC);
+						LOG_ERROR_ERRNO("Failed to delete ledger db", STD_ERR_CODE, STD_ERR_DESC);
 						break;
 					}
 					
 					if (utils::File::IsExist(db_config.account_db_path_) && !utils::File::DeleteFolder(db_config.account_db_path_)) {
-						LOG_ERROR_ERRNO("Delete account db failed", STD_ERR_CODE, STD_ERR_DESC);
+						LOG_ERROR_ERRNO("Failed to delete account db", STD_ERR_CODE, STD_ERR_DESC);
 						break;
 					}
 					
@@ -336,21 +336,21 @@ namespace bumo {
 #endif
 			keyvalue_db_ = NewKeyValueDb(db_config);
 			if (!keyvalue_db_->Open(db_config.keyvalue_db_path_, keyvaule_max_open_files)) {
-				LOG_ERROR("Keyvalue_db path(%s) open fail(%s)\n",
+				LOG_ERROR("Keyvalue_db path(%s) open failure(%s)\n",
 					db_config.keyvalue_db_path_.c_str(), keyvalue_db_->error_desc().c_str());
 				break;
 			}
 
 			ledger_db_ = NewKeyValueDb(db_config);
 			if (!ledger_db_->Open(db_config.ledger_db_path_, ledger_max_open_files)) {
-				LOG_ERROR("Ledger db path(%s) open fail(%s)\n",
+				LOG_ERROR("Ledger db path(%s) open failure(%s)\n",
 					db_config.ledger_db_path_.c_str(), ledger_db_->error_desc().c_str());
 				break;
 			}
 
 			account_db_ = NewKeyValueDb(db_config);
 			if (!account_db_->Open(db_config.account_db_path_, account_max_open_files)) {
-				LOG_ERROR("Ledger db path(%s) open fail(%s)\n",
+				LOG_ERROR("Ledger db path(%s) open failure(%s)\n",
 					db_config.account_db_path_.c_str(), account_db_->error_desc().c_str());
 				break;
 			}

@@ -1,5 +1,5 @@
-ARC与非ARC在一个项目中同时使用，
+When ARC and non-ARC are used in the project at the same time:
 
-1，选择项目中的Targets，选中你所要操作的Target，
+1. Select the target that you will operate from the project.
 
-2，选Build Phases，在其中Complie Sources中选择需要ARC的文件双击，并在输入框中输入：-fobjc-arc，如果不要ARC则输入：-fno-objc-arc
+2. Select Build Phrases. Select a file required ARC from Complie Sources and double-click the file and then input -fobjc-arc in the input box; if the file does not require ARC, input -fno-objc-arc.

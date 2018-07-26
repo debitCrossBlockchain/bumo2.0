@@ -16,7 +16,6 @@
     <ClInclude Include="..\..\src\utils\common.h" />
     <ClInclude Include="..\..\src\utils\crypto.h" />
     <ClInclude Include="..\..\src\utils\ecc_sm2.h" />
-    <ClInclude Include="..\..\src\utils\exprparser.h" />
     <ClInclude Include="..\..\src\utils\file.h" />
     <ClInclude Include="..\..\src\utils\headers.h" />
     <ClInclude Include="..\..\src\utils\logger.h" />
@@ -26,7 +25,6 @@
     <ClInclude Include="..\..\src\utils\random.h" />
     <ClInclude Include="..\..\src\utils\singleton.h" />
     <ClInclude Include="..\..\src\utils\sm3.h" />
-    <ClInclude Include="..\..\src\utils\sqlparser.h" />
     <ClInclude Include="..\..\src\utils\strings.h" />
     <ClInclude Include="..\..\src\utils\system.h" />
     <ClInclude Include="..\..\src\utils\thread.h" />
@@ -38,13 +36,11 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\utils\crypto.cpp" />
     <ClCompile Include="..\..\src\utils\ecc_sm2.cpp" />
-    <ClCompile Include="..\..\src\utils\exprparser.cpp" />
     <ClCompile Include="..\..\src\utils\file.cpp" />
     <ClCompile Include="..\..\src\utils\logger.cpp" />
     <ClCompile Include="..\..\src\utils\net.cpp" />
     <ClCompile Include="..\..\src\utils\random.cpp" />
     <ClCompile Include="..\..\src\utils\sm3.cpp" />
-    <ClCompile Include="..\..\src\utils\sqlparser.cpp" />
     <ClCompile Include="..\..\src\utils\system.cpp" />
     <ClCompile Include="..\..\src\utils\thread.cpp" />
     <ClCompile Include="..\..\src\utils\timer.cpp" />

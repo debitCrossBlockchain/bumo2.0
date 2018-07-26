@@ -40,7 +40,7 @@
 #define LOGOUT_VALID			BIT(3)		//set to 1 if valid logout response is received
 
 //to identify the request currently under test
-#define BUBI							BIT(1)		//set to 1 if bubi request is under test
+#define BUMO							BIT(1)		//set to 1 if bumo request is under test
 #define LEDGER							BIT(2)		//set to 1 if ledger request is under test
 #define SYSTEM							BIT(3)		//set to 1 if system request is under test
 #define ACCTEXCP						BIT(4)		//set to 1 if acctexcp request is under test
@@ -61,7 +61,7 @@
 #define GENERAL_CASE_RESPONSE_BAD_SESSION_ID	BIT(9)
 
 #define GENERAL_CASE_REQUEST_BAD_SESSION_ID		BIT(10)
-//bubi request test condition
+//bumo request test condition
 //NONE
 
 //ledger request test condition
@@ -88,11 +88,11 @@
 #define UPGRADE_NO_URL						BIT(13)		//set to 1 if generating an upgrade rqst without URL
 #define UPGRADE_NO_MD5						BIT(14)		//set to 1 if generating an upgrade rqst without MD5
 #define UPGRADE_WRONG_MD5					BIT(15)		//set to 1 if generating an upgrade rqst with wrong MD5
-#define UPGRADE_FILENAME_BUBI				BIT(16)		//set to 1 if generating an upgrade rqst with filename bubi
-#define UPGRADE_FILENAME_BUBID				BIT(17)		//set to 1 if generating an upgrade rqst with filename bubid
+#define UPGRADE_FILENAME_BUMO				BIT(16)		//set to 1 if generating an upgrade rqst with filename bumo
+#define UPGRADE_FILENAME_BUMOD				BIT(17)		//set to 1 if generating an upgrade rqst with filename bumod
 #define UPGRADE_FILENAME_SLAVE				BIT(18)		//set to 1 if generating an upgrade rqst with filename slave
 #define UPGRADE_FILENAME_SLAVED				BIT(19)		//set to 1 if generating an upgrade rqst with filename slaved
-#define UPGRADE_FILENAME_BUBIJSON			BIT(20)		//set to 1 if generating an upgrade rqst with filename bubi.json
+#define UPGRADE_FILENAME_BUMOJSON			BIT(20)		//set to 1 if generating an upgrade rqst with filename bumo.json
 #define UPGRADE_FILENAME_CACERTPEM			BIT(21)		//set to 1 if generating an upgrade rqst with filename cacert.pem
 #define UPGRADE_FILENAME_CACERTCRT			BIT(22)		//set to 1 if generating an upgrade rqst with filename cacert.crt
 #define UPGRADE_FILENAME_PRIVKEYPEM			BIT(23)		//set to 1 if generating an upgrade rqst with filename privkey.pem
@@ -140,12 +140,12 @@
 #define WARNING_DISK_HIGH					BIT(5)
 #define WARNING_CONSENSUS_LOW				BIT(6)
 #define WARNING_CONSENSUS_HIGH				BIT(7)
-#define WARNING_BUBI_CRACK_LOW				BIT(8)
-#define WARNING_BUBI_CRACK_HIGH				BIT(9)
-#define WARNING_BUBI_ATTACK_TIME_LOW		BIT(10)
-#define WARNING_BUBI_ATTACK_TIME_HIGH		BIT(11)
-#define WARNING_BUBI_ATTACK_CONT_LOW		BIT(12)
-#define WARNING_BUBI_ATTACK_CONT_HIGH		BIT(13)
+#define WARNING_BUMO_CRACK_LOW				BIT(8)
+#define WARNING_BUMO_CRACK_HIGH				BIT(9)
+#define WARNING_BUMO_ATTACK_TIME_LOW		BIT(10)
+#define WARNING_BUMO_ATTACK_TIME_HIGH		BIT(11)
+#define WARNING_BUMO_ATTACK_CONT_LOW		BIT(12)
+#define WARNING_BUMO_ATTACK_CONT_HIGH		BIT(13)
 
 #define random(x) (rand()%x)
 
@@ -222,8 +222,8 @@ namespace bumo{
 		const std::string monitor_id_ = "123123123123123";
 		
 #else
-		const std::string monitor_id_1 = "bubiV8i9PstGLHj2qmMW9JKQQ2HpybnpoY2xme4a";
-		const std::string monitor_id_2 = "bubiV8hxAjNUuwQJLdvYwFjRhQutzoTqz81RcWqh";
+		const std::string monitor_id_1 = "bumoV8i9PstGLHj2qmMW9JKQQ2HpybnpoY2xme4a";
+		const std::string monitor_id_2 = "bumoV8hxAjNUuwQJLdvYwFjRhQutzoTqz81RcWqh";
 	
 #endif
 		std::string random_key_;
@@ -235,7 +235,7 @@ namespace bumo{
 		bool CheckReg(const std::string& msg);
 		bool CheckHB(const std::string& msg);
 		bool CheckLogout(const std::string& msg);
-		bool CheckBubi(const std::string& msg);
+		bool CheckBumo(const std::string& msg);
 		bool CheckSystem(const std::string& msg);
 		bool CheckLedger(const std::string& msg);
 		bool CheckAcctExcp(const std::string& msg);
@@ -273,7 +273,7 @@ namespace bumo{
 		void NormalResponseTest();
 		void BadHelloResponseTest();
 		void BadSessionIDTest();
-		void RequestBubiTest();
+		void RequestBumoTest();
 		void RequestSystemTest();
 		void RequestLedgerTest();
 		void RequestAccountExceptionTest();

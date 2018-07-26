@@ -26,7 +26,6 @@
 namespace bumo {
 
 	WebServer::WebServer() :
-		async_io_ptr_(NULL),
 		server_ptr_(NULL),
 		context_(NULL),
 		running(NULL),

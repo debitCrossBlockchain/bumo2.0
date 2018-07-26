@@ -172,7 +172,7 @@ namespace bumo {
 				LOG_ERROR("%s", res.error_desc().c_str());
 				break;
 			}
-			//if (hello->ledger_version() < bubi::General::LEDGER_MIN_VERSION){
+			//if (hello->ledger_version() < bumo::General::LEDGER_MIN_VERSION){
 			//	LOG_ERROR("Peer's leger version(%d) is too old,", hello->ledger_version());
 			//	break;
 			//}

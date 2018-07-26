@@ -42,7 +42,7 @@ namespace bumo {
 		utils::GetStrongRandBytes(aes_iv);
 		aes_iv.resize(16);
 
-		//produce
+		//Produce
 		uint64_t n = 16384;
 		uint32_t r = 8;
 		uint32_t p = 1;

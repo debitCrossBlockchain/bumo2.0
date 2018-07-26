@@ -12,7 +12,7 @@
 #include <websocketpp/server.hpp>
 #include <websocketpp/client.hpp>
 
-namespace bubi1 {
+namespace bumo1 {
 	typedef websocketpp::client<websocketpp::config::asio_client> client;
 	typedef websocketpp::server<websocketpp::config::asio> server;
 
