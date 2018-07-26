@@ -423,7 +423,7 @@ namespace bumo {
 			const protocol::LedgerUpgrade &upgrade = consensus_value.ledger_upgrade();
 			if (upgrade.new_ledger_version() != 0) {
 				if (lcl.version() >= upgrade.new_ledger_version()) {
-					LOG_ERROR("Failed to check value,  new version(" FMT_I64 ") less or equal than lcl ledger version(" FMT_I64 ")",
+					LOG_ERROR("Failed to check value,  new version(" FMT_I64 ") less than or equal to lcl ledger version(" FMT_I64 ")",
 						upgrade.new_ledger_version(), lcl.version());
 					return Consensus::CHECK_VALUE_MAYVALID;
 				}
