@@ -7,7 +7,7 @@ aux_source_directory(${BUMO_SRC_DIR}/overlay/ OVERLAY_SRC)
 #Generate static library files
 add_library(${LIB_BUMO_OVERLAY} ${OVERLAY_SRC})
 
-#Specify compiling options for the target obj
+#Specify compiling options for the target objects
 target_compile_options(${LIB_BUMO_OVERLAY}
     PUBLIC -std=c++11 
     PUBLIC -DASIO_STANDALONE
