@@ -343,33 +343,33 @@ namespace bumo{
 			else
 				threshold["memory"] = 100;
 
-			if (test_warning&WARNING_BUBI_CRACK_HIGH)
-				threshold["bubi_crack"] = 100;
-			else if (test_warning&WARNING_BUBI_CRACK_LOW)
-				threshold["bubi_crack"] = 0;
+			if (test_warning&WARNING_BUMO_CRACK_HIGH)
+				threshold["bumo_crack"] = 100;
+			else if (test_warning&WARNING_BUMO_CRACK_LOW)
+				threshold["bumo_crack"] = 0;
 			else
-				threshold["bubi_crack"] = 100;
+				threshold["bumo_crack"] = 100;
 
-			if (test_warning&WARNING_BUBI_ATTACK_TIME_HIGH)
-				threshold["bubi_attack_time"] = 100;
-			else if (test_warning&WARNING_BUBI_ATTACK_TIME_LOW)
-				threshold["bubi_attack_time"] = 0;
+			if (test_warning&WARNING_BUMO_ATTACK_TIME_HIGH)
+				threshold["bumo_attack_time"] = 100;
+			else if (test_warning&WARNING_BUMO_ATTACK_TIME_LOW)
+				threshold["bumo_attack_time"] = 0;
 			else
-				threshold["bubi_attack_time"] = 100;
+				threshold["bumo_attack_time"] = 100;
 
-			if (test_warning&WARNING_BUBI_ATTACK_CONT_HIGH)
-				threshold["bubi_attack_counts"] = 100;
-			else if (test_warning&WARNING_BUBI_ATTACK_CONT_LOW)
-				threshold["bubi_attack_counts"] = 0;
+			if (test_warning&WARNING_BUMO_ATTACK_CONT_HIGH)
+				threshold["bumo_attack_counts"] = 100;
+			else if (test_warning&WARNING_BUMO_ATTACK_CONT_LOW)
+				threshold["bumo_attack_counts"] = 0;
 			else
-				threshold["bubi_attack_counts"] = 100;
+				threshold["bumo_attack_counts"] = 100;
 
-			if (test_warning&WARNING_BUBI_CRACK_HIGH)
-				threshold["bubi_crack"] = 100;
-			else if (test_warning&WARNING_BUBI_CRACK_LOW)
-				threshold["bubi_crack"] = 0;
+			if (test_warning&WARNING_BUMO_CRACK_HIGH)
+				threshold["bumo_crack"] = 100;
+			else if (test_warning&WARNING_BUMO_CRACK_LOW)
+				threshold["bumo_crack"] = 0;
 			else
-				threshold["bubi_crack"] = 100;
+				threshold["bumo_crack"] = 100;
 			
 			threshold["consensus"] = 100;
 			
@@ -477,14 +477,14 @@ namespace bumo{
 			result["session_id"] = random_key_;			
 			SendResponseMessage("warning", false, 0, result);
 		}
-		else if (receive["method"].asString() == "bubi")
+		else if (receive["method"].asString() == "bumo")
 		{
-			if (current_request_test_ != BUBI)
+			if (current_request_test_ != BUMO)
 				return true;
-			if (CheckBubi(msg))
+			if (CheckBumo(msg))
 			request_test_result_ = true;
 			
-			DetermineResponse("bubi");		
+			DetermineResponse("bumo");		
 		}
 		else if (receive["method"].asString() == "system")
 		{
@@ -649,7 +649,7 @@ namespace bumo{
 		
 		Json::Value result = receive["result"];
 		
-		Json::Value result_from_bubi = latest_ledger[0]["result"];
+		Json::Value result_from_bumo = latest_ledger[0]["result"];
 		int seq = result["ledger_seq"].asInt();
 	
 
@@ -661,9 +661,9 @@ namespace bumo{
 					Json::Value blocks = result["blocks"];
 					for (int k = 0; k < 20; ++k)
 					{
-						result_from_bubi = latest_ledger[k]["result"];
-						EXPECT_EQ(blocks[k]["ledger_seq"].asInt(), (result_from_bubi["ledger_seq"].asInt()));
-						EXPECT_STREQ(blocks[k]["hash"].asCString(), result_from_bubi["hash"].asCString())<<"index = "<<k;
+						result_from_bumo = latest_ledger[k]["result"];
+						EXPECT_EQ(blocks[k]["ledger_seq"].asInt(), (result_from_bumo["ledger_seq"].asInt()));
+						EXPECT_STREQ(blocks[k]["hash"].asCString(), result_from_bumo["hash"].asCString())<<"index = "<<k;
 					}
 				}
 				
@@ -676,8 +676,8 @@ namespace bumo{
 				{
 					int k = 0;
 					Json::Value blocks = result["blocks"];
-					EXPECT_EQ(blocks[k]["ledger_seq"].asInt(), result_from_bubi["ledger_seq"].asInt());
-					EXPECT_STREQ(blocks[k]["hash"].asCString(), result_from_bubi["hash"].asCString());
+					EXPECT_EQ(blocks[k]["ledger_seq"].asInt(), result_from_bumo["ledger_seq"].asInt());
+					EXPECT_STREQ(blocks[k]["hash"].asCString(), result_from_bumo["hash"].asCString());
 				}				
 				break;
 			case LEDGER_NUM_0:
@@ -710,7 +710,7 @@ namespace bumo{
 #ifdef WIN32
 		EXPECT_STREQ(property["host_name"].asCString(), "DESKTOP-ISOADM0");
 #else
-		EXPECT_STREQ(property["host_name"].asCString(), "bubi65");
+		EXPECT_STREQ(property["host_name"].asCString(), "bumo65");
 #endif
 		EXPECT_STREQ(property["os_bit"].asCString(), "64");
 		ret = CheckCommonResponse(msg);
@@ -773,9 +773,9 @@ namespace bumo{
 		case UPGRADE_NO_URL:
 			expected_errorcode = 14;
 			break;
-		case UPGRADE_FILENAME_BUBI:
-		case UPGRADE_FILENAME_BUBID:
-		case UPGRADE_FILENAME_BUBIJSON:
+		case UPGRADE_FILENAME_BUMO:
+		case UPGRADE_FILENAME_BUMOD:
+		case UPGRADE_FILENAME_BUMOJSON:
 		case UPGRADE_FILENAME_CACERTCRT:
 		case UPGRADE_FILENAME_CACERTPEM:
 		case UPGRADE_FILENAME_DH1024PEM:
@@ -839,7 +839,7 @@ namespace bumo{
 
 		return ret;
 	}
-	bool MsgProcessor::CheckBubi(const std::string& msg)
+	bool MsgProcessor::CheckBumo(const std::string& msg)
 	{
 		bool ret(true);
 		Json::Value receive;
@@ -936,7 +936,7 @@ namespace bumo{
 				 if (missing_part&EMPTY_METHOD)
 					 msg["method"] = "";
 				 else
-					msg["method"] = "bubi";
+					msg["method"] = "bumo";
 			 }
 			 if (!(missing_part&NO_REQUEST))
 			 {
@@ -1004,20 +1004,20 @@ namespace bumo{
 		 {
 		 case UPGRADE_NO_FILENAME:			 
 			 break;
-		 case UPGRADE_FILENAME_BUBI:
-			 item["file_name"] = "bubi";
+		 case UPGRADE_FILENAME_BUMO:
+			 item["file_name"] = "bumo";
 			 break;
-		 case UPGRADE_FILENAME_BUBID:
-			 item["file_name"] = "bubid";
+		 case UPGRADE_FILENAME_BUMOD:
+			 item["file_name"] = "bumod";
 			 break;
 		 case UPGRADE_FILENAME_SLAVE:
 			 item["file_name"] = "slave";
 			 break;
 		 case UPGRADE_FILENAME_SLAVED:
-			 item["file_name"] = "bubid";
+			 item["file_name"] = "bumod";
 			 break;
-		 case UPGRADE_FILENAME_BUBIJSON:
-			 item["file_name"] = "bubi.json";
+		 case UPGRADE_FILENAME_BUMOJSON:
+			 item["file_name"] = "bumo.json";
 			 break;
 		 case UPGRADE_FILENAME_DH1024PEM:
 			 item["file_name"] = "dh1024.pem";
@@ -1035,7 +1035,7 @@ namespace bumo{
 			 item["file_name"] = "wrongname";
 			 break;
 		 default:
-			 item["file_name"] = "bubi";
+			 item["file_name"] = "bumo";
 			 break;
 
 		 }
@@ -1185,8 +1185,8 @@ namespace bumo{
 
 		 switch (msg_processor_.GetCurrentRequestTest())
 		 {
-		 case BUBI:
-			 method = "bubi";
+		 case BUMO:
+			 method = "bumo";
 			 break;
 		 case SYSTEM:
 			 method = "system";
@@ -1584,7 +1584,7 @@ namespace bumo{
 				target = "on_response_error -- system info error";
 				break;
 			case 8:
-				target = "on_response_error -- bubi info failed";
+				target = "on_response_error -- bumo info failed";
 				break;
 			case 9:
 				target = "on_response_error -- system user permission denied";
@@ -1955,14 +1955,14 @@ namespace bumo{
 		EXPECT_EQ(msg_processor_.GetTestOutput(), (HELLO_VALID | REG_VALID | HB_VALID));		
 		
 	}
-	void WebSocketServer::RequestBubiTest()
+	void WebSocketServer::RequestBumoTest()
 	{
-		printf("**Test Start**this is a test to verify the response of request \"bubi\"!\n");
+		printf("**Test Start**this is a test to verify the response of request \"bumo\"!\n");
 		uint32_t testconditions[] = { GENERAL_CASE_RESPONSE_ERRCODE_0, GENERAL_CASE_RESPONSE_ERRCODE_14, \
 			GENERAL_CASE_RESPONSE_ERRCODE_21, GENERAL_CASE_RESPONSE_ERRCODE_22, GENERAL_CASE_RESPONSE_ERRCODE_MAX, \
 			GENERAL_CASE_RESPONSE_ERRCODE_MINUS, GENERAL_CASE_RESPONSE_BAD_SESSION_ID };
 
-		msg_processor_.SetCurrentRequestTest(BUBI);
+		msg_processor_.SetCurrentRequestTest(BUMO);
 
 		for (int i = 0; i < (sizeof(testconditions) / 4); i++)
 		{
@@ -2047,9 +2047,9 @@ namespace bumo{
 		printf("**Test Start**this is a test to verify the response of request \"upgrade\"!\n");
 		
 		uint32_t testconditions[] = { 
-			GENERAL_CASE_RESPONSE_ERRCODE_0|UPGRADE_FILENAME_BUBI,
-			GENERAL_CASE_RESPONSE_ERRCODE_14|UPGRADE_FILENAME_BUBID, 
-			GENERAL_CASE_RESPONSE_ERRCODE_21|UPGRADE_FILENAME_BUBIJSON,
+			GENERAL_CASE_RESPONSE_ERRCODE_0 | UPGRADE_FILENAME_BUMO,
+			GENERAL_CASE_RESPONSE_ERRCODE_14 | UPGRADE_FILENAME_BUMOD,
+			GENERAL_CASE_RESPONSE_ERRCODE_21 | UPGRADE_FILENAME_BUMOJSON,
 			GENERAL_CASE_RESPONSE_ERRCODE_22|UPGRADE_FILENAME_CACERTCRT, 
 			GENERAL_CASE_RESPONSE_ERRCODE_MAX|UPGRADE_FILENAME_CACERTPEM, 
 			GENERAL_CASE_RESPONSE_ERRCODE_MINUS|UPGRADE_FILENAME_DH1024PEM, 
@@ -2267,8 +2267,8 @@ namespace bumo{
 		//uint32_t warning[] = { WARNING_CPU_HIGH, WARNING_CUP_LOW, WARNING_CPU_HIGH, \
 		//					WARNING_MEMORY_HIGH, WARNING_MEMORY_LOW, WARNING_MEMORY_HIGH, \
 		//					WARNING_DISK_HIGH, WARNING_DISK_LOW, WARNING_DISK_HIGH,\
-		//					WARNING_BUBI_CRACK_HIGH, WARNING_BUBI_ATTACK_CONT_LOW, \
-		//	WARNING_BUBI_CRACK_LOW, WARNING_BUBI_ATTACK_CONT_HIGH, WARNING_BUBI_ATTACK_CONT_LOW };
+		//					WARNING_BUMO_CRACK_HIGH, WARNING_BUMO_ATTACK_CONT_LOW, \
+		//	WARNING_BUMO_CRACK_LOW, WARNING_BUMO_ATTACK_CONT_HIGH, WARNING_BUMO_ATTACK_CONT_LOW };
 		
 		uint32_t warning[] = { WARNING_CUP_LOW, WARNING_CPU_HIGH };
 		
@@ -2285,6 +2285,6 @@ namespace bumo{
 
 	}
 
-}//end of bubi
+}//end of bumo
 
 

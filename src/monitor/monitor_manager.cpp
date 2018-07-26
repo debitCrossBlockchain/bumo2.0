@@ -209,7 +209,7 @@ namespace bumo {
 		// Send the response of bumo status
 		if (NULL == monitor || !monitor->SendResponse(message, bumo_status.SerializeAsString(), ignore_ec)) {
 			bret = false;
-			LOG_ERROR("Failed to send bubi status from ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
+			LOG_ERROR("Failed to send bumo status from ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
 		}
 		return bret;
