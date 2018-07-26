@@ -60,7 +60,7 @@ namespace utils{
 
 		bool ret = false;
 		do {
-			//get query type
+			//Get query types
 			std::string type1, type2;
 			static pcrecpp::RE rgx_type("^(\\w+) +(\\w+|.*).*");
 			if (!rgx_type.FullMatch(result, &type1, &type2)){
@@ -114,7 +114,7 @@ namespace utils{
 	bool SqlParser::ParseInsert(std::string &result){
 		do {
 			static pcrecpp::RE rgx1("INSERT +?INTO +?(\\w+) *?\\((.+?)\\) *?VALUES *?\\((.+?)\\)$", pcrecpp::RE_Options().set_caseless(true));
-			//get table name
+			//Get table name
 			std::string str_field, str_value;
 			if (rgx1.FullMatch(result, &table_, &str_field, &str_value)){
 				if (!ParseTable(table_)){
@@ -127,7 +127,7 @@ namespace utils{
 				break;
 			}
 
-			//get all field
+			//Get all fields
 			utils::String::Trim(str_field);
 			utils::String::Trim(str_value);
 			utils::StringVector vec;
@@ -140,7 +140,7 @@ namespace utils{
 				}
 			} while (false);
 
-			//get all value
+			//Get all values
 			utils::StringVector vec1;
 			do {
 				static pcrecpp::RE rgx_value("(.+?)(?: *, *|$)", pcrecpp::RE_Options().set_caseless(true));
@@ -179,7 +179,7 @@ namespace utils{
 	bool SqlParser::ParseUpdate(std::string &result){
 		do {
 			static pcrecpp::RE rgx1("UPDATE +?(\\w+) +?SET (.*)", pcrecpp::RE_Options().set_caseless(true));
-			//get table name
+			//Get table name
 			std::string str_field;
 			if (rgx1.FullMatch(result, &table_, &str_field)){
 				if (!ParseTable(table_)){
@@ -192,7 +192,7 @@ namespace utils{
 				break;
 			}
 
-			//get all field
+			//Get all fields
 			static pcrecpp::RE rgx2("(\\w+?) *= *(\\S+?)(?: *, *|$)", pcrecpp::RE_Options().set_caseless(true));
 			std::string field1, field2;
 			pcrecpp::StringPiece input(str_field);
@@ -209,21 +209,21 @@ namespace utils{
 			}
 			if (!mongo_field_.empty()) mongo_field_ += "}";
 
-			//get condition
+			//Get condition
 			static pcrecpp::RE rgx3("UPDATE.*?SET.*?WHERE(.*?)(LIMIT.*|$)", pcrecpp::RE_Options().set_caseless(true));
 			rgx3.FullMatch(result, &condition_);
 
-			//get limit
+			//Get limit
 			static pcrecpp::RE rgx4("UPDATE.*?SET.*?(WHERE|GROUP.*?BY|ORDER.*?BY|.*?).*?LIMIT (.*?)$.*", pcrecpp::RE_Options().set_caseless(true));
 			std::string s1;
 			rgx4.FullMatch(result, &s1, &limit_);
 
-			//parse where
+			//Parse where
 			if (!condition_.empty()){
 				mongo_where_ += ParseWhere(condition_);
 			}
 
-			//parse limit
+			//Parse limit
 			if (!limit_.empty() && !ParseLimit(limit_, mongo_limit_)){
 				break;
 			}
@@ -237,7 +237,7 @@ namespace utils{
 	bool SqlParser::ParseDelete(std::string &result){
 		do {
 			static pcrecpp::RE rgx1("DELETE +?FROM *(\\w+) ($|WHERE.*)", pcrecpp::RE_Options().set_caseless(true));
-			//get table name
+			//Get table name
 			if (rgx1.FullMatch(result, &table_)){
 				if (!ParseTable(table_)){
 					error_desc_ = "Multi table not support";
@@ -249,21 +249,21 @@ namespace utils{
 				break;
 			}
 
-			//get condition
+			//Get condition
 			static pcrecpp::RE rgx3("DELETE.*?FROM.*?WHERE(.*?)(LIMIT.*|$)", pcrecpp::RE_Options().set_caseless(true));
 			rgx3.FullMatch(result, &condition_);
 
-			//get limit
+			//Get limit
 			static pcrecpp::RE rgx4("SELECT.*?FROM.*?(WHERE|GROUP.*?BY|ORDER.*?BY|.*?).*?LIMIT (.*?)$.*", pcrecpp::RE_Options().set_caseless(true));
 			std::string s1;
 			rgx4.FullMatch(result, &s1, &limit_);
 
-			//parse where
+			//Parse where
 			if (!condition_.empty()){
 				mongo_where_ += ParseWhere(condition_);
 			}
 
-			//parse limit
+			//Parse limit
 			if (!limit_.empty() && !ParseLimit(limit_, mongo_limit_)){
 				break;
 			}
@@ -276,14 +276,14 @@ namespace utils{
 
 	bool SqlParser::ParseSelect(std::string &result){
 		do {
-			//get fields
+			//Get fields
 			static pcrecpp::RE rgx1("SELECT +(.*?) +FROM.*", pcrecpp::RE_Options().set_caseless(true));
 			if (!rgx1.FullMatch(result, &fields_)){
 				error_desc_ = "Filed not found";
 				break;
 			}
 
-			//get table name
+			//Get table name
 			static pcrecpp::RE rgx2("SELECT.*?FROM *(.*?) *($|WHERE|GROUP.*?BY|order.*?BY|LIMIT|$).*", pcrecpp::RE_Options().set_caseless(true));
 			if (rgx2.FullMatch(result, &table_)){
 				if (!ParseTable(table_)){
@@ -296,20 +296,20 @@ namespace utils{
 				break;
 			}
 
-			//get condition
+			//Get condition
 			static pcrecpp::RE rgx3("SELECT.*?FROM.*?WHERE(.*?)(GROUP.*?BY|ORDER.*?BY|LIMIT|$).*", pcrecpp::RE_Options().set_caseless(true));
 			rgx3.FullMatch(result, &condition_);
 
-			//get limit
+			//Get limit
 			static pcrecpp::RE rgx4("SELECT.*?FROM.*?(WHERE|GROUP.*?BY|ORDER.*?BY|.*?).*?LIMIT (.*?)$.*", pcrecpp::RE_Options().set_caseless(true));
 			std::string s1;
 			rgx4.FullMatch(result, &s1, &limit_);
 
-			//get order by
+			//Get order by
 			static pcrecpp::RE rgx5("SELECT.*?FROM.*?ORDER.*?BY(.*?)(LIMIT|$).*", pcrecpp::RE_Options().set_caseless(true));
 			rgx5.FullMatch(result, &orderby_);
 
-			//get condition
+			//Get condition
 			static pcrecpp::RE rgx6("SELECT.*?FROM.*?GROUP *?BY(.+?)$", pcrecpp::RE_Options().set_caseless(true));
 			rgx6.FullMatch(result, &groupby_);
 
@@ -317,12 +317,12 @@ namespace utils{
 				break;
 			}
 
-			//parse where
+			//Parse where
 			if (!condition_.empty()){
 				mongo_where_ += ParseWhere(condition_);
 			}
 			
-			//parse goup by
+			//Parse groupby
 			if (!groupby_.empty()){
 				ParseGroupBy(groupby_);
 			}
@@ -330,12 +330,12 @@ namespace utils{
 				mongo_groupby_ = "{\"_id\":null," + mongo_groupby_ + "}";
 			}
 
-			//parse orderby
+			//Parse orderby
 			if (!orderby_.empty() && !ParseOrderBy(orderby_, mongo_orderby_)){
 				break;
 			}
 
-			//parse limit
+			//Parse limit
 			if (!limit_.empty() && !ParseLimit(limit_, mongo_limit_)){
 				break;
 			}
@@ -376,7 +376,7 @@ namespace utils{
 			*/
 
 		do {
-			//get table name
+			//Get table name
 			static pcrecpp::RE rgx2("CREATE +?TABLE *(\\w+).*", pcrecpp::RE_Options().set_caseless(true));
 			if (rgx2.FullMatch(result, &table_)){
 				if (!ParseTable(table_)){
@@ -389,7 +389,7 @@ namespace utils{
 				break;
 			}
 
-			//get index
+			//Get index
 			static pcrecpp::RE rgx3(".*?; *?CREATE +?INDEX +?(\\w+?) +?ON +?(\\w+?)\\((.+?)\\)", pcrecpp::RE_Options().set_caseless(true));
 			std::string rename_field;
 			std::string table;
@@ -417,7 +417,7 @@ namespace utils{
 				indexes_[f1] = f2;
 			}
 
-			//primary key
+			//Primary key
 			static pcrecpp::RE rgx4(".*PRIMARY +?KEY *?\\((\\w+)\\).*", pcrecpp::RE_Options().set_caseless(true));
 			std::string primary_key;
 			if (rgx4.FullMatch(result, &primary_key)){
@@ -435,7 +435,7 @@ namespace utils{
 
 	bool SqlParser::ParseDropDatabase(std::string &result){
 		do {
-			//get table name
+			//Get table name
 			static pcrecpp::RE rgx1("DROP +?DATABASE *(IF EXISTS| +) *(\\w+)$", pcrecpp::RE_Options().set_caseless(true));
 			std::string other;
 			if (rgx1.FullMatch(result, &other, &db_name_)){
@@ -453,7 +453,7 @@ namespace utils{
 
 	bool SqlParser::ParseCreateDatabase(std::string &result){
 		do {
-			//get table name
+			//Get table name
 			static pcrecpp::RE rgx1("CREATE +?DATABASE +(\\w+)$", pcrecpp::RE_Options().set_caseless(true));
 			if (rgx1.FullMatch(result, &db_name_)){
 			}
@@ -469,14 +469,14 @@ namespace utils{
 	}
 
 	bool SqlParser::ParseField(const std::string &fields) {
-		//split field
+		//Split field
 		utils::StringList vec;
 		std::string mongo_field_item;
 		utils::String::Strtok(fields, vec, ",", -1, true);
 		for (utils::StringList::iterator iter = vec.begin(); iter != vec.end(); iter++){
 			std::string field = *iter;
 
-			//if find count
+			//If find count
 			utils::String::Trim(field);
 			static pcrecpp::RE rgx1("(\\w+) *?\\((\\w+?|\\*)\\) +?AS (\\w+?)", pcrecpp::RE_Options().set_caseless(true));
 			static pcrecpp::RE rgx2("(\\w+) *?\\((\\w+?|\\*)\\)", pcrecpp::RE_Options().set_caseless(true));
@@ -608,7 +608,7 @@ namespace utils{
 			}
 		}
 
-		//empty stack
+		//Empty stack
 		while (stack.size() > 0){
 			polish.push_back(stack.back());
 			stack.pop_back();
@@ -618,7 +618,7 @@ namespace utils{
 		//#foreach($polish as $key) { echo $key . " "; }
 		//#echo "<br/>";
 
-		//polish stuff to mongo
+		//Polish stuff to mongo
 		utils::StringVector tmpval;
 		size_t cnt = 0;
 		std::string nextoper;
@@ -722,7 +722,7 @@ namespace utils{
 			return true;
 		}
 
-		//check for normal
+		//Check whether it is normal
 		static pcrecpp::RE rgx("(\\w+).*?([<>=!]+)(.*).*", pcrecpp::RE_Options().set_caseless(true));
 		static pcrecpp::RE rgx1("([^ ]+) +?(is +?null|is +?not +?null|like) *?(.*)", pcrecpp::RE_Options().set_caseless(true));
 		std::string ope;
@@ -735,7 +735,7 @@ namespace utils{
 			matches.push_back(str3);
 			ope = str2;
 		}
-		else if (rgx1.FullMatch(val, &str1, &str2, &str3)){ //### check for is null and such
+		else if (rgx1.FullMatch(val, &str1, &str2, &str3)){ //### Check whether it is null
 			matches.push_back(val);
 			matches.push_back(str1);
 			matches.push_back(str2);

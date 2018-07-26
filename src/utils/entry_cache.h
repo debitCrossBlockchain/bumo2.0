@@ -37,7 +37,7 @@ namespace utils {
 
 	template <class Key, class Value, class Sort>
 	class EntryCache {
-		//indicate an object been add delete or modify 
+		//Indicate an object has been added, deleted or modified
 	protected:
 	public:
 		typedef std::shared_ptr<Value> pointer;
@@ -85,7 +85,7 @@ namespace utils {
 
 		~EntryCache() {}
 
-		//注意v_pt 在loadValue函数内部new
+		//Note that v_pt is created within the loadValue function
 		virtual bool LoadValue(const Key&, pointer &v_pt) = 0;
 		/*virtual bool commit() = 0;*/
 		//virtual EntryCache<Key,Value> newBranch();
@@ -155,7 +155,7 @@ namespace utils {
 		usage:
 		pointer pt;
 		if(GetEntry(key,pv)){
-		//TODO modify the value whic pt pointed to
+		//TODO modify the value which pt pointed to
 		ps!!!:
 		don't use pt=xxx
 		}
@@ -194,11 +194,11 @@ namespace utils {
 		bool AddEntry(const Key &key, pointer pval) {
 			auto it = entries_.find(key);
 			if (it != entries_.end()) {
-				if (it->second.action_ == DEL) {//marked as deleted, add success
+				if (it->second.action_ == DEL) {//Marked as deleted, added successfully
 					it->second = Record(pval, MOD);
 					return true;
 				}
-				else { //already exits, fail
+				else { //Already exited, fail
 					return false;
 				}
 			}
@@ -214,13 +214,13 @@ namespace utils {
 				}
 			}
 
-			//if it has no parent level, then it is the top level. just add it
+			//If it has no parent level, then it is the top level. Just add it
 			if (!LoadValue(key, pval)) {
 				entries_.insert({ key, Record(pval, ADD) });
 				return true;
 			}
 			else {
-				//there is a same key , repteated
+				//There is a same key, so it is repteated
 				return false;
 			}
 		}

@@ -1,16 +1,16 @@
-# **智能合约语法说明**
-Bumo 智能合约使用 `JaveScript` 语言编写，为了方便开发者更规范的，更安全的开发合约，在做合约语法检测时候，使用了 JSLint 做限制。[参考JSLint GitHub](./)。编辑合约时候，首先需要在 JSLint 里检测通过，才可以被 Bumo 系统检测为一个合法的合约。
+# **Syntax in the Smart Contract**
+Bumo smart contracts are written in the 'JaveScript' language. In order to facilitate developers to develop a more standardized, safer contract, JSLint is used to check the syntax in smart contracts. [Please refer to JSLint GitHub](./). When editing a contract, you first need to ensure that the contract passes the JSLint detection before it can be detected as a legal contract by the Bumo system.
 
-JSLint 的标准语法在官方网站有详尽的说明。本文档的目的是作为一个完善文档，整理了原有的 JSLint 语法规则，同时对 Bumo 修改后的规则进行了补充说明，文档会举例说明其用法。对于本文没有提到的部分，请参考 [JsLint 帮助手册](http://bumo.chinacloudapp.cn:36002/help.html)。
+The standard syntax of JSLint is described in detail on the official website. The purpose of this document is to refine the original JSLint grammar rules as a complete document, and to supplement Bumo's modified rules. The documentation will illustrate its usage. For parts not mentioned in this article, please refer to the [JsLint help manual](http://bumo.chinacloudapp.cn:36002/help.html).
 
-或者通过节点服务器、钱包地址访问文档 127.0.0.1:36002/jslint/help.html
+Or you can visit the manual site 127.0.0.1:36002/jslint/help.html by node servers or wallet addresses.
 
-## **检测工具**
-   JSLint 检测工具地址：[JSLint 语法检测工具](http://bumo.chinacloudapp.cn:36002/jslint.html "JSLint 语法检测工具")
+## **Detection Tool**
+   JSLint detection tool address: [JSLint syntax dection tool](http://bumo.chinacloudapp.cn:36002/jslint.html "JSLint syntax detection tool").
 
-   或者通过节点服务器、钱包地址使用工具 127.0.0.1:36002/jslint/index.html
+   Or you can visit 127.0.0.1:36002/jslint/index.html by node servers or wallet addresses. 
 
-错误说明，在 web 工具里调试合约语法时候，会有详尽的错误描述。当输入如下代码时候
+For error description, details will be given when you debug contract syntax in the web tool. When you input the following code:
 
 ```javascript
 
@@ -21,16 +21,16 @@ function init(bar)
 }
 ```
 
-错误如下
+Error is shown below:
 
 ```
 Empty block.   2.0
 {
 ```
 
-错误原因：空的语句块，在第 `2` 行，第 `0` 列。
+Cause: Blank statement block at row 2 and 0 column.
 
-正确的代码如下：
+Correct code is shown below:
 
 ```javascript
 
@@ -41,12 +41,12 @@ function init(bar)
 }
 ```
 
-正确的检测结果，不会报出红色的 `Warnings` 信息
+The Warning info in red color will not prompt.
 
-## **文本压缩**
-合约文档写好之后，可以使用 JSMin 工具进行压缩，注意保存原文档，压缩是不可逆的操作。
+## **Text Compression**
+After the contract document is written, you can use the JSMin tool to compress it. Ensure that the original document is saved because compression is an irreversible operation.
 
-[工具地址](../../../deploy/jsmin/)
+[Tool address](../../../deploy/jsmin/)
 
 ## **Demo**
 ```javascript
@@ -133,43 +133,42 @@ function main(input)
 }
 ```
 
-## **规则列表**
+## **Rules List**
  
-- 严格检测声明，所有的源码在开始必须要添加 `"use strict";` 字段
+- Detect the statement strictly with all source code added the 'use strict' field at the beginning
 
-- 语句块内尽量使用 `let` 声明变量
+- Use 'let' to declare variables within a statement block
 
-- 使用`===` 代替 `==` 判断比较；使用 `!==` 代替 `!=` 比较
+- Use '===' instead of '==' to judge the comparison; use '!==' instead of '!=' to compare
+- A statement must end with ';'
 
-- 语句必须以 `;` 结束
+- Statement blocks must be enclosed with '{}' and empty block blocks are prohibited
 
-- 语句块必须用 `{}` 包括起来，且禁止空语句块
+- The initial variable of the 'for' loop variable needs to be declared before the conditional statement block, and a new value is assigned to it when used
 
-- `for` 的循环变量初始变量需在条件语句块之前声明，每次使用重新赋值
+- Use '+=' and '-=' to substitute '++' and '--'
 
-- 禁用 `++` 和 `--`，使用 `+=` 和 `-=` 替代
+- Prohibit to use 'eval', 'void' and 'this' keywords
 
-- 禁止使用 `eval`, `void`, `this` 关键字
+- Prohibit to use 'new' to create 'Number', 'String' and 'Boolean' objects, which objects can be obtained by calling their constructors
 
-- 禁止使用 `new` 创建 `Number`, `String`, `Boolean`对象，可以使用其构造调用来获取对象
+- Prohibit to create an array with array keywords
 
-- 禁止使用的数组关键字创建数组
-
-- 禁止使用 `try`, `catch` 关键字，可以使用 `throw` 手动抛出异常
+- Prohibit to use 'try' and 'catch' keywords, but you can use 'throw' to throw exceptions
 
 ```javascript
 "Array", "ArrayBuffer", "Float32Array", "Float64Array", 
 "Int8Array", "Int16Array", "Int32Array", "Uint8Array", 
 "Uint8ClampedArray", "Uint16Array", "Uint32Array"
 
-let color = new Array(100); //编译报错
+let color = new Array(100); //Compiling error
 
-//可以使用替代 new Array(100) 语句;
+//You can use the alternative new Array(100) statement;
 let color = ["red","black"]; 
 let arr = [1,2,3,4];
 ```
 
-- 禁止使用的关键字
+- Keywords prohibited to use
 ```javascript
 "DataView", "decodeURI", "decodeURIComponent", "encodeURI", 
 "encodeURIComponent", "Generator","GeneratorFunction", "Intl", 

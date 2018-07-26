@@ -58,7 +58,7 @@
 #define ftell64  _ftelli64
 
 #ifndef EXCLUDE_WINDOW_H
-//#include <windows.h>
+//#Include <windows.h>
 #endif //EXCLUDE_WINDOW_H
 typedef CRITICAL_SECTION pthread_mutex_t;
 
@@ -128,20 +128,20 @@ namespace utils {
 
 	using namespace std::placeholders; // for std::bind
 
-	// disallow copy ctor and assign opt
+	// It is not allowed to copy ctor and assign opt
 #undef UTILS_DISALLOW_EVIL_CONSTRUCTORS
 #define UTILS_DISALLOW_EVIL_CONSTRUCTORS(TypeName)    \
     TypeName(const TypeName&);                         \
     void operator=(const TypeName&)
 
-	// delete object safe
+	// Delete the object safely
 #define SAFE_DELETE(p)        \
     if (NULL != p) {          \
         delete p;             \
         p = NULL;             \
 	    }
 
-	// delete object array safe
+	// Delete the object array safely
 #define SAFE_DELETE_ARRAY(p)  \
     if (NULL != p) {          \
         delete []p;           \
@@ -174,7 +174,7 @@ extern "C"
 }
 #endif
 
-//#define DEBUG_NEW_ENABLE
-//#include "debug_new.h"
+//#Define DEBUG_NEW_ENABLE
+//#Include "debug_new.h"
 
 #endif 

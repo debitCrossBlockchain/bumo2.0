@@ -86,7 +86,7 @@ namespace bumo {
 		}
 
 		if (ret){
-			//check sum
+			//Checksum
 			std::string checksum = buff.substr(buff.size() - 4);
 			std::string hash1 = CalcHash(buff.substr(0, buff.size() - 4), sign_type_tmp);
 			std::string hash2 = CalcHash(hash1, sign_type_tmp);
@@ -156,7 +156,7 @@ namespace bumo {
 		}
 
 		if (ret){
-			//checksum
+			//Checksum
 			std::string checksum = buff.substr(buff.size() - 4);
 			std::string hash1 = CalcHash(buff.substr(0, buff.size() - 4), sign_type_tmp);
 			std::string hash2 = CalcHash(hash1, sign_type_tmp);
@@ -229,19 +229,19 @@ namespace bumo {
 	std::string PublicKey::GetEncAddress() const {
 		
 		std::string str_result = "";
-		//append prefix (bubi 0XE6 0X9A 0X73 0XFF)
-		//append prefix (bu)
+		//Append prefix (bubi 0XE6 0X9A 0X73 0XFF)
+		//Append prefix (bu)
 		str_result.push_back((char)0X01);
 		str_result.push_back((char)0X56);
 
-		//append version 1byte
+		//Append version 1byte
 		str_result.push_back((char)type_);
 
-		//append public key 20byte
+		//Append public key 20byte
 		std::string hash = CalcHash(raw_pub_key_,type_);
 		str_result.append(hash.substr(12));
 
-		//append check sum 4byte
+		//Append checksum 4byte
 		std::string hash1, hash2;
 		hash1 = CalcHash(str_result, type_);
 		hash2 = CalcHash(hash1, type_);
@@ -257,13 +257,13 @@ namespace bumo {
 	std::string PublicKey::GetEncPublicKey() const {
 		
 		std::string str_result = "";
-		//append PrivateKeyPrefix
+		//Append PrivateKeyPrefix
 		str_result.push_back((char)PUBLICKEY_PREFIX);
 
-		//append version
+		//Append version
 		str_result.push_back((char)type_);
 
-		//append public key
+		//Append public key
 		str_result.append(raw_pub_key_);
 
 		std::string hash1, hash2;
@@ -297,7 +297,7 @@ namespace bumo {
 		return false;
 	}
 
-	//地址是否合法
+	//碌脴脰路脢脟路帽潞脧路篓
 	PrivateKey::PrivateKey(SignatureType type) {
 		std::string raw_pub_key = "";
 		type_ = type;
@@ -400,21 +400,21 @@ namespace bumo {
 
 	std::string PrivateKey::GetEncPrivateKey() const {
 		std::string str_result;
-		//append prefix(priv)
+		//Append prefix(priv)
 		str_result.push_back((char)0XDA);
 		str_result.push_back((char)0X37);
 		str_result.push_back((char)0X9F);
 
-		//append version 1
+		//Append version 1
 		str_result.push_back((char)type_);
 
-		//append private key 32
+		//Append private key 32
 		str_result.append(raw_priv_key_);
 
-		//压缩标志
+		//脩鹿脣玫卤锚脰戮
 		str_result.push_back(0X00);
 
-		//bitcoin use 4 byte hash check.
+		//Bitcoin uses 4 byte hash check.
 		std::string hash1, hash2;
 		hash1 = CalcHash(str_result, type_);
 		hash2 = CalcHash(hash1, type_);

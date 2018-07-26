@@ -32,7 +32,7 @@ namespace bumo {
 	const uint32_t General::LEDGER_VERSION = 1001;
 	const uint32_t General::LEDGER_MIN_VERSION = 1000;
 	const uint32_t General::MONITOR_VERSION = 1000;
-	const char *General::BUMO_VERSION = "1.0.0.6";
+	const char *General::BUMO_VERSION = "1.0.0.7";
 
 #ifdef WIN32
 	const char *General::DEFAULT_KEYVALUE_DB_PATH = "data/keyvalue.db";
@@ -324,7 +324,7 @@ namespace bumo {
 	int64_t GetBlockReward(const int64_t cur_block_height) {
 		int64_t period_index = cur_block_height / General::REWARD_PERIOD;
 
-		//decrease 1/4 every period
+		//Decrease by 1/4 every period.
 		int64_t result = General::REWARD_INIT_VALUE;
 		for (int64_t i = 0; i < period_index; i++)
 		{

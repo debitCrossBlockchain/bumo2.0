@@ -164,7 +164,7 @@ E.g.
 参数：address 账户地址
 
 - 函数：function balanceOf(owner)
-- 返回值：
+- 返回值：指定地址的余额，如果参数 address 是资产合约地址或者合约拥有者地址，则返回值是尚未分配的合约资产数额
 ```json
 {
     "result":{
@@ -258,7 +258,7 @@ E.g.
 
 ### changeOwner
 
-将合约 token 拥有权转移给 address，只有合约 token 拥有者才能执行此权限，入口函数 main。
+将合约 token 拥有权（默认拥有者为合约资产的创建账户）转移给 address，只有合约 token 拥有者才能执行此权限，入口函数 main。
 
 参数 json 结构:
 ```json
@@ -319,16 +319,14 @@ function init(input_str){
         "name":"RMB",
         "symbol":"CNY",
         "decimals":8,
-        "totalSupply":"1500000000",
-        "contractOwner":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj",
+        "supply":"1500000000"
     }
 }
 ```
 参数：name 资产名称；
 参数：symbol 资产符号；
 参数：decimals 小数位数；
-参数：totalSupply 发型总量；
-参数：contractOwner 合约资产归属人；
+参数：supply 发型总量(整数部分)；
 
 - 返回值：true或者抛异常
 

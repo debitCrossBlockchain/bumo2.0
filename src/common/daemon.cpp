@@ -34,7 +34,7 @@ namespace utils {
 #ifdef WIN32
 
 #else
-		//互斥锁初始化
+		//Initialize mutex
 		int fd;
 		pthread_mutexattr_t mattr;
 		fd = open("/dev/zero", O_RDWR, 0);
@@ -44,20 +44,20 @@ namespace utils {
 		pthread_mutexattr_setpshared(&mattr, PTHREAD_PROCESS_SHARED);
 		pthread_mutex_init(mptr, &mattr);
 
-		//创建共享内存
+		//Allocate shared memory
 		shmid = shmget((key_t)key, sizeof(int64_t), 0666 | IPC_CREAT);
 		if (shmid == -1) {
 			LOG_ERROR("shmget failed");
 			return true;
 		}
-		//将共享内存连接到当前进程的地址空间
+		//Attach the shared memory at the the current thread 
 		shm = shmat(shmid, (void*)0, 0);
 		if (shm == (void*)-1) {
 			LOG_ERROR("shmat failed\n");
 			return false;
 		}
 		LOG_INFO("Memory attached at %lx\n", (unsigned long int)shm);
-		//设置共享内存
+		//Set the shared memory
 		shared = (int64_t*)shm;
 
 #endif
@@ -67,7 +67,7 @@ namespace utils {
 	bool Daemon::Exit() {
 #ifdef WIN32
 #else
-		//把共享内存从当前进程中分离
+		//Detach the shared memory from the current thread
 		if (shmdt(shm) == -1) {
 			LOG_ERROR("shmdt failed");
 			return false;

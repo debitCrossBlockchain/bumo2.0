@@ -75,7 +75,7 @@ namespace bumo {
                         break;
                     }
 
-                    //search the command
+                    //Search for the command
                     if (support_cmd.find(tmp_argv[1]) == support_cmd.end()) {
                         std::cout << "error, command not found" << std::endl;
                         break;

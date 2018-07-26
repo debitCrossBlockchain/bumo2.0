@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Bubi API 接口示例</title>
+    <title>Example for Bubi API Interface</title>
     <link rel="stylesheet" type="text/css" href="themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="themes/icon.css">
     <link rel="stylesheet" type="text/css" href="demo.css">
@@ -12,9 +12,9 @@
 </head>
 <body>
     <div style="margin:20px 0;"></div>
-    <div class="easyui-panel" title="POST 操作" style="width:100%;padding:1px 1px">
+    <div class="easyui-panel" title="POST Operation" style="width:100%;padding:1px 1px">
     	<div style="margin-bottom:20px">
-	        <div>方法名:</div>
+	        <div>Method Name:</div>
 	        <select class="easyui-combobox" name="method" style="width:200px;">
 				<option value="submitTransaction">SubmitTransaction</option>
 				<option value="getTransactionBlob">GetTransactionBlob</option>
@@ -24,18 +24,18 @@
      
         
         <div1 style="margin-bottom:20px">
-            <div>消息体:</div>
+            <div>Message Body:</div>
             <input class="easyui-textbox" name="param" data-options="multiline:true,prompt:'{}'" style="width:700px;height:300px">
             <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="submitForm()" style="width:100px;height:32px">提交</a>
 			
-			<div>执行次数</div>
+			<div>Execution Times</div>
 			 <input id="count" name="count" type="text" style="width:70px;height:20px" >
 			 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="MoreSubmt()" style="width:200px;height:32px">批量执行</a>
 			 
 			 <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="autoCreate()" style="width:200px;height:32px">自动创建帐号</a>
         </div1>
         <div style="margin-bottom:20px">
-            <div>返回值:</div>
+            <div>Return Value:</div>
             <input id="result" name="result" type="text" data-options="multiline:true" style="width:700px;height:100px">
 			<a 	href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="ab()" style="width:150px;height:32px">查询交易记录</a>
         </div>
@@ -85,7 +85,7 @@
 						document.getElementById("result").value=j1;
 					 },
 					 error : function() {
-						  alert("异常！");
+						  alert("Exception！");
 					 }
 				}); 
 	}
@@ -112,8 +112,8 @@
 							//$("#d1").html(j1);
 						 },
 						 error : function() {
-							  // view("异常！");
-							  alert("异常！");
+							  // view("Exception！");
+							  alert("Exception！");
 						 }
 				  }); 
 		}

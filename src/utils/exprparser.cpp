@@ -710,7 +710,7 @@ namespace utils {
 		if (type_ == NUMBER){
 			//int prec = 18;// std::numeric_limits::digits10; // 18
 			std::ostringstream out;
-			out.precision(0);//╦╡╦гд╛хо╬╚╤х
+			out.precision(0);//б╦б╡б╦ц┤ц└б╛ц┬ц▐б╬б╚б╤ц┬
 			out << d_value_;
 			std::string str = out.str();
 
@@ -793,13 +793,13 @@ namespace utils {
 	{
 		word_.erase(0, std::string::npos);
 
-		// skip spaces
+		// Skip spaces
 		while (*pWord_ && isspace(*pWord_))
 			++pWord_;
 
-		pWordStart_ = pWord_;   // remember where word_ starts *now*
+		pWordStart_ = pWord_;   // Remember where word_ starts *now*
 
-		// look out for unterminated statements and things
+		// Look out for unterminated statements and things
 		if (*pWord_ == 0 &&  // we have EOF
 			type_ == ExprValue::END)  // after already detecting it
 			throw std::runtime_error("Unexpected end of expression.");
@@ -814,7 +814,7 @@ namespace utils {
 
 		unsigned char cNextCharacter = *(pWord_ + 1);  // 2nd character in new word_
 
-		// look for number
+		// Look for number
 		// can be: + or - followed by a decimal point
 		// or: + or - followed by a digit
 		// or: starting with a digit
@@ -824,7 +824,7 @@ namespace utils {
 			(isdigit(cNextCharacter) || cNextCharacter == '.')
 			)
 			|| isdigit(cFirstCharacter)
-			// allow decimal numbers without a leading 0. e.g. ".5"
+			// Allow decimal numbers without a leading 0. e.g. ".5"
 			// Dennis Jones 01-30-2009
 			|| (cFirstCharacter == '.' && isdigit(cNextCharacter)))
 		{
@@ -924,7 +924,7 @@ namespace utils {
 			word_ = std::string(pWordStart_, 1);
 			++pWord_;   // skip it
 			return type_ = ExprValue::TokenType(cFirstCharacter);
-		} // end of switch on cFirstCharacter
+		} // End of switch on cFirstCharacter
 
 		if (!isalpha(cFirstCharacter) && cFirstCharacter != '\"')
 		{
@@ -938,7 +938,7 @@ namespace utils {
 				throw std::runtime_error("Unexpected character: " + std::string(1, cFirstCharacter));
 		}
 
-		//add by zhao for string
+		//Added by zhao for string
 		if (cFirstCharacter == '\"'){
 			do {
 				++pWord_;
@@ -948,7 +948,7 @@ namespace utils {
 			return type_ = ExprValue::STRING;
 		}
 
-		// we have a word (starting with A-Z) - pull it out
+		// We have a word (starting with A-Z) - pull it out
 		while (isalnum(*pWord_) || *pWord_ == '_')
 			++pWord_;
 
@@ -956,7 +956,7 @@ namespace utils {
 		return type_ = ExprValue::NAME;
 	}   // end of Parser::GetToken
 
-	// force load of functions at static initialisation time
+	// Force load of functions at static initialisation time
 	static int doLoadOneArgumentFunctions = LoadOneArgumentFunctions();
 	static int doLoadOneCommonArgumentFunctions = LoadOneCommonArgumentFunctions();
 	static int doLoadTwoArgumentFunctions = LoadTwoArgumentFunctions();
@@ -1090,7 +1090,7 @@ namespace utils {
 
 		case ExprValue::LHPAREN:
 		{
-			ExprValue v = CommaList(true);    // inside parens, you could have commas
+			ExprValue v = CommaList(true);    // Inside parens, you could have commas
 			CheckToken(ExprValue::RHPAREN);
 			GetToken(true);                // eat the )
 			return v;
@@ -1099,11 +1099,11 @@ namespace utils {
 		default:
 			throw std::runtime_error("Unexpected token: " + word_);
 
-		} // end of switch on type
+		} // End of switch on type
 
-	} // end of Parser::Primary 
+	} // End of Parser::Primary 
 
-	const ExprValue ExprParser::Term(const bool get) {   // multiply and divide
+	const ExprValue ExprParser::Term(const bool get) {   // Multiply and divide
 
 		ExprValue left = Primary(get);
 		while (true)
@@ -1121,9 +1121,9 @@ namespace utils {
 				break;
 			}
 			default:    return left;
-			} // end of switch on type
-		}   // end of loop
-	} // end of Parser::Term
+			} // End of switch on type
+		}   // End of loop
+	} // End of Parser::Term
 
 	const ExprValue ExprParser::AddSubtract(const bool get){  // add and subtract
 
@@ -1135,9 +1135,9 @@ namespace utils {
 			case ExprValue::PLUS:  left += Term(true); break;
 			case ExprValue::MINUS: left -= Term(true); break;
 			default:    return left;
-			} // end of switch on type
-		}   // end of loop
-	} // end of Parser::AddSubtract
+			} // End of switch on type
+		}   // End of loop
+	} // End of Parser::AddSubtract
 
 	const ExprValue ExprParser::Comparison(const bool get){  // LT, GT, LE, EQ etc.
 
@@ -1195,9 +1195,9 @@ namespace utils {
 				break;
 			}
 			default:    return left;
-			} // end of switch on type
-		}   // end of loop
-	} // end of Parser::Comparison
+			} // End of switch on type
+		}   // End of loop
+	} // End of Parser::Comparison
 
 	const ExprValue ExprParser::Expression(const bool get){  // AND and OR
 
@@ -1208,7 +1208,7 @@ namespace utils {
 			{
 			case ExprValue::AND:
 			{
-				ExprValue d = Comparison(true);   // don't want short-circuit evaluation
+				ExprValue d = Comparison(true);   // Do not want to short-circuit evaluation
 				if (left.type_ != ExprValue::UNSURE) {
 					left = (left != 0.0) && (d != 0.0);
 				} 
@@ -1216,16 +1216,16 @@ namespace utils {
 			break;
 			case ExprValue::OR:
 			{
-				ExprValue d = Comparison(true);   // don't want short-circuit evaluation
+				ExprValue d = Comparison(true);   // Do not want to short-circuit evaluation
 				if (left.type_ != ExprValue::UNSURE) {
 					left = (left != 0.0) || (d != 0.0);
 				}
 			}
 			break;
 			default:    return left;
-			} // end of switch on type
-		}   // end of loop
-	} // end of Parser::Expression
+			} // End of switch on type
+		}   // End of loop
+	} // End of Parser::Expression
 
 	const ExprValue ExprParser::CommaList(const bool get){// expr1, expr2
 		ExprValue left = Expression(get);
@@ -1249,7 +1249,7 @@ namespace utils {
 		return v;
 	}
 
-	// change program and evaluate it
+	// Change program and evaluate it
 	const ExprValue ExprParser::Evaluate(const std::string & program) {  // get result
 		program_ = program;
 		return Evaluate();

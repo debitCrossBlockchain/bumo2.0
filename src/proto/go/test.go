@@ -29,7 +29,7 @@ func main() {
 		},
 	}
 
-	// 序列化操作
+	// Serialization operation
 	data, err := proto.Marshal(Transaction)
 	if err != nil {
 		fmt.Print("error");

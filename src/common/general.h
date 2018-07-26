@@ -41,16 +41,16 @@ namespace bumo {
 		const static int ASSET_CODE_MAX_SIZE = 64;
 		const static int EXPRCONDITION_MAXSIZE = 256;
 
-		//contract A can invoke contract B, and contract B can invoke contract C...
-		// the max RECURSIVE DEPTH is 3
+		//Contract A can invoke contract B, and contract B can invoke contract C...
+		// The max RECURSIVE DEPTH is 3.
 		const static int CONTRACT_MAX_RECURSIVE_DEPTH = 3;
 
-		//at most 512 transaction can be created when a contract executed
+		//At most 512 transaction can be created when a contract is executed.
 		const static int CONTRACT_TRANSACTION_LIMIT = 512;
 
 		const static int CONTRACT_CODE_LIMIT = 256 * utils::BYTES_PER_KILO;
 		const static int CONTRACT_STEP_LIMIT = 10 * utils::BYTES_PER_KILO;
-		const static int CONTRACT_MEMORY_LIMIT = 30 * utils::BYTES_PER_MEGA; //limit memory 30M
+		const static int CONTRACT_MEMORY_LIMIT = 30 * utils::BYTES_PER_MEGA; //Limit memory to 30M
 		const static int CONTRACT_STACK_LIMIT = 256 * utils::BYTES_PER_KILO;
 
 		const static int TX_EXECUTE_TIME_OUT = utils::MICRO_UNITS_PER_SEC;

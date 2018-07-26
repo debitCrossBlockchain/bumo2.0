@@ -137,14 +137,15 @@ namespace bumo {
 					result_item["hash"] = utils::String::BinToHexString(HashWrapper::Crypto(content));
 				}
 
+				TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
+				GlueManager::Instance().OnTransaction(ptr, result);
+
+				// do not broadcast if OnTransaction failed
+				if (result.code() == protocol::ERRCODE_SUCCESS) {
+					PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, ptr->GetFullData());
+				}
+
 			} while (false);
-
-			TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-			GlueManager::Instance().OnTransaction(ptr, result);
-
-			if (result.code() == protocol::ERRCODE_SUCCESS) {
-				PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, ptr->GetFullData());
-			}
 
 			//force exist to success
 			if (result.code() == protocol::ERRCODE_SUCCESS || result.code() == protocol::ERRCODE_ALREADY_EXIST) {

@@ -24,7 +24,7 @@
 #include <termios.h>
 #endif
 
-//#define WIN32_DUMP
+//#Define WIN32_DUMP
 
 #ifdef WIN32_DUMP
 #include <DbgHelp.h>
@@ -75,7 +75,7 @@ std::string utils::error_desc(uint32_t code) {
 		return std::string("");
 	}
 
-	// trim end blank characters
+	// Trim blank characters at the end 
 	char *msg_data = (char *)msg_buffer;
 	int msg_len = (int)strlen(msg_data);
 	while (msg_len > 0 && isspace(msg_data[msg_len - 1])) {
@@ -226,7 +226,7 @@ void utils::SetExceptionHandle()
 std::string utils::GetCinPassword(const std::string &_prompt) {
 #if defined(_WIN32)
 	std::cout << _prompt << std::flush;
-	// Get current Console input flags
+	// Get the current Console input flags
 	HANDLE hStdin;
 	DWORD fdwSaveOldMode;
 	if ((hStdin = GetStdHandle(STD_INPUT_HANDLE)) == INVALID_HANDLE_VALUE)
@@ -239,7 +239,7 @@ std::string utils::GetCinPassword(const std::string &_prompt) {
 	// Read the string
 	std::string ret;
 	std::getline(std::cin, ret);
-	// Restore old input mode
+	// Restore the old input mode
 	if (!SetConsoleMode(hStdin, fdwSaveOldMode))
 		abort();
 	return ret;
@@ -248,7 +248,7 @@ std::string utils::GetCinPassword(const std::string &_prompt) {
 	struct termios nflags;
 	char password[256];
 
-	// disable echo in the terminal
+	// Disable echo in the terminal
 	tcgetattr(fileno(stdin), &oflags);
 	nflags = oflags;
 	nflags.c_lflag &= ~ECHO;
@@ -262,7 +262,7 @@ std::string utils::GetCinPassword(const std::string &_prompt) {
 		abort();
 	password[strlen(password) - 1] = 0;
 
-	// restore terminal
+	// Restore terminal
 	if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
 		abort();
 

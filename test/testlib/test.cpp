@@ -536,6 +536,12 @@ int main(int32_t argc, char *argv[]){
 // 	assert(!utils::String::IsDecNumber("x00.012345678", 8));
 // 	assert(!utils::String::IsDecNumber("x00.012345x678", 8));
 // 	assert(!utils::String::IsDecNumber("a00.012345x678", 8));
+//	assert(!utils::String::IsDecNumber("0123", 8));
+// 	assert(utils::String::IsDecNumber("0", 8));
+// 	assert(utils::String::IsDecNumber("0.0", 8));
+// 	assert(utils::String::IsDecNumber("123", 8));
+// 	assert(utils::String::IsDecNumber("1.0002", 8));
+// 	assert(utils::String::IsDecNumber("1000.00", 8));
 // 
 // 	assert(utils::String::MultiplyDecimal("0.01234", 1) == "0.1234");
 // 	assert(utils::String::MultiplyDecimal("0.01234", 2) == "1.234");
