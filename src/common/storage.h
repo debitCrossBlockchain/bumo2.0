@@ -124,10 +124,10 @@ namespace bumo {
 		bool Exit();
 
 		KeyValueDb *keyvalue_db();   //Store other data except account, legder and transaction.
-		KeyValueDb *account_db();   //Store account tree
-		KeyValueDb *ledger_db();    //Store transactions and ledgers
+		KeyValueDb *account_db();   //Store account tree.
+		KeyValueDb *ledger_db();    //Store transactions and ledgers.
 
-		//Lock the account db and ledger db to make the databases in sync.
+		//Lock the account db and ledger db to make the databases in synchronization.
 		utils::ReadWriteLock account_ledger_lock_;
 
 		virtual void OnTimer(int64_t current_time) {};
