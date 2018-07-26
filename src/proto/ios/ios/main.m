@@ -2,7 +2,7 @@
 //  main.m
 //  ios
 //
-//  Created by 冯瑞明 on 2018/6/22.
+//  Created by Feng Ruiming on 2018/6/22.
 //  Copyright © 2018年 bumo. All rights reserved.
 //
 
@@ -30,10 +30,10 @@ int main(int argc, char * argv[]) {
         [transaction.operationsArray addObject: operation];
         NSLog(@"before: %@", transaction);
         
-        // 序列化操作
+        // Serialization
         NSData *serialData = transaction.data;
         
-        // 反序列化操作
+        // Anti-serialization
         Transaction *tran = [Transaction parseFromData:serialData error:NULL];
         NSLog(@"after: %@", tran);
         
