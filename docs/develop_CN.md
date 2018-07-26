@@ -819,18 +819,16 @@ POST /getTransactionBlob
    "error_desc" : "",
    "result" : {
       "logs" : {
-         "0-buQVkReBYUPUYHBinVDrrb9FQRpo49b9YRXq" : [ "undefined" ]
+         "0-buQVkReBYUPUYHBinVDrrb9FQRpo49b9YRXq" : null
       },
       "query_rets" : [
          {
             "result" : {
-               "type" : "number",
-               "value" : "000000000000f03f",
-               "valuePlain" : 1
+               "type" : "bool",
+               "value" : false
             }
          }
       ],
-      "actual_fee" : 0,
       "stat" : {
          "apply_time" : 6315,
          "memory_usage" : 886176,

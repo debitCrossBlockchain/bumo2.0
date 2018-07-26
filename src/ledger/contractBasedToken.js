@@ -64,7 +64,7 @@ function approve(spender, value){
     let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
 
-    tlog('approve', sender + ' approve ' + spender + ' ' + value + ' succeed.');
+    tlog('approve', sender, spender, value);
 
     return true;
 }
@@ -85,7 +85,7 @@ function transfer(to, value){
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
     assert(valueCheck(value) === true, 'Arg-value must be positive number.');
     if(sender === to) {
-        tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.');    
+        tlog('transfer', sender, to, value);  
         return true;
     }
     
@@ -102,7 +102,7 @@ function transfer(to, value){
     senderValue = int64Sub(senderValue, value);
     storageStore(senderKey, senderValue);
 
-    tlog('transfer', sender + ' transfer ' + value + ' to ' + to + ' succeed.');
+    tlog('transfer', sender, to, value);
 
     return true;
 }
@@ -113,7 +113,7 @@ function assign(to, value){
     assert(valueCheck(value) === true, 'Arg-value must be positive number.');
     
     if(thisAddress === to) {
-        tlog('assign', 'assign ' + value + ' to ' + to + ' succeed.');
+        tlog('assign', to, value);
         return true;
     }
     
@@ -129,7 +129,7 @@ function assign(to, value){
     globalAttribute.balance = int64Sub(globalAttribute.balance, value);
     storeGlobalAttribute();
 
-    tlog('assign', 'assign ' + value + ' to ' + to + ' succeed.');
+    tlog('assign', to, value);
 
     return true;
 }
@@ -140,7 +140,7 @@ function transferFrom(from, to, value){
     assert(valueCheck(value) === true, 'Arg-value must be positive number.');
     
     if(from === to) {
-        tlog('transferFrom', sender + ' triggering ' + from + ' transfer ' + value + ' to ' + to + ' succeed.');
+        tlog('transferFrom', sender, from, to, value);
         return true;
     }
     
@@ -164,7 +164,7 @@ function transferFrom(from, to, value){
     allowValue   = int64Sub(allowValue, value);
     storageStore(allowKey, allowValue);
 
-    tlog('transferFrom', sender + ' triggering ' + from + ' transfer ' + value + ' to ' + to + ' succeed.');
+    tlog('transferFrom', sender, from, to, value);
 
     return true;
 }
@@ -178,7 +178,7 @@ function changeOwner(address){
     globalAttribute.contractOwner = address;
     storeGlobalAttribute();
 
-    tlog('changeOwner', sender + ' change contract ownership to ' + address + ' succeed.');
+    tlog('changeOwner', sender, address);
 }
 
 function name() {
@@ -208,6 +208,10 @@ function contractInfo(){
 function balanceOf(address){
     assert(addressCheck(address) === true, 'Arg-address is not a valid address.');
 
+    if(address === globalAttribute.contractOwner || address === thisAddress){
+        return globalAttribute.balance;
+    }
+
     let key = makeBalanceKey(address);
     let value = storageLoad(key);
     assert(value !== false, 'Get balance of ' + address + ' from metadata failed.');
@@ -218,8 +222,7 @@ function balanceOf(address){
 function init(input_str){
     let input = JSON.parse(input_str);
 
-    assert(addressCheck(input.params.contractOwner) === true &&
-           stoI64Check(input.params.totalSupply) === true &&
+    assert(stoI64Check(input.params.supply) === true &&
            typeof input.params.name === 'string' &&
            typeof input.params.symbol === 'string' &&
            typeof input.params.decimals === 'number',
@@ -229,8 +232,8 @@ function init(input_str){
     globalAttribute.name = input.params.name;
     globalAttribute.symbol = input.params.symbol;
     globalAttribute.decimals = input.params.decimals;
-    globalAttribute.totalSupply = int64Mul(input.params.totalSupply, powerOfBase10(globalAttribute.decimals));
-    globalAttribute.contractOwner = input.params.contractOwner;
+    globalAttribute.totalSupply = int64Mul(input.params.supply, powerOfBase10(globalAttribute.decimals));
+    globalAttribute.contractOwner = sender;
     globalAttribute.balance = globalAttribute.totalSupply;
 
     storageStore(globalAttributeKey(), JSON.stringify(globalAttribute));

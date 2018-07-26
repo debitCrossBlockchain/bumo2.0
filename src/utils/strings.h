@@ -870,12 +870,12 @@ namespace utils {
 					}
 				}
 			}
-
-			if (count_zero > 2 ||
-				(count_zero == 1 && dot_pos != 1)
-				) {  //00123 or 01223, except 0.123 or .123
+			// 0123 or 00123, except 0 or 0.123
+			bool leading_zero = (value[0] == '0') ? true : false;
+			if ((leading_zero && dot_pos != 1) && value != "0") {
 				return false;
 			}
+
 			if ((dot_pos != std::string::npos) && (value.size() - dot_pos - 1 > decimal)) {
 				return false;
 			}
