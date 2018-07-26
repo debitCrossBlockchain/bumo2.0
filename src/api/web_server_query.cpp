@@ -37,7 +37,7 @@ namespace bumo {
 
 		if (!Environment::AccountFromDB(address, acc)) {
 			error_code = protocol::ERRCODE_NOT_EXIST;
-			LOG_TRACE("GetAccount fail, account(%s) not exist", address.c_str());
+			LOG_TRACE("GetAccount failure, account(%s) not exist", address.c_str());
 		}
 		else {
 			acc->ToJson(result);
@@ -583,7 +583,7 @@ namespace bumo {
 		std::string with_block_reward = request.GetParamValue("with_block_reward");
 
 
-		/// default last closed ledger
+		/// By default query the last closed ledger
 		if (ledger_seq.empty())
 			ledger_seq = utils::String::ToString(LedgerManager::Instance().GetLastClosedLedger().seq());
 
@@ -748,19 +748,19 @@ namespace bumo {
 			KeyValueDb *db = Storage::Instance().keyvalue_db();
 			int32_t count = db->Get(General::PEERS_TABLE, peers);
 			if (count < 0) {
-				LOG_ERROR("Load peers info from db failed, error desc(%s)", db->error_desc().c_str());
+				LOG_ERROR("Failed to load peers info from db, error desc(%s)", db->error_desc().c_str());
 				error_code = protocol::ERRCODE_INTERNAL_ERROR;
 				break;
 			}
 
 			if (count == 0) {
-				LOG_ERROR("Load peers info from db failed, not initialize");
+				LOG_ERROR("Failed to load peers info from db, not initialized");
 				break;
 			}
 
 			protocol::Peers all;
 			if (!all.ParseFromString(peers)) {
-				LOG_ERROR("Parse peers string failed");
+				LOG_ERROR("Failed to parse peers string");
 				break;
 			}
 
