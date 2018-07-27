@@ -7,7 +7,7 @@ void TestJson(){
 	Json::Value jsonvalue;
 	Json::Reader reader;
 	if (!reader.parse(text, jsonvalue)){
-		LOG_ERROR("Json parse string(%s) error ", text.c_str());
+		LOG_ERROR("Failed to parse json, raw json data is (%s) ", text.c_str());
 	}
 
 	std::string bumos = jsonvalue["b"].asString();

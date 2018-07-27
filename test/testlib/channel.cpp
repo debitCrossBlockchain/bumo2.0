@@ -239,7 +239,7 @@ namespace bumo1 {
 						}
 
 						if (iter->second->IsDataExpired(120 * utils::MICRO_UNITS_PER_SEC)) {
-							LOG_ERROR("Data Expired");
+							LOG_ERROR("Failed to check network status, data expired");
 						}
 					}
 
@@ -248,7 +248,7 @@ namespace bumo1 {
 			}
 		}
 		catch (const std::exception & e) {
-			LOG_ERROR("%s", e.what());
+			LOG_ERROR("Received the thrown exception.%s", e.what());
 		}
 
 		enabled_ = false;
