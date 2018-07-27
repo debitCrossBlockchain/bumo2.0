@@ -1,3 +1,5 @@
+[English](README.md) | 中文
+
 ## 模块简介
 `BUMO` 的序列化消息定义模块。在区块链程序的内部通信、节点通信和永久化存储等方面，都会用到数据的序列化和反序列化。`BUMO` 采用 `protobuf` 作为序列化工具。在使用时，首先按照 `protobuf` 制定得语法标准定义 `message` 结构，然后调用 `protobuf` 的编译工具，将定义 `message` 结构的文件编译成 `C++` 源文件。然后，`BUMO` 的其他源文件就可以直接调用由 `protobuf` 编译的 `message` 源文件了。
 
