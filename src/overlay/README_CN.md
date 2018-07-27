@@ -3,7 +3,7 @@
 ## Features
 This module enables P2P network communication and parses service message. 
 - Node connection management. It includes configuring known nodes, discovering new nodes, actively connecting to other nodes, and listening to other node connections.
-- Node communication. It provides message interaction with other nodes,such as initiating transactions, block synchronization, block consensus messages, and so on.
+- Node communication. It provides message interaction with other nodes, such as initiating transactions, block synchronization, block consensus messages, and so on.
 - Message parsing. After receiving the message, it is parsed and passed to other internal modules.
 
 ## Module Structure
