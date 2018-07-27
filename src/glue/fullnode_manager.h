@@ -60,6 +60,7 @@ namespace bumo {
 		bool add(FullNodePointer fp);
 		void remove(const std::string& key);
 		bool update(FullNodePointer fp);
+		void clear_fulll_node();
 		
 		// called in LedgerManager::CloseLedger after AtomMap commit
 		void getFullNode(const std::string& addr, Json::Value& node);

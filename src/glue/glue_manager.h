@@ -76,7 +76,7 @@ namespace bumo {
 		bool OnConsensus(const ConsensusMsg &msg);
 		void NotifyErrTx(std::vector<TransactionFrm::pointer> &txs);
 
-		//called by ledger manger once ledger closed
+		//called by ledger manager once ledger closed
 		void UpdateValidators(const protocol::ValidatorSet &validators, const std::string &proof);
 		void LedgerHasUpgrade();
 

@@ -167,6 +167,9 @@ namespace bumo {
 		return true;
 	}
 
+	void FullNodeManager::clear_fulll_node() {
+		full_node_info_.clear();
+	}
 	void FullNodeManager::getFullNode(const std::string& addr, Json::Value& node) {
 		FullNodePointer fp = get(addr);
 		if (fp) {
@@ -182,7 +185,7 @@ namespace bumo {
 				return false;
 			}
 			if (!add(fp)) return false;
-			batch->Put(utils::String::Format("%s", utils::String::BinToHexString(fp->getAddress()).c_str()), node.toFastString());
+			batch->Put(ComposePrefix(General::FULLNODE_PREFIX, fp->getAddress().c_str()), node.toFastString());
 		}
 		else if (operation == "update") {
 			FullNodePointer fp = std::make_shared<FullNode>();
@@ -191,12 +194,12 @@ namespace bumo {
 				return false;
 			}
 			if (!update(fp)) return false;
-			batch->Put(utils::String::Format("%s", utils::String::BinToHexString(fp->getAddress()).c_str()), node.toFastString());
+			batch->Put(ComposePrefix(General::FULLNODE_PREFIX, fp->getAddress().c_str()), node.toFastString());
 		}
 		else if (operation == "remove") {
 			std::string addr = node["addr"].asString();
 			remove(addr);
-			batch->Delete(utils::String::Format("%s", utils::String::BinToHexString(node["addr"].asString()).c_str()));
+			batch->Delete(ComposePrefix(General::FULLNODE_PREFIX, node["addr"].asString()));
 		}
 		else {
 			LOG_ERROR("Unknown full node operation, %s", operation.c_str());
@@ -207,24 +210,58 @@ namespace bumo {
 	}
 
 	bool FullNodeManager::updateDb(std::shared_ptr<WRITE_BATCH> batch) {
-		KVTrie trie;
-		trie.Init(Storage::Instance().keyvalue_db(), batch, General::FULLNODE_PREFIX, 1);
-		trie.UpdateHash();
+		Json::Value fnode_arr;
+		for (auto it = full_node_info_.begin(); it != full_node_info_.end(); it++)
+		{
+			fnode_arr.append(it->first);
+		}
+		batch->Put(ComposePrefix(General::FULLNODE_PREFIX, "list"), fnode_arr.toFastString());
+
+		if (!Storage::Instance().keyvalue_db()->WriteBatch(*batch)) {
+			LOG_INFO("Failed to Write batch: %s", Storage::Instance().account_db()->error_desc().c_str());
+			return false;
+		}
 		return true;
 	}
 
 	bool FullNodeManager::loadAllFullNode() {
-		KVTrie trie;
-		auto batch = std::make_shared<WRITE_BATCH>();
-		trie.Init(Storage::Instance().keyvalue_db(), batch, General::FULLNODE_PREFIX, 1);
-		std::vector<std::string> values;
-		trie.GetAll("", values);
-		std::map<std::string, FullNodePointer> fullnodes;
-		for (size_t i = 0; i < values.size(); i++){
+		auto db = Storage::Instance().keyvalue_db();
+		std::string str;
+		int32_t ret = db->Get(ComposePrefix(General::FULLNODE_PREFIX, "list"), str);
+		if (ret == -1) {
+			LOG_ERROR("Failed to get full node list from db");
+			return false;
+		}
+		else if (ret == 0) {
+			LOG_ERROR("Full node list is empty");
+			return true;
+		}
+
+		Json::Value fnode_arr;
+		if (!fnode_arr.fromString(str)) {
+			LOG_ERROR("Failed to parse full node list from json string %s", fnode_arr.toFastString().c_str());
+			return false; 
+		}
+		
+		std::string key;
+		for (size_t i = 0; i < fnode_arr.size(); i++) {
+			std::string addr = fnode_arr[i].asString();
+			key = ComposePrefix(General::FULLNODE_PREFIX, addr);
+			std::string nodestr;
+			if (!db->Get(key, nodestr)) {
+				LOG_ERROR("Failed to get full node %s from db", addr.c_str());
+				return false;
+			}
 			Json::Value fn_json;
-			fn_json.fromString(values[i]);
+			if (!fn_json.fromString(nodestr)) {
+				LOG_ERROR("Failed to parse full node %s from string", addr.c_str());
+				return false;
+			}
 			FullNodePointer fp = std::make_shared<FullNode>();
-			fp->loadFromJson(fn_json);
+			if (!fp->loadFromJson(fn_json)) {
+				LOG_ERROR("Failed to load full node info from json, %s", nodestr.c_str());
+				return false;
+			} 
 			if (!update(fp)) return false;
 		}
 		return true;
@@ -316,7 +353,7 @@ namespace bumo {
 				break;
 			}
 			std::string peer;
-			if (!getPeerAddr(local_address_, peer)) {
+			if (!getPeerAddr(local_address_, peer) || peer.empty()) {
 				LOG_ERROR("Failed to get full node check peer of local address");
 				break;
 			}
@@ -359,7 +396,7 @@ namespace bumo {
 			if (!PeerManager::Instance().ConsensusNetwork().Connect(uri)) {
 				LOG_ERROR("Failed to connect to uri:%s", uri.c_str());
 			}
-			if (PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString())) {
+			if (!PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString())) {
 				LOG_ERROR("Failed to send request to uri:%s", uri.c_str());
 				break;
 			}

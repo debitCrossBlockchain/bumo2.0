@@ -666,6 +666,7 @@ namespace bumo {
 			}
 		}
 		if (!update_done) {
+			FullNodeManager::Instance().clear_fulll_node();
 			FullNodeManager::Instance().loadAllFullNode();
 		}
 		else {
