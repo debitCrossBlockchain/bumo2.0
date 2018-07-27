@@ -22,12 +22,12 @@ Class name | Statement file | Function
 |`LedgerContext`         | [ledgercontext_manager.h](./ledgercontext_manager.h) | The execution context of the ledger, which carries the content data and attribute status data of the ledger.
 |`LedgerContextManager`  | [ledgercontext_manager.h](./ledgercontext_manager.h) | The management class of `LedgerContext` is convenient for multi-thread execution scheduling.
 |`LedgerFrm`             | [ledger_frm.h](./ledger_frm.h)                       | The ledger execution class is responsible for the specific processing of the ledger. The main task is to transfer the transactions in the ledger one by one to `TransactionFrm` to execute.
-## 框架流程
-- 程序启动时，`LedgerManager` 初始化，并根据配置文件创建创世账户和创世区块。
-- 区块链网络开始运行后，`LedgerManager` 接收到经由 `glue` 模块传递过来的共识提案，对提案做合法性检查。
-- 通过合法检查后，将共识提案交给 `LedgerContextManager`。
-- `LedgerContextManager` 为共识提案的处理生成执行上下文 `LedgerContext` 对象，`LedgerContext` 将提案交由 `LedgerFrm` 具体处理。
-- `LedgerFrm` 创建 `Environment` 对象，为执行提案内的交易提供事务容器，然后将提案的交易逐一取出，交由 `TransactionFrm` 处理。
+## Workflow
+- When the program starts, `LedgerManager` is initialized and the genesis Account and genesis Zone are created according to the configuration file.
+- After the blockchain network starts running, `LedgerManager` receives the consensus proposal passed through the `glue` module and checks the validity of the proposal.
+- After passing the legal check, hand over the consensus proposal to `LedgerContextManager`.
+- `LedgerContextManager` generates an execution context `LedgerContext` object for processing the consensus proposal, and `LedgerContext` passes the proposal to `LedgerFrm` for specific processing.
+- `LedgerFrm` creates an `Environment` object, provides a transaction container for executing the transactions within the proposal, and then extracts the transactions of the proposal one by one, and transfer them to `TransactionFrm`to process.
 - `TransactionFrm` 再将交易内的操作逐一取出，交由 `OperationFrm` 执行。
 - `OperationFrm` 根据类型分别执行交易内的不同操作，并将操作变更的数据写入 `Environment` 的缓存。其中， `OperationFrm` 执行的创建账户操作如果是创建合约账户，或者执行转账操作（包括转移资产和转移BU币），会触发 `ContractManager` 加载并执行合约代码，合约执行对数据的变更也会写入 `Environment` 中。
 - 在交易执行过程中，会调用 `FeeCalculate` 计算实际费用。
