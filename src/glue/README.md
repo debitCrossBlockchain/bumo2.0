@@ -1,7 +1,7 @@
 English | [中文](README_CN.md) 
 
 ## Introduction
-`glue` is the glue module of the `BUMO` blockchain, which is responsible for bonding the important modules together and acting as an intermediary to provide interactive information transferservices for each module. It mainly includes the following functions:
+`glue` is the glue module of the `BUMO` blockchain, which is responsible for bonding the important modules together and acting as an intermediary to provide interactive information transfer services for each module. It mainly includes the following functions:
 - Connect the `console` module so that users can submit transactions to the `glue` trading pool via the command line
 - Connect the `api` module so that users can submit transactions to the `glue` transaction pool via the light client or the `http` tool;
 - Connect the `overlay` module so that `glue` can be connected to other modules to call the 'overlay` `p2p` network via `glue` for node communication
