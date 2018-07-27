@@ -1,7 +1,7 @@
 English | [中文](README_CN.md) 
 
 ## Introduction
-The ledger module is mainly responsible for the execution of the ledger and block generation.It includes the following features:
+The ledger module is mainly responsible for the execution of the ledger and block generation. It includes the following features:
 - Generate the genesis account and genesis block based on configuration
 - Execute transactions in the proposal after a consensus is reached
 - Generate a new block based on the completed transaction package
