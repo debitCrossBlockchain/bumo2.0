@@ -6,7 +6,7 @@ English | [中文](README_CN.md)
 The module implements a variety of interface service functions, as follows:
 - HTTP service. There are two ways for this service: one is the API interface, through which you can interact with the node blockchain account, such as querying account information, querying transactions, submitting transactions, calling contracts, etc.; second, it provides access to HTTP pages.
 - WebSocket interface service. It provides the ability to initiate transactions and subscribe to transactions.
-- Console interface. It provide users with the console mode to operate Wallet, get BU value, pay BU and other operations.
+- Console interface. It provides users with the console mode to operate Wallet, get BU value, pay BU and other operations.
 
 ## Module Structure
 
