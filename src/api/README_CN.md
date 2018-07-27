@@ -10,7 +10,7 @@
 
 类名称 | 声明文件 | 功能
 |:--- | --- | ---
-| `WebServer` | [web_server.h](./web_server.h) | HTTP 服务的提供者。使用 `http::server::server`提供HTTP 服务，参考文件[server.hpp](../3rd/http/server.hpp) ，在该 `WebServer` 类中实现了路由功能，用于 HTTP 接口和访问 HTTP 页面功能。
+| `WebServer` | [web_server.h](./web_server.h) | HTTP 服务的提供者。使用 `http::server::server`提供HTTP 服务，参考文件[server.hpp](../3rd/http/server.hpp) ，在该 `WebServer` 类中实现了路由功能，用于调用 HTTP 接口和访问 HTTP 页面功能。
 | `WebSocketServer` | [websocket_server.h](./websocket_server.h) | Web Socket 服务的提供者。该类继承自 `Network` 类，参考文件 [network.h](../common/network.h)，`Network` 使用 `asio::io_service` 异步 IO 监听网络事件，并管理所有的网络连接。`WebSocketServer` 的功能如下：对外部节点提供发起交易和交易订阅服务；对内其他模块提供广播交易的接口，用于把相关交易通知给订阅者。
 | `Console` | [console.h](./console.h) | 控制台命令服务的提供者。拥有独立的线程执行环境，启动后监听输入执行后执操作行。执行指令过程中会调用到其他模块如 `KeyStore` 参考文件 [key_store.h](../common/key_store.h)，`GlueManager` 参考 [glue_manager.h](../glue/glue_manager.h) 等
 
