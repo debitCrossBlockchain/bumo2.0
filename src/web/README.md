@@ -2,24 +2,25 @@ English | [中文](README_CN.md)
 
 # WEB
 
-## 基本介绍
-提供基本的 web 页面访问功能，目前提供的功能是智能合约语法检测工具。
+## Introduction
 
-## 模块结构
+Provides basic web page access capabilities, and the currently available feature is a smart contract syntax detection tool.
 
-名称 | 目录 | 功能
+## Module Structure
+
+Name | Directory | Function
 |:--- | --- | ---
-| `jslint` | [jslint](./jslint) | 智能合约检测工具。参考文档 [智能合约语法说明](./jslint/ContractRules_CN.md)。
+| `jslint` | [jslint](./jslint) | Smart contract detection tool. Refer to [Syntax in Smart Contract](./jslint/ContractRules_CN.md)。
 
-## 配置方法
-- 打开 [bumo.json](../../build/win32/config/bumo.json) 配置如下：
+## Configuration
+- Open [bumo.json](../../build/win32/config/bumo.json) and the configuration is shown below:
     ```
     "webserver": {
         "listen_addresses": "0.0.0.0:36002",
-        "index_name": "",           #主页路径
-        "directory": "web/"        #web 目录
+        "index_name": "",           # Homepage directory
+        "directory": "web/"        # Web directory
     }
     ```
-- 拷贝该目录（web） 下的文件夹和文件至部署目录 `./bumo/web/` 下
-- 重启 `bumo` 程序
-- 访问 `http://ip:36002/jslint/index.html`
+- Copy the folders and files under the directory (web) to the deployment directory `./bumo/web/`
+- Restart `bumo` program
+- Visit `http://ip:36002/jslint/index.html`
