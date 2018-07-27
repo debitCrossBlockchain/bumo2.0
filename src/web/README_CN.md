@@ -17,7 +17,7 @@
     "webserver": {
         "listen_addresses": "0.0.0.0:36002",
         "index_name": "",           #主页路径
-        "directory": "web/",        #web 目录
+        "directory": "web/"        #web 目录
     }
     ```
 - 拷贝该目录（web） 下的文件夹和文件至部署目录 `./bumo/web/` 下
