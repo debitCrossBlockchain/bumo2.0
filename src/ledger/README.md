@@ -32,6 +32,6 @@ Class name | Statement file | Function
 - `OperationFrm` performs different operations within the transaction according to the type, and writes the data of the operation change to the cache of `Environment’, where the operation of creating an account by `OperationFrm` is to create a contract account, or to perform a transfer operation (including transferring assets and transferring BU coins). It will trigger `ContractManager` to load and execute the contract code, and the data changed in the process of contract execution will also be written to the `Environment`.
 - During the execution of the transaction, `FeeCalculate` is called to calculate the actual cost.
 - After all operations in each transaction are completed, the change cache in `Environment` will be submitted for update.
-- 等提案内的所有交易执行完成后，`LedgerManager` 对提案打包生成新的区块，并将新区块和更新的数据写入数据库。
-- 此外，`LedgerManager` 会通过定时器定时从区块链网络同步最新区块。
+- After all the transactions in the proposal have been executed, `LedgerManager` packages the proposal to generate a new block and writes the new block and updated data to the database.
+- In addition, `LedgerManager` synchronizes the latest block from the blockchain network through timer regularly.
 
