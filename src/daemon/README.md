@@ -3,7 +3,7 @@ English | [中文](README_CN.md)
 # daemon
 
 ## Introduction
-Daemon. It is used to monitor whether the target program is running under Linux. When the target program exits abnormally, the daemon starts the target program.
+Daemon. It is used to monitor whether the target program is running in Linux. When the target program exits abnormally, the daemon starts the target program.
 
 ## Module Structure
 Process name | Implementation file | Function
