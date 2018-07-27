@@ -28,10 +28,10 @@ Class name | Statement file | Function
 - After passing the legal check, hand over the consensus proposal to `LedgerContextManager`.
 - `LedgerContextManager` generates an execution context `LedgerContext` object for processing the consensus proposal, and `LedgerContext` passes the proposal to `LedgerFrm` for specific processing.
 - `LedgerFrm` creates an `Environment` object, provides a transaction container for executing the transactions within the proposal, and then extracts the transactions of the proposal one by one, and transfer them to `TransactionFrm`to process.
-- `TransactionFrm` 再将交易内的操作逐一取出，交由 `OperationFrm` 执行。
-- `OperationFrm` 根据类型分别执行交易内的不同操作，并将操作变更的数据写入 `Environment` 的缓存。其中， `OperationFrm` 执行的创建账户操作如果是创建合约账户，或者执行转账操作（包括转移资产和转移BU币），会触发 `ContractManager` 加载并执行合约代码，合约执行对数据的变更也会写入 `Environment` 中。
-- 在交易执行过程中，会调用 `FeeCalculate` 计算实际费用。
-- 每笔交易内的所有操作完成后，会将 `Environment` 中的变更缓存统一提交更新。
+- `TransactionFrm` takes the operations in the transaction one by one and sends them to `OperationFrm` to execute.
+- `OperationFrm` performs different operations within the transaction according to the type, and writes the data of the operation change to the cache of `Environment’, where the operation of creating an account by `OperationFrm` is to create a contract account, or to perform a transfer operation (including transferring assets and transferring BU coins). It will trigger `ContractManager` to load and execute the contract code, and the data changed in the process of contract execution will also be written to the `Environment`.
+- During the execution of the transaction, `FeeCalculate` is called to calculate the actual cost.
+- After all operations in each transaction are completed, the change cache in `Environment` will be submitted for update.
 - 等提案内的所有交易执行完成后，`LedgerManager` 对提案打包生成新的区块，并将新区块和更新的数据写入数据库。
 - 此外，`LedgerManager` 会通过定时器定时从区块链网络同步最新区块。
 
