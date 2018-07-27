@@ -140,16 +140,16 @@ namespace bumo {
 
 			if (NodeExist(hello.node_address(), peer->GetId())) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				res.set_error_desc(utils::String::Format("Disconnect duplicated connection with ip(%s), id(" FMT_I64 ")", peer->GetPeerAddress().ToIp().c_str(), peer->GetId()));
-				LOG_ERROR("%s",res.error_desc().c_str());
+				res.set_error_desc(utils::String::Format("Duplicated connection with ip(%s), id(" FMT_I64 ")", peer->GetPeerAddress().ToIp().c_str(), peer->GetId()));
+				LOG_ERROR("Failed to process the peer hello message.%s",res.error_desc().c_str());
 				break;
 			}
 			
 			if (network_id_ != hello.network_id()) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				res.set_error_desc(utils::String::Format("The peer connection breaks as the peer network id(" FMT_I64 ") is not equal to the local id(" FMT_I64 ")",
+				res.set_error_desc(utils::String::Format("Different network id, remote id(" FMT_I64 ") is not equal to the local id(" FMT_I64 ")",
 					hello.network_id(), network_id_));
-				LOG_ERROR("%s", res.error_desc().c_str());
+				LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
 				break;
 			}
 
@@ -157,11 +157,11 @@ namespace bumo {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				if (node_rand_ != hello.node_rand()) {
 					res.set_error_desc(utils::String::Format("The peer connection breaks as the configuration node addresses are duplicated"));
-					LOG_ERROR("%s", res.error_desc().c_str());
+					LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
 				}
 				else {
-					res.set_error_desc(utils::String::Format("The peer connection breaks by itself"));
-					LOG_ERROR("%s", res.error_desc().c_str());
+					res.set_error_desc(utils::String::Format("The peer connection is broken because it connects itself")); 
+					LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
 				}
 				break;
 			}
@@ -169,7 +169,7 @@ namespace bumo {
 			if (hello.overlay_version() < bumo::General::OVERLAY_MIN_VERSION) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				res.set_error_desc(utils::String::Format("Peer's overlay version(%d) is too old,", hello.overlay_version()));
-				LOG_ERROR("%s", res.error_desc().c_str());
+				LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
 				break;
 			}
 			//if (hello->ledger_version() < bumo::General::LEDGER_MIN_VERSION){
@@ -180,7 +180,7 @@ namespace bumo {
 				hello.listening_port() > utils::MAX_UINT16) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				res.set_error_desc(utils::String::Format("Peer's listen port(%d) is not valid", hello.listening_port()));
-				LOG_ERROR("%s", res.error_desc().c_str());
+				LOG_ERROR("Failed to process the peer hello message.%s", res.error_desc().c_str());
 				break;
 			}
 
@@ -230,12 +230,12 @@ namespace bumo {
 
 	bool PeerNetwork::OnMethodTransaction(protocol::WsMessage &message, int64_t conn_id) {
 		if (message.data().size() > General::TRANSACTION_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
-			LOG_ERROR("Transaction p2p data size(" FMT_SIZE ") is too large", message.data().size());
+			LOG_ERROR("Failed to process the peer transaction message.Transaction data size(" FMT_SIZE ") is too large", message.data().size());
 			return false;
 		}
 
 		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data())) {
-			LOG_TRACE("Transaction from id(" FMT_I64 ") queued", conn_id);
+			LOG_TRACE("Failed to process the peer transaction message.The transaction has been broadcast, from connection id (" FMT_I64 ")", conn_id);
 			return true;
 		}
 
@@ -283,7 +283,7 @@ namespace bumo {
 		protocol::HelloResponse env;
 		env.ParseFromString(message.data());
 		if (env.error_code() != 0) {
-			LOG_ERROR("Peer reponse error code(%d), desc(%s)", env.error_code(), env.error_desc().c_str());
+			LOG_ERROR("Failed to response the peer hello message.Peer reponse error code(%d), desc(%s)", env.error_code(), env.error_desc().c_str());
 			return false;
 		}
 
@@ -292,14 +292,14 @@ namespace bumo {
 
 	bool PeerNetwork::OnMethodPbft(protocol::WsMessage &message, int64_t conn_id) {
 		if (message.data().size() > General::TXSET_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
-			LOG_ERROR("Consensus p2p data size(" FMT_SIZE ") is too large", message.data().size());
+			LOG_ERROR("Failed to process the peer pbft message.Consensus p2p data size(" FMT_SIZE ") is too large", message.data().size());
 			return false;
 		}
 
 		protocol::PbftEnv env;
 		env.ParseFromString(message.data());
 		if (!env.has_pbft()) {
-			LOG_ERROR("Pbft env is not initialized");
+			LOG_ERROR("Failed to process the peer pbft message.Pbft env is not initialized");
 			return false;
 		}
 
@@ -484,7 +484,7 @@ namespace bumo {
 				update_values.set_num_failures(num_failures);
 				update_values.set_active_time(-1);
 				if (!UpdateItem(address, update_values)) {
-					LOG_ERROR("Update peers failed");
+					LOG_ERROR("Failed to connect peer, update peers failed");
 				}
 
 				if (connections_.size() >= p2p_configure.target_peer_connection_) {
@@ -539,14 +539,14 @@ namespace bumo {
 
 	bool PeerNetwork::CreatePeerIfNotExist(const utils::InetAddress &address) {
 		if (address.IsAny() || address.GetPort() == 0) {
-			LOG_ERROR("Peer address(%s) is not valid", address.ToIpPort().c_str());
+			LOG_ERROR("Failed to create peer.Invalid peer address(%s)", address.ToIpPort().c_str());
 			return false;
 		} 
 
 		protocol::Peers peers;
 		int32_t peer_count = QueryItem(address, peers);
 		if (peer_count < 0) {
-			LOG_ERROR("Failed to query if a peer is existed, address(%s)", address.ToIpPort().c_str());
+			LOG_ERROR("Failed to create peer. Unable to query the address (%s)", address.ToIpPort().c_str());
 			return false;
 		}
 

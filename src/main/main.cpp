@@ -173,7 +173,7 @@ int main(int argc, char *argv[]){
 		if (arg.create_hardfork_) {
 			bumo::LedgerManager &ledgermanger = bumo::LedgerManager::Instance();
 			if (!ledgermanger.Initialize()) {
-				LOG_ERROR("legder manger init error!!!");
+				LOG_ERROR("Failed to initialize legder manger!");
 				return -1;
 			}
 			bumo::LedgerManager::CreateHardforkLedger();
