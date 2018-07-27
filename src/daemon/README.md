@@ -2,10 +2,10 @@ English | [中文](README_CN.md)
 
 # daemon
 
-## 基本介绍
-守护进程。用于 Linux 下监控目标程序是否处于运行状态，当目标程序异常退出后，守护进程会启动目标程序。
+## Introduction
+Daemon is used to monitor whether the target program is running in Linux. When the target program exits abnormally, the daemon starts the target program.
 
-## 模块结构
-进程名称 | 实现文件 | 功能
+## Module Structure
+Process name | Implementation file | Function
 |:--- | --- | ---
-| `bumod` | [main.cpp](./bumo/main.cpp) | 守护进程，Linux 下使用。启动时需传入目标程序的绝对路径，守护进程和目标程序共用同一块共享内存，目标程序定时写时间戳，守护进程读时间戳，如果目标程序长时间没有写时间戳，说明目标程序被关闭，守护进程则会启动目标程序，其中目标程序写时间戳方法参考文件[daemon.h](../common/daemon.h)
+| `bumod` | [main.cpp](./bumo/main.cpp) | Daemon, used in Linux. The absolute path of the target program needs to be passed to the boot process. The daemon and the target program share the same memory. The target program periodically writes the timestamp, and the daemon reads the timestamp. If the target program does not write the timestamp for a long time, it indicates the target program is closed. The daemon will start the target program. For the target program writing the timestamp method, refer to the file [daemon.h](../common/daemon.h).
