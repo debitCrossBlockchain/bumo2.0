@@ -26,7 +26,7 @@ Class name | Statement file | Function
 | `Thread` | [thread.h](./thread.h) | Cross-platform threading tool class. It implements `ThreadPool` thread pool, `Mutex` thread lock, etc.
 | `System` | [system.h](./system.h) | A cross-platform system tool class. It implements the function of querying hardware information, such as hard disk, memory, host name, system version, log size, boot time, cpu, hardware address.
 | `String` | [strings.h](./strings.h) | String processing class. It implements a variety of string manipulation features, such as formatting, removing spaces, converting numbers, converting binary, etc.
-| `Sm3` | [sm3.h](./sm3.h) | Implements SM3 encryption algorithm
+| `Sm3` | [sm3.h](./sm3.h) | It implements SM3 encryption algorithm.
 | `Singleton` | [singleton.h](./singleton.h) | Single instance template class. Ensure that the successor of this class is a single instance class.
 | `random` related| [random.h](./random.h) | It gets random bytes.
 | `NonCopyable` | [noncopyable.h](./noncopyable.h) | The base class for copyless constructors and assignment functions.
