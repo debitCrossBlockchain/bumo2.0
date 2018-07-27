@@ -1,15 +1,15 @@
 # Common
 
-## 基本介绍
-实现 C++ 工程里常用的操作，脱离于业务层，属于通用模块。功能如下：
-- 参数解析。
-- 配置文件解析。
-- 守护进程辅助。
-- 网络层封装。
-- 其他功能。如定时器，状态器，proto 转 json，私钥生成，数据库等
+## Introduction
+The common operations in C++ projects are separated from the business layer and belong to the common module. The functions are as follows:
+- Parse parameters
+- Parse configuration files
+- Assist daemon process
+- Encapsulate network layer
+- Other functions, such as timer, state machine, proto to json, private key generation, database, etc
 
-## 模块结构
-类名称 | 声明文件 | 功能
+## Module Structure
+Class name | Statement file | Function
 |:--- | --- | ---
 | `Argument` | [argument.h](./argument.h) | 用于解析 `main` 函数的参数。实现签名、创建账号、管理 KeyStore、加解密、字节转换等功能。
 | `ConfigureBase` | [configure_base.h](./configure_base.h) | 解析配置文件的基本类，提供加载和获取值的基本操作。头文件同时实现三个子配置加载类：`LoggerConfigure` 日志配置，`DbConfigure` 数据库配置，`SSLConfigure` SSL 配置。
