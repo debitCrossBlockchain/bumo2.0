@@ -14,5 +14,5 @@
 [monitor.proto](./monitor.proto)       | 监控模块用到的各类可序列化数据结构，包括注册信息、区块链状态、计算机硬件资源等结构。
 [overlay.proto](./overlay.proto)       | `overlay` 模块自用或者经由 `overlay` 通信的模块用到的可序列化数据结构，包括通信状态、`peer` 信息、账本信息等。
 
-##其他
+## 其他
 在 `proto` 目录下还有一些其他的文件夹，比如 `php`、`go`、`python`等，它们都是由 `*.proto` 文件编译生成的不同语言的序列化源文件，以支持不同语言为 `BUMO` 开发的 `SDK`调用。
