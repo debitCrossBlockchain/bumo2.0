@@ -16,7 +16,8 @@ Name | Implementation file | Function
 ## Startup Workflow
 
 After the main program is started, the main process is as follows:
--Parse the parameters. If the parameter contains the instruction, the corresponding operation is performed. Refer to [argument.h](../common/argument.h).
+
+- Parse the parameters. If the parameter contains the instruction, the corresponding operation is performed. Refer to [argument.h](../common/argument.h).
 - Initialize all modules, such as `net`, `Timer`, `Configure`, `Storage`, `Global`, `SlowTimer`, `Logger`, `Console`, `PeerManager`, `LedgerManager`, `ConsensusManager`, `GlueManager`, ` WebSocketServer`, `WebServer`, `MonitorManager`, `ContractManager`, etc.
 - If the program is a Linux version, the `Daemon` module is started to write a timestamp to the shared memory for use by the daemon.
 - Set itself as the main thread and start timer scheduling.
