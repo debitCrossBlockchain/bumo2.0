@@ -40,7 +40,7 @@ namespace bumo {
 	bool WebServer::Initialize(WebServerConfigure &webserver_config) {
 
 		if (webserver_config.listen_addresses_.size() == 0) {
-			LOG_INFO("Listen address not set, ignore");
+			LOG_INFO("No network address configured for listening, ignore it");
 			return true;
 		}
 

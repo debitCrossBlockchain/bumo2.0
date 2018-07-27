@@ -95,7 +95,7 @@ namespace bumo {
 						if (!pubkey.IsValid()) {
 							result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 							result.set_desc("'public_key' value is not existed or parameter error");
-							LOG_ERROR("Failed to verify the public key, invalid publickey (%s)", signa["public_key"].asString().c_str());
+							LOG_ERROR("Failed to verify the public key, invalid public key (%s)", signa["public_key"].asString().c_str());
 							break;
 						}
 
