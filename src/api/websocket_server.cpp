@@ -33,14 +33,14 @@ namespace bumo {
 
 	bool WsPeer::Set(const protocol::ChainSubscribeTx &sub) {
 		if (sub.address_size() > 100) {
-			LOG_ERROR("Subscribe tx size large than 100");
+			LOG_ERROR("Failed to subscribe transaction, size large than 100");
 			return false;
 		}
 
 		tx_filter_address_.clear();
 		for (int32_t i = 0; i < sub.address_size(); i++) {
 			if (!PublicKey::IsAddressValid(sub.address(i))) {
-				LOG_ERROR("Subscribe tx failed, address(%s) not valid", sub.address(i).c_str());
+				LOG_ERROR("Failed to subscribe transaction, address(%s) not valid", sub.address(i).c_str());
 				return false;
 			} 
 			tx_filter_address_.insert(sub.address(i));
@@ -161,7 +161,7 @@ namespace bumo {
 		LOG_INFO("Recv chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 		protocol::ChainPeerMessage cpm;
 		if (!cpm.ParseFromString(message.data())) {
-			LOG_ERROR("ChainPeerMessage FromString fail");
+			LOG_ERROR("Failed to parse the message, invalid chain peer message");
 			return true;
 		}
 
@@ -204,7 +204,7 @@ namespace bumo {
 		protocol::TransactionEnv tran_env;
 		do {
 			if (!tran_env.ParseFromString(message.data())) {
-				LOG_ERROR("Failed to parse the submitted transaction string, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+				LOG_ERROR("Failed to parse the submitted transaction from string, from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 				result.set_desc("Failed to parse the transaction");
 				break;
@@ -251,16 +251,16 @@ namespace bumo {
 			protocol::ChainSubscribeTx subs;
 			if (!subs.ParseFromString(message.data())) {
 				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				default_response.set_error_desc("ChainPeerMessage FromString fail");
-				LOG_ERROR("%s", default_response.error_desc().c_str());
+				default_response.set_error_desc("Invalid chain peer message");
+				LOG_ERROR("Failed to parse the websocket message.%s", default_response.error_desc().c_str());
 				break;
 			}
 
 			bool ret = conn->Set(subs);
 			if (!ret) {
 				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				default_response.set_error_desc("ChainPeerMessage FromString fail");
-				LOG_ERROR("%s", default_response.error_desc().c_str());
+				default_response.set_error_desc("Incorrect peer setting");
+				LOG_ERROR("Failed to set the subscription message.%s", default_response.error_desc().c_str());
 				break;
 			} 
 		} while (false);

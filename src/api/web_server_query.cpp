@@ -283,7 +283,7 @@ namespace bumo {
 				if (!tran_env.ParseFromString(decodeblob)) {
 					result_e.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 					result_e.set_desc("Parse From env String from decodeblob invalid");
-					LOG_ERROR("ParseFromString from decodeblob invalid");
+					LOG_ERROR("Failed to parse the transaction, invalid decode blob");
 					break;
 				}
 			}
@@ -292,7 +292,7 @@ namespace bumo {
 				if (!tran->ParseFromString(decodeblob)) {
 					result_e.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 					result_e.set_desc("Parse From String from decodeblob invalid");
-					LOG_ERROR("ParseFromString from decodeblob invalid");
+					LOG_ERROR("Failed to parse the transaction, invalid decode blob");
 					break;
 				}
 			}
