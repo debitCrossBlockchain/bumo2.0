@@ -21,7 +21,7 @@
 | `scrypt` | [libscrypt](./libscrypt) | HASH 算法，时间长，占内存，暴力攻击难。
 | `openssl` | [openssl](./openssl) | 提供对称加密算法(AES、DES等)、非对称加密算法(AES、DES等)和摘要算法（MD5、SHA1等）。
 | `pcre` | [pcre-8.39](./pcre-8.39) | 提供 C/C++ 语言中使用正则表达式的功能。
-| `protobuf` | [protobuf](./protobuf) | Google 公司开发的一种高效的数据描述语言，用于存储，通讯协议等方面。
+| `protobuf` | [protobuf](./protobuf) | Google 公司开发的一种高效的数据描述语言，一般应用于存储，通讯协议等场景。
 | `rocksdb` | [rocksdb](./rocksdb) | Facebook 开发的可嵌入，持久型的 key-value 数据库。
 | `sqlite` | [sqlite](./sqlite) | 轻量级关系数据库，其消耗资源低，一般嵌入于产品使用。
 | `websocketpp` | [websocketpp](./websocketpp) | C++ 的 WebSocket 客户端/服务器库。
