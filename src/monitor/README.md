@@ -18,7 +18,7 @@ Class name | Statement file | Function
 ## Protocol Definition
 For monitoring message, use the Google protocol buffer definition. Refer to file [monitor.proto](../proto/monitor.proto). The types are belows:
 ```
-MONITOR_MSGTYPE_HELLO  #Handshake message and send monitoring ID
+MONITOR_MSGTYPE_HELLO  #Handshake message and send the monitoring ID
 MONITOR_MSGTYPE_REGISTER  #Register message and verify the monitoring ID
 MONITOR_MSGTYPE_BUMO   #Get the node information
 MONITOR_MSGTYPE_LEDGER    #Get the block information
