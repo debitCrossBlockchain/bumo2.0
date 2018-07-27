@@ -1,8 +1,8 @@
-## 模块简介
-`consensus` 模块是区块链的核心模块之一。BUMO将交易集合打包，创建共识提案，交由 `consensus` 模块进一步处理。区块链内的各个节点通过 `consensus` 模块对提案进行审核和表决投票，各节点对提案达成一致后，再交由其他模块执行提案内的交易，最终生成区块。
+## Introduction
+The 'consensus' module is one of the core modules of the blockchain. BUMO packages the transaction collection and creates a consensus proposal for further processing by the 'consensus' module. Each node in the blockchain will review and vote on the proposal through the 'consensus' module. After each node agrees on the proposal, then the proposal will be submitted to other modules to execute the transactions within it, and finally generate a block.
 
-## 模块组成
-类名称 | 声明文件 | 功能
+## Module Structure
+Class name | Statement file | Function
 |:--- | --- | ---
 |`ConsensusManager` | [consensus_manager.h](./consensus_manager.h) | 负责共识模块的整体管理和对其他模块的交互工作。
 |`Consensus`        | [consensus.h](./consensus.h)                 | 定义了共识的主要功能框架，并实现了部分接口，具体采用何种共识算法以及详细实现交由派生类去处理。
