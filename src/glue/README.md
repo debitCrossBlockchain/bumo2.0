@@ -1,12 +1,12 @@
 English | [中文](README_CN.md) 
 
-## 模块简介
-`glue` 是 `BUMO` 区块链的胶水模块，负责将各重要模块黏合在一起，并充当中间媒介为各模块提供信息中转交互服务。主要包括：
-- 连接 `console` 模块，使用户可以通过命令行提交交易到 `glue` 的交易池；
-- 连接 `api` 模块，使用户可以通过轻客户端或者 `http` 工具提交交易到 `glue` 的交易池；
-- 连接 `overlay` 模块，使 `glue` 连接得其他模块可以经由 `glue` 调用 `overlay` 的 `p2p` 网络进行节点通信；
-- 连接 `consensus` 模块，使 `consensus` 可以经由 `glue` 调用 `overlay` 发送和接收共识消息，或者经由 `glue` 将共识提案提交给 `ledger` 执行；
-- 连接 `ledger` 模块，使 `consensus` 的共识提案可以经由 `glue` 提交给 `ledger` 执行生成区块，将 `ledger` 更新的验证节点集合或者升级信息提交给 `consensus` 更新生效，并且可以使 `ledger` 可以通过 `overlay` 同步区块；
+## Introduction
+`glue` is the glue module of the `BUMO` blockchain, which is responsible for bonding the important modules together and acting as an intermediary to provide interactive information transferservices for each module. It mainly includes the following functions:
+- Connect the `console` module so that users can submit transactions to the `glue` trading pool via the command line
+- Connect the `api` module so that users can submit transactions to the `glue` transaction pool via the light client or the `http` tool;
+- Connect the `overlay` module so that `glue` can be connected to other modules to call the 'overlay` `p2p` network via `glue` for node communication
+- Connect the `consensus` module so that `consensus` can send and receive consensus messages via `glue` which calls `overlay`, or submit the consensus proposal to `ledger` via `glue`
+- Connect the `ledger` module so that the consensus proposal for `consensus` can be submitted to `ledger` via `glue` to generate a block; the set of authentication nodes updated by `ledger` or the upgrade information can be submitted to `consensus` to update and take effect; it also enables `ledger` to synchronize blocks via `overlay`
 
 ## 模块组成
 类名称 | 声明文件 | 功能
