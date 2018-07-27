@@ -1,6 +1,6 @@
 # P2P Network
 
-## Features
+## Introduction
 This module enables P2P network communication and parses service message. 
 - Node connection management. It includes configuring known nodes, discovering new nodes, actively connecting to other nodes, and listening to other node connections.
 - Node communication. It provides message interaction with other nodes, such as initiating transactions, block synchronization, block consensus messages, and so on.
