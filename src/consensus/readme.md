@@ -1,3 +1,5 @@
+English | [中文](README_CN.md)
+
 ## Introduction
 The 'consensus' module is one of the core modules of the blockchain. BUMO packages the transaction collection and creates a consensus proposal for further processing by the 'consensus' module. Each node in the blockchain will review and vote on the proposal through the 'consensus' module. After each node agrees on the proposal, then the proposal will be submitted to other modules to execute the transactions within it, and finally generate a block.
 
