@@ -21,7 +21,7 @@ Utils 模块提供 C++ 工程常用的工具集，并且屏蔽底层平台差异
 类名称 | 声明文件 | 功能
 |:--- | --- | ---
 | `utils` | [utils.h](./utils.h) | 实现以下功能：一是定义时间、字节单位的全局静态变量；二是实现原子性加减函数；三是实现 `ObjectExit` 类，用于批量处理对象自动释放使用；四是实现其他小函数：如 cpu 核数，sleep 函数，开机时间等。
-| `Timestamp` | [timestamp.h](./timestamp.h) | 时间戳工具类。能获取系统的时间戳，精确到微妙，并具有跨平台性。
+| `Timestamp` | [timestamp.h](./timestamp.h) | 时间戳工具类。能获取系统的时间戳，精确到微秒，并具有跨平台性。
 | `Timer` | [timer.h](./timer.h) | 定时器工具类。可以在设置时间内，定时执行某函数。
 | `Thread` | [thread.h](./thread.h) | 跨平台的线程工具类。实现 `ThreadPool`线程池、`Mutex` 线程锁等。
 | `System` | [system.h](./system.h) | 跨平台的系统工具类。实现查询硬件信息的功能。如硬盘、内存、主机名称、系统版本、日志大小、开机时间、cpu、硬件地址。
