@@ -3,7 +3,7 @@ English | [中文](README_CN.md)
 # libbumo_tools
 
 ## Introduction
-The bumo tool library is provided as a third-party library to implement operations such as wallet, account, and signature. The features are listed below:
+The bumo tool library is provided as a third-party library to implement operations such as wallet control, account management , and transaction signature. The features are listed below:
 - Cross-platform. The c++ implementation is packaged into a third-party library for developers to use.
 - Lightweight tool. Node data synchronization is not included.
 - Safe operation. The private key information will not be revealed during use.
@@ -12,7 +12,7 @@ The bumo tool library is provided as a third-party library to implement operatio
 
 Module name | Statement file | Function
 |:--- | --- | ---
-| `libbumo_tools` | [lib_bumo_tools.h](./lib_bumo_tools.h) | The functions of wallet, operation, and signature are implemented by the third-party library.
+| `libbumo_tools` | [lib_bumo_tools.h](./lib_bumo_tools.h) | The functions of wallet control, account management, and transaction signature are implemented by the third-party library.
 ## Interface List
 
 The interfaces implemented in the code include but are not limited to the following:
