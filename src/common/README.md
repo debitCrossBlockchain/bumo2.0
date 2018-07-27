@@ -11,12 +11,12 @@ The common operations in C++ projects are separated from the business layer and 
 ## Module Structure
 Class name | Statement file | Function
 |:--- | --- | ---
-| `Argument` | [argument.h](./argument.h) | 用于解析 `main` 函数的参数。实现签名、创建账号、管理 KeyStore、加解密、字节转换等功能。
-| `ConfigureBase` | [configure_base.h](./configure_base.h) | 解析配置文件的基本类，提供加载和获取值的基本操作。头文件同时实现三个子配置加载类：`LoggerConfigure` 日志配置，`DbConfigure` 数据库配置，`SSLConfigure` SSL 配置。
-| `Daemon` | [daemon.h](./daemon.h) | 守护进程辅助工具，向共享内存内写最新的时间戳，供守护程序监控。
-| `General` | [general.h](./general.h) | 定义工程通用的全局静态变量；提供小的工具类：如`Result` 、 `TimerNotify` 、`StatusModule` 、`SlowTimer` 、`Global` 、`HashWrapper` 。
-| `KeyStore` | [key_store.h](./key_store.h) | 实现创建和解析 KeyStore 的功能。
-| `Network` | [network.h](./network.h) | 实现节点网络通信功能。使用 `asio::io_service` 做为异步 IO ，同时管理所有网络连接，如新建，关闭，保持心跳等，并负责分发和解析接收到的消息。其中 `Connection` 类是单个网络连接的封装者，使用 `websocketpp::server` 和 `websocketpp::client` 做为管理对象，实现发送数据、获取 TCP 状态等功能。
-| `Json2Proto`、`Proto2Json` 函数| [pb2json.h](./pb2json.h) | 用于 Google Proto buffer 和 JSON 之间数据转换。
-| `PublicKey`、`PrivateKey` | [private_key.h](./private_key.h) | `PublicKey` 是公钥数据转换和验签签名数据的工具类。`PrivateKey` 是私钥数据转换和签名数据的工具类。
-| `Storage` | [storage.h](./storage.h) | `Storage` 是 key vaule 数据库的管理类。在头文件中还定义数据库操作的接口类`KeyValueDb`，并派生出两个子类 `LevelDbDriver` 和 `RocksDbDriver`，分别用于操作 LevelDb 和 RocksDB
+| `Argument` | [argument.h](./argument.h) | The argument used to parse the `main` function. It allows signatures, creating accounts, managing KeyStore, encrypting and decrypting, and converting bytes.
+| `ConfigureBase` | [configure_base.h](./configure_base.h) | It parses the base class of the configuration file, providing basic operations for loading and getting values. The header file implements three sub-configuration load classes at the same time: `LoggerConfigure` log configuration, `DbConfigure` database configuration, `SSLConfigure` SSL configuration.
+| `Daemon` | [daemon.h](./daemon.h) | A daemon aid that writes the latest timestamp to shared memory for monitoring by the daemon.
+| `General` | [general.h](./general.h) | It defines global static variables that are general to the project, and provides small tool classes such as `Result` , `TimerNotify`, `StatusModule`, `SlowTimer`, `Global`, `HashWrapper`.
+| `KeyStore` | [key_store.h](./key_store.h) | Implement the ability to create and parse KeyStore.
+| `Network` | [network.h](./network.h) | It allows node network communication. Use `asio::io_service` as an asynchronous IO while managing all network connections, such as new, close, and keep heartbeat, etc., and responsible for distributing and parsing received messages. The `Connection` class is a wrapper for a single network connection, using `websocketpp::server` and `websocketpp::client` as management objects to implement functions such as sending data and obtaining TCP status.
+| `Json2Proto`、`Proto2Json`| [pb2json.h](./pb2json.h) | It is used for data conversion between Google Proto buffer and JSON.
+| `PublicKey`、`PrivateKey` | [private_key.h](./private_key.h) | `PublicKey` is a utility class for public key data conversion and verification signature data. `PrivateKey` is a utility class for private key data conversion and signature data.
+| `Storage` | [storage.h](./storage.h) | `Storage` is the management class for the key vaule database. The interface class `KeyValueDb` of the database operation is also defined in the header file, and two subclasses `LevelDbDriver` and `RocksDbDriver` are derived, which are used to operate LevelDb and RocksDB respectively.
