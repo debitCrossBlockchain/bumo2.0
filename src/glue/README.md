@@ -3,7 +3,7 @@ English | [中文](README_CN.md)
 ## Introduction
 `glue` is the glue module of the `BUMO` blockchain, which is responsible for bonding the important modules together and acting as an intermediary to provide interactive information transfer services for each module. It mainly includes the following functions:
 - Connect the `console` module so that users can submit transactions to the `glue` trading pool via the command line
-- Connect the `api` module so that users can submit transactions to the `glue` transaction pool via the light client or the `http` tool;
+- Connect the `api` module so that users can submit transactions to the `glue` transaction pool via the light client or the `http` tool
 - Connect the `overlay` module so that `glue` can be connected to other modules to call the 'overlay` `p2p` network via `glue` for node communication
 - Connect the `consensus` module so that `consensus` can send and receive consensus messages via `glue` which calls `overlay`, or submit the consensus proposal to `ledger` via `glue`
 - Connect the `ledger` module so that the consensus proposal for `consensus` can be submitted to `ledger` via `glue` to generate a block; the set of authentication nodes updated by `ledger` or the upgrade information can be submitted to `consensus` to update and take effect; it also enables `ledger` to synchronize blocks via `overlay`
