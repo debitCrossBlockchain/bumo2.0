@@ -1,11 +1,11 @@
 English | [中文](README_CN.md) 
 
-## 模块简介
-账本模块主要负责账本的执行和区块生成。主要包括：
-- 根据配置生成创世账户和创世区块；
-- 执行共识通过后的提案内的交易；
-- 根据执行完成的交易打包生成新的区块；
-- 定时从区块链网络同步区块。
+## Introduction
+The ledger module is mainly responsible for the execution of the ledger and block generation.It includes the following features:
+- Generate the genesis account and genesis block based on configuration
+- Execute transactions in the proposal after a consensus is reached
+- Generate a new block based on the completed transaction package
+- Synchronize blocks from the blockchain network regularly
 
 ## 模块组成
 类名称 | 声明文件 | 功能
