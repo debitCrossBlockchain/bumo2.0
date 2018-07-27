@@ -21,7 +21,6 @@
     <ClInclude Include="..\..\src\utils\logger.h" />
     <ClInclude Include="..\..\src\utils\net.h" />
     <ClInclude Include="..\..\src\utils\noncopyable.h" />
-    <ClInclude Include="..\..\src\utils\scopeGuard.h" />
     <ClInclude Include="..\..\src\utils\random.h" />
     <ClInclude Include="..\..\src\utils\singleton.h" />
     <ClInclude Include="..\..\src\utils\sm3.h" />
