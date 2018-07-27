@@ -271,7 +271,7 @@ namespace bumo {
 #ifndef WIN32
 					KeyValueDb *account_db = NewKeyValueDb(db_config);
 					if (!account_db->Open(db_config.account_db_path_, -1)) {
-						LOG_ERROR("Drop failed, error desc(%s)", account_db->error_desc().c_str());
+						LOG_ERROR("Failed to drop db.Error description(%s)", account_db->error_desc().c_str());
 						delete account_db;
 						break;
 					}
@@ -319,7 +319,7 @@ namespace bumo {
 				keyvaule_max_open_files = 2;
 				ledger_max_open_files = 4;
 				account_max_open_files = 4; 
-				LOG_ERROR("mac os max open files is too lower:%d.", max_open_files);
+				LOG_INFO("mac os max open files is too lower:%d.", max_open_files);
 			}
 			else
 			{
@@ -336,14 +336,14 @@ namespace bumo {
 #endif
 			keyvalue_db_ = NewKeyValueDb(db_config);
 			if (!keyvalue_db_->Open(db_config.keyvalue_db_path_, keyvaule_max_open_files)) {
-				LOG_ERROR("Keyvalue_db path(%s) open failure(%s)\n",
+				LOG_ERROR("Failed to open db. Keyvalue db path(%s) open failure(%s)\n",
 					db_config.keyvalue_db_path_.c_str(), keyvalue_db_->error_desc().c_str());
 				break;
 			}
 
 			ledger_db_ = NewKeyValueDb(db_config);
 			if (!ledger_db_->Open(db_config.ledger_db_path_, ledger_max_open_files)) {
-				LOG_ERROR("Ledger db path(%s) open failure(%s)\n",
+				LOG_ERROR("Failed to open db.Ledger db path(%s) open failure(%s)\n",
 					db_config.ledger_db_path_.c_str(), ledger_db_->error_desc().c_str());
 				break;
 			}

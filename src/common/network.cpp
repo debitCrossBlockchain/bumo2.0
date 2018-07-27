@@ -367,7 +367,7 @@ namespace bumo {
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(hdl);
 		if (conn) {
-			LOG_ERROR("Peer on failed, ip(%s), error desc(%s)", conn->GetPeerAddress().ToIpPort().c_str(), conn->GetErrorCode().message().c_str());
+			LOG_ERROR("Receive network failed events, ip(%s), error desc(%s)", conn->GetPeerAddress().ToIpPort().c_str(), conn->GetErrorCode().message().c_str());
 			OnDisconnect(conn);
 			RemoveConnection(conn);
 		}
@@ -382,7 +382,7 @@ namespace bumo {
 			message.ParseFromString(msg->get_payload());
 		}
 		catch (std::exception const e) {
-			LOG_ERROR("Failed to parse websocket message(%s)", e.what());
+			LOG_ERROR("Failed to parse websocket message (%s)", e.what());
 			return;
 		}
 
@@ -410,14 +410,14 @@ namespace bumo {
 
 			if (proc(message, conn_id)) break; //Break if returned true;
 
-			LOG_ERROR("The method type(" FMT_I64 ") request(%s), return false, delete it",
+			LOG_ERROR("Failed to process message, the method type (" FMT_I64 ") (%s) handles exceptions, need to delete it here",
 				message.type(), message.request() ? "true" : "false");
 			// Delete the connection if returned false.
 			do {
 				utils::MutexGuard guard(conns_list_lock_);
 				Connection *conn = GetConnection(hdl);
 				if (!conn) {
-					LOG_ERROR("Handle not found");
+					LOG_ERROR("Failed to process network message. Handle not found");
 					break;  //Not found
 				}
 				OnDisconnect(conn);
@@ -477,7 +477,7 @@ namespace bumo {
 						if (iter->second->IsDataExpired(connect_time_out_)) {
 							iter->second->Close("expired");
 							delete_list.push_back(iter->second);
-							LOG_ERROR("Peer(%s) data receive timeout", iter->second->GetPeerAddress().ToIpPort().c_str());
+							LOG_ERROR("Failed to process data by network module.Peer(%s) data receive timeout", iter->second->GetPeerAddress().ToIpPort().c_str());
 						}
 
 						//Check application timer.
@@ -542,7 +542,7 @@ namespace bumo {
 				handle = tls_con->get_handle();
 			}
 			else {
-				LOG_ERROR("Get uri(%s) initialization error(%s)", uri.c_str(), ec.message().c_str());
+				LOG_ERROR("Failed to connect network.Url(%s), error(%s)", uri.c_str(), ec.message().c_str());
 				return false;
 			}
 		}
@@ -557,7 +557,7 @@ namespace bumo {
 				handle = con->get_handle();
 			}
 			else {
-				LOG_ERROR("Get uri(%s) initialization error(%s)", uri.c_str(), ec.message().c_str());
+				LOG_ERROR("Failed to connect network.Url(%s), error(%s)", uri.c_str(), ec.message().c_str());
 				return false;
 			}
 		}
