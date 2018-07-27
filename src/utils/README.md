@@ -23,8 +23,8 @@ Class name | Statement file | Function
 | `utils` | [utils.h](./utils.h) | The following functions are implemented: one is to define the time, the global static variable of the byte unit; the second is to implement the atomic addition and subtraction function; the third is to implement the `ObjectExit` class for batch processing object and automatically release usage; the fourth is to implement other small functions, such as cpu core number, sleep function, boot time and so on.
 | `Timestamp` | [timestamp.h](./timestamp.h) | Timestamp tool class. Get the timestamp of the system, precise to microsecond, and cross-platform.
 | `Timer` | [timer.h](./timer.h) | Timer tool class. A function can be executed periodically during the set time.
-| `Thread` | [thread.h](./thread.h) | Cross-platform threading tool class. Implement `ThreadPool` thread pool, `Mutex` thread lock, etc.
-| `System` | [system.h](./system.h) | A cross-platform system tool class. Implement the function of querying hardware information. Such as hard disk, memory, host name, system version, log size, boot time, cpu, hardware address.
+| `Thread` | [thread.h](./thread.h) | Cross-platform threading tool class. It implements `ThreadPool` thread pool, `Mutex` thread lock, etc.
+| `System` | [system.h](./system.h) | A cross-platform system tool class. It implements the function of querying hardware information, such as hard disk, memory, host name, system version, log size, boot time, cpu, hardware address.
 | `String` | [strings.h](./strings.h) | String processing class. Implement a variety of string manipulation features. Such as formatting, removing spaces, converting numbers, converting binary, etc.
 | `Sm3` | [sm3.h](./sm3.h) | Implements SM3 encryption algorithm
 | `Singleton` | [singleton.h](./singleton.h) | Single instance template class. Ensure that the successor of this class is a single instance class.
