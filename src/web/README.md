@@ -10,7 +10,7 @@ Provides basic web page access capabilities, and the currently available feature
 
 Name | Directory | Function
 |:--- | --- | ---
-| `jslint` | [jslint](./jslint) | Smart contract detection tool. Refer to [Syntax in Smart Contract](./jslint/ContractRules_CN.md)。
+| `jslint` | [jslint](./jslint) | Smart contract detection tool. Refer to [Syntax in Smart Contract](./jslint/ContractRules_CN.md).
 
 ## Configuration
 - Open [bumo.json](../../build/win32/config/bumo.json) and the configuration is shown below:
