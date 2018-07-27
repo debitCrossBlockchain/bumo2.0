@@ -10,7 +10,7 @@
 |:--- | --- | ---
 |`Trie`                  | [trie.h](./trie.h)                                   | 字典树基类。字典树是 `BUMO` 的底层数据查询和存取结构，除了字典特性外， `BUMO` 还为 `Trie` 加入了默克尔根的特性。Trie定义了字典树的框架功能，并实现了部分接口。
 |`KVTrie`                | [kv_trie.h](./kv_trie.h)                             | `Trie` 的派生类，具体实现了默克尔前缀树的功能。
-|`Environment`           | [environment.h](./environment.h)                     | 交易的执行容器，为交易提供了事务特性。执行交易时变动的数据都会写入Environment的缓存，交易内的所有操作全部执行结束后，统一提交更新。
+|`Environment`           | [environment.h](./environment.h)                     | 交易的执行容器，为交易提供了事务特性。执行交易时变动的数据都会写入 `Environment` 的缓存，交易内的所有操作全部执行结束后，统一提交更新。
 |`FeeCalculate`          | [fee_calculate.h](./fee_calculate.h)                 | 费用计算类，定义了各类交易操作的费用标准，对外提供费用计算接口。
 |`AccountFrm`            | [account.h](./account.h)                             | 账户类。用户在 `BUMO` 链上的行为主体，记录了包括账户属性、账户状态和内容资产在内的所有用户数据，用户的所有操作都要以 `AccountFrm` 为基础来实现。
 |`TransactionFrm`        | [transaction_frm.h](./transaction_frm.h)             | 交易执行类，负责交易的执行处理，交易内的具体操作交由 `OperationFrm` 执行。
@@ -25,7 +25,7 @@
 - 程序启动时，`LedgerManager` 初始化，并根据配置文件创建创世账户和创世区块。
 - 区块链网络开始运行后，`LedgerManager` 接收到经由 `glue` 模块传递过来的共识提案，对提案做合法性检查。
 - 通过合法检查后，将共识提案交给 `LedgerContextManager`。
-- `LedgerContextManager` 为共识提案的处理生成执行上下文，并将提案交由 `LedgerFrm` 具体处理。
+- `LedgerContextManager` 为共识提案的处理生成执行上下文 `LedgerContext` 对象，`LedgerContext` 将提案交由 `LedgerFrm` 具体处理。
 - `LedgerFrm` 创建 `Environment` 对象，为执行提案内的交易提供事务容器，然后将提案的交易逐一取出，交由 `TransactionFrm` 处理。
 - `TransactionFrm` 再将交易内的操作逐一取出，交由 `OperationFrm` 执行。
 - `OperationFrm` 根据类型分别执行交易内的不同操作，并将操作变更的数据写入 `Environment` 的缓存。其中， `OperationFrm` 执行的创建账户操作如果是创建合约账户，或者执行转账操作（包括转移资产和转移BU币），会触发 `ContractManager` 加载并执行合约代码，合约执行对数据的变更也会写入 `Environment` 中。
