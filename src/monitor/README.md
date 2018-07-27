@@ -1,28 +1,27 @@
 English | [中文](README_CN.md)
 
-# Monitor 监控
+# Monitor
 
-## 功能介绍
-该模块实现了 监控 区块链节点状态，节点信息及异常告警功能，具体如下：
-- 区块链节点状态。包括节点的在线和离线状态。
-- 节点信息。包括系统信息，区块信息，交易信息，用户信息。
-- 异常告警。当发现节点状态或节点系统状态异常时，提供实时告警。包括离线告警、CPU告警、内存告警、磁盘告警、区块不同步告警
+## Introduction
+The module implements monitoring blockchain node status, node information and abnormal alarm functions, as follows:
+- Block chain node status, including the online and offline status of the node.
+- Node information, including system information, block information, transaction information, user information.
+- Abnormal alarm. It provides real-time alerts when node status or node system status is found to be abnormal, including offline alarms, CPU alarms, memory alarms, disk alarms, and block asynchronous alarms.
+## Module Structure
 
-## 模块结构
-
-类名称 | 声明文件 | 功能
+Class name | Statement file | Function
 |:--- | --- | ---
-| `MonitorManager` | [monitor_manager.h](./monitor_manager.h) | 监控模块的管理者，继承自 `Network` 类。该类有三个功能：一是管理节点连接；二是处理接收到的消息，包括握手消息，注册消息，节点状态消息，区块状态消息，节点系统消息和心跳信息；三是提供监控重连和异常检测的定时器。
-|`Monitor`|  [monitor.h](./monitor.h) | 保存节点的监控状态，包括监控Session，是否在线，监控Id，监控节点的版本信息等。
-|`SystemManager`|  [system_manager.h](../common/system_manager.h)  | 节点系统信息的管理者。提供CPU的定时器和系统监控信息的获取。
+| `MonitorManager` | [monitor_manager.h](./monitor_manager.h) | The manager of the monitoring module, inherited from the `Network` class. This class has three functions: one is to manage the connection of the node; the other is to process the received message, including the handshake message, the registration message, the node status message, the block status message, the node system message and the heartbeat information; the third is to provide monitoring reconnection and The timer for abnormality detection.
+|`Monitor`|  [monitor.h](./monitor.h) | The monitoring status of the node is saved, including monitoring the session, whether it is online, monitoring the Id, and monitoring the version information of the node.
+|`SystemManager`|  [system_manager.h](../common/system_manager.h)  |The administrator of the node system information. It provides CPU timer and system monitoring information acquisition.
 
-## 协议定义
-监控 消息使用 Google protocol buffer 定义，参考文件 [monitor.proto](../proto/monitor.proto)，类型如下：
+## Protocol Definition
+For monitoring message, use the Google protocol buffer definition. Refer to file [monitor.proto](../proto/monitor.proto). The types are belows:
 ```
-MONITOR_MSGTYPE_HELLO  #握手消息，发送监控ID
-MONITOR_MSGTYPE_REGISTER  #注册消息，验证监控ID
-MONITOR_MSGTYPE_BUMO   #获取节点信息
-MONITOR_MSGTYPE_LEDGER    #获取区块信息
-MONITOR_MSGTYPE_SYSTEM   #获取节点系统信息
-MONITOR_MSGTYPE_ALERT #告警信息
+MONITOR_MSGTYPE_HELLO  #Handshake message and send monitoring ID
+MONITOR_MSGTYPE_REGISTER  #Register message and verify the monitoring ID
+MONITOR_MSGTYPE_BUMO   #Get the node information
+MONITOR_MSGTYPE_LEDGER    #Get the block information
+MONITOR_MSGTYPE_SYSTEM   #Get the node system information
+MONITOR_MSGTYPE_ALERT #Alert message
 ```
