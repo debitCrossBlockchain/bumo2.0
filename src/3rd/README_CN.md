@@ -27,4 +27,4 @@ Name | Directory | Function
 | `websocketpp` | [websocketpp](./websocketpp) | WebSocket client/server library for C++.
 | `zlib` | [zlib-1.2.8](./zlib-1.2.8) | A library that provides data compression, supports the variant algorithm of LZ77, and algorithm of DEFLATE.
 | `asio` | [asio](./asio) | Originated fro the `boost::asio` module, it supports the underlying asynchronous IO functionality of the cross-platform network.
-| `v8` | [v8](https://github.com/bumoproject/v8) | High performance JaScript engine developed by Google。
+| `v8` | [v8](https://github.com/bumoproject/v8) | High performance JaScript engine developed by Google.
