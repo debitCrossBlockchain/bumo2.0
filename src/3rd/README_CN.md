@@ -17,14 +17,14 @@ Name | Directory | Function
 | `ed25519` | [ed25519-donna](./ed25519-donna) | It implements a high performance digital signature algorithm.
 | `gtest` | [gtest](./gtest) | Google's C++ unit testing framework, abbreviated for Google Test.
 | `http` | [http](./http) | Originated from the `boost.asio` module, it provides the `HTTP` client and server basic functionality.
-| `jsoncpp` | [jsoncpp](./jsoncpp) | 处理 JSON 文本的 C++  库。
-| `scrypt` | [libscrypt](./libscrypt) | HASH 算法，时间长，占内存，暴力攻击难。
-| `openssl` | [openssl](./openssl) | 提供对称加密算法(AES、DES等)、非对称加密算法(AES、DES等)和摘要算法（MD5、SHA1等）。
-| `pcre` | [pcre-8.39](./pcre-8.39) | 提供 C/C++ 语言中使用正则表达式的功能。
-| `protobuf` | [protobuf](./protobuf) | Google 公司开发的一种高效的数据描述语言，一般应用于存储，通讯协议等场景。
-| `rocksdb` | [rocksdb](./rocksdb) | Facebook 开发的可嵌入，持久型的 key-value 数据库。
-| `sqlite` | [sqlite](./sqlite) | 轻量级关系数据库，其消耗资源低，一般嵌入于产品使用。
-| `websocketpp` | [websocketpp](./websocketpp) | C++ 的 WebSocket 客户端/服务器库。
-| `zlib` | [zlib-1.2.8](./zlib-1.2.8) | 提供数据压缩功能的库，支持 LZ77 的变种算法，DEFLATE的算法。
-| `asio` | [asio](./asio) | 源自 `boost::asio` 模块，实现跨平台网络底层异步 IO 功能。
-| `v8` | [v8](https://github.com/bumoproject/v8) | Google 开发的高性能 JavaScript 引擎。
+| `jsoncpp` | [jsoncpp](./jsoncpp) | It processes the C++ library for JSON text.
+| `scrypt` | [libscrypt](./libscrypt) | HASH algorithm, long time, accounted for memory, violent attack is difficult.
+| `openssl` | [openssl](./openssl) | It provides symmetric encryption algorithms (AES, DES, etc.), asymmetric encryption algorithms (AES, DES, etc.) and digest algorithms (MD5, SHA1, etc.).
+| `pcre` | [pcre-8.39](./pcre-8.39) | It provides the ability to use regular expressions in the C/C++ language.
+| `protobuf` | [protobuf](./protobuf) | An efficient data description language developed by Google Inc., generally used in storage, communication protocols and other scenarios.
+| `rocksdb` | [rocksdb](./rocksdb) | An embeddable, persistent key-value database developed by Facebook.
+| `sqlite` | [sqlite](./sqlite) | Lightweight relational database, which consumes low resources and is generally embedded in product use.
+| `websocketpp` | [websocketpp](./websocketpp) | WebSocket client/server library for C++.
+| `zlib` | [zlib-1.2.8](./zlib-1.2.8) | A library that provides data compression, supports the variant algorithm of LZ77, and algorithm of DEFLATE.
+| `asio` | [asio](./asio) | Originated fro the `boost::asio` module, it supports the underlying asynchronous IO functionality of the cross-platform network.
+| `v8` | [v8](https://github.com/bumoproject/v8) | High performance JaScript engine developed by Google。
