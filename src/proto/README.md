@@ -7,8 +7,8 @@ The definition module for serialized message of `BUMO`. Serialization and deseri
 File | Function
 |:--- | ---
 [chain.proto](./chain.proto)           | The serializable data structure used by the `ledger` module and the module interacting with `ledger`, includes account, transaction, block header and other related structures.
-[common.proto](./common.proto)         | Basic serializable data structures which are commonly used, includes key-value pairs, signatures, `ping`, error codes, and so on.
-[consensus.proto](./consensus.proto)   | Serializable data structures related to consensus and cost includes various types of consensus messages, validation nodes, and cost structures for `pbft`.
+[common.proto](./common.proto)         | Basic serializable data structures which are commonly used, including key-value pairs, signatures, `ping`, error codes, and so on.
+[consensus.proto](./consensus.proto)   | Serializable data structures related to consensus and cost, including various types of consensus messages, validation nodes, and cost structures for `pbft`.
 [merkeltrie.proto](./merkeltrie.proto) | The serializable data structure used by the Merkel prefix tree, including nodes, subnodes, and types.
 [monitor.proto](./monitor.proto)       | Various serializable data structures used by the monitoring module, including registration information, blockchain status, and computer hardware resources.
 [overlay.proto](./overlay.proto)       | The `overlay` module is a self-contained or serializable data structure used by the module of the `overlay` communication, including communication status, `peer` information, and account information.
