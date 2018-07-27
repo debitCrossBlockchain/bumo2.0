@@ -16,7 +16,7 @@ Class name | Statement file | Function
 |`SystemManager`|  [system_manager.h](../common/system_manager.h)  |The administrator of the node system information. It provides CPU timer and system monitoring information acquisition.
 
 ## Protocol Definition
-For monitoring message, use the Google protocol buffer definition. Refer to file [monitor.proto](../proto/monitor.proto). The types are belows:
+For monitoring message, use the Google protocol buffer definition. Refer to file [monitor.proto](../proto/monitor.proto). The types are listed below:
 ```
 MONITOR_MSGTYPE_HELLO  #Handshake message and send the monitoring ID
 MONITOR_MSGTYPE_REGISTER  #Register message and verify the monitoring ID
