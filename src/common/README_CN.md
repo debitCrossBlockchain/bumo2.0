@@ -1,3 +1,5 @@
+[English](README.md) | 中文
+
 # Common
 
 ## 基本介绍

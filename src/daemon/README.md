@@ -1,3 +1,5 @@
+English | [中文](README_CN.md) 
+
 # daemon
 
 ## 基本介绍

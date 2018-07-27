@@ -1,3 +1,5 @@
+[English](README.md) | 中文
+
 # libbumo_tools
 
 ## 功能介绍
