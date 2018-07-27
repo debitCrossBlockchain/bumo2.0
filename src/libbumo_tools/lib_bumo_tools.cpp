@@ -14,7 +14,7 @@ BUMO_TOOLS_API int InitBumoTools()
 	utils::Logger &logger = utils::Logger::Instance();
 	logger.SetExpireDays(1);
 	if (!logger.Initialize(utils::LOG_DEST_ALL, utils::LOG_LEVEL_ALL, "", false)){
-		printf("Initialize logger failed\n");
+		printf("Failed to initialize logger\n");
 		return -1;
 	}
 
@@ -29,25 +29,25 @@ BUMO_TOOLS_API void UnInitBumoTools()
 
 BUMO_TOOLS_API int CreateAccountAddress(const char *input_signtype, char *output_result, int *output_len) {
 	if (input_signtype == NULL || strlen(input_signtype) == 0) {
-		printf("input_signtype data or len error\n");
+		printf("Failed to create account address, signtype data or data length is error\n");
 		return -1;
 	}
 
 	if (output_result == NULL || output_len == nullptr ||  (*output_len <= 0)) {
-		printf("output_result data or len error\n");
+		printf("Failed to create account address, output data or length is error\n");
 		return -1;
 	}
 
 	std::string str_singtype(input_signtype);
 	bumo::SignatureType type = bumo::GetSignTypeByDesc(str_singtype);
 	if (type == bumo::SIGNTYPE_NONE) {
-		printf("input_signtype \"%s\" error, support: ed25519 or sm2 \n", str_singtype.c_str());
+		printf("Failed to create account address, signtype \"%s\" error, support: ed25519 or sm2 \n", str_singtype.c_str());
 		return -2;
 	}
 
 	bumo::PrivateKey priv_key(type);
 	if (!priv_key.IsValid()) {
-		printf("Generate private key error");
+		printf("Failed to check private key, invalid private key");
 		return -2;
 	}
 
@@ -66,7 +66,7 @@ BUMO_TOOLS_API int CreateAccountAddress(const char *input_signtype, char *output
 	//printf("%s\n", result.toStyledString().c_str());
 
 	if (*output_len <= (int)result.toStyledString().size()) {
-		printf("output_result len error\n");
+		printf("Failed to check private key, output result length is error\n");
 		return -1;
 	}
 
@@ -77,7 +77,7 @@ BUMO_TOOLS_API int CreateAccountAddress(const char *input_signtype, char *output
 
 BUMO_TOOLS_API int CheckAccountAddressValid(const char *input_encode_address) {
 	if (input_encode_address == NULL || strlen(input_encode_address) == 0) {
-		printf("input data or len error\n");
+		printf("Failed to check account address, input data or length is error\n");
 		return -1;
 	}
 
@@ -87,12 +87,12 @@ BUMO_TOOLS_API int CheckAccountAddressValid(const char *input_encode_address) {
 
 BUMO_TOOLS_API int CreateKeystore(const char *input_password, char *output_keystore, int *output_len) {
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("input data or len error\n");
+		printf("Failed to create keystore, input data or length is error\n");
 		return -1;
 	}
 
 	if (output_keystore == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("output data or len error\n");
+		printf("Failed to create keystore, output data or length is error\n");
 		return -1;
 	}
 
@@ -117,12 +117,12 @@ BUMO_TOOLS_API int CreateKeystore(const char *input_password, char *output_keyst
 
 BUMO_TOOLS_API int CheckKeystoreValid(const char *input_keystore, const char *input_password) {
 	if (input_keystore == NULL || strlen(input_keystore) == 0) {
-		printf("input_keystore data or len error\n");
+		printf("Failed to check keystore, input keystore data or length is error\n");
 		return -1;
 	}
 
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("input_password data or len error\n");
+		printf("Failed to check keystore, input password data or length is error\n");
 		return -1;
 	}
 	std::string str_keystore(input_keystore);
@@ -142,17 +142,17 @@ BUMO_TOOLS_API int CheckKeystoreValid(const char *input_keystore, const char *in
 
 BUMO_TOOLS_API int SignData(const char *input_privkey, const char *input_rawdata, char *output_data, int *output_len) {
 	if (input_privkey == NULL || strlen(input_privkey) == 0) {
-		printf("input_privkey data or len error\n");
+		printf("Failed to sign data, input privkey data or length is error\n");
 		return -1;
 	}
 
 	if (input_rawdata == NULL || strlen(input_rawdata) == 0) {
-		printf("input_rawdata data or len error\n");
+		printf("Failed to sign data, input raw data or length is error\n");
 		return -1;
 	}
 
 	if (output_data == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("output_data data or len error\n");
+		printf("Failed to sign data, output data or length is error\n");
 		return -1;
 	}
 
@@ -184,19 +184,19 @@ BUMO_TOOLS_API int SignData(const char *input_privkey, const char *input_rawdata
 
 BUMO_TOOLS_API int SignDataWithKeystore(const char *input_keystore, const char *input_password, const char *input_blob, char *output_data, int *output_len) {
 	if (input_keystore == NULL || strlen(input_keystore) == 0) {
-		printf("input_keystore data or len error\n");
+		printf("Failed to sign data with keystore, input keystore data or length is error\n");
 		return -1;
 	}
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("input_password data or len error\n");
+		printf("Failed to sign data with keystore, input password data or length is error\n");
 		return -1;
 	}
 	if (input_blob == NULL || strlen(input_blob) == 0) {
-		printf("input_password data or len error\n");
+		printf("Failed to sign data with keystore, input password data or length is error\n");
 		return -1;
 	}
 	if (output_data == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("output_data data or len error\n");
+		printf("Failed to sign data with keystore, output data or length is error\n");
 		return -1;
 	}
 
@@ -210,7 +210,7 @@ BUMO_TOOLS_API int SignDataWithKeystore(const char *input_keystore, const char *
 	std::string private_key;
 	bool ret = key_store.From(key_store_json, str_password, private_key);
 	if (!ret) {
-		printf("error\n");
+		printf("Failed to sign data with keystore, invalid keystore \n");
 		return -2;
 	}
 
@@ -234,15 +234,15 @@ BUMO_TOOLS_API int SignDataWithKeystore(const char *input_keystore, const char *
 
 BUMO_TOOLS_API int CheckSignedData(const char *input_blob, const char *input_signeddata, const char *input_pubkey) {
 	if (input_blob == NULL || strlen(input_blob) == 0) {
-		printf("input_blob data or len error\n");
+		printf("Failed to check signed data, input blob data or length is error\n");
 		return -1;
 	}
 	if (input_signeddata == NULL || strlen(input_signeddata) == 0) {
-		printf("input_signeddata data or len error\n");
+		printf("Failed to check signed data, input signed data or length is error\n");
 		return -1;
 	}
 	if (input_pubkey == NULL || strlen(input_pubkey) == 0) {
-		printf("input_pubkey data or len error\n");
+		printf("Failed to check signed data, input public key data or length is error\n");
 		return -1;
 	}
 
@@ -255,15 +255,15 @@ BUMO_TOOLS_API int CheckSignedData(const char *input_blob, const char *input_sig
 
 BUMO_TOOLS_API int CreateKeystoreFromPrivkey(const char *input_privkey, const char *input_password, char *output_data, int *output_len) {
 	if (input_privkey == NULL || strlen(input_privkey) == 0) {
-		printf("input_privkey data or len error\n");
+		printf("Failed to create keystore from private key, input private key data or length is error\n");
 		return -1;
 	}
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("input_password data or len error\n");
+		printf("Failed to create keystore from private key, input password data or length is error\n");
 		return -1;
 	}
 	if (output_data == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("output_data data or len error\n");
+		printf("Failed to create keystore from private key, output data or length is error\n");
 		return -1;
 	}
 
@@ -272,14 +272,14 @@ BUMO_TOOLS_API int CreateKeystoreFromPrivkey(const char *input_privkey, const ch
 
 	bumo::PrivateKey key(str_privkey);
 	if (!key.IsValid()) {
-		printf("error, private key not valid\n");
+		printf("Failed to create keystore from private key, invalid private key\n");
 		return -2;
 	}
 
 	bumo::KeyStore key_store;
 	Json::Value key_store_json;
 	if (!key_store.Generate(srt_password, key_store_json, str_privkey)) {
-		printf("error\n");
+		printf("Failed to create keystore from private key, keystore cannot be generated\n");
 		return -2;
 	}
 
@@ -294,12 +294,12 @@ BUMO_TOOLS_API int CreateKeystoreFromPrivkey(const char *input_privkey, const ch
 
 int GetAddressFromPubkey(const char *input_pubkey, char *output_data, int *output_len) {
 	if (input_pubkey == NULL || strlen(input_pubkey) == 0) {
-		printf("input_pubkey data or len error\n");
+		printf("Failed to get address from public key, input pubkey data or length is error\n");
 		return -1;
 	}
 
 	if (output_data == NULL || *output_len <= 0) {
-		printf("output_data data or len error\n");
+		printf("Failed to get address from public key, output data or length is error\n");
 		return -1;
 	}
 	std::string str_pubkey(input_pubkey);
@@ -316,7 +316,7 @@ int GetAddressFromPubkey(const char *input_pubkey, char *output_data, int *outpu
 	//printf("%s\n", result.toStyledString().c_str());
 
 	if (result["public_key_raw"].asString().size() <= 0 || result["sign_type"].asString().size() <= 0) {
-		printf("input_pubkey format error!\n");
+		printf("Failed to get address from public key, invalid input data without public key raw or sign type!\n");
 		return -2;
 	}
 
@@ -331,17 +331,17 @@ int GetAddressFromPubkey(const char *input_pubkey, char *output_data, int *outpu
 
 BUMO_TOOLS_API int GetPrivatekeyFromKeystore(const char *input_keystore, const char *input_password, char *output_data, int *output_len) {
 	if (input_keystore == NULL || strlen(input_keystore) == 0) {
-		printf("input_keystore data or len error\n");
+		printf("Failed to get private key from keystore, input keystore data or length is error\n");
 		return -1;
 	}
 
 	if (input_password == NULL || strlen(input_password) == 0) {
-		printf("input_password data or len error\n");
+		printf("Failed to get private key from keystore, input password data or length is error\n");
 		return -1;
 	}
 
 	if (output_data == NULL || output_len == nullptr || (*output_len <= 0)) {
-		printf("output_data data or len error\n");
+		printf("Failed to get private key from keystore, output data or length is error\n");
 		return -1;
 	}
 
@@ -354,7 +354,7 @@ BUMO_TOOLS_API int GetPrivatekeyFromKeystore(const char *input_keystore, const c
 	std::string private_key;
 	bool ret = key_store.From(key_store_json, str_password, private_key);
 	if (!ret) {
-		printf("error");
+		printf("Failed to get private key from keystore, invalid keystore parameter");
 		return -2;
 	}
 
