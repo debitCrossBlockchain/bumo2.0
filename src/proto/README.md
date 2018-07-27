@@ -6,7 +6,7 @@ The definition module for serialized message of `BUMO`. Serialization and deseri
 ## Module Structure
 File | Function
 |:--- | ---
-[chain.proto](./chain.proto)           | The serializable data structure used by the `ledger` module and the module interacting with `ledger`, includes account, transaction, block header and other related structures.
+[chain.proto](./chain.proto)           | The serializable data structure used by the `ledger` module and the module interacting with `ledger`, including account, transaction, block header and other related structures.
 [common.proto](./common.proto)         | Basic serializable data structures which are commonly used, including key-value pairs, signatures, `ping`, error codes, and so on.
 [consensus.proto](./consensus.proto)   | Serializable data structures related to consensus and cost, including various types of consensus messages, validation nodes, and cost structures for `pbft`.
 [merkeltrie.proto](./merkeltrie.proto) | The serializable data structure used by the Merkel prefix tree, including nodes, subnodes, and types.
