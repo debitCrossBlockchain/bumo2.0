@@ -2,31 +2,31 @@ English | [中文](README_CN.md)
 
 # libbumo_tools
 
-## 功能介绍
-bumo 工具库，以三方库的方式提供，实现钱包、账号和签名等操作的功能。有如下特性：
-- 跨平台。c++ 实现，封装成三方库后供开发者使用。
-- 轻量级工具。不含节点数据同步功能。
-- 操作安全。使用过程中，不会泄露私钥信息。
+## Introduction
+The bumo tool library is provided as a third-party library to implement operations such as wallet, account, and signature. The features are listed below:
+- Cross-platform. The c++ implementation is packaged into a third-party library for developers to use.
+- Lightweight tool. Node data synchronization is not included.
+- Safe operation. The private key information will not be revealed during use.
 
-## 模块结构
+## Module Structure
 
-模块名称 | 声明文件 | 功能
+Module name | Statement file | Function
 |:--- | --- | ---
-| `libbumo_tools` | [lib_bumo_tools.h](./lib_bumo_tools.h) | 以三方库的方式实现钱包、操作和签名等操作的功能。
-## 接口列表
+| `libbumo_tools` | [lib_bumo_tools.h](./lib_bumo_tools.h) | The functions of wallet, operation, and signature are implemented by the third-party library.
+## Interface List
 
-代码中实现的接口包括但不限于如下
+The interfaces implemented in the code include but are not limited to the following:
 ```
-CreateAccountAddress   #创建公私钥对
-CheckAccountAddressValid    #检测账号是否正确
-CreateKeystore  #创建私钥存储器
-CheckKeystoreValid  #检测私钥存储器是否正确
-SignData    #使用私钥签名
-SignDataWithKeystore    #使用私钥存储器签名
-CheckSignedData     #检测签名数据
-CreateKeystoreFromPrivkey   #使用私钥创建一个私钥存储器
-GetAddressFromPubkey    #从公钥地址中获取账号地址和原始公钥地址
-GetPrivatekeyFromKeystore   #从私钥存储器里获取私钥
+CreateAccountAddress   #Create a public-private key pair
+CheckAccountAddressValid    #Check if the account number is correct
+CreateKeystore  #Create a private key store
+CheckKeystoreValid  #Check if the private key store is correct
+SignData    #Sign with private key
+SignDataWithKeystore    #Sign with the private key storage
+CheckSignedData     #Detect signature data
+CreateKeystoreFromPrivkey   #Create a private key store using the private key
+GetAddressFromPubkey    #Obtain the account address and the original public key address from the public key address
+GetPrivatekeyFromKeystore   #Get the private key from the private key store
 ```
 
 
