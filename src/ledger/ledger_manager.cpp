@@ -71,7 +71,7 @@ namespace bumo {
 					seq_kvdb, seq_rational);
 			}
 
-			LOG_INFO("max closed ledger seq=" FMT_I64, seq_rational);
+			LOG_INFO("The maximum ledger sequence that is closed=" FMT_I64, seq_rational);
 			last_closed_ledger_ = std::make_shared<LedgerFrm>();
 			if (!last_closed_ledger_->LoadFromDb(seq_rational)) {
 				return false;
@@ -79,7 +79,7 @@ namespace bumo {
 		}
 		else {
 			if (!CreateGenesisAccount()) {
-				LOG_ERROR("Create genesis account failed");
+				LOG_ERROR("Failed to create genesis account.");
 				return false;
 			}
 			seq_kvdb = 1;
@@ -97,14 +97,14 @@ namespace bumo {
 		const protocol::LedgerHeader& lclheader = last_closed_ledger_->GetProtoHeader();
 		std::string validators_hash = lclheader.validators_hash();
 		if (!ValidatorsGet(validators_hash, validators_)) {
-			LOG_ERROR("Get validators failed!");
+			LOG_ERROR("Failed to get validators!");
 			return false;
 		}
 
 		//fee
 		std::string fees_hash = lclheader.fees_hash();
 		if (!FeesConfigGet(fees_hash, fees_)) {
-			LOG_ERROR("Get config fee failed!");
+			LOG_ERROR("Failed to get config fee!");
 			return false;
 		}
 	
@@ -127,7 +127,7 @@ namespace bumo {
 		}
 
 		if (lclheader.version() > General::LEDGER_VERSION) {
-			PROCESS_EXIT("consensus ledger version:%d,software ledger version:%d", lclheader.version(), General::LEDGER_VERSION);
+			PROCESS_EXIT("Consensus ledger version:%d, software ledger version:%d", lclheader.version(), General::LEDGER_VERSION);
 		}
 
 		TimerNotify::RegisterModule(this);
@@ -142,7 +142,7 @@ namespace bumo {
 			delete tree_;
 			tree_ = NULL;
 		}
-		LOG_INFO("Ledger manager stop [OK]");
+		LOG_INFO("Ledger manager stoped. [OK]");
 		return true;
 	}
 
@@ -176,7 +176,7 @@ namespace bumo {
 			next_seq = last_closed_ledger_->GetProtoHeader().seq() + 1;
 
 			sync_.update_time_ = current_time;
-			LOG_INFO("OnTimer. request max ledger seq from neighbours. BEGIN");
+			LOG_INFO("OnTimer. Request maximum ledger sequence from neighbours. BEGIN");
 
 			gl.set_begin(next_seq);
 			gl.set_end(next_seq);
@@ -199,7 +199,7 @@ namespace bumo {
 				}
 				enable_peers.insert(pid);
 			}
-			LOG_INFO("OnTimer. request max ledger seq from neighbours. END");
+			LOG_INFO("OnTimer. Request maximum ledger sequence from neighbours. END");
 		} while (false);
 
 		for (auto it = enable_peers.begin(); it != enable_peers.end(); it++)
@@ -247,7 +247,7 @@ namespace bumo {
 	}
 
 	bool LedgerManager::CreateGenesisAccount() {
-		LOG_INFO("There is no ledger exist,then create a init ledger");
+		LOG_INFO("There is no ledger, then create an init ledger.");
 
 		//Set the calculated hash values in the global ledger header.
 		int32_t account_count = 0;
@@ -260,7 +260,7 @@ namespace bumo {
 		const utils::StringList &list = Configure::Instance().genesis_configure_.validators_;
 		for (utils::StringList::const_iterator iter = list.begin(); iter != list.end(); iter++) {
 			if (*iter == Configure::Instance().genesis_configure_.account_){
-				LOG_ERROR("Validator can't be the Genesis account.");
+				LOG_ERROR("Validator's address could not be equal to genesis account address.");
 				return false;
 			}
 
@@ -318,7 +318,7 @@ namespace bumo {
 
 		batch->Put(General::STATISTICS, statistics_.toFastString());
 		if (!Storage::Instance().account_db()->WriteBatch(*batch)) {
-			PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
+			PROCESS_EXIT("Failed to write account to database, %s", Storage::Instance().account_db()->error_desc().c_str());
 		}
 
 		return true;
@@ -343,18 +343,18 @@ namespace bumo {
 			std::string str_max_seq;
 			account_db->Get(General::KEY_LEDGER_SEQ, str_max_seq);
 			int64_t seq_kvdb = utils::String::Stoi64(str_max_seq);
-			LOG_INFO("Max closed ledger seq=" FMT_I64, seq_kvdb);
+			LOG_INFO("The maximum ledger sequence that is closed =" FMT_I64, seq_kvdb);
 
 			//load ledger from db
 			protocol::LedgerHeader last_closed_ledger_hdr;
 			bumo::KeyValueDb *ledger_db = bumo::Storage::Instance().ledger_db();
 			std::string ledger_header;
 			if (ledger_db->Get(ComposePrefix(General::LEDGER_PREFIX, seq_kvdb), ledger_header) <= 0) {
-				LOG_ERROR("Load ledger from db failed, error(%s)", ledger_db->error_desc().c_str());
+				LOG_ERROR("Failed to load ledger from database, error(%s)", ledger_db->error_desc().c_str());
 				break;
 			}
 			if (!last_closed_ledger_hdr.ParseFromString(ledger_header)) {
-				LOG_ERROR("Parse last closed ledger failed");
+				LOG_ERROR("Failed to parse last closed ledger.");
 				break;
 			}
 
@@ -413,7 +413,7 @@ namespace bumo {
 			//Write account db
 			auto batch_account = LedgerManager::GetInstance()->tree_->batch_;
 			if (!Storage::Instance().account_db()->WriteBatch(*batch_account)) {
-				PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
+				PROCESS_EXIT("Failed to write account to database, %s", Storage::Instance().account_db()->error_desc().c_str());
 			}
 
 			header->set_hash(HashWrapper::Crypto(ledger_frm->ProtoLedger().SerializeAsString()));
@@ -430,15 +430,15 @@ namespace bumo {
 			batch_ledger.Put(ComposePrefix(General::LEDGER_PREFIX, header->seq()), header->SerializeAsString());
 			batch_ledger.Put(ComposePrefix(General::CONSENSUS_VALUE_PREFIX, header->seq()), request.SerializeAsString());
 			if (!ledger_db->WriteBatch(batch_ledger)) {
-				PROCESS_EXIT("Write ledger and transaction failed(%s)", ledger_db->error_desc().c_str());
+				PROCESS_EXIT("Failed to write ledger and transaction to database(%s)", ledger_db->error_desc().c_str());
 			}
 
 			//Write acount db
 			if (!Storage::Instance().account_db()->WriteBatch(*batch)) {
-				PROCESS_EXIT("Write account batch failed, %s", Storage::Instance().account_db()->error_desc().c_str());
+				PROCESS_EXIT("Failed to write account to database, %s", Storage::Instance().account_db()->error_desc().c_str());
 			}
 
-			LOG_INFO("Create hard fork ledger successfully, seq(" FMT_I64 "), consensus value hash(%s)",
+			LOG_INFO("Created hard fork ledger successfully: sequence(" FMT_I64 "), consensus value hash(%s)",
 				header->seq(),
 				utils::String::BinToHexString(header->consensus_value_hash()).c_str());
 
@@ -462,11 +462,11 @@ namespace bumo {
 	}
 
 	int LedgerManager::OnConsent(const protocol::ConsensusValue &consensus_value, const std::string& proof) {
-		LOG_INFO("OnConsent Ledger consensus_value seq(" FMT_I64 ")", consensus_value.ledger_seq());
+		LOG_INFO("OnConsent ledger: consensus value sequence(" FMT_I64 ")", consensus_value.ledger_seq());
 
 		utils::MutexGuard guard(gmutex_);
 		if (last_closed_ledger_->GetProtoHeader().seq() >= consensus_value.ledger_seq()) {
-			LOG_ERROR("received duplicated consensus, max closed ledger seq(" FMT_I64 ")>= received request(" FMT_I64 ")",
+			LOG_ERROR("Received duplicated consensus, maximum ledger closed(" FMT_I64 ")>= received request(" FMT_I64 ")",
 				last_closed_ledger_->GetProtoHeader().seq(),
 				consensus_value.ledger_seq());
 			return 1;
@@ -484,7 +484,7 @@ namespace bumo {
 		std::string str_value;
 		int32_t ret = ledger_db->Get(General::KEY_LEDGER_SEQ, str_value);
 		if (ret < 0) {
-			PROCESS_EXIT_ERRNO("Get max ledger seq failed, error desc(%s)", ledger_db->error_desc().c_str());
+			PROCESS_EXIT_ERRNO("Failed to get max ledger sequence, error desc(%s)", ledger_db->error_desc().c_str());
 		}
 		else if (ret == 0) {
 			return 0;
@@ -516,7 +516,7 @@ namespace bumo {
 			protocol::PbftProof proof_proto;
 			proof_proto.ParseFromString(proof);
 
-			LOG_ERROR("CheckValueAndProof failed:%s\nproof=%s",
+			LOG_ERROR("Failed to execute CheckValueAndProof function:%s\n proof=%s",
 				Proto2Json(consensus_value).toFastString().c_str(),
 				Proto2Json(proof_proto).toFastString().c_str());
 
@@ -609,11 +609,11 @@ namespace bumo {
 			utils::WriteLockGuard guard(Storage::Instance().account_ledger_lock_);
 
 			if (!closing_ledger->AddToDb(ledger_db_batch)) {
-				PROCESS_EXIT("AddToDb failed");
+				PROCESS_EXIT("Failed to write ledger to database.");
 			}
 
 			if (!Storage::Instance().account_db()->WriteBatch(*account_db_batch)) {
-				PROCESS_EXIT("Write batch failed: %s", Storage::Instance().account_db()->error_desc().c_str());
+				PROCESS_EXIT("Failed to write accounts to database: %s", Storage::Instance().account_db()->error_desc().c_str());
 			}
 
 		} while (false);
@@ -624,7 +624,7 @@ namespace bumo {
 		int64_t time3 = utils::Timestamp().HighResolution();
 		tree_->batch_ = std::make_shared<WRITE_BATCH>();
 		tree_->FreeMemory(4);
-		LOG_INFO("ledger(" FMT_I64 ") closed txcount(" FMT_SIZE ") hash(%s) apply="  FMT_I64_EX(-8) " calc_hash="  FMT_I64_EX(-8) " addtodb=" FMT_I64_EX(-8)
+		LOG_INFO("ledger(" FMT_I64 "): closed transaction count(" FMT_SIZE "), ledger hash(%s), time of apply ledger ="  FMT_I64_EX(-8) " time of calculating hash="  FMT_I64_EX(-8) " time of addtodb=" FMT_I64_EX(-8)
 			" total=" FMT_I64_EX(-8) " LoadValue=" FMT_I64 " tsize=" FMT_SIZE,
 			closing_ledger->GetProtoHeader().seq(),
 			closing_ledger->GetTxOpeCount(),
@@ -677,7 +677,7 @@ namespace bumo {
 			else {
 				int64_t actual_fee=0;
 				if (!utils::SafeIntMul(tx->GetActualGas(), tx->GetGasPrice(), actual_fee)){
-					LOG_ERROR("Gas and price math over flow, never go here");
+					LOG_ERROR("Overflowed when caculate actual fee.");
 				}
 				apply_tx_msg.set_actual_fee(actual_fee);
 			}
@@ -733,7 +733,7 @@ namespace bumo {
 			}
 
 			if (last_closed_ledger_->GetProtoHeader().seq() < message.end()) {
-				LOG_INFO("Peer(" FMT_I64 ") request [" FMT_I64 "," FMT_I64 "] while the max consensus_value is (" FMT_I64 ")",
+				LOG_INFO("Peer node(" FMT_I64 ") request ledger[" FMT_I64 "," FMT_I64 "] while the max consensus value is (" FMT_I64 ")",
 					peer_id, message.begin(), message.end(), last_closed_ledger_->GetProtoHeader().seq());
 				return;
 			}
@@ -745,7 +745,7 @@ namespace bumo {
 				protocol::ConsensusValue item;
 				if (!ConsensusValueFromDB(i, item)) {
 					ret = false;
-					LOG_ERROR("ConsensusValueFromDB failed seq=" FMT_I64, i);
+					LOG_ERROR("Failed to get consensus value from database: consensus value sequence=" FMT_I64, i);
 					break;
 				}
 				ledgers.add_values()->CopyFrom(item);
@@ -780,16 +780,16 @@ namespace bumo {
 		do {
 			utils::MutexGuard guard(gmutex_);
 			if (ledgers.values_size() == 0) {
-				LOG_ERROR("received empty Ledgers from(" FMT_I64 ")", peer_id);
+				LOG_ERROR("Received empty Ledgers from(" FMT_I64 ")", peer_id);
 				break;
 			}
 			int64_t begin = ledgers.values(0).ledger_seq();
 			int64_t end = ledgers.values(ledgers.values_size() - 1).ledger_seq();
 
-			LOG_INFO("OnReceiveLedgers [" FMT_I64 "," FMT_I64 "] from peer(" FMT_I64 ")", begin, end, peer_id);
+			LOG_INFO("OnReceiveLedgers [" FMT_I64 "," FMT_I64 "] from peer node(" FMT_I64 ")", begin, end, peer_id);
 
 			if (sync_.peers_.find(peer_id) == sync_.peers_.end()) {
-				LOG_ERROR("received unexpected ledgers [" FMT_I64 "," FMT_I64 "] from (" FMT_I64 ")",
+				LOG_ERROR("Received unexpected ledgers [" FMT_I64 "," FMT_I64 "] from (" FMT_I64 ")",
 					begin, end, peer_id);
 				break;
 			}
@@ -798,7 +798,7 @@ namespace bumo {
 			itm.send_time_ = 0;
 
 			if (begin != itm.gl_.begin() || end != itm.gl_.end()) {
-				LOG_ERROR("received unexpected ledgers[" FMT_I64 "," FMT_I64 "] while expect[" FMT_I64 "," FMT_I64 "]",
+				LOG_ERROR("Received unexpected ledgers[" FMT_I64 "," FMT_I64 "] while expect[" FMT_I64 "," FMT_I64 "]",
 					begin, end, itm.gl_.begin(), itm.gl_.end());
 				itm.probation_ = utils::Timestamp::HighResolution() + 60 * utils::MICRO_UNITS_PER_SEC;
 				itm.gl_.set_begin(0);
@@ -848,7 +848,7 @@ namespace bumo {
 	}
 
 	void LedgerManager::RequestConsensusValues(int64_t pid, protocol::GetLedgers& gl, int64_t time) {
-		LOG_TRACE("RequestConsensusValues from peer(" FMT_I64 "), [" FMT_I64 "," FMT_I64 "]", pid, gl.begin(), gl.end());
+		LOG_TRACE("Request consensus values from peer(" FMT_I64 "), [" FMT_I64 "," FMT_I64 "]", pid, gl.begin(), gl.end());
 		do {
 			utils::MutexGuard guard(gmutex_);
 			auto &peer = sync_.peers_[pid];
@@ -878,7 +878,7 @@ namespace bumo {
 
 			if (ledger_context->transaction_stack_.size() > General::CONTRACT_MAX_RECURSIVE_DEPTH) {
 				txfrm->result_.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_RECURSION);
-				txfrm->result_.set_desc("Too many recursion ");
+				txfrm->result_.set_desc("Too many recursion.");
 				//Add byte fee
 				TransactionFrm::pointer bottom_tx = ledger_context->GetBottomTx();
 				bottom_tx->AddActualGas(txfrm->GetSelfGas());
@@ -894,7 +894,7 @@ namespace bumo {
 					//break;
 					result.set_code(protocol::ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS);
 					result.set_desc("Too many transaction");
-					LOG_ERROR("Too many transactions called by transaction(hash:%s)", contract->GetParameter().sender_.c_str());
+					LOG_ERROR("Too many transactions triggered by transaction(hash:%s)", contract->GetParameter().sender_.c_str());
 					return result;
 				}
 			}
@@ -951,7 +951,6 @@ namespace bumo {
 			return result;
 		} while (false);
 
-		//
 		protocol::TransactionEnvStore tx_store;
 		tx_store.set_error_code(txfrm->GetResult().code());
 		tx_store.set_error_desc(txfrm->GetResult().desc());
