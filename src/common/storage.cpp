@@ -336,21 +336,21 @@ namespace bumo {
 #endif
 			keyvalue_db_ = NewKeyValueDb(db_config);
 			if (!keyvalue_db_->Open(db_config.keyvalue_db_path_, keyvaule_max_open_files)) {
-				LOG_ERROR("Failed to open db. Keyvalue db path(%s) open failure(%s)\n",
+				LOG_ERROR("Failed to open keyvalue db path(%s), the reason is(%s)\n",
 					db_config.keyvalue_db_path_.c_str(), keyvalue_db_->error_desc().c_str());
 				break;
 			}
 
 			ledger_db_ = NewKeyValueDb(db_config);
 			if (!ledger_db_->Open(db_config.ledger_db_path_, ledger_max_open_files)) {
-				LOG_ERROR("Failed to open db.Ledger db path(%s) open failure(%s)\n",
+				LOG_ERROR("Failed to open ledger db path(%s), the reason is(%s)\n",
 					db_config.ledger_db_path_.c_str(), ledger_db_->error_desc().c_str());
 				break;
 			}
 
 			account_db_ = NewKeyValueDb(db_config);
 			if (!account_db_->Open(db_config.account_db_path_, account_max_open_files)) {
-				LOG_ERROR("Ledger db path(%s) open failure(%s)\n",
+				LOG_ERROR("Failed to open account db path(%s), the reason is(%s)\n",
 					db_config.account_db_path_.c_str(), account_db_->error_desc().c_str());
 				break;
 			}
