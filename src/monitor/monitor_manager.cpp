@@ -69,7 +69,7 @@ namespace bumo {
 		// Add the register of StatusModule and TimeNotify
 		StatusModule::RegisterModule(this);
 		TimerNotify::RegisterModule(this);
-		LOG_INFO("Initialize monitor manager successfully");
+		LOG_INFO("Initialized monitor manager successfully");
 		return true;
 	}
 
@@ -116,7 +116,7 @@ namespace bumo {
 			std::error_code ignore_ec;
 			// Send the monitor request
 			if (!monitor->SendRequest(type, data, ignore_ec)) {
-				LOG_ERROR("Failed to send monitor, (type: " FMT_I64 ") from ip(%s) (%d:%s)", type, monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Failed to send a monitor message, (type: " FMT_I64 ") from ip(%s) (%d:%s)", type, monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value(), ignore_ec.message().c_str());
 				break;
 			}
@@ -149,7 +149,7 @@ namespace bumo {
 
 			connect_time_out_ = hello.connection_timeout();
 
-			LOG_INFO("Receive hello message from center (ip: %s, version: %d, timestamp: %lld)", monitor->GetPeerAddress().ToIpPort().c_str(), 
+			LOG_INFO("Received a hello message from center (ip: %s, version: %d, timestamp: %lld)", monitor->GetPeerAddress().ToIpPort().c_str(), 
 				hello.service_version(), hello.timestamp());
 
 			monitor::Register reg;
@@ -189,7 +189,7 @@ namespace bumo {
 			// Set the active time
 			monitor->SetActiveTime(utils::Timestamp::HighResolution());
 
-			LOG_INFO("Receive register message from center (ip: %s, timestamp: " FMT_I64 ")", monitor->GetPeerAddress().ToIpPort().c_str(), reg.timestamp());
+			LOG_INFO("Received a register message from center (ip: %s, timestamp: " FMT_I64 ")", monitor->GetPeerAddress().ToIpPort().c_str(), reg.timestamp());
 			bret = true;
 		} while (false);
 

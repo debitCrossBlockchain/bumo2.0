@@ -325,7 +325,7 @@ namespace bumo1 {
 	}
 
 	void Network::OnClientMessage(connection_hdl hdl, client::message_ptr msg) {
-		LOG_INFO("Recive message %s %d",
+		LOG_INFO("Recived message %s %d",
 			utils::String::BinToHexString(msg->get_payload()).c_str(), msg->get_opcode());
 	}
 
@@ -333,19 +333,19 @@ namespace bumo1 {
 		Connection *peer = GetPeer(hdl);
 		if (peer){
 			peer->TouchReceiveTime();
-			LOG_INFO("Recive pong message, payload(%s)", payload.c_str());
+			LOG_INFO("Recived pong message, payload(%s)", payload.c_str());
 		} 
 	}
 
 	bool Network::OnRequestPing(protocol::WsMessage &message, Connection *conn) {
-		LOG_INFO("Recive ping message");
+		LOG_INFO("Recived ping message");
 		protocol::WsMessage res = message;
 		res.set_request(false);
 		return conn->SendByteMessage(res.SerializeAsString(), ec_);
 	}
 
 	bool Network::OnResponsePing(protocol::WsMessage &message, Connection *conn) {
-		LOG_INFO("Recive ping response");
+		LOG_INFO("Recived ping response");
 		return true;
 	}
 

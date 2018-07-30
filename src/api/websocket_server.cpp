@@ -33,14 +33,14 @@ namespace bumo {
 
 	bool WsPeer::Set(const protocol::ChainSubscribeTx &sub) {
 		if (sub.address_size() > 100) {
-			LOG_ERROR("Failed to subscribe transaction, size large than 100");
+			LOG_ERROR("Failed to subscribe address, size large than 100");
 			return false;
 		}
 
 		tx_filter_address_.clear();
 		for (int32_t i = 0; i < sub.address_size(); i++) {
 			if (!PublicKey::IsAddressValid(sub.address(i))) {
-				LOG_ERROR("Failed to subscribe transaction, address(%s) not valid", sub.address(i).c_str());
+				LOG_ERROR("Failed to subscribe address, address(%s) not valid", sub.address(i).c_str());
 				return false;
 			} 
 			tx_filter_address_.insert(sub.address(i));
@@ -117,7 +117,7 @@ namespace bumo {
 		}
 
 		StatusModule::RegisterModule(this);
-		LOG_INFO("Initialize web socket server successfully");
+		LOG_INFO("Initialized web socket server successfully");
 		return true;
 	}
 
@@ -144,7 +144,7 @@ namespace bumo {
 		Connection *conn = GetConnection(conn_id);
 		if (conn) {
 			conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
-			LOG_INFO("Receive a hello message from ip(%s), and send response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
+			LOG_INFO("Received a hello message from ip(%s), and sent the response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
 		}
 		return true;
@@ -158,7 +158,7 @@ namespace bumo {
 			return false;
 		}
 
-		LOG_INFO("Receive a chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+		LOG_INFO("Received a chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 		protocol::ChainPeerMessage cpm;
 		if (!cpm.ParseFromString(message.data())) {
 			LOG_ERROR("Failed to parse the message, invalid chain peer message");
@@ -247,7 +247,7 @@ namespace bumo {
 
 		protocol::ChainResponse default_response;
 		do {
-			LOG_INFO("Receive a subscription message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			LOG_INFO("Received a subscription message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 			protocol::ChainSubscribeTx subs;
 			if (!subs.ParseFromString(message.data())) {
 				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);

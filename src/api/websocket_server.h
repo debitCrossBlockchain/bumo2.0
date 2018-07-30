@@ -45,7 +45,7 @@ namespace bumo {
 		~WebSocketServer();
 
 		
-		//Virtual bool Send(const ZMQTaskType type, const std::string& buf);
+		//virtual bool Send(const ZMQTaskType type, const std::string& buf);
 
 		bool Initialize(WsServerConfigure & ws_server_configure);
 		bool Exit();

@@ -188,7 +188,7 @@ namespace bumo {
 			last_send_time_ = utils::Timestamp::HighResolution();
 		} while (false);
 
-		LOG_TRACE("Send ping to ip (%s),error code(%d)", GetPeerAddress().ToIpPort().c_str(), ec.value());
+		LOG_TRACE("Sent ping to ip (%s),error code(%d)", GetPeerAddress().ToIpPort().c_str(), ec.value());
 		return ec.value() == 0;
 	}
 
@@ -197,7 +197,7 @@ namespace bumo {
 		ping.set_nonce(utils::Timestamp::HighResolution());
 		bool ret = SendRequest(OVERLAY_PING, ping.SerializeAsString(), ec);
 		last_send_time_ = utils::Timestamp::HighResolution();
-		LOG_TRACE("Send custom ping to ip(%s),error code(%d:%s)", GetPeerAddress().ToIpPort().c_str(), ec.value(), ec.message().c_str());
+		LOG_TRACE("Sent custom ping to ip(%s),error code(%d:%s)", GetPeerAddress().ToIpPort().c_str(), ec.value(), ec.message().c_str());
 		return !ec;
 	}
 
@@ -345,7 +345,7 @@ namespace bumo {
 		connections_.insert(std::make_pair(new_id, conn));
 		connection_handles_.insert(std::make_pair(hdl, new_id));
 
-		LOG_INFO("Accept a new connection, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+		LOG_INFO("Accepted a new connection, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 		//peer->Ping(ec_);
 		if (!OnConnectOpen(conn)) { //delete
 			conn->Close("connections exceed");
@@ -357,7 +357,7 @@ namespace bumo {
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(hdl);
 		if (conn) {
-			LOG_INFO("Cloes a connection, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			LOG_INFO("Closed a connection, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 			OnDisconnect(conn);
 			RemoveConnection(conn);
 		} 
@@ -367,7 +367,7 @@ namespace bumo {
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(hdl);
 		if (conn) {
-			LOG_ERROR("Receive network failed events, ip(%s), error desc(%s)", conn->GetPeerAddress().ToIpPort().c_str(), conn->GetErrorCode().message().c_str());
+			LOG_ERROR("Got a network failed event, ip(%s), error desc(%s)", conn->GetPeerAddress().ToIpPort().c_str(), conn->GetErrorCode().message().c_str());
 			OnDisconnect(conn);
 			RemoveConnection(conn);
 		}
@@ -500,7 +500,7 @@ namespace bumo {
 					for (ConnectionMap::iterator iter = connections_delete_.begin();
 						iter != connections_delete_.end();) {
 						if (iter->first < now) {
-							LOG_TRACE("Delete connect id:%lld", iter->second->GetId());
+							LOG_TRACE("Deleted connect id:%lld", iter->second->GetId());
 							delete iter->second;
 							iter = connections_delete_.erase(iter);
 						}
@@ -518,7 +518,7 @@ namespace bumo {
 		//}
 
 		enabled_ = false;
-		LOG_INFO("Network listen server(%s) has exit", ip.ToIpPort().c_str());
+		LOG_INFO("Network listen server(%s) has exited", ip.ToIpPort().c_str());
 	}
 	
 	uint16_t Network::GetListenPort() const {

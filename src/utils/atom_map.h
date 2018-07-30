@@ -145,7 +145,7 @@ namespace bumo
 			try{ SetValue(key, val); }
 			catch(std::exception& e)
 			{ 
-				LOG_ERROR("Catch an set exception, detail: %s", e.what());
+				LOG_ERROR("Catched an set exception, detail: %s", e.what());
 				ret = false;
 			}
 
@@ -159,7 +159,7 @@ namespace bumo
 			try{ ret = GetValue(key, val); }
 			catch(std::exception& e)
 			{ 
-				LOG_ERROR("Catch an get exception, detail: %s", e.what());
+				LOG_ERROR("Catched an get exception, detail: %s", e.what());
 				ret = false;
 			}
 			return ret;
@@ -172,7 +172,7 @@ namespace bumo
 			try{ actionBuf_[key] = ActValue(DEL); }
 			catch(std::exception& e)
 			{ 
-				LOG_ERROR("Catch an delete exception, detail: %s", e.what());
+				LOG_ERROR("Catched an delete exception, detail: %s", e.what());
 				ret = false;
 			}
 
@@ -190,7 +190,7 @@ namespace bumo
 			}
 			catch (std::exception& e)
 			{
-				LOG_ERROR("Catch an copy exception, detail: %s", e.what());
+				LOG_ERROR("Catched an copy exception, detail: %s", e.what());
 				actionBuf_.clear();
 				return false;
 			}

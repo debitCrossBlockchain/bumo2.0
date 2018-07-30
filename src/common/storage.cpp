@@ -331,7 +331,7 @@ namespace bumo {
 				ledger_max_open_files = (ledger_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : ledger_max_open_files;
 				account_max_open_files = (account_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : account_max_open_files;
 			}
-			LOG_INFO("Assign number of file handles in mac os, max :%d, keyvaule used:%d, ledger used:%d, account used:%d:",
+			LOG_INFO("Assigned number of file handles in mac os, max :%d, keyvaule used:%d, ledger used:%d, account used:%d:",
 				max_open_files, keyvaule_max_open_files, ledger_max_open_files, account_max_open_files);
 #endif
 			keyvalue_db_ = NewKeyValueDb(db_config);
