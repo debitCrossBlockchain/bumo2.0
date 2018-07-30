@@ -93,7 +93,7 @@ namespace bumo {
 		raw_data += utils::String::ToString(msg.nonce());
 
 		if (!PublicKey::Verify(raw_data, sig.sign_data(), sig.public_key())) {
-			LOG_ERROR("Failed to verify ledger upgrade");
+			LOG_ERROR("Failed to verify ledger upgrade message.");
 			return;
 		} 
 
@@ -149,7 +149,7 @@ namespace bumo {
 
 	bool LedgerUpgrade::ConfNewVersion(int32_t new_version) {
 		local_state_.set_new_ledger_version(new_version);
-		LOG_INFO("Prepare config new version(%d)", new_version);
+		LOG_INFO("Pre-configured new version(%d).", new_version);
 		return true;
 	}
 
