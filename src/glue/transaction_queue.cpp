@@ -196,7 +196,7 @@ namespace bumo {
 				//LOG_TRACE("top(%u) addr(%s) tx(%s) nonce(" FMT_I64 ") gas_price(" FMT_I64 ") last block seq(" FMT_I64 ")", i, tx->GetSourceAddress().c_str(), utils::String::BinToHexString(tx->GetContentHash()).c_str(), tx->GetNonce(), tx->GetGasPrice(), last_block_seq);
 			}
 		}
-		LOG_TRACE("Get transactions at the top of the queue. Current top size(%u), last block seq(" FMT_I64 "), limit(%u), txset byte size(%d), (%d)M.",
+		LOG_TRACE("Get transactions at the top of the queue. Current top size(%u), last ledger sequence(" FMT_I64 "), limit(%u), txset byte size(%d), (%d)M.",
 			i, last_block_seq, limit, set.ByteSize() ,set.ByteSize() / utils::BYTES_PER_MEGA);
 		return std::move(set);
 	}
@@ -223,7 +223,7 @@ namespace bumo {
 				it->second = nonce;
 		}
 
-		LOG_TRACE("Remove transactions: close ledger flag(%d), transaction set size(%d), actual deletion quantity(%u), remaining size of queue(%u), last block seq(" FMT_I64 ")", 
+		LOG_TRACE("Remove transactions: close ledger flag(%d), transaction set size(%d), actual deletion quantity(%u), remaining size of queue(%u), last ledger sequence(" FMT_I64 ")", 
 			(int)close_ledger, set.txs_size(), ret, queue_.size(), last_seq);
 		return ret;
 	}
@@ -278,7 +278,7 @@ namespace bumo {
 			int64_t nonce = (*it)->GetNonce();
 			Remove(account_address, nonce);
 		}
-		LOG_TRACE("Deleted timeout transactions(number: %u) for the last closed ledger(sequence:" FMT_I64 ").", timeout_txs.size(), last_seq);
+		LOG_TRACE("Deleted timeout transactions(number: %u) for the last closed ledger(" FMT_I64 ").", timeout_txs.size(), last_seq);
 	}
 
 	bool TransactionQueue::IsExist(const TransactionFrm::pointer& tx){
