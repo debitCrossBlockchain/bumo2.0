@@ -61,7 +61,7 @@ namespace bumo {
 			return true;
 		}
 		else if (ret < 0) {
-			LOG_ERROR("Get ledger failed, error desc(%s)", db->error_desc().c_str());
+			LOG_ERROR("Failed to get ledger, error desc(%s)", db->error_desc().c_str());
 			return false;
 		}
 
@@ -91,7 +91,7 @@ namespace bumo {
 			else{
 				int64_t actual_fee=0;
 				if (!utils::SafeIntMul(ptr->GetActualGas(), ptr->GetGasPrice(), actual_fee)){
-					LOG_ERROR("Actual_fee math overflow, never go here");
+					LOG_ERROR("Caculation of actual fee overflowed.");
 				}
 
 				env_store.set_actual_fee(actual_fee);
@@ -122,12 +122,12 @@ namespace bumo {
 				std::string str_last_hashs;
 				int32_t ncount = db->Get(General::LAST_TX_HASHS, str_last_hashs);
 				if (ncount < 0) {
-					LOG_ERROR("Load last tx hash failed, error desc(%s)", db->error_desc().c_str());
+					LOG_ERROR("Faild to load last transaction's hash, error desc(%s)", db->error_desc().c_str());
 				}
 
 				protocol::EntryList exist_hashs;
 				if (ncount > 0 && !exist_hashs.ParseFromString(str_last_hashs)) {
-					LOG_ERROR("Parse from string failed");
+					LOG_ERROR("Failed to parse last transaction hash from string.");
 				}
 
 				for (int32_t i = list.entry_size() - 1; i >= 0; i--) {
@@ -149,7 +149,7 @@ namespace bumo {
 		}
 
 		if (!db->WriteBatch(batch)){
-			PROCESS_EXIT("Write ledger and transaction failed(%s)", db->error_desc().c_str());
+			PROCESS_EXIT("Failed to write ledger and transaction to database(%s)", db->error_desc().c_str());
 		}
 		return true;
 	}
@@ -173,14 +173,14 @@ namespace bumo {
 		for (int32_t i = 0; i < validation.expire_tx_ids_size(); i++) {
 			int32_t tid = validation.expire_tx_ids(i);
 			if (tid >= tx_size || tid < 0) {
-				LOG_ERROR("Proposed value expire id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
+				LOG_ERROR("Id(%d) of transaction that exceeding limit in proposed value is not valid: transaction size(%d), consensus value(sequence:" FMT_I64 ")",
 					tid, tx_size, request.ledger_seq());
 				return false;
 			}
 			expire_txs_status.insert(tid);
 
 			if (totol_error.find(tid) != totol_error.end()){
-				LOG_ERROR("Proposed value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
+				LOG_ERROR("Id(%d) of transaction in proposed value duplicated: consensus value(sequence:" FMT_I64 ")", tid, request.ledger_seq());
 				return false;
 			}
 
@@ -190,14 +190,14 @@ namespace bumo {
 		for (int32_t i = 0; i < validation.error_tx_ids_size(); i++) {
 			int32_t tid = validation.error_tx_ids(i);
 			if (tid >= tx_size || tid < 0) {
-				LOG_ERROR("Propose value error id(%d) not valid, txsize(%d), consvalue(seq:" FMT_I64 ")",
+				LOG_ERROR("Error id(%d) of transaction in proposed value not valid: transaction size(%d), consensus value(sequence:" FMT_I64 ")",
 					tid, tx_size, request.ledger_seq());
 				return false;
 			}
 			error_txs_status.insert(validation.error_tx_ids(i));
 
 			if (totol_error.find(tid) != totol_error.end()) {
-				LOG_ERROR("Propose value id(%d) duplicated,consvalue(seq:" FMT_I64 ")", tid, request.ledger_seq());
+				LOG_ERROR("Id(%d) of transaction in proposed value duplicated: consensus value sequence(" FMT_I64 ")", tid, request.ledger_seq());
 				return false;
 			}
 			totol_error.insert(tid);
@@ -237,7 +237,7 @@ namespace bumo {
 		std::set<int32_t> expire_txs, error_txs;
 
 		if (request.has_validation()) {
-			LOG_ERROR("Propose value can't have validation object, consvalue seq(" FMT_I64 ")", request.ledger_seq());
+			LOG_ERROR("Propose value has no validation object: consensus value sequence: " FMT_I64 ".", request.ledger_seq());
 			return false;
 		}
 
@@ -270,14 +270,14 @@ namespace bumo {
 			//Caculate the required mininum fee by calculting the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
-				LOG_ERROR("Transaction(%s) apply failed. %s, %s",
+				LOG_ERROR("Failed to apply transaction(%s): %s, %s",
 					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
 					error_info.c_str());
 				expire_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 			}
 			else {
 				if (!ret) {
-					LOG_ERROR("Transaction(%s) apply failed. %s",
+					LOG_ERROR("Failed to apply transaction(%s): %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
 					error_txs.insert(i - proposed_result.need_dropped_tx_.size());//for check
 				}
@@ -293,7 +293,7 @@ namespace bumo {
 			ledger_context->transaction_stack_.pop_back();
 
 			if ( utils::Timestamp::HighResolution() - start_time > General::BLOCK_EXECUTE_TIME_OUT) {
-				LOG_ERROR("Block apply time timeout(" FMT_I64 ") ", utils::Timestamp::HighResolution() - start_time);
+				LOG_ERROR("Applying block timeout(" FMT_I64 ") ", utils::Timestamp::HighResolution() - start_time);
 				return false;
 			}
 		}
@@ -321,7 +321,7 @@ namespace bumo {
 		std::set<int32_t> expire_txs_check,  error_txs_check;
 		std::set<int32_t> expire_txs,  error_txs;
 		if (!CheckConsValueValidation(request, expire_txs_check,  error_txs_check)) {
-			LOG_ERROR("Check consensus value validation failed,consvalue seq(" FMT_I64 ")", request.ledger_seq());
+			LOG_ERROR("Failed to check consensus value: consensus value sequence(" FMT_I64 ")", request.ledger_seq());
 			return false;
 		}
 
@@ -331,13 +331,13 @@ namespace bumo {
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>(txproto);
 
 			if (!tx_frm->ValidForApply(environment_, !IsTestMode())) {
-				LOG_ERROR("Check consensus value failed, valid for apply failed, seq(" FMT_I64 ")", request.ledger_seq());
+				LOG_ERROR("Validition for application failed: consensus value sequence(" FMT_I64 ")", request.ledger_seq());
 				return false;
 			}
 
 			//pay fee
 			if (!tx_frm->PayFee(environment_, total_fee_)) {
-				LOG_ERROR("Check consensus value failed, pay fee failed, seq(" FMT_I64 ")", request.ledger_seq());
+				LOG_ERROR("Failed to pay fee, consensus value sequence(" FMT_I64 ")", request.ledger_seq());
 				return false;
 			}
 
@@ -352,14 +352,14 @@ namespace bumo {
 			//Caculate the required mininum fee by calculting the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
-				LOG_ERROR("Transaction(%s) apply failed. %s, %s",
+				LOG_ERROR("Failed to apply transaction(%s). %s, %s",
 					utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str(),
 					error_info.c_str());
 				expire_txs.insert(i);//for check
 			}
 			else {
 				if (!ret) {
-					LOG_ERROR("Transaction(%s) apply failed. %s",
+					LOG_ERROR("Failed to apply transaction(%s). %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
 					error_txs.insert(i);//for check
 				}
@@ -375,7 +375,7 @@ namespace bumo {
 			ledger_context->transaction_stack_.pop_back();
 
 			if (utils::Timestamp::HighResolution() - start_time > General::BLOCK_EXECUTE_TIME_OUT) {
-				LOG_ERROR("Block apply time timeout(" FMT_I64 ") ", utils::Timestamp::HighResolution() - start_time);
+				LOG_ERROR("Applying block timeout(" FMT_I64 ") ", utils::Timestamp::HighResolution() - start_time);
 				return false;
 			}
 		}
@@ -384,7 +384,7 @@ namespace bumo {
 
 		bool ret = (expire_txs == expire_txs_check && error_txs == error_txs_check);
 		if (!ret) {
-			LOG_ERROR("Check validation failed this size(%d,%d), check size(%d,%d) ",
+			LOG_ERROR("Failed to check validation: this size(%d,%d), check size(%d,%d) ",
 				expire_txs.size(), error_txs.size(),
 				expire_txs_check.size(), error_txs_check.size());
 		}
@@ -406,7 +406,7 @@ namespace bumo {
 		std::set<int32_t> expire_txs_check, error_txs_check;
 		std::set<int32_t> error_txs;
 		if (!CheckConsValueValidation(request, expire_txs_check, error_txs_check)) {
-			LOG_ERROR("Check consensus value validation failed,consvalue seq(" FMT_I64 ")", request.ledger_seq());
+			LOG_ERROR("Failed to check consensus value validation, consensus value sequence(" FMT_I64 ")", request.ledger_seq());
 			return false;
 		}
 
@@ -422,7 +422,7 @@ namespace bumo {
 
 			//Pay fee
 			if (!tx_frm->PayFee(environment_, total_fee_)) {
-				LOG_WARN("Should not go hear");
+				LOG_WARN("Failed to pay fee.");
 				continue;
 			}
 
@@ -438,7 +438,7 @@ namespace bumo {
 			else {
 				bool ret = tx_frm->Apply(this, environment_);
 				if (!ret) {
-					LOG_ERROR("transaction(%s) apply failed. %s",
+					LOG_ERROR("Failed to apply transaction(%s). %s",
 						utils::String::BinToHexString(tx_frm->GetContentHash()).c_str(), tx_frm->GetResult().desc().c_str());
 					error_txs.insert(i);//for check
 				}
@@ -534,11 +534,11 @@ namespace bumo {
 
 		protocol::ValidatorSet set;
 		if (!LedgerManager::Instance().GetValidators(ledger_.header().seq() - 1, set)) {
-			LOG_ERROR("Get validator failed of ledger seq(" FMT_I64 ")", ledger_.header().seq() - 1);
+			LOG_ERROR("Failed to get validator of ledger(" FMT_I64 ")", ledger_.header().seq() - 1);
 			return false;
 		}
 		if (set.validators_size() == 0) {
-			LOG_ERROR("Validator should not be empty");
+			LOG_ERROR("Validator set should not be empty.");
 			return false;
 		}
 
@@ -559,11 +559,11 @@ namespace bumo {
 
 			left_reward -= average_fee;
 
-			LOG_TRACE("Account(%s) allocate reward(" FMT_I64 ") left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), average_fee, left_reward, ledger_.header().seq());
+			LOG_TRACE("Account(%s) allocated reward(" FMT_I64 "), left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), average_fee, left_reward, ledger_.header().seq());
 			protocol::Account &proto_account = account->GetProtoAccount();
 			int64_t new_balance = 0;;
 			if (!utils::SafeIntAdd(proto_account.balance(), average_fee, new_balance)){
-				LOG_ERROR("AllocateReward math overflow balance:(" FMT_I64 "), average_fee:(" FMT_I64 ")", proto_account.balance(), average_fee);
+				LOG_ERROR("Overflowed when rewarding account. Account balance:(" FMT_I64 "), average_fee:(" FMT_I64 ")", proto_account.balance(), average_fee);
 				return false;
 			}
 			proto_account.set_balance(new_balance);
@@ -572,11 +572,11 @@ namespace bumo {
 			protocol::Account &proto_account = random_account->GetProtoAccount();
 			int64_t new_balance = 0;
 			if (!utils::SafeIntAdd(proto_account.balance(), left_reward, new_balance)){
-				LOG_ERROR("AllocateReward math overflow balance:(" FMT_I64 "), reward:(" FMT_I64 ")", proto_account.balance(), left_reward);
+				LOG_ERROR("Overflowed when rewarding account. Account balance:(" FMT_I64 "), reward:(" FMT_I64 ")", proto_account.balance(), left_reward);
 				return false;
 			}
 			proto_account.set_balance(new_balance);
-			LOG_TRACE("Account(%s) allocate last reward(" FMT_I64 ") in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
+			LOG_TRACE("Account(%s) aquired last reward(" FMT_I64 ") of allocation in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
 		}
 		if (environment_->useAtomMap_)
 			environment_->Commit();
