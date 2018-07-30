@@ -48,7 +48,7 @@ namespace bumo {
 
 	bool AccountFrm::UnSerializer(const std::string &str) {
 		if (!account_info_.ParseFromString(str)) {
-			LOG_ERROR("Accountunserializer is erro!");
+			LOG_ERROR("Account deserialization failed!");
 			return false;
 		}
 		return true;
@@ -65,7 +65,7 @@ namespace bumo {
 	bool AccountFrm::AddBalance(int64_t amount){
 		int64_t balance = 0;
 		if (!utils::SafeIntAdd(account_info_.balance(), amount, balance)) {
-			LOG_ERROR("Add balance math overflow! Account addr:%s, balance(" FMT_I64 ") (" FMT_I64 ")", 
+			LOG_ERROR("The result overflowed when the balance increased for the account: account address:%s, balance(" FMT_I64 "), increasing amount(" FMT_I64 ")", 
 				account_info_.address().c_str(), account_info_.balance(), amount);
 			return false;
 		}
