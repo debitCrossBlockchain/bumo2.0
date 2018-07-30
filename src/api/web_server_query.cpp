@@ -37,7 +37,7 @@ namespace bumo {
 
 		if (!Environment::AccountFromDB(address, acc)) {
 			error_code = protocol::ERRCODE_NOT_EXIST;
-			LOG_TRACE("GetAccount failure, account(%s) not exist", address.c_str());
+			LOG_TRACE("Failed to get account, account(%s) not exist", address.c_str());
 		}
 		else {
 			acc->ToJson(result);
@@ -72,7 +72,7 @@ namespace bumo {
 
 		if (!Environment::AccountFromDB(address, acc)) {
 			error_code = protocol::ERRCODE_NOT_EXIST;
-			LOG_TRACE("GetAccount fail, account(%s) not exist", address.c_str());
+			LOG_TRACE("Failed to get account, account(%s) not exist", address.c_str());
 		}
 		else {
 			acc->ToJson(result);
@@ -139,7 +139,7 @@ namespace bumo {
 
 		if (!Environment::AccountFromDB(address, acc)) {
 			error_code = protocol::ERRCODE_NOT_EXIST;
-			LOG_TRACE("account(%s) not exist", address.c_str());
+			LOG_TRACE("Failed to get account, account(%s) not exist", address.c_str());
 		}
 		else {
 			if (!metadata_key.empty()) {
@@ -197,7 +197,7 @@ namespace bumo {
 
 		if (!Environment::AccountFromDB(address, acc)) {
 			error_code = protocol::ERRCODE_NOT_EXIST;
-			LOG_TRACE("GetAccount fail, account(%s) not exist", address.c_str());
+			LOG_TRACE("Failed to get account, account(%s) not exist", address.c_str());
 		}
 		else {
 
@@ -248,7 +248,7 @@ namespace bumo {
 			if (!tran.SerializeToString(&SerializeString)) {
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 				result.set_desc("");
-				LOG_INFO("SerializeToString Transaction Failed");
+				LOG_INFO("Failed to serialize string, invalid transaction");
 				break;
 			}
 
