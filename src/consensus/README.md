@@ -13,7 +13,7 @@ Class name | Statement file | Function
 |`ConsensusMsg`     | [consensus_msg.h](./consensus_msg.h)         | The wrapper class of the consensus message. In addition to the content of the consensus message, it includes a message sequence number, a message type, a node that sends the message, a message hash, etc., for the message receiver to check and classify the process.
 
 ## Workflow
-- After the main node's `ConsensusManager` receives the consensus proposal submitted by the `glue` module, it is handled by `Pbf` through Consensus.
+- After the main node's `ConsensusManager` receives the consensus proposal submitted by the `glue` module, it is handled by `Pbft` through Consensus.
 - `Pbft` generates a `PbftInstance` instance for the consensus proposal, writes the contents of the proposal to the `PbftInstance` instance, and then broadcasts the proposal to other consensus node consensus.
 - The consensus nodes use the message wrapped by `ConsensusMsg` to communicate, and the communication content and processing data of each stage of the consensus are written to the `PbftInstance` instance.
 - Finally, after reaching an agreement, the consensus proposal is passed to the `ledger` module via the `glue` module.
