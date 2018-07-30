@@ -191,7 +191,7 @@ namespace bumo {
 				item->SlowTimerWrapper(utils::Timestamp::HighResolution());
 
 				if (item->IsSlowExpire(5 * utils::MICRO_UNITS_PER_SEC)){
-					LOG_WARN("The timer(%s) execution time(" FMT_I64 " us) is expired after 5s elapse", item->GetTimerName().c_str(), item->GetSlowLastExecuteTime());
+					LOG_WARN("The execution time(%s) (" FMT_I64 " us) is expired after 5s elapse", item->GetTimerName().c_str(), item->GetSlowLastExecuteTime());
 				}
 			}
 

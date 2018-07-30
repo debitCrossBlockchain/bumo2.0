@@ -319,7 +319,7 @@ namespace bumo {
 				keyvaule_max_open_files = 2;
 				ledger_max_open_files = 4;
 				account_max_open_files = 4; 
-				LOG_INFO("mac os max open files is too lower:%d.", max_open_files);
+				LOG_INFO("In mac os, the maximum number (%d) of files handles is too low.", max_open_files);
 			}
 			else
 			{
@@ -331,7 +331,7 @@ namespace bumo {
 				ledger_max_open_files = (ledger_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : ledger_max_open_files;
 				account_max_open_files = (account_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : account_max_open_files;
 			}
-			LOG_INFO("mac os db file limited:%d, keyvaule:%d, ledger:%d, account:%d:",
+			LOG_INFO("Assign number of file handles in mac os, max :%d, keyvaule used:%d, ledger used:%d, account used:%d:",
 				max_open_files, keyvaule_max_open_files, ledger_max_open_files, account_max_open_files);
 #endif
 			keyvalue_db_ = NewKeyValueDb(db_config);
