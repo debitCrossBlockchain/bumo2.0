@@ -53,7 +53,7 @@ namespace bumo {
 		// Check whether the monitor is enabled
 		MonitorConfigure& monitor_configure = Configure::Instance().monitor_configure_;
 		if (!monitor_configure.enabled_){
-			LOG_TRACE("Failed to initialize monitor, configuration file is not allowed to start");
+			LOG_TRACE("Failed to initialize monitor, config file does not allow startup");
 			return true;
 		}
 
