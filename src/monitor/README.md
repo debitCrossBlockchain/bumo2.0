@@ -11,8 +11,8 @@ The module implements monitoring blockchain node status, node information and ab
 
 Class name | Statement file | Function
 |:--- | --- | ---
-| `MonitorManager` | [monitor_manager.h](./monitor_manager.h) | The manager of the monitoring module, inherited from the `Network` class. This class has three functions: one is to manage the connection of the node; the other is to process the received message, including the handshake message, the registration message, the node status message, the block status message, the node system message and the heartbeat information; the third is to provide monitoring reconnection and The timer for abnormality detection.
-|`Monitor`|  [monitor.h](./monitor.h) | The monitoring status of the node is saved, including monitoring the session, whether it is online, monitoring the Id, and monitoring the version information of the node.
+| `MonitorManager` | [monitor_manager.h](./monitor_manager.h) | The manager of the monitoring module, inherited from the `Network` class. This class has three functions: one is to manage the connection of the node; the other is to process the received message, including the handshake message, the registration message, the node status message, the block status message, the node system message and the heartbeat information; the third is to provide monitoring reconnection and the timer for abnormality detection.
+|`Monitor`|  [monitor.h](./monitor.h) | The monitoring status of the node is saved, including monitoring the session, whether it is online, monitoring the ID, and monitoring the version information of the node.
 |`SystemManager`|  [system_manager.h](../common/system_manager.h)  |The administrator of the node system information. It provides CPU timer and gets system monitoring information.
 
 ## Protocol Definition

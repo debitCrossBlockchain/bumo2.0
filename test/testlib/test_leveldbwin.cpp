@@ -73,6 +73,6 @@ int TestLevelDbWin()
 	for (int i = 0; i < repeat; i++){
 		tt();
 	}
-	LOG_INFO("%d times done", repeat);
+	LOG_INFO("Complete the loop test leveldb %d times", repeat);
 	return getchar();
 }

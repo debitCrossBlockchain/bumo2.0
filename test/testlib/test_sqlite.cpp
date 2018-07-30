@@ -10,7 +10,7 @@ int TestSqlite3(){
 	sqlite3* db;
 	int ret = sqlite3_open("c:\\tmp\\sqlite3_test", &db);
 	if ( ret != 0 ){
-		LOG_ERROR_ERRNO("open db failed", STD_ERR_CODE, STD_ERR_DESC);
+		LOG_ERROR_ERRNO("Failed to open db", STD_ERR_CODE, STD_ERR_DESC);
 	}
 
 	char *err = 0;
