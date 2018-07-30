@@ -53,7 +53,7 @@ namespace bumo {
 		// Check whether the monitor is enabled
 		MonitorConfigure& monitor_configure = Configure::Instance().monitor_configure_;
 		if (!monitor_configure.enabled_){
-			LOG_TRACE("monitor is unable");
+			LOG_TRACE("Failed to initialize monitor, config file does not allow startup");
 			return true;
 		}
 
@@ -69,7 +69,7 @@ namespace bumo {
 		// Add the register of StatusModule and TimeNotify
 		StatusModule::RegisterModule(this);
 		TimerNotify::RegisterModule(this);
-		LOG_INFO("monitor manager initialized");
+		LOG_INFO("Initialize monitor manager successfully");
 		return true;
 	}
 
@@ -101,7 +101,7 @@ namespace bumo {
 		bool bret = false;
 		MonitorConfigure& monitor_configure = Configure::Instance().monitor_configure_;
 		if (!monitor_configure.enabled_){
-			LOG_TRACE("monitor is unable");
+			LOG_TRACE("Failed to send message, configuration file is not allowed");
 			return true;
 		}
 
@@ -116,7 +116,7 @@ namespace bumo {
 			std::error_code ignore_ec;
 			// Send the monitor request
 			if (!monitor->SendRequest(type, data, ignore_ec)) {
-				LOG_ERROR("Failed to send monitor(type: " FMT_I64 ") from ip(%s) (%d:%s)", type, monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Failed to send monitor, (type: " FMT_I64 ") from ip(%s) (%d:%s)", type, monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value(), ignore_ec.message().c_str());
 				break;
 			}
@@ -136,20 +136,20 @@ namespace bumo {
 			monitor::Hello hello;
 			// Parse hello message
 			if (!hello.ParseFromString(message.data())) {
-				LOG_ERROR("Failed to receive hello from ip(%s) (%d:parse hello message)", monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Failed to receive hello message from ip(%s) (%d:parse hello message)", monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value());
 				break;
 			}
 			// Check the bumo version
 			if (hello.service_version() != 3) {
-				LOG_ERROR("Failed to receive hello from ip(%s) (%d: monitor center version is low (3))", monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Failed to receive hello message from ip(%s) (%d: monitor center version is low (3))", monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value());
 				break;
 			}
 
 			connect_time_out_ = hello.connection_timeout();
 
-			LOG_INFO("Receive hello from center (ip: %s, version: %d, timestamp: %lld)", monitor->GetPeerAddress().ToIpPort().c_str(), 
+			LOG_INFO("Receive hello message from center (ip: %s, version: %d, timestamp: %lld)", monitor->GetPeerAddress().ToIpPort().c_str(), 
 				hello.service_version(), hello.timestamp());
 
 			monitor::Register reg;
@@ -189,7 +189,7 @@ namespace bumo {
 			// Set the active time
 			monitor->SetActiveTime(utils::Timestamp::HighResolution());
 
-			LOG_INFO("Receive register from center (ip: %s, timestamp: " FMT_I64 ")", monitor->GetPeerAddress().ToIpPort().c_str(), reg.timestamp());
+			LOG_INFO("Receive register message from center (ip: %s, timestamp: " FMT_I64 ")", monitor->GetPeerAddress().ToIpPort().c_str(), reg.timestamp());
 			bret = true;
 		} while (false);
 
@@ -327,7 +327,7 @@ namespace bumo {
 			// Send the request of alert
 			if ( monitor && !monitor->SendRequest(monitor::MONITOR_MSGTYPE_ALERT, alert_status.SerializeAsString(), ignore_ec)) {
 				bret = false;
-				LOG_ERROR("Failed to send alert status to ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
+				LOG_ERROR("Failed to send alert status message to ip(%s) (%d:%s)", monitor->GetPeerAddress().ToIpPort().c_str(),
 					ignore_ec.value(), ignore_ec.message().c_str());
 			}
 

@@ -319,7 +319,7 @@ namespace bumo {
 				keyvaule_max_open_files = 2;
 				ledger_max_open_files = 4;
 				account_max_open_files = 4; 
-				LOG_INFO("mac os max open files is too lower:%d.", max_open_files);
+				LOG_INFO("In mac os, the maximum number (%d) of files handles is too low.", max_open_files);
 			}
 			else
 			{
@@ -331,26 +331,26 @@ namespace bumo {
 				ledger_max_open_files = (ledger_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : ledger_max_open_files;
 				account_max_open_files = (account_max_open_files > BUMO_ROCKSDB_MAX_OPEN_FILES) ? -1 : account_max_open_files;
 			}
-			LOG_INFO("mac os db file limited:%d, keyvaule:%d, ledger:%d, account:%d:",
+			LOG_INFO("Assign number of file handles in mac os, max :%d, keyvaule used:%d, ledger used:%d, account used:%d:",
 				max_open_files, keyvaule_max_open_files, ledger_max_open_files, account_max_open_files);
 #endif
 			keyvalue_db_ = NewKeyValueDb(db_config);
 			if (!keyvalue_db_->Open(db_config.keyvalue_db_path_, keyvaule_max_open_files)) {
-				LOG_ERROR("Failed to open db. Keyvalue db path(%s) open failure(%s)\n",
+				LOG_ERROR("Failed to open keyvalue db path(%s), the reason is(%s)\n",
 					db_config.keyvalue_db_path_.c_str(), keyvalue_db_->error_desc().c_str());
 				break;
 			}
 
 			ledger_db_ = NewKeyValueDb(db_config);
 			if (!ledger_db_->Open(db_config.ledger_db_path_, ledger_max_open_files)) {
-				LOG_ERROR("Failed to open db.Ledger db path(%s) open failure(%s)\n",
+				LOG_ERROR("Failed to open ledger db path(%s), the reason is(%s)\n",
 					db_config.ledger_db_path_.c_str(), ledger_db_->error_desc().c_str());
 				break;
 			}
 
 			account_db_ = NewKeyValueDb(db_config);
 			if (!account_db_->Open(db_config.account_db_path_, account_max_open_files)) {
-				LOG_ERROR("Ledger db path(%s) open failure(%s)\n",
+				LOG_ERROR("Failed to open account db path(%s), the reason is(%s)\n",
 					db_config.account_db_path_.c_str(), account_db_->error_desc().c_str());
 				break;
 			}

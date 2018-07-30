@@ -79,7 +79,7 @@ namespace bumo {
 
 	bool PeerNetwork::Exit() {
 		//Join and wait
-		LOG_INFO("close async OK");
+		LOG_INFO("Exit peer netwrok ok.");
 
 		return true;
 	}
@@ -184,7 +184,7 @@ namespace bumo {
 				break;
 			}
 
-			LOG_INFO("Recv hello, peer(%s) is active", peer->GetRemoteAddress().ToIpPort().c_str());
+			LOG_INFO("Receive a hello message, peer(%s) is active", peer->GetRemoteAddress().ToIpPort().c_str());
 			peer->SetActiveTime(utils::Timestamp::HighResolution());
 
 			if (peer->InBound()) {
@@ -242,7 +242,7 @@ namespace bumo {
 		//if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_TRANSACTION, message.data(), conn_id)) {
 		protocol::TransactionEnv tran;
 		if (!tran.ParseFromString(message.data())) {
-			LOG_TRACE("Transaction from id(" FMT_I64 ") parse error", conn_id);
+			LOG_TRACE("Failed to parse transaction from a connection which id is(" FMT_I64 ")", conn_id);
 			return false;
 		}
 
@@ -306,18 +306,18 @@ namespace bumo {
 		//Should be in validators
 		ConsensusMsg msg(env);
 		if (ConsensusManager::Instance().GetConsensus()->GetValidatorIndex(msg.GetNodeAddress()) < 0) {
-			LOG_TRACE("Cann't find the validator(%s) in the list", msg.GetNodeAddress());
+			LOG_TRACE("Failed to find validator (%s) in the list.", msg.GetNodeAddress());
 			return true;
 		}
 
 		std::string hash = utils::String::Bin4ToHexString(msg.GetHash());
 
-		LOG_TRACE("On pbft hash(%s), receive consensus from node address(%s) sequence(" FMT_I64 ") pbft type(%s) size(" FMT_SIZE ")",
+		LOG_TRACE("Receive pbft consensus,hash(%s),from node address(%s) sequence(" FMT_I64 ") pbft type(%s) size(" FMT_SIZE ")",
 			hash.c_str(), msg.GetNodeAddress(), msg.GetSeq(),
 			PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()), msg.GetSize());
 
 		if (broadcast_.IsQueued(protocol::OVERLAY_MSGTYPE_PBFT, message.data())) {
-			LOG_TRACE("Consensus msg from id(" FMT_I64 ") queued", conn_id);
+			LOG_TRACE("Duplicate consensus transaction in the broadcast queue.Received from connection id(" FMT_I64 ")", conn_id);
 			return true;
 		}
 
@@ -329,7 +329,7 @@ namespace bumo {
 					BroadcastMsg(protocol::OVERLAY_MSGTYPE_PBFT, message.data());
 				}
 				else {
-					LOG_TRACE("Pbft hash(%s) on consensus failed", hash.c_str());
+					LOG_TRACE("Failed to deal with pbft consensus, which hash is(%s)  ", hash.c_str());
 				}
 		});
 		
@@ -347,11 +347,11 @@ namespace bumo {
 		const protocol::Signature &sig = notify.signature();
 		PublicKey pub_key(sig.public_key());
         if (ConsensusManager::Instance().GetConsensus()->GetValidatorIndex(pub_key.GetEncAddress()) < 0) {
-            LOG_TRACE("Cann't find the validator(%s) in the list", pub_key.GetEncAddress().c_str());
+            LOG_TRACE("Failed to find the validator(%s) in the list", pub_key.GetEncAddress().c_str());
 			return true;
 		}
 
-		LOG_INFO("Receive notification for ledger up (%s)", Proto2Json(notify).toFastString().c_str());
+		LOG_INFO("Receive a ledger up notify message: (%s)", Proto2Json(notify).toFastString().c_str());
 		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY, message.data(), conn_id)) {
 			BroadcastMsg(protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY, message.data());
 			GlueManager::Instance().OnRecvLedgerUpMsg(notify);
@@ -441,7 +441,7 @@ namespace bumo {
 				utils::InetAddress address(item.ip(), (uint16_t)item.port());
 				int64_t num_failures = item.num_failures();
 
-				LOG_TRACE("checking address ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+				LOG_TRACE("Checking address ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 
 				bool exist = false;
 				for (ConnectionMap::iterator iter = connections_.begin(); iter != connections_.end(); iter++) {
@@ -453,7 +453,7 @@ namespace bumo {
 				}
 
 				if (exist) {
-					LOG_TRACE("skip to connect existed ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+					LOG_TRACE("Skip to connect the existed ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 					continue;
 				}
 				bool is_local_addr = false;
@@ -467,12 +467,12 @@ namespace bumo {
 				}
 
 				if (is_local_addr) {
-					LOG_TRACE("skip to connect self ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+					LOG_TRACE("Skip to connect self ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 					continue;
 				}
 
 
-				LOG_TRACE("connect to %s, " FMT_SIZE, address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+				LOG_TRACE("Connect address: %s, thread id:" FMT_SIZE, address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 				
 				std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws",address.ToIpPort().c_str());
 				
@@ -551,7 +551,7 @@ namespace bumo {
 		}
 
 		if (peer_count > 0) {
-			LOG_TRACE("Query if a peer(%s) is existed", address.ToIpPort().c_str());
+			LOG_TRACE("Failed to create peer, because (%s) is existed", address.ToIpPort().c_str());
 			return true;
 		}
 

@@ -56,7 +56,7 @@ namespace utils {
 			LOG_ERROR("Failed to initialize daemon, invalid shmget");
 			return false;
 		}
-		LOG_INFO("Memory attached at %lx\n", (unsigned long int)shm);
+		LOG_INFO("Attached to shared memory address at %lx\n", (unsigned long int)shm);
 		//Set the shared memory
 		shared = (int64_t*)shm;
 

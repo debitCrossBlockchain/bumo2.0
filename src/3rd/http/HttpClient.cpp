@@ -57,7 +57,7 @@ http_request(std::string domain, std::string path, unsigned short port, std::str
         std::getline(response_stream, status_message);
         if (!response_stream || http_version.substr(0, 5) != "HTTP/")
         {
-            LOG_TRACE("Invalid response");
+            LOG_TRACE("Failed to get http request.Invalid response");
             return 1;
         }
         if (status_code != 200)

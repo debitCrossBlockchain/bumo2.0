@@ -300,7 +300,7 @@ namespace bumo1 {
 	void Network::OnClientOpen(connection_hdl hdl) {
 		Connection * conn = GetPeer(hdl);
 		if (conn) {
-			LOG_INFO("Peer connected, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			LOG_INFO("Peer is connected, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 			conn->SetConnectTime();
 			conn->Ping(ec_);
 		}
@@ -308,7 +308,7 @@ namespace bumo1 {
 
 	void Network::OnClientClose(connection_hdl hdl) {
 		Connection *peer = GetPeer(hdl);
-		LOG_INFO("Peer close, ip(%s)", peer->GetPeerAddress().ToIpPort().c_str());
+		LOG_INFO("Peer is closed, ip(%s)", peer->GetPeerAddress().ToIpPort().c_str());
 		if (peer){
 			OnDisconnect(peer);
 		} 
@@ -325,7 +325,7 @@ namespace bumo1 {
 	}
 
 	void Network::OnClientMessage(connection_hdl hdl, client::message_ptr msg) {
-		LOG_INFO("Client recv message %s %d",
+		LOG_INFO("Recive message %s %d",
 			utils::String::BinToHexString(msg->get_payload()).c_str(), msg->get_opcode());
 	}
 
@@ -333,19 +333,19 @@ namespace bumo1 {
 		Connection *peer = GetPeer(hdl);
 		if (peer){
 			peer->TouchReceiveTime();
-			LOG_INFO("Recv Pong, payload(%s)", payload.c_str());
+			LOG_INFO("Recive pong message, payload(%s)", payload.c_str());
 		} 
 	}
 
 	bool Network::OnRequestPing(protocol::WsMessage &message, Connection *conn) {
-		LOG_INFO("On Ping Request");
+		LOG_INFO("Recive ping message");
 		protocol::WsMessage res = message;
 		res.set_request(false);
 		return conn->SendByteMessage(res.SerializeAsString(), ec_);
 	}
 
 	bool Network::OnResponsePing(protocol::WsMessage &message, Connection *conn) {
-		LOG_INFO("On Ping Response");
+		LOG_INFO("Recive ping response");
 		return true;
 	}
 
