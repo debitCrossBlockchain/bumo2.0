@@ -30,7 +30,7 @@ Class name | Statement file | Function
 | `Singleton` | [singleton.h](./singleton.h) | Single instance template class. Ensure that the successor of this class is a single instance class.
 | `random` related| [random.h](./random.h) | It gets random bytes.
 | `NonCopyable` | [noncopyable.h](./noncopyable.h) | The base class for copyless constructors and assignment functions.
-| `Logger` | [logger.h](./logger.h) | Log operation class. It has the following features: first, it provides diversified output methods, such as files and consoles; second, it provides different levels of log output, such as `NONE, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, ALL`; third, automatically manage log files, such as generating a file if it exceeds the specified size or date, periodically cleans up expired log files, and so on.
+| `Logger` | [logger.h](./logger.h) | Log operation class. It has the following features: first, it provides diversified output methods, such as files and consoles; second, it provides different levels of log output, such as `NONE, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, ALL`; third, it automatically manages log files, such as generating a file if it exceeds the specified size or date, periodically cleans up expired log files, and so on.
 | `File` | [file.h](./file.h) | File read and write classes, cross-platform. It implements file read and write, directory operations and other functions.
 | `EccSm2` | [ecc_sm2.h](./ecc_sm2.h) | It implements SM2 algorithm.
 | `crypto` related | [crypto.h](./crypto.h) | A collection of cryptographic libraries. It implements encryption algorithms such as `Base58, Sha256, MD5, Aes`, etc.
