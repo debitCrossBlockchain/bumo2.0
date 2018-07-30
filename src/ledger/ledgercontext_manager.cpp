@@ -68,7 +68,7 @@ namespace bumo {
 	LedgerContext::~LedgerContext() {}
 
 	void LedgerContext::Run() {
-		LOG_INFO("Thread preprocessing the consensus value, ledger seq(" FMT_I64 ")", consensus_value_.ledger_seq());
+		LOG_INFO("Preprocessing the consensus value, ledger(" FMT_I64 ")", consensus_value_.ledger_seq());
 		start_time_ = utils::Timestamp::HighResolution();
 		switch (type_)
 		{
@@ -85,7 +85,7 @@ namespace bumo {
 			TestTransaction();
 			break;
 		default:
-			LOG_ERROR("LedgerContext action type unknown");
+			LOG_ERROR("Action type unknown of LedgerContext.");
 			break;
 		}
 	}
@@ -137,7 +137,7 @@ namespace bumo {
 			parameter_.contract_address_ = account.address();
 			std::shared_ptr<AccountFrm> dest_account = std::make_shared<AccountFrm>(account);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
-				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
+				LOG_ERROR("Failed to add account(%s) entry.", account.address().c_str());
 				propose_result_.exec_result_ = false;
 				return false;
 			}
@@ -158,7 +158,7 @@ namespace bumo {
 			dest_account->SetProtoMasterWeight(1);
 			dest_account->SetProtoTxThreshold(1);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
-				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
+				LOG_ERROR("Failed to add account(%s) entry.", account.address().c_str());
 				propose_result_.exec_result_ = false;
 				return false;
 			}
@@ -418,7 +418,7 @@ namespace bumo {
 			return ledger_context.closing_ledger_;
 		}
 		else {
-			LOG_ERROR("Syn process failed");
+			LOG_ERROR("Failed to process ledger synchronized.");
 			return NULL;
 		}
 	}
@@ -469,10 +469,10 @@ namespace bumo {
 		}
 
 		if (!ledger_context->Start(thread_name)) {
-			LOG_ERROR_ERRNO("Start test thread failed",
+			LOG_ERROR_ERRNO("Failed to start test thread.",
 				STD_ERR_CODE, STD_ERR_DESC);
 			result.set_code(protocol::ERRCODE_INTERNAL_ERROR);
-			result.set_desc("Start thread failed");
+			result.set_desc("Failed to start thread.");
 			delete ledger_context;
 			return false;
 		}
@@ -490,8 +490,8 @@ namespace bumo {
 		if (is_timeout) { //cancel it
 			ledger_context->Cancel();
 			result.set_code(protocol::ERRCODE_TX_TIMEOUT);
-			result.set_desc("Execute contract timeout");
-			LOG_ERROR("Test consvalue time(" FMT_I64 "ms) is out", total_timeout / utils::MICRO_UNITS_PER_MILLI);
+			result.set_desc("Contract execution timeout");
+			LOG_ERROR("Testing consensus value(" FMT_I64 "ms) timeout", total_timeout / utils::MICRO_UNITS_PER_MILLI);
 			ledger_context->JoinWithStop();
 			delete ledger_context;
 			return false;
@@ -577,7 +577,7 @@ namespace bumo {
 		LedgerContext *ledger_context = new LedgerContext(this, chash, consensus_value, propose);
 
 		if (!ledger_context->Start("process-value")) {
-			LOG_ERROR_ERRNO("Start process value thread failed, consvalue hash(%s)", utils::String::BinToHexString(chash).c_str(), 
+			LOG_ERROR_ERRNO("Failed to start processing consensus value, consensus value hash(%s)", utils::String::BinToHexString(chash).c_str(), 
 				STD_ERR_CODE, STD_ERR_DESC);
 
 			propose_result.block_timeout_ = true;
@@ -596,7 +596,7 @@ namespace bumo {
 
 		if (propose_result.block_timeout_) { //cancel it
 			ledger_context->Cancel();
-			LOG_ERROR("Pre execute consvalue time(" FMT_I64 "ms) is out", (utils::Timestamp::HighResolution() - time_start) / utils::MICRO_UNITS_PER_MILLI);
+			LOG_ERROR("Pre-executing consensus value(" FMT_I64 "ms) timeout", (utils::Timestamp::HighResolution() - time_start) / utils::MICRO_UNITS_PER_MILLI);
 			return false;
 		}
 
