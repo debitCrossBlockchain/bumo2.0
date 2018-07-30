@@ -343,7 +343,7 @@ namespace bumo {
 
 		protocol::ValidatorSet set;
 		if (!LedgerManager::Instance().GetValidators(proto_value.ledger_seq() - 1, set)) {
-			LOG_ERROR("Failed to get validator of ledger seq(" FMT_I64 ")",
+			LOG_ERROR("Failed to get validator of ledger(" FMT_I64 ")",
 				proto_value.ledger_seq() - 1);
 			return false;
 		}
@@ -391,7 +391,7 @@ namespace bumo {
 
 		//Check the previous ledger sequence.
 		if (consensus_value.ledger_seq() != lcl.seq() + 1) {
-			LOG_ERROR("Previous ledger's seq(" FMT_I64 ") + 1 is not equal to ledger seq( " FMT_I64 ") in consensus message.",
+			LOG_ERROR("Previous ledger's sequence(" FMT_I64 ") + 1 is not equal to ledger sequence( " FMT_I64 ") in consensus message.",
 				lcl.seq(),
 				consensus_value.ledger_seq());
 			return Consensus::CHECK_VALUE_MAYVALID;
@@ -399,7 +399,7 @@ namespace bumo {
 
 		//Check the previous hash.
 		if (consensus_value.previous_ledger_hash() != lcl.hash()) {
-			LOG_ERROR("Previous ledger(seq:" FMT_I64 ") hash(%s) in current node is not equal to the previous ledger hash(%s) in consensus value.",
+			LOG_ERROR("Previous ledger(" FMT_I64 ") hash(%s) in current node is not equal to the previous ledger hash(%s) in consensus value.",
 				lcl.seq(),
 				utils::String::Bin4ToHexString(lcl.hash()).c_str(),
 				utils::String::Bin4ToHexString(consensus_value.previous_ledger_hash()).c_str());
@@ -456,7 +456,7 @@ namespace bumo {
 			//Get the validator set for the pre pre ledger.
 			protocol::ValidatorSet set;
 			if (!LedgerManager::Instance().GetValidators(consensus_value.ledger_seq() - 2, set)) {
-				LOG_ERROR("Failed to get validator of ledger seq(" FMT_I64 ").",
+				LOG_ERROR("Failed to get validator of ledger (" FMT_I64 ").",
 					consensus_value.ledger_seq() - 2);
 				return Consensus::CHECK_VALUE_MAYVALID;
 			}
