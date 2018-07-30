@@ -78,9 +78,6 @@
     <ClCompile Include="..\..\src\overlay\peer.cpp">
       <Filter>overlay</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\glue\transaction_set.cpp">
-      <Filter>glue</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ledger\environment.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
@@ -178,9 +175,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\overlay\peer.h">
       <Filter>overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\glue\transaction_set.h">
-      <Filter>glue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ledger\environment.h">
       <Filter>ledger</Filter>

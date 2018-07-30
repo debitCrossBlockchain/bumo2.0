@@ -199,7 +199,6 @@ namespace bumo {
 	}
 
 	bool GlueManager::OnTransaction(TransactionFrm::pointer tx, Result &err) {
-		TopicKey key(tx->GetSourceAddress(), tx->GetNonce());
 		std::string hash_value = tx->GetContentHash();
 		std::string address = tx->GetSourceAddress();
 

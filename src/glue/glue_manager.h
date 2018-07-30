@@ -21,7 +21,6 @@
 #include <utils/lrucache.hpp>
 #include <overlay/peer.h>
 #include <consensus/consensus_manager.h>
-#include "transaction_set.h"
 #include "transaction_queue.h"
 #include "ledger_upgrade.h"
 
@@ -31,8 +30,6 @@ namespace bumo {
 		public bumo::TimerNotify,
 		public bumo::StatusModule,
 		public IConsensusNotify {
-
-		friend class TransactionSetFrm;
 
 		utils::Mutex lock_;
 		std::shared_ptr<TransactionQueue> tx_pool_;
