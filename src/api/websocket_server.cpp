@@ -117,7 +117,7 @@ namespace bumo {
 		}
 
 		StatusModule::RegisterModule(this);
-		LOG_INFO("Websocket server was successfully initialized");
+		LOG_INFO("Initialize web socket server successfully");
 		return true;
 	}
 
@@ -144,7 +144,7 @@ namespace bumo {
 		Connection *conn = GetConnection(conn_id);
 		if (conn) {
 			conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
-			LOG_INFO("Receives a hello message from ip(%s), and send response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
+			LOG_INFO("Receive a hello message from ip(%s), and send response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
 		}
 		return true;
@@ -158,7 +158,7 @@ namespace bumo {
 			return false;
 		}
 
-		LOG_INFO("Receives a chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+		LOG_INFO("Receive a chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 		protocol::ChainPeerMessage cpm;
 		if (!cpm.ParseFromString(message.data())) {
 			LOG_ERROR("Failed to parse the message, invalid chain peer message");
@@ -247,7 +247,7 @@ namespace bumo {
 
 		protocol::ChainResponse default_response;
 		do {
-			LOG_INFO("Receives a subscription message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			LOG_INFO("Receive a subscription message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 			protocol::ChainSubscribeTx subs;
 			if (!subs.ParseFromString(message.data())) {
 				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);

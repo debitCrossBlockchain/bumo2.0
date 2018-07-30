@@ -140,20 +140,20 @@ int main(int argc, char *argv[]){
 
 		// end run command
 		bumo::Storage &storage = bumo::Storage::Instance();
-		LOG_INFO("keyvalue(%s),account(%s),ledger(%s)", 
+		LOG_INFO("The path of the database is as follows: keyvalue(%s),account(%s),ledger(%s)", 
 			config.db_configure_.keyvalue_db_path_.c_str(),
 			config.db_configure_.account_db_path_.c_str(),
 			config.db_configure_.ledger_db_path_.c_str());
 
 		if (!bumo::g_enable_ || !storage.Initialize(config.db_configure_, arg.drop_db_)) {
-			LOG_ERROR("Failed to initialize db");
+			LOG_ERROR("Failed to initialize database");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::Storage::Exit, &storage));
-		LOG_INFO("Initialize db successfully");
+		LOG_INFO("Initialize database successfully");
 
 		if (arg.drop_db_) {
-			LOG_INFO("Drop db successfully");
+			LOG_INFO("Drop database successfully");
 			return 1;
 		} 
 		
@@ -186,7 +186,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::Global::Exit, &global));
-		LOG_INFO("Initialize global variable successfully");
+		LOG_INFO("Initialize global module successfully");
 
 		//Consensus manager must be initialized before ledger manager and glue manager
 		bumo::ConsensusManager &consensus_manager = bumo::ConsensusManager::Instance();
