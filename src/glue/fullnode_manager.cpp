@@ -618,10 +618,10 @@ namespace bumo {
 		}
 		
 		if (!account->AddBalance(fullnode_reward)) {
-			LOG_ERROR("Account(%s) allocate reward failed", account->GetAccountAddress().c_str());
+			LOG_ERROR("Failed to allocate reward for account(%s)", account->GetAccountAddress().c_str());
 			return false;
 		} else {
-			LOG_ERROR("Account(%s) allocate reward done", account->GetAccountAddress().c_str());
+			LOG_INFO("Allocate reward for account(%s) done", account->GetAccountAddress().c_str());
         }
 		return true;
 	}
