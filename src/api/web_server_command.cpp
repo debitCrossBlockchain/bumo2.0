@@ -156,7 +156,7 @@ namespace bumo {
 			result_item["error_code"] = result.code();
 			result_item["error_desc"] = result.desc();
 		}
-		LOG_TRACE("Create %u transactions use " FMT_I64 "(ms)", json_items.size(),
+		LOG_TRACE("Created %u transactions use " FMT_I64 "(ms)", json_items.size(),
 			(utils::Timestamp::HighResolution() - begin_time) / utils::MICRO_UNITS_PER_MILLI);
 
 
@@ -510,7 +510,7 @@ namespace bumo {
 			reply_json["error_desc"] = result.desc();
 
 		}//end for
-		LOG_TRACE("Create %u transactions use " FMT_I64 "(ms)", json_items.size(),
+		LOG_TRACE("Created %u transactions use " FMT_I64 "(ms)", json_items.size(),
 			(utils::Timestamp::HighResolution() - begin_time) / utils::MICRO_UNITS_PER_MILLI);
 		reply = reply_json.toStyledString();
 	}
@@ -608,7 +608,7 @@ namespace bumo {
 			result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			result.set_desc(utils::String::Format("Source account(%s) overflow for fee, bytes_fee:(" FMT_I64 "), total_opt_fee:(" FMT_I64 ")", 
 				tx_source_address.c_str(), bytes_fee, total_opt_fee));
-			LOG_ERROR("Failed to evaluate fee.Failed to evaluate fee.%s", result.desc().c_str());
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 			return false;
 		}
 

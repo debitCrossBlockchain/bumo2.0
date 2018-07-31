@@ -79,7 +79,7 @@ namespace bumo {
 
 	bool PeerNetwork::Exit() {
 		//Join and wait
-		LOG_INFO("Exit peer netwrok ok.");
+		LOG_INFO("Exited peer netwrok ok.");
 
 		return true;
 	}
@@ -184,7 +184,7 @@ namespace bumo {
 				break;
 			}
 
-			LOG_INFO("Receive a hello message, peer(%s) is active", peer->GetRemoteAddress().ToIpPort().c_str());
+			LOG_INFO("Received a hello message, peer(%s) is active", peer->GetRemoteAddress().ToIpPort().c_str());
 			peer->SetActiveTime(utils::Timestamp::HighResolution());
 
 			if (peer->InBound()) {
@@ -312,7 +312,7 @@ namespace bumo {
 
 		std::string hash = utils::String::Bin4ToHexString(msg.GetHash());
 
-		LOG_TRACE("Receive pbft consensus,hash(%s),from node address(%s) sequence(" FMT_I64 ") pbft type(%s) size(" FMT_SIZE ")",
+		LOG_TRACE("Received pbft consensus,hash(%s),from node address(%s) sequence(" FMT_I64 ") pbft type(%s) size(" FMT_SIZE ")",
 			hash.c_str(), msg.GetNodeAddress(), msg.GetSeq(),
 			PbftDesc::GetMessageTypeDesc(msg.GetPbft().pbft().type()), msg.GetSize());
 
@@ -351,7 +351,7 @@ namespace bumo {
 			return true;
 		}
 
-		LOG_INFO("Receive a ledger up notify message: (%s)", Proto2Json(notify).toFastString().c_str());
+		LOG_INFO("Received a ledger up notify message: (%s)", Proto2Json(notify).toFastString().c_str());
 		if (ReceiveBroadcastMsg(protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY, message.data(), conn_id)) {
 			BroadcastMsg(protocol::OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY, message.data());
 			GlueManager::Instance().OnRecvLedgerUpMsg(notify);
@@ -413,7 +413,7 @@ namespace bumo {
 				LOG_ERROR("Failed to write a new peer table, error desc(%s)", db->error_desc().c_str());
 			}
 			else {
-				LOG_INFO("Clean %d inactive peers, left %d peers", all.peers_size() - new_all.peers_size(), new_all.peers_size());
+				LOG_INFO("Cleaned %d inactive peers, left %d peers", all.peers_size() - new_all.peers_size(), new_all.peers_size());
 			}
 		}
 		total_peers_count_ = new_all.peers_size();
@@ -453,7 +453,7 @@ namespace bumo {
 				}
 
 				if (exist) {
-					LOG_TRACE("Skip to connect the existed ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+					LOG_TRACE("Skiped to connect the existed ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 					continue;
 				}
 				bool is_local_addr = false;
@@ -467,12 +467,12 @@ namespace bumo {
 				}
 
 				if (is_local_addr) {
-					LOG_TRACE("Skip to connect self ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+					LOG_TRACE("Skiped to connect self ip(%s), thread id(" FMT_SIZE ")", address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 					continue;
 				}
 
 
-				LOG_TRACE("Connect address: %s, thread id:" FMT_SIZE, address.ToIpPort().c_str(), utils::Thread::current_thread_id());
+				LOG_TRACE("Connecting address: %s, thread id:" FMT_SIZE, address.ToIpPort().c_str(), utils::Thread::current_thread_id());
 				
 				std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws",address.ToIpPort().c_str());
 				
