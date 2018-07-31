@@ -182,7 +182,7 @@ namespace bumo1 {
 	}
 
 	void Network::OnMessage(connection_hdl hdl, server::message_ptr msg) {
-		LOG_INFO("Recv message %s %d", 
+		LOG_INFO("Received a message %s %d", 
 			utils::String::BinToHexString(msg->get_payload()).c_str(), msg->get_opcode());
 
 		do {
