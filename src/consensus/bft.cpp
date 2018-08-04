@@ -39,7 +39,6 @@ namespace bumo {
 			return false;
 		}
 
-		//Load from the check point.
 		LoadValues();
 
 		//sequence_ = last_exe_seq_ + 1;
@@ -240,7 +239,6 @@ namespace bumo {
 		const PbftInstanceIndex *index = NULL;
 		PbftInstanceMap::iterator last_prepared_iter = instances_.end();
 		for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end(); iter++) {
-			//Check if we should send the prepare again
 
 			//Check if it times out
 			if (iter->second.IsExpire(current_time) &&
@@ -252,6 +250,7 @@ namespace bumo {
 				iter->second.have_send_viewchange_ = true;
 			}
 
+			//Check if we should send the prepare again
 			if (iter->second.NeedSendAgain(current_time) &&
 				view_active_ &&
 				iter->second.pre_prepare_msg_.has_pbft()) {
@@ -276,7 +275,7 @@ namespace bumo {
 				index->view_number_, index->sequence_, last_prepared_instance->commit_round_);
 		}
 
-		//Check the view change timeout, and get the last new view sent.
+		//Check if the 'view change' times out, and get the last 'new view' just sent.
 		PbftVcInstance *lastvc_instance = NULL;
 		for (PbftVcInstanceMap::iterator iter_vc = vc_instances_.begin(); iter_vc != vc_instances_.end(); iter_vc++) {
 			if (iter_vc->second.NeedSendAgain(current_time) && iter_vc->second.view_change_msg_.has_pbft()) {
@@ -822,10 +821,6 @@ namespace bumo {
 		pinstance.pre_prepare_ = pre_prepare;
 		pinstance.check_value_result_ = check_value_ret;
 
-		//ValueSaver saver;
-		//SaveInstance(saver);
-		//saver.Commit();
-
 		if (pinstance.check_value_result_ != Consensus::CHECK_VALUE_VALID) {
 			LOG_INFO("Failed to check the value(view number:" FMT_I64 ",sequence:" FMT_I64 ", round number:1, value: %s), so don't send prepare message",
 				pre_prepare.view_number(), pre_prepare.sequence(), notify_->DescConsensusValue(pre_prepare.value()).c_str());
@@ -871,10 +866,6 @@ namespace bumo {
 				pinstance.phase_ = PBFT_PHASE_PREPARED;
 				pinstance.phase_item_ = 0;
 			}
-
-			//ValueSaver saver;
-			//SaveInstance(saver);
-			//saver.Commit();
 
 			//Send commit
 			if (pinstance.check_value_result_ == Consensus::CHECK_VALUE_VALID) {
@@ -1206,7 +1197,7 @@ namespace bumo {
 				break;
 			}
 
-			//Get commit env from buf
+			//Get 'commit' env from buf
 			protocol::PbftProof proof;
 			const PbftPhaseVector &vec = instance.msg_buf_[protocol::PBFT_TYPE_COMMIT];
 			std::set<std::string> commit_node;
@@ -1357,7 +1348,7 @@ namespace bumo {
 		}
 	
 
-		//Add view change value digest
+		//Add 'view change' value digest
 		if (vc_raw->has_prepared_set()) {
 			const protocol::PbftEnv &pp_pbft_env = vc_raw->prepared_set().pre_prepare();
 			const protocol::PbftPrePrepare &pp_pbft = pp_pbft_env.pbft().pre_prepare();
@@ -1365,12 +1356,12 @@ namespace bumo {
 		}
 
 
-		//Add view change signature
+		//Add 'view change' signature
 		protocol::Signature *sig = pbft_env_inner->mutable_signature();
 		sig->set_public_key(private_key_.GetEncPublicKey());
 		sig->set_sign_data(private_key_.Sign(pbft_inner->SerializeAsString()));
 
-		//Add view change raw value signature
+		//Add 'view change' raw value signature
 		protocol::Signature *sig_out = env->mutable_signature();
 		sig_out->set_public_key(private_key_.GetEncPublicKey());
 		sig_out->set_sign_data(private_key_.Sign(pbft->SerializeAsString()));
