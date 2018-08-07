@@ -86,13 +86,13 @@ function impeachFullNode(params){
         }
     }
     if (impeach_valid === true) {
-        let impeach = {};
-        impeach[sender] = impeachInfo;
-        fullnode.impeach_list.push(impeach);
+        let new_impeach = {};
+        new_impeach[sender] = impeachInfo;
+        fullnode.impeach_list.push(new_impeach);
     
-        if(fullnode.impeach_list.length >= minImpeachSize) {
+        if(fullnode.impeach_list.length === minImpeachSize) {
             assert(setFullNode(JSON.stringify(fullnode), 'remove') === true, 'Failed to remove invalid full node');
-        } else {
+        } else if (fullnode.impeach_list.length < minImpeachSize){
 			assert(setFullNode(JSON.stringify(fullnode), 'update') === true, 'Failed to update full node ' + impeachedAddr);
 		}
     }

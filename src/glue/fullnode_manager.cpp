@@ -44,7 +44,7 @@ namespace bumo {
 
 	bool FullNodeManager::Initialize() {
 		if (!priv_key_.From(Configure::Instance().p2p_configure_.node_private_key_)) {
-			LOG_ERROR("Initialize node private key failed");
+			LOG_ERROR("Failed to initialize node private key");
 			return false;
 		}
 		local_address_ = priv_key_.GetEncAddress();
@@ -58,7 +58,7 @@ namespace bumo {
 		// Load full nodes from db
 		full_node_info_.clear();
 		if (!loadAllFullNode()) {
-			LOG_ERROR("Initialize full node list failed");
+			LOG_ERROR("Failed to initialize full node list");
 			return false;
 		}
 
@@ -161,8 +161,8 @@ namespace bumo {
 			it->second = fp;
 		}
 		else {
-			// add full node if not exist
-			if (!add(fp)) return false;
+			LOG_ERROR("Failed to update full node %s, no such address", fp->getAddress().c_str());
+			return false;
 		}
 		return true;
 	}
@@ -262,7 +262,7 @@ namespace bumo {
 				LOG_ERROR("Failed to load full node info from json, %s", nodestr.c_str());
 				return false;
 			} 
-			if (!update(fp)) return false;
+			if (!add(fp)) return false;
 		}
 		return true;
 	}

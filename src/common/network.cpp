@@ -152,6 +152,7 @@ namespace bumo {
 		if (ec1.value() == 0) {
 			return true;
 		} else{
+			LOG_ERROR("Client send message error code(%d:%s)", ec1.value(), ec1.message().c_str());
 			ec = ec1;
 			return false;
 		}
