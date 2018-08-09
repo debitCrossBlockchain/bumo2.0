@@ -2,38 +2,38 @@ English | [中文](README_CN.md)
 
 # Utils
 
-## 基本介绍
-Utils 模块提供 C++ 工程常用的工具集，并且屏蔽底层平台差异，具体功能如下：
-- 获取时间戳
-- 线程管理
-- 系统状态管理
-- 字符串操作
-- `SM2、SM3、Base58` 等加解密
-- 单实例类
-- 线程锁
-- 随机数
-- 无拷贝构造函数基类
-- 写日志
-- 读写文件
-- 原子操作
+## Introduction
+The Utils module provides a common set of tools for C++ projects and shields the underlying platform differences. The specific functions are as follows:
+- Get timestamp
+- Thread management
+- System state management
+- String manipulation
+- `SM2、SM3、Base58` etc,. encryption
+- Single instance class
+- Thread lock
+- Random number
+- Copyless constructor base class
+- Write log
+- Read and write files
+- Atomic operation
 
-## 模块结构
-类名称 | 声明文件 | 功能
+## Module structure
+Class name | Statement file | Function
 |:--- | --- | ---
-| `utils` | [utils.h](./utils.h) | 实现以下功能：一是定义时间、字节单位的全局静态变量；二是实现原子性加减函数；三是实现 `ObjectExit` 类，用于批量处理对象自动释放使用；四是实现其他小函数：如 cpu 核数，sleep 函数，开机时间等。
-| `Timestamp` | [timestamp.h](./timestamp.h) | 时间戳工具类。能获取系统的时间戳，精确到微妙，并具有跨平台性。
-| `Timer` | [timer.h](./timer.h) | 定时器工具类。可以在设置时间内，定时执行某函数。
-| `Thread` | [thread.h](./thread.h) | 跨平台的线程工具类。实现 `ThreadPool`线程池、`Mutex` 线程锁等。
-| `System` | [system.h](./system.h) | 跨平台的系统工具类。实现查询硬件信息的功能。如硬盘、内存、主机名称、系统版本、日志大小、开机时间、cpu、硬件地址。
-| `String` | [strings.h](./strings.h) | 字符串处理类。实现多种字符串操作功能。如格式化、去空格、转数字、转二进制等。
-| `Sm3` | [sm3.h](./sm3.h) | 实现 SM3 加密算法。
-| `Singleton` | [singleton.h](./singleton.h) | 单实例模板类。保证该类的继承者为单实例类。
-| `random` 相关| [random.h](./random.h) | 获取随机字节。
-| `NonCopyable` | [noncopyable.h](./noncopyable.h) | 无拷贝构造函数和赋值函数的基类。
-| `Logger` | [logger.h](./logger.h) | 日志操作类。有如下特点：一是提供多样化输出方式，如文件、控制台；二是提供不同级别的日志输出，如`NONE，TRACE，DEBUG，INFO，WARN，ERROR，FATAL，ALL`；三是自动化管理日志文件，如超过指定大小或日期则新生成文件、定时清理过期的日志文件等。
-| `File` | [file.h](./file.h) | 文件读写类，具有跨平台性。实现文件读写、目录操作等功能。
-| `EccSm2` | [ecc_sm2.h](./ecc_sm2.h) | 实现 SM2 算法。
-| `crypto` 相关 | [crypto.h](./crypto.h) | 加密库的合集。实现加密算法如：`Base58，Sha256，MD5，Aes` 等。
-| `AtomMap` | [atom_map.h](./atom_map.h) | 原子操作性的数据集。可以存储大量非重复的 Key-Value 数据，用于保证对数据集的操作具有原子性。
-| `uint128_t` | [base_int.h](./base_int.h) | 大数运算的封装类。
+| `utils` | [utils.h](./utils.h) | The following functions are implemented: one is to define the time, the global static variable of the byte unit; the second is to implement the atomic addition and subtraction function; the third is to implement the `ObjectExit` class for batch processing object and automatically release usage; the fourth is to implement other small functions, such as cpu core number, sleep function, boot time and so on.
+| `Timestamp` | [timestamp.h](./timestamp.h) | Timestamp tool class. Get the timestamp of the system, precise to microsecond, and cross-platform.
+| `Timer` | [timer.h](./timer.h) | Timer tool class. A function can be executed periodically during the set time.
+| `Thread` | [thread.h](./thread.h) | Cross-platform threading tool class. It implements `ThreadPool` thread pool, `Mutex` thread lock, etc.
+| `System` | [system.h](./system.h) | A cross-platform system tool class. It implements the function of querying hardware information, such as hard disk, memory, host name, system version, log size, boot time, cpu, hardware address.
+| `String` | [strings.h](./strings.h) | String processing class. It implements a variety of string manipulation features, such as formatting, removing spaces, converting numbers, converting binary, etc.
+| `Sm3` | [sm3.h](./sm3.h) | It implements SM3 encryption algorithm.
+| `Singleton` | [singleton.h](./singleton.h) | Single instance template class. Ensure that the successor of this class is a single instance class.
+| `random` related| [random.h](./random.h) | It gets random bytes.
+| `NonCopyable` | [noncopyable.h](./noncopyable.h) | The base class for copyless constructors and assignment functions.
+| `Logger` | [logger.h](./logger.h) | Log operation class. It has the following features: first, it provides diversified output methods, such as files and consoles; second, it provides different levels of log output, such as `NONE, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, ALL`; third, it automatically manages log files, such as generating a file if it exceeds the specified size or date, periodically cleans up expired log files, and so on.
+| `File` | [file.h](./file.h) | File read and write classes, cross-platform. It implements file read and write, directory operations and other functions.
+| `EccSm2` | [ecc_sm2.h](./ecc_sm2.h) | It implements SM2 algorithm.
+| `crypto` related | [crypto.h](./crypto.h) | A collection of cryptographic libraries. It implements encryption algorithms such as `Base58, Sha256, MD5, Aes`, etc.
+| `AtomMap` | [atom_map.h](./atom_map.h) | Atomically operational data set. A large amount of non-repeating Key-Value data can be stored to ensure atomicity of operations on the data set.
+| `uint128_t` | [base_int.h](./base_int.h) | The wrapper class for large numbers of operations.
 

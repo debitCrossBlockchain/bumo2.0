@@ -21,7 +21,7 @@ CreateAccountAddress   #Create a public-private key pair
 CheckAccountAddressValid    #Check if the account number is correct
 CreateKeystore  #Create a private key store
 CheckKeystoreValid  #Check if the private key store is correct
-SignData    #Sign with private key
+SignData    #Sign with the private key
 SignDataWithKeystore    #Sign with the private key storage
 CheckSignedData     #Detect signature data
 CreateKeystoreFromPrivkey   #Create a private key store using the private key

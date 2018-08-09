@@ -134,46 +134,46 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&utils::Logger::Exit, &logger));
-		LOG_INFO("Initialize daemon successfully");
-		LOG_INFO("Load configure successfully");
-		LOG_INFO("Initialize logger successfully");
+		LOG_INFO("Initialized daemon successfully");
+		LOG_INFO("Loaded configure successfully");
+		LOG_INFO("Initialized logger successfully");
 
 		// end run command
 		bumo::Storage &storage = bumo::Storage::Instance();
-		LOG_INFO("keyvalue(%s),account(%s),ledger(%s)", 
+		LOG_INFO("The path of the database is as follows: keyvalue(%s),account(%s),ledger(%s)", 
 			config.db_configure_.keyvalue_db_path_.c_str(),
 			config.db_configure_.account_db_path_.c_str(),
 			config.db_configure_.ledger_db_path_.c_str());
 
 		if (!bumo::g_enable_ || !storage.Initialize(config.db_configure_, arg.drop_db_)) {
-			LOG_ERROR("Failed to initialize db");
+			LOG_ERROR("Failed to initialize database");
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::Storage::Exit, &storage));
-		LOG_INFO("Initialize db successfully");
+		LOG_INFO("Initialized database successfully");
 
 		if (arg.drop_db_) {
-			LOG_INFO("Drop db successfully");
+			LOG_INFO("Droped database successfully");
 			return 1;
 		} 
 		
 		if ( arg.clear_consensus_status_ ){
 			bumo::Pbft::ClearStatus();
-			LOG_INFO("Clear consensus status successfully");
+			LOG_INFO("Cleared consensus status successfully");
 			return 1;
 		}
 
 		if (arg.clear_peer_addresses_) {
 			bumo::KeyValueDb *db = bumo::Storage::Instance().keyvalue_db();
 			db->Put(bumo::General::PEERS_TABLE, "");
-			LOG_INFO("Clear peer addresss list successfully");
+			LOG_INFO("Cleared peer addresss list successfully");
 			return 1;
 		} 
 
 		if (arg.create_hardfork_) {
 			bumo::LedgerManager &ledgermanger = bumo::LedgerManager::Instance();
 			if (!ledgermanger.Initialize()) {
-				LOG_ERROR("legder manger init error!!!");
+				LOG_ERROR("Failed to initialize legder manger!");
 				return -1;
 			}
 			bumo::LedgerManager::CreateHardforkLedger();
@@ -186,7 +186,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::Global::Exit, &global));
-		LOG_INFO("Initialize global variable successfully");
+		LOG_INFO("Initialized global module successfully");
 
 		//Consensus manager must be initialized before ledger manager and glue manager
 		bumo::ConsensusManager &consensus_manager = bumo::ConsensusManager::Instance();
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::ConsensusManager::Exit, &consensus_manager));
-		LOG_INFO("Initialize consensus manager successfully");
+		LOG_INFO("Initialized consensus manager successfully");
 
 		bumo::LedgerManager &ledgermanger = bumo::LedgerManager::Instance();
 		if (!bumo::g_enable_ || !ledgermanger.Initialize()) {
@@ -203,7 +203,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::LedgerManager::Exit, &ledgermanger));
-		LOG_INFO("Initialize ledger successfully");
+		LOG_INFO("Initialized ledger successfully");
 
 		bumo::GlueManager &glue = bumo::GlueManager::Instance();
 		if (!bumo::g_enable_ || !glue.Initialize()){
@@ -211,7 +211,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::GlueManager::Exit, &glue));
-		LOG_INFO("Initialize glue manager successfully");
+		LOG_INFO("Initialized glue manager successfully");
 
 		bumo::PeerManager &p2p = bumo::PeerManager::Instance();
 		if (!bumo::g_enable_ || !p2p.Initialize(NULL, false)) {
@@ -219,7 +219,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::PeerManager::Exit, &p2p));
-		LOG_INFO("Initialize peer network successfully");
+		LOG_INFO("Initialized peer network successfully");
 
 		bumo::SlowTimer &slow_timer = bumo::SlowTimer::Instance();
 		if (!bumo::g_enable_ || !slow_timer.Initialize(1)){
@@ -227,7 +227,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::SlowTimer::Exit, &slow_timer));
-		LOG_INFO("Initialize slow timer with " FMT_SIZE " successfully", utils::System::GetCpuCoreCount());
+		LOG_INFO("Initialized slow timer with " FMT_SIZE " successfully", utils::System::GetCpuCoreCount());
 
 		bumo::WebSocketServer &ws_server = bumo::WebSocketServer::Instance();
 		if (!bumo::g_enable_ || !ws_server.Initialize(bumo::Configure::Instance().wsserver_configure_)) {
@@ -235,7 +235,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::WebSocketServer::Exit, &ws_server));
-		LOG_INFO("Initialize web server successfully");
+		LOG_INFO("Initialized web server successfully");
 
 		bumo::WebServer &web_server = bumo::WebServer::Instance();
 		if (!bumo::g_enable_ || !web_server.Initialize(bumo::Configure::Instance().webserver_configure_)) {
@@ -243,7 +243,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::WebServer::Exit, &web_server));
-		LOG_INFO("Initialize web server successfully");
+		LOG_INFO("Initialized web server successfully");
 
 		SaveWSPort();
 		
@@ -253,7 +253,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::MonitorManager::Exit, &monitor_manager));
-		LOG_INFO("Initialize monitor manager successfully");
+		LOG_INFO("Initialized monitor manager successfully");
 
 		bumo::ContractManager &contract_manager = bumo::ContractManager::Instance();
 		if (!contract_manager.Initialize(argc, argv)){
@@ -261,7 +261,7 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::ContractManager::Exit, &contract_manager));
-		LOG_INFO("Initialize contract manager successfully");
+		LOG_INFO("Initialized contract manager successfully");
 
 		bumo::g_ready_ = true;
 
@@ -287,7 +287,7 @@ int main(int argc, char *argv[]){
 	utils::Daemon::ExitInstance();
 	
 	if (arg.console_ && !bumo::g_ready_) {
-		printf("Initialize failed, please check log for detail\n");
+		printf("Initialized failed, please check log for detail\n");
 	}
 	printf("process exit\n");
 }

@@ -4,7 +4,7 @@ English | [中文](README_CN.md)
 
 ## Introduction
 
-Provides basic web page access capabilities, and the currently available feature is a smart contract syntax detection tool.
+It provides basic web page access capabilities, and the currently available feature is a smart contract syntax detection tool.
 
 ## Module Structure
 

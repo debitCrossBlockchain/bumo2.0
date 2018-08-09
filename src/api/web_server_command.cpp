@@ -28,7 +28,7 @@ namespace bumo {
 
 		Json::Value body;
 		if (!body.fromString(request.body)) {
-			LOG_ERROR("Parse request body json failed");
+			LOG_ERROR("Failed to parse the json content of the request");
 			Json::Value reply_json;
 			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
 			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must be in json format";
@@ -74,7 +74,7 @@ namespace bumo {
 					if (!tran->ParseFromString(decodeblob)) {
 						result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 						result.set_desc("ParseFromString from 'sign_data' invalid");
-						LOG_ERROR("ParseFromString from decodeblob invalid");
+						LOG_ERROR("Failed to parse the transaction, invalid decode blob");
 						break;
 					}
 
@@ -95,7 +95,7 @@ namespace bumo {
 						if (!pubkey.IsValid()) {
 							result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 							result.set_desc("'public_key' value is not existed or parameter error");
-							LOG_ERROR("Invalid publickey (%s)", signa["public_key"].asString().c_str());
+							LOG_ERROR("Failed to verify the public key, invalid public key (%s)", signa["public_key"].asString().c_str());
 							break;
 						}
 
@@ -156,7 +156,7 @@ namespace bumo {
 			result_item["error_code"] = result.code();
 			result_item["error_desc"] = result.desc();
 		}
-		LOG_TRACE("Create %u transaction use " FMT_I64 "(ms)", json_items.size(),
+		LOG_TRACE("Created %u transactions use " FMT_I64 "(ms)", json_items.size(),
 			(utils::Timestamp::HighResolution() - begin_time) / utils::MICRO_UNITS_PER_MILLI);
 
 
@@ -213,7 +213,7 @@ namespace bumo {
 		
 		Json::Value body;
 		if (!body.fromString(request.body)) {
-			LOG_ERROR("Failed to parse the request body json");
+			LOG_ERROR("Failed to parse the json content of the request");
 			Json::Value reply_json;
 			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
 			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must be in json format";
@@ -244,7 +244,7 @@ namespace bumo {
 				if (!Environment::AccountFromDB(test_parameter.contract_address_, acc)) {
 					error_code = protocol::ERRCODE_NOT_EXIST;
 					error_desc = utils::String::Format("Account(%s) is not existed", test_parameter.contract_address_.c_str());
-					LOG_ERROR("%s", error_desc.c_str());
+					LOG_ERROR("Failed to load the account from the database. %s", error_desc.c_str());
 					break;
 				}
 
@@ -254,7 +254,7 @@ namespace bumo {
 			if (test_parameter.code_.empty()) {
 				error_code = protocol::ERRCODE_NOT_EXIST;
 				error_desc = utils::String::Format("Account(%s) has no contract code", test_parameter.contract_address_.c_str());
-				LOG_ERROR("%s", error_desc.c_str());
+				LOG_ERROR("Failed to load test parameter. %s", error_desc.c_str());
 				break;
 			}
 
@@ -265,7 +265,7 @@ namespace bumo {
 				exe_result, result["logs"], result["txs"], result["query_rets"], result["stat"])) {
 				error_code = exe_result.code();
 				error_desc = exe_result.desc();
-				LOG_ERROR("%s", error_desc.c_str());
+				LOG_ERROR("Failed to execute the test.%s", error_desc.c_str());
 				break;
 			}
 		} while (false);
@@ -282,7 +282,7 @@ namespace bumo {
 	void WebServer::TestTransaction(const http::server::request &request, std::string &reply) {
 		Json::Value body;
 		if (!body.fromString(request.body)) {
-			LOG_ERROR("Parse request body json failed");
+			LOG_ERROR("Failed to parse the json content of the request");
 			Json::Value reply_json;
 			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
 			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must be in json format";
@@ -295,7 +295,7 @@ namespace bumo {
 		int64_t begin_time = utils::Timestamp::HighResolution();
 		const Json::Value &json_items = body["items"];
 		if (json_items.size() > 1) {			
-			LOG_ERROR("Test transaction too much(%d)", json_items.size());
+			LOG_ERROR("Failed to test transaction, too many items (%d)", json_items.size());
 			Json::Value reply_json;
 			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
 			reply_json["results"][Json::UInt(0)]["error_desc"] = "Too many test transactions;you can test only one transaction";
@@ -341,7 +341,7 @@ namespace bumo {
 					if (!tran->ParseFromString(decodeblob)) {
 						result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 						result.set_desc("ParseFromString from 'sign_data' invalid");
-						LOG_ERROR("ParseFromString from decodeblob invalid");
+						LOG_ERROR("Failed to parse the transaction, invalid decode blob");
 						break;
 					}
 					
@@ -403,7 +403,7 @@ namespace bumo {
 					exe_result, logs, txs, query_rets, stat, signature_number)) {
 					reply_json["error_code"] = exe_result.code();
 					reply_json["error_desc"] = exe_result.desc();
-					LOG_ERROR("%s", exe_result.desc().c_str());
+					LOG_ERROR("Failed to test transaction.%s", exe_result.desc().c_str());
 					break;
 				}
 				if (exe_result.code() == protocol::ERRCODE_SUCCESS){
@@ -464,7 +464,7 @@ namespace bumo {
 				//		exe_result, result_json["logs"], result_json["txs"], result_json["query_rets"], result_json["stat"], signature_number)) {
 				//		reply_json["error_code"] = exe_result.code();
 				//		reply_json["error_desc"] = exe_result.desc();
-				//		LOG_ERROR("%s", exe_result.desc().c_str());
+				//		LOG_ERROR("Failed to test transaction.%s", exe_result.desc().c_str());
 				//		skip_flag = true;
 				//		break;
 				//	}
@@ -510,7 +510,7 @@ namespace bumo {
 			reply_json["error_desc"] = result.desc();
 
 		}//end for
-		LOG_TRACE("Create %u transaction use " FMT_I64 "(ms)", json_items.size(),
+		LOG_TRACE("Created %u transactions use " FMT_I64 "(ms)", json_items.size(),
 			(utils::Timestamp::HighResolution() - begin_time) / utils::MICRO_UNITS_PER_MILLI);
 		reply = reply_json.toStyledString();
 	}
@@ -523,7 +523,7 @@ namespace bumo {
 		if (!Environment::AccountFromDB(tx_source_address, source_account)) {
 			result.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
 			result.set_desc(utils::String::Format("Source account(%s) not exist", tx_source_address.c_str()));
-			LOG_ERROR("%s", result.desc().c_str());
+			LOG_ERROR("Failed to load the account from the database.%s", result.desc().c_str());
 			return false;
 		}
 
@@ -540,7 +540,7 @@ namespace bumo {
 					result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 					result.set_desc(utils::String::Format("Source account(%s) math overflow, GetOperationTypeGas:(" FMT_I64 "), gas_price:(" FMT_I64 ")",
                         tx_source_address.c_str(), FeeCalculate::GetOperationTypeGas(ope), tran->gas_price()));
-					LOG_ERROR("%s", result.desc().c_str());
+					LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 					return false;
 				}
 
@@ -548,7 +548,7 @@ namespace bumo {
 					result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 					result.set_desc(utils::String::Format("Source account(%s) math overflow, total_opt_fee:(" FMT_I64 "), opt_price:(" FMT_I64 ")",
 						tx_source_address.c_str(), total_opt_fee, opt_price));
-					LOG_ERROR("%s", result.desc().c_str());
+					LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 					return false;
 				}
 
@@ -557,7 +557,7 @@ namespace bumo {
 						result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 						result.set_desc(utils::String::Format("Source account(%s) math overflow, pay_amount:(" FMT_I64 "), pay_coin().amount:(" FMT_I64 ")", 
 							tx_source_address.c_str(), pay_amount, ope.pay_coin().amount()));
-						LOG_ERROR("%s", result.desc().c_str());
+						LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 						return false;
 					}
 				}
@@ -566,7 +566,7 @@ namespace bumo {
 						result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 						result.set_desc(utils::String::Format("Source account(%s) math overflow, pay_amount:(" FMT_I64 "), init_balance:(" FMT_I64 ")",
 							tx_source_address.c_str(), pay_amount, ope.create_account().init_balance()));
-						LOG_ERROR("%s", result.desc().c_str());
+						LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 						return false;
 					}
 				}
@@ -579,7 +579,7 @@ namespace bumo {
 			result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			result.set_desc(utils::String::Format("Source account(%s) overflow for fee, balance:(" FMT_I64 "), base_reserve:(" FMT_I64 "), pay_amount:(" FMT_I64 ")",
 				tx_source_address.c_str(), balance, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), pay_amount));
-			LOG_ERROR("%s", result.desc().c_str());
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 			return false;
 		}
 
@@ -587,7 +587,7 @@ namespace bumo {
 			result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			result.set_desc(utils::String::Format("Source account(%s) overflow for fee, balance:(" FMT_I64 "), base_reserve:(" FMT_I64 "), pay_amount:(" FMT_I64 ")",
 				tx_source_address.c_str(), balance, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), pay_amount));
-			LOG_ERROR("%s", result.desc().c_str());
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 			return false;
 		}
 		tran->set_fee_limit(fee);
@@ -598,7 +598,7 @@ namespace bumo {
 				result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				result.set_desc(utils::String::Format("Source account(%s) overflow for fee, gas_price:(" FMT_I64 "), ByteSize:%d",
 					tx_source_address.c_str(), tran->gas_price(), tran->ByteSize()));
-				LOG_ERROR("%s", result.desc().c_str());
+				LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 				return false;
 			}
 		}
@@ -608,14 +608,14 @@ namespace bumo {
 			result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			result.set_desc(utils::String::Format("Source account(%s) overflow for fee, bytes_fee:(" FMT_I64 "), total_opt_fee:(" FMT_I64 ")", 
 				tx_source_address.c_str(), bytes_fee, total_opt_fee));
-			LOG_ERROR("%s", result.desc().c_str());
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 			return false;
 		}
 
 		if (fee < total_fee) {
 			result.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
 			result.set_desc(utils::String::Format("Source account(%s) not enough balance for fee", tx_source_address.c_str()));
-			LOG_ERROR("%s", result.desc().c_str());
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
 			return false;
 		}
 

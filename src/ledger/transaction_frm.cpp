@@ -203,7 +203,7 @@ namespace bumo {
 		}
 
 		if (contract_step_ > General::CONTRACT_STEP_LIMIT) {
-			error_info = "Step expire";
+			error_info = "Step exceeding limit";
 			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
 			result_.set_desc(error_info);
 			return true;
@@ -211,21 +211,21 @@ namespace bumo {
 
 		int64_t now = utils::Timestamp::HighResolution();
 		if (max_end_time_ != 0 && now > max_end_time_) {
-			error_info = "Time expire";
+			error_info = "Time expired";
 			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
 			result_.set_desc(error_info);
 			return true;
 		}
 
 		if (contract_memory_usage_ > General::CONTRACT_MEMORY_LIMIT) {
-			error_info = "Memory expire";
+			error_info = "Memory exceeding limit";
 			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
 			result_.set_desc(error_info);
 			return true;
 		}
 
 		if (contract_stack_usage_ > General::CONTRACT_STACK_LIMIT) {
-			error_info = "Stack expire";
+			error_info = "Stack exceeding limit";
 			result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_EXPIRED);
 			result_.set_desc(error_info);
 			return true;
@@ -254,24 +254,27 @@ namespace bumo {
 				break;
 			}
 
-			if (!utils::SafeIntAdd(total_fee, fee, total_fee)){
-				LOG_ERROR("Source account(%s), fee overflow (" FMT_I64 ") (" FMT_I64 ")", 
-					str_address.c_str(), total_fee, fee);
+			int64_t new_total_fee = 0;
+			if (!utils::SafeIntAdd(total_fee, fee, new_total_fee)){
+				LOG_ERROR("Calculation overflowed when original total fee(" FMT_I64 ") + current transaction fee(" FMT_I64 ") paid by source account(%s).", 
+					total_fee, fee, str_address.c_str());
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				break;
 			}
+			total_fee = new_total_fee;
+
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
 			int64_t new_balance=0;
 			if (!utils::SafeIntSub(proto_source_account.balance(), fee, new_balance)) {
-				LOG_ERROR("Source account(%s), proto_source_account overflow (" FMT_I64 ") (" FMT_I64 ")",
-					str_address.c_str(), proto_source_account.balance(), fee);
+				LOG_ERROR("calculation overflowed when source account(%s)'s balance(" FMT_I64 ") - transaction fee(" FMT_I64 ")", str_address.c_str(), proto_source_account.balance(), fee);
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				break;
 			}
 
 			proto_source_account.set_balance(new_balance);
 
-			LOG_TRACE("Account(%s) paid(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
+			LOG_TRACE("Account(%s) paid(" FMT_I64 ") on Transaction(hash:%s) and its latest balance is(" FMT_I64 ")",
+				str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
 
 			return true;
 		} while (false);
@@ -283,14 +286,14 @@ namespace bumo {
 	bool TransactionFrm::ReturnFee(int64_t& total_fee) {
 		int64_t actual_fee=0;
 		if (!utils::SafeIntMul(GetActualGas(), GetGasPrice(), actual_fee)){
-			result_.set_desc(utils::String::Format("Math overflow, GetActualGas:(" FMT_I64 "), GetGasPrice:(" FMT_I64 ")", GetActualGas(), GetGasPrice()));
+			result_.set_desc(utils::String::Format("Calculation overflowed when gas quantity(" FMT_I64 ") * gas price(" FMT_I64 ").", GetActualGas(), GetGasPrice()));
 			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			return false;
 		}
 
 		int64_t fee=0;
 		if (!utils::SafeIntSub(GetFeeLimit(), actual_fee, fee)){
-			result_.set_desc(utils::String::Format("Math overflow, GetFeeLimit:(" FMT_I64 "), actual_fee:(" FMT_I64 ")", GetFeeLimit(), actual_fee));
+			result_.set_desc(utils::String::Format("Calculation overflowed when transaction fee limit(" FMT_I64 ") - actual fee(" FMT_I64 ").", GetFeeLimit(), actual_fee));
 			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 			return false;
 		}
@@ -303,14 +306,13 @@ namespace bumo {
 
 		do {
 			if (!environment_->GetEntry(str_address, source_account)) {
-				LOG_ERROR("Source account(%s) does not exists", str_address.c_str());
+				LOG_ERROR("Source account(%s) does not exist", str_address.c_str());
 				result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
 				break;
 			}
 
 			if (!utils::SafeIntSub(total_fee, fee, total_fee)){
-				result_.set_desc(utils::String::Format("Source account(%s) math overflow, total_fee:(" FMT_I64 "), fee:(" FMT_I64 ")",
-					str_address.c_str(), total_fee, fee));
+				result_.set_desc(utils::String::Format("Calculation overflowed when total fee(" FMT_I64 ") - extra fee(" FMT_I64 ") paid by source account(%s).", total_fee, fee, str_address.c_str()));
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				LOG_ERROR(result_.desc().c_str());
 				break;
@@ -319,7 +321,7 @@ namespace bumo {
 			protocol::Account& proto_source_account = source_account->GetProtoAccount();
 			int64_t new_balance =0;
 			if (!utils::SafeIntAdd(proto_source_account.balance(), fee, new_balance)){
-				result_.set_desc(utils::String::Format("Source account(%s) math overflow, blance:(" FMT_I64 "), fee:(" FMT_I64 ")",
+				result_.set_desc(utils::String::Format("Calculation overflowed when Source account(%s)'s blance:(" FMT_I64 ") + extra fee(" FMT_I64 ") of return.",
 					str_address.c_str(), proto_source_account.balance(), fee));
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
 				LOG_ERROR(result_.desc().c_str());
@@ -328,7 +330,7 @@ namespace bumo {
 
 			proto_source_account.set_balance(new_balance);
 
-			LOG_TRACE("Account(%s) returned(" FMT_I64 ") on Tx(%s) and the latest balance(" FMT_I64 ")", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
+			LOG_TRACE("Account(%s) received a refund of the extra fee(" FMT_I64 ") on transaction(%s) and its latest balance is " FMT_I64 ".", str_address.c_str(), fee, utils::String::BinToHexString(hash_).c_str(), new_balance);
 
 			return true;
 		} while (false);
@@ -359,7 +361,7 @@ namespace bumo {
 			int64_t last_seq = source_account->GetAccountNonce();
 			if (last_seq + 1 != GetNonce()) {
 				result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
-				result_.set_desc(utils::String::Format("Account(%s) Tx sequence(" FMT_I64 ") not match reserve sequence (" FMT_I64 " + 1)",
+				result_.set_desc(utils::String::Format("Account(%s)'s transaction nonce(" FMT_I64 ") is not equal to reserve nonce(" FMT_I64 ") + 1.",
 					str_address.c_str(),
 					GetNonce(),
 					last_seq));
@@ -371,7 +373,7 @@ namespace bumo {
 			vec.push_back(transaction_env_.transaction().source_address());
 			if (check_priv && !SignerHashPriv(source_account, -1)) {
 				result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
-				result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
+				result_.set_desc(utils::String::Format("Transaction(%s)'s signature weight is not enough", utils::String::BinToHexString(hash_).c_str()));
 				LOG_ERROR(result_.desc().c_str());
 				break;
 			}
@@ -389,7 +391,7 @@ namespace bumo {
 		AccountFrm::pointer source_account;
 		if (!Environment::AccountFromDB(GetSourceAddress(), source_account)) {
 			result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
-			result_.set_desc(utils::String::Format("Source account(%s) not exist", GetSourceAddress().c_str()));
+			result_.set_desc(utils::String::Format("Source account(%s) does not exist", GetSourceAddress().c_str()));
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
@@ -397,7 +399,7 @@ namespace bumo {
 		nonce = source_account->GetAccountNonce();	
 		if (GetNonce() <= source_account->GetAccountNonce()) {
 			result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
-			result_.set_desc(utils::String::Format("Tx nonce(" FMT_I64 ") too small, the account(%s) nonce is (" FMT_I64 ")",
+			result_.set_desc(utils::String::Format("Transaction nonce(" FMT_I64 ") too small, the account(%s) nonce is "FMT_I64".",
 				GetNonce(), GetSourceAddress().c_str(), source_account->GetAccountNonce()));
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
@@ -409,7 +411,7 @@ namespace bumo {
 		if (last_seq == 0 && GetNonce() != source_account->GetAccountNonce() + 1) {
 
 			result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
-			result_.set_desc(utils::String::Format("Account(%s) tx sequence(" FMT_I64 ")  not match  reserve sequence (" FMT_I64 " + 1), txhash(%s)",
+			result_.set_desc(utils::String::Format("Account(%s)'s transaction nonce(" FMT_I64 ")  is not equal to reserve nonce(" FMT_I64 ") + 1,and trasaction hash is %s",
 				GetSourceAddress().c_str(),
 				GetNonce(),
 				source_account->GetAccountNonce(),
@@ -420,7 +422,7 @@ namespace bumo {
 
 		if (last_seq > 0 && (GetNonce() != last_seq + 1)) {
 			result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
-			result_.set_desc(utils::String::Format("Account(%s) Tx sequence(" FMT_I64 ")  not match  reserve sequence (" FMT_I64 " + 1)",
+			result_.set_desc(utils::String::Format("Account(%s)'s transaction sequence(" FMT_I64 ") is not equal to reserve sequence(" FMT_I64 ") + 1",
 				GetSourceAddress().c_str(),
 				GetNonce(),
 				last_seq));
@@ -432,7 +434,7 @@ namespace bumo {
 		vec.push_back(transaction_env_.transaction().source_address());
 		if (check_priv && !SignerHashPriv(source_account, -1)) {
 			result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
-			result_.set_desc(utils::String::Format("Tx(%s) signatures not enough weight", utils::String::BinToHexString(hash_).c_str()));
+			result_.set_desc(utils::String::Format("Transaction(%s) signature weight is not enough", utils::String::BinToHexString(hash_).c_str()));
 			LOG_ERROR(result_.desc().c_str());
 			return false;
 		}		
@@ -448,7 +450,7 @@ namespace bumo {
 		const LedgerConfigure &ledger_config = Configure::Instance().ledger_configure_;
 		if (transaction_env_.ByteSize() >= General::TRANSACTION_LIMIT_SIZE) {
 			result_.set_code(protocol::ERRCODE_TX_SIZE_TOO_BIG);
-			result_.set_desc(utils::String::Format("Transaction env size(%d) larger than limit(%d)",
+			result_.set_desc(utils::String::Format("Transaction env size(%d) exceed the limit(%d)",
 				transaction_env_.ByteSize(),
 				General::TRANSACTION_LIMIT_SIZE));
 			LOG_ERROR("%s",result_.desc().c_str());
@@ -464,7 +466,7 @@ namespace bumo {
 
 		if (tran.operations_size() > utils::MAX_OPERATIONS_NUM_PER_TRANSACTION) {
 			result_.set_code(protocol::ERRCODE_TOO_MANY_OPERATIONS);
-			result_.set_desc("Tx too many operations");
+			result_.set_desc("Too many operations in current transaction.");
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
 		}
@@ -491,7 +493,7 @@ namespace bumo {
 			if (tran.ceil_ledger_seq() < current_ledger_seq) {
 				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 				//result_.set_desc("Transaction metadata too long");
-				result_.set_desc(utils::String::Format("Limit ledger seq(" FMT_I64 ") < seq(" FMT_I64 ")",
+				result_.set_desc(utils::String::Format("Limit ledger sequence(" FMT_I64 ") < current ledger sequence(" FMT_I64 ")",
 					tran.ceil_ledger_seq(), current_ledger_seq));
 
 				LOG_ERROR("%s", result_.desc().c_str());
@@ -501,7 +503,7 @@ namespace bumo {
 		else if (tran.ceil_ledger_seq() < 0) {
 			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 			//result_.set_desc("Transaction metadata too long");
-			result_.set_desc(utils::String::Format("Limit ledger seq(" FMT_I64 ") < 0",
+			result_.set_desc(utils::String::Format("Limit ledger sequence(" FMT_I64 ") < 0",
 				tran.ceil_ledger_seq()));
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
@@ -510,7 +512,7 @@ namespace bumo {
 		if (!contract_trigger){
 			if (tran.fee_limit() < 0){
 				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result_.set_desc(utils::String::Format("Tx fee limit(" FMT_I64 ") < 0", tran.fee_limit()));
+				result_.set_desc(utils::String::Format("Transaction fee limit(" FMT_I64 ") < 0", tran.fee_limit()));
 				LOG_ERROR("%s", result_.desc().c_str());
 				return false;
 			}
@@ -519,7 +521,7 @@ namespace bumo {
 			int64_t p = MAX(0, sys_gas_price);
 			if (tran.gas_price() < p){
 				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result_.set_desc(utils::String::Format("Tx gas price(" FMT_I64 ") is less than (" FMT_I64 ")", tran.gas_price(), p));
+				result_.set_desc(utils::String::Format("Transaction gas price(" FMT_I64 ") is less than (" FMT_I64 ")", tran.gas_price(), p));
 				LOG_ERROR("%s", result_.desc().c_str());
 				return false;
 			}
@@ -534,7 +536,7 @@ namespace bumo {
 			if (!PublicKey::IsAddressValid(ope_source)) {
 				check_valid = false;
 				result_.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-				result_.set_desc("Source address not valid");
+				result_.set_desc("Source address is not valid");
 				LOG_ERROR("Invalid operation source address");
 				break;
 			}
@@ -566,9 +568,8 @@ namespace bumo {
 		int64_t limit_balance=0;
 		if (!utils::SafeIntSub(source_account->GetAccountBalance(), fee_limit, limit_balance)){
 			result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-			std::string error_desc = utils::String::Format("Account(%s) reserve balance overflow for transaction(%s) fee and base reserve: balance(" FMT_I64 ") fee(" FMT_I64 "), base reserve(" FMT_I64 ")",
-				source_account->GetAccountAddress().c_str(), utils::String::Bin4ToHexString(GetContentHash()).c_str(),
-				source_account->GetAccountBalance(), fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve());
+			std::string error_desc = utils::String::Format("Calculation overflowed when account(%s)'s reserve balance(" FMT_I64 ") - transaction(%s) fee limit(" FMT_I64 ").",
+				source_account->GetAccountAddress().c_str(), source_account->GetAccountBalance(), utils::String::Bin4ToHexString(GetContentHash()).c_str(), fee_limit);
 			result_.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
 			return false;
@@ -577,9 +578,8 @@ namespace bumo {
 		if (limit_balance < LedgerManager::Instance().GetCurFeeConfig().base_reserve()) {
 			
 			result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-			std::string error_desc = utils::String::Format("Account(%s) reserve balance not enough for transaction(%s) fee and base reserve: balance(" FMT_I64 ") - fee(" FMT_I64 ") < base reserve(" FMT_I64 ")",
-				source_account->GetAccountAddress().c_str(), utils::String::Bin4ToHexString(GetContentHash()).c_str(), 
-				source_account->GetAccountBalance(), fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve());
+			std::string error_desc = utils::String::Format("Account(%s)'s reserve balance(" FMT_I64 ") - transaction(%s) fee limit(" FMT_I64 ") < base reserve(" FMT_I64 ")",
+				source_account->GetAccountAddress().c_str(), source_account->GetAccountBalance(), utils::String::Bin4ToHexString(GetContentHash()).c_str(), fee_limit, LedgerManager::Instance().GetCurFeeConfig().base_reserve());
 			result_.set_desc(error_desc);
 			LOG_ERROR("%s", error_desc.c_str());
 			return false;
@@ -600,7 +600,7 @@ namespace bumo {
 		int64_t tx_fee=0;
 		if (!utils::SafeIntMul(self_gas, gas_price, tx_fee)){
 			std::string error_desc = utils::String::Format(
-				"Transaction(%s), gas(" FMT_I64 "), self gas price(" FMT_I64 ") math overflow",
+				"Calculation overflowed when Transaction(%s) gas(" FMT_I64 ") * gas price(" FMT_I64 ").",
 				utils::String::BinToHexString(GetContentHash()).c_str(), self_gas, gas_price);
 
 			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
@@ -611,7 +611,7 @@ namespace bumo {
 		
 		if (fee_limit < tx_fee){
 			std::string error_desc = utils::String::Format(
-				"Transaction(%s) fee limit(" FMT_I64 ") not enough for transaction fee(" FMT_I64 ") ",
+				"Transaction(%s) fee limit(" FMT_I64 ") is not enough for transaction fee(" FMT_I64 ") ",
 				utils::String::BinToHexString(GetContentHash()).c_str(), fee_limit, tx_fee);
 
 			result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
@@ -636,7 +636,7 @@ namespace bumo {
 		int64_t actual_fee = 0;
 		if (!utils::SafeIntMul(bottom_tx->GetActualGas(), bottom_tx->GetGasPrice(), actual_fee)){
 			txfrm->result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-			txfrm->result_.set_desc(utils::String::Format("Transaction(%s), math overflow actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(),
+			txfrm->result_.set_desc(utils::String::Format("Calculation overflowed when transaction(%s) actual gas(" FMT_I64 ") * gas price(" FMT_I64 ").", utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(),
 				bottom_tx->GetActualGas(), bottom_tx->GetGasPrice()));
 			LOG_ERROR("%s", txfrm->result_.desc().c_str());
 			return false;
@@ -644,7 +644,7 @@ namespace bumo {
 
 		if (actual_fee > bottom_tx->GetFeeLimit()){
 			txfrm->result_.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
-			txfrm->result_.set_desc(utils::String::Format("Transaction(%s) fee limit(" FMT_I64 ") not enough,current actual fee(" FMT_I64 ") ,transaction(%s) fee(" FMT_I64 ")",
+			txfrm->result_.set_desc(utils::String::Format("Bottom transaction(%s) fee limit(" FMT_I64 ") is not enough for actual fee(" FMT_I64 "), and current transaction is %s, current fee is " FMT_I64 ".",
 				utils::String::BinToHexString(bottom_tx->GetContentHash()).c_str(), bottom_tx->GetFeeLimit(), bottom_tx->GetActualGas()*bottom_tx->GetGasPrice(), utils::String::BinToHexString(txfrm->GetContentHash()).c_str(), txfrm->GetSelfGas()*bottom_tx->GetGasPrice()));
 			LOG_ERROR("%s", txfrm->result_.desc().c_str());
 			return false;
@@ -703,17 +703,17 @@ namespace bumo {
 		std::string txenv_store;
 		int res = db->Get(ComposePrefix(General::TRANSACTION_PREFIX, hash), txenv_store);
 		if (res < 0) {
-			LOG_ERROR("Get transaction failed, %s", db->error_desc().c_str());
+			LOG_ERROR("Failed to get transaction and the error decripition is: %s.", db->error_desc().c_str());
 			return protocol::ERRCODE_INTERNAL_ERROR;
 		}
 		else if (res == 0) {
-			LOG_TRACE("Tx(%s) not exist", utils::String::BinToHexString(hash).c_str());
+			LOG_TRACE("Transaction(%s) does not exist.", utils::String::BinToHexString(hash).c_str());
 			return protocol::ERRCODE_NOT_EXIST;
 		}
 
 		protocol::TransactionEnvStore envstor;
 		if (!envstor.ParseFromString(txenv_store)) {
-			LOG_ERROR("Decode tx(%s) body failed", utils::String::BinToHexString(hash).c_str());
+			LOG_ERROR("Failed to parse transaction(%s) body from txenv_store.", utils::String::BinToHexString(hash).c_str());
 			return protocol::ERRCODE_INTERNAL_ERROR;
 		}
 
@@ -730,7 +730,7 @@ namespace bumo {
 
 	bool TransactionFrm::CheckTimeout(int64_t expire_time) {
 		if (incoming_time_ < expire_time) {
-			LOG_WARN("Trans timeout, source account(%s), transaction hash(%s)", GetSourceAddress().c_str(), 
+			LOG_WARN("Transaction timeout, source account(%s), transaction hash(%s).", GetSourceAddress().c_str(), 
 				utils::String::Bin4ToHexString(GetContentHash()).c_str());
 			result_.set_code(protocol::ERRCODE_TX_TIMEOUT);
 			return true;
@@ -769,7 +769,7 @@ namespace bumo {
 			const protocol::Operation &ope = tran.operations(processing_operation_);
 			std::shared_ptr<OperationFrm> opt = std::make_shared< OperationFrm>(ope, this, processing_operation_);
 			if (opt == nullptr) {
-				LOG_ERROR("Create operation frame failed");
+				LOG_ERROR("Failed to create operation frame.");
 				result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 				bSucess = false;
 				break;
@@ -777,7 +777,7 @@ namespace bumo {
 
 			if (!bool_contract && !ledger_->IsTestMode()) {
 				if (!opt->CheckSignature(environment_)) {
-					LOG_ERROR("Check signature operation frame failed, txhash(%s)", utils::String::BinToHexString(GetContentHash()).c_str());
+					LOG_ERROR("Failed to check signature operation frame, and the transaction hash is %s.", utils::String::BinToHexString(GetContentHash()).c_str());
 					result_ = opt->GetResult();
 					bSucess = false;
 					break;
@@ -790,7 +790,7 @@ namespace bumo {
 			if (result.code() != 0) {
 				result_ = opt->GetResult();
 				bSucess = false;
-				LOG_ERROR_ERRNO("Transaction(%s) operation(%d) apply failed",
+				LOG_ERROR_ERRNO("Failed to apply transaction(%s)'s operation(%d).",
 					utils::String::BinToHexString(hash_).c_str(), processing_operation_, result_.code(), result_.desc().c_str());
 				break;
 			}

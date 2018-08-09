@@ -14,4 +14,4 @@ File | Function
 [overlay.proto](./overlay.proto)       | The `overlay` module is a self-contained or serializable data structure used by the module of the `overlay` communication, including communication status, `peer` information, and account information.
 
 ## Other
-There are other folders in the `proto` directory, such as `php`, `go`, `python`, etc., which are serialized source files of different languages ​​compiled by `*.proto` files to support `SDK` calls in different languages ​​for `BUMO.
+There are other folders in the `proto` directory, such as `php`, `go`, `python`, etc., which are serialized source files of different languages ​​compiled by `*.proto` files to support `SDK` calls in different languages ​​for BUMO.

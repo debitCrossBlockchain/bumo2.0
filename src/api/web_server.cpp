@@ -40,7 +40,7 @@ namespace bumo {
 	bool WebServer::Initialize(WebServerConfigure &webserver_config) {
 
 		if (webserver_config.listen_addresses_.size() == 0) {
-			LOG_INFO("Listen address not set, ignore");
+			LOG_INFO("No network address configured for listening, ignore it");
 			return true;
 		}
 
@@ -159,7 +159,7 @@ namespace bumo {
 		do {
 			Json::Value req;
 			if (!req.fromString(request.body)) {
-				LOG_ERROR("Parse request body json failed");
+				LOG_ERROR("Failed to parse the json content of the request");
 				reply_json["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
 				break;
 			}
@@ -167,7 +167,7 @@ namespace bumo {
 			const Json::Value &items = req["items"];
 
 			if (items.size() > web_config.multiquery_limit_){
-				LOG_ERROR("MultiQuery size is too larger than %u", web_config.multiquery_limit_);
+				LOG_ERROR("Failed to multi query, the size of request is too larger than %u", web_config.multiquery_limit_);
 				reply_json["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
 				break;
 			}

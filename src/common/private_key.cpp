@@ -292,7 +292,7 @@ namespace bumo {
 			return utils::EccSm2::verify(utils::EccSm2::GetCFCAGroup(), raw_pubkey, "1234567812345678", data, signature) == 1;
 		}
 		else{
-			LOG_ERROR("Unknown signature type(%d)", sign_type);
+			LOG_ERROR("Failed to verify. Unknown signature type(%d)", sign_type);
 		}
 		return false;
 	}
@@ -320,7 +320,7 @@ namespace bumo {
 			raw_pub_key = key.GetPublicKey();
 		}
 		else{
-			LOG_ERROR("Unknown signature type(%d)", type_);
+			LOG_ERROR("Failed to verify.Unknown signature type(%d)", type_);
 		}
 		pub_key_.Init(raw_pub_key);
 		pub_key_.type_ = type_;
@@ -357,7 +357,7 @@ namespace bumo {
 				tmp = skey.GetPublicKey();
 			}
 			else{
-				LOG_ERROR("Unknown signature type(%d)", type_);
+				LOG_ERROR("Failed to verify.Unknown signature type(%d)", type_);
 			}
 			//ToBase58();
 			pub_key_.type_ = type_;
@@ -391,7 +391,7 @@ namespace bumo {
 			return key.Sign("1234567812345678", input);
 		}
 		else{
-			LOG_ERROR("Unknown signature type(%d)", type_);
+			LOG_ERROR("Failed to verify.Unknown signature type(%d)", type_);
 		}
 		std::string output;
 		output.append((const char *)sig, sig_len);

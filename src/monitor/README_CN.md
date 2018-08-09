@@ -1,3 +1,5 @@
+[English](README.md) | 中文
+
 # Monitor 监控
 
 ## 功能介绍
