@@ -35,11 +35,11 @@ Generating a private key requires multiple algorithms such as a random algorithm
 
 _[17,236,24,183,207,250,207,180,108,87,224,39,189,99,246,85,138,120,236,78,228,233,41,192,124,109,156,104,235,66,194,24]_
 
-2.Add a 3-byte prefix in the raw private key, and then add a 1-byte version number to get a new byte array, as shown below:
+2.Add a 3-byte prefix in the raw private key, and add a 1-byte version number， then add 1-byte fill bit to get a new byte array, as shown below:
 
-_[218,55,159,1,17,236,24,183,207,250,207,180,108,87,224,39,189,99,246,85,138,120,236,78,228,233,41,192,124,109,156,104,235,66,194,24]_
+_[218,55,159,1,17,236,24,183,207,250,207,180,108,87,224,39,189,99,246,85,138,120,236,78,228,233,41,192,124,109,156,104,235,66,194,24,0]_
 
->**Note**: For the Prefix, Version and Checksum, please refer to Table 1。
+>**Note**: For the Prefix, Version, Checksum and Fill, please refer to Table 1。
 
 3.Perform SHA256 calculations twice on the byte array obtained in Step 2. Take the first 4 bytes of the operation result as the byte array of the Checksum, as shown below:
 
@@ -61,6 +61,7 @@ Table 1
 |----------- | ----------------------------------------- | ----- |
 |   Prefix   | 0xDA 0x37 0x9F                            | 3 bytes |
 |   Version      | 0x01                                      | 1 byte |
+|   Fill      | 0x00                                      | 1 byte |
 |   Checksum | After performing SHA256 calculation twice on the byte array obtained in Step 2, take the first 4 bytes of the operation result | 4 bytes |
 
 This table illustrates the Prefix, Version and Checksum used in generating the private key.
