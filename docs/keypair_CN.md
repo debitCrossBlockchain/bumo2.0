@@ -78,6 +78,7 @@ Raw Public Key 是指通过ED25519算法对 raw private key 进行处理生成�
 |   Prefix   | 0xB0                                      | 1个字节 |
 |   Version      | 0x01                                      | 1个字节 |
 |   Checksum | 对第2步中得到的字节数组进行两次SHA256运算之后，取运算结果的前4个字节  | 4个字节 |
+
 该表对生成公钥中使用到的Prefix、Version以及Checksum进行了说明。
 ## 生成地址
 在生成私钥和公钥后可以进一步通过算法生成地址。生成地址包含以下步骤：
