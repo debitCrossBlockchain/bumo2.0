@@ -264,9 +264,11 @@ namespace bumo {
 	bool Storage::Initialize(const DbConfigure &db_config, bool bdropdb) {
 		
 		db_type = db_config.db_type_;
-		//tidb initialize
+		//tidb initialize Initialize_Codb
 		if (TIDB == db_type)
 			return Initialize_Tidb(db_config,bdropdb);
+		else if(CODB == db_type)
+			return Initialize_Codb(db_config, bdropdb);
 
 		do {
 			std::string strConnect = "";
@@ -432,6 +434,52 @@ namespace bumo {
 		return false;
 	}
 
+	bool Storage::Initialize_Codb(const DbConfigure &db_config, bool bdropdb) {
+
+		do {
+
+			if (bdropdb) {
+				bool do_success = false;
+				do {
+					//check the db if opened only for linux or mac
+					CodbDriver *db_handle = new CodbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
+					//todo
+					db_handle->DropDB("abc");
+
+					LOG_INFO("Drop db successful");
+					do_success = true;
+				} while (false);
+
+				return do_success;
+			}
+			keyvalue_db_ = NewKeyValueDb(db_config);
+			if (!keyvalue_db_->Open(TIDB_KV_DB, 0)) {
+				LOG_ERROR("tidb_kv_db open fail(%s)\n", keyvalue_db_->error_desc().c_str());
+				break;
+			}
+
+			ledger_db_ = NewKeyValueDb(db_config);
+			if (!ledger_db_->Open(TIDB_LEDGER_DB, 0)) {
+				LOG_ERROR("TIDB_LEDGER_DB open fail(%s)\n", ledger_db_->error_desc().c_str());
+				break;
+			}
+
+			account_db_ = NewKeyValueDb(db_config);
+			if (!account_db_->Open(TIDB_ACCOUNT_DB, 0)) {
+				LOG_ERROR("TIDB_ACCOUNT_DB open fail(%s)\n", account_db_->error_desc().c_str());
+				break;
+			}
+
+			TimerNotify::RegisterModule(this);
+			return true;
+
+		} while (false);
+
+		CloseDb();
+
+		return false;
+	}
+
 	std::string Storage::get_db_type()
 	{
 		return db_type;
@@ -486,6 +534,11 @@ namespace bumo {
 			db = new TidbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
 			return db;
 		}
+		else if (db_config.db_type_ == CODB)
+		{
+			db = new CodbDriver(db_config.tidb_address_, db_config.tidb_user_, db_config.tidb_pwd_, db_config.tidb_port_);
+			return db;
+		}
 #ifdef WIN32
 		db = new LevelDbDriver();
 #else	
@@ -501,12 +554,18 @@ namespace bumo {
 			isTidb = true;
 		else
 			isTidb = false;
+		if (CODB == Storage::GetInstance()->get_db_type())
+			isCodb = true;
+		else
+			isCodb = false;
 	}
 	
 	void DBBatch::Put(const std::string& key, const std::string& value)
 	{
 		if (isTidb)
 			m_tidb_batch.Put(key, value);
+		else if (isCodb)
+			m_codb_batch.Put(key, value);
 		else
 		{
 #ifdef WIN32
@@ -521,6 +580,8 @@ namespace bumo {
 	{
 		if (isTidb)
 			m_tidb_batch.Delete(key);
+		else if (isCodb)
+			m_codb_batch.Delete(key);
 		else
 		{
 #ifdef WIN32
@@ -535,6 +596,8 @@ namespace bumo {
 	{
 		if (isTidb)
 			m_tidb_batch.Clear();
+		else if (isCodb)
+			m_codb_batch.Clear();
 		else
 		{
 #ifdef WIN32

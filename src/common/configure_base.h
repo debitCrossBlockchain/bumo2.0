@@ -24,6 +24,7 @@
 namespace bumo {
 
 #define		TIDB	"tidb"
+#define		CODB	"codb"
 
 	class LoggerConfigure {
 	public:

@@ -28,6 +28,7 @@
 #include <rocksdb/db.h>
 #endif
 #include "tidb.h"
+#include "cockroachdb.h"
 
 namespace bumo {
 	/*
@@ -64,7 +65,10 @@ namespace bumo {
 #endif
 		WriteTidbBatch m_tidb_batch;
 
+		WriteCodbBatch m_codb_batch;
+
 		bool isTidb;
+		bool isCodb;
 
 	public:
 		// Store the mapping "key->value" in the database.
@@ -196,7 +200,65 @@ namespace bumo {
 		tidb * GetTiDBInstance()	{ return db_; }
 	};
 
+	class CodbDriver : public KeyValueDb {
+	private:
+		codb * db_;
 
+	public:
+		CodbDriver(const std::string host_ip, const std::string user_name, const std::string pwd, int32_t port)
+		{
+			db_ = new codb(host_ip, user_name, pwd, port);
+		}
+		~CodbDriver()
+		{
+			if (db_)
+			{
+				delete db_;
+			}
+			db_ = NULL;
+		}
+
+		bool Open(const std::string &db_name, int max_open_files)	{
+			bool ret = db_->Open(db_name);
+			if (!ret)
+				error_desc_ = db_->get_error();
+			return ret;
+		}
+
+		bool Close()	{ return db_->Close(); }
+
+		int32_t Get(const std::string &key, std::string &value)	{
+			int64_t ret = db_->Get(key, value);
+			if (ret<0)
+				error_desc_ = db_->get_error();
+			return (int32_t)ret;
+		}
+		bool Put(const std::string &key, const std::string &value)	{
+			bool ret = db_->Put(key, value);
+			if (!ret)
+				error_desc_ = db_->get_error();
+			return ret;
+		}
+		bool Delete(const std::string &key)		{
+			bool ret = db_->Delete(key);
+			if (!ret)
+				error_desc_ = db_->get_error();
+			return ret;
+		}
+
+		bool DropDB(const std::string &db_name)		{
+			return true;
+		}
+		//todo »ñÈ¡Êý¾Ý¿â×´Ì¬
+		bool GetOptions(Json::Value &options)	{ return true; }
+		bool WriteBatch(WRITE_BATCH &values)	{
+			return db_->Put(values.m_codb_batch);
+		}
+		//todo ´òÓ¡ËùÓÐ¼ÇÂ¼
+		void* NewIterator() { return NULL; }
+
+		codb * GetCoDBInstance()	{ return db_; }
+	};
 
 	
 
@@ -221,6 +283,7 @@ namespace bumo {
 	public:
 		bool Initialize(const DbConfigure &db_config, bool bdropdb);
 		bool Initialize_Tidb(const DbConfigure &db_config, bool bdropdb);
+		bool Initialize_Codb(const DbConfigure &db_config, bool bdropdb);
 		bool Exit();
 		std::string get_db_type();
 
