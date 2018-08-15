@@ -744,9 +744,9 @@ Ctp10TokenAllowanceResponse allowance(Ctp10TokenAllowanceRequest);
 
 Parameter | Type | Description
 ----------- | ------------ | ---------------- |
-contractAddress|String| Required, contract account address
-tokenOwner|String|Required, the account address holding the contract Token
-spender|String|Required, authorized account address
+contractAddress|String| (Required) contract account address
+tokenOwner|String|(Required) the account address holding the contract Token
+spender|String|(Required) authorized account address
 
 > The response data is shown in the following table:
 
