@@ -674,7 +674,7 @@ https://developers.google.com/protocol-buffers/docs/overview
 6. 通过POST提交交易。
 
 ```
-     POST http://seed1.bumotest.io/submitTransaction
+     POST http://seed1.bumotest.io:26002/submitTransaction
      
 ```
 
@@ -812,7 +812,7 @@ https://developers.google.com/protocol-buffers/docs/overview
 5. 通过POST提交交易。
 
 ```
-     POST http://seed1.bumotest.io/submitTransaction
+     POST http://seed1.bumotest.io:26002/submitTransaction
      
 ```
 得到的响应报文：
