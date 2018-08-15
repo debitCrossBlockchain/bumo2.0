@@ -1367,8 +1367,7 @@ Member | Type | Description |
 ----------- | ------------ | ---------------- |
 transaction|[TriggerTransaction](#triggertransaction)|Trigger transactions
 
-####
-Operation
+#### Operation
 The specific information of Operation is shown in the following table:
 
 
@@ -1385,8 +1384,7 @@ setMetadata|[OperationSetMetadata](#operationsetmetadata)|Operation of setting m
 setPrivilege|[OperationSetPrivilege](#operationsetprivilege)|Operation of setting account privilege
 log|[OperationLog](#operationlog)|Record logs
 
-####
-TriggerTransaction
+#### TriggerTransaction
 
 The specific information of TriggerTransaction is shown in the following table:
 
@@ -1877,6 +1875,7 @@ System.out.println("error: " + response.getErrorDesc());
 #### TestTx
 
 The specific information of TestTx is shown in the following table:
+
 Member | Type | Description |
 ----------- | ------------ | ---------------- |
 transactionEnv| [TestTransactionFees](#testtransactionfees)| Assess transaction costs
