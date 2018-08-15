@@ -275,7 +275,7 @@ a46ee590a84abdeb8cc38ade1ae8e8a2c71bb69bdc4cd7dc0de1b74b37e2cbd1696229687f80dff4
 
 ## Methods of Submitting Transactions
 
-There are two methods of calling the interface to execute transactions: [Generating Transaction_blobs by Calling the Interface](#generating-transaction_blobs-by-calling-the-Interface) and [Generating Transaction_blobs by Yourself](#generating-transactionblobs-by-yourself).
+There are two methods of calling the interface to execute transactions: [Generating Transaction_blobs by Calling the Interface](#Generating-Transaction_blobs-by-Calling-the-Interface) and [Generating Transaction_blobs by Yourself](#generating-transactionblobs-by-yourself).
 
 ### Generating Transaction_blobs by Calling the Interface
 
