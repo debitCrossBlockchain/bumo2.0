@@ -104,6 +104,7 @@ Table 1
 | Prefix | 0xDA 0x37 0x9F | 3 bytes |
 | Version | 0x01 | 1 byte |
 | Checksum | After performing SHA256 calculation twice on the byte array obtained in Step 2,take the first 4 bytes of the operation result | 4 bytes |
+
 This table illustrates the Prefix, Version and Checksum used in generating the private key.
 
 ## Generating Public Keys
