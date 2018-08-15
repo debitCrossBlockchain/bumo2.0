@@ -742,6 +742,7 @@ Ctp10TokenAllowanceResponse allowance(Ctp10TokenAllowanceRequest);
 
 > The request parameters are shown in the following table:
 
+
 Parameter | Type | Description
 ----------- | ------------ | ---------------- |
 contractAddress|String| (Required) contract account address
