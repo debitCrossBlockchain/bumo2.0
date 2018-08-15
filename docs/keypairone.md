@@ -269,13 +269,13 @@ The transaction_blob:
 
 
 
-After signing the transaction_blob with the signature interface of ED25519 and performing hexadecimal conversion, the resulting sign_data [is](#generating-transaction_blobs-by-calling-the-interface):
+After signing the transaction_blob with the signature interface of ED25519 and performing hexadecimal conversion, the resulting sign_data is:
 
 a46ee590a84abdeb8cc38ade1ae8e8a2c71bb69bdc4cd7dc0de1b74b37e2cbd1696229687f80dff4276b1a3dd3f95a9bc1d569943b337fe170317430f36d6401_
 
 ## Methods of Submitting Transactions
 
-There are two methods of calling the interface to execute transactions: [Generating Transaction_blobs by Calling the Interface](###Generating-Transaction_blobs-by-Calling-the-Interface) and [Generating Transaction_blobs by Yourself](#generating-transactionblobs-by-yourself).
+There are two methods of calling the interface to execute transactions: Generating Transaction_blobs by Calling the Interface and Generating Transaction_blobs by Yourself.
 
 ### Generating Transaction_blobs by Calling the Interface
 
