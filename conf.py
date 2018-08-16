@@ -213,7 +213,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   ('index', 'bubi.tex', 'bubi Documentation',
-   'wilson', 'manual'),
+   'wilson', 'manual','utf8extra'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
