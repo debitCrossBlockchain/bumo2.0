@@ -13,8 +13,6 @@ Contents:
    :maxdepth: 4
    
    
-   docs/keypairone
-   docs/bumo_java_sdk
    docs/keypair手册
 
    
