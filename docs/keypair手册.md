@@ -315,7 +315,7 @@ HTTP GET host:port/getAccount?address=账户地址
 ```
 HTTP GET host:port/getAccount?address=账户地址
 ```
-2.填充protocol buffer的交易对象Transaction，并进行序列化操作，从而得到transaction_blob。具体的交易数据结构详情请看[ProtoBuf数据结构](#protoBuf数据结构)。
+2.填充protocol buffer的交易对象Transaction，并进行序列化操作，从而得到transaction_blob。具体的交易数据结构详情请看[ProtoBuf数据结构](#protobuf数据结构)。
 
 3.签名交易，并填充交易数据。根据私钥生成公钥，并用私钥对transaction_blob签名，然后填充提交交易的json数据，格式如下：
 
