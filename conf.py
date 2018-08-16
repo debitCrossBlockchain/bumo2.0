@@ -200,27 +200,12 @@ htmlhelp_basename = 'bubidoc'
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
-'papersize':'a4paper',# The font size ('10pt', '11pt' or '12pt').
-'pointsize':'12pt','classoptions':',oneside','babel':'',#必須
-'inputenc':'',#必須
-'utf8extra':'',#必須
 
 # The font size ('10pt', '11pt' or '12pt').
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
-'preamble': r"""
-\usepackage{xeCJK}
-\usepackage{indentfirst}
-\setlength{\parindent}{2em}
-\setCJKmainfont{WenQuanYi Micro Hei}
-\setCJKmonofont[Scale=0.9]{WenQuanYi Micro Hei Mono}
-\setCJKfamilyfont{song}{WenQuanYi Micro Hei}
-\setCJKfamilyfont{sf}{WenQuanYi Micro Hei}
-\XeTeXlinebreaklocale "zh"
-\XeTeXlinebreakskip = 0pt plus 1pt
-"""
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -228,7 +213,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   ('index', 'bubi.tex', 'bubi Documentation',
-   'wilson', 'manual','utf8extra'),
+   'wilson', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
