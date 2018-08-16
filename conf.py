@@ -205,26 +205,6 @@ latex_elements = {
 #'pointsize': '10pt',
 
 # Additional stuff for the LaTeX preamble.
- # The paper size ('letterpaper' or 'a4paper').
-    'papersize': 'a4paper',
-
-    # The font size ('10pt', '11pt' or '12pt').
-    'pointsize': '12pt',
-
-    'label': '\\usepackage[english]{babel}',
-
-    # Additional stuff for the LaTeX preamble.
-    'preamble': '''
-    \usepackage{xeCJK}
-    \usepackage{indentfirst}
-    \setlength{\parindent}{2em}
-    \setCJKmainfont[BoldFont=SimHei, ItalicFont=SimSun]{SimSun}
-    \setCJKmonofont[Scale=0.9]{SimSun}
-    \setCJKfamilyfont{song}[BoldFont=SimSun]{SimSun}
-    \setCJKfamilyfont{sf}[BoldFont=SimSun]{SimSun}
-    \XeTeXlinebreaklocale "zh"
-    \XeTeXlinebreakskip = 0pt plus 1pt
-    '''    
 #'preamble': '',
 }
 
