@@ -15,6 +15,7 @@ Contents:
    
    docs/keypairone
    docs/bumo_java_sdk
+   docs/keypair手册
 
    
 
