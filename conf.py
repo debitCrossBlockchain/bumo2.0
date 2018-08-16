@@ -197,7 +197,7 @@ htmlhelp_basename = 'bubidoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
-xelatex_elements = {
+latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
@@ -211,7 +211,7 @@ xelatex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-xelatex_documents = [
+latex_documents = [
   ('index', 'bubi.tex', 'bubi Documentation',
    'wilson', 'manual'),
 ]
