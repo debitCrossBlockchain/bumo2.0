@@ -82,7 +82,7 @@ Schematic Diagram
 The following diagram illustrates how the private, public keys and
 address are generated. 
 
-|schematic| 
+|image0| 
 
 Generating Private Keys
 -----------------------
@@ -1148,5 +1148,5 @@ Response message:
 
    **Note**: “success_count”:1 represents that the submission succeeded.
 
-.. |image0| image:: /assets/schematic.png
+.. |image0| image:: /image/schematic.png
 
