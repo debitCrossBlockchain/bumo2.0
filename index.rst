@@ -13,10 +13,10 @@ Contents:
    :maxdepth: 4
    
    
-   docs/keypairone
-   docs/bumo_java_sdk
-   docs/API_Guide_for_Exchanges
-   docs/手册
+   docs/keypaironenew
+   docs/bumo_java_sdknew
+   docs/API_Guide_for_Exchangesnew
+
 
    
 
