@@ -13,7 +13,9 @@ Contents:
    :maxdepth: 4
    
    
-   docs/keypair手册
+   docs/keypairone
+   docs/bumo_java_sdk
+   docs/API_Guide_for_Exchanges
 
    
 
