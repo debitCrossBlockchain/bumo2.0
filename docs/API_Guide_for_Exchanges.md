@@ -324,7 +324,7 @@ Check the validity of the account address by the code shown below.
 
 ### Asset Transactions
 
-In the BUMO network, a block is generated every 10 seconds, and each transaction only needs one confirmation to get its final state. In this section, we will introduce [Detecting User Recharging](#detecting-user-recharging), [Withdrawing or Transferring BU by Users](#withdrawing-or-transferring-bu-by-users) and [Querying Transactions](#Querying-transactions).
+In the BUMO network, a block is generated every 10 seconds, and each transaction only needs one confirmation to get its final state. In this section, we will introduce [Detecting User Recharging](#detecting-user-recharging), [Withdrawing or Transferring BU by Users](#withdrawing-or-transferring-bu-by-users) and [Querying Transactions](#querying-transactions).
 
 
 #### Detecting User Recharging
