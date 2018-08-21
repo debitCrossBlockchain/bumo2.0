@@ -220,7 +220,7 @@ Table 2
 | Version               | 0x01                  | 1 Byte                |
 +-----------------------+-----------------------+-----------------------+
 | Checksum              | After performing      | 4 Bytes               |
-|                       | ``SHA256`` calculation    |                       |
+|                       | ``SHA256`` calculation    |                   |
 |                       | twice on the byte     |                       |
 |                       | array obtained in     |                       |
 |                       | Step 2, take the      |                       |
