@@ -1144,6 +1144,8 @@ Response message:
    "success_count": 1
    }
 
+.. note:: This operation might take a few minutes to complete.
+
 ..
 
    **Note**: “success_count”:1 represents that the submission succeeded.
