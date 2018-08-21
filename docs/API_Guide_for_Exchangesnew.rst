@@ -134,6 +134,7 @@ To install the BUMO node, you need to complete the following steps:
 
 1. Input the following command to enter the installation directory.
 
+
 ::
 
    cd /bumo/
