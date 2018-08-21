@@ -105,10 +105,10 @@ follows:
    AccountGetNonceResult result;
    }
 
-.. note:: 
-- errorCode: error code. 0 means no error, greater than 0 means there is an error 
-- errorDesc: error description 
-- result: returns the result. A structure whose class name is **Service Name+Method Name+Result**, whose members are members of the return value of each interface. For example, the result class name of the ``getNonce`` interface in Account Services is AccountGetNonceResult, and the member has a nonce. The complete structure is as follows:
+.. note:: |
+        - errorCode: error code. 0 means no error, greater than 0 means there is an error 
+        - errorDesc: error description 
+        - result: returns the result. A structure whose class name is **Service Name+Method Name+Result**, whose members are members of the return value of each interface. For example, the result class name of the ``getNonce`` interface in Account Services is AccountGetNonceResult, and the member has a nonce. The complete structure is as follows:
 
 ::
 
