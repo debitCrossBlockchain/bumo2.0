@@ -108,7 +108,9 @@ initialize the development environment.
 
    ./install-build-deps-linux.sh
 
+
 4. Input the following command to return to the ``bumo/`` directory. 
+
 
 ::
 
