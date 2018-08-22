@@ -94,11 +94,11 @@ raw private key，如下所示：
 5. 对第4步中产生的字节数组进行Base58编码，得到以priv开始的字符串，即私钥（private
 key），如下所示：
 
-.. code:: 
+:: 
 
     privbsGZFUoRv8aXZbSGd3bwzZWFn3L5QKq74RXAQYcmfXhhZ54CLr9z
 
-------------------------------------------------------------------------------------------------------
+
 表1
 
 
