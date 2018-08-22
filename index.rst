@@ -16,7 +16,7 @@ Contents:
    docs/keypaironenew
    docs/bumo_java_sdknew
    docs/API_Guide_for_Exchangesnew
-   docs/keypair手册
+   docs/keypairnew手册
 
 
    
