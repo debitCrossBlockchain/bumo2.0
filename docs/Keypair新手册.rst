@@ -762,7 +762,7 @@ https://github.com/bumoproject/bumo/tree/develop/src/proto
 2. 完成交易数据填充。
 
 通过 Keypair 中的
-生成地址_ \ 生成的新账户B的地址是\ ``buQoP2eRymAcUm3uvWgQ8RnjtrSnXBXfAzsV``\ ，填充的json数据如下：
+生成地址_ 生成的新账户B的地址是\ ``buQoP2eRymAcUm3uvWgQ8RnjtrSnXBXfAzsV``\ ，填充的json数据如下：
 
 .. code:: 
 
