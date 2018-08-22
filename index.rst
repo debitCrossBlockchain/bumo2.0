@@ -17,6 +17,7 @@ Contents:
    docs/bumo_java_sdknew
    docs/API_Guide_for_Exchangesnew
    docs/Keypair新手册
+   docs/交易所对接指南
 
 
    
