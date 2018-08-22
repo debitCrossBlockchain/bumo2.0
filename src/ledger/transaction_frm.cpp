@@ -369,8 +369,6 @@ namespace bumo {
 				break;
 			}
 
-			utils::StringVector vec;
-			vec.push_back(transaction_env_.transaction().source_address());
 			if (check_priv && !SignerHashPriv(source_account, -1)) {
 				result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
 				result_.set_desc(utils::String::Format("Transaction(%s)'s signature weight is not enough", utils::String::BinToHexString(hash_).c_str()));
@@ -430,8 +428,6 @@ namespace bumo {
 			return false;
 		}
 
-		utils::StringVector vec;
-		vec.push_back(transaction_env_.transaction().source_address());
 		if (check_priv && !SignerHashPriv(source_account, -1)) {
 			result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
 			result_.set_desc(utils::String::Format("Transaction(%s) signature weight is not enough", utils::String::BinToHexString(hash_).c_str()));
