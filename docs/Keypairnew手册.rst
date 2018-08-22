@@ -46,7 +46,7 @@ Raw Private Key
 
 **Raw Public Key**
 
-Raw Public Key 是指通过``ED25519``算法对 raw private key
+Raw Public Key 是指通过 ``ED25519`` 算法对 raw private key
 进行处理生成的字节数组，该字节数组是生成公钥的前提条件。
 
 原理图
