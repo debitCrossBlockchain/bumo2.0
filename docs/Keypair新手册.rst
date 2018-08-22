@@ -98,7 +98,7 @@ key），如下所示：
 
     privbsGZFUoRv8aXZbSGd3bwzZWFn3L5QKq74RXAQYcmfXhhZ54CLr9z
 
-**说明**: 至此就完成了私钥的生成。
+   **说明**: 至此就完成了私钥的生成。
 
 表1
 
