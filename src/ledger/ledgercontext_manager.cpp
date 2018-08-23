@@ -449,6 +449,7 @@ namespace bumo {
 				if (opt_type > ContractTestParameter::QUERY || opt_type < ContractTestParameter::INIT){
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 					result.set_desc(utils::String::Format("opt_type overload:%d", opt_type));
+					delete ledger_context;
 					return false;
 				}
 
@@ -456,6 +457,7 @@ namespace bumo {
 				if (result.code() == protocol::ERRCODE_SUCCESS) {
 					break;
 				}
+				delete ledger_context;
 				return false;
 			} while (false);
 		}
