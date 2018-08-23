@@ -178,8 +178,6 @@ namespace bumo {
 			ope->set_type(protocol::Operation_Type_CREATE_ACCOUNT);
 
 			protocol::OperationCreateAccount* create_account = ope->mutable_create_account();
-			PrivateKey priv_key(SIGNTYPE_ED25519);
-			create_account->set_dest_address(priv_key.GetEncAddress());
 			create_account->set_init_input(parameter_.input_);
 			create_account->set_init_balance(100000000000000);
 			protocol::AccountPrivilege *priv = create_account->mutable_priv();
