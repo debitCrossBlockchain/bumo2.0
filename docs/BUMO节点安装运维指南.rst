@@ -395,7 +395,7 @@ log              运行日志存储目录
   cd /usr/local/buchain/config/
 
 
-.. note:: 在该目录下提供了以下运行环境的配置文件。
+.. note:: | 在该目录下提供了以下运行环境的配置文件。
   - bumo-mainnet.json（该文件是主网环境的配置文件应用在生产环境中）
   - bumo-testnet.json（该文件是测试网环境的配置文件）
   - bumo-single.json（该文件是单节点调试环境的配置文件）
