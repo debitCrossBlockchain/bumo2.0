@@ -522,16 +522,21 @@ namespace bumo {
 				if (type == LedgerContext::AT_TEST_V8)
 					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
 				else if (LedgerContext::AT_TEST_TRANSACTION) {
-					int64_t actual_fee = 0;
+					int64_t actual_gas = 0;
 					//pub:64, sig:76 + key
-					if (!utils::SafeIntMul(ptr->GetActualGas() + (signature_number*(64 + 76 + 5) + 20), gas_price, actual_fee)) {
-						LOG_ERROR("Calculate actual fee overflow, gas price(" FMT_I64 "), signature number(" FMT_I64 ")", gas_price, signature_number);
+					if (!utils::SafeIntAdd(ptr->GetActualGas(), (int64_t)(signature_number*(64 + 76 + 5) + 20), actual_gas)) {
+						LOG_ERROR("Calculate actual gas overflow, actual gas (" FMT_I64 "), signature number(" FMT_I64 ")", ptr->GetActualGas(), signature_number);
+					}
+
+					int64_t actual_fee = 0;
+					if (!utils::SafeIntMul(actual_gas, gas_price, actual_fee)) {
+						LOG_ERROR("Calculate actual fee overflow, actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", actual_gas, gas_price);
 					}
 					env_store.set_actual_fee(actual_fee);
 
 					result = ptr->GetResult();
 					Json::Value jtx = Proto2Json(env_store);
-					jtx["gas"] = ptr->GetActualGas();
+					jtx["gas"] = actual_gas;
 					txs[txs.size()] = jtx;
 				}
 			}
