@@ -18,6 +18,7 @@ Contents:
    docs/API_Guide_for_Exchangesnew
    docs/Keypair新手册
    docs/交易所对接指南
+   docs/BUMO_JAVA_SDK指南
 
 
    
