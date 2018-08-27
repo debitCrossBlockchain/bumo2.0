@@ -75,11 +75,11 @@ add_subdirectory(common)
 add_subdirectory(libbumo_tools)
 add_subdirectory(overlay)
 add_subdirectory(consensus)
-add_subdirectory(daemon)
 add_subdirectory(monitor)
 add_subdirectory(main)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")  
+	add_subdirectory(daemon)
 	set(BUMO_SCRIPTS ${BUMO_ROOT_DIR}/deploy)
 	install(
 		PROGRAMS ${BUMO_SCRIPTS}/bumo ${BUMO_SCRIPTS}/bumod ${BUMO_SCRIPTS}/start-stop-daemon

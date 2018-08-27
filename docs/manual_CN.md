@@ -1,23 +1,26 @@
 [English](manual.md) | 中文
 
-# __BUMO区块链使用文档__
+# BUMO区块链使用文档
 
 <!-- TOC -->
 
-- [__编译__](#编译)
+- [编译](#编译)
     - [Linux](#linux)
     - [MAC](#mac)
     - [Windows](#windows)
-- [__部署__](#部署)
-    - [__配置要求__](#配置要求)
-    - [__Linux下的安装步骤__](#linux下的安装步骤)
-        - [__使用编译方式安装__](#使用编译方式安装)
-        - [__使用安装包安装__](#使用安装包安装)
-    - [__目录结构__](#目录结构)
-    - [__切换运行环境__](#切换运行环境)
-    - [__运行__](#运行)
-    - [__运行状态__](#运行状态)
-    - [__配置__](#配置)
+- [部署](#部署)
+    - [配置要求](#配置要求)
+    - [Linux下的安装步骤](#linux下的安装步骤)
+        - [Linux编译方式安装](#linux编译方式安装)
+        - [Linux安装包安装](#linux安装包安装)
+    - [MAC 下的安装步骤](#mac下的安装步骤)
+        - [MAC编译方式安装](#mac编译方式安装)
+        - [MAC安装包安装](#mac安装包安装)
+    - [目录结构](#目录结构)
+    - [切换运行环境](#切换运行环境)
+    - [运行](#运行)
+    - [运行状态](#运行状态)
+    - [配置](#配置)
         - [数据存储](#数据存储)
         - [节点间网络通信](#节点间网络通信)
         - [WEB API 配置](#web-api-配置)
@@ -26,7 +29,7 @@
         - [创世区块](#创世区块)
         - [日志配置](#日志配置)
         - [多节点配置示例](#多节点配置示例)
-- [__运维__](#运维)
+- [运维](#运维)
     - [服务启动与停止](#服务启动与停止)
     - [查看系统详细状态](#查看系统详细状态)
     - [清空数据库](#清空数据库)   
@@ -34,9 +37,9 @@
 
 <!-- /TOC -->
 
-## __编译__
+## 编译
 
-__如果不想编译源码，可以直接使用安装包部署，[安装包下载]( https://github.com/bumoproject/bumo/releases/ "download")，下载完成后参考[__使用安装包安装__](#使用安装包安装)__
+如果不想编译源码，可以直接使用安装包部署，[安装包下载]( https://github.com/bumoproject/bumo/releases/ "download")，下载完成后参考[Linux 安装包安装](#使用安装包安装)，[MAC 安装包安装](#使用安装包安装)
 
 ### Linux
 支持 Ubuntu、Centos 等大多数操作系统编译，推荐使用版本Ubuntu 14.04，Centos 7。下面编译步骤以 Ubuntu 14.04 示例
@@ -70,8 +73,7 @@ make
 - 安装brew，参考 [brew安装](https://brew.sh/index_zh-cn.html)
 - 使用brew执行安装依赖包
 
- ```
-bash
+```bash
 export HOMEBREW_NO_AUTO_UPDATE=true
 brew install automake
 brew install autoconf
@@ -82,11 +84,10 @@ brew install m4
 brew install wget
 ```
 
+
 - 编译 
 
-
- ```
-bash
+``` bash
 #首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库
 cd bumo/build/
 ./install-build-deps-mac.sh
@@ -104,16 +105,16 @@ make
 - 打开 buchain\build\win32\Bumo.vs12.sln, 使用 VS 自带编译器编译即可。生成的可执行文件在bumo\build\win32\dbin 目录下。
 - 首次下载代码后，需要初始化开发环境，从服务器下载相关依赖库，进入 build目录，双击执行 install-build-deps-win32.bat 脚本。
 
-## __部署__
+## 部署
 Windows 部署与 Linux 下部署基本类似，本示例以 Linux 为准。
 
-### __配置要求__
+### 配置要求
 - 推荐配置：CPU 8 核，内存 32G，带宽 20 M，SSD 磁盘 500G。或更高配置
 - 最低配置：CPU 4 核，内存 16G，带宽 10 M，SSD 磁盘 500G。
 
-### __Linux下的安装步骤__
+### Linux下的安装步骤
 
-#### __使用编译方式安装__
+#### Linux编译方式安装
 ```bash
 cd bumo
 make install
@@ -122,7 +123,7 @@ make install
 
 安装完成。
 
-#### __使用安装包安装__
+#### Linux安装包安装
 
 这里介绍另外一种安装方式，使用安装包安装：[安装包下载]( https://github.com/bumoproject/bumo/releases/ "download")
 
@@ -165,7 +166,39 @@ make install
     chmod +x /etc/rc.local
 
 安装完成。
-### __目录结构__
+
+### MAC下的安装步骤
+
+MAC 下安装需要注意两点：
+- MAC 系统目录下 /usr/local/ 执行命令或者程序时，都需要加上 sudo 权限，后续的操作不再重复描述。
+- MAC 系统一般是桌面系统，MAC 没有开机启动和 service 功能，因此不用使用 ln 命令设置开启和服务功能。
+
+#### MAC编译方式安装
+```bash
+cd bumo
+sudo make install
+```
+程序将安装在/usr/local/buchain/目录下
+
+安装完成。
+ 
+#### MAC安装包安装
+
+这里介绍另外一种安装方式，使用安装包安装：[安装包下载]( https://github.com/bumoproject/bumo/releases/ "download")
+
+解压
+
+拷贝 buchain-`1.0.0.x`-macOS-x64.tar.gz 到 /usr/local/
+
+```
+cd /usr/local/
+//需要注意用实际版本包的名字
+sudo tar xzvf buchain-1.0.0.x-macOS-x64.tar.gz
+```
+
+解压完后，即安装完毕
+
+### 目录结构
 
 目录 | 描述 
 |:--- | --- 
@@ -173,17 +206,18 @@ make install
 |jslib| 存放第三方js库
 | config | 配置文件目录包含：bumo.json
 | data | 数据库目录，存放账本数据
-| script | 启停脚本目录
+| script | 启停脚本目录 (MAC 系统没有该目录)
 | log | 运行日志存储目录
 
 
-### __切换运行环境__
+### 切换运行环境
 
 如果需要切换 BUMO 的运行环境，需要手动替换配置文件。步骤如下：
 
 1、首先需要停止 bumo 程序，
 ```bash
-    service bumo stop
+    service bumod stop
+    #MAC 系统没有 service 服务，直接终止 bumo 程序
 ```
 2、替换配置文件
 ```bash
@@ -201,21 +235,25 @@ make install
 ```bash
     cd ../
     ./bin/bumo --dropdb
-    service bumo start
+    service bumod start
+
+    #MAC 系统没有 service 服务，直接使用 sudo ./bin/bumo
 ```
-### __运行__
+### 运行
 
 ```bash
-    service bumo start
+    service bumod start
+    #MAC 系统没有 service 服务，直接使用 sudo ./bin/bumo
 ```
 
-### __运行状态__
+### 运行状态
 
 ```bash
-    service bumo status
+    service bumod status
+    #MAC 系统没有 service 服务
 ```
 
-### __配置__
+### 配置
 
 config.json
 
@@ -475,12 +513,15 @@ p2p 的 known_peers 必须为其他已知节点的 IP 和端口，用于节点�
 `account`，`validation_address` 可以通过 bumo 程序命令行工具 `./bumo --create-account` 获取，请妥善保存该账号信息，丢失后将无法找回。
 
 
-## __运维__
+## 运维
 ### 服务启动与停止
-```
-启动    :service bumo start
-关闭    :service bumo stop
-运行状态:service bumo status
+``` bash
+启动    :service bumod start
+关闭    :service bumod stop
+运行状态:service bumod status
+
+#MAC 系统没有 service 服务，直接使用命令行启动和关闭 sudo ./bin/bumo 
+
 ```
 ### 查看系统详细状态
 
