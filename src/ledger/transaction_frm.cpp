@@ -397,7 +397,7 @@ namespace bumo {
 		nonce = source_account->GetAccountNonce();	
 		if (GetNonce() <= source_account->GetAccountNonce()) {
 			result_.set_code(protocol::ERRCODE_BAD_SEQUENCE);
-			result_.set_desc(utils::String::Format("Transaction nonce(" FMT_I64 ") too small, the account(%s) nonce is "FMT_I64".",
+			result_.set_desc(utils::String::Format("Transaction nonce(" FMT_I64 ") too small, the account(%s) nonce is (" FMT_I64 ").",
 				GetNonce(), GetSourceAddress().c_str(), source_account->GetAccountNonce()));
 			LOG_ERROR("%s", result_.desc().c_str());
 			return false;
