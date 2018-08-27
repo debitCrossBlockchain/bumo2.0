@@ -527,7 +527,7 @@ namespace bumo {
 		return listen_port_;
 	}
 
-	bool Network::Connect(const std::string &uri, Connection*& peer) {
+	bool Network::Connect(const std::string &uri) {
 		websocketpp::lib::error_code ec;
 
 		tls_client::connection_ptr tls_con = NULL;
@@ -571,7 +571,7 @@ namespace bumo {
 
 		utils::MutexGuard guard_(conns_list_lock_);
 		int64_t new_id = next_id_++;
-		peer = CreateConnectObject(NULL, ssl_parameter_.enable_ ? NULL : &client_,
+		Connection* peer = CreateConnectObject(NULL, ssl_parameter_.enable_ ? NULL : &client_,
 			NULL, ssl_parameter_.enable_ ? &tls_client_ : NULL,
 			handle, uri, new_id);
 		connections_.insert(std::make_pair(new_id, peer));
@@ -587,11 +587,6 @@ namespace bumo {
 
 		LOG_INFO("Connecting uri(%s), id(" FMT_I64 ")", uri.c_str(), new_id);
 		return true;
-	}
-
-	bool Network::Connect(const std::string &uri) {
-		Connection* temp = nullptr;
-		return Connect(uri, temp);
 	}
 
 	Connection *Network::GetConnection(int64_t id) {
@@ -610,25 +605,6 @@ namespace bumo {
 		}
 
 		return GetConnection(iter->second);
-	}
-
-	Connection *Network::GetConnection(std::string uri) {
-		utils::InetAddress addr(uri);
-		
-		for (auto conn : connections_){
-			if (conn.second->GetPeerAddress() == addr){
-				return conn.second;
-			}
-		}
-		
-		Connection* peer = nullptr;
-		Connect(uri, peer);
-
-		return peer;
-	}
-
-	void Network::Disconnect(int64_t conn_id) {
-		RemoveConnection(conn_id);
 	}
 
 	void Network::RemoveConnection(int64_t conn_id) {

@@ -115,10 +115,12 @@ namespace bumo {
 
 		virtual bool SendMsgToPeer(int64_t peer_id, WsMessagePointer msg);
 		virtual bool SendRequest(int64_t peer_id, int64_t type, const std::string &data);
-		virtual bool SendRequest(std::string uri, int64_t type, const std::string &data);
+		virtual bool SendRequest(std::string addr, int64_t type, const std::string &data);
 		virtual std::set<int64_t> GetActivePeerIds();
 
 		bool NodeExist(std::string node_address, int64_t peer_id);
+		bool Reconnect(std::string node_address, std::string endpoint);
+		bool Disconnect(int64_t conn_id);
 	};
 }
 

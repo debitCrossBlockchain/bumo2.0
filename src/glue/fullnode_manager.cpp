@@ -379,7 +379,7 @@ namespace bumo {
 			req.set_sender(local_address_);
 	
 			// Impeach when check process timeout
-			fullnode_check_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this, peer](int64_t data) {
+			fullnode_check_timer_ = utils::Timer::Instance().AddTimer(5 * utils::MICRO_UNITS_PER_SEC, 0, [this, peer](int64_t data) {
 				std::string reason = "timeout";
 				LOG_ERROR("Full node check timeout, impeach %s", peer.c_str());
 				impeach(peer, reason);
@@ -392,12 +392,12 @@ namespace bumo {
 				break;
 			}
 			FullNodePointer fp = it->second;
-			std::string uri = utils::String::Format("ws://%s", fp->getEndPoint().c_str());
-			if (!PeerManager::Instance().ConsensusNetwork().Connect(uri)) {
-				LOG_ERROR("Failed to connect to uri:%s", uri.c_str());
+			if (!PeerManager::Instance().ConsensusNetwork().Reconnect(peer, fp->getEndPoint())) {
+				LOG_ERROR("Failed to connect to :%s", fp->getEndPoint().c_str());
 			}
-			if (!PeerManager::Instance().SendRequest(uri, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString())) {
-				LOG_ERROR("Failed to send request to uri:%s", uri.c_str());
+			
+			if (!PeerManager::Instance().SendRequest(peer, protocol::OVERLAY_MSGTYPE_FULLNODE_CHECK, req.SerializeAsString())) {
+				LOG_ERROR("Failed to send request to peer:%s", peer.c_str());
 				break;
 			}
 		} while (false);

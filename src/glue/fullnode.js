@@ -79,7 +79,7 @@ function impeachFullNode(params){
         let item = fullnode.impeach_list[i];
         let address = Object.keys(item)[0];
         let info = item[address];
-        if (sender === address && impeachInfo.ledger_seq < info.ledger_seq) {
+        if (sender === address && impeachInfo.ledger_seq <= info.ledger_seq) {
             log('Ignore invalid impeach info from address ' + sender);
             impeach_valid = false;
             break;
@@ -94,8 +94,11 @@ function impeachFullNode(params){
             assert(setFullNode(JSON.stringify(fullnode), 'remove') === true, 'Failed to remove invalid full node');
         } else if (fullnode.impeach_list.length < minImpeachSize){
 			assert(setFullNode(JSON.stringify(fullnode), 'update') === true, 'Failed to update full node ' + impeachedAddr);
+			log('Set new full node info:' + JSON.stringify(fullnode));
 		}
-    }
+    } else {
+		return false;
+	}
     return true;
 }
 
@@ -144,6 +147,7 @@ function query(input_str){
 }
 
 function main(input_str){
+	tlog("Fullnode", input_str);
     let input = JSON.parse(input_str);
 	let address = input.params.address;
     
@@ -157,7 +161,7 @@ function main(input_str){
     else if(input.method === 'impeach'){
         assert(typeof input.params.address === 'string', 'Arg-address should be string');
         assert(typeof input.params.impeach === 'object', 'Arg-impeach should be object');
-        impeachFullNode(input.params);
+        assert(impeachFullNode(input.params), 'Failed to impeach ' + input.params.address);
         tlog('impeach', sender + ' impeach ' + input.params.address + ' succeed');
 	}
 	else if(input.method === 'unimpeach'){

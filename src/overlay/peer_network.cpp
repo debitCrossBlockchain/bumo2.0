@@ -820,11 +820,13 @@ namespace bumo {
 		return false;
 	}
 
-	bool PeerNetwork::SendRequest(std::string uri, int64_t type, const std::string &data){
+	bool PeerNetwork::SendRequest(std::string addr, int64_t type, const std::string &data) {
 		utils::MutexGuard guard(conns_list_lock_);
-		Peer *peer = (Peer *)GetConnection(uri);
-		if (peer && peer->IsActive()) {
-			return peer->SendRequest(type, data, last_ec_);
+		for (auto item : connections_) {
+			Peer *peer = (Peer *)item.second;
+			if (peer->GetPeerNodeAddress() == addr) {
+				return peer->SendRequest(type, data, last_ec_);
+			}
 		}
 
 		return false;
@@ -855,6 +857,56 @@ namespace bumo {
 		return exist;
 	}
 
+	bool PeerNetwork::Reconnect(std::string node_address, std::string endpoint) {
+		// reconnect peer node
+		for (ConnectionMap::iterator iter = connections_.begin(); iter != connections_.end(); iter++) {
+			Peer *peer = (Peer *)iter->second;
+			if (peer->GetPeerNodeAddress() == node_address) {
+				OnDisconnect(peer);
+				RemoveConnection(peer->GetId());
+				LOG_ERROR("Disconnect node %s:", node_address.c_str());
+				break;
+			}
+		}
+
+		std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", endpoint.c_str());
+
+		Connect(uri);
+		LOG_ERROR("Connect to uri:%s", uri.c_str());
+		protocol::Peer values;
+		utils::InetAddress address(endpoint);
+
+		values.set_ip(address.ToIp());
+		values.set_port(address.GetPort());
+		
+
+		if (!UpdateItem(address, values)) {
+			LOG_ERROR("Insert peer failed");
+			return false;
+		}
+
+		for (ConnectionMap::iterator iter = connections_.begin(); iter != connections_.end(); iter++) {
+			Peer *peer = (Peer *)iter->second;
+			if (peer->GetPeerNodeAddress() == node_address) {
+				LOG_ERROR("Got connection %s from address %s:", peer->GetPeerAddress().ToIpPort().c_str(), node_address.c_str());
+			}
+		}
+
+		return true;
+	}
+
+	bool PeerNetwork::Disconnect(int64_t conn_id) {
+		Peer *peer = (Peer *)GetConnection(conn_id);
+		if (peer) {
+			OnDisconnect(peer);
+			RemoveConnection(peer->GetId());
+		}
+		else {
+			LOG_ERROR("Failed to get peer %s", peer->GetPeerAddress().ToIpPort().c_str());
+			return false;
+		}
+		return true;
+	}
 	void PeerNetwork::GetModuleStatus(Json::Value &data) {
 		do {
 			utils::MutexGuard guard(conns_list_lock_);
