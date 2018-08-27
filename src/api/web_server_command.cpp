@@ -431,6 +431,7 @@ namespace bumo {
 							exe_result2, logs, txs, query_rets, stat, signature_number)) {
 							break;
 						}
+						if (!txs[i].isMember("actual_fee")) txs[i]["actual_fee"] = 0;
 						actual_fee2 = txs[i]["actual_fee"].asInt64();
 						if (exe_result2.code() == protocol::ERRCODE_SUCCESS){
 							result_json["logs"] = logs;

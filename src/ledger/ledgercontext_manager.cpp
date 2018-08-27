@@ -149,7 +149,7 @@ namespace bumo {
 				PrivateKey priv_key(SIGNTYPE_ED25519);
 				parameter_.source_address_ = priv_key.GetEncAddress();
 			}
-			//Create a tempory source address
+			//Create a temporary source address
 			protocol::Account account;
 			account.set_address(parameter_.source_address_);
 			account.set_nonce(0);
@@ -285,6 +285,9 @@ namespace bumo {
 			bool ret = ContractManager::Instance().Query(type_, parameter, query_result);
 			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
 			return ret;
+		}
+		else {
+			return false;
 		}
 	}
 
@@ -518,12 +521,17 @@ namespace bumo {
 			else{
 				if (type == LedgerContext::AT_TEST_V8)
 					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
-				else if (LedgerContext::AT_TEST_TRANSACTION){
-					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76 + 5) + 20))*gas_price);//pub:64, sig:76 + key
+				else if (LedgerContext::AT_TEST_TRANSACTION) {
+					int64_t actual_fee = 0;
+					//pub:64, sig:76 + key
+					if (!utils::SafeIntMul(ptr->GetActualGas() + (signature_number*(64 + 76 + 5) + 20), gas_price, actual_fee)) {
+						LOG_ERROR("Calculate actual fee overflow, gas price(" FMT_I64 "), signature number(" FMT_I64 ")", gas_price, signature_number);
+					}
+					env_store.set_actual_fee(actual_fee);
 
 					result = ptr->GetResult();
 					Json::Value jtx = Proto2Json(env_store);
-					jtx["gas"] = env_store.actual_fee() / gas_price;
+					jtx["gas"] = ptr->GetActualGas();
 					txs[txs.size()] = jtx;
 				}
 			}
