@@ -219,7 +219,7 @@ namespace bumo {
 				js["action"] = "apply";
 				js["error_code"] = err.code();
 				js["desc"] = err.desc();
-				LOG_ERROR("Transaction verification failed. The transaction's source address: %s, nonce: "FMT_I64", hash: %s, return value: %s.",
+				LOG_ERROR("Transaction verification failed. The transaction's source address: %s, nonce: (" FMT_I64 "), hash: %s, return value: %s.",
 					address.c_str(), tx->GetNonce(), utils::String::Bin4ToHexString(hash_value).c_str(), js.toFastString().c_str());
 				break;
 			}
