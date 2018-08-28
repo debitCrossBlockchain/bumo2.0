@@ -345,7 +345,8 @@ namespace bumo {
 						break;
 					}
 					
-					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					int64_t gas_price = tran->gas_price() > sys_gas_price ? tran->gas_price() : sys_gas_price;
 					tran->set_gas_price(gas_price);
 					tran->set_fee_limit(0);
 
@@ -366,7 +367,9 @@ namespace bumo {
 						break;
 					}
 
-					int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+					int64_t gas_price = tran->gas_price() > sys_gas_price ? tran->gas_price() : sys_gas_price;
+
 					tran->set_gas_price(gas_price);
 					tran->set_fee_limit(0);
 

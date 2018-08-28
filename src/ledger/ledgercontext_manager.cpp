@@ -515,7 +515,6 @@ namespace bumo {
 			env_store.set_close_time(ledger->GetProtoHeader().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
-			int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
 			if (ptr->GetResult().code() != 0)
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else{
@@ -529,8 +528,8 @@ namespace bumo {
 					}
 
 					int64_t actual_fee = 0;
-					if (!utils::SafeIntMul(actual_gas, gas_price, actual_fee)) {
-						LOG_ERROR("Calculate actual fee overflow, actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", actual_gas, gas_price);
+					if (!utils::SafeIntMul(actual_gas, ptr->GetGasPrice(), actual_fee)) {
+						LOG_ERROR("Calculate actual fee overflow, actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", actual_gas, ptr->GetGasPrice());
 					}
 					env_store.set_actual_fee(actual_fee);
 
