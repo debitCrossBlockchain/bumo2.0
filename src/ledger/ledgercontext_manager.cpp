@@ -523,7 +523,7 @@ namespace bumo {
 					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
 				else if (LedgerContext::AT_TEST_TRANSACTION) {
 					int64_t actual_gas = 0;
-					//pub:64, sig:76 + key
+					//64 is length of signature data, 76 is length of public key, 5 and 20 for redundancy
 					if (!utils::SafeIntAdd(ptr->GetActualGas(), (int64_t)(signature_number*(64 + 76 + 5) + 20), actual_gas)) {
 						LOG_ERROR("Calculate actual gas overflow, actual gas (" FMT_I64 "), signature number(" FMT_I64 ")", ptr->GetActualGas(), signature_number);
 					}
