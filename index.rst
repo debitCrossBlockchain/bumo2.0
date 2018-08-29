@@ -20,6 +20,7 @@ Contents:
    docs/交易所对接指南
    docs/BUMO_JAVA_SDK指南
    docs/BUMO节点安装运维指南
+   docs/Installation_Guide_for_BUMO
 
 
    
