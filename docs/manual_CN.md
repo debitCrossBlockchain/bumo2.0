@@ -431,7 +431,7 @@ p2p 的 known_peers 必须为其他已知节点的 IP 和端口，用于节点�
 "ledger":
 {
     "validation_address":"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",//验证节点一地址，同步节点或者钱包不需要配置
-    "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54", //验证节点二的私钥，同步节点或者钱包不需要配置
+    "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54", //验证节点一的私钥，同步节点或者钱包不需要配置
     "max_trans_per_ledger":1000,
     "tx_pool":
     {
