@@ -31,7 +31,7 @@ namespace utils {
 	class Singleton {
 	private:
 		static T *instance_;
-		static utils::Mutex ms_objLocker;
+		static utils::Mutex obj_locker_;
 	protected:
 		Singleton() {}
 		virtual ~Singleton() {}
@@ -40,7 +40,7 @@ namespace utils {
 		static bool InitInstance() {
 			if (NULL == instance_)
 			{
-				utils::MutexGuard objAuto(ms_objLocker);
+				utils::MutexGuard obj_auto(obj_locker_);
 				if (NULL == instance_)
 				{
 					instance_ = new T;
@@ -56,7 +56,7 @@ namespace utils {
 		template<class CLS_TYPE, class ARG_TYPE> static bool InitInstance(ARG_TYPE nArg) {
 			if (NULL == instance_)
 			{
-				utils::MutexGuard objAuto(ms_objLocker);
+				utils::MutexGuard obj_auto(obj_locker_);
 				if (NULL == instance_)
 				{
 					instance_ = new CLS_TYPE(nArg);
@@ -101,7 +101,7 @@ namespace utils {
 	};
 
 	template<class T> T *utils::Singleton<T>::instance_ = NULL;
-	template<class T> utils::Mutex utils::Singleton<T>::ms_objLocker;
+	template<class T> utils::Mutex utils::Singleton<T>::obj_locker_;
 } // namespace utils
 
 #endif // _UTILS_SINGLETION_H_
