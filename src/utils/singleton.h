@@ -17,56 +17,35 @@
 #ifndef UTILS_SINGLETION_H_
 #define UTILS_SINGLETION_H_
 #include<assert.h>
-#include "thread.h"
+
 #ifndef NULL
 #define  NULL 0
 #endif
-//
-
 
 namespace utils {
-	
-	
+
 	template<class T>
 	class Singleton {
 	private:
 		static T *instance_;
-		static utils::Mutex obj_locker_;
+
 	protected:
 		Singleton() {}
 		virtual ~Singleton() {}
 
 	public:
 		static bool InitInstance() {
-			if (NULL == instance_)
-			{
-				utils::MutexGuard obj_auto(obj_locker_);
-				if (NULL == instance_)
-				{
-					instance_ = new T;
-				}
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			if (NULL != instance_) return false;
+
+			instance_ = new T;
+			return true;
 		}
 
 		template<class CLS_TYPE, class ARG_TYPE> static bool InitInstance(ARG_TYPE nArg) {
-			if (NULL == instance_)
-			{
-				utils::MutexGuard obj_auto(obj_locker_);
-				if (NULL == instance_)
-				{
-					instance_ = new CLS_TYPE(nArg);
-				}
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			if (NULL != instance_) return false;
+
+			instance_ = new CLS_TYPE(nArg);
+			return true;
 		}
 
 		static bool ExitInstance() {
@@ -101,7 +80,7 @@ namespace utils {
 	};
 
 	template<class T> T *utils::Singleton<T>::instance_ = NULL;
-	template<class T> utils::Mutex utils::Singleton<T>::obj_locker_;
+
 } // namespace utils
 
 #endif // _UTILS_SINGLETION_H_
