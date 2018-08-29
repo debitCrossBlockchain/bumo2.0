@@ -436,7 +436,7 @@ Two installation methods are supported on MacOS systems: `Installing by Compilat
 Installing by Compilation in MacOS
 ~~~~~~~
 
-Installing by Compilation means that the source code of the BUMO node is first compiled into machine code that can be recognized by the computer and then installed. Installing by Compilation consists of six parts: `Installing Xcode`_, `Installing Command Line Tools`_, `Installing Homebrew`_, `Installing Dependencies in MacOS`_, `Compiling the BUMO Source Code in MacOS`_, and `Installing the BUMO Node in MacOS <#installing-the-bumo-node-in-macos>`__.
+Installing by Compilation means that the source code of the BUMO node is first compiled into machine code that can be recognized by the computer and then installed. Installing by Compilation consists of six parts: `Installing Xcode`_, `Installing Command Line Tools`_, `Installing Homebrew`_, `Installing Dependencies in MacOS`_, `Compiling the BUMO Source Code in MacOS`_, and `Installing the BUMO Node in MacOS <#installing-the-bumo-node-in-macos-1>`__.
 
 Installing Xcode
 ^^^^^^^^^^^^^^^^
