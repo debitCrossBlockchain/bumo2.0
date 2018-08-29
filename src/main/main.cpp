@@ -301,7 +301,7 @@ void RunLoop(){
 		for (auto item : bumo::TimerNotify::notifys_){
 			item->TimerWrapper(utils::Timestamp::HighResolution());
 			if (item->IsExpire(utils::MICRO_UNITS_PER_SEC)){
-				LOG_WARN("The execution time(" FMT_I64 " us) for the timer(%s) is expired after 1s elapses", item->GetTimerName().c_str(), item->GetLastExecuteTime());
+				LOG_WARN("The execution time(" FMT_I64 " us) for the timer(%s) is expired after 1s elapses", item->GetLastExecuteTime(), item->GetTimerName().c_str());
 			}
 		}
 
