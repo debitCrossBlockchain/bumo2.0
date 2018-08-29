@@ -256,20 +256,20 @@ Switch runtime environment of BUMO manually:
 ```bash
     cd ../
     ./bin/bumo --dropdb
-    service bumo start
+    service bumod start
     #The MacOS does not have a service and use sudo. /bin/bumo directly.
 ```
 ### Operation
 
 ```bash
-    service bumo start
+    service bumod start
     #The MacOS does not have a service and use sudo. /bin/bumo directly.
 ```
 
 ### Operating Status 
 
 ```bash
-    service bumo status
+    service bumod status
     #The MacOS does not have a service.
 ```
 
@@ -529,9 +529,9 @@ Synchronization 3:
 ## Operation and Maintenance
 ### Service Start and Stop
 ```
-Start    :service bumo start
-Stop    :service bumo stop
-Running status:service bumo status
+Start    :service bumod start
+Stop    :service bumod stop
+Running status:service bumod status
 
  #The MacOS does not have a service.
 ```
