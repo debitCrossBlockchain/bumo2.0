@@ -366,7 +366,8 @@ bumo.json
         "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY"] //validated nodes list
     }
 ```
-    In the same blockchain, the configuration of `genesis` should keep consistent.
+
+In the same blockchain, the configuration of `genesis` should keep consistent.
 
 #### Log Configuration
 
