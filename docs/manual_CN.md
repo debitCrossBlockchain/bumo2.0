@@ -55,6 +55,7 @@ sudo apt-get install cmake
 sudo apt-get install libbz2-dev
 sudo apt-get install python
 sudo apt-get install unzip
+sudo apt-get install wget
 ```
 - 编译
 ```bash
