@@ -547,7 +547,7 @@ namespace bumo {
 			if (!success){
 				result_.set_code(protocol::ERRCODE_INVALID_DATAVERSION);
 				result_.set_desc(utils::String::Format(
-					"The version to set meatadata while create account(%s) should be 0 or 1 ",
+					"The version to set metadata while create account(%s) should be 0 or 1 ",
 					dest_account->GetAccountAddress().c_str()));
 				
 				break;
@@ -582,8 +582,6 @@ namespace bumo {
 	}
 
 	void OperationFrm::IssueAsset(std::shared_ptr<Environment> environment) {
-
-
 		const protocol::OperationIssueAsset& ope = operation_.issue_asset();
 		do {
 

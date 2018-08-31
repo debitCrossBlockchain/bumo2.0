@@ -206,7 +206,7 @@ namespace bumo {
 			if (tx_pool_->IsExist(tx->GetContentHash())){
 				//Break when a transaction is replayed;
 				err.set_code(protocol::ERRCODE_ALREADY_EXIST);
-				err.set_desc(utils::String::Format("Received duplicate transation message. The transaction's source address is %s, and hash is %s", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
+				err.set_desc(utils::String::Format("Received duplicate transaction message. The transaction's source address is %s, and hash is %s", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str()));
 				LOG_TRACE("Received duplicate transation message. The transaction's source address is %s, and hash is %s.", address.c_str(), utils::String::Bin4ToHexString(hash_value).c_str());
 				break;
 			}
