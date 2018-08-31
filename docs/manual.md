@@ -230,7 +230,7 @@ Catalog | Description
 
 ### Switch to Target Network
 
-Switch runtime environment of BUMO manually:
+After installation, if you want to switch the BUMO environment, you need to manually replace the configuration file, as follows
 
 1. Stop bumo program
 
@@ -246,7 +246,7 @@ Switch runtime environment of BUMO manually:
     cp bumo-testnet.json bumo.json  
 
     #About configuration profile
-    bumo.json           ##debugging environment is default
+    bumo.json           ##Loaded by default after the program starts
     bumo-mainnet.json   ##configuration profile of main network
     bumo-testnet.json   ##configuration profile of test network
     bumo-single.json    ##configuration profile of single network for debug

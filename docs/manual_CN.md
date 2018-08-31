@@ -212,7 +212,7 @@ sudo tar xzvf buchain-1.0.0.x-macOS-x64.tar.gz
 
 ### 切换运行环境
 
-如果需要切换 BUMO 的运行环境，需要手动替换配置文件。步骤如下：
+安装完成后，如果要切换 BUMO 运行环境，则需要手动替换配置文件。步骤如下：
 
 1、首先需要停止 bumo 程序，
 ```bash
@@ -226,7 +226,7 @@ sudo tar xzvf buchain-1.0.0.x-macOS-x64.tar.gz
     cp bumo-testnet.json bumo.json  
 
     #配置文件环境说明
-    bumo.json           ##默认调试环境
+    bumo.json           ##程序启动后默认加载的文件
     bumo-mainnet.json   ##主网环境配置文件
     bumo-testnet.json   ##测试网配置文件
     bumo-single.json    ##单机节点调试环境
