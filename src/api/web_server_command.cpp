@@ -229,7 +229,9 @@ namespace bumo {
 		test_parameter.contract_address_ = body["contract_address"].asString();
 		test_parameter.source_address_ = body["source_address"].asString();
 		test_parameter.fee_limit_ = body["fee_limit"].asInt64();
-		test_parameter.gas_price_ = body["gas_price"].asInt64();
+		int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+		int64_t gas_price = body["gas_price"].asInt64() > sys_gas_price ? body["gas_price"].asInt64() : sys_gas_price;
+		test_parameter.gas_price_ = gas_price;
 		test_parameter.contract_balance_ = body["contract_balance"].asInt64();
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
