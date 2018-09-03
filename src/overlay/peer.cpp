@@ -94,7 +94,7 @@ namespace bumo {
 
 	bool Peer::OnNetworkTimer(int64_t current_time) {
 		if (!IsActive() && current_time - connect_start_time_ > 10 * utils::MICRO_UNITS_PER_SEC) {
-			LOG_ERROR("Peer(%s) active timeout", GetPeerAddress().ToIpPort().c_str());
+			LOG_ERROR("Failed to check peer active, (%s) timeout", GetPeerAddress().ToIpPort().c_str());
 			return false;
 		} 
 

@@ -17,7 +17,6 @@
 #define LEDGER_MANAGER_H_
 
 #include <utils/headers.h>
-#include <utils/exprparser.h>
 #include <utils/entry_cache.h>
 #include <common/general.h>
 #include <common/storage.h>

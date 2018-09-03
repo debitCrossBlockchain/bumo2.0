@@ -86,7 +86,7 @@ namespace bumo {
 		}
 
 		if (ret){
-			//Checksum
+			//Check checksum
 			std::string checksum = buff.substr(buff.size() - 4);
 			std::string hash1 = CalcHash(buff.substr(0, buff.size() - 4), sign_type_tmp);
 			std::string hash2 = CalcHash(hash1, sign_type_tmp);
@@ -104,7 +104,7 @@ namespace bumo {
 		PrivateKeyPrefix prefix_tmp;
 		SignatureType sign_type_tmp = SIGNTYPE_NONE;
 		std::string buff = DecodeAddress(encode_key);
-		if (buff.size() == 27 && (uint8_t)buff.at(0) == 0X01 && (uint8_t)buff.at(1) == 0X56){// address
+		if (buff.size() == 27 && (uint8_t)buff.at(0) == 0X01 && (uint8_t)buff.at(1) == 0X56){// Address
 			prefix_tmp = ADDRESS_PREFIX;
 		}
 		else if (buff.size() == 41 && (uint8_t)buff.at(0) == 0XDA && (uint8_t)buff.at(1) == 0X37 && (uint8_t)buff.at(2) == 0X9F){//private key
@@ -229,7 +229,7 @@ namespace bumo {
 	std::string PublicKey::GetEncAddress() const {
 		
 		std::string str_result = "";
-		//Append prefix (bubi 0XE6 0X9A 0X73 0XFF)
+		//Append prefix (bumo 0XE6 0X9A 0X73 0XFF)
 		//Append prefix (bu)
 		str_result.push_back((char)0X01);
 		str_result.push_back((char)0X56);
@@ -292,12 +292,12 @@ namespace bumo {
 			return utils::EccSm2::verify(utils::EccSm2::GetCFCAGroup(), raw_pubkey, "1234567812345678", data, signature) == 1;
 		}
 		else{
-			LOG_ERROR("Unknown signature type(%d)", sign_type);
+			LOG_ERROR("Failed to verify. Unknown signature type(%d)", sign_type);
 		}
 		return false;
 	}
 
-	//µØÖ·ÊÇ·ñºÏ·¨
+	//Generate keypair according to signature type.
 	PrivateKey::PrivateKey(SignatureType type) {
 		std::string raw_pub_key = "";
 		type_ = type;
@@ -320,7 +320,7 @@ namespace bumo {
 			raw_pub_key = key.GetPublicKey();
 		}
 		else{
-			LOG_ERROR("Unknown signature type(%d)", type_);
+			LOG_ERROR("Failed to verify.Unknown signature type(%d)", type_);
 		}
 		pub_key_.Init(raw_pub_key);
 		pub_key_.type_ = type_;
@@ -357,7 +357,7 @@ namespace bumo {
 				tmp = skey.GetPublicKey();
 			}
 			else{
-				LOG_ERROR("Unknown signature type(%d)", type_);
+				LOG_ERROR("Failed to verify.Unknown signature type(%d)", type_);
 			}
 			//ToBase58();
 			pub_key_.type_ = type_;
@@ -391,7 +391,7 @@ namespace bumo {
 			return key.Sign("1234567812345678", input);
 		}
 		else{
-			LOG_ERROR("Unknown signature type(%d)", type_);
+			LOG_ERROR("Failed to verify.Unknown signature type(%d)", type_);
 		}
 		std::string output;
 		output.append((const char *)sig, sig_len);
@@ -411,10 +411,10 @@ namespace bumo {
 		//Append private key 32
 		str_result.append(raw_priv_key_);
 
-		//Ñ¹Ëõ±êÖ¾
+		//Append 0X00 to str_result
 		str_result.push_back(0X00);
 
-		//Bitcoin uses 4 byte hash check.
+		//Like Bitcoin, we use 4 byte hash check.
 		std::string hash1, hash2;
 		hash1 = CalcHash(str_result, type_);
 		hash2 = CalcHash(hash1, type_);

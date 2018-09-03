@@ -69,10 +69,10 @@ TEST_F(WebsocketTest, RequestLedger)
 
 //to test the monitoragent with response including bad session id from websocket_server
 
-//to test the monitoragent with a request "bubi"
-TEST_F(WebsocketTest, RequestBubi)
+//to test the monitoragent with a request "bumo"
+TEST_F(WebsocketTest, RequestBumo)
 {
-	websocket_server->RequestBubiTest();
+	websocket_server->RequestBumoTest();
 }
 
 //to test the monitoragent with a request "error"

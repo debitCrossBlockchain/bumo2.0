@@ -1,22 +1,25 @@
 English | [中文](manual_CN.md) 
 
-# __BUMO Blockchain Manual Doc__
+# BUMO Blockchain Manual Doc
 
 <!-- TOC -->
-- [__Compile__](#compile)
+- [Compile](#compile)
     - [Linux](#linux)
     - [MAC](#mac)
     - [Windows](#windows)
-- [__Deployment__](#deployment)
-    - [__Requirement__](#requirement)
-    - [__Installation on Linux__](#installation-on-linux)
-        - [__Use compile mode deploy__](#use-compile-mode-deploy)
-        - [__Use archive packet deploy__](#use-archive-packet-deploy)
-    - [__Catalog Structure__](#catalog-structure)
-    - [__Switch to Target Network__](#switch-to-target-network)
-    - [__Operation__](#operation)
-    - [__Operating Status__](#operating-status)
-    - [__Configuration__](#configuration)
+- [Deployment](#deployment)
+    - [Requirement](#requirement)
+    - [Installation on Linux](#installation-on-linux)
+        - [Linux use compile mode deploy](#linux-use-compile-mode-deploy)
+        - [Linux use archive packet deploy](#linux-use-archive-packet-deploy)
+    - [Installation on MAC](#installation-on-mac)
+        - [MAC use compile mode deploy](#mac-use-compile-mode-deploy)
+        - [MAC use archive packet deploy](#mac-use-archive-packet-deploy)
+    - [Catalog Structure](#catalog-structure)
+    - [Switch to Target Network](#switch-to-target-network)
+    - [Operation](#operation)
+    - [Operating Status](#operating-status)
+    - [Configuration](#configuration)
 	    - [Data Storage](#data-storage)
 	    - [Network Communication between Nodes](#network-communication-between-nodes)
 	    - [WEB API Configuration](#web-api-configuration)
@@ -25,25 +28,23 @@ English | [中文](manual_CN.md)
 	    - [Initial Block](#initial-block)
 	    - [Log Configuration](#log-configuration)
 	    - [Multi-nodes Cluster Configuration](#multi-nodes-cluster-configuration)
-	    - [Network Communication between Nodes](#network-communication-between-nodes)
-	    - [Consensus Parameter](#consensus-parameter)
-	    - [Block Parameter](#block-parameter)
-	    - [Synchronizing Nodes](#synchronizing-nodes)
-	    - [Encrypting Data](#encripting-nodes)
-- [__Operation and Maintenance__](#operation-and-maintenance)
+- [Operation and Maintenance](#operation-and-maintenance)
     - [Service Start and Stop](#service-start-and-stop)
     - [Get Modules Status](#get-modules-status)
     - [Get Account Information](#get-account-information)
     - [Drop Database](#drop-database)   
     - [Create Hard Fork](#create-hard-fork)   
-    - [Data Storage Dir](#data-storage-dir)   
 
 
 <!-- /TOC -->
 
-## __Compile__ 
+## Compile 
 
-If you don't want to compile the source code, you can use the archive package directly, [archive package download](https://github.com/bumoproject/bumo/releases/ "download")，[use archive packet deploy](#use-archive-packet-deploy)
+If you don't want to compile the source code, you can use the archive package directly, [archive package download](https://github.com/bumoproject/bumo/releases/ "download")
+
+[Linux use archive packet deploy](#linux-use-archive-packet-deploy)
+
+[MAC use archive packet deploy](#mac-use-archive-packet-deploy)
 
 ### Linux
 BUMO is currently available for Ubuntu, Centos and most of the operating systems, it is recommended that you have Ubuntu 14.04 or Centos 7. The following demo is based on Ubuntu 14.04 .
@@ -60,6 +61,7 @@ sudo apt-get install cmake
 sudo apt-get install libbz2-dev
 sudo apt-get install python
 sudo apt-get install unzip
+sudo apt-get install wget
 ```
 - Compilation
 ```bash
@@ -115,12 +117,12 @@ Executable program dir:bumo/bin/
 ## Deployment
 The deployment on Windows is almost identical to Linux. (Subject to Linux)
 
-### __Requirement__
+### Requirement
 - Recommended configuration: CPU 8 core, memory 32 G, bandwidth 20 M, SSD disk 500 G. Or higher.
 - Minimum configuration: CPU 4 core, memory 16 G, bandwidth 10 M, SSD disk 500 G.
 
-### __Installation on Linux__
-#### __Use compile mode deploy__
+### Installation on Linux
+#### Linux use compile mode deploy
 ```bash
 cd bumo
 make install
@@ -130,7 +132,7 @@ Install under `/usr/local/buchain/`
 
 Deploy ok!
 
-#### __Use archive packet deploy__
+#### Linux use archive packet deploy
 
 This is another deployment, using the archive packet.
 
@@ -174,26 +176,68 @@ Save and add executable permissions.：
 
 Deploy ok!
 
-### __Catalog Structure__
+### Installation on MAC
+There are two points to note:
+
+- sudo permissions are required, and subsequent operations are not described repeatedly.
+- The MAC does not have startup and service functions, so you don't need to use the ln command to set up and service functions.
+
+#### MAC use compile mode deploy
+
+```bash
+cd bumo
+sudo make install
+```
+
+Install under `/usr/local/buchain/`
+
+Deploy ok!
+
+#### MAC use archive packet deploy
+
+
+This is another deployment, using the archive packet.
+
+[archive package download](https://github.com/bumoproject/bumo/releases/ "download")
+
+Extract files
+
+Copy buchain-`1.0.0.x`-macOS-x64.tar.gz to /usr/local/
+
+```
+cd /usr/local/
+//Note the name of the actual version of the package 1.0.0.x.
+tar xzvf buchain-1.0.0.x-macOS-x64.tar.gz
+```
+
+```
+cd /usr/local/
+sudo tar xzvf buchain-1.0.0.x-macOS-x64.tar.gz
+```
+
+Deploy ok!
+
+### Catalog Structure
 
 Catalog | Description 
 |:--- | --- 
 | bin | Executable program（Compiled bumo exe）
-|jslib| Third-party js libraries
+| jslib| Third-party js libraries
 | config | Configuration profile, including `bumo.json`
 | data | Warehouse of ledger data
-| script | Activate script
+| script | Activate script (The MacOS does not have this directory)
 | log | Running log
 
 
-### __Switch to Target Network__
+### Switch to Target Network
 
-Switch runtime environment of BUMO manually:
+After installation, if you want to switch the BUMO environment, you need to manually replace the configuration file, as follows
 
 1. Stop bumo program
 
 ```bash
-    service bumo stop
+    service bumod stop
+    #The MacOS does not have service and terminates the bumo program
 ```
 2. Replace configuration profile
 
@@ -203,7 +247,7 @@ Switch runtime environment of BUMO manually:
     cp bumo-testnet.json bumo.json  
 
     #About configuration profile
-    bumo.json           ##debugging environment is default
+    bumo.json           ##Loaded by default after the program starts
     bumo-mainnet.json   ##configuration profile of main network
     bumo-testnet.json   ##configuration profile of test network
     bumo-single.json    ##configuration profile of single network for debug
@@ -213,23 +257,26 @@ Switch runtime environment of BUMO manually:
 ```bash
     cd ../
     ./bin/bumo --dropdb
-    service bumo start
+    service bumod start
+    #The MacOS does not have a service and use sudo. /bin/bumo directly.
 ```
-### __Operation__
+### Operation
 
 ```bash
-    service bumo start
+    service bumod start
+    #The MacOS does not have a service and use sudo. /bin/bumo directly.
 ```
 
-### __Operating Status__ 
+### Operating Status 
 
 ```bash
-    service bumo status
+    service bumod status
+    #The MacOS does not have a service.
 ```
 
-### __Configuration__
+### Configuration
 
-config.json 
+bumo.json 
 
 #### Data Storage
 
@@ -241,26 +288,31 @@ config.json
     }
 ```
 #### Network Communication between Nodes
+
 ```json
-    "p2p":{
-        "network_id":10000,//Network ID, to distinguish test network from main network
+    "p2p":
+    {
+        "network_id":30000,//Network ID, to distinguish test network from main network
         //consensu network
-        "consensus_network":{
-            "heartbeat_interval":60,
-            "listen_port":16001,//listened port
-            "target_peer_connection":50,
-            "known_peers":[
-                "127.0.0.1:16001"//link known nodes
+        "consensus_network":
+        {
+            "heartbeat_interval":60, //listened port
+            "listen_port":36001,
+            "target_peer_connection":50,  //Maximum number of active connection nodes
+            "known_peers":
+            [
+                "127.0.0.1:36001"//link known nodes
             ]
         }
     }
 ```
 
+
 #### WEB API Configuration
 
 ```json
     "webserver":{
-        "listen_addresses":"0.0.0.0:16002"
+        "listen_addresses":"0.0.0.0:36002"
     }
 ```
 
@@ -268,7 +320,7 @@ config.json
 
 ```json
     "wsserver":{
-        "listen_address":"0.0.0.0:16003"
+        "listen_address":"0.0.0.0:36003"
     }
 ```
 
@@ -285,6 +337,24 @@ config.json
         }
     }
 ```
+
+`validation_address` and `validation_private_key` can be gained through bumo program command line tools, please keep the account information, after the loss will not be able to find.
+
+
+```
+    [root@bumo ~]# cd /usr/local/buchain/bin
+    [root@bumo bin]#./bumo --create-account
+
+    {
+        "address" : "buQmtDED9nFcCfRkwAF4TVhg6SL1FupDNhZY", 
+        "private_key" : "privbsZozNs3q9aixZWEUzL9ft8AYph5DixN1sQccYvLs2zPsPhPK1Pt", 
+        "private_key_aes" : "e174929ecec818c0861aeb168ebb800f6317dae1d439ec85ac0ce4ccdb88487487c3b74a316ee777a3a7a77e5b12efd724cd789b3b57b063b5db0215fc8f3e89",
+        "public_key" : "b00108d329d5ff69a70177a60bf1b68972576b35a22d99d0b9a61541ab568521db5ee817fea6", 
+        "public_key_raw" : "08d329d5ff69a70177a60bf1b68972576b35a22d99d0b9a61541ab568521db5e", 
+        "sign_type" : "ed25519" 
+    }
+```
+
 #### Initial Block
 ```json
    "genesis": {
@@ -297,7 +367,8 @@ config.json
         "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY"] //validated nodes list
     }
 ```
-    In the same blockchain, the configuration of `genesis` should keep consistent.
+
+In the same blockchain, the configuration of `genesis` should keep consistent.
 
 #### Log Configuration
 
@@ -314,51 +385,162 @@ config.json
 
 #### Multi-nodes Cluster Configuration
 
-- Example for running multi-nodes on a single blockchain (mostly alter `p2p`,`validation`,`ledger`sections ):
+The above sections describe the basic parameters of the configuration file.This section, taking two validation nodes and one synchronization node as examples, introduces the configuration of multiple nodes in a single chain, where the modules of p2p, validation and ledger need to be modified. The specific examples are as follows
 
-#### Network Communication between Nodes
+P2P known_peers must be IP and port of other known nodes for nodes to connect to each other
 
-- config.p2p.consensus_network.known_peers  // add the IP and address of other nodes
+``` json
+validation 1：
+"p2p":
+{
+    "network_id":30000,
+    "consensus_network":
+    {
+        "heartbeat_interval":60,
+        "listen_port":36001,
+        "target_peer_connection":50,
+        "known_peers":
+        [
+            "192.168.1.102:36001",   //node 2's address
+            "192.168.1.103:36001"   //node 3's address
+        ]
+    }
+}
 
-#### Consensus Parameter
+validation 2：
+"p2p":
+{
+    "network_id":30000,
+    "consensus_network":
+    {
+        "heartbeat_interval":60,
+        "listen_port":36001,
+        "target_peer_connection":50,
+        "known_peers":
+        [
+            "192.168.1.101:36001",   //node 1's address
+            "192.168.1.103:36001"   //node 3's address
+        ]
+    }
+}
 
-- validators //add the validated address of other nodes
-- address and node_private_key should be in pairs
-
-#### Block Parameter
-- `config.ledger.genesis_account` is the initial account. In the same blockchain, the configuration of ` genesis_account` should be kept consistent.
-
-Note: Ensure the initial data of every node is consistent before running. Or else the consensus for creating blocks would fail.
-
-#### Synchronizing Nodes
- - The difference on configuration between synchronized node and validation node is that **you do not need to add `validation address` in consensus configuration of synchronized node.** 
-
-##### Encrypting Data
-All the private information of configuration profile is encrypted, and the decryption key is hard-coded in the program. To decrypt the information, you have to get the key in clear format, then transform the key as following:
-
-- command `./bin/bumo --aes-crypto [key]`
-
-```bash
-[root@localhost buchain]# ./bin/bumo --aes-crypto root 
-e2ba44bf0b27f0acbe7b5857e3bc6348
+Synchronization 3:
+"p2p":
+{
+    "network_id":30000,
+    "consensus_network":
+    {
+        "heartbeat_interval":60,
+        "listen_port":36001,
+        "target_peer_connection":50,
+        "known_peers":
+        [
+            "192.168.1.101:36001",   //node 1's address
+            "192.168.1.102:36001"    //node 2's address
+        ]
+    }
+}
 ```
-- The information of configuration needs to be encrypted
+Validation's `validation_address` and `validation_private_key` must match, and you need to fill in the `validation_address` of all validation nodes into the `generation.validators`
 
-name | description 
-|:--- | --- 
-| config.validation.node_private_key | private key of validation node
 
-## __Operation and Maintenance__
+``` json
+validation 1:
+"ledger":
+{
+    "validation_address":"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",//validation 1' address
+    "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54", //validation 1' private key
+    "max_trans_per_ledger":1000,
+    "tx_pool":
+    {
+        "queue_limit":10240,
+        "queue_per_account_txs_limit":64
+    }
+}
+
+validation 2:
+"ledger":
+{
+    "validation_address":"buQqkp5SDcsxpwWXQ2QFQbvHKnZ199HY3dHm",//validation 2' address
+    "validation_private_key": "1cb0151ec2b23cb97bf94d86ee1100582f9f5fbfdfe40a69edae2d2b8711395c40c1da859ac0bc93240a8a70c4a06779ed06d299880417d71fc51c1a0267875f", //validation 2' private key
+    "max_trans_per_ledger":1000,
+    "tx_pool":
+    {
+        "queue_limit":10240,
+        "queue_per_account_txs_limit":64
+    }
+}
+
+Synchronization 3:
+"ledger":
+{
+    "max_trans_per_ledger":1000,
+    "tx_pool":
+    {
+        "queue_limit":10240,
+        "queue_per_account_txs_limit":64
+    }
+}
+```
+
+Out of the same block chain ` genesis ` configuration, must be consistent
+
+```json
+validation 1:
+"genesis": 
+{
+    "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+    "slogan" : "a new era of value",
+    "fees": 
+    {
+        "base_reserve": 10000000,
+        "gas_price": 1000
+    },
+    "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY", "buQqkp5SDcsxpwWXQ2QFQbvHKnZ199HY3dHm"]  //Configure all validation nodes's addresses, and if there are two, two addresses are configured.
+}
+
+validation 2:
+"genesis": 
+{
+    "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+    "slogan" : "a new era of value",
+    "fees": 
+    {
+        "base_reserve": 10000000,
+        "gas_price": 1000
+    },
+    "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY", "buQqkp5SDcsxpwWXQ2QFQbvHKnZ199HY3dHm"]
+    //Configure all validation nodes's addresses, and if there are two, two addresses are configured.
+}
+
+Synchronization 3:
+"genesis": 
+{
+    "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
+    "slogan" : "a new era of value",
+    "fees": 
+    {
+        "base_reserve": 10000000,
+        "gas_price": 1000
+    },
+    "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY", "buQqkp5SDcsxpwWXQ2QFQbvHKnZ199HY3dHm"] 
+    //Configure all validation nodes's addresses, and if there are two, two addresses are configured.
+}
+```
+
+## Operation and Maintenance
 ### Service Start and Stop
 ```
-Start    :service bumo start
-Stop    :service bumo stop
-Running status:service bumo status
+Start    :service bumod start
+Stop    :service bumod stop
+Running status:service bumod status
+
+ #The MacOS does not have a service.
 ```
 ### Get Modules Status
 
 ```bash
-[root@centos7x64-201 ~]# curl 127.0.0.1:19333/getModulesStatus
+[root@centos7x64-201 ~]# curl 127.0.0.1:36002/getModulesStatus
 {
     "glue_manager":{
         "cache_topic_size":0,
@@ -387,30 +569,7 @@ Running status:service bumo status
     "web server":Object{...},
 
 ```
-### Get Account Information
 
-```bash
-[root@centos7x64-201~]#curl 127.0.0.1:19333/getAccount?address=a0024111d1cc90ac8ee0abd5f957e08e3e1b442b581e88
-{
-  "error_code": 0,
-  "result": {
-    "address": "a0024111d1cc90ac8ee0abd5f957e08e3e1b442b581e88",
-    "assets": null,
-    "assets_hash": "ad67d57ae19de8068dbcd47282146bd553fe9f684c57c8c114453863ee41abc3",
-    "contract": null,
-    "metadatas": null,
-    "priv": {
-      "master_weight": 1,
-      "thresholds": {
-        "tx_threshold": 1
-      }
-    },
-    "storage_hash": "ad67d57ae19de8068dbcd47282146bd553fe9f684c57c8c114453863ee41abc3"
-  }
-} 
-[root@centos7x64-201 ~]#
-
-```
 ### Drop Database
 ```bash
 buchain/bin/bumo --dropdb
@@ -440,6 +599,3 @@ Create hard fork ledger successful, seq(20), consensus value hash(**7aa332f05748
 ```
 
 - Start service
-
-### Data Storage Dir
-`buchain/data` is the default dir to store BUMO blockchain data. You can change the dir as you need in the configuration profile.

@@ -20,9 +20,9 @@
 
 /********************************************************************************
 description:
-	must init lib 
+	must be init lib 
 return:
-	0£ºOK£¬-1: data is null, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int InitBumoTools();
 
@@ -34,25 +34,25 @@ BUMO_TOOLS_API void UnInitBumoTools();
 
 /********************************************************************************
 description: 
-	create account address
+	create an account address
 
 input:
-	input_signtype£ºsign type, support with "ed25519","sm2"
+	input_signtypeï¼šsign type, support with "ed25519","sm2"
 
 output:
-	output_result£ºoutput json format data
-	output_len£º   first reset the output buffer's max len, last it's output len
+	output_resultï¼šoutput json format data
+	output_lenï¼š   first reset the output buffer's max len, and then it's output len
 
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int CreateAccountAddress(const char *input_signtype, char *output_result, int *output_len) DEFAULT_VISIBILITY;
 
 /********************************************************************************
 description:
-	check account address valid
+	check validation of the account address 
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int CheckAccountAddressValid(const char *input_encode_address) DEFAULT_VISIBILITY;
 
@@ -65,20 +65,20 @@ output:
 	output_len
 
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int CreateKeystore(const char *input_password, char *output_keystore, int *output_len) DEFAULT_VISIBILITY;
 
 /********************************************************************************
 description:
-	check keystore valid
+	check validation of keystore
 
 input:
 	input_keystore:json string
 	input_password
 
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int CheckKeystoreValid(const char *input_keystore, const char *input_password) DEFAULT_VISIBILITY;
 
@@ -87,7 +87,7 @@ description:
 	sign data
 
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int SignData(const char *input_privkey, const char *input_rawdata, char *output_data, int *output_len) DEFAULT_VISIBILITY;
 
@@ -96,7 +96,7 @@ description:
 	sign data with keystore
 
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int SignDataWithKeystore(const char *input_keystore, const char *input_password, const char *input_blob, char *output_data, int *output_len) DEFAULT_VISIBILITY;
 
@@ -105,7 +105,7 @@ description:
 	CheckSignedData
 
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int CheckSignedData(const char *input_blob, const char *input_signeddata, const char *input_pubkey) DEFAULT_VISIBILITY;
 
@@ -113,7 +113,7 @@ BUMO_TOOLS_API int CheckSignedData(const char *input_blob, const char *input_sig
 description:
 	CreateKeystoreFromPrivkey
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int CreateKeystoreFromPrivkey(const char *input_privkey, const char *input_password, char *output_data, int *output_len) DEFAULT_VISIBILITY;
 
@@ -121,7 +121,7 @@ BUMO_TOOLS_API int CreateKeystoreFromPrivkey(const char *input_privkey, const ch
 description:
 	GetAddressFromPubkey
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int GetAddressFromPubkey(const char *input_pubkey, char *output_data, int *output_len) DEFAULT_VISIBILITY;
 
@@ -129,7 +129,7 @@ BUMO_TOOLS_API int GetAddressFromPubkey(const char *input_pubkey, char *output_d
 description:
 	GetPrivatekeyFromKeystore
 return:
-	0£ºOK£¬-1: data is null, or data len is error, -2: parameter invalid, other: ERR
+	0ï¼šOKï¼Œ-1: data is null, or data len is error, -2: parameter invalid, other: ERR
 ********************************************************************************/
 BUMO_TOOLS_API int GetPrivatekeyFromKeystore(const char *input_keystore, const char *input_password, char *output_data, int *output_len) DEFAULT_VISIBILITY;
 

@@ -36,7 +36,7 @@ namespace bumo{
 		std::string hash = HashWrapper::Crypto(data);
 		utils::MutexGuard guard(mutex_msg_sending_);
 		BroadcastRecordMap::iterator result = records_.find(hash);
-		if (result == records_.end()){ // we have never seen this message
+		if (result == records_.end()){ // We have never seen this message
 			BroadcastRecord::pointer record = std::make_shared<BroadcastRecord>(type, data, peer_id);
 			records_[hash] = record;
 			records_couple_[record->time_stamp_] = hash;
@@ -61,7 +61,7 @@ namespace bumo{
 		std::string hash = HashWrapper::Crypto(data);
 		utils::MutexGuard guard(mutex_msg_sending_);
 		BroadcastRecordMap::iterator result = records_.find(hash);
-		if (result == records_.end()){ // no one has sent us this message
+		if (result == records_.end()){ // No one has sent us this message
 			BroadcastRecord::pointer record = std::make_shared<BroadcastRecord>(
 				type, data, 0);
 
@@ -74,7 +74,7 @@ namespace bumo{
 				record->peers_.insert(peer_id);
 			}
 		}
-		else{ // send it to people that haven't sent it to us
+		else{ // Send it to people who haven't sent it to us
 			std::set<int64_t>& peersTold = result->second->peers_;
 			for (const auto peer : driver_->GetActivePeerIds()){
 				if (peersTold.find(peer) == peersTold.end())
@@ -91,7 +91,7 @@ namespace bumo{
 		int64_t current_time = utils::Timestamp::HighResolution();
 
 		for (auto it = records_couple_.begin(); it != records_couple_.end();){
-			// give one ledger of leeway
+			// Give one ledger of leeway
 			if (it->first + 3600 * utils::MICRO_UNITS_PER_SEC < current_time)
 			{
 				records_.erase(it->second);

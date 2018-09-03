@@ -18,7 +18,7 @@
 #include "contract_manager.h"
 
 namespace bumo {
-	//for sync process
+	//For synchronizing blocks.
 	LedgerContext::LedgerContext(const std::string &chash, const protocol::ConsensusValue &consvalue) :
 		type_(AT_NORMAL),
 		lpmanager_(NULL),
@@ -32,7 +32,7 @@ namespace bumo {
 	}
 
 
-	//for sync pre process
+	//For synchronizing the block before the current block.
 	LedgerContext::LedgerContext(LedgerContextManager *lpmanager, const std::string &chash, const protocol::ConsensusValue &consvalue, bool propose) :
 		type_(AT_NORMAL),
 		lpmanager_(lpmanager),
@@ -68,7 +68,7 @@ namespace bumo {
 	LedgerContext::~LedgerContext() {}
 
 	void LedgerContext::Run() {
-		LOG_INFO("Thread preprocessing the consensus value, ledger seq(" FMT_I64 ")", consensus_value_.ledger_seq());
+		LOG_INFO("Preprocessing the consensus value, ledger(" FMT_I64 ")", consensus_value_.ledger_seq());
 		start_time_ = utils::Timestamp::HighResolution();
 		switch (type_)
 		{
@@ -85,7 +85,7 @@ namespace bumo {
 			TestTransaction();
 			break;
 		default:
-			LOG_ERROR("LedgerContext action type unknown");
+			LOG_ERROR("Action type unknown of LedgerContext.");
 			break;
 		}
 	}
@@ -112,7 +112,7 @@ namespace bumo {
 
 		//async
 		if (lpmanager_) {
-			//move running to complete
+			//Move the finished transactions to the complete list.
 			if (propose_result_.exec_result_) {
 				lpmanager_->MoveRunningToComplete(this);
 			}
@@ -123,10 +123,10 @@ namespace bumo {
 	}
 
 	bool LedgerContext::TestV8() {
-		//if address not exist, then create temporary account
+		//If the source address for starting the contract does not exist, a temporary account will be created.
 		std::shared_ptr<Environment> environment = std::make_shared<Environment>(nullptr);
 		if (parameter_.contract_address_.empty()) {
-			//create a temporary account
+			//Create a temporary account
 			PrivateKey priv_key(SIGNTYPE_ED25519);
 			Json::Value account_json = Json::Value(Json::objectValue);
 			protocol::Account account;
@@ -137,7 +137,7 @@ namespace bumo {
 			parameter_.contract_address_ = account.address();
 			std::shared_ptr<AccountFrm> dest_account = std::make_shared<AccountFrm>(account);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
-				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
+				LOG_ERROR("Failed to add account(%s) entry.", account.address().c_str());
 				propose_result_.exec_result_ = false;
 				return false;
 			}
@@ -149,7 +149,7 @@ namespace bumo {
 				PrivateKey priv_key(SIGNTYPE_ED25519);
 				parameter_.source_address_ = priv_key.GetEncAddress();
 			}
-			//create a tempory source address
+			//Create a temporary source address
 			protocol::Account account;
 			account.set_address(parameter_.source_address_);
 			account.set_nonce(0);
@@ -158,7 +158,7 @@ namespace bumo {
 			dest_account->SetProtoMasterWeight(1);
 			dest_account->SetProtoTxThreshold(1);
 			if (!environment->AddEntry(dest_account->GetAccountAddress(), dest_account)) {
-				LOG_ERROR("Add account(%s) entry failed", account.address().c_str());
+				LOG_ERROR("Failed to add account(%s) entry.", account.address().c_str());
 				propose_result_.exec_result_ = false;
 				return false;
 			}
@@ -178,8 +178,6 @@ namespace bumo {
 			ope->set_type(protocol::Operation_Type_CREATE_ACCOUNT);
 
 			protocol::OperationCreateAccount* create_account = ope->mutable_create_account();
-			PrivateKey priv_key(SIGNTYPE_ED25519);
-			create_account->set_dest_address(priv_key.GetEncAddress());
 			create_account->set_init_input(parameter_.input_);
 			create_account->set_init_balance(100000000000000);
 			protocol::AccountPrivilege *priv = create_account->mutable_priv();
@@ -206,7 +204,7 @@ namespace bumo {
 			return ret;
 		}
 		else if (ContractTestParameter::MAIN == parameter_.opt_type_) {
-			//construct trigger tx
+			//Construct trigger tx
 			protocol::TransactionEnv env;
 			protocol::Transaction *tx = env.mutable_transaction();
 			tx->set_source_address(parameter_.source_address_);
@@ -274,7 +272,7 @@ namespace bumo {
 			parameter.timestamp_ = consensus_value_.close_time();
 			parameter.blocknumber_ = consensus_value_.ledger_seq();
 
-			//do query
+			//Query
 			TransactionFrm::pointer tx_frm = std::make_shared<TransactionFrm>();
 			tx_frm->environment_ = environment;
 			transaction_stack_.push_back(tx_frm);
@@ -287,6 +285,9 @@ namespace bumo {
 			bool ret = ContractManager::Instance().Query(type_, parameter, query_result);
 			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());
 			return ret;
+		}
+		else {
+			return false;
 		}
 	}
 
@@ -418,7 +419,7 @@ namespace bumo {
 			return ledger_context.closing_ledger_;
 		}
 		else {
-			LOG_ERROR("Syn process failed");
+			LOG_ERROR("Failed to process ledger synchronized.");
 			return NULL;
 		}
 	}
@@ -449,6 +450,7 @@ namespace bumo {
 				if (opt_type > ContractTestParameter::QUERY || opt_type < ContractTestParameter::INIT){
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
 					result.set_desc(utils::String::Format("opt_type overload:%d", opt_type));
+					delete ledger_context;
 					return false;
 				}
 
@@ -456,6 +458,7 @@ namespace bumo {
 				if (result.code() == protocol::ERRCODE_SUCCESS) {
 					break;
 				}
+				delete ledger_context;
 				return false;
 			} while (false);
 		}
@@ -469,10 +472,10 @@ namespace bumo {
 		}
 
 		if (!ledger_context->Start(thread_name)) {
-			LOG_ERROR_ERRNO("Start test thread failed",
+			LOG_ERROR_ERRNO("Failed to start test thread.",
 				STD_ERR_CODE, STD_ERR_DESC);
 			result.set_code(protocol::ERRCODE_INTERNAL_ERROR);
-			result.set_desc("Start thread failed");
+			result.set_desc("Failed to start thread.");
 			delete ledger_context;
 			return false;
 		}
@@ -490,8 +493,8 @@ namespace bumo {
 		if (is_timeout) { //cancel it
 			ledger_context->Cancel();
 			result.set_code(protocol::ERRCODE_TX_TIMEOUT);
-			result.set_desc("Execute contract timeout");
-			LOG_ERROR("Test consvalue time(" FMT_I64 "ms) is out", total_timeout / utils::MICRO_UNITS_PER_MILLI);
+			result.set_desc("Contract execution timeout");
+			LOG_ERROR("Testing consensus value(" FMT_I64 "ms) timeout", total_timeout / utils::MICRO_UNITS_PER_MILLI);
 			ledger_context->JoinWithStop();
 			delete ledger_context;
 			return false;
@@ -512,18 +515,27 @@ namespace bumo {
 			env_store.set_close_time(ledger->GetProtoHeader().close_time());
 			env_store.set_error_code(ptr->GetResult().code());
 			env_store.set_error_desc(ptr->GetResult().desc());
-			int64_t gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
 			if (ptr->GetResult().code() != 0)
 				env_store.set_actual_fee(ptr->GetFeeLimit());
 			else{
 				if (type == LedgerContext::AT_TEST_V8)
 					env_store.set_actual_fee(ptr->GetActualGas()*ptr->GetGasPrice());
-				else if (LedgerContext::AT_TEST_TRANSACTION){
-					env_store.set_actual_fee((ptr->GetActualGas() + (signature_number*(64 + 76 + 5) + 20))*gas_price);//pub:64, sig:76 + key
+				else if (LedgerContext::AT_TEST_TRANSACTION) {
+					int64_t actual_gas = 0;
+					//64 is length of signature data, 76 is length of public key, 5 and 20 for redundancy
+					if (!utils::SafeIntAdd(ptr->GetActualGas(), (int64_t)(signature_number*(64 + 76 + 5) + 20), actual_gas)) {
+						LOG_ERROR("Calculate actual gas overflow, actual gas (" FMT_I64 "), signature number(" FMT_I64 ")", ptr->GetActualGas(), signature_number);
+					}
+
+					int64_t actual_fee = 0;
+					if (!utils::SafeIntMul(actual_gas, ptr->GetGasPrice(), actual_fee)) {
+						LOG_ERROR("Calculate actual fee overflow, actual gas(" FMT_I64 "), gas price(" FMT_I64 ")", actual_gas, ptr->GetGasPrice());
+					}
+					env_store.set_actual_fee(actual_fee);
 
 					result = ptr->GetResult();
 					Json::Value jtx = Proto2Json(env_store);
-					jtx["gas"] = env_store.actual_fee() / gas_price;
+					jtx["gas"] = actual_gas;
 					txs[txs.size()] = jtx;
 				}
 			}
@@ -577,7 +589,7 @@ namespace bumo {
 		LedgerContext *ledger_context = new LedgerContext(this, chash, consensus_value, propose);
 
 		if (!ledger_context->Start("process-value")) {
-			LOG_ERROR_ERRNO("Start process value thread failed, consvalue hash(%s)", utils::String::BinToHexString(chash).c_str(), 
+			LOG_ERROR_ERRNO("Failed to start processing consensus value, consensus value hash(%s)", utils::String::BinToHexString(chash).c_str(), 
 				STD_ERR_CODE, STD_ERR_DESC);
 
 			propose_result.block_timeout_ = true;
@@ -596,7 +608,7 @@ namespace bumo {
 
 		if (propose_result.block_timeout_) { //cancel it
 			ledger_context->Cancel();
-			LOG_ERROR("Pre execute consvalue time(" FMT_I64 "ms) is out", (utils::Timestamp::HighResolution() - time_start) / utils::MICRO_UNITS_PER_MILLI);
+			LOG_ERROR("Pre-executing consensus value(" FMT_I64 "ms) timeout", (utils::Timestamp::HighResolution() - time_start) / utils::MICRO_UNITS_PER_MILLI);
 			return false;
 		}
 

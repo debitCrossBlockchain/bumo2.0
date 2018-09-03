@@ -75,7 +75,7 @@ namespace bumo {
                         break;
                     }
 
-                    //Search for the command
+                    //Search for the user input command in the command set.
                     if (support_cmd.find(tmp_argv[1]) == support_cmd.end()) {
                         std::cout << "error, command not found" << std::endl;
                         break;
@@ -109,7 +109,7 @@ namespace bumo {
 				return true;
 			}
 			//else if (s == "--aes-decrypt"  && argc > 2) {
-			//	printf("%s\n", utils::Aes::HexDecrypto(argv[2], bubi::GetDataSecuretKey()).c_str());
+			//	printf("%s\n", utils::Aes::HexDecrypto(argv[2], bumo::GetDataSecuretKey()).c_str());
 			//	return true;
 			//}
 			else if (s == "--sm3" ) {

@@ -1,3 +1,3 @@
-1、安装composer
-2、cd 当前目录
-3、composer require google/protobuf
+1、Install the composer
+2、cd current directory
+3、The composer requires google/protobuf

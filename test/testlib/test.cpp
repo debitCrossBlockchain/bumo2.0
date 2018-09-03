@@ -42,7 +42,7 @@ public:
 		for (int n = 0; n < 100; n++ ){
 			if ( total_ > 0 )
 			{
-				LOG_TRACE("thread id "FMT_SIZE", n:%d \n", this_thread->thread_id(), total_--);
+				LOG_TRACE("Thread id "FMT_SIZE", n:%d \n", this_thread->thread_id(), total_--);
 			}
 		}
 	}
@@ -63,7 +63,7 @@ public:
 		enable_ = true;
 		thread_ptr_ = new utils::Thread(this);
 		if (!thread_ptr_->Start()){
-			LOG_ERROR_ERRNO("Start thread failed", STD_ERR_CODE, STD_ERR_DESC);
+			LOG_ERROR_ERRNO("Failed to start thread ", STD_ERR_CODE, STD_ERR_DESC);
 			return false;
 		}
 		return true;
@@ -88,8 +88,8 @@ void InitLog(){
 	utils::Logger::InitInstance();
 	utils::Logger::Instance().Initialize(utils::LOG_DEST_ALL, utils::LOG_LEVEL_ALL, "D:\\bumo.log", true);
 
-	LOG_FATAL_ERRNO("the trace is ok thread id:" FMT_SIZE, utils::Thread::current_thread_id(), STD_ERR_CODE, STD_ERR_DESC);
-	LOG_ERROR("the trace is error, thread id:%d", 11);
+	LOG_FATAL_ERRNO("The trace is ok, thread id:" FMT_SIZE, utils::Thread::current_thread_id(), STD_ERR_CODE, STD_ERR_DESC);
+	LOG_ERROR("The trace is error, thread id:%d", 11);
 
 	int32_t b = 1;
 	int64_t c = 1;
@@ -111,7 +111,7 @@ void TestAsio(){
 	local_addr.ToIpPort();//0.0.0.0:12000
 	utils::Socket socket;
 	if (!socket.Create(utils::Socket::SOCKET_TYPE_TCP, local_addr)){
-		LOG_ERROR_ERRNO("create socket failed", STD_ERR_CODE, STD_ERR_DESC);
+		LOG_ERROR_ERRNO("Failed to create socket", STD_ERR_CODE, STD_ERR_DESC);
 	}
 
 	utils::AsyncIo io;
@@ -124,7 +124,7 @@ void TestAsio(){
 
 	utils::AsyncSocketTcp sockettcp(&io);
 	bool result = sockettcp.Bind(local_address);
-	LOG_TRACE_ERRNO("bind result", STD_ERR_CODE, STD_ERR_DESC);
+	LOG_TRACE_ERRNO("The result of binding is", STD_ERR_CODE, STD_ERR_DESC);
 	sockettcp.AsyncConnect(addre);
 	utils::Sleep(40000);
 }
@@ -185,12 +185,12 @@ void TestSsl(){
 		utils::AsyncSocketSsl sslscoket(&io, ctx);
 		if (sslscoket.Connect(address)){
 			if (sslscoket.HandShake()){
-				LOG_INFO("Hand success");
+				LOG_INFO("Handle successful");
 			}
 		}
 	}
 	catch (std::exception &e){
-		LOG_INFO("exception %s", e.what());
+		LOG_INFO("Exception %s", e.what());
 	}
 }
 
@@ -269,7 +269,7 @@ void TestBase64(){
 	strbuffer.assign(buffer, sizeof(buffer));
 	strbuffer = "hello the world";
 	std::string str = utils::encode_b64(strbuffer);
-	LOG_INFO("base64:%s", str.c_str());
+	LOG_INFO("Base64:%s", str.c_str());
 }
 
 #if 0
@@ -343,12 +343,12 @@ void TestPeer(const std::string &argv1, const std::string &argv2){
 	utils::AsyncSocketTcp tcp(&io);
 	utils::InetAddress serveraddr(argv1);
 	bool ret = tcp.Connect(serveraddr);
-	LOG_INFO("connect server(%s) %s", serveraddr.ToIpPort().c_str(), ret ? "success" : "failed");
+	LOG_INFO("Connect server(%s) %s", serveraddr.ToIpPort().c_str(), ret ? "success" : "failed");
 
 	int32_t len = utils::String::Stol(argv2);
 
-// 	bubi::PeerMsgHearder header;
-// 	memset(&header, 0, sizeof(bubi::PeerMsgHearder));
+// 	bumo::PeerMsgHearder header;
+// 	memset(&header, 0, sizeof(bumo::PeerMsgHearder));
 // 	header.type = htons(rand()%32);
 // 	header.data_len = htonl(len);
 // 	tcp.SendSome((void *)&header, sizeof(header));
@@ -366,7 +366,7 @@ void TestPeer(const std::string &argv1, const std::string &argv2){
 // 		} 
 // 	}
 
-	LOG_INFO("Send complete");
+	LOG_INFO("Send completed");
 }
 
 void TestSignature(){
@@ -387,7 +387,7 @@ void TestSignature(){
 		t3 += s4 - s3;
 	}
 
-	LOG_INFO("new:" FMT_I64 "us sign:" FMT_I64 "us verify:" FMT_I64 "us", t1 / 1000, t2 / 1000, t3 / 1000);
+	LOG_INFO("New:" FMT_I64 "us sign:" FMT_I64 "us verify:" FMT_I64 "us", t1 / 1000, t2 / 1000, t3 / 1000);
 	
 }
 
@@ -583,17 +583,17 @@ int main(int32_t argc, char *argv[]){
 // 	bumo::KeyStore key_store;
 // 	Json::Value keyss;
 // 	std::string new_private;
-// 	bool ret = key_store.Generate("bubi#07150926", keyss, new_private);
+// 	bool ret = key_store.Generate("bumo#07150926", keyss, new_private);
 // 	printf("%s\n", keyss.toFastString().c_str());
 // 	std::string pk;
 // 	ret = key_store.From(keyss, "bub", pk);
-// 	ret = key_store.From(keyss, "bubi", pk);
-// 	ret = key_store.From(keyss, "bubi#", pk);
-// 	ret = key_store.From(keyss, "bubi#0", pk);
-// 	ret = key_store.From(keyss, "bubi#07", pk);
-// 	ret = key_store.From(keyss, "bubi#071", pk);
-// 	ret = key_store.From(keyss, "bubi#0715092", pk);
-// 	ret = key_store.From(keyss, "bubi#07150926", pk);
+// 	ret = key_store.From(keyss, "bumo", pk);
+// 	ret = key_store.From(keyss, "bumo#", pk);
+// 	ret = key_store.From(keyss, "bumo#0", pk);
+// 	ret = key_store.From(keyss, "bumo#07", pk);
+// 	ret = key_store.From(keyss, "bumo#071", pk);
+// 	ret = key_store.From(keyss, "bumo#0715092", pk);
+// 	ret = key_store.From(keyss, "bumo#07150926", pk);
 
 	//TestSignature();
 	ParseFromProto();
@@ -662,7 +662,7 @@ int main(int32_t argc, char *argv[]){
 
 
 /*
-using namespace Bubi;
+using namespace Bumo;
 
 void dfs (RadixMerkleTreeNode::pointer node, int tree_depth){
 //	node->get_hash ().to_string ();	

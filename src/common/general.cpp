@@ -24,9 +24,9 @@ namespace bumo {
 	const uint32_t General::OVERLAY_MIN_VERSION = 1000;
 	/*
 		Based on ledger 1000, the following changes have been modified.
-		1.Create a common or contract account without signers
-		2.Add set privilege opt
-		3.Create a contract account without dest address, it's will be created automatically.
+		1.Create a common or contract account without signers.
+		2.Add the set privilege option.
+		3.Create a contract account without destination address, and it will be created automatically.
 	*/
 	const uint32_t General::LEDGER_VERSION_HISTORY_1000 = 1000;
 	const uint32_t General::LEDGER_VERSION = 1001;
@@ -191,7 +191,7 @@ namespace bumo {
 				item->SlowTimerWrapper(utils::Timestamp::HighResolution());
 
 				if (item->IsSlowExpire(5 * utils::MICRO_UNITS_PER_SEC)){
-					LOG_WARN("The timer(%s) execute time(" FMT_I64 " us) is expire than 5s", item->GetTimerName().c_str(), item->GetSlowLastExecuteTime());
+					LOG_WARN("The execution time(%s) (" FMT_I64 " us) is expired after 5s elapse", item->GetTimerName().c_str(), item->GetSlowLastExecuteTime());
 				}
 			}
 

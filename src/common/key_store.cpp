@@ -34,7 +34,7 @@ namespace bumo {
 	*/
 
 	bool KeyStore::Generate(const std::string &password, Json::Value &key_store, std::string &new_priv_key) {
-		//produce 32 byte random
+		//Produce 256 bit random.
 		std::string salt;
 		utils::GetStrongRandBytes(salt);
 
@@ -42,7 +42,7 @@ namespace bumo {
 		utils::GetStrongRandBytes(aes_iv);
 		aes_iv.resize(16);
 
-		//produce
+		//Produce
 		uint64_t n = 16384;
 		uint32_t r = 8;
 		uint32_t p = 1;

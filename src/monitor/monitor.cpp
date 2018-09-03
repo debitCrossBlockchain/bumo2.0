@@ -44,14 +44,14 @@ namespace bumo {
 	}
 
 	std::string Monitor::GetPeerNodeAddress() const {
-		return bubi_node_address_;
+		return bumo_node_address_;
 	}
 
-	void Monitor::SetBubiInfo(const protocol::ChainStatus &hello) {
+	void Monitor::SetBumoInfo(const protocol::ChainStatus &hello) {
 		monitor_version_ = hello.monitor_version();
-		bubi_ledger_version_ = hello.ledger_version();
+		bumo_ledger_version_ = hello.ledger_version();
 		bumo_version_ = hello.bumo_version();
-		bubi_node_address_ = hello.self_addr();
+		bumo_node_address_ = hello.self_addr();
 	}
 
 	bool Monitor::SendHello(int32_t listen_port, const std::string &node_address, std::error_code &ec) {

@@ -188,7 +188,7 @@ namespace bumo {
 			last_send_time_ = utils::Timestamp::HighResolution();
 		} while (false);
 
-		LOG_TRACE("Send ping to ip(%s),error code(%d)", GetPeerAddress().ToIpPort().c_str(), ec.value());
+		LOG_TRACE("Sent ping to ip (%s),error code(%d)", GetPeerAddress().ToIpPort().c_str(), ec.value());
 		return ec.value() == 0;
 	}
 
@@ -197,7 +197,7 @@ namespace bumo {
 		ping.set_nonce(utils::Timestamp::HighResolution());
 		bool ret = SendRequest(OVERLAY_PING, ping.SerializeAsString(), ec);
 		last_send_time_ = utils::Timestamp::HighResolution();
-		LOG_TRACE("Send ping to ip(%s),error code(%d:%s)", GetPeerAddress().ToIpPort().c_str(), ec.value(), ec.message().c_str());
+		LOG_TRACE("Sent custom ping to ip(%s),error code(%d:%s)", GetPeerAddress().ToIpPort().c_str(), ec.value(), ec.message().c_str());
 		return !ec;
 	}
 
@@ -315,10 +315,10 @@ namespace bumo {
 		}
 
 		if (err.value() != 0){
-			LOG_ERROR_ERRNO("Init websocket network failed", err.value(), err.message().c_str());
+			LOG_ERROR_ERRNO("Failed to initiate websocket network", err.value(), err.message().c_str());
 		}
 
-		//register function
+		//Register function
 		request_methods_[OVERLAY_PING] = std::bind(&Network::OnRequestPing, this, std::placeholders::_1, std::placeholders::_2);
 		response_methods_[OVERLAY_PING] = std::bind(&Network::OnResponsePing, this, std::placeholders::_1, std::placeholders::_2);
 	}
@@ -345,7 +345,7 @@ namespace bumo {
 		connections_.insert(std::make_pair(new_id, conn));
 		connection_handles_.insert(std::make_pair(hdl, new_id));
 
-		LOG_INFO("Peer accepted, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+		LOG_INFO("Accepted a new connection, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 		//peer->Ping(ec_);
 		if (!OnConnectOpen(conn)) { //delete
 			conn->Close("connections exceed");
@@ -357,7 +357,7 @@ namespace bumo {
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(hdl);
 		if (conn) {
-			LOG_INFO("Peer closed, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			LOG_INFO("Closed a connection, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 			OnDisconnect(conn);
 			RemoveConnection(conn);
 		} 
@@ -367,7 +367,7 @@ namespace bumo {
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(hdl);
 		if (conn) {
-			LOG_ERROR("Peer on failed, ip(%s), error desc(%s)", conn->GetPeerAddress().ToIpPort().c_str(), conn->GetErrorCode().message().c_str());
+			LOG_ERROR("Got a network failed event, ip(%s), error desc(%s)", conn->GetPeerAddress().ToIpPort().c_str(), conn->GetErrorCode().message().c_str());
 			OnDisconnect(conn);
 			RemoveConnection(conn);
 		}
@@ -382,7 +382,7 @@ namespace bumo {
 			message.ParseFromString(msg->get_payload());
 		}
 		catch (std::exception const e) {
-			LOG_ERROR("Parse websocket message failed(%s)", e.what());
+			LOG_ERROR("Failed to parse websocket message (%s)", e.what());
 			return;
 		}
 
@@ -410,15 +410,15 @@ namespace bumo {
 
 			if (proc(message, conn_id)) break; //Break if returned true;
 
-			LOG_ERROR("The method type(" FMT_I64 ") request(%s), return false, delete it",
+			LOG_ERROR("Failed to process message, the method type (" FMT_I64 ") (%s) handles exceptions, need to delete it here",
 				message.type(), message.request() ? "true" : "false");
-			// Delete it if returned false.
+			// Delete the connection if returned false.
 			do {
 				utils::MutexGuard guard(conns_list_lock_);
 				Connection *conn = GetConnection(hdl);
 				if (!conn) {
-					LOG_ERROR("Handle not found");
-					break;  //not found
+					LOG_ERROR("Failed to process network message. Handle not found");
+					break;  //Not found
 				}
 				OnDisconnect(conn);
 			} while (false);
@@ -437,18 +437,18 @@ namespace bumo {
 				if (ssl_parameter_.enable_) {
 					// Listen on a specified port.
 					tls_server_.listen(ip.tcp_endpoint());
-					// Start the server accept loop.
+					// Start the TLS server.
 					tls_server_.start_accept();
 					listen_port_ = tls_server_.get_local_endpoint().port();
 				}
 				else {
 					// Listen on a specified port.
 					server_.listen(ip.tcp_endpoint());
-					// Start the server accept loop.
+					// Start the TLS server.
 					server_.start_accept();
 					listen_port_ = server_.get_local_endpoint().port();
 				}
-				LOG_INFO("WebSocket listen at ip(%s)", ip.ToIpPort().c_str());
+				LOG_INFO("Network listen at ip(%s)", ip.ToIpPort().c_str());
 			}
 			enabled_ = true;
 
@@ -464,7 +464,7 @@ namespace bumo {
 				if (now - last_check_time > utils::MICRO_UNITS_PER_SEC) {
 
 					utils::MutexGuard guard_(conns_list_lock_);
-					//Check ping
+					//Ping the client to see if the connectin times out.
 					std::list<Connection *> delete_list;
 					for (ConnectionMap::iterator iter = connections_.begin();
 						iter != connections_.end();
@@ -477,7 +477,7 @@ namespace bumo {
 						if (iter->second->IsDataExpired(connect_time_out_)) {
 							iter->second->Close("expired");
 							delete_list.push_back(iter->second);
-							LOG_ERROR("Peer(%s) data receive timeout", iter->second->GetPeerAddress().ToIpPort().c_str());
+							LOG_ERROR("Failed to process data by network module.Peer(%s) data receive timeout", iter->second->GetPeerAddress().ToIpPort().c_str());
 						}
 
 						//Check application timer.
@@ -487,11 +487,11 @@ namespace bumo {
 						} 
 					}
 
-					//Remove current connection to delete array.
+					//Remove the current connection to delete array.
 					for (std::list<Connection *>::iterator iter = delete_list.begin();
 						iter != delete_list.end();
 						iter++) {
-						LOG_INFO("Peer closed as expired, ip(%s)", (*iter)->GetPeerAddress().ToIpPort().c_str());
+						LOG_INFO("Connection is closed as expired, ip(%s)", (*iter)->GetPeerAddress().ToIpPort().c_str());
 						OnDisconnect(*iter);
 						RemoveConnection(*iter);
 					}
@@ -500,7 +500,7 @@ namespace bumo {
 					for (ConnectionMap::iterator iter = connections_delete_.begin();
 						iter != connections_delete_.end();) {
 						if (iter->first < now) {
-							LOG_TRACE("delete connect id:%lld", iter->second->GetId());
+							LOG_TRACE("Deleted connect id:%lld", iter->second->GetId());
 							delete iter->second;
 							iter = connections_delete_.erase(iter);
 						}
@@ -518,7 +518,7 @@ namespace bumo {
 		//}
 
 		enabled_ = false;
-		LOG_INFO("WebSocket server(%s) exit", ip.ToIpPort().c_str());
+		LOG_INFO("Network listen server(%s) has exited", ip.ToIpPort().c_str());
 	}
 	
 	uint16_t Network::GetListenPort() const {
@@ -542,7 +542,7 @@ namespace bumo {
 				handle = tls_con->get_handle();
 			}
 			else {
-				LOG_ERROR("Get uri(%s) initialization error(%s)", uri.c_str(), ec.message().c_str());
+				LOG_ERROR("Failed to connect network.Url(%s), error(%s)", uri.c_str(), ec.message().c_str());
 				return false;
 			}
 		}
@@ -557,13 +557,13 @@ namespace bumo {
 				handle = con->get_handle();
 			}
 			else {
-				LOG_ERROR("Get uri(%s) initialization error(%s)", uri.c_str(), ec.message().c_str());
+				LOG_ERROR("Failed to connect network.Url(%s), error(%s)", uri.c_str(), ec.message().c_str());
 				return false;
 			}
 		}
 
 		if (ec) {
-			LOG_INFO("Connect uri(%s) initialization error(%s)", uri.c_str(), ec.message().c_str());
+			LOG_INFO("Failed to connect uri(%s), error(%s)", uri.c_str(), ec.message().c_str());
 			return false;
 		}
 
@@ -583,7 +583,7 @@ namespace bumo {
 			client_.connect(con);
 		}
 
-		LOG_INFO("Connecting uri(%s), id(" FMT_I64 ")", uri.c_str(), new_id);
+		LOG_INFO("Connecting uri(%s), network id(" FMT_I64 ")", uri.c_str(), new_id);
 		return true;
 	}
 
@@ -612,7 +612,7 @@ namespace bumo {
 	}
 
 	void Network::RemoveConnection(Connection *conn) {
-		LOG_INFO("Remove connection id(" FMT_I64 ") peer ip(%s)", conn->GetId(), conn->GetPeerAddress().ToIpPort().c_str());
+		LOG_INFO("Remove connection id(" FMT_I64 "), peer ip(%s)", conn->GetId(), conn->GetPeerAddress().ToIpPort().c_str());
 		conn->Close("no reason");
 		connections_.erase(conn->GetId());
 		connection_handles_.erase(conn->GetHandle());
@@ -624,7 +624,7 @@ namespace bumo {
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection * conn = GetConnection(hdl);
 		if (conn) {
-			LOG_INFO("Peer connected, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			LOG_INFO("Peer is connected, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 			conn->SetConnectTime();
 
 			if (!OnConnectOpen(conn)) { //delete
@@ -706,14 +706,14 @@ namespace bumo {
 	bool Network::OnRequestPing(protocol::WsMessage &message, int64_t conn_id) {
 		protocol::Ping ping;
 		if (!ping.ParseFromString(message.data())){
-			LOG_ERROR("Parse ping failed");
+			LOG_ERROR("Failed to parse ping");
 			return false;
 		}
 
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *con = GetConnection(conn_id);
 		if (!con) {
-			LOG_ERROR("Get connection failed by id(" FMT_I64 ")", conn_id);
+			LOG_ERROR("Failed to get connection by id(" FMT_I64 ")", conn_id);
 			return false;
 		} 
 
@@ -725,7 +725,7 @@ namespace bumo {
 	bool Network::OnResponsePing(protocol::WsMessage &message, int64_t conn_id) {
 		protocol::Pong pong;
 		if (!pong.ParseFromString(message.data())) {
-			LOG_ERROR("Parse pong failed");
+			LOG_ERROR("Failed to parse pong");
 			return false;
 		}
 

@@ -19,7 +19,6 @@
     <ClCompile Include="..\..\src\api\web_server_query.cpp" />
     <ClCompile Include="..\..\src\api\web_server_update.cpp" />
     <ClCompile Include="..\..\src\glue\ledger_upgrade.cpp" />
-    <ClCompile Include="..\..\src\glue\transaction_set.cpp" />
     <ClCompile Include="..\..\src\glue\transaction_queue.cpp" />
     <ClCompile Include="..\..\src\ledger\contract_manager.cpp" />
     <ClCompile Include="..\..\src\ledger\environment.cpp" />
@@ -55,7 +54,6 @@
     <ClInclude Include="..\..\src\api\web_server.h" />
     <ClInclude Include="..\..\src\glue\ledger_upgrade.h" />
     <ClInclude Include="..\..\src\glue\transaction_queue.h" />
-    <ClInclude Include="..\..\src\glue\transaction_set.h" />
     <ClInclude Include="..\..\src\ledger\contract_manager.h" />
     <ClInclude Include="..\..\src\ledger\environment.h" />
     <ClInclude Include="..\..\src\ledger\fee_calculate.h" />

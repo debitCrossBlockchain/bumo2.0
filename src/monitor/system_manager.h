@@ -33,7 +33,7 @@ namespace bumo {
 
 	private:
 		utils::System system_;      // os
-		double cpu_used_percent_;   // cpu percent
+		double cpu_used_percent_;   // cpu percentage
 		int64_t check_interval_;    // timer interval
 		int64_t last_check_time_;   // last check time
 	};

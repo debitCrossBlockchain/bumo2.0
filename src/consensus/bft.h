@@ -25,7 +25,7 @@ namespace bumo {
 		friend class PbftInstance;
 		friend class PbftVcInstance;
 	private:
-		//for pbft instance
+		//For pbft instance
 		PbftInstanceMap instances_;
 		int64_t view_number_;
 		int64_t sequence_;
@@ -39,16 +39,16 @@ namespace bumo {
 
 		bool view_active_;
 
-		//for view change 
+		//For view change 
 		PbftVcInstanceMap vc_instances_;
 
-		//for synchronize
+		//For synchronization
 		PbftInstanceMap out_pbft_instances_;
 
-		//check interval
+		//Check interval
 		int64_t last_check_time_;
 
-		//for change view timer
+		//For change view timer
 		int64_t new_view_repond_timer_;
 
 		PbftEnvPointer NewPrePrepare(const std::string &value, int64_t sequence);

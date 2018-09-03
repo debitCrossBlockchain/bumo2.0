@@ -9,5 +9,5 @@ void TestWebsocket();
 int test_websocketssl();
 void test_sm3();
 void test_sm2();
-void test_bubikey();
+void test_bumokey();
 #endif

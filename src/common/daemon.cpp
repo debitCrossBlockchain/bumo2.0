@@ -47,16 +47,16 @@ namespace utils {
 		//Allocate shared memory
 		shmid = shmget((key_t)key, sizeof(int64_t), 0666 | IPC_CREAT);
 		if (shmid == -1) {
-			LOG_ERROR("shmget failed");
+			LOG_ERROR("Failed to initialize daemon, invalid shmget");
 			return true;
 		}
 		//Attach the shared memory at the the current thread 
 		shm = shmat(shmid, (void*)0, 0);
 		if (shm == (void*)-1) {
-			LOG_ERROR("shmat failed\n");
+			LOG_ERROR("Failed to initialize daemon, invalid shmget");
 			return false;
 		}
-		LOG_INFO("Memory attached at %lx\n", (unsigned long int)shm);
+		LOG_INFO("Attached to shared memory address at %lx\n", (unsigned long int)shm);
 		//Set the shared memory
 		shared = (int64_t*)shm;
 
@@ -69,7 +69,7 @@ namespace utils {
 #else
 		//Detach the shared memory from the current thread
 		if (shmdt(shm) == -1) {
-			LOG_ERROR("shmdt failed");
+			LOG_ERROR("Failed to exit daemon,shmdt failed");
 			return false;
 		}
 		return true;

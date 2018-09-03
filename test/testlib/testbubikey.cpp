@@ -1,14 +1,14 @@
 #include <common/private_key.h>
 
 
-void test_bubikey(){
+void test_bumokey(){
 
 
     bumo::PrivateKey skey(bumo::SIGNTYPE_ED25519);
 	std::string strpkey = skey.GetEncPublicKey();
 	for (int i = 0; i < 10000; i++)
 	{
-		//bubi::PublicKey pkey(strpkey);
+		//bumo::PublicKey pkey(strpkey);
 		std::string sig = skey.Sign("hello");
 		
 		//auto ppp = pkey.GetBase58PublicKey();

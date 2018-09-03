@@ -40,10 +40,10 @@ namespace bumo {
 		bool dns_seed_inited_;
 		bool cert_is_valid_;
 
-		//Peer cach list
+		//Peer cache list
 		protocol::Peers db_peer_cache_;
 
-		//peers infomation received
+		//Peers infomation received
 		utils::Mutex peer_lock_;
 		std::list<utils::StringMap> received_peer_list_;
 

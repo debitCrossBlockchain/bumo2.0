@@ -1,9 +1,9 @@
 # **Syntax in the Smart Contract**
-Bumo smart contracts are written in the 'JaveScript' language. In order to facilitate developers to develop a more standardized, safer contract, JSLint is used to check the syntax in smart contracts. [Please refer to JSLint GitHub](./). When editing a contract, you first need to ensure that the contract passes the JSLint detection before it can be detected as a legal contract by the Bumo system.
+Bumo smart contracts are written in the 'JaveScript'. In order to facilitate developers to develop a more standardized and safer contract, JSLint is used to check the syntax in smart contracts. Please refer to [JSLint GitHub](./). When editing a contract, you first need to ensure that the contract passes the test inJSLint before it can be detected as a legal contract by the Bumo system.
 
-The standard syntax of JSLint is described in detail on the official website. The purpose of this document is to refine the original JSLint grammar rules as a complete document, and to supplement Bumo's modified rules. The documentation will illustrate its usage. For parts not mentioned in this article, please refer to the [JsLint help manual](http://bumo.chinacloudapp.cn:36002/help.html).
+The standard syntax of JSLint is described in detail on the official website. The purpose of this document is to refine the original JSLint syntax rules as a complete document, and to supplement Bumo's modified rules. The documentation will illustrate its usage with examples. For parts not mentioned in this article, please refer to the [JsLint help manual](http://bumo.chinacloudapp.cn:36002/help.html).
 
-Or you can visit the manual site 127.0.0.1:36002/jslint/help.html by node servers or wallet addresses.
+Or you can visit the manual at this site: 127.0.0.1:36002/jslint/help.html by node servers or wallet addresses.
 
 ## **Detection Tool**
    JSLint detection tool address: [JSLint syntax dection tool](http://bumo.chinacloudapp.cn:36002/jslint.html "JSLint syntax detection tool").
@@ -28,7 +28,7 @@ Empty block.   2.0
 {
 ```
 
-Cause: Blank statement block at row 2 and 0 column.
+Cause: Blank statement block at row 2 and column 0.
 
 Correct code is shown below:
 
@@ -41,7 +41,7 @@ function init(bar)
 }
 ```
 
-The Warning info in red color will not prompt.
+If the result is correct, no warning information will prompt.
 
 ## **Text Compression**
 After the contract document is written, you can use the JSMin tool to compress it. Ensure that the original document is saved because compression is an irreversible operation.
@@ -142,19 +142,19 @@ function main(input)
 - Use '===' instead of '==' to judge the comparison; use '!==' instead of '!=' to compare
 - A statement must end with ';'
 
-- Statement blocks must be enclosed with '{}' and empty block blocks are prohibited
+- A statement block must be enclosed with '{}' and empty statement blocks are prohibited
 
 - The initial variable of the 'for' loop variable needs to be declared before the conditional statement block, and a new value is assigned to it when used
 
 - Use '+=' and '-=' to substitute '++' and '--'
 
-- Prohibit to use 'eval', 'void' and 'this' keywords
+- Prohibit to use keywords like 'eval', 'void' and 'this'
 
 - Prohibit to use 'new' to create 'Number', 'String' and 'Boolean' objects, which objects can be obtained by calling their constructors
 
 - Prohibit to create an array with array keywords
 
-- Prohibit to use 'try' and 'catch' keywords, but you can use 'throw' to throw exceptions
+- Prohibit to use keywords like 'try' and 'catch', but you can use 'throw' to throw exceptions
 
 ```javascript
 "Array", "ArrayBuffer", "Float32Array", "Float64Array", 

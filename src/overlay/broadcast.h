@@ -24,7 +24,7 @@ namespace bumo{
 		IBroadcastDriver(){};
 		virtual ~IBroadcastDriver(){};
 
-		//virtual bool SendMessage(int64_t peer_id, WsMessagePointer msg) = 0;
+		//Virtual bool SendMessage(int64_t peer_id, WsMessagePointer msg) = 0;
 		virtual bool SendRequest(int64_t peer_id, int64_t type, const std::string &data) = 0;
 		virtual std::set<int64_t> GetActivePeerIds() = 0;
 	};

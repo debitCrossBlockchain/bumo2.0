@@ -46,7 +46,7 @@ namespace bumo {
 
 		if (!bumo::PublicKey::IsAddressValid(source_address)) {
 			result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-			result.set_desc(utils::String::Format("Source address should be a valid account address"));
+			result.set_desc(utils::String::Format("Source address should be a valid account address."));
 			return result;
 		}
 		//const auto &issue_property = issue_asset.
@@ -61,7 +61,7 @@ namespace bumo {
 
 			if (!bumo::PublicKey::IsAddressValid(create_account.dest_address())) {
 				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-				result.set_desc(utils::String::Format("Dest account address(%s) invalid", create_account.dest_address().c_str()));
+				result.set_desc(utils::String::Format("Dest account address(%s) invalid.", create_account.dest_address().c_str()));
 				break;
 			}
 
@@ -74,7 +74,7 @@ namespace bumo {
 			const protocol::AccountPrivilege &priv = create_account.priv();
 			if (priv.master_weight() < 0 || priv.master_weight() > UINT32_MAX) {
 				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-				result.set_desc(utils::String::Format("Master weight(" FMT_I64 ") is larger than %u or less 0", priv.master_weight(), UINT32_MAX));
+				result.set_desc(utils::String::Format("Master weight(" FMT_I64 ") is larger than %u or less than 0", priv.master_weight(), UINT32_MAX));
 				break;
 			}
 
@@ -85,7 +85,7 @@ namespace bumo {
 				const protocol::Signer &signer = priv.signers(i);
 				if (signer.weight() < 0 || signer.weight() > UINT32_MAX) {
 					result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-					result.set_desc(utils::String::Format("Signer weight(" FMT_I64 ") is larger than %u or less 0", signer.weight(), UINT32_MAX));
+					result.set_desc(utils::String::Format("Signer weight(" FMT_I64 ") is larger than %u or less than 0", signer.weight(), UINT32_MAX));
 					shouldBreak = true;
 					break;
 				}
@@ -134,13 +134,13 @@ namespace bumo {
 				const protocol::OperationTypeThreshold  &type_thresholds = threshold.type_thresholds(i);
 				if (type_thresholds.type() > 100 || type_thresholds.type() <= 0) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("Operation type(%u) not support", type_thresholds.type()));
+					result.set_desc(utils::String::Format("Operation type(%u) not supported", type_thresholds.type()));
 					break;
 				}
 
 				if (type_thresholds.threshold() < 0) {
 					result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
-					result.set_desc(utils::String::Format("Operation type(%d) threshold(" FMT_I64 ") is less than 0", (int32_t)type_thresholds.type(), type_thresholds.threshold()));
+					result.set_desc(utils::String::Format("Operation type(%d) (threshold: " FMT_I64 ") is less than 0", (int32_t)type_thresholds.type(), type_thresholds.threshold()));
 					break;
 				}
 
@@ -153,7 +153,7 @@ namespace bumo {
 				duplicate_type.insert(type_thresholds.type());
 			}
 
-			//if it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
+			//If it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
 			if (create_account.contract().payload() != ""){
  				if (create_account.contract().payload().size() > General::CONTRACT_CODE_LIMIT) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
@@ -168,7 +168,7 @@ namespace bumo {
 					threshold.type_thresholds_size() == 0 
 					)) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("Contract account 'priv' config must be({master_weight:0, thresholds:{tx_threshold:1}})"));
+					result.set_desc(utils::String::Format("Contract account 'priv' configuraion must be({master_weight:0, thresholds:{tx_threshold:1}})"));
 					break;
 				}
 				
@@ -211,7 +211,7 @@ namespace bumo {
 				//utils::String::Trim(trim_code);
 				if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE) {
 					result.set_code(protocol::ERRCODE_ASSET_INVALID);
-					result.set_desc(utils::String::Format("asset code length should between (0,64]"));
+					result.set_desc(utils::String::Format("asset code length should be between (0,64]"));
 					break;
 				}
 
@@ -224,7 +224,7 @@ namespace bumo {
 
 			if (source_address == payAsset.dest_address()) {
 				result.set_code(protocol::ERRCODE_ACCOUNT_SOURCEDEST_EQUAL);
-				result.set_desc(utils::String::Format("Source address(%s) equal to dest address", source_address.c_str()));
+				result.set_desc(utils::String::Format("Source address(%s) is equal to dest address", source_address.c_str()));
 				break;
 			} 
 
@@ -249,7 +249,7 @@ namespace bumo {
 			if (trim_code.size() == 0 || trim_code.size() > General::ASSET_CODE_MAX_SIZE ||
 				trim_code.size() != issue_asset.code().size()) {
 				result.set_code(protocol::ERRCODE_ASSET_INVALID);
-				result.set_desc(utils::String::Format("Asset code length should between (0,64]"));
+				result.set_desc(utils::String::Format("Asset code length should be between (0,64]"));
 				break;
 			}
 
@@ -282,7 +282,7 @@ namespace bumo {
 			const protocol::OperationSetSignerWeight &operation_setoptions = operation.set_signer_weight();
 			if (operation_setoptions.master_weight() < -1 || operation_setoptions.master_weight() > UINT32_MAX) {
 				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-				result.set_desc(utils::String::Format("Master weight(" FMT_I64 ") is larger than %u or less -1", operation_setoptions.master_weight(), UINT32_MAX));
+				result.set_desc(utils::String::Format("Master weight(" FMT_I64 ") is larger than %u or less than -1", operation_setoptions.master_weight(), UINT32_MAX));
 				break;
 			}
 
@@ -290,7 +290,7 @@ namespace bumo {
 				const protocol::Signer &signer = operation_setoptions.signers(i);
 				if (signer.weight() < 0 || signer.weight() > UINT32_MAX) {
 					result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-					result.set_desc(utils::String::Format("Signer weight(" FMT_I64 ") is larger than %u or less 0", signer.weight(), UINT32_MAX));
+					result.set_desc(utils::String::Format("Signer weight(" FMT_I64 ") is larger than %u or less than 0", signer.weight(), UINT32_MAX));
 					break;
 				}
 
@@ -323,7 +323,7 @@ namespace bumo {
 				const protocol::OperationTypeThreshold  &type_thresholds = operation_setoptions.type_thresholds(i);
 				if (type_thresholds.type() > 100 || type_thresholds.type() <= 0) {
 					result.set_code(protocol::ERRCODE_THRESHOLD_NOT_VALID);
-					result.set_desc(utils::String::Format("Operation type(%u) not support", type_thresholds.type()));
+					result.set_desc(utils::String::Format("Operation type(%u) not supported", type_thresholds.type()));
 					break;
 				}
 
@@ -346,7 +346,7 @@ namespace bumo {
 
 			if (source_address == pay_coin.dest_address()) {
 				result.set_code(protocol::ERRCODE_ACCOUNT_SOURCEDEST_EQUAL);
-				result.set_desc(utils::String::Format("Source address(%s) equal to dest address", source_address.c_str()));
+				result.set_desc(utils::String::Format("Source address(%s) is equal to dest address", source_address.c_str()));
 				break;
 			}
 
@@ -362,13 +362,13 @@ namespace bumo {
 			const protocol::OperationLog &log = operation.log();
 			if (log.topic().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE ){
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc(utils::String::Format("Log's parameter topic should be (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE));
+				result.set_desc(utils::String::Format("Log's parameter topic size should be between (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE));
 				break;
 			}
 			for (int i = 0; i < log.datas_size();i++) {
 				if (log.datas(i).size() == 0 || log.datas(i).size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("Log's parameter data should be (0, %d]",General::TRANSACTION_LOG_DATA_MAXSIZE));
+					result.set_desc(utils::String::Format("Log's parameter data size should be between (0, %d]",General::TRANSACTION_LOG_DATA_MAXSIZE));
 					break;
 				}
 			}
@@ -402,16 +402,16 @@ namespace bumo {
 
 		if (!txenvironment->GetEntry(source_address_, source_account_)) {
 			result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
-			result_.set_desc(utils::String::Format("Source account(%s) not exist", source_address_.c_str()));
+			result_.set_desc(utils::String::Format("Source account(%s) is not exist", source_address_.c_str()));
 			return false;
 		}
 
 		utils::StringVector vec;
 		vec.push_back(source_address_);
 		if (!transaction_->SignerHashPriv(source_account_, operation_.type())) {
-			LOG_ERROR("Check operation's signature failed");
+			LOG_ERROR("Failed to check operation's signature.");
 			result_.set_code(protocol::ERRCODE_INVALID_SIGNATURE);
-			result_.set_desc(utils::String::Format("Check operation's signature failed"));
+			result_.set_desc(utils::String::Format("Failed to check operation's signature."));
 			return false;
 		}
 
@@ -426,7 +426,7 @@ namespace bumo {
 		}
 		if (!environment->GetEntry(source_address, source_account_)) {
 			result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
-			result_.set_desc(utils::String::Format("Source address(%s) not exist", source_address.c_str()));
+			result_.set_desc(utils::String::Format("Source address(%s) is not exist", source_address.c_str()));
 			return result_;
 		}
 		auto type = operation_.type();
@@ -466,7 +466,7 @@ namespace bumo {
 			break;
 		default:
 			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-			result_.set_desc(utils::String::Format("type(%d) not support", type));
+			result_.set_desc(utils::String::Format("type(%d) not supported", type));
 			break;
 		}
 		return result_;
@@ -478,7 +478,7 @@ namespace bumo {
 			std::shared_ptr<AccountFrm> dest_account;
 			std::string dest_address = create_account.dest_address();
 			if (dest_address.empty()){
-				//above version 1000, the address of the smart contract must be empty and an address will be created automatically
+				//If the ledger version is greater than 1000, you must leave the address of the smart contract empty. An address will be created automatically.
 				bumo::PublicKey pub_key;
 				std::string raw_pkey = utils::String::Format("%s-" FMT_I64 "-%d", 
 					transaction_->GetSourceAddress().c_str(), transaction_->GetNonce(), index_);
@@ -495,7 +495,7 @@ namespace bumo {
 			int64_t base_reserve = LedgerManager::Instance().GetCurFeeConfig().base_reserve();
 			if (create_account.init_balance() < base_reserve) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_INIT_LOW_RESERVE);
-				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") not enough for base_reserve (" FMT_I64 ")", create_account.init_balance(), base_reserve);
+				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") is not enough for base_reserve (" FMT_I64 ")", create_account.init_balance(), base_reserve);
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
@@ -503,7 +503,7 @@ namespace bumo {
 			int64_t limit_balance=0;
 			if (!utils::SafeIntSub(source_account_->GetAccountBalance(), base_reserve, limit_balance)){
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") overflow (" FMT_I64 ")", source_account_->GetAccountBalance(), base_reserve);
+				std::string error_desc = utils::String::Format("Dest address init balance (" FMT_I64 ") overflowed (" FMT_I64 ")", source_account_->GetAccountBalance(), base_reserve);
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
@@ -511,7 +511,7 @@ namespace bumo {
 
 			if (limit_balance < create_account.init_balance()) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				std::string error_desc = utils::String::Format("Source account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for init balance(" FMT_I64 ")", 
+				std::string error_desc = utils::String::Format("Source account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") is not enough for init balance(" FMT_I64 ")", 
 					source_account_->GetAccountAddress().c_str(), source_account_->GetAccountBalance(), base_reserve, create_account.init_balance());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
@@ -519,7 +519,7 @@ namespace bumo {
 			}
 			if (!source_account_->AddBalance(-1 * create_account.init_balance())){
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-				std::string error_desc = utils::String::Format("Source account(%s) balance overflow (" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for init balance(" FMT_I64 ")",
+				std::string error_desc = utils::String::Format("Source account(%s) balance overflow (" FMT_I64 ") - base_reserve(" FMT_I64 ") is not enough for init balance(" FMT_I64 ")",
 					source_account_->GetAccountAddress().c_str(), source_account_->GetAccountBalance(), base_reserve, create_account.init_balance());
 				result_.set_desc(error_desc);
 				LOG_ERROR("%s", error_desc.c_str());
@@ -547,7 +547,7 @@ namespace bumo {
 			if (!success){
 				result_.set_code(protocol::ERRCODE_INVALID_DATAVERSION);
 				result_.set_desc(utils::String::Format(
-					"set meatadata while create account(%s) version should be 0 or 1 ",
+					"The version to set metadata while create account(%s) should be 0 or 1 ",
 					dest_account->GetAccountAddress().c_str()));
 				
 				break;
@@ -582,8 +582,6 @@ namespace bumo {
 	}
 
 	void OperationFrm::IssueAsset(std::shared_ptr<Environment> environment) {
-
-
 		const protocol::OperationIssueAsset& ope = operation_.issue_asset();
 		do {
 
@@ -601,7 +599,7 @@ namespace bumo {
 				int64_t amount = 0;
 				if (!utils::SafeIntAdd(asset_e.amount(), ope.amount(), amount)){
 					result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), ope.amount()));
+					result_.set_desc(utils::String::Format("IssueAsset asset(%s:%s:%d) overflowed(" FMT_I64 " " FMT_I64 ")", key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), ope.amount()));
 					break;
 				}
 				asset_e.set_amount(amount);
@@ -618,7 +616,7 @@ namespace bumo {
 
 			if (!environment->GetEntry(payAsset.dest_address(), dest_account)) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
-				result_.set_desc(utils::String::Format("Dest account(%s) not exist", payAsset.dest_address().c_str()));
+				result_.set_desc(utils::String::Format("Dest account(%s) is not exist", payAsset.dest_address().c_str()));
 				break;
 			}
 
@@ -627,7 +625,7 @@ namespace bumo {
 				protocol::AssetKey key = payAsset.asset().key();
 				if (!source_account_->GetAsset(key, asset_e)) {
 					result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_LOW_RESERVE);
-					result_.set_desc(utils::String::Format("asset(%s:%s:%d) low reserve", key.issuer().c_str(), key.code().c_str(), key.type()));
+					result_.set_desc(utils::String::Format("Failed to get asset(%s:%s:%d)", key.issuer().c_str(), key.code().c_str(), key.type()));
 					break;
 				}
 
@@ -635,14 +633,14 @@ namespace bumo {
 					int64_t sender_amount = 0;
 					if (!utils::SafeIntSub(asset_e.amount(), payAsset.asset().amount(), sender_amount)) {
 						result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-						result_.set_desc(utils::String::Format("PayAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")",
+						result_.set_desc(utils::String::Format("PayAsset asset(%s:%s:%d) overflowed(" FMT_I64 " " FMT_I64 ")",
 							key.issuer().c_str(), key.code().c_str(), key.type(), asset_e.amount(), payAsset.asset().amount()));
 						break;
 					}
 
 					if (sender_amount < 0) {
 						result_.set_code(protocol::ERRCODE_ACCOUNT_ASSET_LOW_RESERVE);
-						result_.set_desc(utils::String::Format("asset(%s:%s:%d) low reserve", key.issuer().c_str(), key.code().c_str(), key.type()));
+						result_.set_desc(utils::String::Format("asset(%s:%s:%d) is not enought for payment.", key.issuer().c_str(), key.code().c_str(), key.type()));
 						break;
 					}
 					asset_e.set_amount(sender_amount);
@@ -659,7 +657,7 @@ namespace bumo {
 						if (!utils::SafeIntAdd(dest_asset.amount(), payAsset.asset().amount(), receiver_amount))
 						{
 							result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-							result_.set_desc(utils::String::Format("PayAsset asset(%s:%s:%d) overflow(" FMT_I64 " " FMT_I64 ")", 
+							result_.set_desc(utils::String::Format("PayAsset asset(%s:%s:%d) overflowed(" FMT_I64 " " FMT_I64 ")", 
 								key.issuer().c_str(), key.code().c_str(), key.type(), dest_asset.amount(), payAsset.asset().amount()));
 							break;
 						}
@@ -718,7 +716,7 @@ namespace bumo {
 				}
 				else{
 					result_.set_code(protocol::ERRCODE_NOT_EXIST);
-					result_.set_desc(utils::String::Format("DeleteMetaData not exist key(%s)", key.c_str()));
+					result_.set_desc(utils::String::Format("The key(%s) to be deleted is not exist", key.c_str()));
 					break;
 				}
 			}
@@ -728,7 +726,7 @@ namespace bumo {
 					if (version != 0) {
 						if (keypair_e.version() + 1 != version) {
 							result_.set_code(protocol::ERRCODE_INVALID_DATAVERSION);
-							result_.set_desc(utils::String::Format("Data version(" FMT_I64 ") not valid", version));
+							result_.set_desc(utils::String::Format("Data version(" FMT_I64 ") is not valid", version));
 							break;
 						}
 					}
@@ -741,7 +739,7 @@ namespace bumo {
 				else {
 					if (version != 1 && version != 0) {
 						result_.set_code(protocol::ERRCODE_INVALID_DATAVERSION);
-						result_.set_desc(utils::String::Format("Data version(" FMT_I64 ") not valid", version));
+						result_.set_desc(utils::String::Format("Data version(" FMT_I64 ") is not valid", version));
 						break;
 					}
 					protocol::KeyPair keypair;
@@ -798,14 +796,14 @@ namespace bumo {
 			int64_t min_balance=0;
 			if (!utils::SafeIntAdd(ope.amount(), reserve_coin, min_balance)){
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-				result_.set_desc(utils::String::Format("Account(%s) proto_source_account, amount(" FMT_I64 "), reserve_coin:(" FMT_I64 ") ",
+				result_.set_desc(utils::String::Format("PayCoin overflow: account(%s) , amount(" FMT_I64 "), reserve_coin:(" FMT_I64 ") ",
 					proto_source_account.address().c_str(), ope.amount(), reserve_coin));
 				break;
 			}
 
 			if (proto_source_account.balance() < min_balance) {
 				result_.set_code(protocol::ERRCODE_ACCOUNT_LOW_RESERVE);
-				result_.set_desc(utils::String::Format("Account(%s) balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") not enough for pay (" FMT_I64 ") ",
+				result_.set_desc(utils::String::Format("Account(%s)'s balance(" FMT_I64 ") - base_reserve(" FMT_I64 ") is not enough for payment (" FMT_I64 ") ",
 					proto_source_account.address().c_str(),
 					proto_source_account.balance(),
 					reserve_coin,
@@ -817,7 +815,7 @@ namespace bumo {
 			if (!environment->GetEntry(address, dest_account_ptr)) {
 				if (ope.amount() < reserve_coin) {
 					result_.set_code(protocol::ERRCODE_ACCOUNT_INIT_LOW_RESERVE);
-					result_.set_desc(utils::String::Format("Account(%s) init balance(" FMT_I64 ") not enough for reserve(" FMT_I64 ")",
+					result_.set_desc(utils::String::Format("Account(%s)'s init balance(" FMT_I64 ") is not enough for reserve(" FMT_I64 ")",
 						address.c_str(),
 						ope.amount(),
 						reserve_coin
@@ -838,7 +836,7 @@ namespace bumo {
 			int64_t src_balance=0;
 			if (!utils::SafeIntSub(proto_source_account.balance(), ope.amount(), src_balance)) {
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-				result_.set_desc(utils::String::Format("Account(%s) proto_source_account overflow(" FMT_I64 "), amount:(" FMT_I64 ") ",
+				result_.set_desc(utils::String::Format("PayCoin overflow: source ccount(%s), balance(" FMT_I64 "), payment amount:(" FMT_I64 ") ",
 					proto_source_account.address().c_str(), proto_source_account.balance(), ope.amount()));
 				break;
 			}
@@ -848,7 +846,7 @@ namespace bumo {
 			protocol::Account& proto_dest_account = dest_account_ptr->GetProtoAccount();
 			if (!utils::SafeIntAdd(proto_dest_account.balance(), ope.amount(), dest_balance)) {
 				result_.set_code(protocol::ERRCODE_MATH_OVERFLOW);
-				result_.set_desc(utils::String::Format("Account(%s) proto_dest_account overflow(" FMT_I64 "), amount:(" FMT_I64 ") ",
+				result_.set_desc(utils::String::Format("PayCoin overflowed: dest account(%s), balance(" FMT_I64 "), payment amount:(" FMT_I64 ") ",
 					proto_dest_account.address().c_str(), proto_dest_account.balance(), ope.amount()));
 				break;
 			}
@@ -917,12 +915,12 @@ namespace bumo {
 		do {
 			bool is_create_contract = !create_account.contract().payload().empty();
 			const std::string dest_address = create_account.dest_address();
-			//if version greater than 1000, the dest address of contract must empty
+			//If the ledger version is greater than 1000, you must leave the dest address of the smart contract empty. An address will be created automatically.
 			bool has_dest_address = !dest_address.empty();
 			bool unimportant_address = (dest_address != General::CONTRACT_VALIDATOR_ADDRESS) && (dest_address != General::CONTRACT_FEE_ADDRESS);
 			if (is_create_contract && has_dest_address && unimportant_address) {
 				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-				result.set_desc(utils::String::Format("Create contract account dest address(%s) must set empty", dest_address.c_str()));
+				result.set_desc(utils::String::Format("The dest address(%s) must be empty when create contract account", dest_address.c_str()));
 				break;
 			}
 
@@ -943,7 +941,7 @@ namespace bumo {
 			const protocol::AccountPrivilege &priv = create_account.priv();
 			if (priv.master_weight() < 0 || priv.master_weight() > UINT32_MAX) {
 				result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-				result.set_desc(utils::String::Format("Master weight(" FMT_I64 ") is larger than %u or less 0", priv.master_weight(), UINT32_MAX));
+				result.set_desc(utils::String::Format("Master weight(" FMT_I64 ") is larger than %u or less than 0", priv.master_weight(), UINT32_MAX));
 				break;
 			}
 
@@ -966,7 +964,7 @@ namespace bumo {
 				const protocol::OperationTypeThreshold  &type_thresholds = threshold.type_thresholds(i);
 				if (type_thresholds.type() > 100 || type_thresholds.type() <= 0) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("Operation type(%u) not support", type_thresholds.type()));
+					result.set_desc(utils::String::Format("Operation type(%u) is not supported", type_thresholds.type()));
 					break;
 				}
 
@@ -985,7 +983,7 @@ namespace bumo {
 				duplicate_type.insert(type_thresholds.type());
 			}
 
-			//if it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
+			//If it's contract then {master_weight:0 , thresholds:{tx_threshold:1} }
 			if (is_create_contract){
 				if (create_account.contract().payload().size() > General::CONTRACT_CODE_LIMIT) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
@@ -1000,7 +998,7 @@ namespace bumo {
 					threshold.type_thresholds_size() == 0
 					)) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("Contract account 'priv' config must be({master_weight:0, thresholds:{tx_threshold:1}})"));
+					result.set_desc(utils::String::Format("Contract account 'priv' configuration must be({master_weight:0, thresholds:{tx_threshold:1}})"));
 					break;
 				}
 
@@ -1008,14 +1006,14 @@ namespace bumo {
 				result = ContractManager::Instance().SourceCodeCheck(Contract::TYPE_V8, src);
 			}
 			else {
-				//if it's common and version greater than 1000,  then must set master_weight 1, tx_threshold:1	
+				//If it's common and the version is greater than 1000, then you must set master_weight:1 and tx_threshold:1	
 				if (!(priv.master_weight() == 1 &&
 					priv.signers_size() == 0 &&
 					threshold.tx_threshold() == 1 &&
 					threshold.type_thresholds_size() == 0
 					)) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("Common account 'priv' config must be({master_weight:1, thresholds:{tx_threshold:1}})"));
+					result.set_desc(utils::String::Format("Common account 'priv' configuration must be({master_weight:1, thresholds:{tx_threshold:1}})"));
 					break;
 				}
 			}
@@ -1049,7 +1047,7 @@ namespace bumo {
 				bool int64_check = utils::String::SafeStoi64(set_privilege.master_weight(), master_weight);
 				if (!int64_check || master_weight <  0 || master_weight > UINT32_MAX) {
 					result.set_code(protocol::ERRCODE_WEIGHT_NOT_VALID);
-					result.set_desc(utils::String::Format("Parameter master_weight(%s) is larger than %u or less -1",
+					result.set_desc(utils::String::Format("Parameter master_weight(%s) is larger than %u or less than -1",
 						set_privilege.master_weight().c_str(), UINT32_MAX));
 					break;
 				}
@@ -1069,14 +1067,14 @@ namespace bumo {
 
 				if (signer.address() == source_address) {
 					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-					result.set_desc(utils::String::Format("Signer address(%s) can't be equal to the source address", signer.address().c_str()));
+					result.set_desc(utils::String::Format("The signer address(%s) can't be equal to the source address", signer.address().c_str()));
 					shouldBreak = true;
 					break;
 				}
 
 				if (!PublicKey::IsAddressValid(signer.address())) {
 					result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
-					result.set_desc(utils::String::Format("Signer address(%s) is not valid", signer.address().c_str()));
+					result.set_desc(utils::String::Format("Signer address(%s) is invalid", signer.address().c_str()));
 					shouldBreak = true;
 					break;
 				}
@@ -1111,7 +1109,7 @@ namespace bumo {
 				const protocol::OperationTypeThreshold  &type_thresholds = set_privilege.type_thresholds(i);
 				if (type_thresholds.type() > 100 || type_thresholds.type() <= 0) {
 					result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-					result.set_desc(utils::String::Format("Operation type(%u) not support", type_thresholds.type()));
+					result.set_desc(utils::String::Format("Operation type(%u) is not supported", type_thresholds.type()));
 					break;
 				}
 

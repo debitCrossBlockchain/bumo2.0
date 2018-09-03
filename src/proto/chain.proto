@@ -6,7 +6,7 @@ import "common.proto";
 
 message Account{
 	string address = 1;
-	int64  nonce = 2; //last transaction seq
+	int64  nonce = 2; //Last transaction seq
 	AccountPrivilege priv = 3;
 	bytes metadatas_hash = 4;	//metadatas_hash = merklehash(metadatas);
 	bytes assets_hash = 5;    //assets_hash = merkelhash(assets)
@@ -35,7 +35,7 @@ message AssetProperty{
 }
 
 message AssetStore{
-	AssetKey key = 1; //required
+	AssetKey key = 1; //Required
 	int64 amount = 2;
 	AssetProperty property = 3;
 }
@@ -82,7 +82,7 @@ message AccountPrivilege {
 }
 
 message AccountThreshold{
-		 int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: indicate no setting
+		 int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: indicates no setting
 		 repeated OperationTypeThreshold type_thresholds = 2;
 }
 
@@ -98,8 +98,8 @@ message OperationPayCoin{
 }
 
 message OperationSetSignerWeight{
-	 int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: indicate no setting
-	 repeated Signer signers = 2; //address:weight, if weight is 0 indicate deleting this signer
+	 int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: indicates no setting
+	 repeated Signer signers = 2; //address:weight, if weight is 0, it indicates deleting this signer
 }
 
 message OperationLog{
@@ -145,7 +145,7 @@ message Operation {
 
 message OperationSetThreshold{
 	    int64 tx_threshold = 1;
-	    repeated OperationTypeThreshold type_thresholds = 2; //type:threshold, threshold:0 indicate deleting this type
+	    repeated OperationTypeThreshold type_thresholds = 2; //type:threshold, threshold:0 indicates deleting this type
 }
 
 message Transaction {
@@ -222,9 +222,9 @@ message TransactionEnvSet{
 }
 
 message ConsensusValueValidation {
-	repeated int32 expire_tx_ids = 1;  //contract execute expired
+	repeated int32 expire_tx_ids = 1;  //Contract execution expired
 	repeated int32 error_tx_ids = 2;
-	//may contain other check
+	//May contain other checks
 }
 
 message ConsensusValue{

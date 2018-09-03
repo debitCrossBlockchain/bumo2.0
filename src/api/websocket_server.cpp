@@ -33,14 +33,14 @@ namespace bumo {
 
 	bool WsPeer::Set(const protocol::ChainSubscribeTx &sub) {
 		if (sub.address_size() > 100) {
-			LOG_ERROR("Subscribe tx size large than 100");
+			LOG_ERROR("Failed to subscribe address, size large than 100");
 			return false;
 		}
 
 		tx_filter_address_.clear();
 		for (int32_t i = 0; i < sub.address_size(); i++) {
 			if (!PublicKey::IsAddressValid(sub.address(i))) {
-				LOG_ERROR("Subscribe tx failed, address(%s) not valid", sub.address(i).c_str());
+				LOG_ERROR("Failed to subscribe address, address(%s) not valid", sub.address(i).c_str());
 				return false;
 			} 
 			tx_filter_address_.insert(sub.address(i));
@@ -117,7 +117,7 @@ namespace bumo {
 		}
 
 		StatusModule::RegisterModule(this);
-		LOG_INFO("Websocket server initialized");
+		LOG_INFO("Initialized web socket server successfully");
 		return true;
 	}
 
@@ -144,28 +144,28 @@ namespace bumo {
 		Connection *conn = GetConnection(conn_id);
 		if (conn) {
 			conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
-			LOG_INFO("Recv chain hello from ip(%s), send response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
+			LOG_INFO("Received a hello message from ip(%s), and sent the response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
 		}
 		return true;
 	}
 
 	bool WebSocketServer::OnChainPeerMessage(protocol::WsMessage &message, int64_t conn_id) {
-		// send peer
+		// Send peer status to the websocket client.
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(conn_id);
 		if (!conn) {
 			return false;
 		}
 
-		LOG_INFO("Recv chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+		LOG_INFO("Received a chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 		protocol::ChainPeerMessage cpm;
 		if (!cpm.ParseFromString(message.data())) {
-			LOG_ERROR("ChainPeerMessage FromString fail");
+			LOG_ERROR("Failed to parse the message, invalid chain peer message");
 			return true;
 		}
 
-		//bubi::PeerManager::Instance().BroadcastPayLoad(cpm);
+		//bumo::PeerManager::Instance().BroadcastPayLoad(cpm);
 		return true;
 	}
 
@@ -204,9 +204,9 @@ namespace bumo {
 		protocol::TransactionEnv tran_env;
 		do {
 			if (!tran_env.ParseFromString(message.data())) {
-				LOG_ERROR("Parse submit transaction string fail, ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+				LOG_ERROR("Failed to parse the submitted transaction from string, from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 				result.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				result.set_desc("Parse the transaction failed");
+				result.set_desc("Failed to parse the transaction");
 				break;
 			}
 			Json::Value real_json;
@@ -222,7 +222,7 @@ namespace bumo {
 		
 		} while (false);
 
-		//Broadcasting the WebSocketServer transaction(Tx) status.
+		//Broadcast the WebSocketServer transaction(Tx) status.
 		std::string hash = HashWrapper::Crypto(tran_env.transaction().SerializeAsString());
 		protocol::ChainTxStatus cts;
 		cts.set_tx_hash(utils::String::BinToHexString(hash));
@@ -247,20 +247,20 @@ namespace bumo {
 
 		protocol::ChainResponse default_response;
 		do {
-			LOG_INFO("Recv chain peer message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
+			LOG_INFO("Received a subscription message from ip(%s)", conn->GetPeerAddress().ToIpPort().c_str());
 			protocol::ChainSubscribeTx subs;
 			if (!subs.ParseFromString(message.data())) {
 				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				default_response.set_error_desc("ChainPeerMessage FromString fail");
-				LOG_ERROR("%s", default_response.error_desc().c_str());
+				default_response.set_error_desc("Invalid chain peer message");
+				LOG_ERROR("Failed to parse the websocket message.%s", default_response.error_desc().c_str());
 				break;
 			}
 
 			bool ret = conn->Set(subs);
 			if (!ret) {
 				default_response.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				default_response.set_error_desc("ChainPeerMessage FromString fail");
-				LOG_ERROR("%s", default_response.error_desc().c_str());
+				default_response.set_error_desc("Incorrect peer setting");
+				LOG_ERROR("Failed to set the subscription message.%s", default_response.error_desc().c_str());
 				break;
 			} 
 		} while (false);

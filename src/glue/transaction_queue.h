@@ -50,7 +50,7 @@ namespace bumo {
 		struct PriorityCompare
 		{
 			TransactionQueue& transaction_queue_;
-			/// Compare transaction by nonce height and fee.
+			/// Compare transactions by nonce height and fee.
 			bool operator()(TransactionFrm::pointer const& first, TransactionFrm::pointer const& second) const
 			{
 				int64_t const& height1 = first->GetNonce() - transaction_queue_.account_nonce_[first->GetSourceAddress()];
@@ -65,14 +65,14 @@ namespace bumo {
 
 		struct TimePriorityCompare
 		{
-			/// Compare transaction by incoming time
+			/// Compare transactions by incoming time
 			bool operator()(TransactionFrm::pointer const& first, TransactionFrm::pointer const& second) const
 			{
 				return first->GetInComingTime() < second->GetInComingTime();
 			}
 		};
 
-		//time order
+		//Time order
 		using TimeQueue = std::multiset<TransactionFrm::pointer, TimePriorityCompare>;
 		TimeQueue time_queue_;
 
@@ -82,11 +82,11 @@ namespace bumo {
 		QueueByAddressAndNonce queue_by_address_and_nonce_;
 
 		std::unordered_map<std::string, TransactionFrm::pointer> queue_by_hash_;
-		//record account system nonce
+		//Record account system nonce
 		std::unordered_map<std::string, int64_t> account_nonce_;
 
 		uint32_t queue_limit_;
-		//Maximum number of transaction per account
+		//Maximum number of transactions per account
 		uint32_t account_txs_limit_;
 
 		std::pair<bool, TransactionFrm::pointer> Remove(const std::string& account_address,const int64_t& nonce);

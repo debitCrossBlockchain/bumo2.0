@@ -22,7 +22,7 @@
 
 namespace bumo {
 
-	//transaction lite set frame
+	
 	class TransactionSetFrm {
 		protocol::TransactionEnvSet raw_txs_;
 		std::map<std::string, int64_t> topic_seqs_;
@@ -37,7 +37,7 @@ namespace bumo {
 	};
 	typedef std::map<int64_t, TransactionFrm::pointer> TransactionFrmMap;
 
-	//topic key
+	//Topic key
 	class TopicKey {
 		std::string topic_;
 		int64_t sequence_;
