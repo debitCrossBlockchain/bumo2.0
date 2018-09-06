@@ -13,8 +13,8 @@ Contents:
    :maxdepth: 4
    
    
-   docs/Keypair_Doc
-   docs/BUMO_Java_SDK
-   docs/API_Guide_for_Exchanges
-   docs/Installation_Guide_for_BUMO
-   docs/Syntax_in_Smart_Contract
+   Keypair_Doc
+   BUMO_Java_SDK
+   API_Guide_for_Exchanges
+   Installation_Guide_for_BUMO
+   Syntax_in_Smart_Contract
