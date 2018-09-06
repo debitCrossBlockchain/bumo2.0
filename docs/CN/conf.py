@@ -56,7 +56,7 @@ templates_path = ['_templates']
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'indexzh'
 
 # General information about the project.
 project = 'Bubi Documentation'
