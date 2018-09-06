@@ -1249,14 +1249,14 @@ If you installed the BUMO node with the installation package, you can uninstall 
 
 .. note:: Now the BUMO node is uninstalled.
 
-.. |image0| image:: /docs/image/flow_diagram.png
-.. |image1| image:: /docs/image/download_bumo_back2.png
-.. |image2| image:: /docs/image/compile_finished.png
-.. |image3| image:: /docs/image/compile_installed.png
-.. |image4| image:: /docs/image/start_path.png
-.. |image5| image:: /docs/image/add_start_command.png
-.. |image6| image:: /docs/image/clear_database.png
-.. |image7| image:: /docs/image/hard_fork_created.png
+.. |image0| image:: ../docs/image/flow_diagram.png
+.. |image1| image:: ../docs/image/download_bumo_back2.png
+.. |image2| image:: ../docs/image/compile_finished.png
+.. |image3| image:: ../docs/image/compile_installed.png
+.. |image4| image:: ../docs/image/start_path.png
+.. |image5| image:: ../docs/image/add_start_command.png
+.. |image6| image:: ../docs/image/clear_database.png
+.. |image7| image:: ../docs/image/hard_fork_created.png
 
 
 
