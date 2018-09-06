@@ -1,5 +1,5 @@
-BUMO JAVA SDK
-=============
+BUMO JAVA SDK Guide
+===================
 
 Overview
 --------
