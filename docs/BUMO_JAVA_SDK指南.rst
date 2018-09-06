@@ -1,4 +1,4 @@
-BUMO JAVA SDK
+BUMO JAVA SDK 指南
 =============
 
 概述
