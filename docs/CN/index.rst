@@ -13,9 +13,9 @@ Contents:
    :maxdepth: 4
    
    
-   CN/BUMO JAVA SDK指南
-   CN/BUMO Keypair手册
-   CN/BUMO交易所对接指南
-   CN/BUMO节点安装运维指南
+   docs/CN/BUMO JAVA SDK指南
+   docs/CN/BUMO Keypair手册
+   docs/CN/BUMO交易所对接指南
+   docs/CN/BUMO节点安装运维指南
 
 
