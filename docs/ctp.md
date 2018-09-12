@@ -252,7 +252,7 @@ function main(input_str){
 
 ```js
 function query(input_str){
-	globalAttribute = JSON.parse(storageLoad(globalAttributeKey));
+    globalAttribute = JSON.parse(storageLoad(globalAttributeKey));
 
     let result = {};
     let input  = JSON.parse(input_str);
