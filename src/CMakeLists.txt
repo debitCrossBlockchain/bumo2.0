@@ -96,7 +96,7 @@ install(
 install(
     DIRECTORY ${BUMO_ROOT_DIR}/build/win32/config/
     DESTINATION ${BUMOCHAIN}/config
-    FILES_MATCHING PATTERN "bumo-mainnet.json" PATTERN "bumo-testnet.json" PATTERN "bumo-single.json"
+    FILES_MATCHING PATTERN "bumo.json" PATTERN "bumo-mainnet.json" PATTERN "bumo-testnet.json" PATTERN "bumo-single.json"
 )
 
 install(
