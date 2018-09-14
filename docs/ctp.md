@@ -169,9 +169,10 @@ Token 属性可以通过合约的 `tokenInfo` 功能函数查询到，存储在�
 
 ### allowance
 
-返回 spender 仍然被允许从 owner 提取的金额。入口函数 query。
+- 返回 spender 仍然被允许从 owner 提取的金额。
+- 入口函数 query。
 
-参数json结构:
+- 参数json结构:
 ```json
 {
     "method":"allowance",
