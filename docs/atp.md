@@ -25,6 +25,7 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
 |totalSupply   | Token 总量                  |
 |icon          | Token 图标                  |
 |version       | ATP 版本                |  
+
 注意：
 - code-推荐使用大写简拼
 - decimals-小数位在0~8的范围，0表示无小数位
@@ -113,6 +114,7 @@ json格式：
 | address      | 账号地址， 必填                                                                                                                                         |
 | key          | 账号的 metadata 中指定的key的值，如果不填写，那么返回结果中含有所有的metadata                                                                           |
 | code, issuer | Token代码code、Token发行商issuer。这两个变量要么同时填写，要么同时不填写。若不填写，返回的结果中包含所有的Token。若填写，返回的结果中只显示由code和issuer |  
+
 返回内容如下例子：
 
 ```json
