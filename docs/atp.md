@@ -37,7 +37,7 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
 
 ### 发行Token  
 1.客户端通过发起一笔操作类型是`Issuing Assets`的交易。设置参数amount(发行的数量)、code(Token代码)。  
-例如：发行一笔数量是1000,精度为8的的DT资产。
+例如：发行一笔数量是10000,精度为8的的DT资产。
 
 - json格式
 
@@ -59,7 +59,8 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
       "type": 4,
       "set_metadata": {
         "key": "asset_property_DT",
-        "value": "{\"name\":\"Demon Token\",\"code\":\"DT\",\"totalSupply\":\"10000000000000\",\"decimals\":8,\"description\":\"This is hello Token\",\"icon\":\"iVBORw0KGgoAAAANSUhEUgAAAAE....\",\"version\":\"1.0\"}",
+        "value": "{\"name\":\"Demon Token\",\"code\":\"DT\",\"totalSupply\":\"10000000000000\",\"decimals\":8,
+        \"description\":\"This is hello Token\",\"icon\":\"iVBORw0KGgoAAAANSUhEUgAAAAE....\",\"version\":\"1.0\"}",
         "version": 0
       }
     }
@@ -78,6 +79,8 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
 |pay_asset.asset.key.code|  Token代码
 |pay_asset.asset.amount|  要转移的数量*精度
 |pay_asset.input|  触发合约调用的入参，如果用户未输入，默认为空字符串  
+
+
 如下例子：给已激活的目标账户buQaHVCwXj9ERtFznDnAuaQgXrwj2J7iViVK转移数量500000000000的DT。  
 json格式：
 ```JSON
@@ -88,18 +91,18 @@ json格式：
         "asset": {
           "key": {
             "issuer": "buQhzVyca8tQhnqKoW5XY1hix2mCt5KTYzcD",
-            "code": "DT",
-            "type": 0 //目前只能填0 或者不填
+            "code": "DT"
           },
           "amount": 500000000000
         }
       }
     }
   ```  
-  转移成功后通过[查询Token](#查询Token)可以看到目标账户拥有amount数量的DT。
+  转移成功后通过[查询Token](#查询token)可以看到目标账户拥有amount数量的DT。  
+
   注意：给未激活的目标账户转移Token，交易的执行结果是失败的
 ### 增发Token  
-通过设置和之前`发行Token`相同的交易类型代码，继续发送[发行Token](#发行Token)的交易，进行Token增发。应用程序根据具体业务去控制增发Token数量是否超过totalSupply，增发成功后可以看到Token数量会有所增加。  
+通过设置和之前`发行Token`相同的交易类型代码，继续发送[发行Token](#发行token)的交易，进行Token增发。应用程序根据具体业务去控制增发Token数量是否超过totalSupply，增发成功后可以看到Token数量会有所增加。  
 ### 查询Token  
 通过getAccount接口可以返回指定账号的信息及其所有Token、metadata。  
 
@@ -109,7 +112,7 @@ json格式：
 | :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | address      | 账号地址， 必填                                                                                                                                         |
 | key          | 账号的 metadata 中指定的key的值，如果不填写，那么返回结果中含有所有的metadata                                                                           |
-| code, issuer,type | Token代码code、Token发行商issuer。这两个变量要么同时填写，要么同时不填写。若不填写，返回的结果中包含所有的Token。若填写，返回的结果中只显示由code和issuer,type指定的Token。目前type只能是0，可以不用填写 |  
+| code, issuer | Token代码code、Token发行商issuer。这两个变量要么同时填写，要么同时不填写。若不填写，返回的结果中包含所有的Token。若填写，返回的结果中只显示由code和issuer |  
 返回内容如下例子：
 
 ```json
