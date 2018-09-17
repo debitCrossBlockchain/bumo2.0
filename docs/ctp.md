@@ -46,11 +46,11 @@ Token 属性可以通过合约的 `tokenInfo` 功能函数查询到，存储在�
 
 注意：
 
-- name   推荐使用单词全拼，每个首字母大写。如 Demo Token
-- code   推荐使用大写首字母缩写。如 DT
-- decimals   小数位在 0~8 的范围，0 表示无小数位
-- totalSupply  范围是 0~2^63-1。0 表示不固定 Token 的上限
-- version ctp 的版本。如 1.0
+- name：推荐使用单词全拼，每个首字母大写。如 Demo Token
+- code：推荐使用大写首字母缩写。如 DT
+- decimals：小数位在 0~8 的范围，0 表示无小数位
+- totalSupply：范围是 0~2^63-1。0 表示不固定 Token 的上限
+- version：ctp 的版本。如 1.0
 
 ## 功能函数
 
@@ -230,7 +230,7 @@ function init(input_str){
 - name: token 名称
 - symbol: 资产符号
 - decimals: 小数位数
-- supply: 发型总量(整数部分)。例如发行 50000 个 Token，其 totalSupply 量为 50000 * 100000000
+- supply: 字符串格式，发型总量(整数部分)。例如发行 50000 个 Token，其 totalSupply 量为 50000 * 100000000
 - version: 版本号
 
 入口函数的返回值：true或者抛异常
