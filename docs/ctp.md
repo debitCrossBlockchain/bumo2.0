@@ -230,7 +230,7 @@ function init(input_str){
 - name: token 名称
 - symbol: 资产符号
 - decimals: 小数位数
-- supply: 发型总量(整数部分)
+- supply: 发型总量(整数部分)。例如发行 50000 个 Token，其 totalSupply 量为 50000 * 100000000
 - version: 版本号
 
 入口函数的返回值：true或者抛异常
