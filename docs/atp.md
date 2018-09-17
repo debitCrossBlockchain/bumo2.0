@@ -30,7 +30,7 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
 - code-推荐使用大写简拼
 - decimals-小数位在0~8的范围，0表示无小数位
 - totalSupply-范围是0~2^63-1。0表示不固定Token的上限
-- icon-base64位编码，图标文件大小是1M以内
+- icon-base64位编码，图标文件大小是32k以内
 
 
 
@@ -38,7 +38,7 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
 
 ### 发行Token  
 1.客户端通过发起一笔操作类型是`Issuing Assets`的交易。设置参数amount(发行的数量)、code(Token代码)。  
-例如：发行一笔数量是10000,精度为8的的DT资产。
+例如：发行一笔数量是10000,精度为8的的DT Token。
 
 - json格式
 
@@ -67,7 +67,8 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
     }
     ```
 注意：
-- key值必须是asset_property_前缀和code的组合。
+- key值必须是asset_property_前缀和code的组合。  
+设置成功后通过[查询指定metadata](#查询指定metadata)可以看到metadata设置的数据。
 
 
 ### 转移Token  
@@ -104,64 +105,92 @@ json格式：
   注意：给未激活的目标账户转移Token，交易的执行结果是失败的
 ### 增发Token  
 通过设置和之前`发行Token`相同的交易类型代码，继续发送[发行Token](#发行token)的交易，进行Token增发。应用程序根据具体业务去控制增发Token数量是否超过totalSupply，增发成功后可以看到Token数量会有所增加。  
-### 查询Token  
-通过getAccount接口可以返回指定账号的信息及其所有Token、metadata。  
 
-`HTTP GET /getAccount?address=buQhzVyca8tQhnqKoW5XY1hix2mCt5KTYzcD` 
+
+### 查询Token
+
+```text
+HTTP GET /getAccountAssets?address=buQhzVyca8tQhnqKoW5XY1hix2mCt5KTYzcD
+```
+
+ - 返回指定账号的Token信息
 
 | 参数         | 描述                                                                                                                                                    |
 | :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| address      | 账号地址， 必填                                                                                                                                         |
-| key          | 账号的 metadata 中指定的key的值，如果不填写，那么返回结果中含有所有的metadata                                                                           |
-| code, issuer | Token代码code、Token发行商issuer。这两个变量要么同时填写，要么同时不填写。若不填写，返回的结果中包含所有的Token。若填写，返回的结果中只显示由code和issuer |  
+| address      | 账号地址， 必填  |
+| code, issuer | issuer表示Token发行账户地址，code表示Token代码。只有同时填写正确code&issuer才能正确显示指定Token否则默认显示所有Token。type指定的Token。 选填|
+| type      | 目前type只能是0，可以不用填写  |
 
-返回内容如下例子：
+返回内容
+
+```json
+{
+    "error_code": 0,
+    "result": [
+        {
+            "amount": 469999999997,
+            "key": {
+                "code": "DT",
+                "issuer": "buQhzVyca8tQhnqKoW5XY1hix2mCt5KTYzcD"
+            }
+        },
+        {
+            "amount": 1000000000000,
+            "key": {
+                "code": "ABC",
+                "issuer": "buQhzVyca8tQhnqKoW5XY1hix2mCt5KTYzcD"
+            }
+        }
+    ]
+}
+
+```
+
+- 如果该账号不存在Token,则返回内容
+
+```json
+{
+   "error_code" : 0,
+   "result" : null
+}
+```    
+### 查询指定metadata
+
+```text
+HTTP GET /getAccountMetaData?address=buQhzVyca8tQhnqKoW5XY1hix2mCt5KTYzcD&key=asset_property_DT
+```
+
+ - 返回指定账号的MetaData信息
+
+| 参数         | 描述                                                                                                                                                    |
+| :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| address      | 账号地址， 必填  |
+| key      | 指定metadata中的key值。   |
+
+返回内容
 
 ```json
 {
     "error_code": 0,
     "result": {
-        "address": "buQhzVyca8tQhnqKoW5XY1hix2mCt5KTYzcD",
-        "assets": [
-            {
-                "amount": 1000000000000,
-                "key": {
-                    "code": "DT",
-                    "issuer": "buQhzVyca8tQhnqKoW5XY1hix2mCt5KTYzcD"
-                }
-            }
-        ],
-        "assets_hash": "a4eb5c0cb62ca0c2d590df6db53a92a68f0594b68aceb28cab4654aed3e8da3d",
-        "balance": 14998407000,
-        "contract": null,
-        "metadatas": [
-            {
-                "key": "asset_property_DT",
-                "value": "{\"name\":\"Demon Token\",\"code\":\"DT\",\"totalSupply\":\"10000000000000\",\"decimals\":8,\"description\":\"This is hello Token\",\"icon\":\"iVBORw0KGgoAAAANSUhEUgAAAAE\",\"version\":\"1.0\"}",
-                "version": 1
-            }
-        ],
-        "metadatas_hash": "330130b76b03264e9631a051c7a1b17c542d2e40cbf80a0183f36b9196520de1",
-        "nonce": 5,
-        "priv": {
-            "master_weight": 1,
-            "thresholds": {
-                "tx_threshold": 1
-            }
+        "asset_property_DT": {
+            "key": "asset_property_DT",
+            "value": "{\"name\":\"DemonToken\",\"code\":\"DT\",\"totalSupply\":\"1000000000000\",\"decimals\":8,\"description\":\"This is hello Token\",\"icon\":\"iVBORw0KGgoAAAANSUhEUgAAAAE\",\"version\":\"1.0\"}",
+            "version": 4
         }
     }
 }
 
 ```
 
-- 如果该账号不存在,则返回内容
+- 如果该账号指定的key不存在metadata,则返回内容
 
 ```json
 {
-   "error_code" : 4,
+   "error_code" : 0,
    "result" : null
 }
-```
+```  
 
 
 

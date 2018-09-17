@@ -15,6 +15,9 @@
     - [HTTP接口](#http接口)
         - [生成公私钥对-测试用](#生成公私钥对-测试用)
         - [查询账号](#查询账号)
+        - [查询账号基本信息](#查询账号基本信息)
+        - [查询资产](#查询资产)
+        - [查询metadata](#查询metadata)
         - [查询交易](#查询交易)
         - [查询缓存队列交易](#查询缓存队列交易)
         - [查询区块头](#查询区块头)
@@ -280,7 +283,103 @@ HTTP GET /getAccountBase?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
    "error_code" : 4,
    "result" : null
 }
+```  
+### 查询资产
+
+```text
+HTTP GET /getAccountAssets?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 ```
+
+ - 返回指定账号的资产信息
+
+| 参数         | 描述                                                                                                                                                    |
+| :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| address      | 账号地址， 必填  |
+| code, issuer | issuer表示资产发行账户地址，code表示资产代码。只有同时填写正确code&issuer才能正确显示指定资产否则默认显示所有资产。type指定的资产。 选填|
+| type      | 目前type只能是0，可以不用填写  |
+
+返回内容
+
+```json
+{
+  "error_code" : 0,
+    "result": [
+      {
+        "amount" : 1400,
+        "key" :
+        {
+          "code" : "CNY",
+          "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+        }
+      }, 
+      {
+        "amount" : 1000,
+        "key" :
+        {
+          "code" : "USD",
+          "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+        }
+      }
+    ]
+}
+
+```
+
+- 如果该账号不存在资产,则返回内容
+
+```json
+{
+   "error_code" : 0,
+   "result" : null
+}
+```    
+### 查询metadata
+
+```text
+HTTP GET /getAccountMetaData?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
+```
+
+ - 返回指定账号的MetaData信息
+
+| 参数         | 描述                                                                                                                                                    |
+| :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| address      | 账号地址， 必填  |
+| key      | 指定metadata中的key值。 选填  |
+
+返回内容
+
+```json
+{
+  "error_code" : 0,
+    "result": {
+        "123": {
+            "key" : "123",
+            "value" : "123_value",
+            "version" : 1
+        },
+        "456": {
+            "key" : "456",
+            "value" : "456_value",
+            "version" : 1
+        },
+        "abcd": {
+            "key" : "abcd",
+            "value" : "abcd_value",
+            "version" : 1
+        }
+    }
+}
+
+```
+
+- 如果该账号不存在metadata,则返回内容
+
+```json
+{
+   "error_code" : 0,
+   "result" : null
+}
+```  
 
 ### 查询交易
 

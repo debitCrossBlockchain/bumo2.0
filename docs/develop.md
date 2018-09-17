@@ -16,6 +16,8 @@ English | [中文](develop_CN.md)
         - [Creating Test Key Pair](#creating-test-key-pair)
         - [Querying Account](#querying-account) 
         - [Querying Basic Information of Account](#querying-basic-information-of-account)
+        - [Querying Assets](#querying-assets)
+        - [Querying MetaData](#querying-metadata)
         - [Querying Transaction](#querying-transaction)
         - [Querying Transaction in Buffer-queue](#querying-transactions-in-buffer-queue)
         - [Querying Block Header](#querying-block-header)
@@ -282,6 +284,103 @@ return,
    "result" : null
 }
 ```
+
+### Querying Assets
+
+```text
+HTTP GET /getAccountAssets?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
+```
+
+ -  Returning the  assets  of specific account.
+
+| Parameter           | Description                                                  |
+| :------------------ | ------------------------------------------------------------ |
+| address*(required)* | Address of the account.                                      |
+| code, issuer   | Assets code and Assets issuer. The parameters should be specified in pairs. Returns will contain complete information of assets as the code-issuer pair is null.  |
+| type | *The `type` defaults to 0 currently, you do not need to change it.*        |
+
+return：
+
+```json
+{
+  "error_code" : 0,
+    "result": [
+      {
+        "amount" : 1400,
+        "key" :
+        {
+          "code" : "CNY",
+          "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+        }
+      }, 
+      {
+        "amount" : 1000,
+        "key" :
+        {
+          "code" : "USD",
+          "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+        }
+      }
+    ]
+}
+
+```
+
+- If the account does not exist, then return,
+
+```json
+{
+   "error_code" : 0,
+   "result" : null
+}
+```    
+### Querying metadata
+
+```text
+HTTP GET /getAccountMetaData?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
+```
+
+ - Returning the  metadata  of specific account.
+
+| Parameter           | Description                                                                                                                                                   |
+| :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| address*(required)* | Address of the account.
+| key      | Appointed key value of the metadata in the account. Returns will contain complete information of metadata as the key is null.  |
+
+返回内容
+
+```json
+{
+  "error_code" : 0,
+    "result": {
+        "123": {
+            "key" : "123",
+            "value" : "123_value",
+            "version" : 1
+        },
+        "456": {
+            "key" : "456",
+            "value" : "456_value",
+            "version" : 1
+        },
+        "abcd": {
+            "key" : "abcd",
+            "value" : "abcd_value",
+            "version" : 1
+        }
+    }
+}
+
+```
+
+- If the account does not exist, then return,
+
+```json
+{
+   "error_code" : 0,
+   "result" : null
+}
+``` 
 
 ### Querying Transaction
 
