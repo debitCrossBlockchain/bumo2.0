@@ -102,24 +102,24 @@ function init(input_str){
     assert(stoI64Check(params.supply) === true &&
            typeof params.name === 'string' &&
            typeof params.symbol === 'string' &&
-		   typeof params.version === 'string' &&
+           typeof params.version === 'string' &&
            typeof params.decimals === 'number',
            'Args check failed.');
-		   
+       
     let i = 0;
     let power = 1;
     for(i = 0; i < params.decimals; i = i + 1){
         power = power * 10;
     }
 
-	globalAttribute.totalSupply = int64Mul(params.supply, power);
+    globalAttribute.totalSupply = int64Mul(params.supply, power);
     globalAttribute.name = params.name;
     globalAttribute.symbol = params.symbol;
-	globalAttribute.version = params.version;
+    globalAttribute.version = params.version;
     globalAttribute.decimals = params.decimals;
     
     storageStore(globalAttributeKey, JSON.stringify(globalAttribute));
-	storageStore(sender, globalAttribute.totalSupply);
+    storageStore(sender, globalAttribute.totalSupply);
 }
 
 function main(input_str){
@@ -144,17 +144,17 @@ function query(input_str){
     let input  = JSON.parse(input_str);
 
     if(input.method === 'tokenInfo'){
-		globalAttribute = JSON.parse(storageLoad(globalAttributeKey));
+        globalAttribute = JSON.parse(storageLoad(globalAttributeKey));
         result.tokenInfo = globalAttribute;
     }
     else if(input.method === 'allowance'){
         result.allowance = allowance(input.params.owner, input.params.spender);
     }
-	else if(input.method === 'balanceOf'){
+    else if(input.method === 'balanceOf'){
         result.balance = balanceOf(input.params.address);
     }
     else{
-       	throw '<Query interface passes an invalid operation type>';
+        throw '<Query interface passes an invalid operation type>';
     }
     return JSON.stringify(result);
 }
