@@ -59,8 +59,8 @@ templates_path = ['_templates']
 master_doc = 'index'
 
 # General information about the project.
-project = 'Bubi Documentation'
-copyright = '2018, Bubi'
+project = 'Bumo Documentation'
+copyright = '2018, Bumo'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
