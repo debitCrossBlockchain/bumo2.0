@@ -34,6 +34,7 @@ function allowance(owner, spender){
 function transfer(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(int64Compare(value, '0') > 0, 'Arg-value must be greater than 0');
     if(sender === to) {
         tlog('transfer', sender, to, value);  
         return true;
@@ -59,6 +60,7 @@ function transferFrom(from, to, value){
     assert(addressCheck(from) === true, 'Arg-from is not a valid address.');
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(int64Compare(value, '0') > 0, 'Arg-value must be greater than 0');
     
     if(from === to) {
         tlog('transferFrom', sender, from, to, value);
