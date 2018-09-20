@@ -10,7 +10,7 @@ function makeAllowanceKey(owner, spender){
 function approve(spender, value){
     assert(addressCheck(spender) === true, 'Arg-spender is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
-    assert(int64Compare(value, '0') >= 0, 'Arg-value of spender ' + spender + ' must be greater than or equal to 0');
+    assert(int64Compare(value, '0') > 0, 'Arg-value of spender ' + spender + ' must be greater than 0');
 
     let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
