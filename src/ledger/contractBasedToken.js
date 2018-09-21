@@ -10,7 +10,7 @@ function makeAllowanceKey(owner, spender){
 function approve(spender, value){
     assert(addressCheck(spender) === true, 'Arg-spender is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
-    assert(int64Compare(value, '0') > 0, 'Arg-value of spender ' + spender + ' must be greater than 0');
+    assert(int64Compare(value, '0') > 0, 'Arg-value of spender ' + spender + ' must be greater than 0.');
 
     let key = makeAllowanceKey(sender, spender);
     storageStore(key, value);
@@ -34,7 +34,7 @@ function allowance(owner, spender){
 function transfer(to, value){
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
-    assert(int64Compare(value, '0') > 0, 'Arg-value must be greater than 0');
+    assert(int64Compare(value, '0') > 0, 'Arg-value must be greater than 0.');
     if(sender === to) {
         tlog('transfer', sender, to, value);  
         return true;
@@ -60,7 +60,7 @@ function transferFrom(from, to, value){
     assert(addressCheck(from) === true, 'Arg-from is not a valid address.');
     assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
     assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
-    assert(int64Compare(value, '0') > 0, 'Arg-value must be greater than 0');
+    assert(int64Compare(value, '0') > 0, 'Arg-value must be greater than 0.');
     
     if(from === to) {
         tlog('transferFrom', sender, from, to, value);
