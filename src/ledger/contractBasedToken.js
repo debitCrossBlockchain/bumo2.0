@@ -26,7 +26,7 @@ function allowance(owner, spender){
 
     let key = makeAllowanceKey(owner, spender);
     let value = storageLoad(key);
-    assert(value !== false, 'Failed to get allowance ' + owner + ' to ' + spender + ' from metadata.');
+    assert(value !== false, 'Failed to get the allowance given to  ' + spender + ' by ' + owner + ' from metadata.');
 
     return value;
 }
@@ -41,7 +41,7 @@ function transfer(to, value){
     }
     
     let senderValue = storageLoad(sender);
-    assert(senderValue !== false, 'Failed to get balance of ' + sender + ' from metadata.');
+    assert(senderValue !== false, 'Failed to get the balance of ' + sender + ' from metadata.');
     assert(int64Compare(senderValue, value) >= 0, 'Balance:' + senderValue + ' of sender:' + sender + ' < transfer value:' + value + '.');
 
     let toValue = storageLoad(to);
@@ -68,7 +68,7 @@ function transferFrom(from, to, value){
     }
     
     let fromValue = storageLoad(from);
-    assert(fromValue !== false, 'Failed to get value, maybe ' + from + ' has no value.');
+    assert(fromValue !== false, 'Failed to get the value, probably because ' + from + ' has no value.');
     assert(int64Compare(fromValue, value) >= 0, from + ' Balance:' + fromValue + ' < transfer value:' + value + '.');
 
     let allowValue = allowance(from, sender);
@@ -94,7 +94,7 @@ function balanceOf(address){
     assert(addressCheck(address) === true, 'Arg-address is not a valid address.');
 
     let value = storageLoad(address);
-    assert(value !== false, 'Failed to get balance of ' + address + ' from metadata.');
+    assert(value !== false, 'Failed to get the balance of ' + address + ' from metadata.');
     return value;
 }
 
