@@ -23,7 +23,7 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
 |description   | Token 描述                  |
 |decimals      | Token 小数位数              |
 |totalSupply   | Token 总量                  |
-|icon          | Token 图标                  |
+|icon          | Token 图标(optional)                  |
 |version       | ATP 版本                |  
 
 注意：
