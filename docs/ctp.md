@@ -98,7 +98,7 @@ Token 属性可以通过合约的 `tokenInfo` 功能函数查询到，存储在�
 
 ### transferFrom
 
-- 从地址from发送数量为 value 的 token 到地址 to，必须触发 log 事件。 在 transferFrom 之前，from 必须已经调用过 approve 向 to 授权了额度。如果 from 账户余额没有足够的 token 来支出或者 from 授权给 to 的额度不足，该函数应该被 throw。
+- 从from发送数量为 value 的 token 到 to，必须触发 log 事件。 在 transferFrom 之前，from 必须给当前交易的发起者进行授权额度(即approve操作)。如果 from 余额没有足够的 token 来支出或者 from 授权给当前交易的发起者的额度不足，该函数应该被 throw。
 - 入口函数 main。
 
 参数json结构:
