@@ -41,14 +41,16 @@ Token 属性可以通过合约的 `tokenInfo` 功能函数查询到，存储在�
 |name          | Token 名称                  |
 |symbol        | Token 符号                  |
 |decimals      | Token 小数位数              |
-|totalSupply   | Token 总量                  |
-|version       |  Contract Token Protocol版本 |
+|supply        | Token 总个数                |
+|totalSupply   | Token 总量，totalSupply = supply * 10 ^ decimals |
+|version       | Contract Token Protocol版本 |
 
 注意：
 
 - name：推荐使用单词全拼，每个首字母大写。如 Demo Token
 - symbol：推荐使用大写首字母缩写。如 DT
 - decimals：小数位在 0~8 的范围，0 表示无小数位
+- supply：supply * 10 ^ decimals 计算后的结果的范围是 1~2^63-1
 - totalSupply：范围是 1~2^63-1
 - version：ctp 的版本。如 1.0
 
