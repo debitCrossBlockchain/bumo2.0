@@ -200,6 +200,32 @@ namespace bumo {
 		return true;
 	}
 
+	ElectionConfigure::ElectionConfigure() {
+		max_validators_ = 50;
+		max_candidates_ = 1000;
+		pledge_amount_ = 100000;
+		validator_refresh_interval_ = 24 * 60 * 60; // in seconds
+		coin_to_vote_rate_ = 1000; // 1000 means 1000 MO = 1 vote
+		fee_to_vote_rate_ = 1000; // 1000 means 1000 MO = 1 vote
+		penalty_rate_ = 1000; // 1000 means miss one block penalty 1000 BU
+		fee_distribution_rate_ = "2:2:1:5"; // 2:2:1:5 means block_reward:source_address:creator:dapp
+	}
+
+	ElectionConfigure::~ElectionConfigure() {
+	}
+
+	bool ElectionConfigure::Load(const Json::Value &value) {
+		Configure::GetValue(value, "max_validators", max_validators_);
+		Configure::GetValue(value, "max_candidates", max_candidates_);
+		Configure::GetValue(value, "pledge_amount", pledge_amount_);
+		Configure::GetValue(value, "validator_refresh_interval", validator_refresh_interval_);
+		Configure::GetValue(value, "coin_to_vote_rate", coin_to_vote_rate_);
+		Configure::GetValue(value, "fee_to_vote_rate", fee_to_vote_rate_);
+		Configure::GetValue(value, "fee_distribution_rate", fee_distribution_rate_);
+		Configure::GetValue(value, "penalty_rate", penalty_rate_);
+		return true;
+	}
+
 	Configure::Configure() {}
 
 	Configure::~Configure() {}
@@ -222,6 +248,7 @@ namespace bumo {
 		genesis_configure_.Load(values["genesis"]);
 		wsserver_configure_.Load(values["wsserver"]);
 		monitor_configure_.Load(values["monitor"]);
+		election_configure_.Load(values["election"]);
 		return true;
 	}
 }

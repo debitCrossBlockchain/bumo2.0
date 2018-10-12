@@ -122,6 +122,23 @@ namespace bumo {
 		bool Load(const Json::Value &value);
 	};
 
+	class ElectionConfigure {
+	public:
+		ElectionConfigure();
+		~ElectionConfigure();
+
+		int64_t max_validators_;
+		int64_t max_candidates_;
+		int64_t pledge_amount_;
+		int64_t validator_refresh_interval_; // in seconds
+		int64_t coin_to_vote_rate_; // 1000 means 1000MO = 1 vote
+		int64_t fee_to_vote_rate_; // 1000 means 1000 MO = 1 vote
+		int64_t penalty_rate_; // 1000 means miss one block penalty 1000 BU
+		std::string fee_distribution_rate_; // 2:2:1:5 means block_reward:source_address:creator:dapp
+		
+		bool Load(const Json::Value &value);
+	};
+
 	class Configure : public ConfigureBase, public utils::Singleton<Configure> {
 		friend class utils::Singleton<Configure>;
 		Configure();
@@ -140,6 +157,8 @@ namespace bumo {
 
 		MonitorConfigure monitor_configure_;
 
+		ElectionConfigure election_configure_;
+		
 		virtual bool LoadFromJson(const Json::Value &values);
 	};
 }
