@@ -43,23 +43,24 @@ namespace bumo {
 		};
 
 		// operation of candidates map
-		std::string& getCandidate(const std::string& addr);
-		std::string& getAllCandidates();
-		bool addCandidate(const std::string& addr);
-		bool removeCandidate(const std::string& addr);
-		bool updateCandidate(Json::Value& item);
+		std::string& GetCandidate(const std::string& addr);
+		std::string& GetAllCandidates();
+		bool AddCandidate(const std::string& addr);
+		bool RemoveCandidate(const std::string& addr);
+		bool UpdateCandidate(Json::Value& item);
+		bool IsCandidate(const std::string& addr);
 
-		bool addFeeVotes(const std::string& addr, int64_t votes);
-		bool addCoinVotes(const std::string& addr, int64_t votes);
-		bool removeCoinVotes(const std::string& addr, int64_t votes);
+		bool AddFeeVotes(const std::string& addr, int64_t votes);
+		bool AddCoinVotes(const std::string& addr, int64_t votes);
+		bool RemoveCoinVotes(const std::string& addr, int64_t votes);
 
-		std::string& getProposal(const std::string& proposal_id);
-		bool addProposal(const std::string& proposal);
-		bool voteProposal(const std::string& proposal_id);
-		bool deleteProposal(const std::string& proposal_id);
+		std::string& GetProposal(const std::string& proposal_id);
+		bool AddProposal(const std::string& proposal);
+		bool VoteProposal(const std::string& proposal_id);
+		bool DeleteProposal(const std::string& proposal_id);
 
-		bool markAbsent(const std::string& addr);
-		bool refresh_validators();
+		bool MarkAbsent(const std::string& addr);
+		bool RefreshValidators();
 
 	private:
 		std::map<std::string, VoteItem> candidates_map;
