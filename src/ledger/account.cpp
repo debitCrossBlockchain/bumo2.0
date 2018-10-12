@@ -359,6 +359,55 @@ namespace bumo {
 		account_info_.set_nonce(new_nonce);
 	}
 
+	std::string AccountFrm::GetVoteFor() const {
+		return account_info_.vote_for();
+	}
+
+	std::string AccountFrm::GetCreator() const {
+		return account_info_.creator();
+	}
+
+	int64_t AccountFrm::GetFrozenCoin() const {
+		return account_info_.frozen_coin();
+	}
+
+	void AccountFrm::SetVoteFor(std::string& address) {
+		account_info_.set_vote_for(address);
+	}
+
+	void AccountFrm::SetCreator(std::string& address) {
+		account_info_.set_creator(address);
+	}
+	bool AccountFrm::AddFrozenCoin(int64_t amount) {
+		int64_t frozen_coin = 0;
+		if (!utils::SafeIntAdd(account_info_.frozen_coin(), amount, frozen_coin)) {
+			LOG_ERROR("The result overflowed when the frozen coin increased for the account: account address:%s, frozen coin(" FMT_I64 "), increasing amount(" FMT_I64 ")",
+				account_info_.address().c_str(), account_info_.frozen_coin(), amount);
+			return false;
+		}
+		account_info_.set_frozen_coin(frozen_coin);
+		return true;
+	}
+	bool AccountFrm::UnfrozenCoin(int64_t amount) {
+		int64_t frozen_coin = 0;
+		if (!utils::SafeIntSub(account_info_.frozen_coin(), amount, frozen_coin)) {
+			LOG_ERROR("The result overflowed when unfrozen coin for the account: account address:%s, frozen coin(" FMT_I64 "), unforzen amount(" FMT_I64 ")",
+				account_info_.address().c_str(), account_info_.frozen_coin(), amount);
+			return false;
+		}
+		int64_t balance = 0;
+		if (!utils::SafeIntAdd(account_info_.balance(), amount, balance)) {
+			LOG_ERROR("The result overflowed when the frozen coin increased for the account: account address:%s, frozen coin(" FMT_I64 "), increasing amount(" FMT_I64 ")",
+				account_info_.address().c_str(), account_info_.frozen_coin(), amount);
+			return false;
+		}
+		account_info_.set_frozen_coin(frozen_coin);
+		account_info_.set_balance(balance);
+		
+
+		return true;
+	}
+
 	AccountFrm::pointer AccountFrm::CreatAccountFrm(const std::string& account_address, int64_t balance) {
 		protocol::Account acc;
 		acc.set_address(account_address);

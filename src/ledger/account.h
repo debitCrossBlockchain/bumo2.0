@@ -108,6 +108,16 @@ namespace bumo {
 		void NonceIncrease();
 		int64_t GetAccountBalance() const;
 		bool AddBalance(int64_t amount);
+
+		// for validators election
+		std::string GetVoteFor() const;
+		std::string GetCreator() const;
+		int64_t GetFrozenCoin() const;
+		void SetVoteFor(std::string& address);
+		void SetCreator(std::string& address);
+		bool AddFrozenCoin(int64_t amount);
+		bool UnfrozenCoin(int64_t amount);
+
 		static AccountFrm::pointer CreatAccountFrm(const std::string& account_address, int64_t balance);
 	public:
 
