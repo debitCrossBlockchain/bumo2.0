@@ -26,7 +26,7 @@ function allowance(owner, spender){
 
     let key = makeAllowanceKey(owner, spender);
     let value = storageLoad(key);
-    assert(value !== false, 'Failed to get the allowance given to  ' + spender + ' by ' + owner + ' from metadata.');
+    assert(value !== false, 'Failed to get the allowance given to ' + spender + ' by ' + owner + ' from metadata.');
 
     return value;
 }
