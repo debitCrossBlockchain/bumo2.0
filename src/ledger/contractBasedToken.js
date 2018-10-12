@@ -105,7 +105,7 @@ function init(input_str){
            typeof params.name === 'string' && params.name.length > 0 &&
            typeof params.symbol === 'string' && params.symbol.length > 0 &&
            typeof params.version === 'string' && params.version.length > 0 &&
-           typeof params.decimals === 'number', params.decimals >= 0 &&
+           typeof params.decimals === 'number' && params.decimals >= 0, 
            'Args check failed.');
        
     let i = 0;
