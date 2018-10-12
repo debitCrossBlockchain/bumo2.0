@@ -18,6 +18,8 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <utils/headers.h>
 #include <common/general.h>
+#include <common/storage.h>
+#include <proto/cpp/consensus.pb.h>
 
 namespace bumo {
 	class ElectionManager :
@@ -62,11 +64,15 @@ namespace bumo {
 		bool MarkAbsent(const std::string& addr);
 		bool RefreshValidators();
 
+		void ElectionManager::SetConfig(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg);
+		bool ElectionManager::GetConfig(protocol::ElectionConfig &ecfg);
+
 	private:
-		std::map<std::string, VoteItem> candidates_map;
-		std::multimap<int64_t, std::string> validators_map;
-		std::map<std::string, int64_t> absent_map;
-		std::map<std::string, std::string> proposals_map;
+		std::map<std::string, VoteItem> candidates_map_;
+		std::multimap<int64_t, std::string> validators_map_;
+		std::map<std::string, int64_t> absent_map_;
+		std::map<std::string, std::string> proposals_map_;
+		protocol::ElectionConfig election_config_;
 	};
 }
 
