@@ -12,6 +12,9 @@ message Account{
 	bytes assets_hash = 5;    //assets_hash = merkelhash(assets)
 	Contract contract = 6;
 	int64 balance = 7;
+	string vote_for = 8;
+	string creator = 9;
+	int64 frozen_coin = 10;
 }
 
 message AssetKey{
@@ -39,8 +42,6 @@ message AssetStore{
 	int64 amount = 2;
 	AssetProperty property = 3;
 }
-
-
 
 message LedgerHeader
 {
@@ -131,7 +132,6 @@ message Operation {
 	string source_address = 2;
 	bytes metadata	= 3;
 
-	//
 	OperationCreateAccount		create_account 	   = 4;
 	OperationIssueAsset			issue_asset 	   = 5;
 	OperationPayAsset			pay_asset 		   = 6;
@@ -253,7 +253,6 @@ message OperationCreateAccount{
 	int64	init_balance = 5;
 	string  init_input = 6;
 }
-
 
 message OperationSetMetadata{
 	string	key = 1;  

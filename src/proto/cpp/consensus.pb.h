@@ -38,6 +38,7 @@ void protobuf_AddDesc_consensus_2eproto();
 void protobuf_AssignDesc_consensus_2eproto();
 void protobuf_ShutdownFile_consensus_2eproto();
 
+class ElectionConfig;
 class FeeConfig;
 class Pbft;
 class PbftCommit;
@@ -1507,6 +1508,128 @@ class FeeConfig : public ::google::protobuf::Message /* @@protoc_insertion_point
   void InitAsDefaultInstance();
   static FeeConfig* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class ElectionConfig : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ElectionConfig) */ {
+ public:
+  ElectionConfig();
+  virtual ~ElectionConfig();
+
+  ElectionConfig(const ElectionConfig& from);
+
+  inline ElectionConfig& operator=(const ElectionConfig& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ElectionConfig& default_instance();
+
+  void Swap(ElectionConfig* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ElectionConfig* New() const { return New(NULL); }
+
+  ElectionConfig* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ElectionConfig& from);
+  void MergeFrom(const ElectionConfig& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ElectionConfig* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int64 pledge_amount = 1;
+  void clear_pledge_amount();
+  static const int kPledgeAmountFieldNumber = 1;
+  ::google::protobuf::int64 pledge_amount() const;
+  void set_pledge_amount(::google::protobuf::int64 value);
+
+  // optional int64 validators_refresh_interval = 2;
+  void clear_validators_refresh_interval();
+  static const int kValidatorsRefreshIntervalFieldNumber = 2;
+  ::google::protobuf::int64 validators_refresh_interval() const;
+  void set_validators_refresh_interval(::google::protobuf::int64 value);
+
+  // optional int64 coin_to_vote_rate = 3;
+  void clear_coin_to_vote_rate();
+  static const int kCoinToVoteRateFieldNumber = 3;
+  ::google::protobuf::int64 coin_to_vote_rate() const;
+  void set_coin_to_vote_rate(::google::protobuf::int64 value);
+
+  // optional int64 fee_to_vote_rate = 4;
+  void clear_fee_to_vote_rate();
+  static const int kFeeToVoteRateFieldNumber = 4;
+  ::google::protobuf::int64 fee_to_vote_rate() const;
+  void set_fee_to_vote_rate(::google::protobuf::int64 value);
+
+  // optional int64 penalty_rate = 5;
+  void clear_penalty_rate();
+  static const int kPenaltyRateFieldNumber = 5;
+  ::google::protobuf::int64 penalty_rate() const;
+  void set_penalty_rate(::google::protobuf::int64 value);
+
+  // optional string fee_distribution_rate = 6;
+  void clear_fee_distribution_rate();
+  static const int kFeeDistributionRateFieldNumber = 6;
+  const ::std::string& fee_distribution_rate() const;
+  void set_fee_distribution_rate(const ::std::string& value);
+  void set_fee_distribution_rate(const char* value);
+  void set_fee_distribution_rate(const char* value, size_t size);
+  ::std::string* mutable_fee_distribution_rate();
+  ::std::string* release_fee_distribution_rate();
+  void set_allocated_fee_distribution_rate(::std::string* fee_distribution_rate);
+
+  // @@protoc_insertion_point(class_scope:protocol.ElectionConfig)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int64 pledge_amount_;
+  ::google::protobuf::int64 validators_refresh_interval_;
+  ::google::protobuf::int64 coin_to_vote_rate_;
+  ::google::protobuf::int64 fee_to_vote_rate_;
+  ::google::protobuf::int64 penalty_rate_;
+  ::google::protobuf::internal::ArenaStringPtr fee_distribution_rate_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_consensus_2eproto();
+  friend void protobuf_AssignDesc_consensus_2eproto();
+  friend void protobuf_ShutdownFile_consensus_2eproto();
+
+  void InitAsDefaultInstance();
+  static ElectionConfig* default_instance_;
+};
 // ===================================================================
 
 
@@ -2683,7 +2806,127 @@ inline void FeeConfig::set_base_reserve(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.FeeConfig.base_reserve)
 }
 
+// -------------------------------------------------------------------
+
+// ElectionConfig
+
+// optional int64 pledge_amount = 1;
+inline void ElectionConfig::clear_pledge_amount() {
+  pledge_amount_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 ElectionConfig::pledge_amount() const {
+  // @@protoc_insertion_point(field_get:protocol.ElectionConfig.pledge_amount)
+  return pledge_amount_;
+}
+inline void ElectionConfig::set_pledge_amount(::google::protobuf::int64 value) {
+  
+  pledge_amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ElectionConfig.pledge_amount)
+}
+
+// optional int64 validators_refresh_interval = 2;
+inline void ElectionConfig::clear_validators_refresh_interval() {
+  validators_refresh_interval_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 ElectionConfig::validators_refresh_interval() const {
+  // @@protoc_insertion_point(field_get:protocol.ElectionConfig.validators_refresh_interval)
+  return validators_refresh_interval_;
+}
+inline void ElectionConfig::set_validators_refresh_interval(::google::protobuf::int64 value) {
+  
+  validators_refresh_interval_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ElectionConfig.validators_refresh_interval)
+}
+
+// optional int64 coin_to_vote_rate = 3;
+inline void ElectionConfig::clear_coin_to_vote_rate() {
+  coin_to_vote_rate_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 ElectionConfig::coin_to_vote_rate() const {
+  // @@protoc_insertion_point(field_get:protocol.ElectionConfig.coin_to_vote_rate)
+  return coin_to_vote_rate_;
+}
+inline void ElectionConfig::set_coin_to_vote_rate(::google::protobuf::int64 value) {
+  
+  coin_to_vote_rate_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ElectionConfig.coin_to_vote_rate)
+}
+
+// optional int64 fee_to_vote_rate = 4;
+inline void ElectionConfig::clear_fee_to_vote_rate() {
+  fee_to_vote_rate_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 ElectionConfig::fee_to_vote_rate() const {
+  // @@protoc_insertion_point(field_get:protocol.ElectionConfig.fee_to_vote_rate)
+  return fee_to_vote_rate_;
+}
+inline void ElectionConfig::set_fee_to_vote_rate(::google::protobuf::int64 value) {
+  
+  fee_to_vote_rate_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ElectionConfig.fee_to_vote_rate)
+}
+
+// optional int64 penalty_rate = 5;
+inline void ElectionConfig::clear_penalty_rate() {
+  penalty_rate_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 ElectionConfig::penalty_rate() const {
+  // @@protoc_insertion_point(field_get:protocol.ElectionConfig.penalty_rate)
+  return penalty_rate_;
+}
+inline void ElectionConfig::set_penalty_rate(::google::protobuf::int64 value) {
+  
+  penalty_rate_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ElectionConfig.penalty_rate)
+}
+
+// optional string fee_distribution_rate = 6;
+inline void ElectionConfig::clear_fee_distribution_rate() {
+  fee_distribution_rate_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ElectionConfig::fee_distribution_rate() const {
+  // @@protoc_insertion_point(field_get:protocol.ElectionConfig.fee_distribution_rate)
+  return fee_distribution_rate_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ElectionConfig::set_fee_distribution_rate(const ::std::string& value) {
+  
+  fee_distribution_rate_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.ElectionConfig.fee_distribution_rate)
+}
+inline void ElectionConfig::set_fee_distribution_rate(const char* value) {
+  
+  fee_distribution_rate_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.ElectionConfig.fee_distribution_rate)
+}
+inline void ElectionConfig::set_fee_distribution_rate(const char* value, size_t size) {
+  
+  fee_distribution_rate_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.ElectionConfig.fee_distribution_rate)
+}
+inline ::std::string* ElectionConfig::mutable_fee_distribution_rate() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.ElectionConfig.fee_distribution_rate)
+  return fee_distribution_rate_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ElectionConfig::release_fee_distribution_rate() {
+  // @@protoc_insertion_point(field_release:protocol.ElectionConfig.fee_distribution_rate)
+  
+  return fee_distribution_rate_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ElectionConfig::set_allocated_fee_distribution_rate(::std::string* fee_distribution_rate) {
+  if (fee_distribution_rate != NULL) {
+    
+  } else {
+    
+  }
+  fee_distribution_rate_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), fee_distribution_rate);
+  // @@protoc_insertion_point(field_set_allocated:protocol.ElectionConfig.fee_distribution_rate)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

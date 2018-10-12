@@ -129,7 +129,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       "chain.proto");
   GOOGLE_CHECK(file != NULL);
   Account_descriptor_ = file->message_type(0);
-  static const int Account_offsets_[7] = {
+  static const int Account_offsets_[10] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, nonce_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, priv_),
@@ -137,6 +137,9 @@ void protobuf_AssignDesc_chain_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, assets_hash_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, contract_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, balance_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, vote_for_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, creator_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Account, frozen_coin_),
   };
   Account_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -819,115 +822,117 @@ void protobuf_AddDesc_chain_2eproto() {
 
   ::protocol::protobuf_AddDesc_common_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\013chain.proto\022\010protocol\032\014common.proto\"\267\001"
+    "\n\013chain.proto\022\010protocol\032\014common.proto\"\357\001"
     "\n\007Account\022\017\n\007address\030\001 \001(\t\022\r\n\005nonce\030\002 \001("
     "\003\022(\n\004priv\030\003 \001(\0132\032.protocol.AccountPrivil"
     "ege\022\026\n\016metadatas_hash\030\004 \001(\014\022\023\n\013assets_ha"
     "sh\030\005 \001(\014\022$\n\010contract\030\006 \001(\0132\022.protocol.Co"
-    "ntract\022\017\n\007balance\030\007 \001(\003\"6\n\010AssetKey\022\016\n\006i"
-    "ssuer\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\014\n\004type\030\003 \001(\005\""
-    "8\n\005Asset\022\037\n\003key\030\001 \001(\0132\022.protocol.AssetKe"
-    "y\022\016\n\006amount\030\002 \001(\003\"u\n\rAssetProperty\022\017\n\007de"
-    "cimal\030\001 \001(\005\022\023\n\013description\030\002 \001(\t\022\022\n\nmax_"
-    "supply\030\003 \001(\003\022\025\n\rissued_amount\030\004 \001(\003\022\023\n\013f"
-    "ee_percent\030\005 \001(\005\"h\n\nAssetStore\022\037\n\003key\030\001 "
-    "\001(\0132\022.protocol.AssetKey\022\016\n\006amount\030\002 \001(\003\022"
-    ")\n\010property\030\003 \001(\0132\027.protocol.AssetProper"
-    "ty\"\355\001\n\014LedgerHeader\022\013\n\003seq\030\001 \001(\003\022\014\n\004hash"
-    "\030\002 \001(\014\022\025\n\rprevious_hash\030\003 \001(\014\022\031\n\021account"
-    "_tree_hash\030\004 \001(\014\022\022\n\nclose_time\030\005 \001(\003\022\034\n\024"
-    "consensus_value_hash\030\006 \001(\014\022\017\n\007version\030\007 "
-    "\001(\003\022\020\n\010tx_count\030\010 \001(\003\022\027\n\017validators_hash"
-    "\030\t \001(\014\022\021\n\tfees_hash\030\n \001(\014\022\017\n\007reserve\030\013 \001"
-    "(\t\"d\n\006Ledger\022&\n\006header\030\001 \001(\0132\026.protocol."
-    "LedgerHeader\0222\n\020transaction_envs\030\002 \003(\0132\030"
-    ".protocol.TransactionEnv\"X\n\021OperationPay"
-    "Asset\022\024\n\014dest_address\030\001 \001(\t\022\036\n\005asset\030\002 \001"
-    "(\0132\017.protocol.Asset\022\r\n\005input\030\003 \001(\t\"S\n\026Op"
-    "erationTypeThreshold\022&\n\004type\030\001 \001(\0162\030.pro"
-    "tocol.Operation.Type\022\021\n\tthreshold\030\002 \001(\003\""
-    "|\n\020AccountPrivilege\022\025\n\rmaster_weight\030\001 \001"
-    "(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\022.\n"
-    "\nthresholds\030\003 \001(\0132\032.protocol.AccountThre"
-    "shold\"c\n\020AccountThreshold\022\024\n\014tx_threshol"
-    "d\030\001 \001(\003\0229\n\017type_thresholds\030\002 \003(\0132 .proto"
-    "col.OperationTypeThreshold\"3\n\023OperationI"
-    "ssueAsset\022\014\n\004code\030\001 \001(\t\022\016\n\006amount\030\002 \001(\003\""
-    "G\n\020OperationPayCoin\022\024\n\014dest_address\030\001 \001("
-    "\t\022\016\n\006amount\030\002 \001(\003\022\r\n\005input\030\003 \001(\t\"T\n\030Oper"
-    "ationSetSignerWeight\022\025\n\rmaster_weight\030\001 "
-    "\001(\003\022!\n\007signers\030\002 \003(\0132\020.protocol.Signer\","
-    "\n\014OperationLog\022\r\n\005topic\030\001 \001(\t\022\r\n\005datas\030\002"
-    " \003(\t\"\242\001\n\025OperationSetPrivilege\022\025\n\rmaster"
-    "_weight\030\001 \001(\t\022!\n\007signers\030\002 \003(\0132\020.protoco"
-    "l.Signer\022\024\n\014tx_threshold\030\003 \001(\t\0229\n\017type_t"
-    "hresholds\030\004 \003(\0132 .protocol.OperationType"
-    "Threshold\"\343\005\n\tOperation\022&\n\004type\030\001 \001(\0162\030."
-    "protocol.Operation.Type\022\026\n\016source_addres"
-    "s\030\002 \001(\t\022\020\n\010metadata\030\003 \001(\014\0228\n\016create_acco"
-    "unt\030\004 \001(\0132 .protocol.OperationCreateAcco"
-    "unt\0222\n\013issue_asset\030\005 \001(\0132\035.protocol.Oper"
-    "ationIssueAsset\022.\n\tpay_asset\030\006 \001(\0132\033.pro"
-    "tocol.OperationPayAsset\0224\n\014set_metadata\030"
-    "\007 \001(\0132\036.protocol.OperationSetMetadata\022=\n"
-    "\021set_signer_weight\030\010 \001(\0132\".protocol.Oper"
-    "ationSetSignerWeight\0226\n\rset_threshold\030\t "
-    "\001(\0132\037.protocol.OperationSetThreshold\022,\n\010"
-    "pay_coin\030\n \001(\0132\032.protocol.OperationPayCo"
-    "in\022#\n\003log\030\013 \001(\0132\026.protocol.OperationLog\022"
-    "6\n\rset_privilege\030\014 \001(\0132\037.protocol.Operat"
-    "ionSetPrivilege\"\255\001\n\004Type\022\013\n\007UNKNOWN\020\000\022\022\n"
-    "\016CREATE_ACCOUNT\020\001\022\017\n\013ISSUE_ASSET\020\002\022\r\n\tPA"
-    "Y_ASSET\020\003\022\020\n\014SET_METADATA\020\004\022\025\n\021SET_SIGNE"
-    "R_WEIGHT\020\005\022\021\n\rSET_THRESHOLD\020\006\022\014\n\010PAY_COI"
-    "N\020\007\022\007\n\003LOG\020\010\022\021\n\rSET_PRIVILEGE\020\t\"h\n\025Opera"
-    "tionSetThreshold\022\024\n\014tx_threshold\030\001 \001(\003\0229"
-    "\n\017type_thresholds\030\002 \003(\0132 .protocol.Opera"
-    "tionTypeThreshold\"\325\001\n\013Transaction\022\026\n\016sou"
-    "rce_address\030\001 \001(\t\022\r\n\005nonce\030\002 \001(\003\022\021\n\tfee_"
-    "limit\030\003 \001(\003\022\021\n\tgas_price\030\004 \001(\003\022\027\n\017ceil_l"
-    "edger_seq\030\005 \001(\003\022\020\n\010metadata\030\006 \001(\014\022\'\n\nope"
-    "rations\030\007 \003(\0132\023.protocol.Operation\"%\n\005Li"
-    "mit\022\013\n\007UNKNOWN\020\000\022\017\n\nOPERATIONS\020\350\007\"O\n\006Sig"
-    "ner\022\017\n\007address\030\001 \001(\t\022\016\n\006weight\030\002 \001(\003\"$\n\005"
-    "Limit\022\017\n\013SIGNER_NONE\020\000\022\n\n\006SIGNER\020d\"\211\002\n\007T"
-    "rigger\022;\n\020transaction_type\030\001 \001(\0162!.proto"
-    "col.Trigger.TransactionType\022\022\n\nledger_se"
-    "q\030\002 \001(\003\0227\n\013transaction\030\003 \001(\0132\".protocol."
-    "Trigger.OperationTrigger\032/\n\020OperationTri"
-    "gger\022\014\n\004hash\030\001 \001(\014\022\r\n\005index\030\002 \001(\003\"C\n\017Tra"
-    "nsactionType\022\026\n\022NORMAL_TRANSACTION\020\000\022\030\n\024"
-    "CONTRACT_TRANSACTION\020\001\"\211\001\n\016TransactionEn"
-    "v\022*\n\013transaction\030\001 \001(\0132\025.protocol.Transa"
-    "ction\022\'\n\nsignatures\030\002 \003(\0132\023.protocol.Sig"
-    "nature\022\"\n\007trigger\030\003 \001(\0132\021.protocol.Trigg"
-    "er\"\272\001\n\023TransactionEnvStore\0221\n\017transactio"
-    "n_env\030\001 \001(\0132\030.protocol.TransactionEnv\022\022\n"
-    "\nerror_code\030\002 \001(\005\022\022\n\nerror_desc\030\003 \001(\t\022\022\n"
-    "\nledger_seq\030\004 \001(\003\022\022\n\nclose_time\030\005 \001(\003\022\014\n"
-    "\004hash\030\006 \001(\014\022\022\n\nactual_fee\030\007 \001(\003\":\n\021Trans"
-    "actionEnvSet\022%\n\003txs\030\002 \003(\0132\030.protocol.Tra"
-    "nsactionEnv\"G\n\030ConsensusValueValidation\022"
-    "\025\n\rexpire_tx_ids\030\001 \003(\005\022\024\n\014error_tx_ids\030\002"
-    " \003(\005\"\203\002\n\016ConsensusValue\022*\n\005txset\030\001 \001(\0132\033"
-    ".protocol.TransactionEnvSet\022\022\n\nclose_tim"
-    "e\030\002 \001(\003\022\026\n\016previous_proof\030\003 \001(\014\022\022\n\nledge"
-    "r_seq\030\004 \001(\003\022\034\n\024previous_ledger_hash\030\005 \001("
-    "\014\022/\n\016ledger_upgrade\030\006 \001(\0132\027.protocol.Led"
-    "gerUpgrade\0226\n\nvalidation\030\007 \001(\0132\".protoco"
-    "l.ConsensusValueValidation\"j\n\010Contract\022-"
-    "\n\004type\030\001 \001(\0162\037.protocol.Contract.Contrac"
-    "tType\022\017\n\007payload\030\002 \001(\t\"\036\n\014ContractType\022\016"
-    "\n\nJAVASCRIPT\020\000\"\316\001\n\026OperationCreateAccoun"
-    "t\022\024\n\014dest_address\030\001 \001(\t\022$\n\010contract\030\002 \001("
-    "\0132\022.protocol.Contract\022(\n\004priv\030\003 \001(\0132\032.pr"
-    "otocol.AccountPrivilege\022$\n\tmetadatas\030\004 \003"
-    "(\0132\021.protocol.KeyPair\022\024\n\014init_balance\030\005 "
-    "\001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024OperationSetM"
-    "etadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007v"
-    "ersion\030\003 \001(\003\022\023\n\013delete_flag\030\004 \001(\010*#\n\005Lim"
-    "it\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020dB\"\n io.bum"
-    "o.sdk.core.extend.protobufb\006proto3", 4354);
+    "ntract\022\017\n\007balance\030\007 \001(\003\022\020\n\010vote_for\030\010 \001("
+    "\t\022\017\n\007creator\030\t \001(\t\022\023\n\013frozen_coin\030\n \001(\003\""
+    "6\n\010AssetKey\022\016\n\006issuer\030\001 \001(\t\022\014\n\004code\030\002 \001("
+    "\t\022\014\n\004type\030\003 \001(\005\"8\n\005Asset\022\037\n\003key\030\001 \001(\0132\022."
+    "protocol.AssetKey\022\016\n\006amount\030\002 \001(\003\"u\n\rAss"
+    "etProperty\022\017\n\007decimal\030\001 \001(\005\022\023\n\013descripti"
+    "on\030\002 \001(\t\022\022\n\nmax_supply\030\003 \001(\003\022\025\n\rissued_a"
+    "mount\030\004 \001(\003\022\023\n\013fee_percent\030\005 \001(\005\"h\n\nAsse"
+    "tStore\022\037\n\003key\030\001 \001(\0132\022.protocol.AssetKey\022"
+    "\016\n\006amount\030\002 \001(\003\022)\n\010property\030\003 \001(\0132\027.prot"
+    "ocol.AssetProperty\"\355\001\n\014LedgerHeader\022\013\n\003s"
+    "eq\030\001 \001(\003\022\014\n\004hash\030\002 \001(\014\022\025\n\rprevious_hash\030"
+    "\003 \001(\014\022\031\n\021account_tree_hash\030\004 \001(\014\022\022\n\nclos"
+    "e_time\030\005 \001(\003\022\034\n\024consensus_value_hash\030\006 \001"
+    "(\014\022\017\n\007version\030\007 \001(\003\022\020\n\010tx_count\030\010 \001(\003\022\027\n"
+    "\017validators_hash\030\t \001(\014\022\021\n\tfees_hash\030\n \001("
+    "\014\022\017\n\007reserve\030\013 \001(\t\"d\n\006Ledger\022&\n\006header\030\001"
+    " \001(\0132\026.protocol.LedgerHeader\0222\n\020transact"
+    "ion_envs\030\002 \003(\0132\030.protocol.TransactionEnv"
+    "\"X\n\021OperationPayAsset\022\024\n\014dest_address\030\001 "
+    "\001(\t\022\036\n\005asset\030\002 \001(\0132\017.protocol.Asset\022\r\n\005i"
+    "nput\030\003 \001(\t\"S\n\026OperationTypeThreshold\022&\n\004"
+    "type\030\001 \001(\0162\030.protocol.Operation.Type\022\021\n\t"
+    "threshold\030\002 \001(\003\"|\n\020AccountPrivilege\022\025\n\rm"
+    "aster_weight\030\001 \001(\003\022!\n\007signers\030\002 \003(\0132\020.pr"
+    "otocol.Signer\022.\n\nthresholds\030\003 \001(\0132\032.prot"
+    "ocol.AccountThreshold\"c\n\020AccountThreshol"
+    "d\022\024\n\014tx_threshold\030\001 \001(\003\0229\n\017type_threshol"
+    "ds\030\002 \003(\0132 .protocol.OperationTypeThresho"
+    "ld\"3\n\023OperationIssueAsset\022\014\n\004code\030\001 \001(\t\022"
+    "\016\n\006amount\030\002 \001(\003\"G\n\020OperationPayCoin\022\024\n\014d"
+    "est_address\030\001 \001(\t\022\016\n\006amount\030\002 \001(\003\022\r\n\005inp"
+    "ut\030\003 \001(\t\"T\n\030OperationSetSignerWeight\022\025\n\r"
+    "master_weight\030\001 \001(\003\022!\n\007signers\030\002 \003(\0132\020.p"
+    "rotocol.Signer\",\n\014OperationLog\022\r\n\005topic\030"
+    "\001 \001(\t\022\r\n\005datas\030\002 \003(\t\"\242\001\n\025OperationSetPri"
+    "vilege\022\025\n\rmaster_weight\030\001 \001(\t\022!\n\007signers"
+    "\030\002 \003(\0132\020.protocol.Signer\022\024\n\014tx_threshold"
+    "\030\003 \001(\t\0229\n\017type_thresholds\030\004 \003(\0132 .protoc"
+    "ol.OperationTypeThreshold\"\343\005\n\tOperation\022"
+    "&\n\004type\030\001 \001(\0162\030.protocol.Operation.Type\022"
+    "\026\n\016source_address\030\002 \001(\t\022\020\n\010metadata\030\003 \001("
+    "\014\0228\n\016create_account\030\004 \001(\0132 .protocol.Ope"
+    "rationCreateAccount\0222\n\013issue_asset\030\005 \001(\013"
+    "2\035.protocol.OperationIssueAsset\022.\n\tpay_a"
+    "sset\030\006 \001(\0132\033.protocol.OperationPayAsset\022"
+    "4\n\014set_metadata\030\007 \001(\0132\036.protocol.Operati"
+    "onSetMetadata\022=\n\021set_signer_weight\030\010 \001(\013"
+    "2\".protocol.OperationSetSignerWeight\0226\n\r"
+    "set_threshold\030\t \001(\0132\037.protocol.Operation"
+    "SetThreshold\022,\n\010pay_coin\030\n \001(\0132\032.protoco"
+    "l.OperationPayCoin\022#\n\003log\030\013 \001(\0132\026.protoc"
+    "ol.OperationLog\0226\n\rset_privilege\030\014 \001(\0132\037"
+    ".protocol.OperationSetPrivilege\"\255\001\n\004Type"
+    "\022\013\n\007UNKNOWN\020\000\022\022\n\016CREATE_ACCOUNT\020\001\022\017\n\013ISS"
+    "UE_ASSET\020\002\022\r\n\tPAY_ASSET\020\003\022\020\n\014SET_METADAT"
+    "A\020\004\022\025\n\021SET_SIGNER_WEIGHT\020\005\022\021\n\rSET_THRESH"
+    "OLD\020\006\022\014\n\010PAY_COIN\020\007\022\007\n\003LOG\020\010\022\021\n\rSET_PRIV"
+    "ILEGE\020\t\"h\n\025OperationSetThreshold\022\024\n\014tx_t"
+    "hreshold\030\001 \001(\003\0229\n\017type_thresholds\030\002 \003(\0132"
+    " .protocol.OperationTypeThreshold\"\325\001\n\013Tr"
+    "ansaction\022\026\n\016source_address\030\001 \001(\t\022\r\n\005non"
+    "ce\030\002 \001(\003\022\021\n\tfee_limit\030\003 \001(\003\022\021\n\tgas_price"
+    "\030\004 \001(\003\022\027\n\017ceil_ledger_seq\030\005 \001(\003\022\020\n\010metad"
+    "ata\030\006 \001(\014\022\'\n\noperations\030\007 \003(\0132\023.protocol"
+    ".Operation\"%\n\005Limit\022\013\n\007UNKNOWN\020\000\022\017\n\nOPER"
+    "ATIONS\020\350\007\"O\n\006Signer\022\017\n\007address\030\001 \001(\t\022\016\n\006"
+    "weight\030\002 \001(\003\"$\n\005Limit\022\017\n\013SIGNER_NONE\020\000\022\n"
+    "\n\006SIGNER\020d\"\211\002\n\007Trigger\022;\n\020transaction_ty"
+    "pe\030\001 \001(\0162!.protocol.Trigger.TransactionT"
+    "ype\022\022\n\nledger_seq\030\002 \001(\003\0227\n\013transaction\030\003"
+    " \001(\0132\".protocol.Trigger.OperationTrigger"
+    "\032/\n\020OperationTrigger\022\014\n\004hash\030\001 \001(\014\022\r\n\005in"
+    "dex\030\002 \001(\003\"C\n\017TransactionType\022\026\n\022NORMAL_T"
+    "RANSACTION\020\000\022\030\n\024CONTRACT_TRANSACTION\020\001\"\211"
+    "\001\n\016TransactionEnv\022*\n\013transaction\030\001 \001(\0132\025"
+    ".protocol.Transaction\022\'\n\nsignatures\030\002 \003("
+    "\0132\023.protocol.Signature\022\"\n\007trigger\030\003 \001(\0132"
+    "\021.protocol.Trigger\"\272\001\n\023TransactionEnvSto"
+    "re\0221\n\017transaction_env\030\001 \001(\0132\030.protocol.T"
+    "ransactionEnv\022\022\n\nerror_code\030\002 \001(\005\022\022\n\nerr"
+    "or_desc\030\003 \001(\t\022\022\n\nledger_seq\030\004 \001(\003\022\022\n\nclo"
+    "se_time\030\005 \001(\003\022\014\n\004hash\030\006 \001(\014\022\022\n\nactual_fe"
+    "e\030\007 \001(\003\":\n\021TransactionEnvSet\022%\n\003txs\030\002 \003("
+    "\0132\030.protocol.TransactionEnv\"G\n\030Consensus"
+    "ValueValidation\022\025\n\rexpire_tx_ids\030\001 \003(\005\022\024"
+    "\n\014error_tx_ids\030\002 \003(\005\"\203\002\n\016ConsensusValue\022"
+    "*\n\005txset\030\001 \001(\0132\033.protocol.TransactionEnv"
+    "Set\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016previous_proo"
+    "f\030\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024previous_"
+    "ledger_hash\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001("
+    "\0132\027.protocol.LedgerUpgrade\0226\n\nvalidation"
+    "\030\007 \001(\0132\".protocol.ConsensusValueValidati"
+    "on\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037.protocol."
+    "Contract.ContractType\022\017\n\007payload\030\002 \001(\t\"\036"
+    "\n\014ContractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026Opera"
+    "tionCreateAccount\022\024\n\014dest_address\030\001 \001(\t\022"
+    "$\n\010contract\030\002 \001(\0132\022.protocol.Contract\022(\n"
+    "\004priv\030\003 \001(\0132\032.protocol.AccountPrivilege\022"
+    "$\n\tmetadatas\030\004 \003(\0132\021.protocol.KeyPair\022\024\n"
+    "\014init_balance\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\""
+    "X\n\024OperationSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005"
+    "value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_f"
+    "lag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNA"
+    "TURE\020dB\"\n io.bumo.sdk.core.extend.protob"
+    "ufb\006proto3", 4410);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -1024,6 +1029,9 @@ const int Account::kMetadatasHashFieldNumber;
 const int Account::kAssetsHashFieldNumber;
 const int Account::kContractFieldNumber;
 const int Account::kBalanceFieldNumber;
+const int Account::kVoteForFieldNumber;
+const int Account::kCreatorFieldNumber;
+const int Account::kFrozenCoinFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Account::Account()
@@ -1057,6 +1065,9 @@ void Account::SharedCtor() {
   assets_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   contract_ = NULL;
   balance_ = GOOGLE_LONGLONG(0);
+  vote_for_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  creator_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  frozen_coin_ = GOOGLE_LONGLONG(0);
 }
 
 Account::~Account() {
@@ -1068,6 +1079,8 @@ void Account::SharedDtor() {
   address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   metadatas_hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   assets_hash_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  vote_for_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  creator_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
     delete priv_;
     delete contract_;
@@ -1110,6 +1123,9 @@ void Account::Clear() {
   if (GetArenaNoVirtual() == NULL && contract_ != NULL) delete contract_;
   contract_ = NULL;
   balance_ = GOOGLE_LONGLONG(0);
+  vote_for_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  creator_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  frozen_coin_ = GOOGLE_LONGLONG(0);
 }
 
 bool Account::MergePartialFromCodedStream(
@@ -1216,6 +1232,55 @@ bool Account::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(66)) goto parse_vote_for;
+        break;
+      }
+
+      // optional string vote_for = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_vote_for:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_vote_for()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->vote_for().data(), this->vote_for().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "protocol.Account.vote_for"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(74)) goto parse_creator;
+        break;
+      }
+
+      // optional string creator = 9;
+      case 9: {
+        if (tag == 74) {
+         parse_creator:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_creator()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->creator().data(), this->creator().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "protocol.Account.creator"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(80)) goto parse_frozen_coin;
+        break;
+      }
+
+      // optional int64 frozen_coin = 10;
+      case 10: {
+        if (tag == 80) {
+         parse_frozen_coin:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &frozen_coin_)));
+
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -1288,6 +1353,31 @@ void Account::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(7, this->balance(), output);
   }
 
+  // optional string vote_for = 8;
+  if (this->vote_for().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->vote_for().data(), this->vote_for().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.Account.vote_for");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      8, this->vote_for(), output);
+  }
+
+  // optional string creator = 9;
+  if (this->creator().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->creator().data(), this->creator().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.Account.creator");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      9, this->creator(), output);
+  }
+
+  // optional int64 frozen_coin = 10;
+  if (this->frozen_coin() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(10, this->frozen_coin(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.Account)
 }
 
@@ -1341,6 +1431,33 @@ void Account::SerializeWithCachedSizes(
   // optional int64 balance = 7;
   if (this->balance() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(7, this->balance(), target);
+  }
+
+  // optional string vote_for = 8;
+  if (this->vote_for().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->vote_for().data(), this->vote_for().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.Account.vote_for");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        8, this->vote_for(), target);
+  }
+
+  // optional string creator = 9;
+  if (this->creator().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->creator().data(), this->creator().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "protocol.Account.creator");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        9, this->creator(), target);
+  }
+
+  // optional int64 frozen_coin = 10;
+  if (this->frozen_coin() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(10, this->frozen_coin(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Account)
@@ -1400,6 +1517,27 @@ int Account::ByteSize() const {
         this->balance());
   }
 
+  // optional string vote_for = 8;
+  if (this->vote_for().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->vote_for());
+  }
+
+  // optional string creator = 9;
+  if (this->creator().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->creator());
+  }
+
+  // optional int64 frozen_coin = 10;
+  if (this->frozen_coin() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->frozen_coin());
+  }
+
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -1452,6 +1590,17 @@ void Account::MergeFrom(const Account& from) {
   if (from.balance() != 0) {
     set_balance(from.balance());
   }
+  if (from.vote_for().size() > 0) {
+
+    vote_for_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.vote_for_);
+  }
+  if (from.creator().size() > 0) {
+
+    creator_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.creator_);
+  }
+  if (from.frozen_coin() != 0) {
+    set_frozen_coin(from.frozen_coin());
+  }
 }
 
 void Account::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1485,6 +1634,9 @@ void Account::InternalSwap(Account* other) {
   assets_hash_.Swap(&other->assets_hash_);
   std::swap(contract_, other->contract_);
   std::swap(balance_, other->balance_);
+  vote_for_.Swap(&other->vote_for_);
+  creator_.Swap(&other->creator_);
+  std::swap(frozen_coin_, other->frozen_coin_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -1734,6 +1886,108 @@ void Account::clear_balance() {
   
   balance_ = value;
   // @@protoc_insertion_point(field_set:protocol.Account.balance)
+}
+
+// optional string vote_for = 8;
+void Account::clear_vote_for() {
+  vote_for_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Account::vote_for() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.vote_for)
+  return vote_for_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Account::set_vote_for(const ::std::string& value) {
+  
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Account.vote_for)
+}
+ void Account::set_vote_for(const char* value) {
+  
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Account.vote_for)
+}
+ void Account::set_vote_for(const char* value, size_t size) {
+  
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.Account.vote_for)
+}
+ ::std::string* Account::mutable_vote_for() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.Account.vote_for)
+  return vote_for_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Account::release_vote_for() {
+  // @@protoc_insertion_point(field_release:protocol.Account.vote_for)
+  
+  return vote_for_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Account::set_allocated_vote_for(::std::string* vote_for) {
+  if (vote_for != NULL) {
+    
+  } else {
+    
+  }
+  vote_for_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), vote_for);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Account.vote_for)
+}
+
+// optional string creator = 9;
+void Account::clear_creator() {
+  creator_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ const ::std::string& Account::creator() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.creator)
+  return creator_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Account::set_creator(const ::std::string& value) {
+  
+  creator_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Account.creator)
+}
+ void Account::set_creator(const char* value) {
+  
+  creator_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Account.creator)
+}
+ void Account::set_creator(const char* value, size_t size) {
+  
+  creator_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.Account.creator)
+}
+ ::std::string* Account::mutable_creator() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.Account.creator)
+  return creator_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ ::std::string* Account::release_creator() {
+  // @@protoc_insertion_point(field_release:protocol.Account.creator)
+  
+  return creator_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+ void Account::set_allocated_creator(::std::string* creator) {
+  if (creator != NULL) {
+    
+  } else {
+    
+  }
+  creator_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), creator);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Account.creator)
+}
+
+// optional int64 frozen_coin = 10;
+void Account::clear_frozen_coin() {
+  frozen_coin_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 Account::frozen_coin() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.frozen_coin)
+  return frozen_coin_;
+}
+ void Account::set_frozen_coin(::google::protobuf::int64 value) {
+  
+  frozen_coin_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Account.frozen_coin)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

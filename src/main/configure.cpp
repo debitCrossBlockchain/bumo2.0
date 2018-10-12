@@ -204,7 +204,7 @@ namespace bumo {
 		max_validators_ = 50;
 		max_candidates_ = 1000;
 		pledge_amount_ = 100000;
-		validator_refresh_interval_ = 24 * 60 * 60; // in seconds
+		validators_refresh_interval_ = 24 * 60 * 60; // in seconds
 		coin_to_vote_rate_ = 1000; // 1000 means 1000 MO = 1 vote
 		fee_to_vote_rate_ = 1000; // 1000 means 1000 MO = 1 vote
 		penalty_rate_ = 1000; // 1000 means miss one block penalty 1000 BU
@@ -218,7 +218,7 @@ namespace bumo {
 		Configure::GetValue(value, "max_validators", max_validators_);
 		Configure::GetValue(value, "max_candidates", max_candidates_);
 		Configure::GetValue(value, "pledge_amount", pledge_amount_);
-		Configure::GetValue(value, "validator_refresh_interval", validator_refresh_interval_);
+		Configure::GetValue(value, "validators_refresh_interval", validators_refresh_interval_);
 		Configure::GetValue(value, "coin_to_vote_rate", coin_to_vote_rate_);
 		Configure::GetValue(value, "fee_to_vote_rate", fee_to_vote_rate_);
 		Configure::GetValue(value, "fee_distribution_rate", fee_distribution_rate_);

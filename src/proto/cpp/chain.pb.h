@@ -327,6 +327,34 @@ class Account : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::int64 balance() const;
   void set_balance(::google::protobuf::int64 value);
 
+  // optional string vote_for = 8;
+  void clear_vote_for();
+  static const int kVoteForFieldNumber = 8;
+  const ::std::string& vote_for() const;
+  void set_vote_for(const ::std::string& value);
+  void set_vote_for(const char* value);
+  void set_vote_for(const char* value, size_t size);
+  ::std::string* mutable_vote_for();
+  ::std::string* release_vote_for();
+  void set_allocated_vote_for(::std::string* vote_for);
+
+  // optional string creator = 9;
+  void clear_creator();
+  static const int kCreatorFieldNumber = 9;
+  const ::std::string& creator() const;
+  void set_creator(const ::std::string& value);
+  void set_creator(const char* value);
+  void set_creator(const char* value, size_t size);
+  ::std::string* mutable_creator();
+  ::std::string* release_creator();
+  void set_allocated_creator(::std::string* creator);
+
+  // optional int64 frozen_coin = 10;
+  void clear_frozen_coin();
+  static const int kFrozenCoinFieldNumber = 10;
+  ::google::protobuf::int64 frozen_coin() const;
+  void set_frozen_coin(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.Account)
  private:
 
@@ -339,6 +367,9 @@ class Account : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::internal::ArenaStringPtr assets_hash_;
   ::protocol::Contract* contract_;
   ::google::protobuf::int64 balance_;
+  ::google::protobuf::internal::ArenaStringPtr vote_for_;
+  ::google::protobuf::internal::ArenaStringPtr creator_;
+  ::google::protobuf::int64 frozen_coin_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -4000,6 +4031,108 @@ inline void Account::set_balance(::google::protobuf::int64 value) {
   
   balance_ = value;
   // @@protoc_insertion_point(field_set:protocol.Account.balance)
+}
+
+// optional string vote_for = 8;
+inline void Account::clear_vote_for() {
+  vote_for_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Account::vote_for() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.vote_for)
+  return vote_for_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Account::set_vote_for(const ::std::string& value) {
+  
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Account.vote_for)
+}
+inline void Account::set_vote_for(const char* value) {
+  
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Account.vote_for)
+}
+inline void Account::set_vote_for(const char* value, size_t size) {
+  
+  vote_for_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.Account.vote_for)
+}
+inline ::std::string* Account::mutable_vote_for() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.Account.vote_for)
+  return vote_for_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Account::release_vote_for() {
+  // @@protoc_insertion_point(field_release:protocol.Account.vote_for)
+  
+  return vote_for_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Account::set_allocated_vote_for(::std::string* vote_for) {
+  if (vote_for != NULL) {
+    
+  } else {
+    
+  }
+  vote_for_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), vote_for);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Account.vote_for)
+}
+
+// optional string creator = 9;
+inline void Account::clear_creator() {
+  creator_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Account::creator() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.creator)
+  return creator_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Account::set_creator(const ::std::string& value) {
+  
+  creator_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.Account.creator)
+}
+inline void Account::set_creator(const char* value) {
+  
+  creator_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.Account.creator)
+}
+inline void Account::set_creator(const char* value, size_t size) {
+  
+  creator_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.Account.creator)
+}
+inline ::std::string* Account::mutable_creator() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.Account.creator)
+  return creator_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Account::release_creator() {
+  // @@protoc_insertion_point(field_release:protocol.Account.creator)
+  
+  return creator_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Account::set_allocated_creator(::std::string* creator) {
+  if (creator != NULL) {
+    
+  } else {
+    
+  }
+  creator_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), creator);
+  // @@protoc_insertion_point(field_set_allocated:protocol.Account.creator)
+}
+
+// optional int64 frozen_coin = 10;
+inline void Account::clear_frozen_coin() {
+  frozen_coin_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Account::frozen_coin() const {
+  // @@protoc_insertion_point(field_get:protocol.Account.frozen_coin)
+  return frozen_coin_;
+}
+inline void Account::set_frozen_coin(::google::protobuf::int64 value) {
+  
+  frozen_coin_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Account.frozen_coin)
 }
 
 // -------------------------------------------------------------------

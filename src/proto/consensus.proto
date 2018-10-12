@@ -115,3 +115,13 @@ message FeeConfig
 	int64 gas_price = 1;
 	int64 base_reserve = 2;
 }
+
+message ElectionConfig
+{
+	int64 pledge_amount = 1;
+	int64 validators_refresh_interval = 2;
+	int64 coin_to_vote_rate = 3;
+	int64 fee_to_vote_rate = 4;
+	int64 penalty_rate = 5;
+	string fee_distribution_rate = 6;
+}
