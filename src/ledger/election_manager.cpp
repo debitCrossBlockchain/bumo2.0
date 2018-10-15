@@ -28,6 +28,8 @@ namespace bumo {
 		// Initialize election configuration to ledger db if get configuration failed
 		if (!GetConfig(election_config_)) {
 			LOG_ERROR("Failed to get election configuration!");
+			election_config_.set_max_validators(ecfg.max_validators_);
+			election_config_.set_max_candidates(ecfg.max_candidates_);
 			election_config_.set_pledge_amount(ecfg.pledge_amount_);
 			election_config_.set_validators_refresh_interval(ecfg.validators_refresh_interval_);
 			election_config_.set_coin_to_vote_rate(ecfg.coin_to_vote_rate_);
@@ -36,6 +38,7 @@ namespace bumo {
 			election_config_.set_penalty_rate(ecfg.penalty_rate_);
 		
 			// TODO: write configuration to db
+			
 		}
 		LOG_INFO("The election configuration is : %s", election_config_.DebugString().c_str());
 		return true;

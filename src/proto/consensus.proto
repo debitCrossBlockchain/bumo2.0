@@ -118,10 +118,12 @@ message FeeConfig
 
 message ElectionConfig
 {
-	int64 pledge_amount = 1;
-	int64 validators_refresh_interval = 2;
-	int64 coin_to_vote_rate = 3;
-	int64 fee_to_vote_rate = 4;
-	int64 penalty_rate = 5;
-	string fee_distribution_rate = 6;
+    int64 max_validators = 1;
+    int64 max_candidates = 2;
+	int64 pledge_amount = 3;
+	int64 validators_refresh_interval = 4;
+	int64 coin_to_vote_rate = 5;
+	int64 fee_to_vote_rate = 6;
+	int64 penalty_rate = 7;
+	string fee_distribution_rate = 8;
 }

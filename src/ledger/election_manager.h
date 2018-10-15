@@ -52,6 +52,7 @@ namespace bumo {
 		bool UpdateCandidate(Json::Value& item);
 		bool IsCandidate(const std::string& addr);
 
+		bool VoteFor(const std::string& vote_for, int64_t coin_amount);
 		bool AddFeeVotes(const std::string& addr, int64_t votes);
 		bool AddCoinVotes(const std::string& addr, int64_t votes);
 		bool RemoveCoinVotes(const std::string& addr, int64_t votes);
@@ -64,8 +65,8 @@ namespace bumo {
 		bool MarkAbsent(const std::string& addr);
 		bool RefreshValidators();
 
-		void ElectionManager::SetConfig(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg);
-		bool ElectionManager::GetConfig(protocol::ElectionConfig &ecfg);
+		void SetConfig(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg);
+		bool GetConfig(protocol::ElectionConfig &ecfg);
 
 	private:
 		std::map<std::string, VoteItem> candidates_map_;
