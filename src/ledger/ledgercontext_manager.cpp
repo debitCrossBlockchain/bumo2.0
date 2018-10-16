@@ -124,7 +124,7 @@ namespace bumo {
 
 	bool LedgerContext::TestV8() {
 		//If the source address for starting the contract does not exist, a temporary account will be created.
-		std::shared_ptr<Environment> environment = std::make_shared<Environment>(nullptr);
+		std::shared_ptr<Environment> environment = std::make_shared<Environment>(/*nullptr*/);
 		if (parameter_.contract_address_.empty()) {
 			//Create a temporary account
 			PrivateKey priv_key(SIGNTYPE_ED25519);

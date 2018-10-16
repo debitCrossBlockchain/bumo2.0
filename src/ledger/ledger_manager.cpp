@@ -903,12 +903,12 @@ namespace bumo {
 			txfrm->SetMaxEndTime(back->GetMaxEndTime());
 			txfrm->NonceIncrease(ledger_context->closing_ledger_.get(), back->environment_);
 			if (txfrm->ValidForParameter(true)) {
-				if (back->environment_->useAtomMap_){
+				//if (back->environment_->useAtomMap_){
 					std::shared_ptr<Environment> cacheEnv = back->environment_->NewStackFrameEnv();
 					txfrm->Apply(ledger_context->closing_ledger_.get(), cacheEnv, true);
-				}
-				else
-					txfrm->Apply(ledger_context->closing_ledger_.get(), back->environment_, true);
+				//}
+				//else
+				//	txfrm->Apply(ledger_context->closing_ledger_.get(), back->environment_, true);
 			}
 			else {
 				TransactionFrm::AddActualFee(bottom_tx, txfrm.get());

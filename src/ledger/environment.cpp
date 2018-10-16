@@ -22,71 +22,71 @@ namespace bumo{
 	Environment::Environment(mapKV* data, settingKV* settings) :
 		AtomMap<std::string, AccountFrm>(data), settings_(settings)
 	{
-		useAtomMap_ = Configure::Instance().ledger_configure_.use_atom_map_;
-		parent_ = nullptr;
+		//useAtomMap_ = Configure::Instance().ledger_configure_.use_atom_map_;
+		//parent_ = nullptr;
 	}
 
-	Environment::Environment(Environment* parent){
+	//Environment::Environment(Environment* parent){
 
-		useAtomMap_ = Configure::Instance().ledger_configure_.use_atom_map_;
-		if (useAtomMap_)
-		{
-			parent_ = nullptr;
-			return;
-		}
+	//	useAtomMap_ = Configure::Instance().ledger_configure_.use_atom_map_;
+	//	if (useAtomMap_)
+	//	{
+	//		parent_ = nullptr;
+	//		return;
+	//	}
 
-		parent_ = parent;
-		if (parent_){
-			for (auto it = parent_->entries_.begin(); it != parent_->entries_.end(); it++){
-				entries_[it->first] = std::make_shared<AccountFrm>(it->second);
-			}
-			settings_ = parent->settings_;
-		}
-	}
+	//	parent_ = parent;
+	//	if (parent_){
+	//		for (auto it = parent_->entries_.begin(); it != parent_->entries_.end(); it++){
+	//			entries_[it->first] = std::make_shared<AccountFrm>(it->second);
+	//		}
+	//		settings_ = parent->settings_;
+	//	}
+	//}
 
 	bool Environment::GetEntry(const std::string &key, AccountFrm::pointer &frm){
-		if (useAtomMap_)
+		//if (useAtomMap_)
 			return Get(key, frm);
 
-		if (entries_.find(key) == entries_.end()){
-			if (AccountFromDB(key, frm)){
-				entries_[key] = frm;
-				return true;
-			}
-			else{
-				return false;
-			}
-		}
-		else{
-			frm = entries_[key];
-			return true;
-		}
+		//if (entries_.find(key) == entries_.end()){
+		//	if (AccountFromDB(key, frm)){
+		//		entries_[key] = frm;
+		//		return true;
+		//	}
+		//	else{
+		//		return false;
+		//	}
+		//}
+		//else{
+		//	frm = entries_[key];
+		//	return true;
+		//}
 	}
 
 	bool Environment::Commit(){
-		if (useAtomMap_){
+		//if (useAtomMap_){
 			return settings_.Commit() && AtomMap<std::string, AccountFrm>::Commit();
-		}
+		//}
 
-		parent_->entries_ = entries_;
-		parent_->settings_ = settings_;
-		return true;
+		//parent_->entries_ = entries_;
+		//parent_->settings_ = settings_;
+		//return true;
 	}
 
 	void Environment::ClearChangeBuf()
 	{
-		if (useAtomMap_){
+		//if (useAtomMap_){
 			settings_.ClearChangeBuf();
 			AtomMap<std::string, AccountFrm>::ClearChangeBuf();
-		}
+		//}
 	}
 
 	bool Environment::AddEntry(const std::string& key, AccountFrm::pointer frm){
-		if (useAtomMap_ == true)
+		//if (useAtomMap_ == true)
 			return Set(key, frm);
 
-		entries_[key] = frm;
-		return true;
+		//entries_[key] = frm;
+		//return true;
 	}
 
 	bool Environment::GetFromDB(const std::string &address, AccountFrm::pointer &account_ptr)
