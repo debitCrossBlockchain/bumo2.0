@@ -127,8 +127,6 @@ namespace bumo {
 		ElectionConfigure();
 		~ElectionConfigure();
 
-		int64_t max_validators_;
-		int64_t max_candidates_;
 		int64_t pledge_amount_;
 		int64_t validators_refresh_interval_; // in seconds
 		int64_t coin_to_vote_rate_; // 1000 means 1000MO = 1 vote

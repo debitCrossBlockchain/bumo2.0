@@ -1570,51 +1570,39 @@ class ElectionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
 
   // accessors -------------------------------------------------------
 
-  // optional int64 max_validators = 1;
-  void clear_max_validators();
-  static const int kMaxValidatorsFieldNumber = 1;
-  ::google::protobuf::int64 max_validators() const;
-  void set_max_validators(::google::protobuf::int64 value);
-
-  // optional int64 max_candidates = 2;
-  void clear_max_candidates();
-  static const int kMaxCandidatesFieldNumber = 2;
-  ::google::protobuf::int64 max_candidates() const;
-  void set_max_candidates(::google::protobuf::int64 value);
-
-  // optional int64 pledge_amount = 3;
+  // optional int64 pledge_amount = 1;
   void clear_pledge_amount();
-  static const int kPledgeAmountFieldNumber = 3;
+  static const int kPledgeAmountFieldNumber = 1;
   ::google::protobuf::int64 pledge_amount() const;
   void set_pledge_amount(::google::protobuf::int64 value);
 
-  // optional int64 validators_refresh_interval = 4;
+  // optional int64 validators_refresh_interval = 2;
   void clear_validators_refresh_interval();
-  static const int kValidatorsRefreshIntervalFieldNumber = 4;
+  static const int kValidatorsRefreshIntervalFieldNumber = 2;
   ::google::protobuf::int64 validators_refresh_interval() const;
   void set_validators_refresh_interval(::google::protobuf::int64 value);
 
-  // optional int64 coin_to_vote_rate = 5;
+  // optional int64 coin_to_vote_rate = 3;
   void clear_coin_to_vote_rate();
-  static const int kCoinToVoteRateFieldNumber = 5;
+  static const int kCoinToVoteRateFieldNumber = 3;
   ::google::protobuf::int64 coin_to_vote_rate() const;
   void set_coin_to_vote_rate(::google::protobuf::int64 value);
 
-  // optional int64 fee_to_vote_rate = 6;
+  // optional int64 fee_to_vote_rate = 4;
   void clear_fee_to_vote_rate();
-  static const int kFeeToVoteRateFieldNumber = 6;
+  static const int kFeeToVoteRateFieldNumber = 4;
   ::google::protobuf::int64 fee_to_vote_rate() const;
   void set_fee_to_vote_rate(::google::protobuf::int64 value);
 
-  // optional int64 penalty_rate = 7;
+  // optional int64 penalty_rate = 5;
   void clear_penalty_rate();
-  static const int kPenaltyRateFieldNumber = 7;
+  static const int kPenaltyRateFieldNumber = 5;
   ::google::protobuf::int64 penalty_rate() const;
   void set_penalty_rate(::google::protobuf::int64 value);
 
-  // optional string fee_distribution_rate = 8;
+  // optional string fee_distribution_rate = 6;
   void clear_fee_distribution_rate();
-  static const int kFeeDistributionRateFieldNumber = 8;
+  static const int kFeeDistributionRateFieldNumber = 6;
   const ::std::string& fee_distribution_rate() const;
   void set_fee_distribution_rate(const ::std::string& value);
   void set_fee_distribution_rate(const char* value);
@@ -1628,8 +1616,6 @@ class ElectionConfig : public ::google::protobuf::Message /* @@protoc_insertion_
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::int64 max_validators_;
-  ::google::protobuf::int64 max_candidates_;
   ::google::protobuf::int64 pledge_amount_;
   ::google::protobuf::int64 validators_refresh_interval_;
   ::google::protobuf::int64 coin_to_vote_rate_;
@@ -2824,35 +2810,7 @@ inline void FeeConfig::set_base_reserve(::google::protobuf::int64 value) {
 
 // ElectionConfig
 
-// optional int64 max_validators = 1;
-inline void ElectionConfig::clear_max_validators() {
-  max_validators_ = GOOGLE_LONGLONG(0);
-}
-inline ::google::protobuf::int64 ElectionConfig::max_validators() const {
-  // @@protoc_insertion_point(field_get:protocol.ElectionConfig.max_validators)
-  return max_validators_;
-}
-inline void ElectionConfig::set_max_validators(::google::protobuf::int64 value) {
-  
-  max_validators_ = value;
-  // @@protoc_insertion_point(field_set:protocol.ElectionConfig.max_validators)
-}
-
-// optional int64 max_candidates = 2;
-inline void ElectionConfig::clear_max_candidates() {
-  max_candidates_ = GOOGLE_LONGLONG(0);
-}
-inline ::google::protobuf::int64 ElectionConfig::max_candidates() const {
-  // @@protoc_insertion_point(field_get:protocol.ElectionConfig.max_candidates)
-  return max_candidates_;
-}
-inline void ElectionConfig::set_max_candidates(::google::protobuf::int64 value) {
-  
-  max_candidates_ = value;
-  // @@protoc_insertion_point(field_set:protocol.ElectionConfig.max_candidates)
-}
-
-// optional int64 pledge_amount = 3;
+// optional int64 pledge_amount = 1;
 inline void ElectionConfig::clear_pledge_amount() {
   pledge_amount_ = GOOGLE_LONGLONG(0);
 }
@@ -2866,7 +2824,7 @@ inline void ElectionConfig::set_pledge_amount(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.ElectionConfig.pledge_amount)
 }
 
-// optional int64 validators_refresh_interval = 4;
+// optional int64 validators_refresh_interval = 2;
 inline void ElectionConfig::clear_validators_refresh_interval() {
   validators_refresh_interval_ = GOOGLE_LONGLONG(0);
 }
@@ -2880,7 +2838,7 @@ inline void ElectionConfig::set_validators_refresh_interval(::google::protobuf::
   // @@protoc_insertion_point(field_set:protocol.ElectionConfig.validators_refresh_interval)
 }
 
-// optional int64 coin_to_vote_rate = 5;
+// optional int64 coin_to_vote_rate = 3;
 inline void ElectionConfig::clear_coin_to_vote_rate() {
   coin_to_vote_rate_ = GOOGLE_LONGLONG(0);
 }
@@ -2894,7 +2852,7 @@ inline void ElectionConfig::set_coin_to_vote_rate(::google::protobuf::int64 valu
   // @@protoc_insertion_point(field_set:protocol.ElectionConfig.coin_to_vote_rate)
 }
 
-// optional int64 fee_to_vote_rate = 6;
+// optional int64 fee_to_vote_rate = 4;
 inline void ElectionConfig::clear_fee_to_vote_rate() {
   fee_to_vote_rate_ = GOOGLE_LONGLONG(0);
 }
@@ -2908,7 +2866,7 @@ inline void ElectionConfig::set_fee_to_vote_rate(::google::protobuf::int64 value
   // @@protoc_insertion_point(field_set:protocol.ElectionConfig.fee_to_vote_rate)
 }
 
-// optional int64 penalty_rate = 7;
+// optional int64 penalty_rate = 5;
 inline void ElectionConfig::clear_penalty_rate() {
   penalty_rate_ = GOOGLE_LONGLONG(0);
 }
@@ -2922,7 +2880,7 @@ inline void ElectionConfig::set_penalty_rate(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.ElectionConfig.penalty_rate)
 }
 
-// optional string fee_distribution_rate = 8;
+// optional string fee_distribution_rate = 6;
 inline void ElectionConfig::clear_fee_distribution_rate() {
   fee_distribution_rate_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

@@ -110,6 +110,29 @@ namespace bumo {
 	
 		LOG_INFO("Gas price :" FMT_I64 " Base reserve:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
 
+		// Election configuration
+		ElectionConfigure& ecfg = Configure::Instance().election_configure_;
+
+		// Initialize election configuration to ledger db if get configuration failed
+		if (!ElectionConfigGet(election_config_)) {
+			LOG_ERROR("Failed to get election configuration!");
+			election_config_.set_pledge_amount(ecfg.pledge_amount_);
+			election_config_.set_validators_refresh_interval(ecfg.validators_refresh_interval_);
+			election_config_.set_coin_to_vote_rate(ecfg.coin_to_vote_rate_);
+			election_config_.set_fee_to_vote_rate(ecfg.fee_to_vote_rate_);
+			election_config_.set_fee_distribution_rate(ecfg.fee_distribution_rate_);
+			election_config_.set_penalty_rate(ecfg.penalty_rate_);
+
+			auto batch = tree_->batch_;
+			ElectionConfigSet(batch, election_config_);
+			KeyValueDb *db = Storage::Instance().ledger_db();
+			if (!db->WriteBatch(*batch)){
+				LOG_ERROR("Failed to write ledger and transaction to database(%s)", db->error_desc().c_str());
+				return false;
+			}
+		}
+		LOG_INFO("The election configuration is : %s", election_config_.DebugString().c_str());
+
 		//load proof
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof_);
 
@@ -963,5 +986,19 @@ namespace bumo {
 		
 		result = txfrm->GetResult();
 		return result;
+	}
+
+	void LedgerManager::ElectionConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg) {
+		batch->Put("election_config", ecfg.SerializeAsString());
+	}
+
+	bool LedgerManager::ElectionConfigGet(protocol::ElectionConfig &ecfg) {
+		std::string key = "election_config";
+		auto db = Storage::Instance().account_db();
+		std::string str;
+		if (!db->Get(key, str)) {
+			return false;
+		}
+		return ecfg.ParseFromString(str);
 	}
 }

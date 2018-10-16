@@ -68,7 +68,9 @@ namespace bumo {
 		bool ConsensusValueFromDB(int64_t seq, protocol::ConsensusValue& request);
 		protocol::FeeConfig GetCurFeeConfig();
 
-		Result DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context); // -1: false, 0 : successs, > 0 exception
+		bool ElectionConfigGet(protocol::ElectionConfig& ecfg);
+
+		Result DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context); // -1: false, 0 : success, > 0 exception
 		void NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade);
 
 		virtual void OnTimer(int64_t current_time) override;
@@ -98,6 +100,8 @@ namespace bumo {
 		static bool ValidatorsGet(const std::string& hash, protocol::ValidatorSet& vlidators_set);
 
 		static void FeesConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::FeeConfig &fee);
+
+		static void ElectionConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg);
 		
 		LedgerFrm::pointer last_closed_ledger_;
 		protocol::ValidatorSet validators_;
@@ -109,6 +113,7 @@ namespace bumo {
 
 		utils::ReadWriteLock fee_config_mutex_;
 		protocol::FeeConfig fees_;
+		protocol::ElectionConfig election_config_;
 
 		struct SyncStat{
 			int64_t send_time_;
