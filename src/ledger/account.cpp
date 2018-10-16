@@ -378,26 +378,34 @@ namespace bumo {
 	void AccountFrm::SetCreator(std::string& address) {
 		account_info_.set_creator(address);
 	}
-	bool AccountFrm::AddFrozenCoin(int64_t amount) {
+	bool AccountFrm::FrozenCoin(int64_t amount) {
+		int64_t balance = 0;
+		if (!utils::SafeIntSub(account_info_.balance(), amount, balance)) {
+			LOG_ERROR("The result overflowed when frozen coin for the account: account address:%s, balance(" FMT_I64 "), decreasing amount(" FMT_I64 ")",
+				account_info_.address().c_str(), account_info_.balance(), amount);
+			return false;
+		}
 		int64_t frozen_coin = 0;
 		if (!utils::SafeIntAdd(account_info_.frozen_coin(), amount, frozen_coin)) {
-			LOG_ERROR("The result overflowed when the frozen coin increased for the account: account address:%s, frozen coin(" FMT_I64 "), increasing amount(" FMT_I64 ")",
+			LOG_ERROR("The result overflowed when frozen coin for the account: account address:%s, frozen coin(" FMT_I64 "), increasing amount(" FMT_I64 ")",
 				account_info_.address().c_str(), account_info_.frozen_coin(), amount);
 			return false;
 		}
+
+		account_info_.set_balance(balance);
 		account_info_.set_frozen_coin(frozen_coin);
 		return true;
 	}
 	bool AccountFrm::UnfrozenCoin(int64_t amount) {
 		int64_t frozen_coin = 0;
 		if (!utils::SafeIntSub(account_info_.frozen_coin(), amount, frozen_coin)) {
-			LOG_ERROR("The result overflowed when unfrozen coin for the account: account address:%s, frozen coin(" FMT_I64 "), unforzen amount(" FMT_I64 ")",
+			LOG_ERROR("The result overflowed when unfrozen coin for the account: account address:%s, frozen coin(" FMT_I64 "), decreasing amount(" FMT_I64 ")",
 				account_info_.address().c_str(), account_info_.frozen_coin(), amount);
 			return false;
 		}
 		int64_t balance = 0;
 		if (!utils::SafeIntAdd(account_info_.balance(), amount, balance)) {
-			LOG_ERROR("The result overflowed when the frozen coin increased for the account: account address:%s, frozen coin(" FMT_I64 "), increasing amount(" FMT_I64 ")",
+			LOG_ERROR("The result overflowed when unfrozen coin for the account: account address:%s, balance(" FMT_I64 "), increasing amount(" FMT_I64 ")",
 				account_info_.address().c_str(), account_info_.frozen_coin(), amount);
 			return false;
 		}

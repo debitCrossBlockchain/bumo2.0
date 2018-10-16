@@ -115,7 +115,7 @@ namespace bumo {
 		int64_t GetFrozenCoin() const;
 		void SetVoteFor(std::string& address);
 		void SetCreator(std::string& address);
-		bool AddFrozenCoin(int64_t amount);
+		bool FrozenCoin(int64_t amount);
 		bool UnfrozenCoin(int64_t amount);
 
 		static AccountFrm::pointer CreatAccountFrm(const std::string& account_address, int64_t balance);
