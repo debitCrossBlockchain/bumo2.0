@@ -261,7 +261,7 @@ namespace bumo {
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
-			/*if (environment_->useAtomMap_) */environment_->Commit();
+			environment_->Commit();
 
 			tx_frm->EnableChecked();
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
@@ -343,7 +343,7 @@ namespace bumo {
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
-			/*if (environment_->useAtomMap_)*/ environment_->Commit();
+			environment_->Commit();
 
 			tx_frm->EnableChecked();
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
@@ -428,7 +428,7 @@ namespace bumo {
 
 			ledger_context->transaction_stack_.push_back(tx_frm);
 			tx_frm->NonceIncrease(this, environment_);
-			/*if (environment_->useAtomMap_)*/ environment_->Commit();
+			environment_->Commit();
 
 
 			if ( expire_txs_check.find(i) != expire_txs_check.end()) {
@@ -484,45 +484,26 @@ namespace bumo {
 
 	bool LedgerFrm::Commit(KVTrie* trie, int64_t& new_count, int64_t& change_count) {
 		auto batch = trie->batch_;
+		auto entries = environment_->GetData();
 
-		//if (environment_->useAtomMap_)
-		//{
-			auto entries = environment_->GetData();
+		for (auto it = entries.begin(); it != entries.end(); it++){
 
-			for (auto it = entries.begin(); it != entries.end(); it++){
+			if (it->second.type_ == Environment::DEL)
+				continue; //There is no delete account function now.
 
-				if (it->second.type_ == Environment::DEL)
-					continue; //There is no delete account function now.
-
-				std::shared_ptr<AccountFrm> account = it->second.value_;
-				account->UpdateHash(batch);
-				std::string ss = account->Serializer();
-				std::string index = DecodeAddress(it->first);
-				bool is_new = trie->Set(index, ss);
-				if (is_new){
-					new_count++;
-				}
-				else{
-					change_count++;
-				}
+			std::shared_ptr<AccountFrm> account = it->second.value_;
+			account->UpdateHash(batch);
+			std::string ss = account->Serializer();
+			std::string index = DecodeAddress(it->first);
+			bool is_new = trie->Set(index, ss);
+			if (is_new){
+				new_count++;
 			}
-			return true;
-		//}
-
-		//for (auto it = environment_->entries_.begin(); it != environment_->entries_.end(); it++){
-		//	std::shared_ptr<AccountFrm> account = it->second;
-		//	account->UpdateHash(batch);
-		//	std::string ss = account->Serializer();
-		//	std::string index = DecodeAddress(it->first);
-		//	bool is_new = trie->Set(index, ss);
-		//	if (is_new){
-		//		new_count++;
-		//	}
-		//	else{
-		//		change_count++;
-		//	}
-		//}
-		//return true;
+			else{
+				change_count++;
+			}
+		}
+		return true;
 	}
 
 	bool LedgerFrm::AllocateReward() {
@@ -578,8 +559,8 @@ namespace bumo {
 			proto_account.set_balance(new_balance);
 			LOG_TRACE("Account(%s) aquired last reward(" FMT_I64 ") of allocation in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
 		}
-		//if (environment_->useAtomMap_)
-			environment_->Commit();
+
+		environment_->Commit();
 		return true;
 	}
 

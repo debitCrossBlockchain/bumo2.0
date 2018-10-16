@@ -748,11 +748,7 @@ namespace bumo {
 
 	bool TransactionFrm::Apply(LedgerFrm* ledger_frm, std::shared_ptr<Environment> parent, bool bool_contract) {
 		ledger_ = ledger_frm;
-
-		//if (parent->useAtomMap_)
-			environment_ = parent;
-		//else
-		//	environment_ = std::make_shared<Environment>(parent.get());
+		environment_ = parent;
 
 		bool ret = TransactionFrm::AddActualFee(ledger_frm->lpledger_context_->GetBottomTx(), this);
 		if (!ret) return ret;
