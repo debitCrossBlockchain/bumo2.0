@@ -125,9 +125,9 @@ namespace bumo {
 
 			auto batch = tree_->batch_;
 			ElectionConfigSet(batch, election_config_);
-			KeyValueDb *db = Storage::Instance().ledger_db();
+			KeyValueDb *db = Storage::Instance().account_db();
 			if (!db->WriteBatch(*batch)){
-				LOG_ERROR("Failed to write ledger and transaction to database(%s)", db->error_desc().c_str());
+				LOG_ERROR("Failed to write election configuration to database(%s)", db->error_desc().c_str());
 				return false;
 			}
 		}
