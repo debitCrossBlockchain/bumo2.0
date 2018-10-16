@@ -132,9 +132,6 @@
     <ClCompile Include="..\..\src\ledger\fee_calculate.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\ledger\election_manager.cpp">
-      <Filter>ledger</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -231,9 +228,6 @@
       <Filter>glue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ledger\fee_calculate.h">
-      <Filter>ledger</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ledger\election_manager.h">
       <Filter>ledger</Filter>
     </ClInclude>
   </ItemGroup>

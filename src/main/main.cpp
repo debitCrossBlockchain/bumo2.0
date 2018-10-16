@@ -27,7 +27,6 @@
 #include <api/websocket_server.h>
 #include <api/console.h>
 #include <ledger/contract_manager.h>
-#include <ledger/election_manager.h>
 #include <monitor/monitor_manager.h>
 #include "configure.h"
 
@@ -263,14 +262,6 @@ int main(int argc, char *argv[]){
 		}
 		object_exit.Push(std::bind(&bumo::ContractManager::Exit, &contract_manager));
 		LOG_INFO("Initialized contract manager successfully");
-
-		bumo::ElectionManager &election_manager = bumo::ElectionManager::Instance();
-		if (!bumo::g_enable_ || !election_manager.Initialize()) {
-			LOG_ERROR("Failed to initialize election manager");
-			break;
-		}
-		object_exit.Push(std::bind(&bumo::ElectionManager::Exit, &election_manager));
-		LOG_INFO("Initialized election manager successfully");
 
 		bumo::g_ready_ = true;
 
