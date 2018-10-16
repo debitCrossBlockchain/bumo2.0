@@ -48,9 +48,8 @@ namespace bumo{
 	}
 
 	bool Environment::AccountFromDB(const std::string &address, AccountFrm::pointer &account_ptr){
-
-		auto db = Storage::Instance().account_db();
 		std::string index = DecodeAddress(address);
+
 		std::string buff;
 		if (!LedgerManager::Instance().tree_->Get(index, buff)){
 			return false;
