@@ -1,8 +1,10 @@
 'use strict';
 
-const passRate               = 0.7;
-const effectiveVoteInterval  = 24 * 60 * 60 * 1000 * 1000;
-const minPledgeAmount        = 100000 * 100000000;
+let effectiveVoteInterval = 24 * 60 * 60 * 1000 * 1000;
+let minPledgeAmount       = 100000 * 100000000;
+let minAdditionalAmount   = minPledgeAmount * 0.01;
+const candidateSetSize    = 1000;
+const passRate            = 0.7;
 const abolishVar      = 'abolish_';
 const proposerVar     = 'proposer';
 const reasonVar       = 'reason';
@@ -60,7 +62,28 @@ function transferCoin(dest, amount)
 }
 
 function applyAsCandidate(){
-    return;
+    let candidates = getObjectMetaData(candidatesVar);
+    let com = 0;
+    if(candidates[sender] !== undefined){
+        com = int64Compare(thisPayCoinAmount, minAdditionalAmount);
+        assert(com === 1 || com === 0, 'Additional coin amount must more than ' + minAdditionalAmount);
+
+        candidates[sender][0] = int64Add(candidates[sender][0], thisPayCoinAmount);
+    }
+    else{
+        com = int64Compare(thisPayCoinAmount, minPledgeAmount);
+        assert(com === 1 || com === 0, 'Pledge coin amount must more than ' + minAdditionalAmount);
+
+        if(candidates.length >= candidateSetSize){
+            log('Validator candidates were enough.');
+            return false;
+        }
+
+        let data =[thisPayCoinAmount, 0, 0];
+        candidates[sender] = data;
+    }
+
+    return true;
 }
 
 function voteForCandidate(candidate, tokenAmount){
