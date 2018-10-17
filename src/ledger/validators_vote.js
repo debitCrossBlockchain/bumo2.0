@@ -11,7 +11,18 @@ const candidatesVar   = 'validator_candidates';
 const expiredTimeVar  = 'voting_expired_time';
 
 function initCandidatesByValidators(validators){
-    return;
+    let i = 0;
+    let candidates = {};
+
+    while(i < validators.length){
+        let data =[0, 0, 0]; //pledge, token vote, fee vote
+
+        data[0] = validators[i][1];
+        candidates[validators[i][0]] = data;
+        i += 1;
+    }
+
+    return candidates;
 }
 
 function getObjectMetaData(key){
