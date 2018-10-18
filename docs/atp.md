@@ -30,7 +30,7 @@ ATP1.0(Account based Tokenization Protocol) 指基于 BuChain的账号结构对�
 - code-推荐使用大写简拼
 - decimals-小数位在0~8的范围，0表示无小数位
 - totalSupply-范围是0~2^63-1。0表示不固定Token的上限
-- icon-base64位编码，图标文件大小是32k以内
+- icon-base64位编码，图标文件大小是32k以内,推荐200*200像素。
 
 
 
