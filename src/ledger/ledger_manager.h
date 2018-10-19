@@ -103,6 +103,8 @@ namespace bumo {
 
 		static void ElectionConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg);
 		
+		void AddAbnormalRecord(LedgerFrm::pointer ledger_frm, const std::string& abnormal_node);
+		
 		LedgerFrm::pointer last_closed_ledger_;
 		protocol::ValidatorSet validators_;
 		std::string proof_;

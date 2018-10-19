@@ -1167,10 +1167,11 @@ namespace bumo {
 		ValueSaver saver;
 		//Enter the new view
 		std::string abnormal_node;
+		int32_t vsize = validators_.size();
 		for (std::map<std::string, int64_t>::iterator iter = validators_.begin();
 			iter != validators_.end();
 			iter++) {
-			if (iter->second == view_number_) {
+			if (iter->second == view_number_ % vsize) {
 				abnormal_node = iter->first;
 				break;
 			}
