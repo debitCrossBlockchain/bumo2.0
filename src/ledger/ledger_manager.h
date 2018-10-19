@@ -69,6 +69,7 @@ namespace bumo {
 		protocol::FeeConfig GetCurFeeConfig();
 
 		bool ElectionConfigGet(protocol::ElectionConfig& ecfg);
+		void GetAbnormalRecords(Json::Value& record);
 
 		Result DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context); // -1: false, 0 : success, > 0 exception
 		void NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade);
@@ -103,7 +104,7 @@ namespace bumo {
 
 		static void ElectionConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg);
 		
-		void AddAbnormalRecord(LedgerFrm::pointer ledger_frm, const std::string& abnormal_node);
+		void AddAbnormalRecord(const std::string& abnormal_node);
 		
 		LedgerFrm::pointer last_closed_ledger_;
 		protocol::ValidatorSet validators_;
@@ -115,7 +116,10 @@ namespace bumo {
 
 		utils::ReadWriteLock fee_config_mutex_;
 		protocol::FeeConfig fees_;
+
+		// for validator election
 		protocol::ElectionConfig election_config_;
+		std::unordered_map<std::string, int64_t> abnormal_records_;
 
 		struct SyncStat{
 			int64_t send_time_;

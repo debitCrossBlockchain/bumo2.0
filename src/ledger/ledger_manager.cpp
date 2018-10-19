@@ -570,7 +570,7 @@ namespace bumo {
 			}
 		}
 		if (!abnormal_node.empty()) {
-			AddAbnormalRecord(closing_ledger, abnormal_node);
+			AddAbnormalRecord(abnormal_node);
 		}
 
 		int64_t time0 = utils::Timestamp().HighResolution();
@@ -1009,37 +1009,21 @@ namespace bumo {
 		return ecfg.ParseFromString(str);
 	}
 
-	void LedgerManager::AddAbnormalRecord(LedgerFrm::pointer ledger_frm, const std::string& abnormal_node) {
-		AccountFrm::pointer election_acc = nullptr;
-		if (!ledger_frm->environment_->GetEntry(General::CONTRACT_VALIDATOR_ADDRESS, election_acc)) {
-			LOG_ERROR("Failed to get account %s from environment", General::CONTRACT_VALIDATOR_ADDRESS);
-		}
-		if (election_acc) {
-			protocol::KeyPair kp;
-			if (!election_acc->GetMetaData(General::ABNORMAL_RECORDS, kp)) {
-				LOG_ERROR("Failed to get abnormal nodes record from metadata of %s", General::CONTRACT_VALIDATOR_ADDRESS);
-				kp.set_key(General::ABNORMAL_RECORDS);
-				Json::Value nodes;
-				nodes[abnormal_node] = 1;
-				kp.set_value(nodes.toFastString());
-			}
-			else {
-				Json::Value nodes;
-				nodes.fromString(kp.value());
-				if (nodes.isMember(abnormal_node)) {
-					int32_t cnt = nodes[abnormal_node].asInt();
-					nodes[abnormal_node] = cnt + 1;
-				}
-				else {
-					nodes[abnormal_node] = 1;
-				}
-				kp.set_value(nodes.toFastString());
-			}
-
-			election_acc->SetMetaData(kp);
+	void LedgerManager::AddAbnormalRecord(const std::string& abnormal_node) {
+		std::unordered_map<std::string, int64_t>::iterator it = abnormal_records_.find(abnormal_node);
+		if (it != abnormal_records_.end()) {
+			it->second++;
 		}
 		else {
-			LOG_ERROR("Validator contract address %s not exist", General::CONTRACT_VALIDATOR_ADDRESS);
+			abnormal_records_.insert(std::make_pair(abnormal_node, 1));
+		}
+	}
+
+	void LedgerManager::GetAbnormalRecords(Json::Value& records) {
+		for (std::unordered_map<std::string, int64_t>::iterator it = abnormal_records_.begin();
+			it != abnormal_records_.end();
+			it++) {
+			records[it->first] = it->second;
 		}
 	}
 }

@@ -220,6 +220,7 @@ namespace bumo{
 		js_func_read_["toBaseUnit"] = V8Contract::CallBackToBaseUnit;
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
+		js_func_read_["getAbnormalRecords"] = V8Contract::CallBackGetAbnormalRecords;
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
@@ -1215,6 +1216,30 @@ namespace bumo{
 			return;
 		} while (false);
 
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackGetAbnormalRecords(const v8::FunctionCallbackInfo<v8::Value>& args)
+	{
+		do {
+			if (args.Length() != 0)
+			{
+				LOG_TRACE("parameter error");
+				args.GetReturnValue().Set(false);
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+
+			Json::Value jsonRecords;
+			LedgerManager::Instance().GetAbnormalRecords(jsonRecords);
+
+			std::string strvalue = jsonRecords.toFastString();
+			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
+
+			return;
+		} while (false);
 		args.GetReturnValue().Set(false);
 	}
 

@@ -11,7 +11,6 @@ const reasonVar       = 'reason';
 const ballotVar       = 'ballot';
 const candidatesVar   = 'validator_candidates';
 const expiredTimeVar  = 'voting_expired_time';
-const abnormalRecordsVar   = 'abnormal_records';
 
 
 function initCandidatesByValidators(validators){
@@ -104,16 +103,6 @@ function voteAbolishValidator(malicious){
     return;
 }
 
-function initAbnormalRcords() {
-    let abnormal_records = {}; // key: address, value: count
-    storageStore(abnormalRecordsVar, JSON.stringify(abnormal_records));
-}
-
-function getAbnormalRecords() {
-    let data = getObjectMetaData(abnormalRecordsVar);
-    return data;
-}
-
 function query(input_str){
     let input  = JSON.parse(input_str);
 
@@ -168,8 +157,6 @@ function init(){
     let initCandidates = initCandidatesByValidators(validators);
     let candidateStr   = JSON.stringify(initCandidates);
     storageStore(candidatesVar, candidateStr);
-	
-	initAbnormalRcords();
 	
     return true;
 }
