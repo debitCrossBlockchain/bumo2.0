@@ -561,6 +561,49 @@ namespace bumo {
 		header->set_consensus_value_hash(chash);
 		//LOG_INFO("set_consensus_value_hash:%s,%s", utils::String::BinToHexString(con_str).c_str(), utils::String::BinToHexString(chash).c_str());
 		header->set_version(last_closed_ledger_->GetProtoHeader().version());
+		
+		// Add abnormal node record
+		std::string abnormal_node;
+		for (int i = 0; consensus_value.entry().size(); i++) {
+			const protocol::KeyPair& kv = consensus_value.entry(i);
+			if (kv.key() == "abnormal_node") {
+				abnormal_node = kv.value();
+			}
+		}
+		AccountFrm::pointer election_acc = nullptr;
+		if (!closing_ledger->environment_->GetEntry(General::CONTRACT_VALIDATOR_ADDRESS, election_acc)) {
+			LOG_TRACE("Failed to get account %s from environment", General::CONTRACT_VALIDATOR_ADDRESS);
+			if (!Environment::AccountFromDB(General::CONTRACT_VALIDATOR_ADDRESS, election_acc)) {
+				LOG_ERROR("Failed to get account %s from db.", General::CONTRACT_VALIDATOR_ADDRESS);
+			}
+		}
+		if (election_acc) {
+			protocol::KeyPair kp;
+			if (!election_acc->GetMetaData(General::ABNORMAL_RECORDS, kp)) {
+				LOG_ERROR("Failed to get abnormal nodes record from metadata of %s", General::CONTRACT_VALIDATOR_ADDRESS);
+				kp.set_key(General::ABNORMAL_RECORDS);
+				Json::Value nodes;
+				nodes[abnormal_node] = 1;
+				kp.set_value(nodes.toFastString());
+			}
+			else {
+				Json::Value nodes;
+				nodes.fromString(kp.value());
+				if (nodes.isMember(abnormal_node)) {
+					int32_t cnt = nodes[abnormal_node].asInt();
+					nodes[abnormal_node] = cnt + 1;
+				}
+				else {
+					nodes[abnormal_node] = 1;
+				}
+				kp.set_value(nodes.toFastString());
+			}
+			
+			election_acc->SetMetaData(kp);
+		}
+		else {
+			LOG_ERROR("Validator contract address %s not exist", General::CONTRACT_VALIDATOR_ADDRESS);
+		}
 
 		int64_t time0 = utils::Timestamp().HighResolution();
 		int64_t new_count = 0, change_count = 0;
