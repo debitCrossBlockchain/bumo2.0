@@ -1084,7 +1084,7 @@ namespace bumo {
 		}
 
 		ClearViewChanges();
-		OnViewChanged("");
+		OnViewChanged("", "");
 		return true;
 	}
 
@@ -1150,7 +1150,7 @@ namespace bumo {
 			LOG_INFO("View-change instance got the prepared value, desc(%s)", PbftDesc::GetPbft(pbft).c_str());
 		}
 
-		//Delete uncommited instances
+		//Delete uncommitted instances
 		for (PbftInstanceMap::iterator iter_inst = instances_.begin();
 			iter_inst != instances_.end();
 			) {
@@ -1166,6 +1166,16 @@ namespace bumo {
 
 		ValueSaver saver;
 		//Enter the new view
+		std::string abnormal_node;
+		for (std::map<std::string, int64_t>::iterator iter = validators_.begin();
+			iter != validators_.end();
+			iter++) {
+			if (iter->second == view_number_) {
+				abnormal_node = iter->first;
+				break;
+			}
+		}
+
 		view_number_ = vc_instance.view_number_;
 		view_active_ = true;
 		saver.SaveValue(PbftDesc::VIEW_ACTIVE, view_active_ ? 1 : 0);
@@ -1177,7 +1187,7 @@ namespace bumo {
 		ClearViewChanges();
 
 		notify_->OnResetCloseTimer();
-		OnViewChanged(last_cons_value);
+		OnViewChanged(last_cons_value, abnormal_node);
 
 		return true;
 	}

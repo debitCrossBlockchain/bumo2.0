@@ -235,6 +235,7 @@ message ConsensusValue{
 	bytes previous_ledger_hash = 5;
 	LedgerUpgrade ledger_upgrade = 6;
 	ConsensusValueValidation validation = 7;
+	repeated KeyPair entry = 8;
 }
 
 message Contract{

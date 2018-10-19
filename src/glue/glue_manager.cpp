@@ -41,7 +41,7 @@ namespace bumo {
 
 		//Start consensus
 		start_consensus_timer_ = utils::Timer::Instance().AddTimer(3 * utils::MICRO_UNITS_PER_SEC, 0, [this](int64_t data) {
-			StartConsensus("");
+			StartConsensus("", "");
 		});
 
 		protocol::LedgerHeader lcl = LedgerManager::Instance().GetLastClosedLedger();
@@ -86,7 +86,7 @@ namespace bumo {
 		return true;
 	}
 
-	bool GlueManager::StartConsensus(const std::string &last_consavlue) {
+	bool GlueManager::StartConsensus(const std::string &last_consavlue, const std::string& abnormal_node) {
 
 		time_start_consenus_ = utils::Timestamp::HighResolution();
 		if (!consensus_->IsLeader()) {
@@ -116,10 +116,14 @@ namespace bumo {
 			if (CheckValue(last_consavlue) == Consensus::CHECK_VALUE_VALID) {
 				protocol::ConsensusValue propose_value;
 				propose_value.ParseFromString(last_consavlue);
+				protocol::KeyPair* kv = propose_value.add_entry();
+				kv->set_key("abnormal_node");
+				kv->set_value(abnormal_node);
+
 				LOG_INFO("Take the last consensus value as the proposal. The number of transactions in consensus value is %d, and the last closed ledger's hash is %s.", propose_value.txset().txs_size(),
 					utils::String::Bin4ToHexString(lcl.hash()).c_str());
 
-				return consensus_->Request(last_consavlue);
+				return consensus_->Request(propose_value.SerializeAsString());
 			}
 		}
 
@@ -309,7 +313,7 @@ namespace bumo {
 
 			if (consensus_->IsLeader()) {
 				start_consensus_timer_ = utils::Timer::Instance().AddTimer(waiting_time, 0, [this](int64_t data) {
-					StartConsensus("");
+					StartConsensus("", "");
 				});
 
 				LOG_INFO("Ledger(" FMT_I64 ") closed successfully, time used (" FMT_I64 ")ms, next consensus in(" FMT_I64 ")ms",
@@ -327,9 +331,9 @@ namespace bumo {
 		return lcl1.hash();
 	}
 
-	void GlueManager::OnViewChanged(const std::string &last_consvalue) {
+	void GlueManager::OnViewChanged(const std::string &last_consvalue, const std::string& abnormal_node) {
 		LOG_INFO("On view changed.");
-		StartConsensus(last_consvalue);
+		StartConsensus(last_consvalue, abnormal_node);
 		StartLedgerCloseTimer();
 	}
 

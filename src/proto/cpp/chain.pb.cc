@@ -597,7 +597,7 @@ void protobuf_AssignDesc_chain_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValueValidation, _is_default_instance_));
   ConsensusValue_descriptor_ = file->message_type(25);
-  static const int ConsensusValue_offsets_[7] = {
+  static const int ConsensusValue_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, txset_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, close_time_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, previous_proof_),
@@ -605,6 +605,7 @@ void protobuf_AssignDesc_chain_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, previous_ledger_hash_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, ledger_upgrade_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, validation_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ConsensusValue, entry_),
   };
   ConsensusValue_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -913,26 +914,27 @@ void protobuf_AddDesc_chain_2eproto() {
     "e\030\007 \001(\003\":\n\021TransactionEnvSet\022%\n\003txs\030\002 \003("
     "\0132\030.protocol.TransactionEnv\"G\n\030Consensus"
     "ValueValidation\022\025\n\rexpire_tx_ids\030\001 \003(\005\022\024"
-    "\n\014error_tx_ids\030\002 \003(\005\"\203\002\n\016ConsensusValue\022"
+    "\n\014error_tx_ids\030\002 \003(\005\"\245\002\n\016ConsensusValue\022"
     "*\n\005txset\030\001 \001(\0132\033.protocol.TransactionEnv"
     "Set\022\022\n\nclose_time\030\002 \001(\003\022\026\n\016previous_proo"
     "f\030\003 \001(\014\022\022\n\nledger_seq\030\004 \001(\003\022\034\n\024previous_"
     "ledger_hash\030\005 \001(\014\022/\n\016ledger_upgrade\030\006 \001("
     "\0132\027.protocol.LedgerUpgrade\0226\n\nvalidation"
     "\030\007 \001(\0132\".protocol.ConsensusValueValidati"
-    "on\"j\n\010Contract\022-\n\004type\030\001 \001(\0162\037.protocol."
-    "Contract.ContractType\022\017\n\007payload\030\002 \001(\t\"\036"
-    "\n\014ContractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026Opera"
-    "tionCreateAccount\022\024\n\014dest_address\030\001 \001(\t\022"
-    "$\n\010contract\030\002 \001(\0132\022.protocol.Contract\022(\n"
-    "\004priv\030\003 \001(\0132\032.protocol.AccountPrivilege\022"
-    "$\n\tmetadatas\030\004 \003(\0132\021.protocol.KeyPair\022\024\n"
-    "\014init_balance\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\""
-    "X\n\024OperationSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005"
-    "value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_f"
-    "lag\030\004 \001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNA"
-    "TURE\020dB\"\n io.bumo.sdk.core.extend.protob"
-    "ufb\006proto3", 4410);
+    "on\022 \n\005entry\030\010 \003(\0132\021.protocol.KeyPair\"j\n\010"
+    "Contract\022-\n\004type\030\001 \001(\0162\037.protocol.Contra"
+    "ct.ContractType\022\017\n\007payload\030\002 \001(\t\"\036\n\014Cont"
+    "ractType\022\016\n\nJAVASCRIPT\020\000\"\316\001\n\026OperationCr"
+    "eateAccount\022\024\n\014dest_address\030\001 \001(\t\022$\n\010con"
+    "tract\030\002 \001(\0132\022.protocol.Contract\022(\n\004priv\030"
+    "\003 \001(\0132\032.protocol.AccountPrivilege\022$\n\tmet"
+    "adatas\030\004 \003(\0132\021.protocol.KeyPair\022\024\n\014init_"
+    "balance\030\005 \001(\003\022\022\n\ninit_input\030\006 \001(\t\"X\n\024Ope"
+    "rationSetMetadata\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030"
+    "\002 \001(\t\022\017\n\007version\030\003 \001(\003\022\023\n\013delete_flag\030\004 "
+    "\001(\010*#\n\005Limit\022\013\n\007UNKNOWN\020\000\022\r\n\tSIGNATURE\020d"
+    "B\"\n io.bumo.sdk.core.extend.protobufb\006pr"
+    "oto3", 4444);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "chain.proto", &protobuf_RegisterTypes);
   Account::default_instance_ = new Account();
@@ -13510,6 +13512,7 @@ const int ConsensusValue::kLedgerSeqFieldNumber;
 const int ConsensusValue::kPreviousLedgerHashFieldNumber;
 const int ConsensusValue::kLedgerUpgradeFieldNumber;
 const int ConsensusValue::kValidationFieldNumber;
+const int ConsensusValue::kEntryFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 ConsensusValue::ConsensusValue()
@@ -13598,6 +13601,7 @@ void ConsensusValue::Clear() {
   ledger_upgrade_ = NULL;
   if (GetArenaNoVirtual() == NULL && validation_ != NULL) delete validation_;
   validation_ = NULL;
+  entry_.Clear();
 }
 
 bool ConsensusValue::MergePartialFromCodedStream(
@@ -13700,6 +13704,23 @@ bool ConsensusValue::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(66)) goto parse_entry;
+        break;
+      }
+
+      // repeated .protocol.KeyPair entry = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_entry:
+          DO_(input->IncrementRecursionDepth());
+         parse_loop_entry:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
+                input, add_entry()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(66)) goto parse_loop_entry;
+        input->UnsafeDecrementRecursionDepth();
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -13768,6 +13789,12 @@ void ConsensusValue::SerializeWithCachedSizes(
       7, *this->validation_, output);
   }
 
+  // repeated .protocol.KeyPair entry = 8;
+  for (unsigned int i = 0, n = this->entry_size(); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      8, this->entry(i), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.ConsensusValue)
 }
 
@@ -13817,6 +13844,13 @@ void ConsensusValue::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         7, *this->validation_, false, target);
+  }
+
+  // repeated .protocol.KeyPair entry = 8;
+  for (unsigned int i = 0, n = this->entry_size(); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        8, this->entry(i), false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.ConsensusValue)
@@ -13876,6 +13910,14 @@ int ConsensusValue::ByteSize() const {
         *this->validation_);
   }
 
+  // repeated .protocol.KeyPair entry = 8;
+  total_size += 1 * this->entry_size();
+  for (int i = 0; i < this->entry_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->entry(i));
+  }
+
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -13904,6 +13946,7 @@ void ConsensusValue::MergeFrom(const ConsensusValue& from) {
   if (GOOGLE_PREDICT_FALSE(&from == this)) {
     ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
   }
+  entry_.MergeFrom(from.entry_);
   if (from.has_txset()) {
     mutable_txset()->::protocol::TransactionEnvSet::MergeFrom(from.txset());
   }
@@ -13960,6 +14003,7 @@ void ConsensusValue::InternalSwap(ConsensusValue* other) {
   previous_ledger_hash_.Swap(&other->previous_ledger_hash_);
   std::swap(ledger_upgrade_, other->ledger_upgrade_);
   std::swap(validation_, other->validation_);
+  entry_.UnsafeArenaSwap(&other->entry_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -14203,6 +14247,36 @@ void ConsensusValue::set_allocated_validation(::protocol::ConsensusValueValidati
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.ConsensusValue.validation)
+}
+
+// repeated .protocol.KeyPair entry = 8;
+int ConsensusValue::entry_size() const {
+  return entry_.size();
+}
+void ConsensusValue::clear_entry() {
+  entry_.Clear();
+}
+const ::protocol::KeyPair& ConsensusValue::entry(int index) const {
+  // @@protoc_insertion_point(field_get:protocol.ConsensusValue.entry)
+  return entry_.Get(index);
+}
+::protocol::KeyPair* ConsensusValue::mutable_entry(int index) {
+  // @@protoc_insertion_point(field_mutable:protocol.ConsensusValue.entry)
+  return entry_.Mutable(index);
+}
+::protocol::KeyPair* ConsensusValue::add_entry() {
+  // @@protoc_insertion_point(field_add:protocol.ConsensusValue.entry)
+  return entry_.Add();
+}
+::google::protobuf::RepeatedPtrField< ::protocol::KeyPair >*
+ConsensusValue::mutable_entry() {
+  // @@protoc_insertion_point(field_mutable_list:protocol.ConsensusValue.entry)
+  return &entry_;
+}
+const ::google::protobuf::RepeatedPtrField< ::protocol::KeyPair >&
+ConsensusValue::entry() const {
+  // @@protoc_insertion_point(field_list:protocol.ConsensusValue.entry)
+  return entry_;
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

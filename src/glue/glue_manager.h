@@ -63,7 +63,7 @@ namespace bumo {
 		bool Initialize();
 		bool Exit();
 
-		bool StartConsensus(const std::string &last_consavlue); //Start to trigger consensus
+		bool StartConsensus(const std::string &last_consavlue, const std::string& abnormal_node); //Start to trigger consensus
 		bool CreateTableIfNotExist(); //Create the db.
 		std::string CalculateTxTreeHash(const std::vector<TransactionFrm::pointer> &tx_array);
 		//const LedgerHeaderLiteFrmPtr GetLastLedger() const { return last_ledger_; };
@@ -95,7 +95,7 @@ namespace bumo {
 
 		// IConsensusNotify
 		virtual std::string OnValueCommited(int64_t request_seq, const std::string &value, const std::string &evidence,bool calculate_total);
-		virtual void OnViewChanged(const std::string &last_consvalue);
+		virtual void OnViewChanged(const std::string &last_consvalue, const std::string& abnormal_node);
 		virtual int32_t CheckValue(const std::string &value);
 		virtual void SendConsensusMessage(const std::string &message);
 		virtual std::string FetchNullMsg();

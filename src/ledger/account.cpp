@@ -378,6 +378,7 @@ namespace bumo {
 	void AccountFrm::SetCreator(std::string& address) {
 		account_info_.set_creator(address);
 	}
+
 	bool AccountFrm::FrozenCoin(int64_t amount) {
 		int64_t balance = 0;
 		if (!utils::SafeIntSub(account_info_.balance(), amount, balance)) {
@@ -396,6 +397,7 @@ namespace bumo {
 		account_info_.set_frozen_coin(frozen_coin);
 		return true;
 	}
+
 	bool AccountFrm::UnfrozenCoin(int64_t amount) {
 		int64_t frozen_coin = 0;
 		if (!utils::SafeIntSub(account_info_.frozen_coin(), amount, frozen_coin)) {
