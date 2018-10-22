@@ -2,7 +2,6 @@
 
 let effectiveVoteInterval = 24 * 60 * 60 * 1000 * 1000;
 let minPledgeAmount       = 100000 * 100000000;
-let minAdditionalAmount   = minPledgeAmount * 0.01;
 const candidateSetSize    = 1000;
 const passRate            = 0.7;
 const abolishVar      = 'abolish_';
@@ -11,22 +10,6 @@ const reasonVar       = 'reason';
 const ballotVar       = 'ballot';
 const candidatesVar   = 'validator_candidates';
 const expiredTimeVar  = 'voting_expired_time';
-
-
-function initCandidatesByValidators(validators){
-    let i = 0;
-    let candidates = {};
-
-    while(i < validators.length){
-        let data =[0, 0, 0]; //pledge, token vote, fee vote
-
-        data[0] = validators[i][1];
-        candidates[validators[i][0]] = data;
-        i += 1;
-    }
-
-    return candidates;
-}
 
 function getObjectMetaData(key){
     assert(typeof key === 'string', 'Args type error, key must be a string.');
@@ -62,29 +45,29 @@ function transferCoin(dest, amount)
     log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
 }
 
-function applyAsCandidate(){
-    let candidates = getObjectMetaData(candidatesVar);
-    let com = 0;
-    if(candidates[sender] !== undefined){
-        com = int64Compare(thisPayCoinAmount, minAdditionalAmount);
-        assert(com === 1 || com === 0, 'Additional coin amount must more than ' + minAdditionalAmount);
+function findValidator(addr){
+    let validators = getValidators();
 
-        candidates[sender][0] = int64Add(candidates[sender][0], thisPayCoinAmount);
-    }
-    else{
-        com = int64Compare(thisPayCoinAmount, minPledgeAmount);
-        assert(com === 1 || com === 0, 'Pledge coin amount must more than ' + minAdditionalAmount);
-
-        if(candidates.length >= candidateSetSize){
-            log('Validator candidates were enough.');
-            return false;
+    let i = 0;
+    while(i < validators.length){
+        if(validators[i][0] === addr){
+            return true;
         }
-
-        let data =[thisPayCoinAmount, 0, 0];
-        candidates[sender] = data;
+        i += 1;
     }
 
-    return true;
+    return false;
+}
+
+function applyAsCandidate(){
+    let candidate = getValidateCandidate(sender);
+
+    if(candidate === false){
+        let com = int64Compare(thisPayCoinAmount, minPledgeAmount);
+        assert(com === 1 || com === 0, 'Pledge coin amount must more than ' + minPledgeAmount);
+    }
+
+    assert(setValidateCandidate(sender, thisPayCoinAmount) === true, 'Application to become a validator or an additional deposit failed.');
 }
 
 function voteForCandidate(candidate, tokenAmount){
@@ -95,7 +78,28 @@ function voteForCandidate(candidate, tokenAmount){
     return;
 }
 
-function quitCandidateStatus(){
+function takebackCoin(tokenAmount){
+    let candidate = getValidateCandidate(sender);
+    assert(candidate !== false, 'Sender(' + sender + ') is not validator candidate.');
+
+    let left = int64Sub(candidate.pledge, tokenAmount);
+    let com = int64Compare(left, minPledgeAmount);
+    if(com === -1){
+        assert(setValidateCandidate(sender, '-'+ candidate.pledge) === true, 'Quit candidate status failed.');
+        assert(transferCoin(sender, candidate.pledge) === true, 'Takeback pledge coin failed.');
+    }
+    else{
+        assert(setValidateCandidate(sender, '-'+ tokenAmount) === true, 'Reduced pledge coin operation failed.');
+        assert(transferCoin(sender, tokenAmount) === true, 'Takeback pledge coin failed.');
+    }
+
+    if(findValidator(sender) === true){
+        //to do: triger validator update, com += 1; just for avoid jslint, must be delete later
+        com += 1;
+    }
+}
+
+function voteForCandidate(candidate, tokenAmount){
     return;
 }
 
@@ -134,7 +138,7 @@ function query(input_str){
 function main(input_str){
     let input = JSON.parse(input_str);
 
-    if(input.method === 'applyAsCandidate'){
+    if(input.method === 'pledgeCoin'){
         applyAsCandidate();
     }
     else if(input.method === 'voteForCandidate'){
@@ -142,8 +146,8 @@ function main(input_str){
 		assert(typeof input.params.coinAmount !== string, 'Arg-coinAmount should be string')
 	    voteForCandidate(input.params.address, input.params.coinAmount);
     }
-    else if(input.method === 'quitCandidateStatus'){
-	    quitCandidateStatus();
+    else if(input.method === 'takebackCoin'){
+	    takebackCoin(input.params.amount);
     }
     else if(input.method === 'abolishValidator'){
     	abolishValidator(input.params.address, input.params.proof);
@@ -157,12 +161,5 @@ function main(input_str){
 }
 
 function init(){
-    let validators = getValidators();
-    assert(validators !== false, 'Get validators failed.');
-
-    let initCandidates = initCandidatesByValidators(validators);
-    let candidateStr   = JSON.stringify(initCandidates);
-    storageStore(candidatesVar, candidateStr);
-	
     return true;
 }

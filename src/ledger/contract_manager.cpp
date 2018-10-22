@@ -221,7 +221,7 @@ namespace bumo{
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
 		js_func_read_["getAbnormalRecords"] = V8Contract::CallBackGetAbnormalRecords;
-		js_func_read_["getValidateCandidate"] = V8Contract::CallBackGetValidatorCadidates;
+		js_func_read_["getValidateCandidate"] = V8Contract::CallBackGetValidatorCandidate;
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
@@ -233,7 +233,7 @@ namespace bumo{
 		js_func_write_["issueAsset"] = V8Contract::CallBackIssueAsset;
 		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
 		js_func_write_["tlog"] = V8Contract::CallBackTopicLog;
-		js_func_write_["setValidateCandidate"] = V8Contract::CallBackSetValidatorCadidates;
+		js_func_write_["setValidateCandidate"] = V8Contract::CallBackSetValidatorCandidate;
 		js_func_read_["setVoteForCandidate"] = V8Contract::CallBackSetVoteForCandidate;
 
 		LoadJsLibSource();
@@ -1122,7 +1122,7 @@ namespace bumo{
 		args.GetReturnValue().Set(obj);
 	}
 
-	void V8Contract::CallBackGetValidatorCadidates(const v8::FunctionCallbackInfo<v8::Value>& args){
+	void V8Contract::CallBackGetValidatorCandidate(const v8::FunctionCallbackInfo<v8::Value>& args){
 		do {
 			if (args.Length() != 1) {
 				LOG_TRACE("parameter error");
@@ -1162,12 +1162,10 @@ namespace bumo{
 		args.GetReturnValue().Set(false);
 	}
 
-	void V8Contract::CallBackSetValidatorCadidates(const v8::FunctionCallbackInfo<v8::Value>& args){
+	void V8Contract::CallBackSetValidatorCandidate(const v8::FunctionCallbackInfo<v8::Value>& args){
 		std::string error_desc;
-		do
-		{
-			if (args.Length() != 2)
-			{
+		do{
+			if (args.Length() != 2){
 				error_desc = "parameter number error";
 				break;
 			}
@@ -1184,17 +1182,16 @@ namespace bumo{
 				break;
 			}
 
-			if (v8_contract->GetParameter().this_address_ != General::CONTRACT_VALIDATOR_ADDRESS)
-			{
-				error_desc = utils::String::Format("contract(%s) has no permission to call callBackSetValidators interface.", v8_contract->GetParameter().this_address_.c_str());
+			if (v8_contract->GetParameter().this_address_ != General::CONTRACT_VALIDATOR_ADDRESS){
+				error_desc = utils::String::Format("contract(%s) has no permission to call setValidatorCandiate interface.", v8_contract->GetParameter().this_address_.c_str());
 				break;
 			}
 			std::string addr = std::string(ToCString(v8::String::Utf8Value(args[0])));
-			std::string amount = std::string(ToCString(v8::String::Utf8Value(args[1])));
+			std::string sAmount = std::string(ToCString(v8::String::Utf8Value(args[1])));
 
-			int64_t pledge_amount = 0;
-			if (!utils::String::SafeStoi64(amount, pledge_amount) || pledge_amount < 0){
-				error_desc = utils::String::Format("Failed to execute setValidateCandidte function in contract, candidate:%s, pledge amount:%s.", addr.c_str(), amount.c_str());
+			int64_t iAmount = 0;
+			if (!utils::String::SafeStoi64(sAmount, iAmount)){
+				error_desc = utils::String::Format("Failed to convert arg[1] from string to number, amount:%s.", sAmount.c_str());
 				break;
 			}
 
@@ -1203,21 +1200,36 @@ namespace bumo{
 			Environment::CandidatePointer candidate;
 			std::shared_ptr<Environment> env = ledger_context->GetTopTx()->environment_;
 			if (!env->GetValidatorCandidate(addr, candidate)){
-				candidate->set_address(addr);
-				candidate->set_pledge(pledge_amount);
-			}
-			else{
-				int64_t new_amount = 0;
-				if (utils::SafeIntAdd(candidate->pledge(), pledge_amount, new_amount)){
-					candidate->set_pledge(new_amount);
-				}
-				else{
+				if (iAmount < 0){
+					error_desc = utils::String::Format("Pledge amount(%s) < 0.", sAmount.c_str());
 					break;
 				}
-				
-			}
 
-			env->SetValidatorCandidate(addr, candidate);
+				candidate = std::make_shared<protocol::ValidatorCandidate>();
+				candidate->set_address(addr);
+				candidate->set_pledge(iAmount);
+				env->SetValidatorCandidate(addr, candidate);
+			}
+			else{
+				int64_t newAmount = 0;
+				if (!utils::SafeIntAdd(candidate->pledge(), iAmount, newAmount)){
+					error_desc = utils::String::Format("Pledge amount(%ld) + additional amount(%s) overflowed", candidate->pledge(), sAmount);
+					break;
+				}
+
+				if (newAmount < 0){
+					error_desc = utils::String::Format("Withdrawal amount(%s) > pledge amount(%ld).", sAmount.c_str(), candidate->pledge());
+					break;
+				}
+
+				if (newAmount == 0){
+					env->DelValidatorCandidate(addr);
+				}
+				else{
+					candidate->set_pledge(newAmount);
+				}
+			}
+			
 			args.GetReturnValue().Set(true);
 			return;
 
