@@ -1163,10 +1163,8 @@ namespace bumo{
 
 	void V8Contract::CallBackSetValidatorCadidate(const v8::FunctionCallbackInfo<v8::Value>& args){
 		std::string error_desc;
-		do
-		{
-			if (args.Length() != 2)
-			{
+		do{
+			if (args.Length() != 2){
 				error_desc = "parameter number error";
 				break;
 			}
