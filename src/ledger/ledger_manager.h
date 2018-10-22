@@ -17,7 +17,7 @@
 #define LEDGER_MANAGER_H_
 
 #include <utils/headers.h>
-#include <utils/entry_cache.h>
+//#include <utils/entry_cache.h>
 #include <common/general.h>
 #include <common/storage.h>
 #include <common/private_key.h>
@@ -119,6 +119,7 @@ namespace bumo {
 
 		// for validator election
 		protocol::ElectionConfig election_config_;
+		std::map<std::string, protocol::ValidatorCandidate> validator_candidates_;
 		std::unordered_map<std::string, int64_t> abnormal_records_;
 
 		struct SyncStat{

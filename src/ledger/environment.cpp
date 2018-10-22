@@ -22,7 +22,7 @@ namespace bumo{
 	Environment::Environment(mapKV* data, settingKV* settings, candidateKV* candidates) :
 		AtomMap<std::string, AccountFrm>(data), 
 		settings_(settings), 
-		validator_candidates_(candidates)
+		candidates_(candidates)
 	{
 	}
 
@@ -31,13 +31,13 @@ namespace bumo{
 	}
 
 	bool Environment::Commit(){
-		return settings_.Commit() && validator_candidates_.Commit() && AtomMap<std::string, AccountFrm>::Commit();
+		return settings_.Commit() && candidates_.Commit() && AtomMap<std::string, AccountFrm>::Commit();
 	}
 
 	void Environment::ClearChangeBuf()
 	{
 		settings_.ClearChangeBuf();
-		validator_candidates_.ClearChangeBuf();
+		candidates_.ClearChangeBuf();
 		AtomMap<std::string, AccountFrm>::ClearChangeBuf();
 	}
 
@@ -71,7 +71,7 @@ namespace bumo{
 	{
 		mapKV& data	= GetActionBuf();
 		settingKV& settings = settings_.GetActionBuf();
-		candidateKV& candidates = validator_candidates_.GetActionBuf();
+		candidateKV& candidates = candidates_.GetActionBuf();
 		std::shared_ptr<Environment> next = std::make_shared<Environment>(&data, &settings, &candidates);
 
 		return next;
@@ -178,10 +178,10 @@ namespace bumo{
 	}
 
 	bool Environment::GetValidatorCandidate(const std::string& addr, CandidatePointer& candidate){
-		return validator_candidates_.Get(addr, candidate);
+		return candidates_.Get(addr, candidate);
 	}
 
 	bool Environment::SetValidatorCandidate(const std::string& addr, CandidatePointer candidate){
-		return validator_candidates_.Set(addr, candidate);
+		return candidates_.Set(addr, candidate);
 	}
 }

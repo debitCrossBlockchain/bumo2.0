@@ -35,7 +35,7 @@ namespace bumo {
 		const std::string feesKey = "configFees";
 
 		AtomMap<std::string, Json::Value> settings_;
-		AtomMap<std::string, protocol::ValidatorCandidate> validator_candidates_;
+		AtomMap<std::string, protocol::ValidatorCandidate> candidates_;
 
 		Environment() = default;
 		Environment(Environment const&) = delete;

@@ -221,6 +221,7 @@ namespace bumo{
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
 		js_func_read_["getAbnormalRecords"] = V8Contract::CallBackGetAbnormalRecords;
+		js_func_read_["getValidateCandidate"] = V8Contract::CallBackGetValidatorCadidates;
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
@@ -232,6 +233,7 @@ namespace bumo{
 		js_func_write_["issueAsset"] = V8Contract::CallBackIssueAsset;
 		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
 		js_func_write_["tlog"] = V8Contract::CallBackTopicLog;
+		js_func_write_["setValidateCandidate"] = V8Contract::CallBackSetValidatorCadidates;
 
 		LoadJsLibSource();
 		LoadJslintGlobalString();
@@ -1117,6 +1119,112 @@ namespace bumo{
 		} while (false);
 
 		args.GetReturnValue().Set(obj);
+	}
+
+	void V8Contract::CallBackGetValidatorCadidates(const v8::FunctionCallbackInfo<v8::Value>& args){
+		do {
+			if (args.Length() != 1) {
+				LOG_TRACE("parameter error");
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsString()) {
+				LOG_TRACE("contract execution error, GetValidatorCandidate, parameter 0 should be a String");
+				break;
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_TRACE("Failed to find contract object by isolate id");
+				break;
+			}
+
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			//ledger_context->GetTopTx()->ContractStepInc(100);
+
+			std::string key = ToCString(v8::String::Utf8Value(args[0]));
+			bumo::Environment::CandidatePointer pCandidate = nullptr;
+			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
+			if (!environment->GetValidatorCandidate(key, pCandidate)) {
+				LOG_ERROR("Failed to find validator candidate %s.", key.c_str());
+				break;
+			}
+
+			Json::Value jsonValue = Proto2Json(*pCandidate);
+			std::string strvalue = jsonValue.toFastString();
+			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+			args.GetReturnValue().Set(v8::JSON::Parse(returnvalue));
+			return;
+
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackSetValidatorCadidates(const v8::FunctionCallbackInfo<v8::Value>& args){
+		std::string error_desc;
+		do
+		{
+			if (args.Length() != 2)
+			{
+				error_desc = "parameter number error";
+				break;
+			}
+
+			if ((!args[0]->IsString()) || (!args[1]->IsString())) {
+				error_desc = "arg0 and arg1 should be string";
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->GetParameter().ledger_context_) {
+				error_desc = "Can't find contract object by isolate id";
+				break;
+			}
+
+			if (v8_contract->GetParameter().this_address_ != General::CONTRACT_VALIDATOR_ADDRESS)
+			{
+				error_desc = utils::String::Format("contract(%s) has no permission to call callBackSetValidators interface.", v8_contract->GetParameter().this_address_.c_str());
+				break;
+			}
+			std::string addr = std::string(ToCString(v8::String::Utf8Value(args[0])));
+			std::string amount = std::string(ToCString(v8::String::Utf8Value(args[1])));
+
+			int64_t pledge_amount = 0;
+			if (!utils::String::SafeStoi64(amount, pledge_amount) || pledge_amount < 0){
+				error_desc = utils::String::Format("Failed to execute setValidateCandidte function in contract, candidate:%s, pledge amount:%s.", addr.c_str(), amount.c_str());
+				break;
+			}
+
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+
+			Environment::CandidatePointer candidate;
+			std::shared_ptr<Environment> env = ledger_context->GetTopTx()->environment_;
+			if (!env->GetValidatorCandidate(addr, candidate)){
+				candidate->set_address(addr);
+				candidate->set_pledge(pledge_amount);
+			}
+			else{
+				int64_t new_amount = 0;
+				if (utils::SafeIntAdd(candidate->pledge(), pledge_amount, new_amount)){
+					candidate->set_pledge(new_amount);
+				}
+				else{
+					break;
+				}
+				
+			}
+
+			env->SetValidatorCandidate(addr, candidate);
+			args.GetReturnValue().Set(true);
+			return;
+
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
 	void V8Contract::CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args)
