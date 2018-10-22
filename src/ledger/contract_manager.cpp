@@ -234,6 +234,7 @@ namespace bumo{
 		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
 		js_func_write_["tlog"] = V8Contract::CallBackTopicLog;
 		js_func_write_["setValidateCandidate"] = V8Contract::CallBackSetValidatorCadidates;
+		js_func_read_["setVoteForCandidate"] = V8Contract::CallBackSetVoteForCandidate;
 
 		LoadJsLibSource();
 		LoadJslintGlobalString();
@@ -1226,6 +1227,139 @@ namespace bumo{
 			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
+
+	void V8Contract::CallBackSetVoteForCandidate(const v8::FunctionCallbackInfo<v8::Value>& args){
+		std::string error_desc;
+		do
+		{
+			if (args.Length() != 2)
+			{
+				error_desc = "parameter number error";
+				break;
+			}
+
+			if ((!args[0]->IsString()) || (!args[1]->IsString())) {
+				error_desc = "arg0 and arg1 should be string";
+				break;
+			}
+
+			v8::HandleScope handle_scope(args.GetIsolate());
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->GetParameter().ledger_context_) {
+				error_desc = "Can't find contract object by isolate id";
+				break;
+			}
+
+			if (v8_contract->GetParameter().this_address_ != General::CONTRACT_VALIDATOR_ADDRESS)
+			{
+				error_desc = utils::String::Format("contract(%s) has no permission to call callBackSetValidators interface.", v8_contract->GetParameter().this_address_.c_str());
+				break;
+			}
+
+			std::string source_addr = v8_contract->parameter_.sender_;
+			std::string vote_for_new = std::string(ToCString(v8::String::Utf8Value(args[0])));
+			std::string amount = std::string(ToCString(v8::String::Utf8Value(args[1])));
+
+			int64_t coin_amount = 0;
+			if (!utils::String::SafeStoi64(amount, coin_amount)) {
+				error_desc = utils::String::Format("Failed to execute setVoteForCandidate function in contract,  address:%s, coin amount:%s.", vote_for_new.c_str(), amount.c_str());
+				break;
+			}
+
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			std::shared_ptr<Environment> env = ledger_context->GetTopTx()->environment_;
+			AccountFrm::pointer account_frm = NULL;
+			if (!env->GetEntry(source_addr, account_frm)) {
+				error_desc = utils::String::Format("Failed to get account info of %s from transaction environment.", source_addr.c_str());
+				break;
+			}
+			std::string vote_for_old = account_frm->GetVoteFor();
+
+			Environment::CandidatePointer candidate_new;
+			if (!env->GetValidatorCandidate(vote_for_new, candidate_new)) {
+				error_desc = utils::String::Format("Failed to get candidate info of %s from transaction environment.", vote_for_new.c_str());
+				break;
+			}
+
+			Environment::CandidatePointer candidate_old;
+			if (!vote_for_old.empty()) {
+				if (vote_for_old != vote_for_new) {
+					if (env->GetValidatorCandidate(vote_for_old, candidate_old)) {
+						// transfer votes from vote_for_old to vote_for_new
+						int64_t frozen_coin = account_frm->GetFrozenCoin();
+						int64_t frozen_votes = LedgerManager::GetInstance()->CoinToVotes(frozen_coin);
+						int64_t frozen_votes_old = 0;
+						if (!utils::SafeIntSub(candidate_old->coin_vote(), frozen_votes, frozen_votes_old)) {
+							error_desc = utils::String::Format("The result overflowed when decrease votes for %s", vote_for_old.c_str());
+							break;
+						}
+						int64_t frozen_votes_new = 0;
+						if (!utils::SafeIntAdd(candidate_new->coin_vote(), frozen_votes, frozen_votes_new)) {
+							error_desc = utils::String::Format("The result overflowed when increase votes for %s", vote_for_new.c_str());
+							break;
+						}
+						candidate_old->set_coin_vote(frozen_votes_old);
+						candidate_new->set_coin_vote(frozen_votes_new);
+					}
+					else {
+						// Ignore if vote_for_old not in candidate list
+						LOG_TRACE("The vote for address not in candidate list");
+					}
+				}
+				else {
+					// ignore if address is no different
+					LOG_TRACE("The vote for adddress has no change");
+				}
+			}
+			else {
+				LOG_TRACE("The account %s has no vote for address", source_addr.c_str());
+			}
+
+			account_frm->SetVoteFor(vote_for_new);
+			
+			int64_t votes_amount_new = LedgerManager::Instance().CoinToVotes(coin_amount);
+			if (coin_amount > 0) {
+				// if coin_amount > 0 frozen coin and increase votes
+				int64_t votes_amount_new = LedgerManager::Instance().CoinToVotes(coin_amount);
+				if (account_frm->FrozenCoin(coin_amount)) {
+					int64_t new_coin_votes = 0;
+					if (!utils::SafeIntAdd(candidate_new->coin_vote(), votes_amount_new, new_coin_votes)) {
+						error_desc = utils::String::Format("The result overflowed when increase votes for %s", vote_for_new.c_str());
+						break;
+					}
+					candidate_new->set_coin_vote(new_coin_votes);
+				}
+				else {
+					error_desc = utils::String::Format("Failed to frozen coin from address %s, amount:" FMT_I64 "", source_addr.c_str(), coin_amount);
+					break;
+				}
+			}
+			else {
+				// if coin_amount < 0 unforzen coin and decrease votes
+				int64_t votes_amount_new = LedgerManager::Instance().CoinToVotes(-coin_amount);
+				int64_t new_coin_votes = 0;
+				if (!utils::SafeIntSub(candidate_new->coin_vote(), votes_amount_new, new_coin_votes)) {
+					error_desc = utils::String::Format("The result overflowed when increase votes for %s", vote_for_new.c_str());
+					break;
+				}
+				candidate_new->set_coin_vote(new_coin_votes);
+				if (!account_frm->UnfrozenCoin(-coin_amount)) {
+					error_desc = error_desc = utils::String::Format("Failed to unfrozen coin from address %s, amount:" FMT_I64 "", source_addr.c_str(), -coin_amount);
+					break;
+				}
+			}
+			
+			args.GetReturnValue().Set(true);
+			return;
+
+		} while (false);
+		LOG_ERROR("%s", error_desc.c_str());
+		args.GetIsolate()->ThrowException(
+			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
+			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+
 
 	void V8Contract::CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args)
 	{

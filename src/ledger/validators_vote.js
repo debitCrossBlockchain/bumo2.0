@@ -88,6 +88,10 @@ function applyAsCandidate(){
 }
 
 function voteForCandidate(candidate, tokenAmount){
+	assert(addressCheck(candidate) === true, 'Arg-candidate is not valid address.');
+	assert(getValidateCandidate(candidate) !== false, 'No such validator candidate');
+	
+	assert(setVoteForCandidate(candidate, tokenAmount));
     return;
 }
 
@@ -134,7 +138,9 @@ function main(input_str){
         applyAsCandidate();
     }
     else if(input.method === 'voteForCandidate'){
-	    voteForCandidate(input.params.address, input.params.tokenAmount);
+		assert(typeof input.params.address !== string, 'Arg-address should be string');
+		assert(typeof input.params.coinAmount !== string, 'Arg-coinAmount should be string')
+	    voteForCandidate(input.params.address, input.params.coinAmount);
     }
     else if(input.method === 'quitCandidateStatus'){
 	    quitCandidateStatus();

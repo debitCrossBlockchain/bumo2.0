@@ -1026,4 +1026,13 @@ namespace bumo {
 			records[it->first] = it->second;
 		}
 	}
+
+	int64_t LedgerManager::CoinToVotes(int64_t coin) {
+		if (election_config_.coin_to_vote_rate() < 1) {
+			return 0;
+		}
+		else {
+			return coin / election_config_.coin_to_vote_rate();
+		}
+	}
 }

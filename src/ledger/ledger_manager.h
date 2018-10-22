@@ -79,6 +79,10 @@ namespace bumo {
 		virtual void GetModuleStatus(Json::Value &data);
 
 		static void CreateHardforkLedger();
+
+		// for validator election
+		int64_t CoinToVotes(int64_t coin);
+
 	public:
 		utils::Mutex gmutex_;
 		Json::Value statistics_;
