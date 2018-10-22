@@ -85,9 +85,10 @@ function takebackCoin(tokenAmount){
         assert(transferCoin(sender, tokenAmount) === true, 'Takeback pledge coin failed.');
     }
 
-    findValidator(sender);
-    //to do: triger validator update
-
+    if(findValidator(sender) === true){
+        //to do: triger validator update, com += 1; just for avoid jslint, must be delete later
+        com += 1;
+    }
 }
 
 function voteForCandidate(candidate, tokenAmount){
