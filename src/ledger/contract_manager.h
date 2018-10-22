@@ -206,8 +206,8 @@ namespace bumo{
 		static void CallBackBlockNumber(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Get block number 
 		static void CallBackGetTxOrigin(const v8::FunctionCallbackInfo<v8::Value>& args);
-		//selfDestruct
-
+		//Get abnormal records
+		static void CallBackGetAbnormalRecords(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Get block timestamp 
 		static void CallBackGetBlockTimestamp(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//str to int64 check
