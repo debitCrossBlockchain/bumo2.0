@@ -18,7 +18,7 @@
 
 #include <proto/cpp/chain.pb.h>
 #include <proto/cpp/consensus.pb.h>
-#include <utils/entry_cache.h>
+//#include <utils/entry_cache.h>
 #include <utils/atom_map.h>
 #include <main/configure.h>
 #include <json/value.h>
@@ -27,17 +27,21 @@
 namespace bumo {
 	class Environment : public AtomMap<std::string, AccountFrm>{
 	public:
+		typedef std::shared_ptr<protocol::ValidatorCandidate> CandidatePointer;
 		typedef AtomMap<std::string, Json::Value>::mapKV settingKV;
+		typedef AtomMap<std::string, protocol::ValidatorCandidate>::mapKV candidateKV;
+
 		const std::string validatorsKey = "validators";
 		const std::string feesKey = "configFees";
 
 		AtomMap<std::string, Json::Value> settings_;
+		AtomMap<std::string, protocol::ValidatorCandidate> validator_candidates_;
 
 		Environment() = default;
 		Environment(Environment const&) = delete;
 		Environment& operator=(Environment const&) = delete;
 
-		Environment(mapKV* data, settingKV* settings);
+		Environment(mapKV* data, settingKV* settings, candidateKV* candidates);
 
 		bool GetEntry(const std::string& key, AccountFrm::pointer &frm);
 		bool AddEntry(const std::string& key, AccountFrm::pointer frm);
@@ -48,6 +52,9 @@ namespace bumo {
 		Json::Value& GetValidators();
 		bool UpdateNewValidators(const Json::Value& validators);
 		bool GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator);
+
+		bool GetValidatorCandidate(const std::string& addr, CandidatePointer& candidate);
+		bool SetValidatorCandidate(const std::string& addr, CandidatePointer candidate);
 
 		bool Commit();
 		void ClearChangeBuf();

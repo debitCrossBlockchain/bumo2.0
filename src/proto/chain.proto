@@ -29,6 +29,13 @@ message Asset{
 	 int64		amount = 2;
 }
 
+message ValidatorCandidate{
+    string address = 1;
+    int64  pledge  = 2;
+    int64  coin_vote = 3;
+    int64  fee_vote  = 4;
+}
+
 message AssetProperty{
 	int32 decimal = 1;
 	string description = 2;

@@ -68,6 +68,7 @@ class TransactionEnvSet;
 class TransactionEnvStore;
 class Trigger;
 class Trigger_OperationTrigger;
+class ValidatorCandidate;
 
 enum Operation_Type {
   Operation_Type_UNKNOWN = 0,
@@ -575,6 +576,114 @@ class Asset : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
 
   void InitAsDefaultInstance();
   static Asset* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class ValidatorCandidate : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.ValidatorCandidate) */ {
+ public:
+  ValidatorCandidate();
+  virtual ~ValidatorCandidate();
+
+  ValidatorCandidate(const ValidatorCandidate& from);
+
+  inline ValidatorCandidate& operator=(const ValidatorCandidate& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ValidatorCandidate& default_instance();
+
+  void Swap(ValidatorCandidate* other);
+
+  // implements Message ----------------------------------------------
+
+  inline ValidatorCandidate* New() const { return New(NULL); }
+
+  ValidatorCandidate* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const ValidatorCandidate& from);
+  void MergeFrom(const ValidatorCandidate& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(ValidatorCandidate* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string address = 1;
+  void clear_address();
+  static const int kAddressFieldNumber = 1;
+  const ::std::string& address() const;
+  void set_address(const ::std::string& value);
+  void set_address(const char* value);
+  void set_address(const char* value, size_t size);
+  ::std::string* mutable_address();
+  ::std::string* release_address();
+  void set_allocated_address(::std::string* address);
+
+  // optional int64 pledge = 2;
+  void clear_pledge();
+  static const int kPledgeFieldNumber = 2;
+  ::google::protobuf::int64 pledge() const;
+  void set_pledge(::google::protobuf::int64 value);
+
+  // optional int64 coin_vote = 3;
+  void clear_coin_vote();
+  static const int kCoinVoteFieldNumber = 3;
+  ::google::protobuf::int64 coin_vote() const;
+  void set_coin_vote(::google::protobuf::int64 value);
+
+  // optional int64 fee_vote = 4;
+  void clear_fee_vote();
+  static const int kFeeVoteFieldNumber = 4;
+  ::google::protobuf::int64 fee_vote() const;
+  void set_fee_vote(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.ValidatorCandidate)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr address_;
+  ::google::protobuf::int64 pledge_;
+  ::google::protobuf::int64 coin_vote_;
+  ::google::protobuf::int64 fee_vote_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_chain_2eproto();
+  friend void protobuf_AssignDesc_chain_2eproto();
+  friend void protobuf_ShutdownFile_chain_2eproto();
+
+  void InitAsDefaultInstance();
+  static ValidatorCandidate* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -4312,6 +4421,96 @@ inline void Asset::set_amount(::google::protobuf::int64 value) {
 
 // -------------------------------------------------------------------
 
+// ValidatorCandidate
+
+// optional string address = 1;
+inline void ValidatorCandidate::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ValidatorCandidate::address() const {
+  // @@protoc_insertion_point(field_get:protocol.ValidatorCandidate.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ValidatorCandidate::set_address(const ::std::string& value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.ValidatorCandidate.address)
+}
+inline void ValidatorCandidate::set_address(const char* value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.ValidatorCandidate.address)
+}
+inline void ValidatorCandidate::set_address(const char* value, size_t size) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.ValidatorCandidate.address)
+}
+inline ::std::string* ValidatorCandidate::mutable_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.ValidatorCandidate.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ValidatorCandidate::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.ValidatorCandidate.address)
+  
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ValidatorCandidate::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
+    
+  } else {
+    
+  }
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.ValidatorCandidate.address)
+}
+
+// optional int64 pledge = 2;
+inline void ValidatorCandidate::clear_pledge() {
+  pledge_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 ValidatorCandidate::pledge() const {
+  // @@protoc_insertion_point(field_get:protocol.ValidatorCandidate.pledge)
+  return pledge_;
+}
+inline void ValidatorCandidate::set_pledge(::google::protobuf::int64 value) {
+  
+  pledge_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ValidatorCandidate.pledge)
+}
+
+// optional int64 coin_vote = 3;
+inline void ValidatorCandidate::clear_coin_vote() {
+  coin_vote_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 ValidatorCandidate::coin_vote() const {
+  // @@protoc_insertion_point(field_get:protocol.ValidatorCandidate.coin_vote)
+  return coin_vote_;
+}
+inline void ValidatorCandidate::set_coin_vote(::google::protobuf::int64 value) {
+  
+  coin_vote_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ValidatorCandidate.coin_vote)
+}
+
+// optional int64 fee_vote = 4;
+inline void ValidatorCandidate::clear_fee_vote() {
+  fee_vote_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 ValidatorCandidate::fee_vote() const {
+  // @@protoc_insertion_point(field_get:protocol.ValidatorCandidate.fee_vote)
+  return fee_vote_;
+}
+inline void ValidatorCandidate::set_fee_vote(::google::protobuf::int64 value) {
+  
+  fee_vote_ = value;
+  // @@protoc_insertion_point(field_set:protocol.ValidatorCandidate.fee_vote)
+}
+
+// -------------------------------------------------------------------
+
 // AssetProperty
 
 // optional int32 decimal = 1;
@@ -7636,6 +7835,8 @@ inline void OperationSetMetadata::set_delete_flag(bool value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
