@@ -184,4 +184,8 @@ namespace bumo{
 	bool Environment::SetValidatorCandidate(const std::string& addr, CandidatePointer candidate){
 		return candidates_.Set(addr, candidate);
 	}
+
+	bool Environment::DelValidatorCandidate(const std::string& addr){
+		return candidates_.Del(addr);
+	}
 }

@@ -171,8 +171,8 @@ namespace bumo{
 		static void CallBackGetAccountAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackSetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void CallBackSetValidatorCadidates(const v8::FunctionCallbackInfo<v8::Value>& args);
-		static void CallBackGetValidatorCadidates(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackSetValidatorCadidate(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackGetValidatorCadidate(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackAddressValidCheck(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackPayCoin(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackIssueAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
