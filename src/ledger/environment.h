@@ -56,6 +56,7 @@ namespace bumo {
 		bool GetValidatorCandidate(const std::string& addr, CandidatePointer& candidate);
 		bool SetValidatorCandidate(const std::string& addr, CandidatePointer candidate);
 		bool DelValidatorCandidate(const std::string& addr);
+		bool UpdateValidatorCandidate();
 
 		bool Commit();
 		void ClearChangeBuf();

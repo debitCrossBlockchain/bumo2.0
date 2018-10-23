@@ -178,7 +178,18 @@ namespace bumo{
 	}
 
 	bool Environment::GetValidatorCandidate(const std::string& addr, CandidatePointer& candidate){
-		return candidates_.Get(addr, candidate);
+
+		CandidatePointer temp = nullptr;
+		if (!candidates_.Get(addr, temp)){
+			temp = LedgerManager::Instance().GetValidatorCandidate(addr);
+		}
+
+		if (!temp){
+			return false;
+		}
+		
+		candidate = temp;
+		return true;
 	}
 
 	bool Environment::SetValidatorCandidate(const std::string& addr, CandidatePointer candidate){
@@ -187,5 +198,22 @@ namespace bumo{
 
 	bool Environment::DelValidatorCandidate(const std::string& addr){
 		return candidates_.Del(addr);
+	}
+
+	bool Environment::UpdateValidatorCandidate(){
+		const candidateKV& newCandidates = candidates_.GetData();
+
+		for (auto it : newCandidates){
+			if (it.second.type_ == DEL){
+				LedgerManager::Instance().DelValidatorCandidate(it.first);
+			}
+			else{
+				if (!LedgerManager::Instance().SetValidatorCandidate(it.first, it.second.value_)){
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 }

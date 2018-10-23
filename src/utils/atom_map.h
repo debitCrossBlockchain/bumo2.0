@@ -9,20 +9,20 @@
 
 namespace bumo
 {
+	enum actType
+	{
+		ADD = 0,
+		MOD = 1,
+		DEL = 2,
+		REV = 3,
+		MAX,
+	};
+
 	template<class KEY, class VALUE, class COMPARE = std::less<KEY>>
 	class AtomMap
 	{
 	public:
 		typedef std::shared_ptr<VALUE> pointer;
-
-		enum actType
-		{
-			ADD = 0,
-			MOD = 1,
-			DEL = 2,
-			REV = 3,
-			MAX,
-		};
 
 		struct ActValue
 		{

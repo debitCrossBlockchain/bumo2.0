@@ -253,6 +253,14 @@ namespace bumo {
 		}
 		return vlidators_set.ParseFromString(str);
 	}
+
+	void LedgerManager::ValidatorCandidatesStorage(std::shared_ptr<WRITE_BATCH> batch) {
+
+	}
+
+	bool LedgerManager::ValidatorCandidatesLoad(const std::string& hash) {
+		return true;
+	}
 	
 	void LedgerManager::FeesConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::FeeConfig &fee) {
 		std::string hash = HashWrapper::Crypto(fee.SerializeAsString());
@@ -610,6 +618,8 @@ namespace bumo {
 		int64_t ledger_seq = closing_ledger->GetProtoHeader().seq();
 		std::shared_ptr<WRITE_BATCH> account_db_batch = tree_->batch_;
 		account_db_batch->Put(bumo::General::KEY_LEDGER_SEQ, utils::String::Format(FMT_I64, ledger_seq));
+
+		closing_ledger->environment_->UpdateValidatorCandidate();
 		
 		//for validator upgrade
 		if (new_set.validators_size() > 0 || closing_ledger->environment_->GetVotedValidators(validators_, new_set)) {
@@ -1034,5 +1044,47 @@ namespace bumo {
 		else {
 			return coin / election_config_.coin_to_vote_rate();
 		}
+	}
+
+	Environment::CandidatePointer LedgerManager::GetValidatorCandidate(const std::string& key){
+		Environment::CandidatePointer candidate = nullptr;
+
+		auto it = validator_candidates_.find(key);
+		if (it != validator_candidates_.end()){
+			candidate = it->second;
+		}
+
+		return candidate;
+	}
+
+	bool  LedgerManager::SetValidatorCandidate(const std::string& key, Environment::CandidatePointer value){
+		if (!value){
+			return false;
+		}
+
+		try{ 
+			validator_candidates_[key] = value;
+		}
+		catch (std::exception& e){
+			return false;
+		}
+
+		return true;
+	}
+
+	bool LedgerManager::SetValidatorCandidate(const std::string& key, const protocol::ValidatorCandidate& value){
+		try{
+			Environment::CandidatePointer candidate = std::make_shared<protocol::ValidatorCandidate>(value);
+			validator_candidates_[key] = candidate;
+		}
+		catch (std::exception& e){
+			return false;
+		}
+
+		return true;
+	}
+
+	void LedgerManager::DelValidatorCandidate(const std::string& key){
+		validator_candidates_.erase(key);
 	}
 }
