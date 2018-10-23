@@ -221,7 +221,7 @@ namespace bumo{
 		js_func_read_["assert"] = V8Contract::CallBackAssert;
 		js_func_read_["addressCheck"] = V8Contract::CallBackAddressValidCheck;
 		js_func_read_["getAbnormalRecords"] = V8Contract::CallBackGetAbnormalRecords;
-		js_func_read_["getValidateCandidate"] = V8Contract::CallBackGetValidatorCandidate;
+		js_func_read_["getValidatorCandidate"] = V8Contract::CallBackGetValidatorCandidate;
 
 		//write func
 		js_func_write_["storageStore"] = V8Contract::CallBackStorageStore;
@@ -233,7 +233,7 @@ namespace bumo{
 		js_func_write_["issueAsset"] = V8Contract::CallBackIssueAsset;
 		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
 		js_func_write_["tlog"] = V8Contract::CallBackTopicLog;
-		js_func_write_["setValidateCandidate"] = V8Contract::CallBackSetValidatorCandidate;
+		js_func_write_["setValidatorCandidate"] = V8Contract::CallBackSetValidatorCandidate;
 		js_func_read_["setVoteForCandidate"] = V8Contract::CallBackSetVoteForCandidate;
 
 		LoadJsLibSource();
