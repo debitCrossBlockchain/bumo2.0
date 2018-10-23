@@ -1189,6 +1189,11 @@ namespace bumo{
 			std::string addr = std::string(ToCString(v8::String::Utf8Value(args[0])));
 			std::string sAmount = std::string(ToCString(v8::String::Utf8Value(args[1])));
 
+			if (!PublicKey::IsAddressValid(addr)){
+				error_desc = utils::String::Format("Arg[0] is invalid address, amount:%s.", sAmount.c_str());
+				break;
+			}
+
 			int64_t iAmount = 0;
 			if (!utils::String::SafeStoi64(sAmount, iAmount)){
 				error_desc = utils::String::Format("Failed to convert arg[1] from string to number, amount:%s.", sAmount.c_str());
