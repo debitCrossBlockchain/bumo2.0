@@ -530,6 +530,7 @@ namespace bumo {
 			account.set_balance(create_account.init_balance());
 			account.mutable_priv()->CopyFrom(create_account.priv());
 			account.set_address(dest_address);
+			account.set_creator(transaction_->GetSourceAddress());
 			account.mutable_contract()->CopyFrom(create_account.contract());
 			dest_account = std::make_shared<AccountFrm>(account);
 
@@ -828,6 +829,7 @@ namespace bumo {
 				account.mutable_priv()->set_master_weight(1);
 				account.mutable_priv()->mutable_thresholds()->set_tx_threshold(1);
 				account.set_address(ope.dest_address());
+				account.set_creator(source_account_->GetAccountAddress());
 				dest_account_ptr = std::make_shared<AccountFrm>(account);
 				environment->AddEntry(ope.dest_address(), dest_account_ptr);
 
