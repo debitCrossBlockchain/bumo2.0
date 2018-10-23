@@ -1264,7 +1264,7 @@ namespace bumo{
 
 			if (v8_contract->GetParameter().this_address_ != General::CONTRACT_VALIDATOR_ADDRESS)
 			{
-				error_desc = utils::String::Format("contract(%s) has no permission to call callBackSetValidators interface.", v8_contract->GetParameter().this_address_.c_str());
+				error_desc = utils::String::Format("contract(%s) has no permission to call callBackSetVoteForCandidate interface.", v8_contract->GetParameter().this_address_.c_str());
 				break;
 			}
 
@@ -1295,6 +1295,7 @@ namespace bumo{
 
 			Environment::CandidatePointer candidate_old;
 			if (!vote_for_old.empty()) {
+				LOG_TRACE("The account try to vote for candidate %s instead of candidate %s", vote_for_new.c_str(), vote_for_old.c_str());
 				if (vote_for_old != vote_for_new) {
 					if (env->GetValidatorCandidate(vote_for_old, candidate_old)) {
 						// transfer votes from vote_for_old to vote_for_new
