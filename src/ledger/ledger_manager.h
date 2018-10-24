@@ -90,6 +90,13 @@ namespace bumo {
 
 		// for validator election
 		int64_t CoinToVotes(int64_t coin);
+		enum FeesOwner {
+			SELF = 0,
+			CREATOR = 1,
+			APP = 2,
+			VALIDATORS = 3
+		};
+		bool GetFeesRateByOwner(FeesOwner owner, uint32_t rate);
 
 	public:
 		utils::Mutex gmutex_;
@@ -117,6 +124,7 @@ namespace bumo {
 		static void ElectionConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg);
 		
 		void AddAbnormalRecord(const std::string& abnormal_node);
+		void UpdateAbnormalRecords();
 		
 		LedgerFrm::pointer last_closed_ledger_;
 		protocol::ValidatorSet validators_;

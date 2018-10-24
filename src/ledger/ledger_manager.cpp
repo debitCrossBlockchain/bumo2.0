@@ -133,6 +133,30 @@ namespace bumo {
 		}
 		LOG_INFO("The election configuration is : %s", election_config_.DebugString().c_str());
 
+		// Validator abnormal records
+		std::string key = "abnormal_records";
+		auto db = Storage::Instance().account_db();
+		std::string json_str;
+		if (db->Get(key, json_str)) {
+			abnormal_records_.clear();
+			Json::Value abnormal_json;
+			if (abnormal_json.fromString(json_str)) {
+				LOG_ERROR("Failed to parse the json content of validator abnormal records");
+				UpdateAbnormalRecords();
+			}
+			else {
+				for (size_t i = 0; i < abnormal_json.size(); i++) {
+					Json::Value& item = abnormal_json[i];
+					abnormal_records_.insert(std::make_pair(item["address"].asString(), item["count"].asInt64()));
+				}
+			}			
+		}
+		else {
+			// write test value
+			abnormal_records_.insert(std::make_pair("buQcjgnBuoLkKdoggtJsQxiEPAFifgQBKu16", 10));
+			abnormal_records_.insert(std::make_pair("buQWQ4rwVW8RCzatR8XnRnhMCaCeMkE46qLR", 1));
+		}
+		
 		//load proof
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof_);
 
@@ -1027,6 +1051,7 @@ namespace bumo {
 		else {
 			abnormal_records_.insert(std::make_pair(abnormal_node, 1));
 		}
+		UpdateAbnormalRecords();
 	}
 
 	void LedgerManager::GetAbnormalRecords(Json::Value& records) {
@@ -1037,6 +1062,29 @@ namespace bumo {
 		}
 	}
 
+	void LedgerManager::UpdateAbnormalRecords() {
+		std::string key = "abnormal_records";
+
+		Json::Value abnormal_json;
+		for (std::unordered_map<std::string, int64_t>::iterator it = abnormal_records_.begin();
+			it != abnormal_records_.end();
+			it++) {
+			Json::Value item;
+			item["address"] = it->first;
+			item["count"] = it->second;
+			abnormal_json.append(item);
+		}
+		auto batch = tree_->batch_;
+		batch->Put("abnormal_records", abnormal_json.toFastString());
+		KeyValueDb *db = Storage::Instance().account_db();
+		if (!db->WriteBatch(*batch)){
+			LOG_ERROR("Failed to write abnormal records to database(%s)", db->error_desc().c_str());
+		}
+		else {
+			LOG_TRACE("Update abnormal records to db done");
+		}
+	}
+
 	int64_t LedgerManager::CoinToVotes(int64_t coin) {
 		if (election_config_.coin_to_vote_rate() < 1) {
 			return 0;
@@ -1044,6 +1092,31 @@ namespace bumo {
 		else {
 			return coin / election_config_.coin_to_vote_rate();
 		}
+	}
+
+	bool LedgerManager::GetFeesRateByOwner(FeesOwner owner, uint32_t rate) {
+		std::vector<std::string> vec = utils::String::split(election_config_.fee_distribution_rate(), ":");
+		if (vec.size() != 4) {
+			LOG_ERROR("Failed to get fees distribute rate, owner type:" FMT_I64"", owner);
+			return false;
+		}
+		uint32_t count = 0;
+		uint32_t owner_value = 0;
+		for (int i = 0; i < 4; i++) {
+			uint32_t value = 0;
+			if (!utils::String::SafeStoui(vec[i], value)) {
+				LOG_ERROR("Failed to convert string(%s) to int", vec[i].c_str());
+				return false;
+			}
+			if (!utils::SafeIntAdd(count, value, count)){
+				LOG_ERROR("Overflowed when get fees distribute rate.");
+				return false;
+			}
+			if (i == owner) owner_value = value;
+		}
+		rate = owner_value / count;
+
+		return true;
 	}
 
 	Environment::CandidatePointer LedgerManager::GetValidatorCandidate(const std::string& key){
