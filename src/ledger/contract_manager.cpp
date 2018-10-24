@@ -1332,10 +1332,7 @@ namespace bumo{
 			else {
 				LOG_TRACE("The account %s has no vote for address", source_addr.c_str());
 			}
-
-			account_frm->SetVoteFor(vote_for_new);
 			
-			int64_t votes_amount_new = LedgerManager::Instance().CoinToVotes(coin_amount);
 			if (coin_amount > 0) {
 				// if coin_amount > 0 frozen coin and increase votes
 				int64_t votes_amount_new = LedgerManager::Instance().CoinToVotes(coin_amount);
@@ -1354,6 +1351,10 @@ namespace bumo{
 			}
 			else {
 				// if coin_amount < 0 unforzen coin and decrease votes
+				if (account_frm->GetFrozenCoin() < -coin_amount) {
+					error_desc = utils::String::Format("The amount of unfrozen coin(" FMT_I64 ") is more than the amount frozen coin(" FMT_I64 ")", -coin_amount, account_frm->GetFrozenCoin());
+					break;
+				}
 				int64_t votes_amount_new = LedgerManager::Instance().CoinToVotes(-coin_amount);
 				int64_t new_coin_votes = 0;
 				if (!utils::SafeIntSub(candidate_new->coin_vote(), votes_amount_new, new_coin_votes)) {
@@ -1366,7 +1367,8 @@ namespace bumo{
 					break;
 				}
 			}
-			
+			account_frm->SetVoteFor(vote_for_new);
+
 			args.GetReturnValue().Set(true);
 			return;
 
