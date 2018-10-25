@@ -1361,7 +1361,7 @@ namespace bumo{
 					error_desc = utils::String::Format("The result overflowed when increase votes for %s", vote_for_new.c_str());
 					break;
 				}
-				candidate_new->set_coin_vote(new_coin_votes);
+				candidate_new->set_coin_vote(new_coin_votes < 0 ? 0 : new_coin_votes);
 				if (!account_frm->UnfrozenCoin(-coin_amount)) {
 					error_desc = error_desc = utils::String::Format("Failed to unfrozen coin from address %s, amount:" FMT_I64 "", source_addr.c_str(), -coin_amount);
 					break;
