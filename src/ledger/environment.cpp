@@ -185,10 +185,11 @@ namespace bumo{
 		}
 
 		if (!temp){
+			candidate = nullptr;
 			return false;
 		}
 		
-		candidate = temp;
+		candidate = std::make_shared<protocol::ValidatorCandidate>(*temp);
 		return true;
 	}
 
