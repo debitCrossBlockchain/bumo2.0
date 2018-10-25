@@ -187,8 +187,9 @@ namespace bumo{
 		if (!temp){
 			return false;
 		}
-		
-		candidate = temp;
+
+		candidate = std::make_shared<protocol::ValidatorCandidate>(*temp);
+		candidates_.Set(addr, candidate);
 		return true;
 	}
 
