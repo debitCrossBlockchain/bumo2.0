@@ -190,6 +190,7 @@ namespace bumo{
 		}
 		
 		candidate = std::make_shared<protocol::ValidatorCandidate>(*temp);
+		candidates_.Set(addr, candidate);
 		return true;
 	}
 
