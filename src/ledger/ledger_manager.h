@@ -79,7 +79,7 @@ namespace bumo {
 		void DelValidatorCandidate(const std::string& key);
 
 		void ValidatorCandidatesStorage(std::shared_ptr<WRITE_BATCH> batch);
-		bool ValidatorCandidatesLoad(const std::string& hash);
+		bool ValidatorCandidatesLoad();
 
 		virtual void OnTimer(int64_t current_time) override;
 		virtual void OnSlowTimer(int64_t current_time) override;

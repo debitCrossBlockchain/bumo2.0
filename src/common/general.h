@@ -91,6 +91,7 @@ namespace bumo {
 		const static char *ACCOUNT_PREFIX;
 		const static char *ASSET_PREFIX;
 		const static char *METADATA_PREFIX;
+		const static char *VALIDATOR_CANDIDATE_PREFIX;
 
 		const static char *CHECK_TIME_FUNCTION;
 
