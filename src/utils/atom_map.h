@@ -1,13 +1,13 @@
 #ifndef TEMPLATE_ATOMIC_MAP_H
 #define TEMPLATE_ATOMIC_MAP_H
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <memory>
 #include <exception>
 #include "logger.h"
 
-namespace bumo
+namespace utils
 {
 	enum actType
 	{

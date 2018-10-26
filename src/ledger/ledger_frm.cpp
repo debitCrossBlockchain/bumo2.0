@@ -488,7 +488,7 @@ namespace bumo {
 
 		for (auto it = entries.begin(); it != entries.end(); it++){
 
-			if (it->second.type_ == DEL)
+			if (it->second.type_ == utils::DEL)
 				continue; //There is no delete account function now.
 
 			std::shared_ptr<AccountFrm> account = it->second.value_;

@@ -205,7 +205,7 @@ namespace bumo{
 		const candidateKV& newCandidates = candidates_.GetData();
 
 		for (auto it : newCandidates){
-			if (it.second.type_ == DEL){
+			if (it.second.type_ == utils::DEL){
 				LedgerManager::Instance().DelValidatorCandidate(it.first);
 			}
 			else{
