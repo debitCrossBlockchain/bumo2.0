@@ -177,9 +177,9 @@ namespace bumo{
 		return true;
 	}
 
-	bool Environment::GetValidatorCandidate(const std::string& addr, CandidatePointer& candidate){
+	bool Environment::GetValidatorCandidate(const std::string& addr, CandidatePtr& candidate){
 
-		CandidatePointer temp = nullptr;
+		CandidatePtr temp = nullptr;
 		if (!candidates_.Get(addr, temp)){
 			temp = LedgerManager::Instance().GetValidatorCandidate(addr);
 		}
@@ -193,7 +193,7 @@ namespace bumo{
 		return true;
 	}
 
-	bool Environment::SetValidatorCandidate(const std::string& addr, CandidatePointer candidate){
+	bool Environment::SetValidatorCandidate(const std::string& addr, CandidatePtr candidate){
 		return candidates_.Set(addr, candidate);
 	}
 

@@ -24,9 +24,10 @@
 #include "account.h"
 
 namespace bumo {
+	typedef std::shared_ptr<protocol::ValidatorCandidate> CandidatePtr;
+
 	class Environment : public utils::AtomMap<std::string, AccountFrm>{
 	public:
-		typedef std::shared_ptr<protocol::ValidatorCandidate> CandidatePointer;
 		typedef AtomMap<std::string, Json::Value>::Map SettingMap;
 		typedef AtomMap<std::string, protocol::ValidatorCandidate>::Map CandidateMap;
 
@@ -52,8 +53,8 @@ namespace bumo {
 		bool UpdateNewValidators(const Json::Value& validators);
 		bool GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator);
 
-		bool GetValidatorCandidate(const std::string& addr, CandidatePointer& candidate);
-		bool SetValidatorCandidate(const std::string& addr, CandidatePointer candidate);
+		bool GetValidatorCandidate(const std::string& addr, CandidatePtr& candidate);
+		bool SetValidatorCandidate(const std::string& addr, CandidatePtr candidate);
 		bool DelValidatorCandidate(const std::string& addr);
 		bool UpdateValidatorCandidate();
 

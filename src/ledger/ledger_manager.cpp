@@ -1119,8 +1119,8 @@ namespace bumo {
 		return true;
 	}
 
-	Environment::CandidatePointer LedgerManager::GetValidatorCandidate(const std::string& key){
-		Environment::CandidatePointer candidate = nullptr;
+	CandidatePtr LedgerManager::GetValidatorCandidate(const std::string& key){
+		CandidatePtr candidate = nullptr;
 
 		auto it = validator_candidates_.find(key);
 		if (it != validator_candidates_.end()){
@@ -1130,7 +1130,7 @@ namespace bumo {
 		return candidate;
 	}
 
-	bool  LedgerManager::SetValidatorCandidate(const std::string& key, Environment::CandidatePointer value){
+	bool  LedgerManager::SetValidatorCandidate(const std::string& key, CandidatePtr value){
 		if (!value){
 			return false;
 		}
@@ -1147,7 +1147,7 @@ namespace bumo {
 
 	bool LedgerManager::SetValidatorCandidate(const std::string& key, const protocol::ValidatorCandidate& value){
 		try{
-			Environment::CandidatePointer candidate = std::make_shared<protocol::ValidatorCandidate>(value);
+			CandidatePtr candidate = std::make_shared<protocol::ValidatorCandidate>(value);
 			validator_candidates_[key] = candidate;
 		}
 		catch (std::exception& e){
