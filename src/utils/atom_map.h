@@ -18,7 +18,7 @@ namespace bumo
 		MAX,
 	};
 
-	template<class KEY, class VALUE, class COMPARE = std::less<KEY>>
+	template<class KEY, class VALUE, class Hash = std::hash<KEY>, class KeyEqual = std::equal_to<KEY>>
 	class AtomMap
 	{
 	public:
@@ -32,7 +32,7 @@ namespace bumo
 			ActValue(const pointer& val, actType type = MAX) :value_(val), type_(type){}
 		};
 
-		typedef std::map<KEY, ActValue, COMPARE> mapKV;
+		typedef std::unordered_map<KEY, ActValue, Hash, KeyEqual> mapKV;
 
 	protected:
 		mapKV  actionBuf_;
