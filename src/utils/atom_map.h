@@ -22,35 +22,36 @@ namespace utils
 	class AtomMap
 	{
 	public:
-		typedef std::shared_ptr<VALUE> pointer;
+		typedef std::shared_ptr<VALUE> VALUE_PTR;
 
-		struct ActValue
+		struct Record
 		{
-			pointer value_;
 			actType type_;
-			ActValue(actType type = MAX) :type_(type){}
-			ActValue(const pointer& val, actType type = MAX) :value_(val), type_(type){}
+			VALUE_PTR ptr_;
+
+			Record(actType type = MAX) :type_(type){}
+			Record(const VALUE_PTR& ptr, actType type = MAX) :ptr_(ptr), type_(type){}
 		};
 
-		typedef std::unordered_map<KEY, ActValue, Hash, KeyEqual> mapKV;
+		typedef std::unordered_map<KEY, Record, Hash, KeyEqual> Map;
 
 	protected:
-		mapKV  actionBuf_;
-		mapKV  standby_;
-		mapKV* data_;
+		Map  buff_;
+		Map  stor_;
+		Map* data_;
 
 	public:
 		AtomMap()
 		{
-			data_ = &standby_; //avoid manual memory management
+			data_ = &stor_; //avoid manual memory management
 		}
 
-		AtomMap(mapKV* data)
+		AtomMap(Map* data)
 		{
 			if (data)
 				data_ = data;
 			else
-				data_ = &standby_; //avoid manual memory management
+				data_ = &stor_; //avoid manual memory management
 		}
 
 		AtomMap(const AtomMap& other)
@@ -60,8 +61,8 @@ namespace utils
 
 		AtomMap& operator=(const AtomMap& other)
 		{
-			actionBuf_.clear();
-			standby_.clear();
+			buff_.clear();
+			stor_.clear();
 			data_ = nullptr;
 
 			Copy(other);
@@ -72,30 +73,30 @@ namespace utils
 	private:
 		void Copy(const AtomMap& other)
 		{
-			for (auto kvAct : other.actionBuf_)
-				actionBuf_[kvAct.first] = ActValue(std::make_shared<VALUE>(*(kvAct.second.value_)), kvAct.second.type_);
+			for (auto kvAct : other.buff_)
+				buff_[kvAct.first] = Record(std::make_shared<VALUE>(*(kvAct.second.ptr_)), kvAct.second.type_);
 
 			for (auto kvData : *(other.data_))
-				standby_[kvData.first] = ActValue(std::make_shared<VALUE>(*(kvData.second.value_)), kvData.second.type_);
+				stor_[kvData.first] = Record(std::make_shared<VALUE>(*(kvData.second.ptr_)), kvData.second.type_);
 
-			data_ = &standby_;
+			data_ = &stor_;
 		}
 
-		void SetValue(const KEY& key, const pointer& val)
+		void SetValue(const KEY& key, const VALUE_PTR& ptr)
 		{
-			actionBuf_[key] = ActValue(val, MOD);
+			buff_[key] = Record(ptr, MOD);
 		}
 
-		bool GetValue(const KEY& key, pointer& val)
+		bool GetValue(const KEY& key, VALUE_PTR& ptr)
 		{
 			bool ret = false;
-			auto itAct = actionBuf_.find(key);
-			if (itAct != actionBuf_.end())
+			auto itAct = buff_.find(key);
+			if (itAct != buff_.end())
 			{
 				if (itAct->second.type_ == DEL)
 					return false;
 
-				val = itAct->second.value_;
+				ptr = itAct->second.ptr_;
 				ret = true;
 			}
 			else
@@ -106,21 +107,21 @@ namespace utils
 					if (itData->second.type_ == DEL)
 						return false;
 
-					//can't be assigned directly, because itData->second.value_ is smart pointer
-					auto pv = std::make_shared<VALUE>(*(itData->second.value_));
+					//can't be assigned directly, because itData->second.ptr_ is smart pointer
+					auto pv = std::make_shared<VALUE>(*(itData->second.ptr_));
 					if (!pv)
 						return false;
 
-					actionBuf_[key] = ActValue(pv, MOD);
-					val = pv;
+					buff_[key] = Record(pv, MOD);
+					ptr = pv;
 					ret = true;
 				}
 				else
 				{
-					if (!GetFromDB(key, val))
+					if (!GetFromDB(key, ptr))
 						return false;
 
-					actionBuf_[key] = ActValue(val, ADD);
+					buff_[key] = Record(ptr, ADD);
 					ret = true;
 				}
 			}
@@ -128,21 +129,21 @@ namespace utils
 		}
 
 	public:
-		const mapKV& GetData()
+		const Map& GetData()
 		{
 			return *data_;
 		}
 
-		mapKV& GetActionBuf()
+		Map& GetChangeBuf()
 		{
-			return actionBuf_;
+			return buff_;
 		}
 
-		bool Set(const KEY& key, const pointer& val)
+		bool Set(const KEY& key, const VALUE_PTR& ptr)
 		{
 			bool ret = true;
 
-			try{ SetValue(key, val); }
+			try{ SetValue(key, ptr); }
 			catch(std::exception& e)
 			{ 
 				LOG_ERROR("Catched an set exception, detail: %s", e.what());
@@ -152,11 +153,11 @@ namespace utils
 			return ret;
 		}
 
-		bool Get(const KEY& key, pointer& val)
+		bool Get(const KEY& key, VALUE_PTR& ptr)
 		{
 			bool ret = true;
 
-			try{ ret = GetValue(key, val); }
+			try{ ret = GetValue(key, ptr); }
 			catch(std::exception& e)
 			{ 
 				LOG_ERROR("Catched an get exception, detail: %s", e.what());
@@ -169,7 +170,7 @@ namespace utils
 		{
 			bool ret = true;
 
-			try{ actionBuf_[key] = ActValue(DEL); }
+			try{ buff_[key] = Record(DEL); }
 			catch(std::exception& e)
 			{ 
 				LOG_ERROR("Catched an delete exception, detail: %s", e.what());
@@ -182,24 +183,24 @@ namespace utils
 	private:
 		bool CopyCommit()
 		{
-			mapKV copyBuf = *data_;
+			Map copyBuf = *data_;
 			try
 			{
-				for (auto act : actionBuf_)
+				for (auto act : buff_)
 					copyBuf[act.first] = act.second;
 			}
 			catch (std::exception& e)
 			{
 				LOG_ERROR("Catched an copy exception, detail: %s", e.what());
-				actionBuf_.clear();
+				buff_.clear();
 				return false;
 			}
 
 			data_->swap(copyBuf);
 
-			//CAUTION: now the pointers in actionBuf_ and dataCopy_ are overlapped with data_,
+			//CAUTION: now the pointers in buff_ and copyBuf_ are overlapped with data_,
 			//so it must be clear, otherwise the later modification to them will aslo directly act on data_.
-			actionBuf_.clear(); 
+			buff_.clear(); 
 			return true;
 		}
 
@@ -212,10 +213,10 @@ namespace utils
 		//Call ClearChange to discard the modification if Commit failed
 		void ClearChangeBuf()
 		{
-			actionBuf_.clear();
+			buff_.clear();
 		}
 
-		virtual bool GetFromDB(const KEY& key, pointer& val){ return false; }
+		virtual bool GetFromDB(const KEY& key, VALUE_PTR& ptr){ return false; }
 
 		virtual void updateToDB(){}
 	};

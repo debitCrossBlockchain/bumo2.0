@@ -138,7 +138,7 @@ namespace bumo {
 
 		// for validator election
 		protocol::ElectionConfig election_config_;
-		std::map<std::string, Environment::CandidatePointer> validator_candidates_;
+		std::unordered_map<std::string, Environment::CandidatePointer> validator_candidates_;
 		std::unordered_map<std::string, int64_t> abnormal_records_;
 
 		struct SyncStat{

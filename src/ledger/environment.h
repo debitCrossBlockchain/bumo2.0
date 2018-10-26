@@ -27,8 +27,8 @@ namespace bumo {
 	class Environment : public utils::AtomMap<std::string, AccountFrm>{
 	public:
 		typedef std::shared_ptr<protocol::ValidatorCandidate> CandidatePointer;
-		typedef AtomMap<std::string, Json::Value>::mapKV settingKV;
-		typedef AtomMap<std::string, protocol::ValidatorCandidate>::mapKV candidateKV;
+		typedef AtomMap<std::string, Json::Value>::Map SettingMap;
+		typedef AtomMap<std::string, protocol::ValidatorCandidate>::Map CandidateMap;
 
 		const std::string validatorsKey = "validators";
 		const std::string feesKey = "configFees";
@@ -40,7 +40,7 @@ namespace bumo {
 		Environment(Environment const&) = delete;
 		Environment& operator=(Environment const&) = delete;
 
-		Environment(mapKV* data, settingKV* settings, candidateKV* candidates);
+		Environment(Map* data, SettingMap* settings, CandidateMap* candidates);
 
 		bool GetEntry(const std::string& key, AccountFrm::pointer &frm);
 		bool AddEntry(const std::string& key, AccountFrm::pointer frm);
