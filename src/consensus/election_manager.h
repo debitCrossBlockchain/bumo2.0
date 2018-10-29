@@ -77,6 +77,8 @@ namespace bumo {
 		bool ValidatorCandidatesStorage();
 		bool ValidatorCandidatesLoad();
 
+		void UpdateToDB();
+
 		virtual void OnTimer(int64_t current_time);
 		virtual void OnSlowTimer(int64_t current_time);
 		virtual void GetModuleStatus(Json::Value &data);

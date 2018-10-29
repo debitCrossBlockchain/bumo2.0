@@ -547,9 +547,14 @@ namespace bumo {
 				abnormal_node = kv.value();
 			}
 		}
+
 		if (!abnormal_node.empty()) {
 			ElectionManager::Instance().AddAbnormalRecord(abnormal_node);
 		}
+
+		closing_ledger->environment_->UpdateValidatorCandidate();
+		ElectionManager::Instance().ValidatorCandidatesStorage();
+		ElectionManager::Instance().UpdateToDB();
 
 		int64_t time0 = utils::Timestamp().HighResolution();
 		int64_t new_count = 0, change_count = 0;
@@ -588,9 +593,6 @@ namespace bumo {
 		int64_t ledger_seq = closing_ledger->GetProtoHeader().seq();
 		std::shared_ptr<WRITE_BATCH> account_db_batch = tree_->batch_;
 		account_db_batch->Put(bumo::General::KEY_LEDGER_SEQ, utils::String::Format(FMT_I64, ledger_seq));
-
-		closing_ledger->environment_->UpdateValidatorCandidate();
-		ElectionManager::Instance().ValidatorCandidatesStorage();
 		
 		//for validator upgrade
 		if (new_set.validators_size() > 0 || closing_ledger->environment_->GetVotedValidators(validators_, new_set)) {

@@ -276,4 +276,10 @@ namespace bumo {
 
 		return true;
 	}
+
+	void ElectionManager::UpdateToDB(){
+		if (!Storage::Instance().account_db()->WriteBatch(*(candidate_mpt_->batch_))) {
+			PROCESS_EXIT("Failed to write accounts to database: %s", Storage::Instance().account_db()->error_desc().c_str());
+		}
+	}
 }
