@@ -22,6 +22,7 @@
 #include <overlay/peer_manager.h>
 #include <ledger/ledger_manager.h>
 #include <consensus/consensus_manager.h>
+#include <consensus/election_manager.h>
 #include <glue/glue_manager.h>
 #include <api/web_server.h>
 #include <api/websocket_server.h>
@@ -75,6 +76,7 @@ int main(int argc, char *argv[]){
 	bumo::PeerManager::InitInstance();
 	bumo::LedgerManager::InitInstance();
 	bumo::ConsensusManager::InitInstance();
+	bumo::ElectionManager::InitInstance();
 	bumo::GlueManager::InitInstance();
 	bumo::WebSocketServer::InitInstance();
 	bumo::WebServer::InitInstance();
@@ -196,6 +198,14 @@ int main(int argc, char *argv[]){
 		}
 		object_exit.Push(std::bind(&bumo::ConsensusManager::Exit, &consensus_manager));
 		LOG_INFO("Initialized consensus manager successfully");
+
+		bumo::ElectionManager& election_manager = bumo::ElectionManager::Instance();
+		if (!bumo::g_enable_ || !election_manager.Initialize()){
+			LOG_ERROR("Failed to initialize election manager");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::ElectionManager::Exit, &election_manager));
+		LOG_INFO("Initialized election manager successfully");
 
 		bumo::LedgerManager &ledgermanger = bumo::LedgerManager::Instance();
 		if (!bumo::g_enable_ || !ledgermanger.Initialize()) {

@@ -30,6 +30,9 @@
     <ClCompile Include="..\..\src\consensus\bft_instance.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\consensus\election_manager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\consensus\consensus.h">
@@ -45,6 +48,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\consensus\bft_instance.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\consensus\election_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

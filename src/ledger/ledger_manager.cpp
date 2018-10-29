@@ -20,6 +20,7 @@
 #include "ledger_manager.h"
 #include "contract_manager.h"
 #include "fee_calculate.h"
+#include "consensus/election_manager.h"
 
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
@@ -132,8 +133,6 @@ namespace bumo {
 			}
 		}
 		LOG_INFO("The election configuration is : %s", election_config_.DebugString().c_str());
-
-		ValidatorCandidatesLoad();
 
 		// Validator abnormal records
 		std::string key = "abnormal_records";
@@ -278,40 +277,6 @@ namespace bumo {
 			return false;
 		}
 		return vlidators_set.ParseFromString(str);
-	}
-
-	void LedgerManager::ValidatorCandidatesStorage(std::shared_ptr<WRITE_BATCH> batch) {
-		KVTrie mpt;
-		mpt.Init(Storage::Instance().account_db(), batch, General::VALIDATOR_CANDIDATE_PREFIX, 1);
-
-		for (auto it : validator_candidates_){
-			mpt.Set(it.first, it.second->SerializeAsString());
-		}
-
-		mpt.UpdateHash();
-	}
-
-	bool LedgerManager::ValidatorCandidatesLoad() {
-
-		try{
-			KVTrie mpt;
-			auto batch = std::make_shared<WRITE_BATCH>();
-			mpt.Init(Storage::Instance().account_db(), batch, General::VALIDATOR_CANDIDATE_PREFIX, 1);
-
-			std::vector<std::string> entries;
-			mpt.GetAll("", entries);
-
-			for (size_t i = 0; i < entries.size(); i++){
-				CandidatePtr candidate = std::make_shared<protocol::ValidatorCandidate>();
-				candidate->ParseFromString(entries[i]);
-				validator_candidates_[candidate->address()] = candidate;
-			}
-		}
-		catch (std::exception& e){
-			return false;
-		}
-
-		return true;
 	}
 	
 	void LedgerManager::FeesConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::FeeConfig &fee) {
@@ -672,7 +637,7 @@ namespace bumo {
 		account_db_batch->Put(bumo::General::KEY_LEDGER_SEQ, utils::String::Format(FMT_I64, ledger_seq));
 
 		closing_ledger->environment_->UpdateValidatorCandidate();
-		ValidatorCandidatesStorage(account_db_batch);
+		ElectionManager::Instance().ValidatorCandidatesStorage();
 		
 		//for validator upgrade
 		if (new_set.validators_size() > 0 || closing_ledger->environment_->GetVotedValidators(validators_, new_set)) {
@@ -1146,47 +1111,5 @@ namespace bumo {
 		rate = owner_value / count;
 
 		return true;
-	}
-
-	CandidatePtr LedgerManager::GetValidatorCandidate(const std::string& key){
-		CandidatePtr candidate = nullptr;
-
-		auto it = validator_candidates_.find(key);
-		if (it != validator_candidates_.end()){
-			candidate = it->second;
-		}
-
-		return candidate;
-	}
-
-	bool  LedgerManager::SetValidatorCandidate(const std::string& key, CandidatePtr value){
-		if (!value){
-			return false;
-		}
-
-		try{ 
-			validator_candidates_[key] = value;
-		}
-		catch (std::exception& e){
-			return false;
-		}
-
-		return true;
-	}
-
-	bool LedgerManager::SetValidatorCandidate(const std::string& key, const protocol::ValidatorCandidate& value){
-		try{
-			CandidatePtr candidate = std::make_shared<protocol::ValidatorCandidate>(value);
-			validator_candidates_[key] = candidate;
-		}
-		catch (std::exception& e){
-			return false;
-		}
-
-		return true;
-	}
-
-	void LedgerManager::DelValidatorCandidate(const std::string& key){
-		validator_candidates_.erase(key);
 	}
 }

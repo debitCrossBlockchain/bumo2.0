@@ -73,14 +73,6 @@ namespace bumo {
 		Result DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context); // -1: false, 0 : success, > 0 exception
 		void NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade);
 
-		bool SetValidatorCandidate(const std::string& key, CandidatePtr value);
-		bool SetValidatorCandidate(const std::string& key, const protocol::ValidatorCandidate& value);
-		CandidatePtr GetValidatorCandidate(const std::string& key);
-		void DelValidatorCandidate(const std::string& key);
-
-		void ValidatorCandidatesStorage(std::shared_ptr<WRITE_BATCH> batch);
-		bool ValidatorCandidatesLoad();
-
 		virtual void OnTimer(int64_t current_time) override;
 		virtual void OnSlowTimer(int64_t current_time) override;
 		virtual void GetModuleStatus(Json::Value &data);
@@ -138,7 +130,6 @@ namespace bumo {
 
 		// for validator election
 		protocol::ElectionConfig election_config_;
-		std::unordered_map<std::string, CandidatePtr> validator_candidates_;
 		std::unordered_map<std::string, int64_t> abnormal_records_;
 
 		struct SyncStat{

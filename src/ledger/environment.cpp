@@ -15,6 +15,7 @@
 
 #include <common/storage.h>
 #include "ledger_manager.h"
+#include "consensus/election_manager.h"
 #include "environment.h"
 
 namespace bumo{
@@ -179,17 +180,17 @@ namespace bumo{
 
 	bool Environment::GetValidatorCandidate(const std::string& addr, CandidatePtr& candidate){
 
-		CandidatePtr temp = nullptr;
-		if (!candidates_.Get(addr, temp)){
-			temp = LedgerManager::Instance().GetValidatorCandidate(addr);
+		if (!candidates_.Get(addr, candidate)){
+			candidate = ElectionManager::Instance().GetValidatorCandidate(addr);
+			if (!candidate){
+				candidate = nullptr;
+				return false;
+			}
+
+			CandidatePtr cache = std::make_shared<protocol::ValidatorCandidate>(*candidate);
+			candidates_.Set(addr, cache);
 		}
 
-		if (!temp){
-			return false;
-		}
-
-		candidate = std::make_shared<protocol::ValidatorCandidate>(*temp);
-		candidates_.Set(addr, candidate);
 		return true;
 	}
 
@@ -206,10 +207,10 @@ namespace bumo{
 
 		for (auto it : newCandidates){
 			if (it.second.type_ == utils::DEL){
-				LedgerManager::Instance().DelValidatorCandidate(it.first);
+				ElectionManager::Instance().DelValidatorCandidate(it.first);
 			}
 			else{
-				if (!LedgerManager::Instance().SetValidatorCandidate(it.first, it.second.ptr_)){
+				if (!ElectionManager::Instance().SetValidatorCandidate(it.first, it.second.ptr_)){
 					return false;
 				}
 			}

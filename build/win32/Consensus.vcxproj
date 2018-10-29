@@ -87,6 +87,7 @@
     <ClCompile Include="..\..\src\consensus\consensus_msg.cpp" />
     <ClCompile Include="..\..\src\consensus\bft.cpp" />
     <ClCompile Include="..\..\src\consensus\bft_instance.cpp" />
+    <ClCompile Include="..\..\src\consensus\election_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\consensus\consensus.h" />
@@ -94,6 +95,7 @@
     <ClInclude Include="..\..\src\consensus\consensus_msg.h" />
     <ClInclude Include="..\..\src\consensus\bft.h" />
     <ClInclude Include="..\..\src\consensus\bft_instance.h" />
+    <ClInclude Include="..\..\src\consensus\election_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\consensus\Makefile.am" />
