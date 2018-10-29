@@ -488,10 +488,10 @@ namespace bumo {
 
 		for (auto it = entries.begin(); it != entries.end(); it++){
 
-			if (it->second.type_ == DEL)
+			if (it->second.type_ == utils::DEL)
 				continue; //There is no delete account function now.
 
-			std::shared_ptr<AccountFrm> account = it->second.value_;
+			std::shared_ptr<AccountFrm> account = it->second.ptr_;
 			account->UpdateHash(batch);
 			std::string ss = account->Serializer();
 			std::string index = DecodeAddress(it->first);

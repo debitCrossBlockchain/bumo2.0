@@ -18,18 +18,18 @@
 
 #include <proto/cpp/chain.pb.h>
 #include <proto/cpp/consensus.pb.h>
-//#include <utils/entry_cache.h>
 #include <utils/atom_map.h>
 #include <main/configure.h>
 #include <json/value.h>
 #include "account.h"
 
 namespace bumo {
-	class Environment : public AtomMap<std::string, AccountFrm>{
+	typedef std::shared_ptr<protocol::ValidatorCandidate> CandidatePtr;
+
+	class Environment : public utils::AtomMap<std::string, AccountFrm>{
 	public:
-		typedef std::shared_ptr<protocol::ValidatorCandidate> CandidatePointer;
-		typedef AtomMap<std::string, Json::Value>::mapKV settingKV;
-		typedef AtomMap<std::string, protocol::ValidatorCandidate>::mapKV candidateKV;
+		typedef AtomMap<std::string, Json::Value>::Map SettingMap;
+		typedef AtomMap<std::string, protocol::ValidatorCandidate>::Map CandidateMap;
 
 		const std::string validatorsKey = "validators";
 		const std::string feesKey = "configFees";
@@ -41,7 +41,7 @@ namespace bumo {
 		Environment(Environment const&) = delete;
 		Environment& operator=(Environment const&) = delete;
 
-		Environment(mapKV* data, settingKV* settings, candidateKV* candidates);
+		Environment(Map* data, SettingMap* settings, CandidateMap* candidates);
 
 		bool GetEntry(const std::string& key, AccountFrm::pointer &frm);
 		bool AddEntry(const std::string& key, AccountFrm::pointer frm);
@@ -53,8 +53,8 @@ namespace bumo {
 		bool UpdateNewValidators(const Json::Value& validators);
 		bool GetVotedValidators(const protocol::ValidatorSet &old_validator, protocol::ValidatorSet& new_validator);
 
-		bool GetValidatorCandidate(const std::string& addr, CandidatePointer& candidate);
-		bool SetValidatorCandidate(const std::string& addr, CandidatePointer candidate);
+		bool GetValidatorCandidate(const std::string& addr, CandidatePtr& candidate);
+		bool SetValidatorCandidate(const std::string& addr, CandidatePtr candidate);
 		bool DelValidatorCandidate(const std::string& addr);
 		bool UpdateValidatorCandidate();
 

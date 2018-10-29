@@ -17,7 +17,6 @@
 #define LEDGER_MANAGER_H_
 
 #include <utils/headers.h>
-//#include <utils/entry_cache.h>
 #include <common/general.h>
 #include <common/storage.h>
 #include <common/private_key.h>
@@ -74,13 +73,13 @@ namespace bumo {
 		Result DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context); // -1: false, 0 : success, > 0 exception
 		void NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade);
 
-		bool SetValidatorCandidate(const std::string& key, Environment::CandidatePointer value);
+		bool SetValidatorCandidate(const std::string& key, CandidatePtr value);
 		bool SetValidatorCandidate(const std::string& key, const protocol::ValidatorCandidate& value);
-		Environment::CandidatePointer GetValidatorCandidate(const std::string& key);
+		CandidatePtr GetValidatorCandidate(const std::string& key);
 		void DelValidatorCandidate(const std::string& key);
 
 		void ValidatorCandidatesStorage(std::shared_ptr<WRITE_BATCH> batch);
-		bool ValidatorCandidatesLoad(const std::string& hash);
+		bool ValidatorCandidatesLoad();
 
 		virtual void OnTimer(int64_t current_time) override;
 		virtual void OnSlowTimer(int64_t current_time) override;
@@ -139,7 +138,7 @@ namespace bumo {
 
 		// for validator election
 		protocol::ElectionConfig election_config_;
-		std::map<std::string, Environment::CandidatePointer> validator_candidates_;
+		std::unordered_map<std::string, CandidatePtr> validator_candidates_;
 		std::unordered_map<std::string, int64_t> abnormal_records_;
 
 		struct SyncStat{

@@ -19,7 +19,7 @@
 
 namespace bumo{
 
-	Environment::Environment(mapKV* data, settingKV* settings, candidateKV* candidates) :
+	Environment::Environment(Map* data, SettingMap* settings, CandidateMap* candidates) :
 		AtomMap<std::string, AccountFrm>(data), 
 		settings_(settings), 
 		candidates_(candidates)
@@ -69,9 +69,9 @@ namespace bumo{
 
 	std::shared_ptr<Environment> Environment::NewStackFrameEnv()
 	{
-		mapKV& data	= GetActionBuf();
-		settingKV& settings = settings_.GetActionBuf();
-		candidateKV& candidates = candidates_.GetActionBuf();
+		Map& data	= GetChangeBuf();
+		SettingMap& settings = settings_.GetChangeBuf();
+		CandidateMap& candidates = candidates_.GetChangeBuf();
 		std::shared_ptr<Environment> next = std::make_shared<Environment>(&data, &settings, &candidates);
 
 		return next;
@@ -177,9 +177,9 @@ namespace bumo{
 		return true;
 	}
 
-	bool Environment::GetValidatorCandidate(const std::string& addr, CandidatePointer& candidate){
+	bool Environment::GetValidatorCandidate(const std::string& addr, CandidatePtr& candidate){
 
-		CandidatePointer temp = nullptr;
+		CandidatePtr temp = nullptr;
 		if (!candidates_.Get(addr, temp)){
 			temp = LedgerManager::Instance().GetValidatorCandidate(addr);
 		}
@@ -193,7 +193,7 @@ namespace bumo{
 		return true;
 	}
 
-	bool Environment::SetValidatorCandidate(const std::string& addr, CandidatePointer candidate){
+	bool Environment::SetValidatorCandidate(const std::string& addr, CandidatePtr candidate){
 		return candidates_.Set(addr, candidate);
 	}
 
@@ -202,14 +202,14 @@ namespace bumo{
 	}
 
 	bool Environment::UpdateValidatorCandidate(){
-		const candidateKV& newCandidates = candidates_.GetData();
+		const CandidateMap& newCandidates = candidates_.GetData();
 
 		for (auto it : newCandidates){
-			if (it.second.type_ == DEL){
+			if (it.second.type_ == utils::DEL){
 				LedgerManager::Instance().DelValidatorCandidate(it.first);
 			}
 			else{
-				if (!LedgerManager::Instance().SetValidatorCandidate(it.first, it.second.value_)){
+				if (!LedgerManager::Instance().SetValidatorCandidate(it.first, it.second.ptr_)){
 					return false;
 				}
 			}

@@ -314,14 +314,14 @@ namespace bumo {
 			Json::Value tmp = Proto2Json(asset);
 			switch (action)
 			{
-			case utils::ChangeAction::ADD:
-			case utils::ChangeAction::MOD:
+			case utils::ADD:
+			case utils::MOD:
 				if (asset.amount() == 0)
 					trie_asset.Delete(asset.key().SerializeAsString());
 				else
 					trie_asset.Set(asset.key().SerializeAsString(), asset.SerializeAsString());
 				break;
-			case utils::ChangeAction::DEL:
+			case utils::DEL:
 				trie_asset.Delete(asset.key().SerializeAsString());
 				break;
 

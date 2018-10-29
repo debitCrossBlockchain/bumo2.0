@@ -1145,7 +1145,7 @@ namespace bumo{
 			//ledger_context->GetTopTx()->ContractStepInc(100);
 
 			std::string key = ToCString(v8::String::Utf8Value(args[0]));
-			bumo::Environment::CandidatePointer pCandidate = nullptr;
+			bumo::CandidatePtr pCandidate = nullptr;
 			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
 			if (!environment->GetValidatorCandidate(key, pCandidate)) {
 				LOG_ERROR("Failed to find validator candidate %s.", key.c_str());
@@ -1202,7 +1202,7 @@ namespace bumo{
 
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 
-			Environment::CandidatePointer candidate;
+			CandidatePtr candidate;
 			std::shared_ptr<Environment> env = ledger_context->GetTopTx()->environment_;
 			if (!env->GetValidatorCandidate(addr, candidate)){
 				if (iAmount < 0){
@@ -1292,13 +1292,13 @@ namespace bumo{
 			}
 			std::string vote_for_old = account_frm->GetVoteFor();
 
-			Environment::CandidatePointer candidate_new;
+			CandidatePtr candidate_new;
 			if (!env->GetValidatorCandidate(vote_for_new, candidate_new)) {
 				error_desc = utils::String::Format("Failed to get candidate info of %s from transaction environment.", vote_for_new.c_str());
 				break;
 			}
 
-			Environment::CandidatePointer candidate_old;
+			CandidatePtr candidate_old;
 			if (!vote_for_old.empty()) {
 				LOG_TRACE("The account try to vote for candidate %s instead of candidate %s", vote_for_new.c_str(), vote_for_old.c_str());
 				if (vote_for_old != vote_for_new) {
