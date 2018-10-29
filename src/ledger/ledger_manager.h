@@ -67,9 +67,6 @@ namespace bumo {
 		bool ConsensusValueFromDB(int64_t seq, protocol::ConsensusValue& request);
 		protocol::FeeConfig GetCurFeeConfig();
 
-		bool ElectionConfigGet(protocol::ElectionConfig& ecfg);
-		void GetAbnormalRecords(Json::Value& record);
-
 		Result DoTransaction(protocol::TransactionEnv& env, LedgerContext *ledger_context); // -1: false, 0 : success, > 0 exception
 		void NotifyLedgerClose(LedgerFrm::pointer closing_ledger, bool has_upgrade);
 
@@ -78,16 +75,6 @@ namespace bumo {
 		virtual void GetModuleStatus(Json::Value &data);
 
 		static void CreateHardforkLedger();
-
-		// for validator election
-		int64_t CoinToVotes(int64_t coin);
-		enum FeesOwner {
-			SELF = 0,
-			CREATOR = 1,
-			APP = 2,
-			VALIDATORS = 3
-		};
-		bool GetFeesRateByOwner(FeesOwner owner, uint32_t rate);
 
 	public:
 		utils::Mutex gmutex_;
@@ -111,11 +98,6 @@ namespace bumo {
 		static bool ValidatorsGet(const std::string& hash, protocol::ValidatorSet& vlidators_set);
 
 		static void FeesConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::FeeConfig &fee);
-
-		static void ElectionConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg);
-		
-		void AddAbnormalRecord(const std::string& abnormal_node);
-		void UpdateAbnormalRecords();
 		
 		LedgerFrm::pointer last_closed_ledger_;
 		protocol::ValidatorSet validators_;
@@ -127,10 +109,6 @@ namespace bumo {
 
 		utils::ReadWriteLock fee_config_mutex_;
 		protocol::FeeConfig fees_;
-
-		// for validator election
-		protocol::ElectionConfig election_config_;
-		std::unordered_map<std::string, int64_t> abnormal_records_;
 
 		struct SyncStat{
 			int64_t send_time_;

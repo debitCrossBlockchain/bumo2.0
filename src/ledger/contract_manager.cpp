@@ -17,6 +17,7 @@
 #include <utils/logger.h>
 #include <common/pb2json.h>
 #include <common/private_key.h>
+#include "consensus/election_manager.h"
 #include "ledger_frm.h"
 #include "ledger_manager.h"
 #include "contract_manager.h"
@@ -1305,7 +1306,7 @@ namespace bumo{
 					if (env->GetValidatorCandidate(vote_for_old, candidate_old)) {
 						// transfer votes from vote_for_old to vote_for_new
 						int64_t frozen_coin = account_frm->GetFrozenCoin();
-						int64_t frozen_votes = LedgerManager::GetInstance()->CoinToVotes(frozen_coin);
+						int64_t frozen_votes = ElectionManager::GetInstance()->CoinToVotes(frozen_coin);
 						int64_t frozen_votes_old = 0;
 						if (!utils::SafeIntSub(candidate_old->coin_vote(), frozen_votes, frozen_votes_old)) {
 							error_desc = utils::String::Format("The result overflowed when decrease votes for %s", vote_for_old.c_str());
@@ -1335,7 +1336,7 @@ namespace bumo{
 			
 			if (coin_amount > 0) {
 				// if coin_amount > 0 frozen coin and increase votes
-				int64_t votes_amount_new = LedgerManager::Instance().CoinToVotes(coin_amount);
+				int64_t votes_amount_new = ElectionManager::Instance().CoinToVotes(coin_amount);
 				if (account_frm->FrozenCoin(coin_amount)) {
 					int64_t new_coin_votes = 0;
 					if (!utils::SafeIntAdd(candidate_new->coin_vote(), votes_amount_new, new_coin_votes)) {
@@ -1355,7 +1356,7 @@ namespace bumo{
 					error_desc = utils::String::Format("The amount of unfrozen coin(" FMT_I64 ") is more than the amount frozen coin(" FMT_I64 ")", -coin_amount, account_frm->GetFrozenCoin());
 					break;
 				}
-				int64_t votes_amount_new = LedgerManager::Instance().CoinToVotes(-coin_amount);
+				int64_t votes_amount_new = ElectionManager::Instance().CoinToVotes(-coin_amount);
 				int64_t new_coin_votes = 0;
 				if (!utils::SafeIntSub(candidate_new->coin_vote(), votes_amount_new, new_coin_votes)) {
 					error_desc = utils::String::Format("The result overflowed when increase votes for %s", vote_for_new.c_str());
@@ -1378,8 +1379,6 @@ namespace bumo{
 			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
-
-
 
 	void V8Contract::CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args)
 	{
@@ -1494,7 +1493,7 @@ namespace bumo{
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
 
 			Json::Value jsonRecords;
-			LedgerManager::Instance().GetAbnormalRecords(jsonRecords);
+			ElectionManager::Instance().GetAbnormalRecords(jsonRecords);
 
 			std::string strvalue = jsonRecords.toFastString();
 			v8::Local<v8::String> returnvalue = v8::String::NewFromUtf8(args.GetIsolate(), strvalue.c_str(), v8::NewStringType::kNormal).ToLocalChecked();

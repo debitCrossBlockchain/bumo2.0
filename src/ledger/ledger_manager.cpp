@@ -110,53 +110,6 @@ namespace bumo {
 		}
 	
 		LOG_INFO("Gas price :" FMT_I64 " Base reserve:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
-
-		// Election configuration
-		ElectionConfigure& ecfg = Configure::Instance().election_configure_;
-
-		// Initialize election configuration to ledger db if get configuration failed
-		if (!ElectionConfigGet(election_config_)) {
-			LOG_ERROR("Failed to get election configuration!");
-			election_config_.set_pledge_amount(ecfg.pledge_amount_);
-			election_config_.set_validators_refresh_interval(ecfg.validators_refresh_interval_);
-			election_config_.set_coin_to_vote_rate(ecfg.coin_to_vote_rate_);
-			election_config_.set_fee_to_vote_rate(ecfg.fee_to_vote_rate_);
-			election_config_.set_fee_distribution_rate(ecfg.fee_distribution_rate_);
-			election_config_.set_penalty_rate(ecfg.penalty_rate_);
-
-			auto batch = tree_->batch_;
-			ElectionConfigSet(batch, election_config_);
-			KeyValueDb *db = Storage::Instance().account_db();
-			if (!db->WriteBatch(*batch)){
-				LOG_ERROR("Failed to write election configuration to database(%s)", db->error_desc().c_str());
-				return false;
-			}
-		}
-		LOG_INFO("The election configuration is : %s", election_config_.DebugString().c_str());
-
-		// Validator abnormal records
-		std::string key = "abnormal_records";
-		auto db = Storage::Instance().account_db();
-		std::string json_str;
-		if (db->Get(key, json_str)) {
-			abnormal_records_.clear();
-			Json::Value abnormal_json;
-			if (abnormal_json.fromString(json_str)) {
-				LOG_ERROR("Failed to parse the json content of validator abnormal records");
-				UpdateAbnormalRecords();
-			}
-			else {
-				for (size_t i = 0; i < abnormal_json.size(); i++) {
-					Json::Value& item = abnormal_json[i];
-					abnormal_records_.insert(std::make_pair(item["address"].asString(), item["count"].asInt64()));
-				}
-			}			
-		}
-		else {
-			// write test value
-			abnormal_records_.insert(std::make_pair("buQcjgnBuoLkKdoggtJsQxiEPAFifgQBKu16", 10));
-			abnormal_records_.insert(std::make_pair("buQWQ4rwVW8RCzatR8XnRnhMCaCeMkE46qLR", 1));
-		}
 		
 		//load proof
 		Storage::Instance().account_db()->Get(General::LAST_PROOF, proof_);
@@ -595,7 +548,7 @@ namespace bumo {
 			}
 		}
 		if (!abnormal_node.empty()) {
-			AddAbnormalRecord(abnormal_node);
+			ElectionManager::Instance().AddAbnormalRecord(abnormal_node);
 		}
 
 		int64_t time0 = utils::Timestamp().HighResolution();
@@ -1021,95 +974,5 @@ namespace bumo {
 		
 		result = txfrm->GetResult();
 		return result;
-	}
-
-	void LedgerManager::ElectionConfigSet(std::shared_ptr<WRITE_BATCH> batch, const protocol::ElectionConfig &ecfg) {
-		batch->Put("election_config", ecfg.SerializeAsString());
-	}
-
-	bool LedgerManager::ElectionConfigGet(protocol::ElectionConfig &ecfg) {
-		std::string key = "election_config";
-		auto db = Storage::Instance().account_db();
-		std::string str;
-		if (!db->Get(key, str)) {
-			return false;
-		}
-		return ecfg.ParseFromString(str);
-	}
-
-	void LedgerManager::AddAbnormalRecord(const std::string& abnormal_node) {
-		std::unordered_map<std::string, int64_t>::iterator it = abnormal_records_.find(abnormal_node);
-		if (it != abnormal_records_.end()) {
-			it->second++;
-		}
-		else {
-			abnormal_records_.insert(std::make_pair(abnormal_node, 1));
-		}
-		UpdateAbnormalRecords();
-	}
-
-	void LedgerManager::GetAbnormalRecords(Json::Value& records) {
-		for (std::unordered_map<std::string, int64_t>::iterator it = abnormal_records_.begin();
-			it != abnormal_records_.end();
-			it++) {
-			records[it->first] = it->second;
-		}
-	}
-
-	void LedgerManager::UpdateAbnormalRecords() {
-		std::string key = "abnormal_records";
-
-		Json::Value abnormal_json;
-		for (std::unordered_map<std::string, int64_t>::iterator it = abnormal_records_.begin();
-			it != abnormal_records_.end();
-			it++) {
-			Json::Value item;
-			item["address"] = it->first;
-			item["count"] = it->second;
-			abnormal_json.append(item);
-		}
-		auto batch = tree_->batch_;
-		batch->Put("abnormal_records", abnormal_json.toFastString());
-		KeyValueDb *db = Storage::Instance().account_db();
-		if (!db->WriteBatch(*batch)){
-			LOG_ERROR("Failed to write abnormal records to database(%s)", db->error_desc().c_str());
-		}
-		else {
-			LOG_TRACE("Update abnormal records to db done");
-		}
-	}
-
-	int64_t LedgerManager::CoinToVotes(int64_t coin) {
-		if (election_config_.coin_to_vote_rate() < 1) {
-			return 0;
-		}
-		else {
-			return coin / election_config_.coin_to_vote_rate();
-		}
-	}
-
-	bool LedgerManager::GetFeesRateByOwner(FeesOwner owner, uint32_t rate) {
-		std::vector<std::string> vec = utils::String::split(election_config_.fee_distribution_rate(), ":");
-		if (vec.size() != 4) {
-			LOG_ERROR("Failed to get fees distribute rate, owner type:" FMT_I64"", owner);
-			return false;
-		}
-		uint32_t count = 0;
-		uint32_t owner_value = 0;
-		for (int i = 0; i < 4; i++) {
-			uint32_t value = 0;
-			if (!utils::String::SafeStoui(vec[i], value)) {
-				LOG_ERROR("Failed to convert string(%s) to int", vec[i].c_str());
-				return false;
-			}
-			if (!utils::SafeIntAdd(count, value, count)){
-				LOG_ERROR("Overflowed when get fees distribute rate.");
-				return false;
-			}
-			if (i == owner) owner_value = value;
-		}
-		rate = owner_value / count;
-
-		return true;
 	}
 }
