@@ -15,7 +15,6 @@
 
 #include <common/storage.h>
 #include "ledger_manager.h"
-#include "consensus/election_manager.h"
 #include "environment.h"
 
 namespace bumo{

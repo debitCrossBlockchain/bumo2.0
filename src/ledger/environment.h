@@ -22,10 +22,9 @@
 #include <main/configure.h>
 #include <json/value.h>
 #include "account.h"
+#include "consensus/election_manager.h"
 
 namespace bumo {
-	typedef std::shared_ptr<protocol::ValidatorCandidate> CandidatePtr;
-
 	class Environment : public utils::AtomMap<std::string, AccountFrm>{
 	public:
 		typedef AtomMap<std::string, Json::Value>::Map SettingMap;
