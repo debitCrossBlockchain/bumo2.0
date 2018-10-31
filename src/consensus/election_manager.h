@@ -63,7 +63,7 @@ namespace bumo {
 			APP = 2,
 			VALIDATORS = 3
 		};
-		bool GetFeesRateByOwner(FeesOwner owner, uint32_t rate);
+		bool GetFeesShareByOwner(FeesOwner owner, uint32_t rate);
 
 		void GetAbnormalRecords(Json::Value& record);
 		void AddAbnormalRecord(const std::string& abnormal_node);
