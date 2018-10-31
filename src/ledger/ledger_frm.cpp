@@ -267,7 +267,7 @@ namespace bumo {
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
 			bool ret = tx_frm->Apply(this, environment_);
-			//Caculate the required mininum fee by calculting the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
+			//Calculate the required minimum fee by calculating the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
 				LOG_ERROR("Failed to apply transaction(%s): %s, %s",
@@ -349,7 +349,7 @@ namespace bumo {
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
 			bool ret = tx_frm->Apply(this, environment_);
-			//Caculate the required mininum fee by calculting the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
+			//Calculate the required minimum fee by calculating the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
 				LOG_ERROR("Failed to apply transaction(%s). %s, %s",
@@ -508,7 +508,17 @@ namespace bumo {
 
 	bool LedgerFrm::AllocateReward() {
 		int64_t block_reward = GetBlockReward(ledger_.header().seq());
-		int64_t total_reward = total_fee_ + block_reward;
+		uint32_t fees_validators_rate = 0;
+		if (!ElectionManager::Instance().GetFeesShareByOwner(ElectionManager::VALIDATORS, fees_validators_rate)) {
+			LOG_ERROR("Failed to get validators' share of fee");
+			return false;
+		}
+		int64_t fees_validators = 0;
+		if (!utils::SafeIntMul(total_fee_, (int64_t)fees_validators_rate, fees_validators)){
+			LOG_ERROR("Overflowed when rewarding account. total fee:(" FMT_I64 "), validator rate:(" FMT_I64 ")", total_fee_, fees_validators_rate);
+			return false;
+		}
+		int64_t total_reward = fees_validators + block_reward;
 		if (total_reward == 0 || IsTestMode()) {
 			return true;
 		}

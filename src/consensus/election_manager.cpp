@@ -170,10 +170,10 @@ namespace bumo {
 		}
 	}
 
-	bool ElectionManager::GetFeesRateByOwner(FeesOwner owner, uint32_t rate) {
+	bool ElectionManager::GetFeesShareByOwner(FeesOwner owner, uint32_t rate) {
 		std::vector<std::string> vec = utils::String::split(election_config_.fee_distribution_rate(), ":");
 		if (vec.size() != 4) {
-			LOG_ERROR("Failed to get fees distribute rate, owner type:" FMT_I64"", owner);
+			LOG_ERROR("Failed to get fees share, owner type:" FMT_I64"", owner);
 			return false;
 		}
 		uint32_t count = 0;
@@ -185,7 +185,7 @@ namespace bumo {
 				return false;
 			}
 			if (!utils::SafeIntAdd(count, value, count)){
-				LOG_ERROR("Overflowed when get fees distribute rate.");
+				LOG_ERROR("Overflowed when get fees share.");
 				return false;
 			}
 			if (i == owner) owner_value = value;
