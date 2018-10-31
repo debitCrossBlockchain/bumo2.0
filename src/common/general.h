@@ -92,6 +92,7 @@ namespace bumo {
 		const static char *ASSET_PREFIX;
 		const static char *METADATA_PREFIX;
 		const static char *VALIDATOR_CANDIDATE_PREFIX;
+		const static char *VALIDATOR_LEADER_KEY_PREFIX;
 
 		const static char *CHECK_TIME_FUNCTION;
 

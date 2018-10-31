@@ -82,6 +82,7 @@ namespace bumo {
 	const char *General::ASSET_PREFIX = "ast";
 	const char *General::METADATA_PREFIX = "meta";
 	const char *General::VALIDATOR_CANDIDATE_PREFIX = "valc";
+	const char *General::VALIDATOR_LEADER_KEY_PREFIX = "validator_leader";
 
 	const char *General::CHECK_TIME_FUNCTION = "internal_check_time";
 

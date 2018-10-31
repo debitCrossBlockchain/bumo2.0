@@ -1193,6 +1193,26 @@ namespace bumo {
 		return true;
 	}
 
+	bool Pbft::SaveLeader(const PbftInstanceIndex& index){
+		bool ret = true;
+		int64_t leader_replica_id = index.view_number_ % validators_.size();
+
+		std::string leader_addr;
+		for (auto it = validators_.begin(); it != validators_.end(); it++){
+			if (it->second == leader_replica_id){
+				leader_addr = it->first;
+				break;
+			}
+		}
+
+		if (!leader_addr.empty()){
+			std::string key = ComposePrefix(General::VALIDATOR_LEADER_KEY_PREFIX, index.sequence_);
+			ret = SaveValue(key, leader_addr);
+		}
+
+		return ret;
+	}
+
 	bool Pbft::TryExecuteValue() {
 		for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end(); iter++) {
 			PbftInstance &instance = iter->second;
@@ -1225,6 +1245,8 @@ namespace bumo {
 				index.sequence_,
 				instance.pre_prepare_.value(), 
 				proof.SerializeAsString(),true);
+
+			SaveLeader(index);
 
 			//Delete the old check point
 			for (PbftInstanceMap::iterator iter = instances_.begin(); iter != instances_.end();) {
