@@ -99,8 +99,11 @@ namespace bumo{
 		auto db = Storage::Instance().account_db();
 		std::string index = DecodeAddress(address);
 		std::string buff;
-		if (!LedgerManager::Instance().tree_->Get(index, buff)){
-			return false;
+		{
+			utils::WriteLockGuard guard(LedgerManager::Instance().GetTreeMutex());
+			if (!LedgerManager::Instance().tree_->Get(index, buff)){
+				return false;
+			}
 		}
 
 		protocol::Account account;

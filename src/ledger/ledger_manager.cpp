@@ -150,6 +150,11 @@ namespace bumo {
 		utils::MutexGuard guard(gmutex_);
 		return statistics_["account_count"].asInt();
 	}
+	
+	utils::ReadWriteLock& LedgerManager::GetTreeMutex()  {
+		return tree_mutex_;
+	}
+
 
 	void LedgerManager::OnTimer(int64_t current_time) {
 		int64_t next_seq = 0;
@@ -623,7 +628,10 @@ namespace bumo {
 
 		int64_t time3 = utils::Timestamp().HighResolution();
 		tree_->batch_ = std::make_shared<WRITE_BATCH>();
-		tree_->FreeMemory(4);
+		{
+			utils::WriteLockGuard guard(tree_mutex_);
+			tree_->FreeMemory(4);
+		}
 		LOG_INFO("ledger(" FMT_I64 "): closed transaction count(" FMT_SIZE "), ledger hash(%s), time of apply ledger ="  FMT_I64_EX(-8) " time of calculating hash="  FMT_I64_EX(-8) " time of addtodb=" FMT_I64_EX(-8)
 			" total=" FMT_I64_EX(-8) " LoadValue=" FMT_I64 " tsize=" FMT_SIZE,
 			closing_ledger->GetProtoHeader().seq(),

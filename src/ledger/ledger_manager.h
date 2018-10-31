@@ -76,9 +76,11 @@ namespace bumo {
 		virtual void GetModuleStatus(Json::Value &data);
 
 		static void CreateHardforkLedger();
+		utils::ReadWriteLock& GetTreeMutex();
 	public:
 		utils::Mutex gmutex_;
 		Json::Value statistics_;
+		utils::ReadWriteLock tree_mutex_;
 		KVTrie* tree_;
 
 		LedgerContextManager context_manager_;
