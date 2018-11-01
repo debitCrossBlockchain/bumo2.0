@@ -25,11 +25,9 @@ CTP 1.0(Contract Token Protocol) 指基于 BUMO 智能合约发行 token 的标�
  
 基于这套标准接口，可以让发行的 token 被其他应用程序和第三方快速对接和使用，比如钱包和交易所。
 
-
 ## 规则
 
 Bumo 智能合约由 JavaScript 语言实现, 包含初始化函数 init 和两个入口函数 main、query 。init 函数用于合约创建时初始化; main 函数主要负责数据写入，query 函数负责数据查询。
-
 
 ## Token 属性
 
