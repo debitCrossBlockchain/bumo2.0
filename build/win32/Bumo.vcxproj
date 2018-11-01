@@ -31,6 +31,9 @@
     <ClCompile Include="..\..\src\monitor\monitor.cpp" />
     <ClCompile Include="..\..\src\monitor\monitor_manager.cpp" />
     <ClCompile Include="..\..\src\monitor\system_manager.cpp" />
+    <ClCompile Include="..\..\src\multichain\block_listener.cpp" />
+    <ClCompile Include="..\..\src\multichain\challenger.cpp" />
+    <ClCompile Include="..\..\src\multichain\proposer.cpp" />
     <ClCompile Include="..\..\src\overlay\peer.cpp" />
     <ClCompile Include="..\..\src\overlay\peer_network.cpp" />
     <ClCompile Include="..\..\src\proto\cpp\chain.pb.cc" />
@@ -65,6 +68,9 @@
     <ClInclude Include="..\..\src\monitor\monitor.h" />
     <ClInclude Include="..\..\src\monitor\monitor_manager.h" />
     <ClInclude Include="..\..\src\monitor\system_manager.h" />
+    <ClInclude Include="..\..\src\multichain\block_listener.h" />
+    <ClInclude Include="..\..\src\multichain\challenger.h" />
+    <ClInclude Include="..\..\src\multichain\proposer.h" />
     <ClInclude Include="..\..\src\overlay\peer.h" />
     <ClInclude Include="..\..\src\overlay\peer_network.h" />
     <ClInclude Include="..\..\src\proto\cpp\chain.pb.h" />

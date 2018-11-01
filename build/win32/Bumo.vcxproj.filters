@@ -22,6 +22,9 @@
     <Filter Include="monitor">
       <UniqueIdentifier>{f06ae41d-262b-435b-9143-a83f4b5a5d11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="multichain">
+      <UniqueIdentifier>{e38e6467-9c1d-402c-b414-4678d3af0f3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\main.cpp">
@@ -132,6 +135,15 @@
     <ClCompile Include="..\..\src\ledger\fee_calculate.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\multichain\block_listener.cpp">
+      <Filter>multichain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\multichain\challenger.cpp">
+      <Filter>multichain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\multichain\proposer.cpp">
+      <Filter>multichain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -229,6 +241,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ledger\fee_calculate.h">
       <Filter>ledger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\multichain\block_listener.h">
+      <Filter>multichain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\multichain\challenger.h">
+      <Filter>multichain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\multichain\proposer.h">
+      <Filter>multichain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
