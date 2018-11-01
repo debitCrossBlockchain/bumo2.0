@@ -1,6 +1,7 @@
 'use strict';
 
 let effectiveVoteInterval = 24 * 60 * 60 * 1000 * 1000;
+let effectiveAbolishVoteInterval = 15 * effectiveVoteInterval;
 let minPledgeAmount       = 100000 * 100000000;
 const candidateSetSize    = 1000;
 const passRate            = 0.7;
@@ -99,12 +100,107 @@ function takebackCoin(tokenAmount){
     }
 }
 
-function abolishValidator(malicious, proof){
-    return;
-}
 
 function voteAbolishValidator(malicious){
-    return;
+
+    assert(addressCheck(malicious) === true, 'Arg-malicious is not valid adress.');
+    let abolishKey = abolishVar + malicious;
+    let abolishStr = storageLoad(abolishKey);
+    if(abolishStr === false){
+        log(abolishKey + ' is not existed, voting maybe passed or expired.');
+        return false;
+    }
+    let validators = getValidators();
+    let candidate = getValidatorCandidate(malicious);
+    assert(candidate !== false, 'Sender(' + sender + ') is not validator candidate.');
+    assert(validators !== false, 'Get validators failed.');
+    assert(validators.length > 1, 'The number of validators must > 1.');
+    assert(findValidator(sender) !== false, sender + ' has no permission to vote.'); 
+    assert(findValidator(malicious) !== false, malicious + ' is not validator.'); 
+
+    let abolishProposal = JSON.parse(abolishStr);
+    if(blockTimestamp >abolishProposal[expiredTimeVar]){
+        log('Voting time expired, ' + malicious + ' is still validator.'); 
+        setMetaData(abolishKey);
+        return false;
+    }
+    
+    assert(abolishProposal[ballotVar].includes(sender) !== true, sender + ' has voted.');
+    abolishProposal[ballotVar].push(sender);
+    let halfVotes = 0;/*The vote not in validators is halved */
+    let i = 0;
+    while(i < abolishProposal[ballotVar].length){
+        if(findValidator(abolishProposal[ballotVar]) === false){
+            halfVotes += 1;
+        }
+        i += 1;
+    }
+    let validVotes = Object.keys(abolishProposal[ballotVar]).length - parseInt(halfVotes * 0.5);
+
+    if(validVotes < parseInt(validators.length * passRate + 0.5)){
+        setMetaData(abolishKey, abolishProposal);
+        return true;
+    }
+
+    let forfeit    = candidate.pledge;/*step here, logic promising position !== false*/
+
+    let leftValidatorsCnt = validators.length - 1;
+    let award   = int64Mod(forfeit, leftValidatorsCnt);
+    let average = int64Div(forfeit, leftValidatorsCnt);
+    let index = 0;
+    let newTokenAmount;
+    if(award !== '0'){
+        if (validators[index][0] === malicious){
+            candidate = getValidatorCandidate(malicious);
+            assert(setValidatorCandidate(malicious, '-'+ candidate.pledge) === true, 'Abolish candidate status failed.');
+            index += 1;
+        }
+        candidate = getValidatorCandidate(validators[index][0]);
+        newTokenAmount = candidate.pledge + award + average;
+        assert(setVoteForCandidate(candidate, newTokenAmount));
+    }
+    while(index < leftValidatorsCnt){
+        candidate = getValidatorCandidate(validators[index][0]);
+        newTokenAmount = candidate.pledge + average;
+        assert(setVoteForCandidate(validators[index][0], newTokenAmount));
+        index += 1;
+    }
+
+    setMetaData(abolishKey);
+    return true;
+}
+function abolishValidator(malicious, proof){
+    assert(addressCheck(malicious) === true, 'Arg-malicious is not valid adress.');
+    assert(typeof proof === 'string', 'Args type error, arg-proof must be string.'); 
+
+    let validators = getValidators();
+    assert(validators !== false, 'Get validators failed.');
+    assert(findValidator(sender) !== false, sender + ' has no permmition to abolish validator.'); 
+    assert(findValidator(malicious) !== false, 'current validator sets has no ' + malicious); 
+
+    let abolishKey = abolishVar + malicious;
+    let abolishStr = storageLoad(abolishKey);
+    if(abolishStr !== false){
+        let abolishProposal = JSON.parse(abolishStr);
+        if(blockTimestamp >= abolishProposal[expiredTimeVar]){
+            log('Update expired time of abolishing validator(' + malicious + ').'); 
+            voteAbolishValidator(malicious);
+        }
+        else{
+            log('Already abolished validator(' + malicious + ').'); 
+        }
+        return true;
+    }
+
+    let newProposal = {};
+    newProposal[abolishVar]     = malicious;
+    newProposal[reasonVar]      = proof;
+    newProposal[proposerVar]    = sender;
+    newProposal[expiredTimeVar] = blockTimestamp + effectiveAbolishVoteInterval;
+    newProposal[ballotVar]      = [sender];
+
+    setMetaData(abolishKey, newProposal);
+    return true;
 }
 
 function query(input_str){
