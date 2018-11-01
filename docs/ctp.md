@@ -15,7 +15,6 @@
         - [main](#main)
         - [query](#query)
 
-
 # Bumo CTP1.0 Token 标准
 
 ## 简介
