@@ -23,7 +23,7 @@
 CTP 1.0(Contract Token Protocol) 指基于 BUMO 智能合约发行 token 的标准协议。该协议提供了转移 token 的基本功能，并允许 token 授权给第三方使用。
 
 ## 目标
-
+ 
 基于这套标准接口，可以让发行的 token 被其他应用程序和第三方快速对接和使用，比如钱包和交易所。
 
 
