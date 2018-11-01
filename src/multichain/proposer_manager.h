@@ -13,8 +13,8 @@ You should have received a copy of the GNU General Public License
 along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef BLOCK_LISTEN_MANAGER_H_
-#define BLOCK_LISTEN_MANAGER_H_
+#ifndef PROPOSER_MANAGER_H_
+#define PROPOSER_MANAGER_H_
 
 #include <utils/singleton.h>
 #include <utils/thread.h>
