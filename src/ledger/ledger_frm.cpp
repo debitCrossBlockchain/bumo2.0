@@ -523,52 +523,28 @@ namespace bumo {
 			return true;
 		}
 
-		protocol::ValidatorSet set;
-		if (!LedgerManager::Instance().GetValidators(ledger_.header().seq() - 1, set)) {
-			LOG_ERROR("Failed to get validator of ledger(" FMT_I64 ")", ledger_.header().seq() - 1);
-			return false;
-		}
-		if (set.validators_size() == 0) {
-			LOG_ERROR("Validator set should not be empty.");
+		std::string key = ComposePrefix(General::VALIDATOR_LEADER_KEY_PREFIX, ledger_.header().seq() - 1);
+		std::string addr;
+		if (!Consensus::LoadValue(key, addr)){
+			LOG_ERROR("Failed to get validator leader of ledger(" FMT_I64 ")", ledger_.header().seq() - 1);
 			return false;
 		}
 
-		int64_t left_reward = total_reward;
-		std::shared_ptr<AccountFrm> random_account;
-		int64_t random_index = ledger_.header().seq() % set.validators_size();
-		int64_t average_fee = total_reward / set.validators_size();
-		LOG_INFO("total reward(" FMT_I64 ") = total fee(" FMT_I64 ") + block reward(" FMT_I64 ") in ledger(" FMT_I64 ")", total_reward, total_fee_, block_reward, ledger_.header().seq());
-		for (int32_t i = 0; i < set.validators_size(); i++) {
-			std::shared_ptr<AccountFrm> account;
-			if (!environment_->GetEntry(set.validators(i).address(), account)) {
-				account = AccountFrm::CreatAccountFrm(set.validators(i).address(), 0);
-				environment_->AddEntry(account->GetAccountAddress(), account);
-			}
-			if (random_index == i) {
-				random_account = account;
-			}
-
-			left_reward -= average_fee;
-
-			LOG_TRACE("Account(%s) allocated reward(" FMT_I64 "), left reward(" FMT_I64 ") in ledger(" FMT_I64 ")", account->GetAccountAddress().c_str(), average_fee, left_reward, ledger_.header().seq());
-			protocol::Account &proto_account = account->GetProtoAccount();
-			int64_t new_balance = 0;;
-			if (!utils::SafeIntAdd(proto_account.balance(), average_fee, new_balance)){
-				LOG_ERROR("Overflowed when rewarding account. Account balance:(" FMT_I64 "), average_fee:(" FMT_I64 ")", proto_account.balance(), average_fee);
-				return false;
-			}
-			proto_account.set_balance(new_balance);
+		std::shared_ptr<AccountFrm> leader;
+		if (!environment_->GetEntry(addr, leader)) {
+			leader = AccountFrm::CreatAccountFrm(addr, 0);
+			environment_->AddEntry(addr, leader);
 		}
-		if (left_reward > 0) {
-			protocol::Account &proto_account = random_account->GetProtoAccount();
-			int64_t new_balance = 0;
-			if (!utils::SafeIntAdd(proto_account.balance(), left_reward, new_balance)){
-				LOG_ERROR("Overflowed when rewarding account. Account balance:(" FMT_I64 "), reward:(" FMT_I64 ")", proto_account.balance(), left_reward);
-				return false;
-			}
-			proto_account.set_balance(new_balance);
-			LOG_TRACE("Account(%s) aquired last reward(" FMT_I64 ") of allocation in ledger(" FMT_I64 ")", proto_account.address().c_str(), left_reward, ledger_.header().seq());
+
+		protocol::Account &account = leader->GetProtoAccount();
+		int64_t new_balance = 0;
+		if (!utils::SafeIntAdd(account.balance(), total_reward, new_balance)){
+			LOG_ERROR("Overflowed when rewarding validator leader. Account balance:(" FMT_I64 "), reward:(" FMT_I64 ")", account.balance(), total_reward);
+			return false;
 		}
+
+		account.set_balance(new_balance);
+		LOG_TRACE("Validator leader account(%s) aquired block reward(" FMT_I64 ") of allocation in ledger(" FMT_I64 ")", account.address().c_str(), total_reward, ledger_.header().seq());
 
 		environment_->Commit();
 		return true;

@@ -85,6 +85,7 @@ namespace bumo {
 		int32_t LoadValidators();
 		bool SaveValidators(ValueSaver &saver);
 		bool SaveViewChange(ValueSaver &saver);
+		bool SaveLeader(const PbftInstanceIndex& index);
 		bool SendMessage(const PbftEnvPointer &msg);
 		void ClearViewChanges();
 	public:
