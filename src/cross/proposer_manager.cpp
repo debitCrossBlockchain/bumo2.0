@@ -31,7 +31,7 @@ namespace bumo {
 	}
 
 	bool ProposerManager::CommitChildChainBlock(){
-		//Push to a block map
+		///Push to a block map
 
 		return true;
 	}
