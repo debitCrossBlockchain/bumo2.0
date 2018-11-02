@@ -38,7 +38,7 @@ namespace bumo {
 
 	void ProposerManager::Run(utils::Thread *thread) {
 		while (enabled_){
-			//Handel block map
+			//Handel block map//
 			HandleChildChainBlock();
 		}
 	}
