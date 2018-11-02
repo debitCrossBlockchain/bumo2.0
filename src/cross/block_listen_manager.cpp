@@ -23,7 +23,7 @@ namespace bumo {
 	}
 
 	void BlockListenManager::HandleMainChainBlock(){
-		//TODO: Handel child chain block, and call MessageChannel to send main chain proc 
+		//TODO: Handel child chain block, and call MessageChannel to send main chain proc //
 	}
 
 	void BlockListenManager::HandleChildChainBlock(){
