@@ -18,6 +18,9 @@
     <ClCompile Include="..\..\src\api\web_server_helper.cpp" />
     <ClCompile Include="..\..\src\api\web_server_query.cpp" />
     <ClCompile Include="..\..\src\api\web_server_update.cpp" />
+    <ClCompile Include="..\..\src\cross\block_listen_manager.cpp" />
+    <ClCompile Include="..\..\src\cross\challenge_manager.cpp" />
+    <ClCompile Include="..\..\src\cross\proposer_manager.cpp" />
     <ClCompile Include="..\..\src\glue\ledger_upgrade.cpp" />
     <ClCompile Include="..\..\src\glue\transaction_queue.cpp" />
     <ClCompile Include="..\..\src\ledger\contract_manager.cpp" />
@@ -31,9 +34,6 @@
     <ClCompile Include="..\..\src\monitor\monitor.cpp" />
     <ClCompile Include="..\..\src\monitor\monitor_manager.cpp" />
     <ClCompile Include="..\..\src\monitor\system_manager.cpp" />
-    <ClCompile Include="..\..\src\multichain\block_listen_manager.cpp" />
-    <ClCompile Include="..\..\src\multichain\challenge_manager.cpp" />
-    <ClCompile Include="..\..\src\multichain\proposer_manager.cpp" />
     <ClCompile Include="..\..\src\overlay\peer.cpp" />
     <ClCompile Include="..\..\src\overlay\peer_network.cpp" />
     <ClCompile Include="..\..\src\proto\cpp\chain.pb.cc" />
@@ -55,6 +55,9 @@
     <ClInclude Include="..\..\src\api\console.h" />
     <ClInclude Include="..\..\src\api\websocket_server.h" />
     <ClInclude Include="..\..\src\api\web_server.h" />
+    <ClInclude Include="..\..\src\cross\block_listen_manager.h" />
+    <ClInclude Include="..\..\src\cross\challenge_manager.h" />
+    <ClInclude Include="..\..\src\cross\proposer_manager.h" />
     <ClInclude Include="..\..\src\glue\ledger_upgrade.h" />
     <ClInclude Include="..\..\src\glue\transaction_queue.h" />
     <ClInclude Include="..\..\src\ledger\contract_manager.h" />
@@ -68,9 +71,6 @@
     <ClInclude Include="..\..\src\monitor\monitor.h" />
     <ClInclude Include="..\..\src\monitor\monitor_manager.h" />
     <ClInclude Include="..\..\src\monitor\system_manager.h" />
-    <ClInclude Include="..\..\src\multichain\block_listen_manager.h" />
-    <ClInclude Include="..\..\src\multichain\challenge_manager.h" />
-    <ClInclude Include="..\..\src\multichain\proposer_manager.h" />
     <ClInclude Include="..\..\src\overlay\peer.h" />
     <ClInclude Include="..\..\src\overlay\peer_network.h" />
     <ClInclude Include="..\..\src\proto\cpp\chain.pb.h" />

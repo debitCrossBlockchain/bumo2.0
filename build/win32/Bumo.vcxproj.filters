@@ -135,13 +135,13 @@
     <ClCompile Include="..\..\src\ledger\fee_calculate.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\multichain\challenge_manager.cpp">
+    <ClCompile Include="..\..\src\cross\block_listen_manager.cpp">
       <Filter>cross</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\multichain\block_listen_manager.cpp">
+    <ClCompile Include="..\..\src\cross\challenge_manager.cpp">
       <Filter>cross</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\multichain\proposer_manager.cpp">
+    <ClCompile Include="..\..\src\cross\proposer_manager.cpp">
       <Filter>cross</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,13 +242,13 @@
     <ClInclude Include="..\..\src\ledger\fee_calculate.h">
       <Filter>ledger</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\multichain\challenge_manager.h">
+    <ClInclude Include="..\..\src\cross\block_listen_manager.h">
       <Filter>cross</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\multichain\proposer_manager.h">
+    <ClInclude Include="..\..\src\cross\challenge_manager.h">
       <Filter>cross</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\multichain\block_listen_manager.h">
+    <ClInclude Include="..\..\src\cross\proposer_manager.h">
       <Filter>cross</Filter>
     </ClInclude>
   </ItemGroup>
