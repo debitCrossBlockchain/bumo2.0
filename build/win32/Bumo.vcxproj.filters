@@ -22,7 +22,7 @@
     <Filter Include="monitor">
       <UniqueIdentifier>{f06ae41d-262b-435b-9143-a83f4b5a5d11}</UniqueIdentifier>
     </Filter>
-    <Filter Include="multichain">
+    <Filter Include="cross">
       <UniqueIdentifier>{e38e6467-9c1d-402c-b414-4678d3af0f3e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -135,14 +135,14 @@
     <ClCompile Include="..\..\src\ledger\fee_calculate.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\multichain\challenge_manager.cpp">
-      <Filter>multichain</Filter>
+    <ClCompile Include="..\..\src\cross\block_listen_manager.cpp">
+      <Filter>cross</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\multichain\block_listen_manager.cpp">
-      <Filter>multichain</Filter>
+    <ClCompile Include="..\..\src\cross\challenge_manager.cpp">
+      <Filter>cross</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\multichain\proposer_manager.cpp">
-      <Filter>multichain</Filter>
+    <ClCompile Include="..\..\src\cross\proposer_manager.cpp">
+      <Filter>cross</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,14 +242,14 @@
     <ClInclude Include="..\..\src\ledger\fee_calculate.h">
       <Filter>ledger</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\multichain\challenge_manager.h">
-      <Filter>multichain</Filter>
+    <ClInclude Include="..\..\src\cross\block_listen_manager.h">
+      <Filter>cross</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\multichain\proposer_manager.h">
-      <Filter>multichain</Filter>
+    <ClInclude Include="..\..\src\cross\challenge_manager.h">
+      <Filter>cross</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\multichain\block_listen_manager.h">
-      <Filter>multichain</Filter>
+    <ClInclude Include="..\..\src\cross\proposer_manager.h">
+      <Filter>cross</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
