@@ -85,9 +85,10 @@ void protobuf_AssignDesc_common_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signature, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Signature, _is_default_instance_));
   LedgerUpgrade_descriptor_ = file->message_type(2);
-  static const int LedgerUpgrade_offsets_[2] = {
+  static const int LedgerUpgrade_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LedgerUpgrade, new_ledger_version_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LedgerUpgrade, new_validator_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(LedgerUpgrade, chain_id_),
   };
   LedgerUpgrade_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -204,43 +205,44 @@ void protobuf_AddDesc_common_2eproto() {
     "\n\014common.proto\022\010protocol\"6\n\007KeyPair\022\013\n\003k"
     "ey\030\001 \001(\t\022\r\n\005value\030\002 \001(\t\022\017\n\007version\030\003 \001(\003"
     "\"2\n\tSignature\022\022\n\npublic_key\030\001 \001(\t\022\021\n\tsig"
-    "n_data\030\002 \001(\014\"B\n\rLedgerUpgrade\022\032\n\022new_led"
+    "n_data\030\002 \001(\014\"T\n\rLedgerUpgrade\022\032\n\022new_led"
     "ger_version\030\001 \001(\003\022\025\n\rnew_validator\030\002 \001(\t"
-    "\"J\n\tWsMessage\022\014\n\004type\030\001 \001(\003\022\017\n\007request\030\002"
-    " \001(\010\022\020\n\010sequence\030\003 \001(\003\022\014\n\004data\030\004 \001(\014\"\025\n\004"
-    "Ping\022\r\n\005nonce\030\001 \001(\003\"\025\n\004Pong\022\r\n\005nonce\030\001 \001"
-    "(\003*\317\t\n\tERRORCODE\022\023\n\017ERRCODE_SUCCESS\020\000\022\032\n"
-    "\026ERRCODE_INTERNAL_ERROR\020\001\022\035\n\031ERRCODE_INV"
-    "ALID_PARAMETER\020\002\022\031\n\025ERRCODE_ALREADY_EXIS"
-    "T\020\003\022\025\n\021ERRCODE_NOT_EXIST\020\004\022\026\n\022ERRCODE_TX"
-    "_TIMEOUT\020\005\022\031\n\025ERRCODE_ACCESS_DENIED\020\006\022\031\n"
-    "\025ERRCODE_MATH_OVERFLOW\020\007\022\'\n#ERRCODE_EXPR"
-    "_CONDITION_RESULT_FALSE\020\024\022\'\n#ERRCODE_EXP"
-    "R_CONDITION_SYNTAX_ERROR\020\025\022\032\n\026ERRCODE_IN"
-    "VALID_PUBKEY\020Z\022\032\n\026ERRCODE_INVALID_PRIKEY"
-    "\020[\022\031\n\025ERRCODE_ASSET_INVALID\020\\\022\035\n\031ERRCODE"
-    "_INVALID_SIGNATURE\020]\022\033\n\027ERRCODE_INVALID_"
-    "ADDRESS\020^\022\036\n\032ERRCODE_MISSING_OPERATIONS\020"
-    "a\022\037\n\033ERRCODE_TOO_MANY_OPERATIONS\020b\022\030\n\024ER"
-    "RCODE_BAD_SEQUENCE\020c\022\037\n\033ERRCODE_ACCOUNT_"
-    "LOW_RESERVE\020d\022$\n ERRCODE_ACCOUNT_SOURCED"
-    "EST_EQUAL\020e\022\036\n\032ERRCODE_ACCOUNT_DEST_EXIS"
-    "T\020f\022\035\n\031ERRCODE_ACCOUNT_NOT_EXIST\020g\022%\n!ER"
-    "RCODE_ACCOUNT_ASSET_LOW_RESERVE\020h\022*\n&ERR"
-    "CODE_ACCOUNT_ASSET_AMOUNT_TOO_LARGE\020i\022$\n"
-    " ERRCODE_ACCOUNT_INIT_LOW_RESERVE\020j\022\032\n\026E"
-    "RRCODE_FEE_NOT_ENOUGH\020o\022\027\n\023ERRCODE_FEE_I"
-    "NVALID\020p\022\032\n\026ERRCODE_OUT_OF_TXCACHE\020r\022\034\n\030"
-    "ERRCODE_WEIGHT_NOT_VALID\020x\022\037\n\033ERRCODE_TH"
-    "RESHOLD_NOT_VALID\020y\022 \n\033ERRCODE_INVALID_D"
-    "ATAVERSION\020\220\001\022\034\n\027ERRCODE_TX_SIZE_TOO_BIG"
-    "\020\222\001\022\"\n\035ERRCODE_CONTRACT_EXECUTE_FAIL\020\227\001\022"
-    "\"\n\035ERRCODE_CONTRACT_SYNTAX_ERROR\020\230\001\022(\n#E"
-    "RRCODE_CONTRACT_TOO_MANY_RECURSION\020\231\001\022+\n"
-    "&ERRCODE_CONTRACT_TOO_MANY_TRANSACTIONS\020"
-    "\232\001\022%\n ERRCODE_CONTRACT_EXECUTE_EXPIRED\020\233"
-    "\001\022!\n\034ERRCODE_TX_INSERT_QUEUE_FAIL\020\240\001B\"\n "
-    "io.bumo.sdk.core.extend.protobufb\006proto3", 1600);
+    "\022\020\n\010chain_id\030\003 \001(\003\"J\n\tWsMessage\022\014\n\004type\030"
+    "\001 \001(\003\022\017\n\007request\030\002 \001(\010\022\020\n\010sequence\030\003 \001(\003"
+    "\022\014\n\004data\030\004 \001(\014\"\025\n\004Ping\022\r\n\005nonce\030\001 \001(\003\"\025\n"
+    "\004Pong\022\r\n\005nonce\030\001 \001(\003*\317\t\n\tERRORCODE\022\023\n\017ER"
+    "RCODE_SUCCESS\020\000\022\032\n\026ERRCODE_INTERNAL_ERRO"
+    "R\020\001\022\035\n\031ERRCODE_INVALID_PARAMETER\020\002\022\031\n\025ER"
+    "RCODE_ALREADY_EXIST\020\003\022\025\n\021ERRCODE_NOT_EXI"
+    "ST\020\004\022\026\n\022ERRCODE_TX_TIMEOUT\020\005\022\031\n\025ERRCODE_"
+    "ACCESS_DENIED\020\006\022\031\n\025ERRCODE_MATH_OVERFLOW"
+    "\020\007\022\'\n#ERRCODE_EXPR_CONDITION_RESULT_FALS"
+    "E\020\024\022\'\n#ERRCODE_EXPR_CONDITION_SYNTAX_ERR"
+    "OR\020\025\022\032\n\026ERRCODE_INVALID_PUBKEY\020Z\022\032\n\026ERRC"
+    "ODE_INVALID_PRIKEY\020[\022\031\n\025ERRCODE_ASSET_IN"
+    "VALID\020\\\022\035\n\031ERRCODE_INVALID_SIGNATURE\020]\022\033"
+    "\n\027ERRCODE_INVALID_ADDRESS\020^\022\036\n\032ERRCODE_M"
+    "ISSING_OPERATIONS\020a\022\037\n\033ERRCODE_TOO_MANY_"
+    "OPERATIONS\020b\022\030\n\024ERRCODE_BAD_SEQUENCE\020c\022\037"
+    "\n\033ERRCODE_ACCOUNT_LOW_RESERVE\020d\022$\n ERRCO"
+    "DE_ACCOUNT_SOURCEDEST_EQUAL\020e\022\036\n\032ERRCODE"
+    "_ACCOUNT_DEST_EXIST\020f\022\035\n\031ERRCODE_ACCOUNT"
+    "_NOT_EXIST\020g\022%\n!ERRCODE_ACCOUNT_ASSET_LO"
+    "W_RESERVE\020h\022*\n&ERRCODE_ACCOUNT_ASSET_AMO"
+    "UNT_TOO_LARGE\020i\022$\n ERRCODE_ACCOUNT_INIT_"
+    "LOW_RESERVE\020j\022\032\n\026ERRCODE_FEE_NOT_ENOUGH\020"
+    "o\022\027\n\023ERRCODE_FEE_INVALID\020p\022\032\n\026ERRCODE_OU"
+    "T_OF_TXCACHE\020r\022\034\n\030ERRCODE_WEIGHT_NOT_VAL"
+    "ID\020x\022\037\n\033ERRCODE_THRESHOLD_NOT_VALID\020y\022 \n"
+    "\033ERRCODE_INVALID_DATAVERSION\020\220\001\022\034\n\027ERRCO"
+    "DE_TX_SIZE_TOO_BIG\020\222\001\022\"\n\035ERRCODE_CONTRAC"
+    "T_EXECUTE_FAIL\020\227\001\022\"\n\035ERRCODE_CONTRACT_SY"
+    "NTAX_ERROR\020\230\001\022(\n#ERRCODE_CONTRACT_TOO_MA"
+    "NY_RECURSION\020\231\001\022+\n&ERRCODE_CONTRACT_TOO_"
+    "MANY_TRANSACTIONS\020\232\001\022%\n ERRCODE_CONTRACT"
+    "_EXECUTE_EXPIRED\020\233\001\022!\n\034ERRCODE_TX_INSERT"
+    "_QUEUE_FAIL\020\240\001B\"\n io.bumo.sdk.core.exten"
+    "d.protobufb\006proto3", 1618);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "common.proto", &protobuf_RegisterTypes);
   KeyPair::default_instance_ = new KeyPair();
@@ -1125,6 +1127,7 @@ void Signature::clear_sign_data() {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int LedgerUpgrade::kNewLedgerVersionFieldNumber;
 const int LedgerUpgrade::kNewValidatorFieldNumber;
+const int LedgerUpgrade::kChainIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 LedgerUpgrade::LedgerUpgrade()
@@ -1151,6 +1154,7 @@ void LedgerUpgrade::SharedCtor() {
   _cached_size_ = 0;
   new_ledger_version_ = GOOGLE_LONGLONG(0);
   new_validator_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  chain_id_ = GOOGLE_LONGLONG(0);
 }
 
 LedgerUpgrade::~LedgerUpgrade() {
@@ -1193,6 +1197,7 @@ void LedgerUpgrade::Clear() {
 // @@protoc_insertion_point(message_clear_start:protocol.LedgerUpgrade)
   new_ledger_version_ = GOOGLE_LONGLONG(0);
   new_validator_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  chain_id_ = GOOGLE_LONGLONG(0);
 }
 
 bool LedgerUpgrade::MergePartialFromCodedStream(
@@ -1229,6 +1234,21 @@ bool LedgerUpgrade::MergePartialFromCodedStream(
             this->new_validator().data(), this->new_validator().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
             "protocol.LedgerUpgrade.new_validator"));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_chain_id;
+        break;
+      }
+
+      // optional int64 chain_id = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_chain_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &chain_id_)));
+
         } else {
           goto handle_unusual;
         }
@@ -1275,6 +1295,11 @@ void LedgerUpgrade::SerializeWithCachedSizes(
       2, this->new_validator(), output);
   }
 
+  // optional int64 chain_id = 3;
+  if (this->chain_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->chain_id(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.LedgerUpgrade)
 }
 
@@ -1297,6 +1322,11 @@ void LedgerUpgrade::SerializeWithCachedSizes(
         2, this->new_validator(), target);
   }
 
+  // optional int64 chain_id = 3;
+  if (this->chain_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->chain_id(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:protocol.LedgerUpgrade)
   return target;
 }
@@ -1317,6 +1347,13 @@ int LedgerUpgrade::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->new_validator());
+  }
+
+  // optional int64 chain_id = 3;
+  if (this->chain_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->chain_id());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -1354,6 +1391,9 @@ void LedgerUpgrade::MergeFrom(const LedgerUpgrade& from) {
 
     new_validator_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.new_validator_);
   }
+  if (from.chain_id() != 0) {
+    set_chain_id(from.chain_id());
+  }
 }
 
 void LedgerUpgrade::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1382,6 +1422,7 @@ void LedgerUpgrade::Swap(LedgerUpgrade* other) {
 void LedgerUpgrade::InternalSwap(LedgerUpgrade* other) {
   std::swap(new_ledger_version_, other->new_ledger_version_);
   new_validator_.Swap(&other->new_validator_);
+  std::swap(chain_id_, other->chain_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -1453,6 +1494,20 @@ void LedgerUpgrade::clear_new_validator() {
   }
   new_validator_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), new_validator);
   // @@protoc_insertion_point(field_set_allocated:protocol.LedgerUpgrade.new_validator)
+}
+
+// optional int64 chain_id = 3;
+void LedgerUpgrade::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 LedgerUpgrade::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.LedgerUpgrade.chain_id)
+  return chain_id_;
+}
+ void LedgerUpgrade::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.LedgerUpgrade.chain_id)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

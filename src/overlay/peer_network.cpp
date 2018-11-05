@@ -138,7 +138,7 @@ namespace bumo {
 		do {
 			peer->SetPeerInfo(hello);
 
-			if (NodeExist(hello.node_address(), peer->GetId())) {
+			if (NodeExist(hello.node_address(), peer->GetId(), hello.chain_id())) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				res.set_error_desc(utils::String::Format("Duplicated connection with ip(%s), id(" FMT_I64 ")", peer->GetPeerAddress().ToIp().c_str(), peer->GetId()));
 				LOG_ERROR("Failed to process the peer hello message.%s",res.error_desc().c_str());
@@ -153,7 +153,7 @@ namespace bumo {
 				break;
 			}
 
-			if (peer_node_address_ == hello.node_address()) {
+			if (CheckSameNode(peer_node_address_, hello.node_address(), General::GetSelfChainId(), hello.chain_id())) {
 				res.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				if (node_rand_ != hello.node_rand()) {
 					res.set_error_desc(utils::String::Format("The peer connection breaks as the configuration node addresses are duplicated"));
@@ -229,6 +229,11 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodTransaction(protocol::WsMessage &message, int64_t conn_id) {
+		if (GetChainIdFromConn(conn_id) != General::GetSelfChainId()){
+			LOG_TRACE("Message is not same chain, ignore it.");
+			return true;
+		}
+
 		if (message.data().size() > General::TRANSACTION_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
 			LOG_ERROR("Failed to process the peer transaction message.Transaction data size(" FMT_SIZE ") is too large", message.data().size());
 			return false;
@@ -260,6 +265,10 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodGetLedgers(protocol::WsMessage &message, int64_t conn_id) {
+		if (GetChainIdFromConn(conn_id) != General::GetSelfChainId()){
+			LOG_TRACE("Message is not same chain, ignore it.");
+			return true;
+		}
 		protocol::GetLedgers getledgers;
 		getledgers.ParseFromString(message.data());
 		LedgerManager::Instance().OnRequestLedgers(getledgers, conn_id);
@@ -267,6 +276,10 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodLedgers(protocol::WsMessage &message, int64_t conn_id) {
+		if (GetChainIdFromConn(conn_id) != General::GetSelfChainId()){
+			LOG_TRACE("Message is not same chain, ignore it.");
+			return true;
+		}
 		protocol::Ledgers ledgers;
 		ledgers.ParseFromString(message.data());
 		LedgerManager::Instance().OnReceiveLedgers(ledgers, conn_id);
@@ -291,6 +304,10 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodPbft(protocol::WsMessage &message, int64_t conn_id) {
+		if (GetChainIdFromConn(conn_id) != General::GetSelfChainId()){
+			LOG_TRACE("WsMessage is not same chain, ignore it.");
+			return true;
+		}
 		if (message.data().size() > General::TXSET_LIMIT_SIZE + 2 * utils::BYTES_PER_MEGA) {
 			LOG_ERROR("Failed to process the peer pbft message.Consensus p2p data size(" FMT_SIZE ") is too large", message.data().size());
 			return false;
@@ -337,6 +354,10 @@ namespace bumo {
 	}
 
 	bool PeerNetwork::OnMethodLedgerUpNotify(protocol::WsMessage &message, int64_t conn_id) {
+		if (GetChainIdFromConn(conn_id) != General::GetSelfChainId()){
+			LOG_TRACE("Message is not same chain, ignore it.");
+			return true;
+		}
 		protocol::LedgerUpgradeNotify notify;
 		if (!notify.ParseFromString(message.data())) {
 			LOG_ERROR("Failed to parse notification for ledger upgrade");
@@ -823,16 +844,31 @@ namespace bumo {
 		return ids;
 	}
 
-	bool PeerNetwork::NodeExist(std::string node_address, int64_t peer_id) {
+	bool PeerNetwork::NodeExist(std::string node_address, int64_t peer_id, int64_t chain_id) {
 		bool exist = false;
 		for (ConnectionMap::iterator iter = connections_.begin(); iter != connections_.end(); iter++) {
 			Peer *peer = (Peer *)iter->second;
-			if (peer->GetPeerNodeAddress() == node_address && peer->GetId() != peer_id) {
+			bool same_node = CheckSameNode(node_address, peer->GetPeerNodeAddress(), chain_id, peer->GetChainId());
+			if (same_node && peer->GetId() != peer_id) {
 				exist = true;
 				break;
 			}
 		}
 		return exist;
+	}
+
+	bool PeerNetwork::CheckSameNode(const std::string &local_address, const std::string &target_address, int64_t local_chain_id, int64_t target_chain_id){
+		return (local_address == target_address) && (local_chain_id == target_chain_id);
+	}
+
+	int64_t PeerNetwork::GetChainIdFromConn(int64_t conn_id){
+		Peer *peer = (Peer *)GetConnection(conn_id);
+		if (!peer){
+			LOG_ERROR("The target peer cannot be found in conection list.");
+			return -1;
+		}
+
+		return peer->GetChainId();
 	}
 
 	void PeerNetwork::GetModuleStatus(Json::Value &data) {

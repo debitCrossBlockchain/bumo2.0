@@ -96,6 +96,7 @@ namespace bumo {
 	const int32_t General::TRANSACTION_LIMIT_SIZE = utils::BYTES_PER_MEGA;
 	const int32_t General::TXSET_LIMIT_SIZE = 16 * utils::BYTES_PER_MEGA;
 
+	int64_t General::chain_id_ = 0;
 
 	Result::Result(){
 		code_ = protocol::ERRCODE_SUCCESS;

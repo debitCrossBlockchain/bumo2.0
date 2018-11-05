@@ -123,6 +123,13 @@ namespace bumo {
 		volatile static long account_delete_count;
 		volatile static long trans_low_new_count;
 		volatile static long trans_low_delete_count;
+
+	public:
+		static void SetSelfChainId(int64_t chain_id) { chain_id_ = chain_id; }
+		static int64_t GetSelfChainId() { return chain_id_; }
+
+	private:
+		static int64_t chain_id_;
 	};
 
 	class Result {

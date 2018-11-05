@@ -16,7 +16,6 @@ enum OVERLAY_MESSAGE_TYPE{
 	OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY = 7; //Broadcast the ledger upgrade status
 }
 
-
 message Hello {
     int64 network_id = 1;
     int64 ledger_version = 2;
@@ -25,6 +24,7 @@ message Hello {
     int64 listening_port = 5;
     string node_address = 6;
     string node_rand = 7;
+    int64 chain_id = 8;
 }
 
 message HelloResponse {

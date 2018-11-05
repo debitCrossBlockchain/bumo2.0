@@ -925,6 +925,12 @@ class LedgerHeader : public ::google::protobuf::Message /* @@protoc_insertion_po
   ::std::string* release_reserve();
   void set_allocated_reserve(::std::string* reserve);
 
+  // optional int64 chain_id = 12;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 12;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.LedgerHeader)
  private:
 
@@ -941,6 +947,7 @@ class LedgerHeader : public ::google::protobuf::Message /* @@protoc_insertion_po
   ::google::protobuf::internal::ArenaStringPtr validators_hash_;
   ::google::protobuf::internal::ArenaStringPtr fees_hash_;
   ::google::protobuf::internal::ArenaStringPtr reserve_;
+  ::google::protobuf::int64 chain_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -2448,6 +2455,12 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
       operations() const;
 
+  // optional int64 chain_id = 8;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 8;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.Transaction)
  private:
 
@@ -2460,6 +2473,7 @@ class Transaction : public ::google::protobuf::Message /* @@protoc_insertion_poi
   ::google::protobuf::int64 ceil_ledger_seq_;
   ::google::protobuf::internal::ArenaStringPtr metadata_;
   ::google::protobuf::RepeatedPtrField< ::protocol::Operation > operations_;
+  ::google::protobuf::int64 chain_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_chain_2eproto();
   friend void protobuf_AssignDesc_chain_2eproto();
@@ -4730,6 +4744,20 @@ inline void LedgerHeader::set_allocated_reserve(::std::string* reserve) {
   // @@protoc_insertion_point(field_set_allocated:protocol.LedgerHeader.reserve)
 }
 
+// optional int64 chain_id = 12;
+inline void LedgerHeader::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 LedgerHeader::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.LedgerHeader.chain_id)
+  return chain_id_;
+}
+inline void LedgerHeader::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.LedgerHeader.chain_id)
+}
+
 // -------------------------------------------------------------------
 
 // Ledger
@@ -6241,6 +6269,20 @@ inline const ::google::protobuf::RepeatedPtrField< ::protocol::Operation >&
 Transaction::operations() const {
   // @@protoc_insertion_point(field_list:protocol.Transaction.operations)
   return operations_;
+}
+
+// optional int64 chain_id = 8;
+inline void Transaction::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Transaction::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.Transaction.chain_id)
+  return chain_id_;
+}
+inline void Transaction::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Transaction.chain_id)
 }
 
 // -------------------------------------------------------------------

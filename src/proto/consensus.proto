@@ -83,6 +83,7 @@ message Pbft
 	PbftViewChange view_change = 6;
 	PbftNewView new_view = 7;
 	PbftViewChangeWithRawValue view_change_with_rawvalue = 8;
+	int64 chain_id = 9;
 }
 
 message PbftEnv

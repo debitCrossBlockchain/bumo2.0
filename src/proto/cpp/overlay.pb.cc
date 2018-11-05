@@ -86,7 +86,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
       "overlay.proto");
   GOOGLE_CHECK(file != NULL);
   Hello_descriptor_ = file->message_type(0);
-  static const int Hello_offsets_[7] = {
+  static const int Hello_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, network_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, ledger_version_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, overlay_version_),
@@ -94,6 +94,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, listening_port_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, node_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, node_rand_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Hello, chain_id_),
   };
   Hello_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -464,73 +465,74 @@ void protobuf_AddDesc_overlay_2eproto() {
   ::protocol::protobuf_AddDesc_chain_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\roverlay.proto\022\010protocol\032\014common.proto\032"
-    "\013chain.proto\"\243\001\n\005Hello\022\022\n\nnetwork_id\030\001 \001"
+    "\013chain.proto\"\265\001\n\005Hello\022\022\n\nnetwork_id\030\001 \001"
     "(\003\022\026\n\016ledger_version\030\002 \001(\003\022\027\n\017overlay_ve"
     "rsion\030\003 \001(\003\022\024\n\014bumo_version\030\004 \001(\t\022\026\n\016lis"
     "tening_port\030\005 \001(\003\022\024\n\014node_address\030\006 \001(\t\022"
-    "\021\n\tnode_rand\030\007 \001(\t\"L\n\rHelloResponse\022\'\n\ne"
-    "rror_code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\n"
-    "error_desc\030\002 \001(\t\"}\n\004Peer\022\n\n\002ip\030\001 \001(\t\022\014\n\004"
-    "port\030\002 \001(\003\022\024\n\014num_failures\030\003 \001(\003\022\031\n\021next"
-    "_attempt_time\030\004 \001(\003\022\023\n\013active_time\030\005 \001(\003"
-    "\022\025\n\rconnection_id\030\006 \001(\003\"&\n\005Peers\022\035\n\005peer"
-    "s\030\001 \003(\0132\016.protocol.Peer\";\n\nGetLedgers\022\r\n"
-    "\005begin\030\001 \001(\003\022\013\n\003end\030\002 \001(\003\022\021\n\ttimestamp\030\003"
-    " \001(\003\"\337\001\n\007Ledgers\022(\n\006values\030\001 \003(\0132\030.proto"
-    "col.ConsensusValue\022-\n\tsync_code\030\002 \001(\0162\032."
-    "protocol.Ledgers.SyncCode\022\017\n\007max_seq\030\003 \001"
-    "(\003\022\r\n\005proof\030\004 \001(\014\"[\n\010SyncCode\022\006\n\002OK\020\000\022\017\n"
-    "\013OUT_OF_SYNC\020\001\022\022\n\016OUT_OF_LEDGERS\020\002\022\010\n\004BU"
-    "SY\020\003\022\n\n\006REFUSE\020\004\022\014\n\010INTERNAL\020\005\"&\n\010DontHa"
-    "ve\022\014\n\004type\030\001 \001(\003\022\014\n\004hash\030\002 \001(\014\"v\n\023Ledger"
-    "UpgradeNotify\022\r\n\005nonce\030\001 \001(\003\022(\n\007upgrade\030"
-    "\002 \001(\0132\027.protocol.LedgerUpgrade\022&\n\tsignat"
-    "ure\030\003 \001(\0132\023.protocol.Signature\"\032\n\tEntryL"
-    "ist\022\r\n\005entry\030\001 \003(\014\"M\n\nChainHello\022,\n\010api_"
-    "list\030\001 \003(\0162\032.protocol.ChainMessageType\022\021"
-    "\n\ttimestamp\030\002 \001(\003\"z\n\013ChainStatus\022\021\n\tself"
-    "_addr\030\001 \001(\t\022\026\n\016ledger_version\030\002 \001(\003\022\027\n\017m"
-    "onitor_version\030\003 \001(\003\022\024\n\014bumo_version\030\004 \001"
-    "(\t\022\021\n\ttimestamp\030\005 \001(\003\"O\n\020ChainPeerMessag"
-    "e\022\025\n\rsrc_peer_addr\030\001 \001(\t\022\026\n\016des_peer_add"
-    "rs\030\002 \003(\t\022\014\n\004data\030\003 \001(\014\"#\n\020ChainSubscribe"
-    "Tx\022\017\n\007address\030\001 \003(\t\"7\n\rChainResponse\022\022\n\n"
-    "error_code\030\001 \001(\005\022\022\n\nerror_desc\030\002 \001(\t\"\325\002\n"
-    "\rChainTxStatus\0220\n\006status\030\001 \001(\0162 .protoco"
-    "l.ChainTxStatus.TxStatus\022\017\n\007tx_hash\030\002 \001("
-    "\t\022\026\n\016source_address\030\003 \001(\t\022\032\n\022source_acco"
-    "unt_seq\030\004 \001(\003\022\022\n\nledger_seq\030\005 \001(\003\022\027\n\017new"
-    "_account_seq\030\006 \001(\003\022\'\n\nerror_code\030\007 \001(\0162\023"
-    ".protocol.ERRORCODE\022\022\n\nerror_desc\030\010 \001(\t\022"
-    "\021\n\ttimestamp\030\t \001(\003\"P\n\010TxStatus\022\r\n\tUNDEFI"
-    "NED\020\000\022\r\n\tCONFIRMED\020\001\022\013\n\007PENDING\020\002\022\014\n\010COM"
-    "PLETE\020\003\022\013\n\007FAILURE\020\004\"V\n\016MessageChannel\022\020"
-    "\n\010chain_id\030\001 \001(\003\022\016\n\006msg_id\030\002 \001(\014\022\020\n\010msg_"
-    "type\030\003 \001(\003\022\020\n\010msg_data\030\004 \001(\014*\203\002\n\024OVERLAY"
-    "_MESSAGE_TYPE\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022"
-    "\030\n\024OVERLAY_MSGTYPE_PING\020\001\022\031\n\025OVERLAY_MSG"
-    "TYPE_HELLO\020\002\022\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022"
-    "\037\n\033OVERLAY_MSGTYPE_TRANSACTION\020\004\022\033\n\027OVER"
-    "LAY_MSGTYPE_LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE"
-    "_PBFT\020\006\022)\n%OVERLAY_MSGTYPE_LEDGER_UPGRAD"
-    "E_NOTIFY\020\007*\372\001\n\020ChainMessageType\022\023\n\017CHAIN"
-    "_TYPE_NONE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_T"
-    "X_STATUS\020\013\022\025\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHA"
-    "IN_PEER_OFFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020"
-    "\016\022\033\n\027CHAIN_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_"
-    "LEDGER_HEADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022"
-    "\026\n\022CHAIN_TX_ENV_STORE\020\022*\216\003\n\024MESSAGE_CHAN"
-    "NEL_TYPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE\020\000\022"
-    "&\n\"MESSAGE_CHANNEL_CREATE_CHILD_CHAIN\020\036\022"
-    "\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020\037\022\035\n\031MESSAGE"
-    "_CHANNEL_CHILD_MIX\020 \022\033\n\027MESSAGE_CHANNEL_"
-    "DEPOSIT\020!\022\036\n\032MESSAGE_CHANNEL_WITHDRAWAL\020"
-    "\"\022#\n\037MESSAGE_CHANNEL_FAST_WITHDRAWAL\020#\022\037"
-    "\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020$\022(\n$MESSA"
-    "GE_CHANNEL_CHALLENGE_WITHDRAWAL\020%\022\"\n\036MES"
-    "SAGE_CHANNEL_CHALLENGE_HEAD\020&\022!\n\035MESSAGE"
-    "_CHANNEL_CHILD_GENESES\020\'B\"\n io.bumo.sdk."
-    "core.extend.protobufb\006proto3", 2708);
+    "\021\n\tnode_rand\030\007 \001(\t\022\020\n\010chain_id\030\010 \001(\003\"L\n\r"
+    "HelloResponse\022\'\n\nerror_code\030\001 \001(\0162\023.prot"
+    "ocol.ERRORCODE\022\022\n\nerror_desc\030\002 \001(\t\"}\n\004Pe"
+    "er\022\n\n\002ip\030\001 \001(\t\022\014\n\004port\030\002 \001(\003\022\024\n\014num_fail"
+    "ures\030\003 \001(\003\022\031\n\021next_attempt_time\030\004 \001(\003\022\023\n"
+    "\013active_time\030\005 \001(\003\022\025\n\rconnection_id\030\006 \001("
+    "\003\"&\n\005Peers\022\035\n\005peers\030\001 \003(\0132\016.protocol.Pee"
+    "r\";\n\nGetLedgers\022\r\n\005begin\030\001 \001(\003\022\013\n\003end\030\002 "
+    "\001(\003\022\021\n\ttimestamp\030\003 \001(\003\"\337\001\n\007Ledgers\022(\n\006va"
+    "lues\030\001 \003(\0132\030.protocol.ConsensusValue\022-\n\t"
+    "sync_code\030\002 \001(\0162\032.protocol.Ledgers.SyncC"
+    "ode\022\017\n\007max_seq\030\003 \001(\003\022\r\n\005proof\030\004 \001(\014\"[\n\010S"
+    "yncCode\022\006\n\002OK\020\000\022\017\n\013OUT_OF_SYNC\020\001\022\022\n\016OUT_"
+    "OF_LEDGERS\020\002\022\010\n\004BUSY\020\003\022\n\n\006REFUSE\020\004\022\014\n\010IN"
+    "TERNAL\020\005\"&\n\010DontHave\022\014\n\004type\030\001 \001(\003\022\014\n\004ha"
+    "sh\030\002 \001(\014\"v\n\023LedgerUpgradeNotify\022\r\n\005nonce"
+    "\030\001 \001(\003\022(\n\007upgrade\030\002 \001(\0132\027.protocol.Ledge"
+    "rUpgrade\022&\n\tsignature\030\003 \001(\0132\023.protocol.S"
+    "ignature\"\032\n\tEntryList\022\r\n\005entry\030\001 \003(\014\"M\n\n"
+    "ChainHello\022,\n\010api_list\030\001 \003(\0162\032.protocol."
+    "ChainMessageType\022\021\n\ttimestamp\030\002 \001(\003\"z\n\013C"
+    "hainStatus\022\021\n\tself_addr\030\001 \001(\t\022\026\n\016ledger_"
+    "version\030\002 \001(\003\022\027\n\017monitor_version\030\003 \001(\003\022\024"
+    "\n\014bumo_version\030\004 \001(\t\022\021\n\ttimestamp\030\005 \001(\003\""
+    "O\n\020ChainPeerMessage\022\025\n\rsrc_peer_addr\030\001 \001"
+    "(\t\022\026\n\016des_peer_addrs\030\002 \003(\t\022\014\n\004data\030\003 \001(\014"
+    "\"#\n\020ChainSubscribeTx\022\017\n\007address\030\001 \003(\t\"7\n"
+    "\rChainResponse\022\022\n\nerror_code\030\001 \001(\005\022\022\n\ner"
+    "ror_desc\030\002 \001(\t\"\325\002\n\rChainTxStatus\0220\n\006stat"
+    "us\030\001 \001(\0162 .protocol.ChainTxStatus.TxStat"
+    "us\022\017\n\007tx_hash\030\002 \001(\t\022\026\n\016source_address\030\003 "
+    "\001(\t\022\032\n\022source_account_seq\030\004 \001(\003\022\022\n\nledge"
+    "r_seq\030\005 \001(\003\022\027\n\017new_account_seq\030\006 \001(\003\022\'\n\n"
+    "error_code\030\007 \001(\0162\023.protocol.ERRORCODE\022\022\n"
+    "\nerror_desc\030\010 \001(\t\022\021\n\ttimestamp\030\t \001(\003\"P\n\010"
+    "TxStatus\022\r\n\tUNDEFINED\020\000\022\r\n\tCONFIRMED\020\001\022\013"
+    "\n\007PENDING\020\002\022\014\n\010COMPLETE\020\003\022\013\n\007FAILURE\020\004\"V"
+    "\n\016MessageChannel\022\020\n\010chain_id\030\001 \001(\003\022\016\n\006ms"
+    "g_id\030\002 \001(\014\022\020\n\010msg_type\030\003 \001(\003\022\020\n\010msg_data"
+    "\030\004 \001(\014*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERL"
+    "AY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PIN"
+    "G\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLA"
+    "Y_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRA"
+    "NSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022"
+    "\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSG"
+    "TYPE_LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMe"
+    "ssageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_"
+    "HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PE"
+    "ER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022C"
+    "HAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANS"
+    "ACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHA"
+    "IN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020"
+    "\022*\216\003\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MESSAGE_CH"
+    "ANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHANNEL_CRE"
+    "ATE_CHILD_CHAIN\020\036\022\034\n\030MESSAGE_CHANNEL_MAI"
+    "N_MIX\020\037\022\035\n\031MESSAGE_CHANNEL_CHILD_MIX\020 \022\033"
+    "\n\027MESSAGE_CHANNEL_DEPOSIT\020!\022\036\n\032MESSAGE_C"
+    "HANNEL_WITHDRAWAL\020\"\022#\n\037MESSAGE_CHANNEL_F"
+    "AST_WITHDRAWAL\020#\022\037\n\033MESSAGE_CHANNEL_SUBM"
+    "IT_HEAD\020$\022(\n$MESSAGE_CHANNEL_CHALLENGE_W"
+    "ITHDRAWAL\020%\022\"\n\036MESSAGE_CHANNEL_CHALLENGE"
+    "_HEAD\020&\022!\n\035MESSAGE_CHANNEL_CHILD_GENESES"
+    "\020\'B\"\n io.bumo.sdk.core.extend.protobufb\006"
+    "proto3", 2726);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -650,6 +652,7 @@ const int Hello::kBumoVersionFieldNumber;
 const int Hello::kListeningPortFieldNumber;
 const int Hello::kNodeAddressFieldNumber;
 const int Hello::kNodeRandFieldNumber;
+const int Hello::kChainIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Hello::Hello()
@@ -681,6 +684,7 @@ void Hello::SharedCtor() {
   listening_port_ = GOOGLE_LONGLONG(0);
   node_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   node_rand_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  chain_id_ = GOOGLE_LONGLONG(0);
 }
 
 Hello::~Hello() {
@@ -744,6 +748,7 @@ void Hello::Clear() {
   listening_port_ = GOOGLE_LONGLONG(0);
   node_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   node_rand_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  chain_id_ = GOOGLE_LONGLONG(0);
 
 #undef ZR_HELPER_
 #undef ZR_
@@ -866,6 +871,21 @@ bool Hello::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(64)) goto parse_chain_id;
+        break;
+      }
+
+      // optional int64 chain_id = 8;
+      case 8: {
+        if (tag == 64) {
+         parse_chain_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &chain_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -944,6 +964,11 @@ void Hello::SerializeWithCachedSizes(
       7, this->node_rand(), output);
   }
 
+  // optional int64 chain_id = 8;
+  if (this->chain_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(8, this->chain_id(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.Hello)
 }
 
@@ -1003,6 +1028,11 @@ void Hello::SerializeWithCachedSizes(
         7, this->node_rand(), target);
   }
 
+  // optional int64 chain_id = 8;
+  if (this->chain_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(8, this->chain_id(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Hello)
   return target;
 }
@@ -1060,6 +1090,13 @@ int Hello::ByteSize() const {
         this->node_rand());
   }
 
+  // optional int64 chain_id = 8;
+  if (this->chain_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->chain_id());
+  }
+
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -1112,6 +1149,9 @@ void Hello::MergeFrom(const Hello& from) {
 
     node_rand_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.node_rand_);
   }
+  if (from.chain_id() != 0) {
+    set_chain_id(from.chain_id());
+  }
 }
 
 void Hello::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1145,6 +1185,7 @@ void Hello::InternalSwap(Hello* other) {
   std::swap(listening_port_, other->listening_port_);
   node_address_.Swap(&other->node_address_);
   node_rand_.Swap(&other->node_rand_);
+  std::swap(chain_id_, other->chain_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -1346,6 +1387,20 @@ void Hello::clear_node_rand() {
   }
   node_rand_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), node_rand);
   // @@protoc_insertion_point(field_set_allocated:protocol.Hello.node_rand)
+}
+
+// optional int64 chain_id = 8;
+void Hello::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 Hello::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.Hello.chain_id)
+  return chain_id_;
+}
+ void Hello::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Hello.chain_id)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
