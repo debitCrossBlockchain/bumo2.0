@@ -519,17 +519,18 @@ void protobuf_AddDesc_overlay_2eproto() {
     "IN_PEER_OFFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020"
     "\016\022\033\n\027CHAIN_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_"
     "LEDGER_HEADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022"
-    "\026\n\022CHAIN_TX_ENV_STORE\020\022*\357\002\n\024MESSAGE_CHAN"
-    "NEL_TYPE\022&\n\"MESSAGE_CHANNEL_CREATE_CHILD"
-    "_CHAIN\020\000\022\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020\001\022\035"
-    "\n\031MESSAGE_CHANNEL_CHILD_MIX\020\002\022\033\n\027MESSAGE"
-    "_CHANNEL_DEPOSIT\020\003\022\036\n\032MESSAGE_CHANNEL_WI"
-    "THDRAWAL\020\004\022#\n\037MESSAGE_CHANNEL_FAST_WITHD"
-    "RAWAL\020\005\022\037\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020\006"
-    "\022(\n$MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL"
-    "\020\007\022\"\n\036MESSAGE_CHANNEL_CHALLENGE_HEAD\020\010\022!"
-    "\n\035MESSAGE_CHANNEL_CHILD_GENESES\020\tB\"\n io."
-    "bumo.sdk.core.extend.protobufb\006proto3", 2677);
+    "\026\n\022CHAIN_TX_ENV_STORE\020\022*\216\003\n\024MESSAGE_CHAN"
+    "NEL_TYPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE\020\000\022"
+    "&\n\"MESSAGE_CHANNEL_CREATE_CHILD_CHAIN\020\036\022"
+    "\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020\037\022\035\n\031MESSAGE"
+    "_CHANNEL_CHILD_MIX\020 \022\033\n\027MESSAGE_CHANNEL_"
+    "DEPOSIT\020!\022\036\n\032MESSAGE_CHANNEL_WITHDRAWAL\020"
+    "\"\022#\n\037MESSAGE_CHANNEL_FAST_WITHDRAWAL\020#\022\037"
+    "\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020$\022(\n$MESSA"
+    "GE_CHANNEL_CHALLENGE_WITHDRAWAL\020%\022\"\n\036MES"
+    "SAGE_CHANNEL_CHALLENGE_HEAD\020&\022!\n\035MESSAGE"
+    "_CHANNEL_CHILD_GENESES\020\'B\"\n io.bumo.sdk."
+    "core.extend.protobufb\006proto3", 2708);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -622,15 +623,16 @@ const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_TYPE_descriptor() {
 bool MESSAGE_CHANNEL_TYPE_IsValid(int value) {
   switch(value) {
     case 0:
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
+    case 30:
+    case 31:
+    case 32:
+    case 33:
+    case 34:
+    case 35:
+    case 36:
+    case 37:
+    case 38:
+    case 39:
       return true;
     default:
       return false;
