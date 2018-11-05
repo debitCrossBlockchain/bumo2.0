@@ -37,14 +37,14 @@ namespace bumo {
 		std::set<std::string> tx_filter_address_;
 	};
 
-	class MessageChannelServer :public utils::Singleton<MessageChannelServer>,
+	class MessageChannel :public utils::Singleton<MessageChannel>,
 		public StatusModule,
 		public Network,
 		public utils::Runnable {
-		friend class utils::Singleton<bumo::MessageChannelServer>;
+		friend class utils::Singleton<bumo::MessageChannel>;
 	public:
-		MessageChannelServer();
-		~MessageChannelServer();
+		MessageChannel();
+		~MessageChannel();
 
 
 		//virtual bool Send(const ZMQTaskType type, const std::string& buf);
