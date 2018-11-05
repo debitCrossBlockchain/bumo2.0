@@ -112,8 +112,9 @@ void protobuf_AddDesc_merkeltrie_2eproto() {
     "\013sublocation\030\001 \001(\014\022\014\n\004hash\030\002 \001(\014\022&\n\tchil"
     "dtype\030\003 \001(\0162\023.protocol.CHILDTYPE\")\n\004Node"
     "\022!\n\010children\030\001 \003(\0132\017.protocol.Child**\n\tC"
-    "HILDTYPE\022\010\n\004NONE\020\000\022\t\n\005INNER\020\001\022\010\n\004LEAF\020\002b"
-    "\006proto3", 207);
+    "HILDTYPE\022\010\n\004NONE\020\000\022\t\n\005INNER\020\001\022\010\n\004LEAF\020\002B"
+    "\"\n io.bumo.sdk.core.extend.protobufb\006pro"
+    "to3", 243);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "merkeltrie.proto", &protobuf_RegisterTypes);
   Child::default_instance_ = new Child();

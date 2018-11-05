@@ -113,7 +113,9 @@ namespace bumo {
 		virtual bool SendRequest(int64_t peer_id, int64_t type, const std::string &data);
 		virtual std::set<int64_t> GetActivePeerIds();
 
-		bool NodeExist(std::string node_address, int64_t peer_id);
+		bool NodeExist(std::string node_address, int64_t peer_id, int64_t chain_id);
+		bool CheckSameNode(const std::string &local_address, const std::string &target_address, int64_t local_chain_id, int64_t target_chain_id);
+		int64_t GetChainIdFromConn(int64_t conn_id);
 	};
 }
 

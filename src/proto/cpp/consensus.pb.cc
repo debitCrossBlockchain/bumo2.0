@@ -199,7 +199,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(PbftNewView, _is_default_instance_));
   Pbft_descriptor_ = file->message_type(7);
-  static const int Pbft_offsets_[8] = {
+  static const int Pbft_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, round_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, pre_prepare_),
@@ -208,6 +208,7 @@ void protobuf_AssignDesc_consensus_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, view_change_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, new_view_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, view_change_with_rawvalue_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Pbft, chain_id_),
   };
   Pbft_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -402,7 +403,7 @@ void protobuf_AddDesc_consensus_2eproto() {
     "NewView\022\023\n\013view_number\030\001 \001(\003\022\020\n\010sequence"
     "\030\002 \001(\003\022\022\n\nreplica_id\030\003 \001(\003\022\'\n\014view_chang"
     "es\030\004 \003(\0132\021.protocol.PbftEnv\022&\n\013pre_prepa"
-    "re\030\005 \001(\0132\021.protocol.PbftEnv\"\343\002\n\004Pbft\022\024\n\014"
+    "re\030\005 \001(\0132\021.protocol.PbftEnv\"\365\002\n\004Pbft\022\024\n\014"
     "round_number\030\001 \001(\003\022\'\n\004type\030\002 \001(\0162\031.proto"
     "col.PbftMessageType\022-\n\013pre_prepare\030\003 \001(\013"
     "2\030.protocol.PbftPrePrepare\022&\n\007prepare\030\004 "
@@ -411,22 +412,23 @@ void protobuf_AddDesc_consensus_2eproto() {
     "\006 \001(\0132\030.protocol.PbftViewChange\022\'\n\010new_v"
     "iew\030\007 \001(\0132\025.protocol.PbftNewView\022G\n\031view"
     "_change_with_rawvalue\030\010 \001(\0132$.protocol.P"
-    "bftViewChangeWithRawValue\"O\n\007PbftEnv\022\034\n\004"
-    "pbft\030\001 \001(\0132\016.protocol.Pbft\022&\n\tsignature\030"
-    "\002 \001(\0132\023.protocol.Signature\"8\n\tValidator\022"
-    "\017\n\007address\030\001 \001(\t\022\032\n\022pledge_coin_amount\030\002"
-    " \001(\003\"7\n\014ValidatorSet\022\'\n\nvalidators\030\001 \003(\013"
-    "2\023.protocol.Validator\"/\n\tPbftProof\022\"\n\007co"
-    "mmits\030\001 \003(\0132\021.protocol.PbftEnv\"j\n\tFeeCon"
-    "fig\022\021\n\tgas_price\030\001 \001(\003\022\024\n\014base_reserve\030\002"
-    " \001(\003\"4\n\004Type\022\013\n\007UNKNOWN\020\000\022\r\n\tGAS_PRICE\020\001"
-    "\022\020\n\014BASE_RESERVE\020\002*\260\001\n\017PbftMessageType\022\030"
-    "\n\024PBFT_TYPE_PREPREPARE\020\000\022\025\n\021PBFT_TYPE_PR"
-    "EPARE\020\001\022\024\n\020PBFT_TYPE_COMMIT\020\002\022\030\n\024PBFT_TY"
-    "PE_VIEWCHANGE\020\003\022\025\n\021PBFT_TYPE_NEWVIEW\020\004\022%"
-    "\n!PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE\020\005*8\n"
-    "\rPbftValueType\022\021\n\rPBFT_VALUE_TX\020\000\022\024\n\020PBF"
-    "T_VALUE_TXSET\020\001b\006proto3", 1783);
+    "bftViewChangeWithRawValue\022\020\n\010chain_id\030\t "
+    "\001(\003\"O\n\007PbftEnv\022\034\n\004pbft\030\001 \001(\0132\016.protocol."
+    "Pbft\022&\n\tsignature\030\002 \001(\0132\023.protocol.Signa"
+    "ture\"8\n\tValidator\022\017\n\007address\030\001 \001(\t\022\032\n\022pl"
+    "edge_coin_amount\030\002 \001(\003\"7\n\014ValidatorSet\022\'"
+    "\n\nvalidators\030\001 \003(\0132\023.protocol.Validator\""
+    "/\n\tPbftProof\022\"\n\007commits\030\001 \003(\0132\021.protocol"
+    ".PbftEnv\"j\n\tFeeConfig\022\021\n\tgas_price\030\001 \001(\003"
+    "\022\024\n\014base_reserve\030\002 \001(\003\"4\n\004Type\022\013\n\007UNKNOW"
+    "N\020\000\022\r\n\tGAS_PRICE\020\001\022\020\n\014BASE_RESERVE\020\002*\260\001\n"
+    "\017PbftMessageType\022\030\n\024PBFT_TYPE_PREPREPARE"
+    "\020\000\022\025\n\021PBFT_TYPE_PREPARE\020\001\022\024\n\020PBFT_TYPE_C"
+    "OMMIT\020\002\022\030\n\024PBFT_TYPE_VIEWCHANGE\020\003\022\025\n\021PBF"
+    "T_TYPE_NEWVIEW\020\004\022%\n!PBFT_TYPE_VIEWCHANG_"
+    "WITH_RAWVALUE\020\005*8\n\rPbftValueType\022\021\n\rPBFT"
+    "_VALUE_TX\020\000\022\024\n\020PBFT_VALUE_TXSET\020\001B\"\n io."
+    "bumo.sdk.core.extend.protobufb\006proto3", 1837);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "consensus.proto", &protobuf_RegisterTypes);
   PbftPrePrepare::default_instance_ = new PbftPrePrepare();
@@ -3591,6 +3593,7 @@ const int Pbft::kCommitFieldNumber;
 const int Pbft::kViewChangeFieldNumber;
 const int Pbft::kNewViewFieldNumber;
 const int Pbft::kViewChangeWithRawvalueFieldNumber;
+const int Pbft::kChainIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Pbft::Pbft()
@@ -3628,6 +3631,7 @@ void Pbft::SharedCtor() {
   view_change_ = NULL;
   new_view_ = NULL;
   view_change_with_rawvalue_ = NULL;
+  chain_id_ = GOOGLE_LONGLONG(0);
 }
 
 Pbft::~Pbft() {
@@ -3687,6 +3691,7 @@ void Pbft::Clear() {
   new_view_ = NULL;
   if (GetArenaNoVirtual() == NULL && view_change_with_rawvalue_ != NULL) delete view_change_with_rawvalue_;
   view_change_with_rawvalue_ = NULL;
+  chain_id_ = GOOGLE_LONGLONG(0);
 }
 
 bool Pbft::MergePartialFromCodedStream(
@@ -3803,6 +3808,21 @@ bool Pbft::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
+        if (input->ExpectTag(72)) goto parse_chain_id;
+        break;
+      }
+
+      // optional int64 chain_id = 9;
+      case 9: {
+        if (tag == 72) {
+         parse_chain_id:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &chain_id_)));
+
+        } else {
+          goto handle_unusual;
+        }
         if (input->ExpectAtEnd()) goto success;
         break;
       }
@@ -3878,6 +3898,11 @@ void Pbft::SerializeWithCachedSizes(
       8, *this->view_change_with_rawvalue_, output);
   }
 
+  // optional int64 chain_id = 9;
+  if (this->chain_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(9, this->chain_id(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:protocol.Pbft)
 }
 
@@ -3935,6 +3960,11 @@ void Pbft::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         8, *this->view_change_with_rawvalue_, false, target);
+  }
+
+  // optional int64 chain_id = 9;
+  if (this->chain_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(9, this->chain_id(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.Pbft)
@@ -4000,6 +4030,13 @@ int Pbft::ByteSize() const {
         *this->view_change_with_rawvalue_);
   }
 
+  // optional int64 chain_id = 9;
+  if (this->chain_id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->chain_id());
+  }
+
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = total_size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
@@ -4052,6 +4089,9 @@ void Pbft::MergeFrom(const Pbft& from) {
   if (from.has_view_change_with_rawvalue()) {
     mutable_view_change_with_rawvalue()->::protocol::PbftViewChangeWithRawValue::MergeFrom(from.view_change_with_rawvalue());
   }
+  if (from.chain_id() != 0) {
+    set_chain_id(from.chain_id());
+  }
 }
 
 void Pbft::CopyFrom(const ::google::protobuf::Message& from) {
@@ -4086,6 +4126,7 @@ void Pbft::InternalSwap(Pbft* other) {
   std::swap(view_change_, other->view_change_);
   std::swap(new_view_, other->new_view_);
   std::swap(view_change_with_rawvalue_, other->view_change_with_rawvalue_);
+  std::swap(chain_id_, other->chain_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -4355,6 +4396,20 @@ void Pbft::set_allocated_view_change_with_rawvalue(::protocol::PbftViewChangeWit
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.view_change_with_rawvalue)
+}
+
+// optional int64 chain_id = 9;
+void Pbft::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 Pbft::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.Pbft.chain_id)
+  return chain_id_;
+}
+ void Pbft::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Pbft.chain_id)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

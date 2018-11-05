@@ -120,6 +120,8 @@ int main(int argc, char *argv[]){
 			break;
 		}
 
+		bumo::General::SetSelfChainId(config.genesis_configure_.chain_id_);
+
 		std::string log_path = config.logger_configure_.path_;
 		if (!utils::File::IsAbsolute(log_path)){
 			log_path = utils::String::Format("%s/%s", utils::File::GetBinHome().c_str(), log_path.c_str());

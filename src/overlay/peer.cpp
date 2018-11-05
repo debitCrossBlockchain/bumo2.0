@@ -26,6 +26,7 @@ namespace bumo {
 		peer_ledger_version_ = 0;
 		peer_overlay_version_ = 0;
 		peer_listen_port_ = 0;
+		chain_id_ = 0;
 	}
 
 	Peer::~Peer() {}
@@ -60,6 +61,7 @@ namespace bumo {
 		peer_version_ = hello.bumo_version();
 		peer_listen_port_ = hello.listening_port();
 		peer_node_address_ = hello.node_address();
+		chain_id_ = hello.chain_id();
 	}
 
 	void Peer::SetActiveTime(int64_t current_time) {
@@ -76,6 +78,7 @@ namespace bumo {
 		hello.set_node_address(node_address);
 		hello.set_node_rand(node_rand);
 		hello.set_network_id(network_id);
+		hello.set_chain_id(General::GetSelfChainId());
 		return SendRequest(protocol::OVERLAY_MSGTYPE_HELLO, hello.SerializeAsString(), ec);
 	}
 
@@ -90,6 +93,10 @@ namespace bumo {
 
 	int64_t Peer::GetDelay() const {
 		return delay_;
+	}
+
+	int64_t Peer::GetChainId() const{
+		return chain_id_;
 	}
 
 	bool Peer::OnNetworkTimer(int64_t current_time) {

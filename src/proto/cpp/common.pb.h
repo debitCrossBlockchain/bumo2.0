@@ -385,6 +385,12 @@ class LedgerUpgrade : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::std::string* release_new_validator();
   void set_allocated_new_validator(::std::string* new_validator);
 
+  // optional int64 chain_id = 3;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 3;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.LedgerUpgrade)
  private:
 
@@ -392,6 +398,7 @@ class LedgerUpgrade : public ::google::protobuf::Message /* @@protoc_insertion_p
   bool _is_default_instance_;
   ::google::protobuf::int64 new_ledger_version_;
   ::google::protobuf::internal::ArenaStringPtr new_validator_;
+  ::google::protobuf::int64 chain_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_common_2eproto();
   friend void protobuf_AssignDesc_common_2eproto();
@@ -934,6 +941,20 @@ inline void LedgerUpgrade::set_allocated_new_validator(::std::string* new_valida
   }
   new_validator_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), new_validator);
   // @@protoc_insertion_point(field_set_allocated:protocol.LedgerUpgrade.new_validator)
+}
+
+// optional int64 chain_id = 3;
+inline void LedgerUpgrade::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 LedgerUpgrade::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.LedgerUpgrade.chain_id)
+  return chain_id_;
+}
+inline void LedgerUpgrade::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.LedgerUpgrade.chain_id)
 }
 
 // -------------------------------------------------------------------

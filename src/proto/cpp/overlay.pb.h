@@ -310,6 +310,12 @@ class Hello : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::std::string* release_node_rand();
   void set_allocated_node_rand(::std::string* node_rand);
 
+  // optional int64 chain_id = 8;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 8;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.Hello)
  private:
 
@@ -322,6 +328,7 @@ class Hello : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::int64 listening_port_;
   ::google::protobuf::internal::ArenaStringPtr node_address_;
   ::google::protobuf::internal::ArenaStringPtr node_rand_;
+  ::google::protobuf::int64 chain_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
@@ -2174,6 +2181,20 @@ inline void Hello::set_allocated_node_rand(::std::string* node_rand) {
   }
   node_rand_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), node_rand);
   // @@protoc_insertion_point(field_set_allocated:protocol.Hello.node_rand)
+}
+
+// optional int64 chain_id = 8;
+inline void Hello::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Hello::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.Hello.chain_id)
+  return chain_id_;
+}
+inline void Hello::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Hello.chain_id)
 }
 
 // -------------------------------------------------------------------

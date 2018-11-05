@@ -182,6 +182,7 @@ namespace bumo {
 		Configure::GetValue(value, "validators", validators_);
 		Configure::GetValue(value, "account", account_);
 		Configure::GetValue(value, "slogan", slogan_);
+		Configure::GetValue(value, "chain_id", chain_id_);
 		
 		if (validators_.empty()) {
 			return false;
