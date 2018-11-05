@@ -20,6 +20,7 @@
     <ClCompile Include="..\..\src\api\web_server_update.cpp" />
     <ClCompile Include="..\..\src\cross\block_listen_manager.cpp" />
     <ClCompile Include="..\..\src\cross\challenge_manager.cpp" />
+    <ClCompile Include="..\..\src\cross\message_channel_manager.cpp" />
     <ClCompile Include="..\..\src\cross\proposer_manager.cpp" />
     <ClCompile Include="..\..\src\glue\ledger_upgrade.cpp" />
     <ClCompile Include="..\..\src\glue\transaction_queue.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="..\..\src\api\web_server.h" />
     <ClInclude Include="..\..\src\cross\block_listen_manager.h" />
     <ClInclude Include="..\..\src\cross\challenge_manager.h" />
+    <ClInclude Include="..\..\src\cross\message_channel_manager.h" />
     <ClInclude Include="..\..\src\cross\proposer_manager.h" />
     <ClInclude Include="..\..\src\glue\ledger_upgrade.h" />
     <ClInclude Include="..\..\src\glue\transaction_queue.h" />
