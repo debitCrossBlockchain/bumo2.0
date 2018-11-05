@@ -71,6 +71,20 @@ namespace bumo {
 		return true;
 	}
 
+	MessageChannelConfigure::~MessageChannelConfigure() {}
+
+	bool MessageChannelConfigure::Load(const Json::Value &value) {
+		std::string address;
+		Configure::GetValue(value, "listen_address", address);
+		listen_address_ = utils::InetAddress(address);
+
+		return true;
+	}
+
+	MessageChannelConfigure::MessageChannelConfigure() {
+	}
+
+
 	WsServerConfigure::~WsServerConfigure() {}
 
 	bool WsServerConfigure::Load(const Json::Value &value) {
@@ -217,6 +231,7 @@ namespace bumo {
 		db_configure_.Load(values["db"]);
 		logger_configure_.Load(values["logger"]);
 		p2p_configure_.Load(values["p2p"]);
+		message_channel_configure_.Load(values["messagechannel"]);
 		webserver_configure_.Load(values["webserver"]);
 		ledger_configure_.Load(values["ledger"]);
 		genesis_configure_.Load(values["genesis"]);

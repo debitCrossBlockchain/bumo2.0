@@ -56,6 +56,16 @@ namespace bumo {
 		bool Load(const Json::Value &value);
 	};
 
+	class MessageChannelConfigure {
+	public:
+		MessageChannelConfigure();
+		~MessageChannelConfigure();
+
+		utils::InetAddress listen_address_;
+
+		bool Load(const Json::Value &value);
+	};
+
 	class WebServerConfigure {
 	public:
 		WebServerConfigure();
@@ -132,13 +142,16 @@ namespace bumo {
 		LoggerConfigure logger_configure_;
 
 		WebServerConfigure webserver_configure_;
+		MessageChannelConfigure message_channel_configure_;
 		WsServerConfigure wsserver_configure_; //Websocket server
+
 		
 		P2pConfigure p2p_configure_;
 		LedgerConfigure ledger_configure_;
 		GenesisConfigure genesis_configure_;
 
 		MonitorConfigure monitor_configure_;
+
 
 		virtual bool LoadFromJson(const Json::Value &values);
 	};
