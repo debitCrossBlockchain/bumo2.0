@@ -21,7 +21,7 @@ namespace bumo {
 
 	bool MessageChannelManager::Set(const protocol::ChainSubscribeTx &sub) {
 		if (sub.address_size() > 100) {
-			LOG_ERROR("Failed to subscribe address, size large than 100");
+			LOG_ERROR("Failed  to subscribe address, size large than 100");
 			return false;
 		}
 

@@ -77,6 +77,7 @@ namespace bumo {
 	protected:
 		virtual void Run(utils::Thread *thread) override;
 
+
 	private:
 		utils::Thread *thread_ptr_;
 
