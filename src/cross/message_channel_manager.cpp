@@ -1,3 +1,12 @@
+#include <utils/headers.h>
+#include <common/general.h>
+#include <main/configure.h>
+#include <proto/cpp/monitor.pb.h>
+#include <overlay/peer_manager.h>
+#include <glue/glue_manager.h>
+#include <ledger/ledger_manager.h>
+#include <monitor/monitor.h>
+
 #include "message_channel_manager.h"
 
 namespace bumo {
@@ -10,16 +19,48 @@ namespace bumo {
 	MessageChannelManager::~MessageChannelManager(){
 	}
 
+	bool MessageChannelManager::Set(const protocol::ChainSubscribeTx &sub) {
+		if (sub.address_size() > 100) {
+			LOG_ERROR("Failed to subscribe address, size large than 100");
+			return false;
+		}
+
+		tx_filter_address_.clear();
+		for (int32_t i = 0; i < sub.address_size(); i++) {
+			if (!PublicKey::IsAddressValid(sub.address(i))) {
+				LOG_ERROR("Failed to subscribe address, address(%s) not valid", sub.address(i).c_str());
+				return false;
+			}
+			tx_filter_address_.insert(sub.address(i));
+		}
+
+		return true;
+	}
+
+	bool MessageChannelManager::Filter(const protocol::TransactionEnvStore &tx_msg) {
+		return false;
+	}
+
+
+
 
 
 	MessageChannelServer::MessageChannelServer() : Network(SslParameter()) {
 		connect_interval_ = 120 * utils::MICRO_UNITS_PER_SEC;
 		last_connect_time_ = 0;
 
-		/*request_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageChannelServer::OnCrateChildChain, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageChannelServer::OnCrateChildChain, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_MAIN_MIX] = std::bind(&MessageChannelServer::OnMainChainMix, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_CHILD_MIX] = std::bind(&MessageChannelServer::OnChildChainMix, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_DEPOSIT] = std::bind(&MessageChannelServer::OnDeposit, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageChannelServer::OnWithdrawal, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_FAST_WITHDRAWAL] = std::bind(&MessageChannelServer::OnFastWithdrawal, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_SUBMIT_HEAD] = std::bind(&MessageChannelServer::OnSubmitChildHead, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL] = std::bind(&MessageChannelServer::OnChallengeWithdrawal, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD] = std::bind(&MessageChannelServer::OnChallengeChildHead, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES] = std::bind(&MessageChannelServer::OnChildChainGeneses, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_SUBMITTRANSACTION] = std::bind(&MessageChannelServer::OnSubmitTransaction, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::CHAIN_SUBSCRIBE_TX] = std::bind(&MessageChannelServer::OnSubscribeTx, this, std::placeholders::_1, std::placeholders::_2);*/
+		request_methods_[protocol::CHAIN_SUBSCRIBE_TX] = std::bind(&MessageChannelServer::OnSubscribeTx, this, std::placeholders::_1, std::placeholders::_2);
 		thread_ptr_ = NULL;
 	}
 
@@ -51,50 +92,50 @@ namespace bumo {
 	}
 
 
-	bool MessageChannelServer::OnCrateChildChain(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnCrateChildChain(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnMainChainMix(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnMainChainMix(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnChildChainMix(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnChildChainMix(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
-	bool MessageChannelServer::OnDeposit(protocol::MessageChannel &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannelServer::OnWithdrawal(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnDeposit(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnFastWithdrawal(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnWithdrawal(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnSubmitChildHead(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnFastWithdrawal(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnChallengeWithdrawal(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnSubmitChildHead(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnChallengeChildHead(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnChallengeWithdrawal(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnChildChainGeneses(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnChallengeChildHead(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnSubmitTransaction(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnChildChainGeneses(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannelServer::OnSubscribeTx(protocol::MessageChannel &message, int64_t conn_id){
+	bool MessageChannelServer::OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id){
+		return true;
+	}
+
+	bool MessageChannelServer::OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
@@ -112,14 +153,14 @@ namespace bumo {
 	void MessageChannelServer::BroadcastChainTxMsg(const protocol::TransactionEnvStore& tx_msg) {
 		utils::MutexGuard guard(conns_list_lock_);
 
-	/*	for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
-			WsPeer *peer = (WsPeer *)iter->second;
-			if (peer->Filter(tx_msg)) {
+			for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
+				MessageChannelManager *messageChannel = (MessageChannelManager *)iter->second;
+				if (messageChannel->Filter(tx_msg)) {
 				std::error_code ec;
 				std::string str = tx_msg.SerializeAsString();
-				peer->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
-			}
-		}*/
+				messageChannel->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
+				}
+				}
 	}
 
 	void MessageChannelServer::GetModuleStatus(Json::Value &data) {

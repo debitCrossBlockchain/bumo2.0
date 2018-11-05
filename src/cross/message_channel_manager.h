@@ -24,9 +24,17 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace bumo {
 	class MessageChannelManager :public Connection{
+
 	public:
 		MessageChannelManager(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id);
 		~MessageChannelManager();
+		bool Set(const protocol::ChainSubscribeTx &sub);
+		bool Filter(const protocol::TransactionEnvStore &tx_msg);
+
+	private:
+
+		//Peer infomation
+		std::set<std::string> tx_filter_address_;
 	};
 
 	class MessageChannelServer :public utils::Singleton<MessageChannelServer>,
@@ -45,18 +53,18 @@ namespace bumo {
 		bool Exit();
 
 		// Handlers
-		bool OnCrateChildChain(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnMainChainMix(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnChildChainMix(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnDeposit(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnWithdrawal(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnFastWithdrawal(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnSubmitChildHead(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnChallengeWithdrawal(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnChallengeChildHead(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnChildChainGeneses(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnSubmitTransaction(protocol::MessageChannel &message, int64_t conn_id);
-		bool OnSubscribeTx(protocol::MessageChannel &message, int64_t conn_id);
+		bool OnCrateChildChain(protocol::WsMessage &message, int64_t conn_id);
+		bool OnMainChainMix(protocol::WsMessage &message, int64_t conn_id);
+		bool OnChildChainMix(protocol::WsMessage &message, int64_t conn_id);
+		bool OnDeposit(protocol::WsMessage &message, int64_t conn_id);
+		bool OnWithdrawal(protocol::WsMessage &message, int64_t conn_id);
+		bool OnFastWithdrawal(protocol::WsMessage &message, int64_t conn_id);
+		bool OnSubmitChildHead(protocol::WsMessage &message, int64_t conn_id);
+		bool OnChallengeWithdrawal(protocol::WsMessage &message, int64_t conn_id);
+		bool OnChallengeChildHead(protocol::WsMessage &message, int64_t conn_id);
+		bool OnChildChainGeneses(protocol::WsMessage &message, int64_t conn_id);
+		bool OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id);
+		bool OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id);
 
 		void BroadcastMsg(int64_t type, const std::string &data);
 		void BroadcastChainTxMsg(const protocol::TransactionEnvStore& txMsg);
