@@ -78,6 +78,21 @@ namespace bumo {
 		Configure::GetValue(value, "listen_address", address);
 		listen_address_ = utils::InetAddress(address);
 
+		int32_t temp = (int32_t)target_message_channel_connection_;
+		Configure::GetValue(value, "target_message_channel_connection", temp);
+		target_message_channel_connection_ = temp;
+
+		temp = (int32_t)max_connection_;
+		Configure::GetValue(value, "max_connection", temp);
+		max_connection_ = temp;
+
+		Configure::GetValue(value, "known_message_channel", known_message_channel_list_);
+		Configure::GetValue(value, "connect_timeout", connect_timeout_);
+		Configure::GetValue(value, "heartbeat_interval", heartbeat_interval_);
+
+		connect_timeout_ = connect_timeout_ * utils::MICRO_UNITS_PER_SEC; //micro second
+		heartbeat_interval_ = heartbeat_interval_ * utils::MICRO_UNITS_PER_SEC; //micro second
+
 		return true;
 	}
 
