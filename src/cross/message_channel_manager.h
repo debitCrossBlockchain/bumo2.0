@@ -23,11 +23,11 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <monitor/system_manager.h>
 
 namespace bumo {
-	class MessageChannelManager :public Connection{
+	class MessageChannelPeer :public Connection{
 
 	public:
-		MessageChannelManager(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id);
-		~MessageChannelManager();
+		MessageChannelPeer(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id);
+		~MessageChannelPeer();
 		bool Set(const protocol::ChainSubscribeTx &sub);
 		bool Filter(const protocol::TransactionEnvStore &tx_msg);
 
@@ -89,6 +89,10 @@ namespace bumo {
 		//client
 	public:
 		bool ConnectToMessageChannel();
+		bool SendRequest(int64_t id, int64_t type, const std::string &data);
+		bool ReceiveMsg(int64_t type, const std::string &data, int64_t id);
+		virtual void OnTimer(int64_t current_time) override;
+		virtual void OnSlowTimer(int64_t current_time) override {};
 
 
 

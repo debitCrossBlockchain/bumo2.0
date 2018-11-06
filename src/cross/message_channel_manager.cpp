@@ -11,15 +11,15 @@
 
 namespace bumo {
 
-	MessageChannelManager::MessageChannelManager(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id) :
+	MessageChannelPeer::MessageChannelPeer(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id) :
 		Connection(server_h, client_h, tls_server_h, tls_client_h, con, uri, id) {
 	}
 
 
-	MessageChannelManager::~MessageChannelManager(){
+	MessageChannelPeer::~MessageChannelPeer(){
 	}
 
-	bool MessageChannelManager::Set(const protocol::ChainSubscribeTx &sub) {
+	bool MessageChannelPeer::Set(const protocol::ChainSubscribeTx &sub) {
 		if (sub.address_size() > 100) {
 			LOG_ERROR("Failed  to subscribe address, size large than 100");
 			return false;
@@ -37,7 +37,7 @@ namespace bumo {
 		return true;
 	}
 
-	bool MessageChannelManager::Filter(const protocol::TransactionEnvStore &tx_msg) {
+	bool MessageChannelPeer::Filter(const protocol::TransactionEnvStore &tx_msg) {
 		return false;
 	}
 
@@ -154,7 +154,7 @@ namespace bumo {
 		utils::MutexGuard guard(conns_list_lock_);
 
 			for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
-				MessageChannelManager *messageChannel = (MessageChannelManager *)iter->second;
+				MessageChannelPeer *messageChannel = (MessageChannelPeer *)iter->second;
 				if (messageChannel->Filter(tx_msg)) {
 				std::error_code ec;
 				std::string str = tx_msg.SerializeAsString();
@@ -177,7 +177,7 @@ namespace bumo {
 	Connection *MessageChannel::CreateConnectObject(server *server_h, client *client_,
 		tls_server *tls_server_h, tls_client *tls_client_h,
 		connection_hdl con, const std::string &uri, int64_t id) {
-		return new MessageChannelManager(server_h, client_, tls_server_h, tls_client_h, con, uri, id);
+		return new MessageChannelPeer(server_h, client_, tls_server_h, tls_client_h, con, uri, id);
 	}
 
 	bool MessageChannel::ConnectToMessageChannel() {
@@ -196,6 +196,18 @@ namespace bumo {
 			
 		} while (false);
 
-		return false;
+		return true;
+	}
+
+	bool MessageChannel::SendRequest(int64_t id, int64_t type, const std::string &data){
+		return true;
+	}
+
+	bool MessageChannel::ReceiveMsg(int64_t type, const std::string &data, int64_t id){
+		return true;
+	}
+
+	void MessageChannel::OnTimer(int64_t current_time){
+
 	}
 }
