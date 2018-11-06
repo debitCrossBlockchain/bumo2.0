@@ -24,6 +24,14 @@
 		"multiquery_limit": 100,
 		"thread_count": 8
     },
+    "messagechannel": {
+        "heartbeat_interval": 60,
+        "target_message_channel_connection": 50,
+		"max_connection": 20000,
+		"connect_timeout": 5,
+        "known_message_channel": ["127.0.0.1:36004"],
+        "listen_address": "0.0.0.0:36004"
+    },
     "wsserver": {
         "listen_address": "0.0.0.0:36003"
     },
