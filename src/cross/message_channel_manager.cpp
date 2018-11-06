@@ -179,4 +179,23 @@ namespace bumo {
 		connection_hdl con, const std::string &uri, int64_t id) {
 		return new MessageChannelManager(server_h, client_, tls_server_h, tls_client_h, con, uri, id);
 	}
+
+	bool MessageChannel::ConnectToMessageChannel() {
+		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
+		do {
+			utils::InetAddressVec addresses;
+			utils::net::GetNetworkAddress(addresses);
+			std::list<std::string>::const_iterator itor;
+			itor = message_channel_configure.known_message_channel_list_.begin();
+			utils::MutexGuard guard(conns_list_lock_);
+			while (itor != message_channel_configure.known_message_channel_list_.end()){
+				std::string address = *itor++;
+				std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", address.c_str());
+				Connect(uri);
+			}
+			
+		} while (false);
+
+		return false;
+	}
 }

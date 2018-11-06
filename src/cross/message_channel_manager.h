@@ -38,6 +38,7 @@ namespace bumo {
 	};
 
 	class MessageChannel :public utils::Singleton<MessageChannel>,
+		public TimerNotify,
 		public StatusModule,
 		public Network,
 		public utils::Runnable {
@@ -83,6 +84,14 @@ namespace bumo {
 
 		uint64_t last_connect_time_;
 		uint64_t connect_interval_;
+
+
+		//client
+	public:
+		bool ConnectToMessageChannel();
+
+
+
 	};
 }
 #endif
