@@ -64,6 +64,7 @@ namespace bumo {
 
 		size_t target_message_channel_connection_;
 		size_t max_connection_;
+		int64_t network_id_;
 		int64_t connect_timeout_;
 		int64_t heartbeat_interval_;
 		utils::StringList known_message_channel_list_;

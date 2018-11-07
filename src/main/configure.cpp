@@ -71,6 +71,15 @@ namespace bumo {
 		return true;
 	}
 
+
+
+	MessageChannelConfigure::MessageChannelConfigure() :
+		network_id_(1),
+		max_connection_(2000),
+		connect_timeout_(5),// second
+		heartbeat_interval_(1800) {// second
+	}
+
 	MessageChannelConfigure::~MessageChannelConfigure() {}
 
 	bool MessageChannelConfigure::Load(const Json::Value &value) {
@@ -87,6 +96,7 @@ namespace bumo {
 		max_connection_ = temp;
 
 		Configure::GetValue(value, "known_message_channel", known_message_channel_list_);
+		Configure::GetValue(value, "network_id", network_id_);
 		Configure::GetValue(value, "connect_timeout", connect_timeout_);
 		Configure::GetValue(value, "heartbeat_interval", heartbeat_interval_);
 
@@ -96,8 +106,7 @@ namespace bumo {
 		return true;
 	}
 
-	MessageChannelConfigure::MessageChannelConfigure() {
-	}
+
 
 
 	WsServerConfigure::~WsServerConfigure() {}
