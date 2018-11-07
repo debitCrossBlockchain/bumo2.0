@@ -35,6 +35,28 @@ namespace bumo {
 
 		//Peer infomation
 		std::set<std::string> tx_filter_address_;
+		int64_t active_time_;
+		int64_t delay_;
+
+		//Peer infomation
+		int64_t peer_listen_port_;
+		std::string peer_node_address_;
+		int64_t chain_id_;
+	public:
+		utils::InetAddress GetRemoteAddress() const;
+		bool IsActive() const;
+		std::string GetPeerNodeAddress() const;
+		int64_t GetActiveTime() const;
+		int64_t GetDelay() const;
+		int64_t GetChainId() const;
+
+		bool SendPeers(std::error_code &ec);
+		void SetPeerInfo(const protocol::MessageChannelHello &hello);
+		void SetActiveTime(int64_t current_time);
+		bool SendHello(int32_t listen_port, const std::string &node_address, const int64_t &network_id,std::error_code &ec);
+
+		virtual void ToJson(Json::Value &status) const;
+		virtual bool OnNetworkTimer(int64_t current_time);
 	};
 
 	class MessageChannel :public utils::Singleton<MessageChannel>,
@@ -70,10 +92,12 @@ namespace bumo {
 		void BroadcastMsg(int64_t type, const std::string &data);
 		void BroadcastChainTxMsg(const protocol::TransactionEnvStore& txMsg);
 
+		virtual void OnDisconnect(Connection *conn);
+		virtual bool OnConnectOpen(Connection *conn);
 		virtual Connection *CreateConnectObject(server *server_h, client *client_,
 			tls_server *tls_server_h, tls_client *tls_client_h,
 			connection_hdl con, const std::string &uri, int64_t id);
-
+		virtual bool OnVerifyCallback(bool preverified, asio::ssl::verify_context& ctx);
 		virtual void GetModuleStatus(Json::Value &data);
 	protected:
 		virtual void Run(utils::Thread *thread) override;
@@ -84,6 +108,9 @@ namespace bumo {
 
 		uint64_t last_connect_time_;
 		uint64_t connect_interval_;
+		int32_t  total_peers_count_;
+		int64_t  network_id_;
+		std::error_code last_ec_;
 
 
 		//client

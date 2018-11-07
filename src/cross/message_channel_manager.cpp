@@ -13,11 +13,87 @@ namespace bumo {
 
 	MessageChannelPeer::MessageChannelPeer(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id) :
 		Connection(server_h, client_h, tls_server_h, tls_client_h, con, uri, id) {
+		active_time_ = 0;
+		delay_ = 0;
+		peer_listen_port_ = 0;
+		chain_id_ = 0;
 	}
 
 
 	MessageChannelPeer::~MessageChannelPeer(){
 	}
+
+
+	utils::InetAddress MessageChannelPeer::GetRemoteAddress() const {
+		utils::InetAddress address = GetPeerAddress();
+		if (InBound()) {
+			address.SetPort((uint16_t)peer_listen_port_);
+		}
+		return address;
+	}
+
+	std::string MessageChannelPeer::GetPeerNodeAddress() const {
+		return peer_node_address_;
+	}
+
+	int64_t MessageChannelPeer::GetActiveTime() const {
+		return active_time_;
+	}
+
+	bool MessageChannelPeer::IsActive() const {
+		return active_time_ > 0;
+	}
+
+
+	void MessageChannelPeer::SetPeerInfo(const protocol::MessageChannelHello &hello) {
+
+		peer_listen_port_ = hello.listening_port();
+		peer_node_address_ = hello.node_address();
+		chain_id_ = hello.chain_id();
+	}
+
+	void MessageChannelPeer::SetActiveTime(int64_t current_time) {
+		active_time_ = current_time;
+	}
+
+	bool MessageChannelPeer::SendHello(int32_t listen_port, const std::string &node_address, const int64_t &network_id, std::error_code &ec) {
+		protocol::MessageChannelHello hello;
+
+
+		hello.set_listening_port(listen_port);
+		hello.set_node_address(node_address);
+		hello.set_network_id(network_id);
+		hello.set_chain_id(General::GetSelfChainId());
+		return SendRequest(protocol::MESSAGE_CHANNEL_HELLO, hello.SerializeAsString(), ec);
+	}
+
+	void MessageChannelPeer::ToJson(Json::Value &status) const {
+		Connection::ToJson(status);
+
+		status["node_address"] = peer_node_address_;
+		status["delay"] = delay_;
+		status["active"] = IsActive();
+		status["active_time"] = active_time_;
+	}
+
+	int64_t MessageChannelPeer::GetDelay() const {
+		return delay_;
+	}
+
+	int64_t MessageChannelPeer::GetChainId() const{
+		return chain_id_;
+	}
+
+	bool MessageChannelPeer::OnNetworkTimer(int64_t current_time) {
+		if (!IsActive() && current_time - connect_start_time_ > 10 * utils::MICRO_UNITS_PER_SEC) {
+			LOG_ERROR("Failed to check peer active, (%s) timeout", GetPeerAddress().ToIpPort().c_str());
+			return false;
+		}
+
+		return true;
+	}
+
+
 
 	bool MessageChannelPeer::Set(const protocol::ChainSubscribeTx &sub) {
 		if (sub.address_size() > 100) {
@@ -153,14 +229,15 @@ namespace bumo {
 	void MessageChannel::BroadcastChainTxMsg(const protocol::TransactionEnvStore& tx_msg) {
 		utils::MutexGuard guard(conns_list_lock_);
 
-			for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
-				MessageChannelPeer *messageChannel = (MessageChannelPeer *)iter->second;
-				if (messageChannel->Filter(tx_msg)) {
+		for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
+			MessageChannelPeer *messageChannel = (MessageChannelPeer *)iter->second;
+			if (messageChannel->Filter(tx_msg)) {
 				std::error_code ec;
 				std::string str = tx_msg.SerializeAsString();
 				messageChannel->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
-				}
-				}
+			}
+
+		}
 	}
 
 	void MessageChannel::GetModuleStatus(Json::Value &data) {
@@ -174,6 +251,30 @@ namespace bumo {
 		}
 	}
 
+	bool MessageChannel::OnConnectOpen(Connection *conn) {
+		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
+		size_t total_connection = message_channel_configure.max_connection_;
+		if (connections_.size() < total_connection) {
+			if (!conn->InBound()) {
+				MessageChannelPeer *peer = (MessageChannelPeer *)conn;
+				utils::InetAddress address(message_channel_configure.listen_address_);
+				peer->SendHello(address.GetPort(), address.ToIp(), message_channel_configure.network_id_, last_ec_);
+			}
+			return true;
+		}
+		else{
+			LOG_ERROR("Failed to open a connection, because it exceeds the threshold(" FMT_SIZE ")", total_connection);
+			return false;
+		}
+	}
+
+
+	void MessageChannel::OnDisconnect(Connection *conn) {
+		MessageChannelPeer *peer = (MessageChannelPeer *)conn;
+		std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", peer->GetPeerAddress().ToIpPort().c_str());
+		Connect(uri);
+	}
+
 	Connection *MessageChannel::CreateConnectObject(server *server_h, client *client_,
 		tls_server *tls_server_h, tls_client *tls_client_h,
 		connection_hdl con, const std::string &uri, int64_t id) {
@@ -183,9 +284,7 @@ namespace bumo {
 	bool MessageChannel::ConnectToMessageChannel() {
 		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
 		do {
-			utils::InetAddressVec addresses;
-			utils::net::GetNetworkAddress(addresses);
-			std::list<std::string>::const_iterator itor;
+			utils::StringList::const_iterator itor;
 			itor = message_channel_configure.known_message_channel_list_.begin();
 			utils::MutexGuard guard(conns_list_lock_);
 			while (itor != message_channel_configure.known_message_channel_list_.end()){
@@ -193,10 +292,10 @@ namespace bumo {
 				std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", address.c_str());
 				Connect(uri);
 			}
-			
+			return true;
 		} while (false);
 
-		return true;
+		return false;
 	}
 
 	bool MessageChannel::SendRequest(int64_t id, int64_t type, const std::string &data){
@@ -209,5 +308,38 @@ namespace bumo {
 
 	void MessageChannel::OnTimer(int64_t current_time){
 
+		utils::Sleep(10);
+		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
+		size_t con_size = 0;
+		utils::MutexGuard guard(conns_list_lock_);
+		ConnectionMap::const_iterator iter;
+		utils::StringList listTempIptoPort;
+		iter = connections_.begin();
+		while (iter != connections_.end()) {
+			listTempIptoPort.push_back(iter->second->GetPeerAddress().ToIpPort().c_str());
+			iter++;
+		}
+
+		utils::StringList::const_iterator itor;
+		itor = message_channel_configure.known_message_channel_list_.begin();
+		while (itor != message_channel_configure.known_message_channel_list_.end()){
+			std::string address = *itor++;
+			utils::StringList::const_iterator listTempIptoPortiter;
+			listTempIptoPortiter = std::find(listTempIptoPort.begin(), listTempIptoPort.end(), address.c_str());
+
+			if (listTempIptoPortiter != listTempIptoPort.end()){
+
+			}
+			else{
+				std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", address.c_str());
+				Connect(uri);
+			}
+		}
 	}
+
+	bool MessageChannel::OnVerifyCallback(bool preverified, asio::ssl::verify_context& ctx) {
+		return true;
+	}
+
+
 }
