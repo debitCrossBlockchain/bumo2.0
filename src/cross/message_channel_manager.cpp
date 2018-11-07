@@ -15,23 +15,14 @@ namespace bumo {
 		Connection(server_h, client_h, tls_server_h, tls_client_h, con, uri, id) {
 		active_time_ = 0;
 		delay_ = 0;
-		peer_listen_port_ = 0;
 		chain_id_ = 0;
-		
+
 	}
 
 
 	MessageChannelPeer::~MessageChannelPeer(){
 	}
 
-
-	utils::InetAddress MessageChannelPeer::GetRemoteAddress() const {
-		utils::InetAddress address = GetPeerAddress();
-		if (InBound()) {
-			address.SetPort((uint16_t)peer_listen_port_);
-		}
-		return address;
-	}
 
 	std::string MessageChannelPeer::GetPeerNodeAddress() const {
 		return peer_node_address_;
@@ -48,7 +39,6 @@ namespace bumo {
 
 	void MessageChannelPeer::SetPeerInfo(const protocol::MessageChannelHello &hello) {
 
-		peer_listen_port_ = hello.listening_port();
 		peer_node_address_ = hello.node_address();
 		chain_id_ = hello.chain_id();
 	}
@@ -57,11 +47,10 @@ namespace bumo {
 		active_time_ = current_time;
 	}
 
-	bool MessageChannelPeer::SendHello(int32_t listen_port, const std::string &node_address, const int64_t &network_id, std::error_code &ec) {
+	bool MessageChannelPeer::SendHello(const std::string &node_address, const int64_t &network_id, std::error_code &ec) {
 		protocol::MessageChannelHello hello;
 
 
-		hello.set_listening_port(listen_port);
 		hello.set_node_address(node_address);
 		hello.set_network_id(network_id);
 		hello.set_chain_id(General::GetSelfChainId());
@@ -183,11 +172,11 @@ namespace bumo {
 
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(conn_id);
-		
+
 		if (conn) {
 			cmsg.set_error_code(protocol::ERRCODE_SUCCESS);
-			std::string error_desc_temp = utils::String::Format("Received a message channel hello message from ip(%s), and sent the response result(%d:%s)", 
-				conn->GetPeerAddress().ToIpPort().c_str(),ignore_ec.value(), ignore_ec.message().c_str());
+			std::string error_desc_temp = utils::String::Format("Received a message channel hello message from ip(%s), and sent the response result(%d:%s)",
+				conn->GetPeerAddress().ToIpPort().c_str(), ignore_ec.value(), ignore_ec.message().c_str());
 			cmsg.set_error_desc(error_desc_temp.c_str());
 			conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
 			LOG_INFO("Received a message channel hello message from ip(%s), and sent the response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
@@ -281,26 +270,20 @@ namespace bumo {
 
 	bool MessageChannel::OnConnectOpen(Connection *conn) {
 		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
-		size_t total_connection = message_channel_configure.max_connection_;
-		if (connections_.size() < total_connection) {
-			if (!conn->InBound()) {
-				MessageChannelPeer *peer = (MessageChannelPeer *)conn;
-				utils::InetAddress address(message_channel_configure.listen_address_);
-				peer->SendHello(address.GetPort(), address.ToIp(), message_channel_configure.network_id_, last_ec_);
-			}
-			return true;
+
+		if (!conn->InBound()) {
+			MessageChannelPeer *peer = (MessageChannelPeer *)conn;
+			utils::InetAddress address(message_channel_configure.listen_address_);
+			peer->SendHello(address.ToIp(), message_channel_configure.network_id_, last_ec_);
 		}
-		else{
-			LOG_ERROR("Failed to open a connection, because it exceeds the threshold(" FMT_SIZE ")", total_connection);
-			return false;
-		}
+		return true;
+
 	}
 
 
 	void MessageChannel::OnDisconnect(Connection *conn) {
 		MessageChannelPeer *peer = (MessageChannelPeer *)conn;
-		std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", peer->GetPeerAddress().ToIpPort().c_str());
-		Connect(uri);
+		LOG_INFO("The MessageChannelPeer has been disconnected, node address is (%s)", peer->GetPeerAddress().ToIpPort().c_str());
 	}
 
 	Connection *MessageChannel::CreateConnectObject(server *server_h, client *client_,
@@ -336,7 +319,7 @@ namespace bumo {
 
 	void MessageChannel::OnTimer(int64_t current_time){
 
-		if (current_time<10 *utils::MICRO_UNITS_PER_SEC + last_uptate_time_)
+		if (current_time < 10 * utils::MICRO_UNITS_PER_SEC + last_uptate_time_)
 		{
 			return;
 		}

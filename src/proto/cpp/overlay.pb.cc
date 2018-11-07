@@ -356,9 +356,8 @@ void protobuf_AssignDesc_overlay_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(ChainTxStatus, _is_default_instance_));
   ChainTxStatus_TxStatus_descriptor_ = ChainTxStatus_descriptor_->enum_type(0);
   MessageChannelHello_descriptor_ = file->message_type(15);
-  static const int MessageChannelHello_offsets_[4] = {
+  static const int MessageChannelHello_offsets_[3] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelHello, network_id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelHello, listening_port_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelHello, node_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelHello, chain_id_),
   };
@@ -553,39 +552,39 @@ void protobuf_AddDesc_overlay_2eproto() {
     "error_code\030\007 \001(\0162\023.protocol.ERRORCODE\022\022\n"
     "\nerror_desc\030\010 \001(\t\022\021\n\ttimestamp\030\t \001(\003\"P\n\010"
     "TxStatus\022\r\n\tUNDEFINED\020\000\022\r\n\tCONFIRMED\020\001\022\013"
-    "\n\007PENDING\020\002\022\014\n\010COMPLETE\020\003\022\013\n\007FAILURE\020\004\"i"
+    "\n\007PENDING\020\002\022\014\n\010COMPLETE\020\003\022\013\n\007FAILURE\020\004\"Q"
     "\n\023MessageChannelHello\022\022\n\nnetwork_id\030\001 \001("
-    "\003\022\026\n\016listening_port\030\002 \001(\003\022\024\n\014node_addres"
-    "s\030\003 \001(\t\022\020\n\010chain_id\030\004 \001(\003\"Z\n\033MessageChan"
-    "nelHelloResponse\022\'\n\nerror_code\030\001 \001(\0162\023.p"
-    "rotocol.ERRORCODE\022\022\n\nerror_desc\030\002 \001(\t\"V\n"
-    "\016MessageChannel\022\020\n\010chain_id\030\001 \001(\003\022\016\n\006msg"
-    "_id\030\002 \001(\014\022\020\n\010msg_type\030\003 \001(\003\022\020\n\010msg_data\030"
-    "\004 \001(\014*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERLA"
-    "Y_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING"
-    "\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY"
-    "_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRAN"
-    "SACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030"
-    "\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSGT"
-    "YPE_LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMes"
-    "sageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_H"
-    "ELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEE"
-    "R_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CH"
-    "AIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSA"
-    "CTION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHAI"
-    "N_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022"
-    "*\251\003\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MESSAGE_CHA"
-    "NNEL_TYPE_NONE\020\000\022\031\n\025MESSAGE_CHANNEL_HELL"
-    "O\020\036\022&\n\"MESSAGE_CHANNEL_CREATE_CHILD_CHAI"
-    "N\020\037\022\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020 \022\035\n\031MES"
-    "SAGE_CHANNEL_CHILD_MIX\020!\022\033\n\027MESSAGE_CHAN"
-    "NEL_DEPOSIT\020\"\022\036\n\032MESSAGE_CHANNEL_WITHDRA"
-    "WAL\020#\022#\n\037MESSAGE_CHANNEL_FAST_WITHDRAWAL"
-    "\020$\022\037\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020%\022(\n$M"
-    "ESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL\020&\022\"\n"
-    "\036MESSAGE_CHANNEL_CHALLENGE_HEAD\020\'\022!\n\035MES"
-    "SAGE_CHANNEL_CHILD_GENESES\020(B\"\n io.bumo."
-    "sdk.core.extend.protobufb\006proto3", 2952);
+    "\003\022\024\n\014node_address\030\003 \001(\t\022\020\n\010chain_id\030\004 \001("
+    "\003\"Z\n\033MessageChannelHelloResponse\022\'\n\nerro"
+    "r_code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\nerr"
+    "or_desc\030\002 \001(\t\"V\n\016MessageChannel\022\020\n\010chain"
+    "_id\030\001 \001(\003\022\016\n\006msg_id\030\002 \001(\014\022\020\n\010msg_type\030\003 "
+    "\001(\003\022\020\n\010msg_data\030\004 \001(\014*\203\002\n\024OVERLAY_MESSAG"
+    "E_TYPE\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVER"
+    "LAY_MSGTYPE_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HE"
+    "LLO\020\002\022\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVER"
+    "LAY_MSGTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSG"
+    "TYPE_LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006"
+    "\022)\n%OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIF"
+    "Y\020\007*\372\001\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_N"
+    "ONE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATU"
+    "S\020\013\022\025\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER"
+    "_OFFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CH"
+    "AIN_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_"
+    "HEADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAI"
+    "N_TX_ENV_STORE\020\022*\251\003\n\024MESSAGE_CHANNEL_TYP"
+    "E\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE\020\000\022\031\n\025MESS"
+    "AGE_CHANNEL_HELLO\020\036\022&\n\"MESSAGE_CHANNEL_C"
+    "REATE_CHILD_CHAIN\020\037\022\034\n\030MESSAGE_CHANNEL_M"
+    "AIN_MIX\020 \022\035\n\031MESSAGE_CHANNEL_CHILD_MIX\020!"
+    "\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020\"\022\036\n\032MESSAGE"
+    "_CHANNEL_WITHDRAWAL\020#\022#\n\037MESSAGE_CHANNEL"
+    "_FAST_WITHDRAWAL\020$\022\037\n\033MESSAGE_CHANNEL_SU"
+    "BMIT_HEAD\020%\022(\n$MESSAGE_CHANNEL_CHALLENGE"
+    "_WITHDRAWAL\020&\022\"\n\036MESSAGE_CHANNEL_CHALLEN"
+    "GE_HEAD\020\'\022!\n\035MESSAGE_CHANNEL_CHILD_GENES"
+    "ES\020(B\"\n io.bumo.sdk.core.extend.protobuf"
+    "b\006proto3", 2928);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -7327,7 +7326,6 @@ void ChainTxStatus::clear_timestamp() {
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int MessageChannelHello::kNetworkIdFieldNumber;
-const int MessageChannelHello::kListeningPortFieldNumber;
 const int MessageChannelHello::kNodeAddressFieldNumber;
 const int MessageChannelHello::kChainIdFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -7355,7 +7353,6 @@ void MessageChannelHello::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   network_id_ = GOOGLE_LONGLONG(0);
-  listening_port_ = GOOGLE_LONGLONG(0);
   node_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   chain_id_ = GOOGLE_LONGLONG(0);
 }
@@ -7398,29 +7395,9 @@ MessageChannelHello* MessageChannelHello::New(::google::protobuf::Arena* arena) 
 
 void MessageChannelHello::Clear() {
 // @@protoc_insertion_point(message_clear_start:protocol.MessageChannelHello)
-#if defined(__clang__)
-#define ZR_HELPER_(f) \
-  _Pragma("clang diagnostic push") \
-  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
-  __builtin_offsetof(MessageChannelHello, f) \
-  _Pragma("clang diagnostic pop")
-#else
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<MessageChannelHello*>(16)->f)
-#endif
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(network_id_, listening_port_);
+  network_id_ = GOOGLE_LONGLONG(0);
   node_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   chain_id_ = GOOGLE_LONGLONG(0);
-
-#undef ZR_HELPER_
-#undef ZR_
-
 }
 
 bool MessageChannelHello::MergePartialFromCodedStream(
@@ -7439,21 +7416,6 @@ bool MessageChannelHello::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  input, &network_id_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(16)) goto parse_listening_port;
-        break;
-      }
-
-      // optional int64 listening_port = 2;
-      case 2: {
-        if (tag == 16) {
-         parse_listening_port:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &listening_port_)));
 
         } else {
           goto handle_unusual;
@@ -7523,11 +7485,6 @@ void MessageChannelHello::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->network_id(), output);
   }
 
-  // optional int64 listening_port = 2;
-  if (this->listening_port() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->listening_port(), output);
-  }
-
   // optional string node_address = 3;
   if (this->node_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -7552,11 +7509,6 @@ void MessageChannelHello::SerializeWithCachedSizes(
   // optional int64 network_id = 1;
   if (this->network_id() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->network_id(), target);
-  }
-
-  // optional int64 listening_port = 2;
-  if (this->listening_port() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->listening_port(), target);
   }
 
   // optional string node_address = 3;
@@ -7588,13 +7540,6 @@ int MessageChannelHello::ByteSize() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->network_id());
-  }
-
-  // optional int64 listening_port = 2;
-  if (this->listening_port() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->listening_port());
   }
 
   // optional string node_address = 3;
@@ -7642,9 +7587,6 @@ void MessageChannelHello::MergeFrom(const MessageChannelHello& from) {
   if (from.network_id() != 0) {
     set_network_id(from.network_id());
   }
-  if (from.listening_port() != 0) {
-    set_listening_port(from.listening_port());
-  }
   if (from.node_address().size() > 0) {
 
     node_address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.node_address_);
@@ -7679,7 +7621,6 @@ void MessageChannelHello::Swap(MessageChannelHello* other) {
 }
 void MessageChannelHello::InternalSwap(MessageChannelHello* other) {
   std::swap(network_id_, other->network_id_);
-  std::swap(listening_port_, other->listening_port_);
   node_address_.Swap(&other->node_address_);
   std::swap(chain_id_, other->chain_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -7709,20 +7650,6 @@ void MessageChannelHello::clear_network_id() {
   
   network_id_ = value;
   // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.network_id)
-}
-
-// optional int64 listening_port = 2;
-void MessageChannelHello::clear_listening_port() {
-  listening_port_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 MessageChannelHello::listening_port() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelHello.listening_port)
-  return listening_port_;
-}
- void MessageChannelHello::set_listening_port(::google::protobuf::int64 value) {
-  
-  listening_port_ = value;
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.listening_port)
 }
 
 // optional string node_address = 3;

@@ -1945,12 +1945,6 @@ class MessageChannelHello : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::int64 network_id() const;
   void set_network_id(::google::protobuf::int64 value);
 
-  // optional int64 listening_port = 2;
-  void clear_listening_port();
-  static const int kListeningPortFieldNumber = 2;
-  ::google::protobuf::int64 listening_port() const;
-  void set_listening_port(::google::protobuf::int64 value);
-
   // optional string node_address = 3;
   void clear_node_address();
   static const int kNodeAddressFieldNumber = 3;
@@ -1974,7 +1968,6 @@ class MessageChannelHello : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::int64 network_id_;
-  ::google::protobuf::int64 listening_port_;
   ::google::protobuf::internal::ArenaStringPtr node_address_;
   ::google::protobuf::int64 chain_id_;
   mutable int _cached_size_;
@@ -3669,20 +3662,6 @@ inline void MessageChannelHello::set_network_id(::google::protobuf::int64 value)
   
   network_id_ = value;
   // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.network_id)
-}
-
-// optional int64 listening_port = 2;
-inline void MessageChannelHello::clear_listening_port() {
-  listening_port_ = GOOGLE_LONGLONG(0);
-}
-inline ::google::protobuf::int64 MessageChannelHello::listening_port() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelHello.listening_port)
-  return listening_port_;
-}
-inline void MessageChannelHello::set_listening_port(::google::protobuf::int64 value) {
-  
-  listening_port_ = value;
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.listening_port)
 }
 
 // optional string node_address = 3;
