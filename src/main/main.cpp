@@ -28,6 +28,7 @@
 #include <api/console.h>
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
+#include <cross/message_channel_manager.h>
 #include "configure.h"
 
 void SaveWSPort();
@@ -80,6 +81,7 @@ int main(int argc, char *argv[]){
 	bumo::WebServer::InitInstance();
 	bumo::MonitorManager::InitInstance();
 	bumo::ContractManager::InitInstance();
+	bumo::MessageChannel::InitInstance();
 
 	bumo::Argument arg;
 	if (arg.Parse(argc, argv)){
@@ -264,6 +266,14 @@ int main(int argc, char *argv[]){
 		}
 		object_exit.Push(std::bind(&bumo::ContractManager::Exit, &contract_manager));
 		LOG_INFO("Initialized contract manager successfully");
+		
+		bumo::MessageChannel &message_channel = bumo::MessageChannel::Instance();
+		if (!message_channel.Initialize(bumo::Configure::Instance().message_channel_configure_)){
+			LOG_ERROR("Failed to initialize message channel");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::MessageChannel::Exit, &message_channel));
+		LOG_INFO("Initialized message channel successfully");
 
 		bumo::g_ready_ = true;
 
@@ -282,6 +292,7 @@ int main(int argc, char *argv[]){
 	bumo::WebSocketServer::ExitInstance();
 	bumo::WebServer::ExitInstance();
 	bumo::MonitorManager::ExitInstance();
+	bumo::MessageChannel::ExitInstance();
 	bumo::Configure::ExitInstance();
 	bumo::Global::ExitInstance();
 	bumo::Storage::ExitInstance();

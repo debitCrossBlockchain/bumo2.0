@@ -164,7 +164,12 @@ namespace bumo {
 	}
 
 	void MessageChannel::Run(utils::Thread *thread) {
-		Start(bumo::Configure::Instance().message_channel_configure_.listen_address_);
+		if (General::GetSelfChainId() == 0){
+			Start(bumo::Configure::Instance().message_channel_configure_.listen_address_);
+		}
+		else{
+			ConnectToMessageChannel();
+		}
 	}
 
 
