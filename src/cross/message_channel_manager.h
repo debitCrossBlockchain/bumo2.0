@@ -76,6 +76,7 @@ namespace bumo {
 		bool Exit();
 
 		// Handlers
+		bool OnHello(protocol::WsMessage &message, int64_t conn_id);
 		bool OnCrateChildChain(protocol::WsMessage &message, int64_t conn_id);
 		bool OnMainChainMix(protocol::WsMessage &message, int64_t conn_id);
 		bool OnChildChainMix(protocol::WsMessage &message, int64_t conn_id);

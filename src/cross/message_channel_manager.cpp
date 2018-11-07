@@ -127,6 +127,7 @@ namespace bumo {
 		last_connect_time_ = 0;
 		last_uptate_time_ = utils::Timestamp::HighResolution();
 
+		request_methods_[protocol::MESSAGE_CHANNEL_HELLO] = std::bind(&MessageChannel::OnHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageChannel::OnCrateChildChain, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_MAIN_MIX] = std::bind(&MessageChannel::OnMainChainMix, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_CHILD_MIX] = std::bind(&MessageChannel::OnChildChainMix, this, std::placeholders::_1, std::placeholders::_2);
@@ -155,6 +156,7 @@ namespace bumo {
 		}
 
 		StatusModule::RegisterModule(this);
+		TimerNotify::RegisterModule(this);
 		LOG_INFO("Initialized message channel server successfully");
 		return true;
 	}
@@ -175,6 +177,24 @@ namespace bumo {
 		}
 	}
 
+	bool MessageChannel::OnHello(protocol::WsMessage &message, int64_t conn_id){
+		protocol::MessageChannelHelloResponse cmsg;
+		std::error_code ignore_ec;
+
+		utils::MutexGuard guard_(conns_list_lock_);
+		Connection *conn = GetConnection(conn_id);
+		
+		if (conn) {
+			cmsg.set_error_code(protocol::ERRCODE_SUCCESS);
+			std::string error_desc_temp = utils::String::Format("Received a message channel hello message from ip(%s), and sent the response result(%d:%s)", 
+				conn->GetPeerAddress().ToIpPort().c_str(),ignore_ec.value(), ignore_ec.message().c_str());
+			cmsg.set_error_desc(error_desc_temp.c_str());
+			conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
+			LOG_INFO("Received a message channel hello message from ip(%s), and sent the response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
+				ignore_ec.value(), ignore_ec.message().c_str());
+		}
+		return true;
+	}
 
 	bool MessageChannel::OnCrateChildChain(protocol::WsMessage &message, int64_t conn_id){
 		return true;
@@ -316,7 +336,7 @@ namespace bumo {
 
 	void MessageChannel::OnTimer(int64_t current_time){
 
-		if (current_time<10 * 1000000*utils::MICRO_UNITS_PER_SEC + last_uptate_time_)
+		if (current_time<10 *utils::MICRO_UNITS_PER_SEC + last_uptate_time_)
 		{
 			return;
 		}
