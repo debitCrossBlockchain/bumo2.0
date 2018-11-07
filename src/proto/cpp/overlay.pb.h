@@ -53,6 +53,8 @@ class HelloResponse;
 class LedgerUpgradeNotify;
 class Ledgers;
 class MessageChannel;
+class MessageChannelHello;
+class MessageChannelHelloResponse;
 class Peer;
 class Peers;
 
@@ -163,16 +165,17 @@ inline bool ChainMessageType_Parse(
 }
 enum MESSAGE_CHANNEL_TYPE {
   MESSAGE_CHANNEL_TYPE_NONE = 0,
-  MESSAGE_CHANNEL_CREATE_CHILD_CHAIN = 30,
-  MESSAGE_CHANNEL_MAIN_MIX = 31,
-  MESSAGE_CHANNEL_CHILD_MIX = 32,
-  MESSAGE_CHANNEL_DEPOSIT = 33,
-  MESSAGE_CHANNEL_WITHDRAWAL = 34,
-  MESSAGE_CHANNEL_FAST_WITHDRAWAL = 35,
-  MESSAGE_CHANNEL_SUBMIT_HEAD = 36,
-  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL = 37,
-  MESSAGE_CHANNEL_CHALLENGE_HEAD = 38,
-  MESSAGE_CHANNEL_CHILD_GENESES = 39,
+  MESSAGE_CHANNEL_HELLO = 30,
+  MESSAGE_CHANNEL_CREATE_CHILD_CHAIN = 31,
+  MESSAGE_CHANNEL_MAIN_MIX = 32,
+  MESSAGE_CHANNEL_CHILD_MIX = 33,
+  MESSAGE_CHANNEL_DEPOSIT = 34,
+  MESSAGE_CHANNEL_WITHDRAWAL = 35,
+  MESSAGE_CHANNEL_FAST_WITHDRAWAL = 36,
+  MESSAGE_CHANNEL_SUBMIT_HEAD = 37,
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL = 38,
+  MESSAGE_CHANNEL_CHALLENGE_HEAD = 39,
+  MESSAGE_CHANNEL_CHILD_GENESES = 40,
   MESSAGE_CHANNEL_TYPE_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   MESSAGE_CHANNEL_TYPE_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
@@ -1876,6 +1879,208 @@ class ChainTxStatus : public ::google::protobuf::Message /* @@protoc_insertion_p
 };
 // -------------------------------------------------------------------
 
+class MessageChannelHello : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelHello) */ {
+ public:
+  MessageChannelHello();
+  virtual ~MessageChannelHello();
+
+  MessageChannelHello(const MessageChannelHello& from);
+
+  inline MessageChannelHello& operator=(const MessageChannelHello& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelHello& default_instance();
+
+  void Swap(MessageChannelHello* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelHello* New() const { return New(NULL); }
+
+  MessageChannelHello* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelHello& from);
+  void MergeFrom(const MessageChannelHello& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelHello* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int64 network_id = 1;
+  void clear_network_id();
+  static const int kNetworkIdFieldNumber = 1;
+  ::google::protobuf::int64 network_id() const;
+  void set_network_id(::google::protobuf::int64 value);
+
+  // optional int64 listening_port = 2;
+  void clear_listening_port();
+  static const int kListeningPortFieldNumber = 2;
+  ::google::protobuf::int64 listening_port() const;
+  void set_listening_port(::google::protobuf::int64 value);
+
+  // optional string node_address = 3;
+  void clear_node_address();
+  static const int kNodeAddressFieldNumber = 3;
+  const ::std::string& node_address() const;
+  void set_node_address(const ::std::string& value);
+  void set_node_address(const char* value);
+  void set_node_address(const char* value, size_t size);
+  ::std::string* mutable_node_address();
+  ::std::string* release_node_address();
+  void set_allocated_node_address(::std::string* node_address);
+
+  // optional int64 chain_id = 4;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 4;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelHello)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int64 network_id_;
+  ::google::protobuf::int64 listening_port_;
+  ::google::protobuf::internal::ArenaStringPtr node_address_;
+  ::google::protobuf::int64 chain_id_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelHello* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class MessageChannelHelloResponse : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelHelloResponse) */ {
+ public:
+  MessageChannelHelloResponse();
+  virtual ~MessageChannelHelloResponse();
+
+  MessageChannelHelloResponse(const MessageChannelHelloResponse& from);
+
+  inline MessageChannelHelloResponse& operator=(const MessageChannelHelloResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelHelloResponse& default_instance();
+
+  void Swap(MessageChannelHelloResponse* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelHelloResponse* New() const { return New(NULL); }
+
+  MessageChannelHelloResponse* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelHelloResponse& from);
+  void MergeFrom(const MessageChannelHelloResponse& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelHelloResponse* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .protocol.ERRORCODE error_code = 1;
+  void clear_error_code();
+  static const int kErrorCodeFieldNumber = 1;
+  ::protocol::ERRORCODE error_code() const;
+  void set_error_code(::protocol::ERRORCODE value);
+
+  // optional string error_desc = 2;
+  void clear_error_desc();
+  static const int kErrorDescFieldNumber = 2;
+  const ::std::string& error_desc() const;
+  void set_error_desc(const ::std::string& value);
+  void set_error_desc(const char* value);
+  void set_error_desc(const char* value, size_t size);
+  ::std::string* mutable_error_desc();
+  ::std::string* release_error_desc();
+  void set_allocated_error_desc(::std::string* error_desc);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelHelloResponse)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr error_desc_;
+  int error_code_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelHelloResponse* default_instance_;
+};
+// -------------------------------------------------------------------
+
 class MessageChannel : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannel) */ {
  public:
   MessageChannel();
@@ -3450,6 +3655,158 @@ inline void ChainTxStatus::set_timestamp(::google::protobuf::int64 value) {
 
 // -------------------------------------------------------------------
 
+// MessageChannelHello
+
+// optional int64 network_id = 1;
+inline void MessageChannelHello::clear_network_id() {
+  network_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelHello::network_id() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHello.network_id)
+  return network_id_;
+}
+inline void MessageChannelHello::set_network_id(::google::protobuf::int64 value) {
+  
+  network_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.network_id)
+}
+
+// optional int64 listening_port = 2;
+inline void MessageChannelHello::clear_listening_port() {
+  listening_port_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelHello::listening_port() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHello.listening_port)
+  return listening_port_;
+}
+inline void MessageChannelHello::set_listening_port(::google::protobuf::int64 value) {
+  
+  listening_port_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.listening_port)
+}
+
+// optional string node_address = 3;
+inline void MessageChannelHello::clear_node_address() {
+  node_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelHello::node_address() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHello.node_address)
+  return node_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelHello::set_node_address(const ::std::string& value) {
+  
+  node_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.node_address)
+}
+inline void MessageChannelHello::set_node_address(const char* value) {
+  
+  node_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelHello.node_address)
+}
+inline void MessageChannelHello::set_node_address(const char* value, size_t size) {
+  
+  node_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelHello.node_address)
+}
+inline ::std::string* MessageChannelHello::mutable_node_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelHello.node_address)
+  return node_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelHello::release_node_address() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelHello.node_address)
+  
+  return node_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelHello::set_allocated_node_address(::std::string* node_address) {
+  if (node_address != NULL) {
+    
+  } else {
+    
+  }
+  node_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), node_address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelHello.node_address)
+}
+
+// optional int64 chain_id = 4;
+inline void MessageChannelHello::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelHello::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHello.chain_id)
+  return chain_id_;
+}
+inline void MessageChannelHello::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.chain_id)
+}
+
+// -------------------------------------------------------------------
+
+// MessageChannelHelloResponse
+
+// optional .protocol.ERRORCODE error_code = 1;
+inline void MessageChannelHelloResponse::clear_error_code() {
+  error_code_ = 0;
+}
+inline ::protocol::ERRORCODE MessageChannelHelloResponse::error_code() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHelloResponse.error_code)
+  return static_cast< ::protocol::ERRORCODE >(error_code_);
+}
+inline void MessageChannelHelloResponse::set_error_code(::protocol::ERRORCODE value) {
+  
+  error_code_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelHelloResponse.error_code)
+}
+
+// optional string error_desc = 2;
+inline void MessageChannelHelloResponse::clear_error_desc() {
+  error_desc_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelHelloResponse::error_desc() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHelloResponse.error_desc)
+  return error_desc_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelHelloResponse::set_error_desc(const ::std::string& value) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelHelloResponse.error_desc)
+}
+inline void MessageChannelHelloResponse::set_error_desc(const char* value) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelHelloResponse.error_desc)
+}
+inline void MessageChannelHelloResponse::set_error_desc(const char* value, size_t size) {
+  
+  error_desc_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelHelloResponse.error_desc)
+}
+inline ::std::string* MessageChannelHelloResponse::mutable_error_desc() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelHelloResponse.error_desc)
+  return error_desc_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelHelloResponse::release_error_desc() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelHelloResponse.error_desc)
+  
+  return error_desc_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelHelloResponse::set_allocated_error_desc(::std::string* error_desc) {
+  if (error_desc != NULL) {
+    
+  } else {
+    
+  }
+  error_desc_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), error_desc);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelHelloResponse.error_desc)
+}
+
+// -------------------------------------------------------------------
+
 // MessageChannel
 
 // optional int64 chain_id = 1;
@@ -3569,6 +3926,10 @@ inline void MessageChannel::set_allocated_msg_data(::std::string* msg_data) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
