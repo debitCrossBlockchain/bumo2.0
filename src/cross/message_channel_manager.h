@@ -111,6 +111,7 @@ namespace bumo {
 		int32_t  total_peers_count_;
 		int64_t  network_id_;
 		std::error_code last_ec_;
+		int64_t last_uptate_time_;
 
 
 		//client

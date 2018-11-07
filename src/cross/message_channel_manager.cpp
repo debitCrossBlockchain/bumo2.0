@@ -17,6 +17,7 @@ namespace bumo {
 		delay_ = 0;
 		peer_listen_port_ = 0;
 		chain_id_ = 0;
+		
 	}
 
 
@@ -124,6 +125,7 @@ namespace bumo {
 	MessageChannel::MessageChannel() : Network(SslParameter()) {
 		connect_interval_ = 120 * utils::MICRO_UNITS_PER_SEC;
 		last_connect_time_ = 0;
+		last_uptate_time_ = utils::Timestamp::HighResolution();
 
 		request_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageChannel::OnCrateChildChain, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_MAIN_MIX] = std::bind(&MessageChannel::OnMainChainMix, this, std::placeholders::_1, std::placeholders::_2);
@@ -168,7 +170,8 @@ namespace bumo {
 			Start(bumo::Configure::Instance().message_channel_configure_.listen_address_);
 		}
 		else{
-			ConnectToMessageChannel();
+			utils::InetAddress ip;
+			Start(ip);
 		}
 	}
 
@@ -313,7 +316,11 @@ namespace bumo {
 
 	void MessageChannel::OnTimer(int64_t current_time){
 
-		utils::Sleep(10);
+		if (current_time<10 * 1000000*utils::MICRO_UNITS_PER_SEC + last_uptate_time_)
+		{
+			return;
+		}
+
 		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
 		size_t con_size = 0;
 		utils::MutexGuard guard(conns_list_lock_);
@@ -340,6 +347,7 @@ namespace bumo {
 				Connect(uri);
 			}
 		}
+		last_uptate_time_ = current_time;
 	}
 
 	bool MessageChannel::OnVerifyCallback(bool preverified, asio::ssl::verify_context& ctx) {
