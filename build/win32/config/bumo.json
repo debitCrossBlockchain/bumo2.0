@@ -25,6 +25,7 @@
 		"thread_count": 8
     },
     "messagechannel": {
+        "network_id": 30000,
         "heartbeat_interval": 60,
         "target_message_channel_connection": 50,
 		"max_connection": 20000,
