@@ -176,6 +176,16 @@ namespace bumo {
 			LOG_INFO("Received a message channel hello message from ip(%s), and sent the response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
 
+			LOG_INFO("Received a hello message, peer(%s) is active", conn->GetPeerAddress().ToIpPort().c_str());
+			peer->SetActiveTime(utils::Timestamp::HighResolution());
+
+			if (peer->InBound()) {
+				const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
+				utils::InetAddress address(message_channel_configure.listen_address_);
+				peer->SendHello(address.ToIp(), message_channel_configure.network_id_, last_ec_);
+			}
+
+
 		} while (false);
 
 		conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
