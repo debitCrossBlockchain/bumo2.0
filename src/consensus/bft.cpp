@@ -1777,7 +1777,7 @@ namespace bumo {
 			}
 
 			if (pbft.chain_id() != General::GetSelfChainId()){
-				LOG_ERROR("Failed to check same chain, self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
+				LOG_ERROR("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
 					General::GetSelfChainId(), pbft.chain_id());
 				return false;
 			}

@@ -76,6 +76,12 @@ namespace bumo {
 			if (!last_closed_ledger_->LoadFromDb(seq_rational)) {
 				return false;
 			}
+
+			if (last_closed_ledger_->GetProtoHeader().chain_id() != General::GetSelfChainId()){
+				LOG_ERROR("The config chain id (" FMT_I64 ") != ledger chain id (" FMT_I64 ")", 
+					General::GetSelfChainId(), last_closed_ledger_->GetProtoHeader().chain_id());
+				return false;
+			}
 		}
 		else {
 			if (!CreateGenesisAccount()) {

@@ -147,6 +147,9 @@
     <ClCompile Include="..\..\src\cross\message_channel_manager.cpp">
       <Filter>cross</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\cross\message_handler.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -255,6 +258,9 @@
       <Filter>cross</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\cross\message_channel_manager.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\message_handler.h">
       <Filter>cross</Filter>
     </ClInclude>
   </ItemGroup>
