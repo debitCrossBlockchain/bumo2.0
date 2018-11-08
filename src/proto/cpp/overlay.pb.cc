@@ -582,8 +582,8 @@ void protobuf_AddDesc_overlay_2eproto() {
     "\003\"Z\n\033MessageChannelHelloResponse\022\'\n\nerro"
     "r_code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\nerr"
     "or_desc\030\002 \001(\t\"m\n\016MessageChannel\022\027\n\017targe"
-    "t_chain_id\030\001 \001(\003\0220\n\010msg_type\030\003 \001(\0162\036.pro"
-    "tocol.MESSAGE_CHANNEL_TYPE\022\020\n\010msg_data\030\004"
+    "t_chain_id\030\001 \001(\003\0220\n\010msg_type\030\002 \001(\0162\036.pro"
+    "tocol.MESSAGE_CHANNEL_TYPE\022\020\n\010msg_data\030\003"
     " \001(\014\"U\n\026MessageChannelResponse\022\'\n\nerror_"
     "code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\nerror"
     "_desc\030\002 \001(\t*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024"
@@ -8194,13 +8194,13 @@ bool MessageChannel::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_msg_type;
+        if (input->ExpectTag(16)) goto parse_msg_type;
         break;
       }
 
-      // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
-      case 3: {
-        if (tag == 24) {
+      // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 2;
+      case 2: {
+        if (tag == 16) {
          parse_msg_type:
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
@@ -8210,13 +8210,13 @@ bool MessageChannel::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_msg_data;
+        if (input->ExpectTag(26)) goto parse_msg_data;
         break;
       }
 
-      // optional bytes msg_data = 4;
-      case 4: {
-        if (tag == 34) {
+      // optional bytes msg_data = 3;
+      case 3: {
+        if (tag == 26) {
          parse_msg_data:
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_msg_data()));
@@ -8256,16 +8256,16 @@ void MessageChannel::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->target_chain_id(), output);
   }
 
-  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
+  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 2;
   if (this->msg_type() != 0) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      3, this->msg_type(), output);
+      2, this->msg_type(), output);
   }
 
-  // optional bytes msg_data = 4;
+  // optional bytes msg_data = 3;
   if (this->msg_data().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      4, this->msg_data(), output);
+      3, this->msg_data(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.MessageChannel)
@@ -8279,17 +8279,17 @@ void MessageChannel::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->target_chain_id(), target);
   }
 
-  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
+  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 2;
   if (this->msg_type() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      3, this->msg_type(), target);
+      2, this->msg_type(), target);
   }
 
-  // optional bytes msg_data = 4;
+  // optional bytes msg_data = 3;
   if (this->msg_data().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        4, this->msg_data(), target);
+        3, this->msg_data(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.MessageChannel)
@@ -8307,13 +8307,13 @@ int MessageChannel::ByteSize() const {
         this->target_chain_id());
   }
 
-  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
+  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 2;
   if (this->msg_type() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->msg_type());
   }
 
-  // optional bytes msg_data = 4;
+  // optional bytes msg_data = 3;
   if (this->msg_data().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -8416,7 +8416,7 @@ void MessageChannel::clear_target_chain_id() {
   // @@protoc_insertion_point(field_set:protocol.MessageChannel.target_chain_id)
 }
 
-// optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
+// optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 2;
 void MessageChannel::clear_msg_type() {
   msg_type_ = 0;
 }
@@ -8430,7 +8430,7 @@ void MessageChannel::clear_msg_type() {
   // @@protoc_insertion_point(field_set:protocol.MessageChannel.msg_type)
 }
 
-// optional bytes msg_data = 4;
+// optional bytes msg_data = 3;
 void MessageChannel::clear_msg_data() {
   msg_data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

@@ -2162,15 +2162,15 @@ class MessageChannel : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::int64 target_chain_id() const;
   void set_target_chain_id(::google::protobuf::int64 value);
 
-  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
+  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 2;
   void clear_msg_type();
-  static const int kMsgTypeFieldNumber = 3;
+  static const int kMsgTypeFieldNumber = 2;
   ::protocol::MESSAGE_CHANNEL_TYPE msg_type() const;
   void set_msg_type(::protocol::MESSAGE_CHANNEL_TYPE value);
 
-  // optional bytes msg_data = 4;
+  // optional bytes msg_data = 3;
   void clear_msg_data();
-  static const int kMsgDataFieldNumber = 4;
+  static const int kMsgDataFieldNumber = 3;
   const ::std::string& msg_data() const;
   void set_msg_data(const ::std::string& value);
   void set_msg_data(const char* value);
@@ -3906,7 +3906,7 @@ inline void MessageChannel::set_target_chain_id(::google::protobuf::int64 value)
   // @@protoc_insertion_point(field_set:protocol.MessageChannel.target_chain_id)
 }
 
-// optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
+// optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 2;
 inline void MessageChannel::clear_msg_type() {
   msg_type_ = 0;
 }
@@ -3920,7 +3920,7 @@ inline void MessageChannel::set_msg_type(::protocol::MESSAGE_CHANNEL_TYPE value)
   // @@protoc_insertion_point(field_set:protocol.MessageChannel.msg_type)
 }
 
-// optional bytes msg_data = 4;
+// optional bytes msg_data = 3;
 inline void MessageChannel::clear_msg_data() {
   msg_data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
