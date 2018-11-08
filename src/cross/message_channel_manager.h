@@ -128,8 +128,8 @@ namespace bumo {
 	//croos message hander
 	class MessageChannelConsumer{
 	public:
-		virtual void RegisterMessageChannelConsumer(MessageChannel *message_channel_event, int64_t msg_type);
-		virtual void UnregisterMessageChannelConsumer(MessageChannel *message_channel_event, int64_t msg_type);
+		virtual void RegisterMessageChannelConsumer(int64_t msg_type);
+		virtual void UnregisterMessageChannelConsumer(int64_t msg_type);
 		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) = 0;
 	};
 
