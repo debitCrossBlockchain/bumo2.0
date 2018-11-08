@@ -581,38 +581,39 @@ void protobuf_AddDesc_overlay_2eproto() {
     "\003\022\024\n\014node_address\030\003 \001(\t\022\020\n\010chain_id\030\004 \001("
     "\003\"Z\n\033MessageChannelHelloResponse\022\'\n\nerro"
     "r_code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\nerr"
-    "or_desc\030\002 \001(\t\"M\n\016MessageChannel\022\027\n\017targe"
-    "t_chain_id\030\001 \001(\003\022\020\n\010msg_type\030\003 \001(\003\022\020\n\010ms"
-    "g_data\030\004 \001(\014\"U\n\026MessageChannelResponse\022\'"
-    "\n\nerror_code\030\001 \001(\0162\023.protocol.ERRORCODE\022"
-    "\022\n\nerror_desc\030\002 \001(\t*\203\002\n\024OVERLAY_MESSAGE_"
-    "TYPE\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERLA"
-    "Y_MSGTYPE_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HELL"
-    "O\020\002\022\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERLA"
-    "Y_MSGTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSGTY"
-    "PE_LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)"
-    "\n%OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY\020"
-    "\007*\372\001\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_NON"
-    "E\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020"
-    "\013\022\025\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_O"
-    "FFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHAI"
-    "N_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_HE"
-    "ADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_"
-    "TX_ENV_STORE\020\022*\201\001\n\031MESSAGE_CHANNEL_NODE_"
-    "TYPE\022\"\n\036MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000"
-    "\022 \n\034MESSAGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032ME"
-    "SSAGE_CHANNEL_NODE_HELLO\020\037*\216\003\n\024MESSAGE_C"
-    "HANNEL_TYPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE"
-    "\020\000\022&\n\"MESSAGE_CHANNEL_CREATE_CHILD_CHAIN"
-    "\020\001\022\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020\002\022\035\n\031MESS"
-    "AGE_CHANNEL_CHILD_MIX\020\003\022\033\n\027MESSAGE_CHANN"
-    "EL_DEPOSIT\020\004\022\036\n\032MESSAGE_CHANNEL_WITHDRAW"
-    "AL\020\005\022#\n\037MESSAGE_CHANNEL_FAST_WITHDRAWAL\020"
-    "\006\022\037\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020\007\022(\n$ME"
-    "SSAGE_CHANNEL_CHALLENGE_WITHDRAWAL\020\010\022\"\n\036"
-    "MESSAGE_CHANNEL_CHALLENGE_HEAD\020\t\022!\n\035MESS"
-    "AGE_CHANNEL_CHILD_GENESES\020\nB\"\n io.bumo.s"
-    "dk.core.extend.protobufb\006proto3", 3111);
+    "or_desc\030\002 \001(\t\"m\n\016MessageChannel\022\027\n\017targe"
+    "t_chain_id\030\001 \001(\003\0220\n\010msg_type\030\003 \001(\0162\036.pro"
+    "tocol.MESSAGE_CHANNEL_TYPE\022\020\n\010msg_data\030\004"
+    " \001(\014\"U\n\026MessageChannelResponse\022\'\n\nerror_"
+    "code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\nerror"
+    "_desc\030\002 \001(\t*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024"
+    "OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYP"
+    "E_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025O"
+    "VERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYP"
+    "E_TRANSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGE"
+    "RS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLA"
+    "Y_MSGTYPE_LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020Ch"
+    "ainMessageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013C"
+    "HAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHA"
+    "IN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r"
+    "\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMIT"
+    "TRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026"
+    "\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_S"
+    "TORE\020\022*\201\001\n\031MESSAGE_CHANNEL_NODE_TYPE\022\"\n\036"
+    "MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000\022 \n\034MESS"
+    "AGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032MESSAGE_CH"
+    "ANNEL_NODE_HELLO\020\037*\216\003\n\024MESSAGE_CHANNEL_T"
+    "YPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE\020\000\022&\n\"ME"
+    "SSAGE_CHANNEL_CREATE_CHILD_CHAIN\020\001\022\034\n\030ME"
+    "SSAGE_CHANNEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHAN"
+    "NEL_CHILD_MIX\020\003\022\033\n\027MESSAGE_CHANNEL_DEPOS"
+    "IT\020\004\022\036\n\032MESSAGE_CHANNEL_WITHDRAWAL\020\005\022#\n\037"
+    "MESSAGE_CHANNEL_FAST_WITHDRAWAL\020\006\022\037\n\033MES"
+    "SAGE_CHANNEL_SUBMIT_HEAD\020\007\022(\n$MESSAGE_CH"
+    "ANNEL_CHALLENGE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_"
+    "CHANNEL_CHALLENGE_HEAD\020\t\022!\n\035MESSAGE_CHAN"
+    "NEL_CHILD_GENESES\020\nB\"\n io.bumo.sdk.core."
+    "extend.protobufb\006proto3", 3143);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -8126,7 +8127,7 @@ void MessageChannel::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   target_chain_id_ = GOOGLE_LONGLONG(0);
-  msg_type_ = GOOGLE_LONGLONG(0);
+  msg_type_ = 0;
   msg_data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
@@ -8168,28 +8169,9 @@ MessageChannel* MessageChannel::New(::google::protobuf::Arena* arena) const {
 
 void MessageChannel::Clear() {
 // @@protoc_insertion_point(message_clear_start:protocol.MessageChannel)
-#if defined(__clang__)
-#define ZR_HELPER_(f) \
-  _Pragma("clang diagnostic push") \
-  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
-  __builtin_offsetof(MessageChannel, f) \
-  _Pragma("clang diagnostic pop")
-#else
-#define ZR_HELPER_(f) reinterpret_cast<char*>(\
-  &reinterpret_cast<MessageChannel*>(16)->f)
-#endif
-
-#define ZR_(first, last) do {\
-  ::memset(&first, 0,\
-           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
-} while (0)
-
-  ZR_(target_chain_id_, msg_type_);
+  target_chain_id_ = GOOGLE_LONGLONG(0);
+  msg_type_ = 0;
   msg_data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-
-#undef ZR_HELPER_
-#undef ZR_
-
 }
 
 bool MessageChannel::MergePartialFromCodedStream(
@@ -8216,14 +8198,15 @@ bool MessageChannel::MergePartialFromCodedStream(
         break;
       }
 
-      // optional int64 msg_type = 3;
+      // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
       case 3: {
         if (tag == 24) {
          parse_msg_type:
+          int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &msg_type_)));
-
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_msg_type(static_cast< ::protocol::MESSAGE_CHANNEL_TYPE >(value));
         } else {
           goto handle_unusual;
         }
@@ -8273,9 +8256,10 @@ void MessageChannel::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->target_chain_id(), output);
   }
 
-  // optional int64 msg_type = 3;
+  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
   if (this->msg_type() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->msg_type(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      3, this->msg_type(), output);
   }
 
   // optional bytes msg_data = 4;
@@ -8295,9 +8279,10 @@ void MessageChannel::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->target_chain_id(), target);
   }
 
-  // optional int64 msg_type = 3;
+  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
   if (this->msg_type() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->msg_type(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      3, this->msg_type(), target);
   }
 
   // optional bytes msg_data = 4;
@@ -8322,11 +8307,10 @@ int MessageChannel::ByteSize() const {
         this->target_chain_id());
   }
 
-  // optional int64 msg_type = 3;
+  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
   if (this->msg_type() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->msg_type());
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->msg_type());
   }
 
   // optional bytes msg_data = 4;
@@ -8432,15 +8416,15 @@ void MessageChannel::clear_target_chain_id() {
   // @@protoc_insertion_point(field_set:protocol.MessageChannel.target_chain_id)
 }
 
-// optional int64 msg_type = 3;
+// optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
 void MessageChannel::clear_msg_type() {
-  msg_type_ = GOOGLE_LONGLONG(0);
+  msg_type_ = 0;
 }
- ::google::protobuf::int64 MessageChannel::msg_type() const {
+ ::protocol::MESSAGE_CHANNEL_TYPE MessageChannel::msg_type() const {
   // @@protoc_insertion_point(field_get:protocol.MessageChannel.msg_type)
-  return msg_type_;
+  return static_cast< ::protocol::MESSAGE_CHANNEL_TYPE >(msg_type_);
 }
- void MessageChannel::set_msg_type(::google::protobuf::int64 value) {
+ void MessageChannel::set_msg_type(::protocol::MESSAGE_CHANNEL_TYPE value) {
   
   msg_type_ = value;
   // @@protoc_insertion_point(field_set:protocol.MessageChannel.msg_type)

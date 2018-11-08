@@ -193,7 +193,7 @@ message MessageChannelHelloResponse {
 
 message MessageChannel{
     int64 target_chain_id = 1;
-    int64 msg_type = 3;
+    MESSAGE_CHANNEL_TYPE msg_type = 3;
     bytes msg_data = 4;
 }
 

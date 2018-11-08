@@ -2162,11 +2162,11 @@ class MessageChannel : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::int64 target_chain_id() const;
   void set_target_chain_id(::google::protobuf::int64 value);
 
-  // optional int64 msg_type = 3;
+  // optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
   void clear_msg_type();
   static const int kMsgTypeFieldNumber = 3;
-  ::google::protobuf::int64 msg_type() const;
-  void set_msg_type(::google::protobuf::int64 value);
+  ::protocol::MESSAGE_CHANNEL_TYPE msg_type() const;
+  void set_msg_type(::protocol::MESSAGE_CHANNEL_TYPE value);
 
   // optional bytes msg_data = 4;
   void clear_msg_data();
@@ -2185,8 +2185,8 @@ class MessageChannel : public ::google::protobuf::Message /* @@protoc_insertion_
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::int64 target_chain_id_;
-  ::google::protobuf::int64 msg_type_;
   ::google::protobuf::internal::ArenaStringPtr msg_data_;
+  int msg_type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
@@ -3906,15 +3906,15 @@ inline void MessageChannel::set_target_chain_id(::google::protobuf::int64 value)
   // @@protoc_insertion_point(field_set:protocol.MessageChannel.target_chain_id)
 }
 
-// optional int64 msg_type = 3;
+// optional .protocol.MESSAGE_CHANNEL_TYPE msg_type = 3;
 inline void MessageChannel::clear_msg_type() {
-  msg_type_ = GOOGLE_LONGLONG(0);
+  msg_type_ = 0;
 }
-inline ::google::protobuf::int64 MessageChannel::msg_type() const {
+inline ::protocol::MESSAGE_CHANNEL_TYPE MessageChannel::msg_type() const {
   // @@protoc_insertion_point(field_get:protocol.MessageChannel.msg_type)
-  return msg_type_;
+  return static_cast< ::protocol::MESSAGE_CHANNEL_TYPE >(msg_type_);
 }
-inline void MessageChannel::set_msg_type(::google::protobuf::int64 value) {
+inline void MessageChannel::set_msg_type(::protocol::MESSAGE_CHANNEL_TYPE value) {
   
   msg_type_ = value;
   // @@protoc_insertion_point(field_set:protocol.MessageChannel.msg_type)
