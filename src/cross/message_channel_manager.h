@@ -23,6 +23,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <monitor/system_manager.h>
 
 namespace bumo {
+	class MessageChannelEvent;
 	class MessageChannelPeer :public Connection{
 
 	public:
@@ -49,7 +50,7 @@ namespace bumo {
 		bool SendPeers(std::error_code &ec);
 		void SetPeerInfo(const protocol::MessageChannelHello &hello);
 		void SetActiveTime(int64_t current_time);
-		bool SendHello(const std::string &node_address, const int64_t &network_id,std::error_code &ec);
+		bool SendHello(const std::string &node_address, const int64_t &network_id, std::error_code &ec);
 
 		virtual void ToJson(Json::Value &status) const;
 		virtual bool OnNetworkTimer(int64_t current_time);
@@ -74,7 +75,7 @@ namespace bumo {
 		// Handlers
 		bool OnHello(protocol::WsMessage &message, int64_t conn_id);
 		bool OnMessageChannel(protocol::WsMessage &message, int64_t conn_id);
-		
+
 
 		void BroadcastMsg(int64_t type, const std::string &data);
 		void BroadcastChainTxMsg(const protocol::MessageChannel& txMsg);
@@ -112,8 +113,50 @@ namespace bumo {
 		bool CheckSameChain(int64_t local_chain_id, int64_t target_chain_id);
 		int64_t GetChainIdFromConn(int64_t conn_id);
 
-
 	};
+
+
+	//croos message hander
+	class MessageChannelConsumer{
+	public:
+		virtual void RegisterMessageChannelConsumer(MessageChannelEvent *message_channel_event, int64_t msg_type);
+		virtual void UnregisterMessageChannelConsumer(MessageChannelEvent *message_channel_event, int64_t msg_type);
+		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) = 0;
+	};
+
+	class MessageChannelProducer{
+	public:
+		virtual void SendMsg(MessageChannelEvent *message_channel_event, const protocol::MessageChannel &message_channel);
+	};
+
+	class MessageChannelProducerImp :public MessageChannelProducer
+	{
+	public:
+		MessageChannelProducerImp(){};
+		virtual ~MessageChannelProducerImp(){};
+	};
+
+	class MessageChannelEvent :public utils::Singleton<MessageChannelEvent>,
+		public utils::Runnable {
+		friend class utils::Singleton<bumo::MessageChannelEvent>;
+
+	public:
+		bool Initialize();
+		bool Exit();
+		MessageChannelEvent();
+		~MessageChannelEvent();
+
+	public:
+		virtual void AddConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type);
+		virtual void RemoveConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type);
+		virtual void ReceiveMsg(const protocol::MessageChannel &message_channel);
+		virtual void Notify(const protocol::MessageChannel &message_channel);
+
+	private:
+		std::multimap<int64_t, MessageChannelConsumer*> message_channel_consumer_;
+		utils::Mutex message_channel_consumer_lock_;;
+	};
+
 }
 #endif
 
