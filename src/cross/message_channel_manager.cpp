@@ -54,7 +54,7 @@ namespace bumo {
 		hello.set_node_address(node_address);
 		hello.set_network_id(network_id);
 		hello.set_chain_id(General::GetSelfChainId());
-		return SendRequest(protocol::MESSAGE_CHANNEL_HELLO, hello.SerializeAsString(), ec);
+		return SendRequest(protocol::MESSAGE_CHANNEL_NODE_HELLO, hello.SerializeAsString(), ec);
 	}
 
 	void MessageChannelPeer::ToJson(Json::Value &status) const {
@@ -116,7 +116,7 @@ namespace bumo {
 		last_connect_time_ = 0;
 		last_uptate_time_ = utils::Timestamp::HighResolution();
 
-		request_methods_[protocol::MESSAGE_CHANNEL_HELLO] = std::bind(&MessageChannel::OnHello, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_NODE_HELLO] = std::bind(&MessageChannel::OnHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageChannel::OnCrateChildChain, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_MAIN_MIX] = std::bind(&MessageChannel::OnMainChainMix, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_CHILD_MIX] = std::bind(&MessageChannel::OnChildChainMix, this, std::placeholders::_1, std::placeholders::_2);
@@ -143,7 +143,6 @@ namespace bumo {
 		if (!thread_ptr_->Start("messageChannel")) {
 			return false;
 		}
-
 		StatusModule::RegisterModule(this);
 		TimerNotify::RegisterModule(this);
 		LOG_INFO("Initialized message channel server successfully");
@@ -167,22 +166,84 @@ namespace bumo {
 	}
 
 	bool MessageChannel::OnHello(protocol::WsMessage &message, int64_t conn_id){
+
+		protocol::MessageChannelHello hello;
+		hello.ParseFromString(message.data());
+
 		protocol::MessageChannelHelloResponse cmsg;
 		std::error_code ignore_ec;
 
 		utils::MutexGuard guard_(conns_list_lock_);
 		Connection *conn = GetConnection(conn_id);
+		do{
+			if (!conn) {
+				LOG_ERROR("MessageChannelPeer conn pointer is empty");
+				return false;
+			}
 
-		if (conn) {
+			MessageChannelPeer *peer = (MessageChannelPeer *)conn;
+			peer->SetPeerInfo(hello);
+
+			if (ChainExist(peer->GetId(), hello.chain_id())) {
+				cmsg.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				cmsg.set_error_desc(utils::String::Format("Duplicated connection with ip(%s), id(" FMT_I64 ")", peer->GetPeerAddress().ToIp().c_str(), peer->GetId()));
+				LOG_ERROR("Failed to process the peer hello message.%s", cmsg.error_desc().c_str());
+				break;
+			}
+
+			if (network_id_ != hello.network_id()) {
+				cmsg.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				cmsg.set_error_desc(utils::String::Format("Different network id, remote id(" FMT_I64 ") is not equal to the local id(" FMT_I64 ")",
+					hello.network_id(), network_id_));
+				LOG_ERROR("Failed to process the peer hello message.%s", cmsg.error_desc().c_str());
+				break;
+			}
+
+			if (CheckSameChain(General::GetSelfChainId(), hello.chain_id())) {
+				cmsg.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
+				cmsg.set_error_desc(utils::String::Format("The peer connection is broken because it connects itself"));
+				LOG_ERROR("Failed to process the peer hello message.%s", cmsg.error_desc().c_str());
+				break;
+			}
+
 			cmsg.set_error_code(protocol::ERRCODE_SUCCESS);
 			std::string error_desc_temp = utils::String::Format("Received a message channel hello message from ip(%s), and sent the response result(%d:%s)",
 				conn->GetPeerAddress().ToIpPort().c_str(), ignore_ec.value(), ignore_ec.message().c_str());
 			cmsg.set_error_desc(error_desc_temp.c_str());
-			conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
 			LOG_INFO("Received a message channel hello message from ip(%s), and sent the response result(%d:%s)", conn->GetPeerAddress().ToIpPort().c_str(),
 				ignore_ec.value(), ignore_ec.message().c_str());
+
+		} while (false);
+
+		conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
+		return cmsg.error_code() == 0;
+	}
+
+	bool MessageChannel::ChainExist(int64_t peer_id, int64_t chain_id) {
+		bool exist = false;
+		for (ConnectionMap::iterator iter = connections_.begin(); iter != connections_.end(); iter++) {
+			MessageChannelPeer *peer = (MessageChannelPeer *)iter->second;
+			bool same_node = CheckSameChain(chain_id, peer->GetChainId());
+			if (same_node && peer->GetId() != peer_id) {
+				exist = true;
+				break;
+			}
 		}
-		return true;
+		return exist;
+	}
+
+	bool MessageChannel::CheckSameChain(int64_t local_chain_id, int64_t target_chain_id){
+		return  (local_chain_id == target_chain_id);
+	}
+
+	int64_t MessageChannel::GetChainIdFromConn(int64_t conn_id){
+		MessageChannelPeer *peer = (MessageChannelPeer *)GetConnection(conn_id);
+		if (!peer){
+			LOG_ERROR("The target peer cannot be found in conection list.");
+			return -1;
+		}
+
+		return peer->GetChainId();
 	}
 
 	bool MessageChannel::OnCrateChildChain(protocol::WsMessage &message, int64_t conn_id){
