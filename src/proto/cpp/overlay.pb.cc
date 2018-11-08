@@ -602,7 +602,7 @@ void protobuf_AddDesc_overlay_2eproto() {
     "TORE\020\022*\201\001\n\031MESSAGE_CHANNEL_NODE_TYPE\022\"\n\036"
     "MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000\022 \n\034MESS"
     "AGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032MESSAGE_CH"
-    "ANNEL_NODE_HELLO\020\037*\216\003\n\024MESSAGE_CHANNEL_T"
+    "ANNEL_NODE_HELLO\020\037*\302\003\n\024MESSAGE_CHANNEL_T"
     "YPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE\020\000\022&\n\"ME"
     "SSAGE_CHANNEL_CREATE_CHILD_CHAIN\020\001\022\034\n\030ME"
     "SSAGE_CHANNEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHAN"
@@ -611,9 +611,10 @@ void protobuf_AddDesc_overlay_2eproto() {
     "MESSAGE_CHANNEL_FAST_WITHDRAWAL\020\006\022\037\n\033MES"
     "SAGE_CHANNEL_SUBMIT_HEAD\020\007\022(\n$MESSAGE_CH"
     "ANNEL_CHALLENGE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_"
-    "CHANNEL_CHALLENGE_HEAD\020\t\022!\n\035MESSAGE_CHAN"
-    "NEL_CHILD_GENESES\020\nB\"\n io.bumo.sdk.core."
-    "extend.protobufb\006proto3", 3143);
+    "CHANNEL_CHALLENGE_HEAD\020\t\022)\n%MESSAGE_CHAN"
+    "NEL_CHILD_GENESES_REQUEST\020\n\022*\n&MESSAGE_C"
+    "HANNEL_CHILD_GENESES_RESPONSE\020\013B\"\n io.bu"
+    "mo.sdk.core.extend.protobufb\006proto3", 3195);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -737,6 +738,7 @@ bool MESSAGE_CHANNEL_TYPE_IsValid(int value) {
     case 8:
     case 9:
     case 10:
+    case 11:
       return true;
     default:
       return false;
