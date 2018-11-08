@@ -216,26 +216,16 @@ namespace bumo {
 		return true;
 	}
 
+	void MessageChannel::MessageChannelProducer(const protocol::MessageChannel& message_channel) {
 
-	void MessageChannel::BroadcastMsg(int64_t type, const std::string &data) {
+		Notify(message_channel);
+
 		utils::MutexGuard guard(conns_list_lock_);
-
-		for (ConnectionMap::iterator iter = connections_.begin();
-			iter != connections_.end();
-			iter++) {
-			std::error_code ec;
-			iter->second->SendRequest(type, data, ec);
-		}
-	}
-
-	void MessageChannel::BroadcastChainTxMsg(const protocol::MessageChannel& tx_msg) {
-		utils::MutexGuard guard(conns_list_lock_);
-
 		for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
 			MessageChannelPeer *messageChannel = (MessageChannelPeer *)iter->second;
-			if (messageChannel->GetChainId() == tx_msg.target_chain_id()) {
+			if (messageChannel->GetChainId() == message_channel.target_chain_id()) {
 				std::error_code ec;
-				std::string str = tx_msg.SerializeAsString();
+				std::string str = message_channel.SerializeAsString();
 				messageChannel->SendRequest(protocol::MESSAGE_CHANNEL_NODE_PACKAGE, str, ec);
 			}
 		}
@@ -276,30 +266,6 @@ namespace bumo {
 		return new MessageChannelPeer(server_h, client_, tls_server_h, tls_client_h, con, uri, id);
 	}
 
-	bool MessageChannel::ConnectToMessageChannel() {
-		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
-		do {
-			utils::StringList::const_iterator itor;
-			itor = message_channel_configure.known_message_channel_list_.begin();
-			utils::MutexGuard guard(conns_list_lock_);
-			while (itor != message_channel_configure.known_message_channel_list_.end()){
-				std::string address = *itor++;
-				std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", address.c_str());
-				Connect(uri);
-			}
-			return true;
-		} while (false);
-
-		return false;
-	}
-
-	bool MessageChannel::SendRequest(int64_t id, int64_t type, const std::string &data){
-		return true;
-	}
-
-	bool MessageChannel::ReceiveMsg(int64_t type, const std::string &data, int64_t id){
-		return true;
-	}
 
 	void MessageChannel::OnTimer(int64_t current_time){
 
@@ -342,7 +308,7 @@ namespace bumo {
 	}
 
 	//croos message hander
-	void MessageChannel::RegisterMessageChannelConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
+	void MessageChannel::RegisterMessageChannelConsumer(IMessageChannelConsumer *msg_consumer, int64_t msg_type){
 		utils::MutexGuard guard(message_channel_consumer_lock_);
 
 		if (message_channel_consumer_.empty()){
@@ -350,7 +316,7 @@ namespace bumo {
 		}
 
 		bool is_exist = false;
-		map<int64_t, MessageChannelConsumer*>::iterator it = message_channel_consumer_.lower_bound(msg_type);
+		map<int64_t, IMessageChannelConsumer*>::iterator it = message_channel_consumer_.lower_bound(msg_type);
 		while (it != message_channel_consumer_.upper_bound(msg_type)){
 			if (it->second == msg_consumer){
 				is_exist = true;
@@ -363,13 +329,13 @@ namespace bumo {
 		}
 	}
 
-	void MessageChannel::UnregisterMessageChannelConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
+	void MessageChannel::UnregisterMessageChannelConsumer(IMessageChannelConsumer *msg_consumer, int64_t msg_type){
 		utils::MutexGuard guard(message_channel_consumer_lock_);
 		if (message_channel_consumer_.empty()){
 			return;
 		}
 
-		map<int64_t, MessageChannelConsumer*>::iterator it = message_channel_consumer_.lower_bound(msg_type);
+		map<int64_t, IMessageChannelConsumer*>::iterator it = message_channel_consumer_.lower_bound(msg_type);
 		while (it != message_channel_consumer_.upper_bound(msg_type)){
 			if (it->second == msg_consumer){
 				message_channel_consumer_.erase(it);
@@ -381,7 +347,7 @@ namespace bumo {
 
 	void MessageChannel::Notify(const protocol::MessageChannel &message_channel){
 		utils::MutexGuard guard(message_channel_consumer_lock_);
-		map<int64_t, MessageChannelConsumer*>::iterator it = message_channel_consumer_.lower_bound(message_channel.msg_type());
+		map<int64_t, IMessageChannelConsumer*>::iterator it = message_channel_consumer_.lower_bound(message_channel.msg_type());
 		for (; it != message_channel_consumer_.upper_bound(message_channel.msg_type()); it++){
 			it->second->HandleMessageChannelConsumer(message_channel);
 		}

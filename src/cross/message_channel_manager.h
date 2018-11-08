@@ -24,7 +24,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace bumo {
 	//croos message hander
-	class MessageChannelConsumer{
+	class IMessageChannelConsumer{
 	public:
 		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) = 0;
 	};
@@ -76,15 +76,17 @@ namespace bumo {
 
 		bool Initialize(MessageChannelConfigure & message_channel_configure);
 		bool Exit();
+		void MessageChannelProducer(const protocol::MessageChannel& message_channel);
+		virtual void RegisterMessageChannelConsumer(IMessageChannelConsumer *msg_consumer, int64_t msg_type);
+		virtual void UnregisterMessageChannelConsumer(IMessageChannelConsumer *msg_consumer, int64_t msg_type);
 
+	protected:
+		virtual void Run(utils::Thread *thread) override;
+
+	private:
 		// Handlers
 		bool OnHello(protocol::WsMessage &message, int64_t conn_id);
 		bool OnMessageChannel(protocol::WsMessage &message, int64_t conn_id);
-
-
-		void BroadcastMsg(int64_t type, const std::string &data);
-		void BroadcastChainTxMsg(const protocol::MessageChannel& txMsg);
-
 		virtual void OnDisconnect(Connection *conn);
 		virtual bool OnConnectOpen(Connection *conn);
 		virtual Connection *CreateConnectObject(server *server_h, client *client_,
@@ -92,40 +94,21 @@ namespace bumo {
 			connection_hdl con, const std::string &uri, int64_t id);
 		virtual bool OnVerifyCallback(bool preverified, asio::ssl::verify_context& ctx);
 		virtual void GetModuleStatus(Json::Value &data);
-	protected:
-		virtual void Run(utils::Thread *thread) override;
-
-
-	private:
-		utils::Thread *thread_ptr_;
-
-		uint64_t last_connect_time_;
-		uint64_t connect_interval_;
-		int32_t  total_peers_count_;
-		int64_t  network_id_;
-		std::error_code last_ec_;
-		int64_t last_uptate_time_;
-
-
-		//client
-	public:
-		bool ConnectToMessageChannel();
-		bool SendRequest(int64_t id, int64_t type, const std::string &data);
-		bool ReceiveMsg(int64_t type, const std::string &data, int64_t id);
+		virtual void Notify(const protocol::MessageChannel &message_channel);
 		virtual void OnTimer(int64_t current_time) override;
 		virtual void OnSlowTimer(int64_t current_time) override {};
 		bool ChainExist(int64_t peer_id, int64_t chain_id);
 		bool CheckSameChain(int64_t local_chain_id, int64_t target_chain_id);
 		int64_t GetChainIdFromConn(int64_t conn_id);
-
-		//croos message hander
-	public:
-		virtual void RegisterMessageChannelConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type);
-		virtual void UnregisterMessageChannelConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type);
-		virtual void Notify(const protocol::MessageChannel &message_channel);
-
+	
 	private:
-		std::multimap<int64_t, MessageChannelConsumer*> message_channel_consumer_;
+		utils::Thread *thread_ptr_;
+		uint64_t last_connect_time_;
+		uint64_t connect_interval_;
+		int64_t  network_id_;
+		std::error_code last_ec_;
+		int64_t last_uptate_time_;
+		std::multimap<int64_t, IMessageChannelConsumer*> message_channel_consumer_;
 		utils::Mutex message_channel_consumer_lock_;
 	};
 
