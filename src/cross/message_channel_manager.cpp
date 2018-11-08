@@ -84,51 +84,13 @@ namespace bumo {
 	}
 
 
-
-	bool MessageChannelPeer::Set(const protocol::ChainSubscribeTx &sub) {
-		if (sub.address_size() > 100) {
-			LOG_ERROR("Failed  to subscribe address, size large than 100");
-			return false;
-		}
-
-		tx_filter_address_.clear();
-		for (int32_t i = 0; i < sub.address_size(); i++) {
-			if (!PublicKey::IsAddressValid(sub.address(i))) {
-				LOG_ERROR("Failed to subscribe address, address(%s) not valid", sub.address(i).c_str());
-				return false;
-			}
-			tx_filter_address_.insert(sub.address(i));
-		}
-
-		return true;
-	}
-
-	bool MessageChannelPeer::Filter(const protocol::TransactionEnvStore &tx_msg) {
-		return false;
-	}
-
-
-
-
-
 	MessageChannel::MessageChannel() : Network(SslParameter()) {
 		connect_interval_ = 120 * utils::MICRO_UNITS_PER_SEC;
 		last_connect_time_ = 0;
 		last_uptate_time_ = utils::Timestamp::HighResolution();
 
 		request_methods_[protocol::MESSAGE_CHANNEL_NODE_HELLO] = std::bind(&MessageChannel::OnHello, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageChannel::OnCrateChildChain, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_MAIN_MIX] = std::bind(&MessageChannel::OnMainChainMix, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_CHILD_MIX] = std::bind(&MessageChannel::OnChildChainMix, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_DEPOSIT] = std::bind(&MessageChannel::OnDeposit, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageChannel::OnWithdrawal, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_FAST_WITHDRAWAL] = std::bind(&MessageChannel::OnFastWithdrawal, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_SUBMIT_HEAD] = std::bind(&MessageChannel::OnSubmitChildHead, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL] = std::bind(&MessageChannel::OnChallengeWithdrawal, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD] = std::bind(&MessageChannel::OnChallengeChildHead, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES] = std::bind(&MessageChannel::OnChildChainGeneses, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::CHAIN_SUBMITTRANSACTION] = std::bind(&MessageChannel::OnSubmitTransaction, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::CHAIN_SUBSCRIBE_TX] = std::bind(&MessageChannel::OnSubscribeTx, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_NODE_PACKAGE] = std::bind(&MessageChannel::OnMessageChannel, this, std::placeholders::_1, std::placeholders::_2);
 		thread_ptr_ = NULL;
 	}
 
@@ -246,52 +208,10 @@ namespace bumo {
 		return peer->GetChainId();
 	}
 
-	bool MessageChannel::OnCrateChildChain(protocol::WsMessage &message, int64_t conn_id){
+	bool MessageChannel::OnMessageChannel(protocol::WsMessage &message, int64_t conn_id){
 		return true;
 	}
 
-	bool MessageChannel::OnMainChainMix(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnChildChainMix(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-	bool MessageChannel::OnDeposit(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnWithdrawal(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnFastWithdrawal(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnSubmitChildHead(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnChallengeWithdrawal(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnChallengeChildHead(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnChildChainGeneses(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
-
-	bool MessageChannel::OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id){
-		return true;
-	}
 
 	void MessageChannel::BroadcastMsg(int64_t type, const std::string &data) {
 		utils::MutexGuard guard(conns_list_lock_);
@@ -304,17 +224,16 @@ namespace bumo {
 		}
 	}
 
-	void MessageChannel::BroadcastChainTxMsg(const protocol::TransactionEnvStore& tx_msg) {
+	void MessageChannel::BroadcastChainTxMsg(const protocol::MessageChannel& tx_msg) {
 		utils::MutexGuard guard(conns_list_lock_);
 
 		for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
 			MessageChannelPeer *messageChannel = (MessageChannelPeer *)iter->second;
-			if (messageChannel->Filter(tx_msg)) {
+			if (messageChannel->GetChainId() == tx_msg.target_chain_id()) {
 				std::error_code ec;
 				std::string str = tx_msg.SerializeAsString();
-				messageChannel->SendRequest(protocol::CHAIN_TX_ENV_STORE, str, ec);
+				messageChannel->SendRequest(protocol::MESSAGE_CHANNEL_NODE_PACKAGE, str, ec);
 			}
-
 		}
 	}
 

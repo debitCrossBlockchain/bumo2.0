@@ -28,8 +28,6 @@ namespace bumo {
 	public:
 		MessageChannelPeer(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id);
 		~MessageChannelPeer();
-		bool Set(const protocol::ChainSubscribeTx &sub);
-		bool Filter(const protocol::TransactionEnvStore &tx_msg);
 
 	private:
 
@@ -75,21 +73,11 @@ namespace bumo {
 
 		// Handlers
 		bool OnHello(protocol::WsMessage &message, int64_t conn_id);
-		bool OnCrateChildChain(protocol::WsMessage &message, int64_t conn_id);
-		bool OnMainChainMix(protocol::WsMessage &message, int64_t conn_id);
-		bool OnChildChainMix(protocol::WsMessage &message, int64_t conn_id);
-		bool OnDeposit(protocol::WsMessage &message, int64_t conn_id);
-		bool OnWithdrawal(protocol::WsMessage &message, int64_t conn_id);
-		bool OnFastWithdrawal(protocol::WsMessage &message, int64_t conn_id);
-		bool OnSubmitChildHead(protocol::WsMessage &message, int64_t conn_id);
-		bool OnChallengeWithdrawal(protocol::WsMessage &message, int64_t conn_id);
-		bool OnChallengeChildHead(protocol::WsMessage &message, int64_t conn_id);
-		bool OnChildChainGeneses(protocol::WsMessage &message, int64_t conn_id);
-		bool OnSubmitTransaction(protocol::WsMessage &message, int64_t conn_id);
-		bool OnSubscribeTx(protocol::WsMessage &message, int64_t conn_id);
+		bool OnMessageChannel(protocol::WsMessage &message, int64_t conn_id);
+		
 
 		void BroadcastMsg(int64_t type, const std::string &data);
-		void BroadcastChainTxMsg(const protocol::TransactionEnvStore& txMsg);
+		void BroadcastChainTxMsg(const protocol::MessageChannel& txMsg);
 
 		virtual void OnDisconnect(Connection *conn);
 		virtual bool OnConnectOpen(Connection *conn);
