@@ -210,6 +210,9 @@ namespace bumo {
 	}
 
 	bool MessageChannel::OnMessageChannel(protocol::WsMessage &message, int64_t conn_id){
+		protocol::MessageChannel message_channel;
+		message_channel.ParseFromString(message.data());
+		Notify(message_channel);
 		return true;
 	}
 
@@ -339,24 +342,19 @@ namespace bumo {
 	}
 
 	//croos message hander
-	void MessageChannelConsumer::RegisterMessageChannelConsumer(MessageChannelEvent *message_channel_event, int64_t msg_type){
+	void MessageChannelConsumer::RegisterMessageChannelConsumer(MessageChannel *message_channel_event, int64_t msg_type){
 		message_channel_event->AddConsumer(this, msg_type);
 	}
 
-	void MessageChannelConsumer::UnregisterMessageChannelConsumer(MessageChannelEvent *message_channel_event, int64_t msg_type)
+	void MessageChannelConsumer::UnregisterMessageChannelConsumer(MessageChannel *message_channel_event, int64_t msg_type)
 	{
 		message_channel_event->RemoveConsumer(this, msg_type);
 	}
 
 
-	MessageChannelEvent::MessageChannelEvent(){
-	}
 
 
-	MessageChannelEvent::~MessageChannelEvent(){
-	}
-
-	void MessageChannelEvent::AddConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
+	void MessageChannel::AddConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
 		utils::MutexGuard guard(message_channel_consumer_lock_);
 
 		if (message_channel_consumer_.empty()){
@@ -377,7 +375,7 @@ namespace bumo {
 		}
 	}
 
-	void MessageChannelEvent::RemoveConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
+	void MessageChannel::RemoveConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
 		utils::MutexGuard guard(message_channel_consumer_lock_);
 
 		if (message_channel_consumer_.empty()){
@@ -394,21 +392,14 @@ namespace bumo {
 		}
 	}
 
-	void MessageChannelEvent::Notify(const protocol::MessageChannel &message_channel){
+	void MessageChannel::Notify(const protocol::MessageChannel &message_channel){
+		utils::MutexGuard guard(message_channel_consumer_lock_);
 		map<int64_t, MessageChannelConsumer*>::iterator it = message_channel_consumer_.lower_bound(message_channel.msg_type());
 		for (; it != message_channel_consumer_.upper_bound(message_channel.msg_type()); it++){
 			it->second->HandleMessageChannelConsumer(message_channel);
 		}
 	}
 
-	void MessageChannelEvent::ReceiveMsg(const protocol::MessageChannel &message_channel){
-		utils::MutexGuard guard(message_channel_consumer_lock_);
-		this->Notify(message_channel);
-	}
-
-	void MessageChannelProducer::SendMsg(MessageChannelEvent *message_channel_event, const protocol::MessageChannel &message_channel){
-		message_channel_event->ReceiveMsg(message_channel);
-	}
 
 }
 
