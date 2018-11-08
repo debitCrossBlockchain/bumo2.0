@@ -23,7 +23,12 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <monitor/system_manager.h>
 
 namespace bumo {
-	class MessageChannelConsumer;
+	//croos message hander
+	class MessageChannelConsumer{
+	public:
+		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) = 0;
+	};
+
 	class MessageChannelPeer :public Connection{
 
 	public:
@@ -123,15 +128,6 @@ namespace bumo {
 		std::multimap<int64_t, MessageChannelConsumer*> message_channel_consumer_;
 		utils::Mutex message_channel_consumer_lock_;
 	};
-
-
-	//croos message hander
-	class MessageChannelConsumer{
-	public:
-		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) = 0;
-	};
-
-
 
 }
 #endif
