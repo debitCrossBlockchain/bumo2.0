@@ -342,16 +342,7 @@ namespace bumo {
 	}
 
 	//croos message hander
-	void MessageChannelConsumer::RegisterMessageChannelConsumer(int64_t msg_type){
-		bumo::MessageChannel::GetInstance()->AddConsumer(this, msg_type);
-	}
-
-	void MessageChannelConsumer::UnregisterMessageChannelConsumer(int64_t msg_type)
-	{
-		bumo::MessageChannel::GetInstance()->RemoveConsumer(this, msg_type);
-	}
-
-	void MessageChannel::AddConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
+	void MessageChannel::RegisterMessageChannelConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
 		utils::MutexGuard guard(message_channel_consumer_lock_);
 
 		if (message_channel_consumer_.empty()){
@@ -372,9 +363,8 @@ namespace bumo {
 		}
 	}
 
-	void MessageChannel::RemoveConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
+	void MessageChannel::UnregisterMessageChannelConsumer(MessageChannelConsumer *msg_consumer, int64_t msg_type){
 		utils::MutexGuard guard(message_channel_consumer_lock_);
-
 		if (message_channel_consumer_.empty()){
 			return;
 		}
