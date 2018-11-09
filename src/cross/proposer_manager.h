@@ -18,9 +18,12 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <utils/singleton.h>
 #include <utils/thread.h>
+#include<cross/message_channel_manager.h>
 
 namespace bumo {
-	class ProposerManager :public utils::Singleton<ProposerManager>, public utils::Runnable {
+	class ProposerManager :public utils::Singleton<ProposerManager>,
+		public bumo::IMessageChannelConsumer,
+		public utils::Runnable{
 		friend class utils::Singleton<bumo::ProposerManager>;
 	public:
 		ProposerManager();
@@ -29,16 +32,21 @@ namespace bumo {
 		bool Initialize();
 		bool Exit();
 		bool CommitChildChainBlock();
+		void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel);
 
 	private:
 		virtual void Run(utils::Thread *thread) override;
 		void HandleChildChainBlock();
 		bool CheckChildBlockExsit();
 		bool CommitTransaction();
+		bool AddressIsValidate(const std::string &address);
 
 		bool enabled_;
 		utils::Thread *thread_ptr_;
+		utils::Mutex validate_address_lock_;
+		utils::StringList validate_address_;
 	};
+
 }
 
 #endif

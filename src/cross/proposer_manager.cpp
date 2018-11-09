@@ -19,6 +19,7 @@ namespace bumo {
 		if (!thread_ptr_->Start("ProposerManager")) {
 			return false;
 		}
+		bumo::MessageChannel::GetInstance()->RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		return true;
 	}
 
@@ -27,6 +28,7 @@ namespace bumo {
 		if (thread_ptr_) {
 			thread_ptr_->JoinWithStop();
 		}
+		bumo::MessageChannel::GetInstance()->UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		return true;
 	}
 
@@ -49,8 +51,30 @@ namespace bumo {
 		if (CheckChildBlockExsit()){
 			return;
 		}
-		
+
 		CommitTransaction();
+	}
+
+	void ProposerManager::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
+		if (message_channel.msg_type() != protocol::MESSAGE_CHANNEL_SUBMIT_HEAD){
+			return;
+		}
+
+
+	}
+
+	bool ProposerManager::AddressIsValidate(const std::string &address){
+		utils::StringList::const_iterator itor;
+		bool flag = false;
+		utils::MutexGuard guard(validate_address_lock_);
+		itor = std::find(validate_address_.begin(), validate_address_.end(), address.c_str());
+		if (itor != validate_address_.end()){
+			flag = true;
+		}
+		else{
+			flag = false;
+		}
+		return flag;
 	}
 
 	bool ProposerManager::CheckChildBlockExsit(){
