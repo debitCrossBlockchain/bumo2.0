@@ -1,9 +1,11 @@
 #include "proposer_manager.h"
 
 namespace bumo {
-	ProposerManager::ProposerManager(){
-		enabled_ = false;
-		thread_ptr_ = NULL;
+	ProposerManager::ProposerManager() :
+		enabled_(false),
+		last_uptate_validate_address_time_(0),
+		thread_ptr_(NULL){
+		
 	}
 
 	ProposerManager::~ProposerManager(){
@@ -39,9 +41,15 @@ namespace bumo {
 	}
 
 	void ProposerManager::Run(utils::Thread *thread) {
+		int64_t current_time = utils::Timestamp::HighResolution();
 		while (enabled_){
 			//Handel block map//
 			HandleChildChainBlock();
+			if (current_time > 2 * 60 * utils::MICRO_UNITS_PER_SEC + last_uptate_validate_address_time_)
+			{
+				UpdateValidateAddressList();
+				last_uptate_validate_address_time_ = current_time;
+			}
 		}
 	}
 
@@ -61,6 +69,10 @@ namespace bumo {
 		}
 
 
+	}
+
+	void ProposerManager::UpdateValidateAddressList(){
+		int64_t chain_id = General::GetSelfChainId();
 	}
 
 	bool ProposerManager::AddressIsValidate(const std::string &address){

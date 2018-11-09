@@ -40,11 +40,13 @@ namespace bumo {
 		bool CheckChildBlockExsit();
 		bool CommitTransaction();
 		bool AddressIsValidate(const std::string &address);
+		void UpdateValidateAddressList();
 
 		bool enabled_;
 		utils::Thread *thread_ptr_;
 		utils::Mutex validate_address_lock_;
 		utils::StringList validate_address_;
+		int64_t last_uptate_validate_address_time_;
 	};
 
 }
