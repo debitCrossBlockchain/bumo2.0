@@ -4,6 +4,7 @@ option java_package = "io.bumo.sdk.core.extend.protobuf";
 
 import "common.proto";
 import "chain.proto";
+import "consensus.proto";
 
 enum OVERLAY_MESSAGE_TYPE{
 	OVERLAY_MSGTYPE_NONE = 0;
@@ -210,3 +211,21 @@ message MessageChannelProposer{
    bytes  proposer_signature = 4;
    bytes  header_hash= 5;
 }
+
+message BlockReward{
+	int64 amount = 1;
+	int64 period = 2;
+	double ratio = 3;
+}
+
+message MessageChannelCreateChildChain{
+	string genesis_account	= 1;
+	string slogan = 2;
+	FeeConfig fee_config = 3;
+	repeated string reserve_validator = 4;
+	string chain_name = 5;
+	string genesis_token_amount = 6;
+	BlockReward block_reward = 7;
+	int64 cost = 8;
+}
+
