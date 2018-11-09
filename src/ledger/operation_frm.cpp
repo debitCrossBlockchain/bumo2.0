@@ -570,7 +570,7 @@ namespace bumo {
 				std::string err_msg;
 				result_ = ContractManager::Instance().Execute(Contract::TYPE_V8, parameter, true);
 
-				if (CHECK_VERSION_GT_1000 && result_.code() == 0){
+				if (result_.code() == 0){
 					Json::Value contract_result;
 					contract_result["contract_address"] = dest_address;
 					contract_result["operation_index"] = index_;
@@ -917,7 +917,9 @@ namespace bumo {
 			const std::string dest_address = create_account.dest_address();
 			//If the ledger version is greater than 1000, you must leave the dest address of the smart contract empty. An address will be created automatically.
 			bool has_dest_address = !dest_address.empty();
-			bool unimportant_address = (dest_address != General::CONTRACT_VALIDATOR_ADDRESS) && (dest_address != General::CONTRACT_FEE_ADDRESS);
+			bool unimportant_address = (dest_address != General::CONTRACT_VALIDATOR_ADDRESS) && 
+				(dest_address != General::CONTRACT_FEE_ADDRESS) &&
+				(dest_address != General::CONTRACT_CMC_ADDRESS);
 			if (is_create_contract && has_dest_address && unimportant_address) {
 				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
 				result.set_desc(utils::String::Format("The dest address(%s) must be empty when create contract account", dest_address.c_str()));
