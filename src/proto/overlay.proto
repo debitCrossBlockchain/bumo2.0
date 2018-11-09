@@ -206,7 +206,6 @@ message MessageChannelResponse {
 message MessageChannelProposer{
    LedgerHeader header = 1;
    string proposer_address = 2;
-   int64  proposer_bid = 3;
-   bytes  proposer_signature = 4;
-   bytes  header_hash= 5;
+   bytes  proposer_signature = 3;
+   bytes  header_hash= 4;
 }

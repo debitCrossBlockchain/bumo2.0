@@ -429,10 +429,9 @@ void protobuf_AssignDesc_overlay_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelResponse, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelResponse, _is_default_instance_));
   MessageChannelProposer_descriptor_ = file->message_type(19);
-  static const int MessageChannelProposer_offsets_[5] = {
+  static const int MessageChannelProposer_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelProposer, header_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelProposer, proposer_address_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelProposer, proposer_bid_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelProposer, proposer_signature_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelProposer, header_hash_),
   };
@@ -612,39 +611,39 @@ void protobuf_AddDesc_overlay_2eproto() {
     "tocol.MESSAGE_CHANNEL_TYPE\022\020\n\010msg_data\030\003"
     " \001(\014\"U\n\026MessageChannelResponse\022\'\n\nerror_"
     "code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\nerror"
-    "_desc\030\002 \001(\t\"\241\001\n\026MessageChannelProposer\022&"
+    "_desc\030\002 \001(\t\"\213\001\n\026MessageChannelProposer\022&"
     "\n\006header\030\001 \001(\0132\026.protocol.LedgerHeader\022\030"
-    "\n\020proposer_address\030\002 \001(\t\022\024\n\014proposer_bid"
-    "\030\003 \001(\003\022\032\n\022proposer_signature\030\004 \001(\014\022\023\n\013he"
-    "ader_hash\030\005 \001(\014*\203\002\n\024OVERLAY_MESSAGE_TYPE"
-    "\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MS"
-    "GTYPE_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022"
-    "\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MS"
-    "GTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_L"
-    "EDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OV"
-    "ERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY\020\007*\372\001"
-    "\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022"
-    "\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n"
-    "\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLI"
-    "NE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SU"
-    "BMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADER"
-    "\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_E"
-    "NV_STORE\020\022*\201\001\n\031MESSAGE_CHANNEL_NODE_TYPE"
-    "\022\"\n\036MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000\022 \n\034"
-    "MESSAGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032MESSAG"
-    "E_CHANNEL_NODE_HELLO\020\037*\302\003\n\024MESSAGE_CHANN"
-    "EL_TYPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE\020\000\022&"
-    "\n\"MESSAGE_CHANNEL_CREATE_CHILD_CHAIN\020\001\022\034"
-    "\n\030MESSAGE_CHANNEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_"
-    "CHANNEL_CHILD_MIX\020\003\022\033\n\027MESSAGE_CHANNEL_D"
-    "EPOSIT\020\004\022\036\n\032MESSAGE_CHANNEL_WITHDRAWAL\020\005"
-    "\022#\n\037MESSAGE_CHANNEL_FAST_WITHDRAWAL\020\006\022\037\n"
-    "\033MESSAGE_CHANNEL_SUBMIT_HEAD\020\007\022(\n$MESSAG"
-    "E_CHANNEL_CHALLENGE_WITHDRAWAL\020\010\022\"\n\036MESS"
-    "AGE_CHANNEL_CHALLENGE_HEAD\020\t\022)\n%MESSAGE_"
-    "CHANNEL_CHILD_GENESES_REQUEST\020\n\022*\n&MESSA"
-    "GE_CHANNEL_CHILD_GENESES_RESPONSE\020\013B\"\n i"
-    "o.bumo.sdk.core.extend.protobufb\006proto3", 3359);
+    "\n\020proposer_address\030\002 \001(\t\022\032\n\022proposer_sig"
+    "nature\030\003 \001(\014\022\023\n\013header_hash\030\004 \001(\014*\203\002\n\024OV"
+    "ERLAY_MESSAGE_TYPE\022\030\n\024OVERLAY_MSGTYPE_NO"
+    "NE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING\020\001\022\031\n\025OVERLA"
+    "Y_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY_MSGTYPE_PEE"
+    "RS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRANSACTION\020\004\022\033\n"
+    "\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030\n\024OVERLAY_MS"
+    "GTYPE_PBFT\020\006\022)\n%OVERLAY_MSGTYPE_LEDGER_U"
+    "PGRADE_NOTIFY\020\007*\372\001\n\020ChainMessageType\022\023\n\017"
+    "CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CH"
+    "AIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEER_ONLINE\020\014\022\026"
+    "\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CHAIN_PEER_MES"
+    "SAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSACTION\020\017\022\027\n\023C"
+    "HAIN_LEDGER_HEADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_"
+    "TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022*\201\001\n\031MESSAGE"
+    "_CHANNEL_NODE_TYPE\022\"\n\036MESSAGE_CHANNEL_NO"
+    "DE_TYPE_NONE\020\000\022 \n\034MESSAGE_CHANNEL_NODE_P"
+    "ACKAGE\020\036\022\036\n\032MESSAGE_CHANNEL_NODE_HELLO\020\037"
+    "*\302\003\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MESSAGE_CHA"
+    "NNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHANNEL_CREA"
+    "TE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHANNEL_MAIN"
+    "_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_MIX\020\003\022\033\n"
+    "\027MESSAGE_CHANNEL_DEPOSIT\020\004\022\036\n\032MESSAGE_CH"
+    "ANNEL_WITHDRAWAL\020\005\022#\n\037MESSAGE_CHANNEL_FA"
+    "ST_WITHDRAWAL\020\006\022\037\n\033MESSAGE_CHANNEL_SUBMI"
+    "T_HEAD\020\007\022(\n$MESSAGE_CHANNEL_CHALLENGE_WI"
+    "THDRAWAL\020\010\022\"\n\036MESSAGE_CHANNEL_CHALLENGE_"
+    "HEAD\020\t\022)\n%MESSAGE_CHANNEL_CHILD_GENESES_"
+    "REQUEST\020\n\022*\n&MESSAGE_CHANNEL_CHILD_GENES"
+    "ES_RESPONSE\020\013B\"\n io.bumo.sdk.core.extend"
+    ".protobufb\006proto3", 3337);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -8854,7 +8853,6 @@ void MessageChannelResponse::clear_error_desc() {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int MessageChannelProposer::kHeaderFieldNumber;
 const int MessageChannelProposer::kProposerAddressFieldNumber;
-const int MessageChannelProposer::kProposerBidFieldNumber;
 const int MessageChannelProposer::kProposerSignatureFieldNumber;
 const int MessageChannelProposer::kHeaderHashFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
@@ -8884,7 +8882,6 @@ void MessageChannelProposer::SharedCtor() {
   _cached_size_ = 0;
   header_ = NULL;
   proposer_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  proposer_bid_ = GOOGLE_LONGLONG(0);
   proposer_signature_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   header_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -8933,7 +8930,6 @@ void MessageChannelProposer::Clear() {
   if (GetArenaNoVirtual() == NULL && header_ != NULL) delete header_;
   header_ = NULL;
   proposer_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  proposer_bid_ = GOOGLE_LONGLONG(0);
   proposer_signature_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   header_hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -8973,41 +8969,26 @@ bool MessageChannelProposer::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_proposer_bid;
+        if (input->ExpectTag(26)) goto parse_proposer_signature;
         break;
       }
 
-      // optional int64 proposer_bid = 3;
+      // optional bytes proposer_signature = 3;
       case 3: {
-        if (tag == 24) {
-         parse_proposer_bid:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &proposer_bid_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_proposer_signature;
-        break;
-      }
-
-      // optional bytes proposer_signature = 4;
-      case 4: {
-        if (tag == 34) {
+        if (tag == 26) {
          parse_proposer_signature:
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_proposer_signature()));
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_header_hash;
+        if (input->ExpectTag(34)) goto parse_header_hash;
         break;
       }
 
-      // optional bytes header_hash = 5;
-      case 5: {
-        if (tag == 42) {
+      // optional bytes header_hash = 4;
+      case 4: {
+        if (tag == 34) {
          parse_header_hash:
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_header_hash()));
@@ -9058,21 +9039,16 @@ void MessageChannelProposer::SerializeWithCachedSizes(
       2, this->proposer_address(), output);
   }
 
-  // optional int64 proposer_bid = 3;
-  if (this->proposer_bid() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->proposer_bid(), output);
-  }
-
-  // optional bytes proposer_signature = 4;
+  // optional bytes proposer_signature = 3;
   if (this->proposer_signature().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      4, this->proposer_signature(), output);
+      3, this->proposer_signature(), output);
   }
 
-  // optional bytes header_hash = 5;
+  // optional bytes header_hash = 4;
   if (this->header_hash().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      5, this->header_hash(), output);
+      4, this->header_hash(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.MessageChannelProposer)
@@ -9099,23 +9075,18 @@ void MessageChannelProposer::SerializeWithCachedSizes(
         2, this->proposer_address(), target);
   }
 
-  // optional int64 proposer_bid = 3;
-  if (this->proposer_bid() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->proposer_bid(), target);
-  }
-
-  // optional bytes proposer_signature = 4;
+  // optional bytes proposer_signature = 3;
   if (this->proposer_signature().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        4, this->proposer_signature(), target);
+        3, this->proposer_signature(), target);
   }
 
-  // optional bytes header_hash = 5;
+  // optional bytes header_hash = 4;
   if (this->header_hash().size() > 0) {
     target =
       ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        5, this->header_hash(), target);
+        4, this->header_hash(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.MessageChannelProposer)
@@ -9140,21 +9111,14 @@ int MessageChannelProposer::ByteSize() const {
         this->proposer_address());
   }
 
-  // optional int64 proposer_bid = 3;
-  if (this->proposer_bid() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->proposer_bid());
-  }
-
-  // optional bytes proposer_signature = 4;
+  // optional bytes proposer_signature = 3;
   if (this->proposer_signature().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->proposer_signature());
   }
 
-  // optional bytes header_hash = 5;
+  // optional bytes header_hash = 4;
   if (this->header_hash().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -9196,9 +9160,6 @@ void MessageChannelProposer::MergeFrom(const MessageChannelProposer& from) {
 
     proposer_address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.proposer_address_);
   }
-  if (from.proposer_bid() != 0) {
-    set_proposer_bid(from.proposer_bid());
-  }
   if (from.proposer_signature().size() > 0) {
 
     proposer_signature_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.proposer_signature_);
@@ -9235,7 +9196,6 @@ void MessageChannelProposer::Swap(MessageChannelProposer* other) {
 void MessageChannelProposer::InternalSwap(MessageChannelProposer* other) {
   std::swap(header_, other->header_);
   proposer_address_.Swap(&other->proposer_address_);
-  std::swap(proposer_bid_, other->proposer_bid_);
   proposer_signature_.Swap(&other->proposer_signature_);
   header_hash_.Swap(&other->header_hash_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -9335,21 +9295,7 @@ void MessageChannelProposer::clear_proposer_address() {
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelProposer.proposer_address)
 }
 
-// optional int64 proposer_bid = 3;
-void MessageChannelProposer::clear_proposer_bid() {
-  proposer_bid_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 MessageChannelProposer::proposer_bid() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelProposer.proposer_bid)
-  return proposer_bid_;
-}
- void MessageChannelProposer::set_proposer_bid(::google::protobuf::int64 value) {
-  
-  proposer_bid_ = value;
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelProposer.proposer_bid)
-}
-
-// optional bytes proposer_signature = 4;
+// optional bytes proposer_signature = 3;
 void MessageChannelProposer::clear_proposer_signature() {
   proposer_signature_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -9393,7 +9339,7 @@ void MessageChannelProposer::clear_proposer_signature() {
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelProposer.proposer_signature)
 }
 
-// optional bytes header_hash = 5;
+// optional bytes header_hash = 4;
 void MessageChannelProposer::clear_header_hash() {
   header_hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

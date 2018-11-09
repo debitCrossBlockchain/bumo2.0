@@ -2373,15 +2373,9 @@ class MessageChannelProposer : public ::google::protobuf::Message /* @@protoc_in
   ::std::string* release_proposer_address();
   void set_allocated_proposer_address(::std::string* proposer_address);
 
-  // optional int64 proposer_bid = 3;
-  void clear_proposer_bid();
-  static const int kProposerBidFieldNumber = 3;
-  ::google::protobuf::int64 proposer_bid() const;
-  void set_proposer_bid(::google::protobuf::int64 value);
-
-  // optional bytes proposer_signature = 4;
+  // optional bytes proposer_signature = 3;
   void clear_proposer_signature();
-  static const int kProposerSignatureFieldNumber = 4;
+  static const int kProposerSignatureFieldNumber = 3;
   const ::std::string& proposer_signature() const;
   void set_proposer_signature(const ::std::string& value);
   void set_proposer_signature(const char* value);
@@ -2390,9 +2384,9 @@ class MessageChannelProposer : public ::google::protobuf::Message /* @@protoc_in
   ::std::string* release_proposer_signature();
   void set_allocated_proposer_signature(::std::string* proposer_signature);
 
-  // optional bytes header_hash = 5;
+  // optional bytes header_hash = 4;
   void clear_header_hash();
-  static const int kHeaderHashFieldNumber = 5;
+  static const int kHeaderHashFieldNumber = 4;
   const ::std::string& header_hash() const;
   void set_header_hash(const ::std::string& value);
   void set_header_hash(const char* value);
@@ -2408,7 +2402,6 @@ class MessageChannelProposer : public ::google::protobuf::Message /* @@protoc_in
   bool _is_default_instance_;
   ::protocol::LedgerHeader* header_;
   ::google::protobuf::internal::ArenaStringPtr proposer_address_;
-  ::google::protobuf::int64 proposer_bid_;
   ::google::protobuf::internal::ArenaStringPtr proposer_signature_;
   ::google::protobuf::internal::ArenaStringPtr header_hash_;
   mutable int _cached_size_;
@@ -4242,21 +4235,7 @@ inline void MessageChannelProposer::set_allocated_proposer_address(::std::string
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelProposer.proposer_address)
 }
 
-// optional int64 proposer_bid = 3;
-inline void MessageChannelProposer::clear_proposer_bid() {
-  proposer_bid_ = GOOGLE_LONGLONG(0);
-}
-inline ::google::protobuf::int64 MessageChannelProposer::proposer_bid() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelProposer.proposer_bid)
-  return proposer_bid_;
-}
-inline void MessageChannelProposer::set_proposer_bid(::google::protobuf::int64 value) {
-  
-  proposer_bid_ = value;
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelProposer.proposer_bid)
-}
-
-// optional bytes proposer_signature = 4;
+// optional bytes proposer_signature = 3;
 inline void MessageChannelProposer::clear_proposer_signature() {
   proposer_signature_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -4300,7 +4279,7 @@ inline void MessageChannelProposer::set_allocated_proposer_signature(::std::stri
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelProposer.proposer_signature)
 }
 
-// optional bytes header_hash = 5;
+// optional bytes header_hash = 4;
 inline void MessageChannelProposer::clear_header_hash() {
   header_hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
