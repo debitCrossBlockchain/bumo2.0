@@ -55,6 +55,7 @@ class Ledgers;
 class MessageChannel;
 class MessageChannelHello;
 class MessageChannelHelloResponse;
+class MessageChannelProposer;
 class MessageChannelResponse;
 class Peer;
 class Peers;
@@ -2290,6 +2291,134 @@ class MessageChannelResponse : public ::google::protobuf::Message /* @@protoc_in
   void InitAsDefaultInstance();
   static MessageChannelResponse* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class MessageChannelProposer : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelProposer) */ {
+ public:
+  MessageChannelProposer();
+  virtual ~MessageChannelProposer();
+
+  MessageChannelProposer(const MessageChannelProposer& from);
+
+  inline MessageChannelProposer& operator=(const MessageChannelProposer& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelProposer& default_instance();
+
+  void Swap(MessageChannelProposer* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelProposer* New() const { return New(NULL); }
+
+  MessageChannelProposer* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelProposer& from);
+  void MergeFrom(const MessageChannelProposer& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelProposer* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .protocol.LedgerHeader header = 1;
+  bool has_header() const;
+  void clear_header();
+  static const int kHeaderFieldNumber = 1;
+  const ::protocol::LedgerHeader& header() const;
+  ::protocol::LedgerHeader* mutable_header();
+  ::protocol::LedgerHeader* release_header();
+  void set_allocated_header(::protocol::LedgerHeader* header);
+
+  // optional string proposer_address = 2;
+  void clear_proposer_address();
+  static const int kProposerAddressFieldNumber = 2;
+  const ::std::string& proposer_address() const;
+  void set_proposer_address(const ::std::string& value);
+  void set_proposer_address(const char* value);
+  void set_proposer_address(const char* value, size_t size);
+  ::std::string* mutable_proposer_address();
+  ::std::string* release_proposer_address();
+  void set_allocated_proposer_address(::std::string* proposer_address);
+
+  // optional int64 proposer_bid = 3;
+  void clear_proposer_bid();
+  static const int kProposerBidFieldNumber = 3;
+  ::google::protobuf::int64 proposer_bid() const;
+  void set_proposer_bid(::google::protobuf::int64 value);
+
+  // optional bytes proposer_signature = 4;
+  void clear_proposer_signature();
+  static const int kProposerSignatureFieldNumber = 4;
+  const ::std::string& proposer_signature() const;
+  void set_proposer_signature(const ::std::string& value);
+  void set_proposer_signature(const char* value);
+  void set_proposer_signature(const void* value, size_t size);
+  ::std::string* mutable_proposer_signature();
+  ::std::string* release_proposer_signature();
+  void set_allocated_proposer_signature(::std::string* proposer_signature);
+
+  // optional bytes header_hash = 5;
+  void clear_header_hash();
+  static const int kHeaderHashFieldNumber = 5;
+  const ::std::string& header_hash() const;
+  void set_header_hash(const ::std::string& value);
+  void set_header_hash(const char* value);
+  void set_header_hash(const void* value, size_t size);
+  ::std::string* mutable_header_hash();
+  ::std::string* release_header_hash();
+  void set_allocated_header_hash(::std::string* header_hash);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelProposer)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::protocol::LedgerHeader* header_;
+  ::google::protobuf::internal::ArenaStringPtr proposer_address_;
+  ::google::protobuf::int64 proposer_bid_;
+  ::google::protobuf::internal::ArenaStringPtr proposer_signature_;
+  ::google::protobuf::internal::ArenaStringPtr header_hash_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelProposer* default_instance_;
+};
 // ===================================================================
 
 
@@ -4027,7 +4156,197 @@ inline void MessageChannelResponse::set_allocated_error_desc(::std::string* erro
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelResponse.error_desc)
 }
 
+// -------------------------------------------------------------------
+
+// MessageChannelProposer
+
+// optional .protocol.LedgerHeader header = 1;
+inline bool MessageChannelProposer::has_header() const {
+  return !_is_default_instance_ && header_ != NULL;
+}
+inline void MessageChannelProposer::clear_header() {
+  if (GetArenaNoVirtual() == NULL && header_ != NULL) delete header_;
+  header_ = NULL;
+}
+inline const ::protocol::LedgerHeader& MessageChannelProposer::header() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelProposer.header)
+  return header_ != NULL ? *header_ : *default_instance_->header_;
+}
+inline ::protocol::LedgerHeader* MessageChannelProposer::mutable_header() {
+  
+  if (header_ == NULL) {
+    header_ = new ::protocol::LedgerHeader;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelProposer.header)
+  return header_;
+}
+inline ::protocol::LedgerHeader* MessageChannelProposer::release_header() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelProposer.header)
+  
+  ::protocol::LedgerHeader* temp = header_;
+  header_ = NULL;
+  return temp;
+}
+inline void MessageChannelProposer::set_allocated_header(::protocol::LedgerHeader* header) {
+  delete header_;
+  header_ = header;
+  if (header) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelProposer.header)
+}
+
+// optional string proposer_address = 2;
+inline void MessageChannelProposer::clear_proposer_address() {
+  proposer_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelProposer::proposer_address() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelProposer.proposer_address)
+  return proposer_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelProposer::set_proposer_address(const ::std::string& value) {
+  
+  proposer_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelProposer.proposer_address)
+}
+inline void MessageChannelProposer::set_proposer_address(const char* value) {
+  
+  proposer_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelProposer.proposer_address)
+}
+inline void MessageChannelProposer::set_proposer_address(const char* value, size_t size) {
+  
+  proposer_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelProposer.proposer_address)
+}
+inline ::std::string* MessageChannelProposer::mutable_proposer_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelProposer.proposer_address)
+  return proposer_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelProposer::release_proposer_address() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelProposer.proposer_address)
+  
+  return proposer_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelProposer::set_allocated_proposer_address(::std::string* proposer_address) {
+  if (proposer_address != NULL) {
+    
+  } else {
+    
+  }
+  proposer_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), proposer_address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelProposer.proposer_address)
+}
+
+// optional int64 proposer_bid = 3;
+inline void MessageChannelProposer::clear_proposer_bid() {
+  proposer_bid_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelProposer::proposer_bid() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelProposer.proposer_bid)
+  return proposer_bid_;
+}
+inline void MessageChannelProposer::set_proposer_bid(::google::protobuf::int64 value) {
+  
+  proposer_bid_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelProposer.proposer_bid)
+}
+
+// optional bytes proposer_signature = 4;
+inline void MessageChannelProposer::clear_proposer_signature() {
+  proposer_signature_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelProposer::proposer_signature() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelProposer.proposer_signature)
+  return proposer_signature_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelProposer::set_proposer_signature(const ::std::string& value) {
+  
+  proposer_signature_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelProposer.proposer_signature)
+}
+inline void MessageChannelProposer::set_proposer_signature(const char* value) {
+  
+  proposer_signature_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelProposer.proposer_signature)
+}
+inline void MessageChannelProposer::set_proposer_signature(const void* value, size_t size) {
+  
+  proposer_signature_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelProposer.proposer_signature)
+}
+inline ::std::string* MessageChannelProposer::mutable_proposer_signature() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelProposer.proposer_signature)
+  return proposer_signature_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelProposer::release_proposer_signature() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelProposer.proposer_signature)
+  
+  return proposer_signature_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelProposer::set_allocated_proposer_signature(::std::string* proposer_signature) {
+  if (proposer_signature != NULL) {
+    
+  } else {
+    
+  }
+  proposer_signature_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), proposer_signature);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelProposer.proposer_signature)
+}
+
+// optional bytes header_hash = 5;
+inline void MessageChannelProposer::clear_header_hash() {
+  header_hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelProposer::header_hash() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelProposer.header_hash)
+  return header_hash_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelProposer::set_header_hash(const ::std::string& value) {
+  
+  header_hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelProposer.header_hash)
+}
+inline void MessageChannelProposer::set_header_hash(const char* value) {
+  
+  header_hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelProposer.header_hash)
+}
+inline void MessageChannelProposer::set_header_hash(const void* value, size_t size) {
+  
+  header_hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelProposer.header_hash)
+}
+inline ::std::string* MessageChannelProposer::mutable_header_hash() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelProposer.header_hash)
+  return header_hash_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelProposer::release_header_hash() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelProposer.header_hash)
+  
+  return header_hash_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelProposer::set_allocated_header_hash(::std::string* header_hash) {
+  if (header_hash != NULL) {
+    
+  } else {
+    
+  }
+  header_hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), header_hash);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelProposer.header_hash)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

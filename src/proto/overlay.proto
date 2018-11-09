@@ -202,3 +202,11 @@ message MessageChannelResponse {
 	 ERRORCODE error_code = 1;
 	 string error_desc = 2;
 }
+
+message MessageChannelProposer{
+   LedgerHeader header = 1;
+   string proposer_address = 2;
+   int64  proposer_bid = 3;
+   bytes  proposer_signature = 4;
+   bytes  header_hash= 5;
+}
