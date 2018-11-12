@@ -298,7 +298,4 @@
       <Filter>proto</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Bumo.rc" />
-  </ItemGroup>
 </Project>

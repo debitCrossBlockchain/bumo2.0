@@ -123,9 +123,6 @@
     <None Include="..\..\src\proto\merkeltrie.proto" />
     <None Include="..\..\src\proto\overlay.proto" />
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Bumo.rc" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B69ACED4-ACCB-4230-8229-1A2EA1A5C4CC}</ProjectGuid>
     <RootNamespace>bumo</RootNamespace>

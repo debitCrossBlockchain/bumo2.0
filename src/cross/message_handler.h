@@ -21,7 +21,11 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include "message_channel_manager.h"
 
 namespace bumo {
-	class MessageHandler : public utils::Singleton<MessageHandler>{
+
+	typedef std::function<void(const protocol::MessageChannel &message_channel)> MessageChannelPoc;
+	typedef std::map<int64_t, MessageChannelPoc> MessageChannelPocMap;
+
+	class MessageHandler : public utils::Singleton<MessageHandler>, public IMessageChannelConsumer{
 		friend class utils::Singleton<bumo::MessageHandler>;
 	public:
 		MessageHandler();
@@ -30,14 +34,21 @@ namespace bumo {
 		bool Initialize();
 		bool Exit();
 
-		bool CommitMessage();
-
 	private:
 		bool CheckForChildBlock();
+		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
+
+		void OnHandleCreateChildChain(const protocol::MessageChannel &message_channel);
+		void OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel);
+		void OnHandleChildGenesesResponse(const protocol::MessageChannel &message_channel);
+
+		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
+		void SendChildGenesesRequest();
 
 	private:
 		bool init_;
-		bool received_create_child__;
+		bool received_create_child_;
+		MessageChannelPocMap proc_methods_;
 	};
 }
 
