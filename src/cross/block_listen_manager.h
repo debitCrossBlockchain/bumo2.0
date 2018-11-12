@@ -18,6 +18,8 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <utils/singleton.h>
 #include <utils/thread.h>
+#include "ledger/ledger_frm.h"
+
 
 namespace bumo {
 	class BlockListenManager :public utils::Singleton<BlockListenManager>{
@@ -28,11 +30,18 @@ namespace bumo {
 
 		bool Initialize();
 		bool Exit();
-		bool CommitBlock();
+		//bool CommitBlock();
+		bool HandleBlock(LedgerFrm::pointer closing_ledger);
 
 	private:
-		void HandleMainChainBlock();
-		void HandleChildChainBlock();
+		void HandleMainChainBlock(LedgerFrm::pointer closing_ledger);
+		void HandleChildChainBlock(LedgerFrm::pointer closing_ledger);
+
+		//MainChain have Tx'Msg which need to transfer to ChildChain
+		const protocol::OperationLog * HaveTransferTlog_Main(TransactionFrm::pointer txFrm);
+
+		protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::str2msgtype(std::string trans_str);
+		::google::protobuf::Message * GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type);
 	};
 }
 

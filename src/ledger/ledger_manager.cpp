@@ -20,6 +20,7 @@
 #include "ledger_manager.h"
 #include "contract_manager.h"
 #include "fee_calculate.h"
+#include "cross/block_listen_manager.h"
 
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
@@ -677,6 +678,9 @@ namespace bumo {
 
 		//Broadcast that the ledger is closed.
 		WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_LEDGER_HEADER, tmp_lcl_header.SerializeAsString());
+
+		//listener
+		BlockListenManager::GetInstance()->HandleBlock(closing_ledger);
 
 		// The broadcast message is applied.
 		for (size_t i = 0; i < closing_ledger->apply_tx_frms_.size(); i++) {
