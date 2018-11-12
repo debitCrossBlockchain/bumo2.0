@@ -1,11 +1,26 @@
-#include "proposer_manager.h"
+/*
+bumo is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
+bumo is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with bumo.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#include "proposer_manager.h"
+#include<cross/cross_utils.h>
 namespace bumo {
 	ProposerManager::ProposerManager() :
 		enabled_(false),
 		last_uptate_validate_address_time_(0),
 		thread_ptr_(NULL){
-		
+
 	}
 
 	ProposerManager::~ProposerManager(){
@@ -71,8 +86,33 @@ namespace bumo {
 
 	}
 
+
 	void ProposerManager::UpdateValidateAddressList(){
+
 		int64_t chain_id = General::GetSelfChainId();
+		std::string reply;
+		bumo::CrossUtilsManager::CallContract("", reply);
+		Json::Value object;
+		object.fromString(reply.c_str());
+
+		if (object["error_code"].asInt64() != protocol::ERRCODE_SUCCESS){
+			LOG_ERROR("Failed to query validators .%s", object["error_desc"].asString().c_str());
+			return;
+		}
+
+		utils::MutexGuard guard(validate_address_lock_);
+		validate_address_.clear();
+		if (!object["result"]["validators"].isArray()){
+			LOG_ERROR("Failed to validators list is not array");
+			return;
+		}
+
+		int size = object["result"]["validators"].size();
+		for (int i = 0; i < size; i++){
+			std::string address = object["result"]["validators"][i].asString().c_str();
+			validate_address_.push_back(address.c_str());
+		}
+
 	}
 
 	bool ProposerManager::AddressIsValidate(const std::string &address){
