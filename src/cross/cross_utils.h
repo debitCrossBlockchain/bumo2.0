@@ -16,18 +16,14 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CROSS_UTILS_H_
 #define CROSS_UTILS_H_
 #include<iostream>
+#include <utils/headers.h>
 using namespace std;
 namespace bumo {
-	class CrossUtilsManager {
+	class CrossUtilsManager :public utils::NonCopyable{
 	public:
 		CrossUtilsManager();
 		~CrossUtilsManager();
 		static void  CallContract(const std::string &request, std::string &reply);
-
-	private:
-		// Disallow copy and assignment.
-		CrossUtilsManager(const CrossUtilsManager&);
-		void operator=(const CrossUtilsManager&);
 	};
 
 }
