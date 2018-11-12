@@ -218,13 +218,25 @@ message BlockReward{
 }
 
 message MessageChannelCreateChildChain{
-	string genesis_account	= 1;
+	string genesis_account = 1;
 	string slogan = 2;
 	FeeConfig fee_config = 3;
 	repeated string reserve_validator = 4;
 	string chain_name = 5;
-	string genesis_token_amount = 6;
-	BlockReward block_reward = 7;
-	int64 cost = 8;
+	int64 chain_id = 6;
+	string genesis_token_amount = 7;
+	BlockReward block_reward = 8;
+	int64 cost = 9;
 }
+
+message MessageChannelChildGenesesRequest{
+	int64 chain_id = 1;
+}
+
+message MessageChannelChildGenesesResponse{
+	ERRORCODE error_code = 1;
+	string error_desc = 2;
+	MessageChannelCreateChildChain create_child_chain = 3;
+}
+
 
