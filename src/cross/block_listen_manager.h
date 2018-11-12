@@ -38,9 +38,9 @@ namespace bumo {
 		void HandleChildChainBlock(LedgerFrm::pointer closing_ledger);
 
 		//MainChain have Tx'Msg which need to transfer to ChildChain
-		const protocol::OperationLog * HaveTransferTlog_Main(TransactionFrm::pointer txFrm);
+		const protocol::OperationLog * PickTransferTlog(TransactionFrm::pointer txFrm);
 
-		protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::str2msgtype(std::string trans_str);
+		protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::FilterTlog(std::string tlog_topic);
 		::google::protobuf::Message * GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type);
 	};
 }

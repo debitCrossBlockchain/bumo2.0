@@ -109,6 +109,8 @@ namespace bumo {
 		const static int64_t REWARD_PERIOD = (5 * 365 * 24 * 60 * 60) / 10;
 		const static int64_t REWARD_INIT_VALUE = 8 * 100000000;
 
+		const static int64_t MAIN_CHAIN_ID = 0;
+
 		typedef enum WARNINGCODE_ {
 			WARNING,
 			NOWARNING
