@@ -150,6 +150,9 @@
     <ClCompile Include="..\..\src\cross\message_handler.cpp">
       <Filter>cross</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\cross\cross_utils.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -263,6 +266,10 @@
     <ClInclude Include="..\..\src\cross\message_handler.h">
       <Filter>cross</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\src\cross\cross_utils.h">
+      <Filter>cross</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\src\ledger\Makefile.am">
@@ -290,5 +297,8 @@
     <None Include="..\..\src\proto\chain.proto">
       <Filter>proto</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Bumo.rc" />
   </ItemGroup>
 </Project>

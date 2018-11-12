@@ -20,6 +20,7 @@
     <ClCompile Include="..\..\src\api\web_server_update.cpp" />
     <ClCompile Include="..\..\src\cross\block_listen_manager.cpp" />
     <ClCompile Include="..\..\src\cross\challenge_manager.cpp" />
+    <ClCompile Include="..\..\src\cross\cross_utils.cpp" />
     <ClCompile Include="..\..\src\cross\message_handler.cpp" />
     <ClCompile Include="..\..\src\cross\message_channel_manager.cpp" />
     <ClCompile Include="..\..\src\cross\proposer_manager.cpp" />
@@ -59,6 +60,7 @@
     <ClInclude Include="..\..\src\api\web_server.h" />
     <ClInclude Include="..\..\src\cross\block_listen_manager.h" />
     <ClInclude Include="..\..\src\cross\challenge_manager.h" />
+    <ClInclude Include="..\..\src\cross\cross_utils.h" />
     <ClInclude Include="..\..\src\cross\message_handler.h" />
     <ClInclude Include="..\..\src\cross\message_channel_manager.h" />
     <ClInclude Include="..\..\src\cross\proposer_manager.h" />
@@ -91,6 +93,7 @@
     <ClInclude Include="..\..\src\overlay\broadcast.h" />
     <ClInclude Include="..\..\src\overlay\peer_manager.h" />
     <ClInclude Include="..\..\src\proto\pb2json.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Common.vcxproj">
@@ -119,6 +122,9 @@
     <None Include="..\..\src\proto\chain.proto" />
     <None Include="..\..\src\proto\merkeltrie.proto" />
     <None Include="..\..\src\proto\overlay.proto" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Bumo.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B69ACED4-ACCB-4230-8229-1A2EA1A5C4CC}</ProjectGuid>
