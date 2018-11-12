@@ -17,13 +17,15 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #define CROSS_UTILS_H_
 #include<iostream>
 #include <utils/headers.h>
+#include<ledger/ledger_manager.h>
 using namespace std;
 namespace bumo {
+	class ContractTestParameter;
 	class CrossUtilsManager :public utils::NonCopyable{
 	public:
 		CrossUtilsManager();
 		~CrossUtilsManager();
-		static void  CallContract(const std::string &request, std::string &reply);
+		static void  CallContract(ContractTestParameter &test_parameter, std::string &reply);
 	};
 
 }

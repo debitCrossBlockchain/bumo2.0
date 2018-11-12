@@ -15,34 +15,12 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include<cross/cross_utils.h>
-#include<ledger/ledger_manager.h>
 namespace bumo {
 
 	CrossUtilsManager::CrossUtilsManager(){}
 	CrossUtilsManager::~CrossUtilsManager(){}
-	void  CrossUtilsManager::CallContract(const std::string &request, std::string &reply){
-		Json::Value body;
-		if (!body.fromString(request)) {
-			LOG_ERROR("Failed to parse the json content of the request");
-			Json::Value reply_json;
-			reply_json["results"][Json::UInt(0)]["error_code"] = protocol::ERRCODE_INVALID_PARAMETER;
-			reply_json["results"][Json::UInt(0)]["error_desc"] = "request must be in json format";
-			reply_json["success_count"] = Json::UInt(0);
-			reply = reply_json.toStyledString();
-			return;
-		}
 
-		ContractTestParameter test_parameter;
-		test_parameter.code_ = body["code"].asString();
-		test_parameter.input_ = body["input"].asString();
-		test_parameter.opt_type_ = ContractTestParameter::OptType(body["opt_type"].asInt());
-		test_parameter.contract_address_ = body["contract_address"].asString();
-		test_parameter.source_address_ = body["source_address"].asString();
-		test_parameter.fee_limit_ = body["fee_limit"].asInt64();
-		int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
-		int64_t gas_price = body["gas_price"].asInt64() > sys_gas_price ? body["gas_price"].asInt64() : sys_gas_price;
-		test_parameter.gas_price_ = gas_price;
-		test_parameter.contract_balance_ = body["contract_balance"].asInt64();
+	void  CrossUtilsManager::CallContract(ContractTestParameter &test_parameter, std::string &reply){
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc;
