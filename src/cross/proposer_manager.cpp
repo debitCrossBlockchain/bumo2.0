@@ -76,6 +76,14 @@ namespace bumo {
 
 	void ProposerManager::HandleChildChainBlock(){
 		//handel child chain block, and call MessageChannel to send main chain proc 
+		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
+		std::string node_address = private_key.GetEncAddress();
+
+		if (!CheckNodeIsValidate(node_address.c_str())){
+			LOG_INFO("this node is not validators,address is %s", node_address.c_str());
+			return;
+		}
+
 		utils::MutexGuard guard(handle_child_chain_list_lock_);
 		std::list<protocol::LedgerHeader>::const_iterator itor = handle_child_chain_block_list_.begin();
 		while (itor != handle_child_chain_block_list_.end()){
@@ -221,15 +229,6 @@ namespace bumo {
 	}
 
 	bool ProposerManager::HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header){
-
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
-		std::string node_address = private_key.GetEncAddress();
-
-
-		if (!CheckNodeIsValidate(node_address.c_str())){
-			LOG_INFO("this node is not validators,address is %s", node_address.c_str());
-			return true;
-		}
 
 		if (!CheckChildBlockExsit(ledger_header.previous_hash().c_str())){
 			LOG_INFO("child previous block is not exsit! hash is  %s", ledger_header.previous_hash().c_str());
