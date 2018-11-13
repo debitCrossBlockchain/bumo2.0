@@ -1,6 +1,7 @@
 #include <common/storage.h>
 #include <common/private_key.h>
 #include "message_handler.h"
+#include "cross_utils.h"
 
 namespace bumo {
 	extern bool g_enable_;
@@ -114,11 +115,27 @@ namespace bumo {
 			return;
 		}
 		//TODO:Call contract api
-		//......
-		//.....
-		//TODO:Call contract api End
+		std::string result;
+		if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS,
+			"{ \"method\":\"tokenInfo\", \"params\":{ \"address\":\"\", \"value\":\"buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF\" } }",
+			result)){
+			LOG_ERROR("Query contract error!%s", result.c_str());
+			return;
+		}
+
+		Json::Value json_result = Json::Value(Json::objectValue);
+		json_result.fromString(result);
+		if (!json_result.isArray()){
+			LOG_ERROR("Query contract error! Json result is not array.%s", json_result.toFastString().c_str());
+			return;
+		}
+		Json::Value custom_result;
+		custom_result.fromString(json_result[Json::UInt(0)]["result"]["value"].asString());
+
+		std::string genesis_account = custom_result["genesis_account"].asString();
 
 		protocol::MessageChannelCreateChildChain create_child_chain;
+		create_child_chain.set_genesis_account(genesis_account);
 
 		//Push message to child chain.
 		protocol::MessageChannel message;
