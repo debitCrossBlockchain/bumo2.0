@@ -38,7 +38,7 @@ namespace bumo {
 	}
 
 	bool MessageHandler::CheckForChildBlock(){
-		if (General::GetSelfChainId() <= 0) {
+		if (General::GetSelfChainId() <= General::MAIN_CHAIN_ID) {
 			return true;
 		}
 
@@ -114,7 +114,7 @@ namespace bumo {
 			LOG_ERROR("Parse MessageChannelChildGenesesRequest error,invalid chain id(" FMT_I64 ")", child_chain_request.chain_id());
 			return;
 		}
-		//TODO:Call contract api
+
 		std::string result;
 		if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS,
 			"{ \"method\":\"tokenInfo\", \"params\":{ \"address\":\"\", \"value\":\"buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF\" } }",
@@ -132,6 +132,7 @@ namespace bumo {
 		Json::Value custom_result;
 		custom_result.fromString(json_result[Json::UInt(0)]["result"]["value"].asString());
 
+		//TODO:Parse contract result
 		std::string genesis_account = custom_result["genesis_account"].asString();
 
 		protocol::MessageChannelCreateChildChain create_child_chain;
@@ -225,7 +226,7 @@ namespace bumo {
 	}
 
 	void MessageHandler::SendChildGenesesRequest(){
-		if (General::GetSelfChainId() <= 0){
+		if (General::GetSelfChainId() <= General::MAIN_CHAIN_ID){
 			LOG_ERROR("The main chain program cannot send this message.");
 			return;
 		}

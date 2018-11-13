@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License
 along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <glue/glue_manager.h>
+#include <overlay/peer_manager.h>
 #include "cross_utils.h"
 
 namespace bumo {
@@ -73,4 +75,56 @@ namespace bumo {
 		return error_code;
 	}
 
+	int32_t CrossUtils::PayCoin(const std::string &encode_private_key, const std::string &dest_address, const std::string &contract_input, int64_t coin_amount) {
+		PrivateKey private_key(encode_private_key);
+		if (!private_key.IsValid()){
+			LOG_ERROR("Private key is not valid");
+			return protocol::ERRCODE_INVALID_PRIKEY;
+		}
+
+		int64_t nonce = 0;
+		std::string source_address = private_key.GetEncAddress();
+		do {
+			AccountFrm::pointer account_ptr;
+			if (!Environment::AccountFromDB(source_address, account_ptr)) {
+				LOG_ERROR("Address:%s not exsit", source_address.c_str());
+				return protocol::ERRCODE_INVALID_PRIKEY;
+			}
+			else {
+				nonce = account_ptr->GetAccountNonce() + 1;
+			}
+		} while (false);
+
+		protocol::TransactionEnv tran_env;
+		protocol::Transaction *tran = tran_env.mutable_transaction();
+		tran->set_source_address(source_address);
+		tran->set_fee_limit(1000000);
+		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());
+		tran->set_nonce(nonce);
+		protocol::Operation *ope = tran->add_operations();
+		ope->set_type(protocol::Operation_Type_PAY_COIN);
+		protocol::OperationPayCoin *pay_coin = ope->mutable_pay_coin();
+		pay_coin->set_amount(coin_amount);
+		pay_coin->set_dest_address(dest_address);
+		pay_coin->set_input(contract_input);
+
+		std::string content = tran->SerializeAsString();
+		std::string sign = private_key.Sign(content);
+		protocol::Signature *signpro = tran_env.add_signatures();
+		signpro->set_sign_data(sign);
+		signpro->set_public_key(private_key.GetEncPublicKey());
+
+		Result result;
+		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
+		GlueManager::Instance().OnTransaction(ptr, result);
+		if (result.code() != 0) {
+			LOG_ERROR("Pay coin result code:%d, des:%s", result.code(), result.desc().c_str());
+			return result.code();
+		}
+
+		PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
+
+		LOG_INFO("Pay coin tx hash %s", utils::String::BinToHexString(HashWrapper::Crypto(content)).c_str());
+		return protocol::ERRCODE_SUCCESS;
+	}
 }
