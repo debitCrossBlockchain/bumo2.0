@@ -29,6 +29,7 @@
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
 #include <cross/message_channel_manager.h>
+#include<cross/proposer_manager.h>
 #include <cross/message_handler.h>
 #include "configure.h"
 
@@ -74,6 +75,7 @@ int main(int argc, char *argv[]){
 	bumo::SlowTimer::InitInstance();
 	utils::Logger::InitInstance();
 	bumo::MessageChannel::InitInstance();
+	bumo::ProposerManager::InitInstance();
 	bumo::MessageHandler::InitInstance();
 	bumo::Console::InitInstance();
 	bumo::PeerManager::InitInstance();
@@ -202,6 +204,14 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::MessageChannel::Exit, &message_channel));
 		LOG_INFO("Initialized message channel successfully");
 
+		bumo::ProposerManager &proposer = bumo::ProposerManager::Instance();
+		if (!proposer.Initialize()){
+			LOG_ERROR("Failed to proposer");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::ProposerManager::Exit, &proposer));
+		LOG_INFO("Initialized proposer successfully");
+
 		bumo::MessageHandler &message_handler = bumo::MessageHandler::Instance();
 		if (!bumo::g_enable_ || !message_handler.Initialize()){
 			LOG_ERROR_ERRNO("Failed to initialize message handler", STD_ERR_CODE, STD_ERR_DESC);
@@ -304,6 +314,7 @@ int main(int argc, char *argv[]){
 	bumo::MonitorManager::ExitInstance();
 	bumo::MessageHandler::ExitInstance();
 	bumo::MessageChannel::ExitInstance();
+	bumo::ProposerManager::ExitInstance();
 	bumo::Configure::ExitInstance();
 	bumo::Global::ExitInstance();
 	bumo::Storage::ExitInstance();

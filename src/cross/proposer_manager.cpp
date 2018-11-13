@@ -32,6 +32,10 @@ namespace bumo {
 	}
 
 	bool ProposerManager::Initialize(){
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return true;
+		}
+
 		enabled_ = true;
 		thread_ptr_ = new utils::Thread(this);
 		if (!thread_ptr_->Start("ProposerManager")) {
@@ -42,6 +46,10 @@ namespace bumo {
 	}
 
 	bool ProposerManager::Exit(){
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return true;
+		}
+
 		enabled_ = false;
 		if (thread_ptr_) {
 			thread_ptr_->JoinWithStop();
@@ -220,7 +228,7 @@ namespace bumo {
 
 		if (!CheckNodeIsValidate(node_address.c_str())){
 			LOG_INFO("this node is not validators,address is %s", node_address.c_str());
-			return false;
+			return true;
 		}
 
 		if (!CheckChildBlockExsit(ledger_header.previous_hash().c_str())){
