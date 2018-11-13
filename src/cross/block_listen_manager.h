@@ -20,6 +20,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <utils/thread.h>
 #include "ledger/ledger_frm.h"
 
+using namespace ::google::protobuf;
 
 namespace bumo {
 	class BlockListenManager :public utils::Singleton<BlockListenManager>{
@@ -41,7 +42,7 @@ namespace bumo {
 		const protocol::OperationLog * PickTransferTlog(TransactionFrm::pointer txFrm);
 
 		protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::FilterTlog(std::string tlog_topic);
-		::google::protobuf::Message * GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type);
+		std::shared_ptr<Message> GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type);
 	};
 }
 

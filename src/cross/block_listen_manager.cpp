@@ -40,12 +40,16 @@ namespace bumo {
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
 	}
 
-	::google::protobuf::Message * BlockListenManager::GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type)
+	std::shared_ptr<Message> BlockListenManager::GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type)
 	{
-		if (msg_type == protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN)
-			return new protocol::MessageChannelCreateChildChain();
-		
-		return nullptr;
+		switch (msg_type)
+		{
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
+			return std::make_shared<protocol::MessageChannelCreateChildChain>();
+		default:
+			return nullptr;
+		}
+
 	}
 
 	const protocol::OperationLog * BlockListenManager::PickTransferTlog(TransactionFrm::pointer txFrm)
@@ -120,7 +124,7 @@ namespace bumo {
 				protocol::MESSAGE_CHANNEL_TYPE msg_type = FilterTlog(tlog->topic());
 				msg_channel.set_msg_type(msg_type);
 
-				::google::protobuf::Message * msg = GetMsgObject(msg_type);
+				std::shared_ptr<Message> msg = GetMsgObject(msg_type);
 				if (!msg)
 					continue;
 				std::string error_msg;
@@ -132,7 +136,6 @@ namespace bumo {
 
 				MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 
-				delete msg;
 
 			}
 		}
