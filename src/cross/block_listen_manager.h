@@ -30,8 +30,8 @@ namespace bumo {
 
 		bool Initialize();
 		bool Exit();
-		//bool CommitBlock();
-		bool HandleBlock(LedgerFrm::pointer closing_ledger);
+
+		void HandleBlock(LedgerFrm::pointer closing_ledger);
 
 	private:
 		void HandleMainChainBlock(LedgerFrm::pointer closing_ledger);

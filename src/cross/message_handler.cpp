@@ -33,7 +33,7 @@ namespace bumo {
 	}
 
 	bool MessageHandler::Exit(){
-
+		init_ = false;
 		return true;
 	}
 
@@ -52,7 +52,7 @@ namespace bumo {
 		if (!config.validators_.empty() || !config.account_.empty() ||
 			!config.slogan_.empty() || config.fees_.gas_price_ != 0 ||
 			config.fees_.base_reserve_ != 0){
-			LOG_STD_ERR("Other parameters of the child chain must be configured to be empty");
+			LOG_ERROR("Other parameters of the child chain must be configured to be empty");
 			return false;
 		}
 
@@ -89,6 +89,14 @@ namespace bumo {
 			LOG_TRACE("Type(" FMT_I64 ") not found", message_channel.msg_type());
 			return; 
 		}
+
+		//When the child chain is not initialized, it is only allowed to receive create subchain messages
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID && !init_ 
+			&& message_channel.msg_type() != protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE){
+			LOG_ERROR("Wating for message channel child response, but now:(" FMT_I64 ")", message_channel.msg_type());
+			return;
+		}
+
 		iter->second(message_channel);
 	}
 
@@ -138,11 +146,15 @@ namespace bumo {
 		protocol::MessageChannelCreateChildChain create_child_chain;
 		create_child_chain.set_genesis_account(genesis_account);
 
+		protocol::MessageChannelChildGenesesResponse response;
+		response.set_error_code(protocol::ERRCODE_SUCCESS);
+		*response.mutable_create_child_chain() = create_child_chain;
+
 		//Push message to child chain.
 		protocol::MessageChannel message;
 		message.set_target_chain_id(child_chain_request.chain_id());
-		message.set_msg_type(protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN);
-		message.set_msg_data(create_child_chain.SerializeAsString());
+		message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
+		message.set_msg_data(response.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(message);
 	}
 
@@ -230,6 +242,19 @@ namespace bumo {
 			LOG_ERROR("The main chain program cannot send this message.");
 			return;
 		}
+		//protocol::MessageChannelCreateChildChain create_child_chain;
+		//create_child_chain.set_genesis_account("abc");
+
+		//protocol::MessageChannelChildGenesesResponse response;
+		//response.set_error_code(protocol::ERRCODE_SUCCESS);
+		//*response.mutable_create_child_chain() = create_child_chain;
+
+		////Push message to child chain.
+		//protocol::MessageChannel message;
+		//message.set_target_chain_id(1);
+		//message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
+		//message.set_msg_data(response.SerializeAsString());
+		//MessageChannel::Instance().MessageChannelProducer(message);
 
 		protocol::MessageChannelChildGenesesRequest child_chain_request;
 		child_chain_request.set_chain_id(General::GetSelfChainId());
