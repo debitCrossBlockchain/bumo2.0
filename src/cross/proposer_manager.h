@@ -31,7 +31,6 @@ namespace bumo {
 
 		bool Initialize();
 		bool Exit();
-		bool CommitChildChainBlock();
 		void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel);
 
 	private:
