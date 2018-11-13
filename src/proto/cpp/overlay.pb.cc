@@ -479,7 +479,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
   static const int MessageChannelCreateChildChain_offsets_[9] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelCreateChildChain, genesis_account_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelCreateChildChain, slogan_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelCreateChildChain, fee_config_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelCreateChildChain, fee_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelCreateChildChain, reserve_validator_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelCreateChildChain, chain_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelCreateChildChain, chain_id_),
@@ -717,48 +717,48 @@ void protobuf_AddDesc_overlay_2eproto() {
     "ol.LedgerHeader\022\030\n\020proposer_address\030\002 \001("
     "\t\022\032\n\022proposer_signature\030\003 \001(\014\022\023\n\013header_"
     "hash\030\004 \001(\014\"<\n\013BlockReward\022\016\n\006amount\030\001 \001("
-    "\003\022\016\n\006period\030\002 \001(\003\022\r\n\005ratio\030\003 \001(\001\"\214\002\n\036Mes"
+    "\003\022\016\n\006period\030\002 \001(\003\022\r\n\005ratio\030\003 \001(\001\"\205\002\n\036Mes"
     "sageChannelCreateChildChain\022\027\n\017genesis_a"
-    "ccount\030\001 \001(\t\022\016\n\006slogan\030\002 \001(\t\022\'\n\nfee_conf"
-    "ig\030\003 \001(\0132\023.protocol.FeeConfig\022\031\n\021reserve"
-    "_validator\030\004 \003(\t\022\022\n\nchain_name\030\005 \001(\t\022\020\n\010"
-    "chain_id\030\006 \001(\003\022\034\n\024genesis_token_amount\030\007"
-    " \001(\t\022+\n\014block_reward\030\010 \001(\0132\025.protocol.Bl"
-    "ockReward\022\014\n\004cost\030\t \001(\003\"5\n!MessageChanne"
-    "lChildGenesesRequest\022\020\n\010chain_id\030\001 \001(\003\"\247"
-    "\001\n\"MessageChannelChildGenesesResponse\022\'\n"
-    "\nerror_code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022"
-    "\n\nerror_desc\030\002 \001(\t\022D\n\022create_child_chain"
-    "\030\003 \001(\0132(.protocol.MessageChannelCreateCh"
-    "ildChain*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVE"
-    "RLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_P"
-    "ING\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVER"
-    "LAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_T"
-    "RANSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020"
-    "\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_M"
-    "SGTYPE_LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020Chain"
-    "MessageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAI"
-    "N_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_"
-    "PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n"
-    "\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRA"
-    "NSACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022C"
-    "HAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STOR"
-    "E\020\022*\201\001\n\031MESSAGE_CHANNEL_NODE_TYPE\022\"\n\036MES"
-    "SAGE_CHANNEL_NODE_TYPE_NONE\020\000\022 \n\034MESSAGE"
-    "_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032MESSAGE_CHANN"
-    "EL_NODE_HELLO\020\037*\302\003\n\024MESSAGE_CHANNEL_TYPE"
-    "\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSA"
-    "GE_CHANNEL_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSA"
-    "GE_CHANNEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL"
-    "_CHILD_MIX\020\003\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020"
-    "\004\022\036\n\032MESSAGE_CHANNEL_WITHDRAWAL\020\005\022#\n\037MES"
-    "SAGE_CHANNEL_FAST_WITHDRAWAL\020\006\022\037\n\033MESSAG"
-    "E_CHANNEL_SUBMIT_HEAD\020\007\022(\n$MESSAGE_CHANN"
-    "EL_CHALLENGE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_CHA"
-    "NNEL_CHALLENGE_HEAD\020\t\022)\n%MESSAGE_CHANNEL"
-    "_CHILD_GENESES_REQUEST\020\n\022*\n&MESSAGE_CHAN"
-    "NEL_CHILD_GENESES_RESPONSE\020\013B\"\n io.bumo."
-    "sdk.core.extend.protobufb\006proto3", 3912);
+    "ccount\030\001 \001(\t\022\016\n\006slogan\030\002 \001(\t\022 \n\003fee\030\003 \001("
+    "\0132\023.protocol.FeeConfig\022\031\n\021reserve_valida"
+    "tor\030\004 \003(\t\022\022\n\nchain_name\030\005 \001(\t\022\020\n\010chain_i"
+    "d\030\006 \001(\003\022\034\n\024genesis_token_amount\030\007 \001(\t\022+\n"
+    "\014block_reward\030\010 \001(\0132\025.protocol.BlockRewa"
+    "rd\022\014\n\004cost\030\t \001(\003\"5\n!MessageChannelChildG"
+    "enesesRequest\022\020\n\010chain_id\030\001 \001(\003\"\247\001\n\"Mess"
+    "ageChannelChildGenesesResponse\022\'\n\nerror_"
+    "code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\nerror"
+    "_desc\030\002 \001(\t\022D\n\022create_child_chain\030\003 \001(\0132"
+    "(.protocol.MessageChannelCreateChildChai"
+    "n*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERLAY_MS"
+    "GTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING\020\001\022\031"
+    "\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY_MSG"
+    "TYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRANSACT"
+    "ION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030\n\024OV"
+    "ERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSGTYPE_"
+    "LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMessage"
+    "Type\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_HELLO"
+    "\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEER_ON"
+    "LINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CHAIN_"
+    "PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSACTIO"
+    "N\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHAIN_SU"
+    "BSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022*\201\001\n"
+    "\031MESSAGE_CHANNEL_NODE_TYPE\022\"\n\036MESSAGE_CH"
+    "ANNEL_NODE_TYPE_NONE\020\000\022 \n\034MESSAGE_CHANNE"
+    "L_NODE_PACKAGE\020\036\022\036\n\032MESSAGE_CHANNEL_NODE"
+    "_HELLO\020\037*\302\003\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MES"
+    "SAGE_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHAN"
+    "NEL_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHAN"
+    "NEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_"
+    "MIX\020\003\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020\004\022\036\n\032ME"
+    "SSAGE_CHANNEL_WITHDRAWAL\020\005\022#\n\037MESSAGE_CH"
+    "ANNEL_FAST_WITHDRAWAL\020\006\022\037\n\033MESSAGE_CHANN"
+    "EL_SUBMIT_HEAD\020\007\022(\n$MESSAGE_CHANNEL_CHAL"
+    "LENGE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_CHANNEL_CH"
+    "ALLENGE_HEAD\020\t\022)\n%MESSAGE_CHANNEL_CHILD_"
+    "GENESES_REQUEST\020\n\022*\n&MESSAGE_CHANNEL_CHI"
+    "LD_GENESES_RESPONSE\020\013B\"\n io.bumo.sdk.cor"
+    "e.extend.protobufb\006proto3", 3905);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -9873,7 +9873,7 @@ void BlockReward::clear_ratio() {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int MessageChannelCreateChildChain::kGenesisAccountFieldNumber;
 const int MessageChannelCreateChildChain::kSloganFieldNumber;
-const int MessageChannelCreateChildChain::kFeeConfigFieldNumber;
+const int MessageChannelCreateChildChain::kFeeFieldNumber;
 const int MessageChannelCreateChildChain::kReserveValidatorFieldNumber;
 const int MessageChannelCreateChildChain::kChainNameFieldNumber;
 const int MessageChannelCreateChildChain::kChainIdFieldNumber;
@@ -9890,7 +9890,7 @@ MessageChannelCreateChildChain::MessageChannelCreateChildChain()
 
 void MessageChannelCreateChildChain::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  fee_config_ = const_cast< ::protocol::FeeConfig*>(&::protocol::FeeConfig::default_instance());
+  fee_ = const_cast< ::protocol::FeeConfig*>(&::protocol::FeeConfig::default_instance());
   block_reward_ = const_cast< ::protocol::BlockReward*>(&::protocol::BlockReward::default_instance());
 }
 
@@ -9908,7 +9908,7 @@ void MessageChannelCreateChildChain::SharedCtor() {
   _cached_size_ = 0;
   genesis_account_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   slogan_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  fee_config_ = NULL;
+  fee_ = NULL;
   chain_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   chain_id_ = GOOGLE_LONGLONG(0);
   genesis_token_amount_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -9927,7 +9927,7 @@ void MessageChannelCreateChildChain::SharedDtor() {
   chain_name_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   genesis_token_amount_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
-    delete fee_config_;
+    delete fee_;
     delete block_reward_;
   }
 }
@@ -9961,8 +9961,8 @@ void MessageChannelCreateChildChain::Clear() {
 // @@protoc_insertion_point(message_clear_start:protocol.MessageChannelCreateChildChain)
   genesis_account_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   slogan_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (GetArenaNoVirtual() == NULL && fee_config_ != NULL) delete fee_config_;
-  fee_config_ = NULL;
+  if (GetArenaNoVirtual() == NULL && fee_ != NULL) delete fee_;
+  fee_ = NULL;
   chain_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   chain_id_ = GOOGLE_LONGLONG(0);
   genesis_token_amount_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
@@ -10011,16 +10011,16 @@ bool MessageChannelCreateChildChain::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_fee_config;
+        if (input->ExpectTag(26)) goto parse_fee;
         break;
       }
 
-      // optional .protocol.FeeConfig fee_config = 3;
+      // optional .protocol.FeeConfig fee = 3;
       case 3: {
         if (tag == 26) {
-         parse_fee_config:
+         parse_fee:
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_fee_config()));
+               input, mutable_fee()));
         } else {
           goto handle_unusual;
         }
@@ -10168,10 +10168,10 @@ void MessageChannelCreateChildChain::SerializeWithCachedSizes(
       2, this->slogan(), output);
   }
 
-  // optional .protocol.FeeConfig fee_config = 3;
-  if (this->has_fee_config()) {
+  // optional .protocol.FeeConfig fee = 3;
+  if (this->has_fee()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, *this->fee_config_, output);
+      3, *this->fee_, output);
   }
 
   // repeated string reserve_validator = 4;
@@ -10248,11 +10248,11 @@ void MessageChannelCreateChildChain::SerializeWithCachedSizes(
         2, this->slogan(), target);
   }
 
-  // optional .protocol.FeeConfig fee_config = 3;
-  if (this->has_fee_config()) {
+  // optional .protocol.FeeConfig fee = 3;
+  if (this->has_fee()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        3, *this->fee_config_, false, target);
+        3, *this->fee_, false, target);
   }
 
   // repeated string reserve_validator = 4;
@@ -10326,11 +10326,11 @@ int MessageChannelCreateChildChain::ByteSize() const {
         this->slogan());
   }
 
-  // optional .protocol.FeeConfig fee_config = 3;
-  if (this->has_fee_config()) {
+  // optional .protocol.FeeConfig fee = 3;
+  if (this->has_fee()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->fee_config_);
+        *this->fee_);
   }
 
   // optional string chain_name = 5;
@@ -10412,8 +10412,8 @@ void MessageChannelCreateChildChain::MergeFrom(const MessageChannelCreateChildCh
 
     slogan_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.slogan_);
   }
-  if (from.has_fee_config()) {
-    mutable_fee_config()->::protocol::FeeConfig::MergeFrom(from.fee_config());
+  if (from.has_fee()) {
+    mutable_fee()->::protocol::FeeConfig::MergeFrom(from.fee());
   }
   if (from.chain_name().size() > 0) {
 
@@ -10460,7 +10460,7 @@ void MessageChannelCreateChildChain::Swap(MessageChannelCreateChildChain* other)
 void MessageChannelCreateChildChain::InternalSwap(MessageChannelCreateChildChain* other) {
   genesis_account_.Swap(&other->genesis_account_);
   slogan_.Swap(&other->slogan_);
-  std::swap(fee_config_, other->fee_config_);
+  std::swap(fee_, other->fee_);
   reserve_validator_.UnsafeArenaSwap(&other->reserve_validator_);
   chain_name_.Swap(&other->chain_name_);
   std::swap(chain_id_, other->chain_id_);
@@ -10570,42 +10570,42 @@ void MessageChannelCreateChildChain::clear_slogan() {
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelCreateChildChain.slogan)
 }
 
-// optional .protocol.FeeConfig fee_config = 3;
-bool MessageChannelCreateChildChain::has_fee_config() const {
-  return !_is_default_instance_ && fee_config_ != NULL;
+// optional .protocol.FeeConfig fee = 3;
+bool MessageChannelCreateChildChain::has_fee() const {
+  return !_is_default_instance_ && fee_ != NULL;
 }
-void MessageChannelCreateChildChain::clear_fee_config() {
-  if (GetArenaNoVirtual() == NULL && fee_config_ != NULL) delete fee_config_;
-  fee_config_ = NULL;
+void MessageChannelCreateChildChain::clear_fee() {
+  if (GetArenaNoVirtual() == NULL && fee_ != NULL) delete fee_;
+  fee_ = NULL;
 }
-const ::protocol::FeeConfig& MessageChannelCreateChildChain::fee_config() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelCreateChildChain.fee_config)
-  return fee_config_ != NULL ? *fee_config_ : *default_instance_->fee_config_;
+const ::protocol::FeeConfig& MessageChannelCreateChildChain::fee() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelCreateChildChain.fee)
+  return fee_ != NULL ? *fee_ : *default_instance_->fee_;
 }
-::protocol::FeeConfig* MessageChannelCreateChildChain::mutable_fee_config() {
+::protocol::FeeConfig* MessageChannelCreateChildChain::mutable_fee() {
   
-  if (fee_config_ == NULL) {
-    fee_config_ = new ::protocol::FeeConfig;
+  if (fee_ == NULL) {
+    fee_ = new ::protocol::FeeConfig;
   }
-  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelCreateChildChain.fee_config)
-  return fee_config_;
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelCreateChildChain.fee)
+  return fee_;
 }
-::protocol::FeeConfig* MessageChannelCreateChildChain::release_fee_config() {
-  // @@protoc_insertion_point(field_release:protocol.MessageChannelCreateChildChain.fee_config)
+::protocol::FeeConfig* MessageChannelCreateChildChain::release_fee() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelCreateChildChain.fee)
   
-  ::protocol::FeeConfig* temp = fee_config_;
-  fee_config_ = NULL;
+  ::protocol::FeeConfig* temp = fee_;
+  fee_ = NULL;
   return temp;
 }
-void MessageChannelCreateChildChain::set_allocated_fee_config(::protocol::FeeConfig* fee_config) {
-  delete fee_config_;
-  fee_config_ = fee_config;
-  if (fee_config) {
+void MessageChannelCreateChildChain::set_allocated_fee(::protocol::FeeConfig* fee) {
+  delete fee_;
+  fee_ = fee;
+  if (fee) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelCreateChildChain.fee_config)
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelCreateChildChain.fee)
 }
 
 // repeated string reserve_validator = 4;

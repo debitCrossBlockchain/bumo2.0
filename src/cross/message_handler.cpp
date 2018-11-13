@@ -1,5 +1,6 @@
 #include <common/storage.h>
 #include <common/private_key.h>
+#include <common/pb2json.h>
 #include "message_handler.h"
 #include "cross_utils.h"
 
@@ -124,9 +125,11 @@ namespace bumo {
 		}
 
 		std::string result;
-		if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS,
-			"{ \"method\":\"tokenInfo\", \"params\":{ \"address\":\"\", \"value\":\"buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF\" } }",
-			result)){
+		Json::Value input_value;
+		Json::Value params;
+		input_value["method"] = "queryChildChainInfo";
+		input_value["params"]["chain_id"] = child_chain_request.chain_id();
+		if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result)){
 			LOG_ERROR("Query contract error!%s", result.c_str());
 			return;
 		}
@@ -140,11 +143,12 @@ namespace bumo {
 		Json::Value custom_result;
 		custom_result.fromString(json_result[Json::UInt(0)]["result"]["value"].asString());
 
-		//TODO:Parse contract result
-		std::string genesis_account = custom_result["genesis_account"].asString();
-
 		protocol::MessageChannelCreateChildChain create_child_chain;
-		create_child_chain.set_genesis_account(genesis_account);
+		std::string error_msg;
+		if (!Json2Proto(custom_result, create_child_chain, error_msg)){
+			LOG_ERROR("Invalid message:%s", custom_result.toFastString());
+			return;
+		}
 
 		protocol::MessageChannelChildGenesesResponse response;
 		response.set_error_code(protocol::ERRCODE_SUCCESS);
@@ -200,7 +204,7 @@ namespace bumo {
 				return;
 			}
 
-			const protocol::FeeConfig &fee_config = create_child_chain.fee_config();
+			const protocol::FeeConfig &fee_config = create_child_chain.fee();
 			if (fee_config.base_reserve() < 0 || fee_config.gas_price() < 0){
 				LOG_ERROR("Invalid fee base reserve:(" FMT_I64 "), fee config:(" FMT_I64 ") ",
 					fee_config.base_reserve(), fee_config.gas_price());

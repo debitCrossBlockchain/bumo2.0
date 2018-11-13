@@ -2597,14 +2597,14 @@ class MessageChannelCreateChildChain : public ::google::protobuf::Message /* @@p
   ::std::string* release_slogan();
   void set_allocated_slogan(::std::string* slogan);
 
-  // optional .protocol.FeeConfig fee_config = 3;
-  bool has_fee_config() const;
-  void clear_fee_config();
-  static const int kFeeConfigFieldNumber = 3;
-  const ::protocol::FeeConfig& fee_config() const;
-  ::protocol::FeeConfig* mutable_fee_config();
-  ::protocol::FeeConfig* release_fee_config();
-  void set_allocated_fee_config(::protocol::FeeConfig* fee_config);
+  // optional .protocol.FeeConfig fee = 3;
+  bool has_fee() const;
+  void clear_fee();
+  static const int kFeeFieldNumber = 3;
+  const ::protocol::FeeConfig& fee() const;
+  ::protocol::FeeConfig* mutable_fee();
+  ::protocol::FeeConfig* release_fee();
+  void set_allocated_fee(::protocol::FeeConfig* fee);
 
   // repeated string reserve_validator = 4;
   int reserve_validator_size() const;
@@ -2672,7 +2672,7 @@ class MessageChannelCreateChildChain : public ::google::protobuf::Message /* @@p
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr genesis_account_;
   ::google::protobuf::internal::ArenaStringPtr slogan_;
-  ::protocol::FeeConfig* fee_config_;
+  ::protocol::FeeConfig* fee_;
   ::google::protobuf::RepeatedPtrField< ::std::string> reserve_validator_;
   ::google::protobuf::internal::ArenaStringPtr chain_name_;
   ::google::protobuf::int64 chain_id_;
@@ -4922,42 +4922,42 @@ inline void MessageChannelCreateChildChain::set_allocated_slogan(::std::string* 
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelCreateChildChain.slogan)
 }
 
-// optional .protocol.FeeConfig fee_config = 3;
-inline bool MessageChannelCreateChildChain::has_fee_config() const {
-  return !_is_default_instance_ && fee_config_ != NULL;
+// optional .protocol.FeeConfig fee = 3;
+inline bool MessageChannelCreateChildChain::has_fee() const {
+  return !_is_default_instance_ && fee_ != NULL;
 }
-inline void MessageChannelCreateChildChain::clear_fee_config() {
-  if (GetArenaNoVirtual() == NULL && fee_config_ != NULL) delete fee_config_;
-  fee_config_ = NULL;
+inline void MessageChannelCreateChildChain::clear_fee() {
+  if (GetArenaNoVirtual() == NULL && fee_ != NULL) delete fee_;
+  fee_ = NULL;
 }
-inline const ::protocol::FeeConfig& MessageChannelCreateChildChain::fee_config() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelCreateChildChain.fee_config)
-  return fee_config_ != NULL ? *fee_config_ : *default_instance_->fee_config_;
+inline const ::protocol::FeeConfig& MessageChannelCreateChildChain::fee() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelCreateChildChain.fee)
+  return fee_ != NULL ? *fee_ : *default_instance_->fee_;
 }
-inline ::protocol::FeeConfig* MessageChannelCreateChildChain::mutable_fee_config() {
+inline ::protocol::FeeConfig* MessageChannelCreateChildChain::mutable_fee() {
   
-  if (fee_config_ == NULL) {
-    fee_config_ = new ::protocol::FeeConfig;
+  if (fee_ == NULL) {
+    fee_ = new ::protocol::FeeConfig;
   }
-  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelCreateChildChain.fee_config)
-  return fee_config_;
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelCreateChildChain.fee)
+  return fee_;
 }
-inline ::protocol::FeeConfig* MessageChannelCreateChildChain::release_fee_config() {
-  // @@protoc_insertion_point(field_release:protocol.MessageChannelCreateChildChain.fee_config)
+inline ::protocol::FeeConfig* MessageChannelCreateChildChain::release_fee() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelCreateChildChain.fee)
   
-  ::protocol::FeeConfig* temp = fee_config_;
-  fee_config_ = NULL;
+  ::protocol::FeeConfig* temp = fee_;
+  fee_ = NULL;
   return temp;
 }
-inline void MessageChannelCreateChildChain::set_allocated_fee_config(::protocol::FeeConfig* fee_config) {
-  delete fee_config_;
-  fee_config_ = fee_config;
-  if (fee_config) {
+inline void MessageChannelCreateChildChain::set_allocated_fee(::protocol::FeeConfig* fee) {
+  delete fee_;
+  fee_ = fee;
+  if (fee) {
     
   } else {
     
   }
-  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelCreateChildChain.fee_config)
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelCreateChildChain.fee)
 }
 
 // repeated string reserve_validator = 4;

@@ -220,7 +220,7 @@ message BlockReward{
 message MessageChannelCreateChildChain{
 	string genesis_account = 1;
 	string slogan = 2;
-	FeeConfig fee_config = 3;
+	FeeConfig fee = 3;
 	repeated string reserve_validator = 4;
 	string chain_name = 5;
 	int64 chain_id = 6;
