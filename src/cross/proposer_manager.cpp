@@ -147,13 +147,13 @@ namespace bumo {
 		return flag;
 	}
 
-	bool ProposerManager::CheckChildBlockExsit(const std::string& hash){
+	bool ProposerManager::CheckChildBlockExsit(const std::string& hash, int64_t chain_id){
 		// Check for child chain block in CMC
 		bool flag = false;
 		Json::FastWriter json_input;
 		Json::Value input_value;
 		Json::Value params;
-		params["chain_id"] = General::GetSelfChainId();
+		params["chain_id"] = chain_id;
 		params["header_hash"] = hash.c_str();
 		input_value["method"] = "queryChildBlockHeader";
 		input_value["params"] = params;
@@ -199,7 +199,7 @@ namespace bumo {
 		block_header["reserve"] = ledger_header.reserve();
 		block_header["chain_id"] = ledger_header.chain_id();
 
-		params["chain_id"] = General::GetSelfChainId();
+		params["chain_id"] = ledger_header.chain_id();
 		params["block_header"] = block_header;
 		input_value["method"] = "submitChildBlockHeader";
 		input_value["params"] = params;
@@ -224,12 +224,12 @@ namespace bumo {
 			return true;
 		}
 
-		if (!CheckChildBlockExsit(ledger_header.previous_hash().c_str())){
+		if (!CheckChildBlockExsit(ledger_header.previous_hash().c_str(), ledger_header.chain_id())){
 			LOG_INFO("child previous block is not exsit! hash is  %s", ledger_header.previous_hash().c_str());
 			return false;
 		}
 
-		if (CheckChildBlockExsit(ledger_header.hash().c_str())){
+		if (CheckChildBlockExsit(ledger_header.hash().c_str(), ledger_header.chain_id())){
 			LOG_INFO("child block is not exsit! hash is  %s", ledger_header.previous_hash().c_str());
 			return true;
 		}

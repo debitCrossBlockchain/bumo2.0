@@ -37,7 +37,7 @@ namespace bumo {
 		virtual void Run(utils::Thread *thread) override;
 		void HandleChildChainBlock();
 		bool HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header);
-		bool CheckChildBlockExsit(const std::string& hash);
+		bool CheckChildBlockExsit(const std::string& hash, int64_t chain_id);
 
 		bool CommitTransaction(const protocol::LedgerHeader& ledger_header);
 		bool CheckNodeIsValidate(const std::string &address, int64_t chain_id);
