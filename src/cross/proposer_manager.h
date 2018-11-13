@@ -37,16 +37,20 @@ namespace bumo {
 	private:
 		virtual void Run(utils::Thread *thread) override;
 		void HandleChildChainBlock();
-		bool CheckChildBlockExsit();
-		bool CommitTransaction();
-		bool AddressIsValidate(const std::string &address);
-		void UpdateValidateAddressList();
+		bool HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header);
+		bool CheckChildBlockExsit(const std::string& hash);
 
+		bool CommitTransaction(const protocol::LedgerHeader& ledger_header);
+		bool CheckNodeIsValidate(const std::string &address);
+		void UpdateValidateAddressList();
 		bool enabled_;
 		utils::Thread *thread_ptr_;
 		utils::Mutex validate_address_lock_;
 		utils::StringList validate_address_;
 		int64_t last_uptate_validate_address_time_;
+		utils::Mutex handle_child_chain_list_lock_;
+		int64_t last_uptate_handle_child_chain_time_;
+		std::list<protocol::LedgerHeader> handle_child_chain_block_list_;
 	};
 
 }
