@@ -20,6 +20,7 @@
 #include "ledger_manager.h"
 #include "contract_manager.h"
 #include "fee_calculate.h"
+#include "cross/block_listen_manager.h"
 
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
@@ -74,6 +75,12 @@ namespace bumo {
 			LOG_INFO("The maximum ledger sequence that is closed=" FMT_I64, seq_rational);
 			last_closed_ledger_ = std::make_shared<LedgerFrm>();
 			if (!last_closed_ledger_->LoadFromDb(seq_rational)) {
+				return false;
+			}
+
+			if (last_closed_ledger_->GetProtoHeader().chain_id() != General::GetSelfChainId()){
+				LOG_ERROR("The config chain id (" FMT_I64 ") != ledger chain id (" FMT_I64 ")", 
+					General::GetSelfChainId(), last_closed_ledger_->GetProtoHeader().chain_id());
 				return false;
 			}
 		}
@@ -290,6 +297,7 @@ namespace bumo {
 		header->set_seq(1);
 		header->set_close_time(0);
 		header->set_consensus_value_hash(HashWrapper::Crypto(request.SerializeAsString()));
+		header->set_chain_id(General::GetSelfChainId());
 
 		header->set_version(1000);
 		header->set_tx_count(0);
@@ -398,6 +406,7 @@ namespace bumo {
 			header->set_seq(request.ledger_seq());
 			header->set_close_time(request.close_time());
 			header->set_consensus_value_hash(consensus_value_hash);
+			header->set_chain_id(General::GetSelfChainId());
 			header->set_version(last_closed_ledger_hdr.version());
 			header->set_tx_count(last_closed_ledger_hdr.tx_count());
 			header->set_fees_hash(last_closed_ledger_hdr.fees_hash());
@@ -541,6 +550,7 @@ namespace bumo {
 		header->set_close_time(consensus_value.close_time());
 		header->set_previous_hash(consensus_value.previous_ledger_hash());
 		header->set_consensus_value_hash(chash);
+		header->set_chain_id(General::GetSelfChainId());
 		//LOG_INFO("set_consensus_value_hash:%s,%s", utils::String::BinToHexString(con_str).c_str(), utils::String::BinToHexString(chash).c_str());
 		header->set_version(last_closed_ledger_->GetProtoHeader().version());
 
@@ -668,6 +678,9 @@ namespace bumo {
 
 		//Broadcast that the ledger is closed.
 		WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_LEDGER_HEADER, tmp_lcl_header.SerializeAsString());
+
+		//listener
+		BlockListenManager::GetInstance()->HandleBlock(closing_ledger);
 
 		// The broadcast message is applied.
 		for (size_t i = 0; i < closing_ledger->apply_tx_frms_.size(); i++) {

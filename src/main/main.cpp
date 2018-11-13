@@ -28,6 +28,10 @@
 #include <api/console.h>
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
+#include <cross/message_channel_manager.h>
+#include<cross/proposer_manager.h>
+#include <cross/message_handler.h>
+#include <cross/block_listen_manager.h>
 #include "configure.h"
 
 void SaveWSPort();
@@ -71,6 +75,10 @@ int main(int argc, char *argv[]){
 	bumo::Global::InitInstance();
 	bumo::SlowTimer::InitInstance();
 	utils::Logger::InitInstance();
+	bumo::MessageChannel::InitInstance();
+	bumo::ProposerManager::InitInstance();
+	bumo::MessageHandler::InitInstance();
+	bumo::BlockListenManager::InitInstance();
 	bumo::Console::InitInstance();
 	bumo::PeerManager::InitInstance();
 	bumo::LedgerManager::InitInstance();
@@ -119,6 +127,8 @@ int main(int argc, char *argv[]){
 			LOG_STD_ERRNO("Failed to load configuration", STD_ERR_CODE, STD_ERR_DESC);
 			break;
 		}
+
+		bumo::General::SetSelfChainId(config.genesis_configure_.chain_id_);
 
 		std::string log_path = config.logger_configure_.path_;
 		if (!utils::File::IsAbsolute(log_path)){
@@ -187,6 +197,38 @@ int main(int argc, char *argv[]){
 		}
 		object_exit.Push(std::bind(&bumo::Global::Exit, &global));
 		LOG_INFO("Initialized global module successfully");
+
+		bumo::MessageChannel &message_channel = bumo::MessageChannel::Instance();
+		if (!message_channel.Initialize(bumo::Configure::Instance().message_channel_configure_)){
+			LOG_ERROR("Failed to initialize message channel");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::MessageChannel::Exit, &message_channel));
+		LOG_INFO("Initialized message channel successfully");
+
+		bumo::ProposerManager &proposer = bumo::ProposerManager::Instance();
+		if (!proposer.Initialize()){
+			LOG_ERROR("Failed to proposer");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::ProposerManager::Exit, &proposer));
+		LOG_INFO("Initialized proposer successfully");
+
+		bumo::MessageHandler &message_handler = bumo::MessageHandler::Instance();
+		if (!bumo::g_enable_ || !message_handler.Initialize()){
+			LOG_ERROR_ERRNO("Failed to initialize message handler", STD_ERR_CODE, STD_ERR_DESC);
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::MessageHandler::Exit, &message_handler));
+		LOG_INFO("Initialized message handler successfully");
+
+		bumo::BlockListenManager &block_listen_handler = bumo::BlockListenManager::Instance();
+		if (!bumo::g_enable_ || !block_listen_handler.Initialize()){
+			LOG_ERROR_ERRNO("Failed to initialize block listen handler", STD_ERR_CODE, STD_ERR_DESC);
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::BlockListenManager::Exit, &block_listen_handler));
+		LOG_INFO("Initialized block listen handler successfully");
 
 		//Consensus manager must be initialized before ledger manager and glue manager
 		bumo::ConsensusManager &consensus_manager = bumo::ConsensusManager::Instance();
@@ -280,6 +322,10 @@ int main(int argc, char *argv[]){
 	bumo::WebSocketServer::ExitInstance();
 	bumo::WebServer::ExitInstance();
 	bumo::MonitorManager::ExitInstance();
+	bumo::MessageHandler::ExitInstance();
+	bumo::MessageChannel::ExitInstance();
+	bumo::ProposerManager::ExitInstance();
+	bumo::BlockListenManager::ExitInstance();
 	bumo::Configure::ExitInstance();
 	bumo::Global::ExitInstance();
 	bumo::Storage::ExitInstance();

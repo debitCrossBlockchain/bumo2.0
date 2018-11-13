@@ -97,6 +97,7 @@ namespace bumo {
 		header->set_close_time(consensus_value_.close_time());
 		header->set_previous_hash(consensus_value_.previous_ledger_hash());
 		header->set_consensus_value_hash(hash_);
+		header->set_chain_id(General::GetSelfChainId());
 		//LOG_INFO("set_consensus_value_hash:%s,%s", utils::String::BinToHexString(con_str).c_str(), utils::String::BinToHexString(chash).c_str());
 		header->set_version(LedgerManager::Instance().GetLastClosedLedger().version());
 		LedgerManager::Instance().tree_->time_ = 0;

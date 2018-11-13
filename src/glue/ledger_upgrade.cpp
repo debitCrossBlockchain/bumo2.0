@@ -97,6 +97,12 @@ namespace bumo {
 			return;
 		} 
 
+		if(upgrade.chain_id() != General::GetSelfChainId()){
+			LOG_ERROR("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")", 
+				General::GetSelfChainId(), upgrade.chain_id());
+			return;
+		}
+
 		PublicKey pub(sig.public_key());
 		LedgerUpgradeFrm frm;
         frm.address_ = pub.GetEncAddress();
@@ -149,6 +155,7 @@ namespace bumo {
 
 	bool LedgerUpgrade::ConfNewVersion(int32_t new_version) {
 		local_state_.set_new_ledger_version(new_version);
+		local_state_.set_chain_id(General::GetSelfChainId());
 		LOG_INFO("Pre-configured new version(%d).", new_version);
 		return true;
 	}

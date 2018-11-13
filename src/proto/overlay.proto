@@ -4,6 +4,7 @@ option java_package = "io.bumo.sdk.core.extend.protobuf";
 
 import "common.proto";
 import "chain.proto";
+import "consensus.proto";
 
 enum OVERLAY_MESSAGE_TYPE{
 	OVERLAY_MSGTYPE_NONE = 0;
@@ -16,7 +17,6 @@ enum OVERLAY_MESSAGE_TYPE{
 	OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY = 7; //Broadcast the ledger upgrade status
 }
 
-
 message Hello {
     int64 network_id = 1;
     int64 ledger_version = 2;
@@ -25,12 +25,14 @@ message Hello {
     int64 listening_port = 5;
     string node_address = 6;
     string node_rand = 7;
+    int64 chain_id = 8;
 }
 
 message HelloResponse {
 	 ERRORCODE error_code = 1;
 	 string error_desc = 2;
 }
+
 
 
 //for peers message
@@ -159,25 +161,82 @@ message ChainTxStatus {
 	int64		timestamp = 9;			
 }
 
-
+enum MESSAGE_CHANNEL_NODE_TYPE{
+    MESSAGE_CHANNEL_NODE_TYPE_NONE = 0;
+	MESSAGE_CHANNEL_NODE_PACKAGE = 30;
+	MESSAGE_CHANNEL_NODE_HELLO = 31;
+}
 
 enum MESSAGE_CHANNEL_TYPE{
-	MESSAGE_CHANNEL_CREATE_CHILD_CHAIN = 0;
-	MESSAGE_CHANNEL_MAIN_MIX  = 1;
-	MESSAGE_CHANNEL_CHILD_MIX = 2;
-	MESSAGE_CHANNEL_DEPOSIT = 3;
-	MESSAGE_CHANNEL_WITHDRAWAL = 4;
-	MESSAGE_CHANNEL_FAST_WITHDRAWAL = 5;
-	MESSAGE_CHANNEL_SUBMIT_HEAD = 6;
-	MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL = 7; 
-	MESSAGE_CHANNEL_CHALLENGE_HEAD = 8;
-	MESSAGE_CHANNEL_CHILD_GENESES = 9;
+	MESSAGE_CHANNEL_TYPE_NONE = 0;
+	MESSAGE_CHANNEL_CREATE_CHILD_CHAIN = 1;
+	MESSAGE_CHANNEL_MAIN_MIX  = 2;
+	MESSAGE_CHANNEL_CHILD_MIX = 3;
+	MESSAGE_CHANNEL_DEPOSIT = 4;
+	MESSAGE_CHANNEL_WITHDRAWAL = 5;
+	MESSAGE_CHANNEL_FAST_WITHDRAWAL = 6;
+	MESSAGE_CHANNEL_SUBMIT_HEAD = 7;
+	MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL = 8; 
+	MESSAGE_CHANNEL_CHALLENGE_HEAD = 9;
+	MESSAGE_CHANNEL_CHILD_GENESES_REQUEST = 10;
+	MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE = 11;
 }
 
+message MessageChannelHello {
+    int64 network_id = 1;
+    string node_address = 3;
+    int64 chain_id = 4;
+}
+
+message MessageChannelHelloResponse {
+	 ERRORCODE error_code = 1;
+	 string error_desc = 2;
+}
 
 message MessageChannel{
-    int64 chain_id = 1;
-    bytes msg_id = 2;
-    int64 msg_type = 3;
-    bytes msg_data = 4;
+    int64 target_chain_id = 1;
+    MESSAGE_CHANNEL_TYPE msg_type = 2;
+    bytes msg_data = 3;
 }
+
+message MessageChannelResponse {
+	 ERRORCODE error_code = 1;
+	 string error_desc = 2;
+}
+
+message MessageChannelProposer{
+   LedgerHeader header = 1;
+   string proposer_address = 2;
+   bytes  proposer_signature = 3;
+   bytes  header_hash= 4;
+}
+
+message BlockReward{
+	int64 amount = 1;
+	int64 period = 2;
+	double ratio = 3;
+}
+
+message MessageChannelCreateChildChain{
+	string genesis_account = 1;
+	string slogan = 2;
+	FeeConfig fee = 3;
+	repeated string reserve_validator = 4;
+	string chain_name = 5;
+	int64 chain_id = 6;
+	string genesis_token_amount = 7;
+	BlockReward block_reward = 8;
+	int64 cost = 9;
+}
+
+message MessageChannelChildGenesesRequest{
+	int64 chain_id = 1;
+}
+
+message MessageChannelChildGenesesResponse{
+	ERRORCODE error_code = 1;
+	string error_desc = 2;
+	MessageChannelCreateChildChain create_child_chain = 3;
+}
+
+

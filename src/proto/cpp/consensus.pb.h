@@ -1004,6 +1004,12 @@ class Pbft : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::protocol::PbftViewChangeWithRawValue* release_view_change_with_rawvalue();
   void set_allocated_view_change_with_rawvalue(::protocol::PbftViewChangeWithRawValue* view_change_with_rawvalue);
 
+  // optional int64 chain_id = 9;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 9;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.Pbft)
  private:
 
@@ -1016,6 +1022,7 @@ class Pbft : public ::google::protobuf::Message /* @@protoc_insertion_point(clas
   ::protocol::PbftViewChange* view_change_;
   ::protocol::PbftNewView* new_view_;
   ::protocol::PbftViewChangeWithRawValue* view_change_with_rawvalue_;
+  ::google::protobuf::int64 chain_id_;
   int type_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_consensus_2eproto();
@@ -2439,6 +2446,20 @@ inline void Pbft::set_allocated_view_change_with_rawvalue(::protocol::PbftViewCh
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.Pbft.view_change_with_rawvalue)
+}
+
+// optional int64 chain_id = 9;
+inline void Pbft::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Pbft::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.Pbft.chain_id)
+  return chain_id_;
+}
+inline void Pbft::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Pbft.chain_id)
 }
 
 // -------------------------------------------------------------------

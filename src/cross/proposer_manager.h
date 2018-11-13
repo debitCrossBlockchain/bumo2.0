@@ -18,9 +18,12 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <utils/singleton.h>
 #include <utils/thread.h>
+#include<cross/message_channel_manager.h>
 
 namespace bumo {
-	class ProposerManager :public utils::Singleton<ProposerManager>, public utils::Runnable {
+	class ProposerManager :public utils::Singleton<ProposerManager>,
+		public bumo::IMessageChannelConsumer,
+		public utils::Runnable{
 		friend class utils::Singleton<bumo::ProposerManager>;
 	public:
 		ProposerManager();
@@ -28,17 +31,25 @@ namespace bumo {
 
 		bool Initialize();
 		bool Exit();
-		bool CommitChildChainBlock();
+		void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel);
 
 	private:
 		virtual void Run(utils::Thread *thread) override;
 		void HandleChildChainBlock();
-		bool CheckChildBlockExsit();
-		bool CommitTransaction();
+		bool HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header);
+		bool CheckChildBlockExsit(const std::string& hash, int64_t chain_id);
 
+		bool CommitTransaction(const protocol::LedgerHeader& ledger_header);
+		bool CheckNodeIsValidate(const std::string &address, int64_t chain_id);
+		void UpdateValidateAddressList(utils::StringList& validate_address,int64_t chain_id);
 		bool enabled_;
 		utils::Thread *thread_ptr_;
+		int64_t last_uptate_validate_address_time_;
+		utils::Mutex handle_child_chain_list_lock_;
+		int64_t last_uptate_handle_child_chain_time_;
+		std::list<protocol::LedgerHeader> handle_child_chain_block_list_;
 	};
+
 }
 
 #endif
