@@ -86,6 +86,7 @@ namespace bumo {
 	private:
 		// Handlers
 		bool OnHello(protocol::WsMessage &message, int64_t conn_id);
+		bool OnHelloResponse(protocol::WsMessage &message, int64_t conn_id);
 		bool OnMessageChannel(protocol::WsMessage &message, int64_t conn_id);
 		virtual void OnDisconnect(Connection *conn);
 		virtual bool OnConnectOpen(Connection *conn);

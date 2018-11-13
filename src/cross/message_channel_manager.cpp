@@ -107,6 +107,7 @@ namespace bumo {
 
 		request_methods_[protocol::MESSAGE_CHANNEL_NODE_HELLO] = std::bind(&MessageChannel::OnHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_NODE_PACKAGE] = std::bind(&MessageChannel::OnMessageChannel, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::MESSAGE_CHANNEL_NODE_HELLO] = std::bind(&MessageChannel::OnHelloResponse, this, std::placeholders::_1, std::placeholders::_2);
 		thread_ptr_ = NULL;
 	}
 
@@ -206,6 +207,23 @@ namespace bumo {
 
 		conn->SendResponse(message, cmsg.SerializeAsString(), ignore_ec);
 		return cmsg.error_code() == 0;
+	}
+
+	bool MessageChannel::OnHelloResponse(protocol::WsMessage &message, int64_t conn_id){
+		utils::MutexGuard guard(conns_list_lock_);
+		MessageChannelPeer *peer = (MessageChannelPeer *)GetConnection(conn_id);
+		if (!peer) {
+			return true;
+		}
+
+		protocol::MessageChannelHelloResponse env;
+		env.ParseFromString(message.data());
+		if (env.error_code() != 0) {
+			LOG_ERROR("Failed to response the MessageChannelPeer hello message.MessageChannelPeer reponse error code(%d), desc(%s)", env.error_code(), env.error_desc().c_str());
+			return false;
+		}
+
+		return true;
 	}
 
 	bool MessageChannel::ChainExist(int64_t peer_id, int64_t chain_id) {
