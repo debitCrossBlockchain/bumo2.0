@@ -107,7 +107,8 @@ namespace bumo {
 
 		request_methods_[protocol::MESSAGE_CHANNEL_NODE_HELLO] = std::bind(&MessageChannel::OnHello, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::MESSAGE_CHANNEL_NODE_PACKAGE] = std::bind(&MessageChannel::OnMessageChannel, this, std::placeholders::_1, std::placeholders::_2);
-		request_methods_[protocol::MESSAGE_CHANNEL_NODE_HELLO] = std::bind(&MessageChannel::OnHelloResponse, this, std::placeholders::_1, std::placeholders::_2);
+
+		response_methods_[protocol::MESSAGE_CHANNEL_NODE_HELLO] = std::bind(&MessageChannel::OnHelloResponse, this, std::placeholders::_1, std::placeholders::_2);
 		thread_ptr_ = NULL;
 	}
 
