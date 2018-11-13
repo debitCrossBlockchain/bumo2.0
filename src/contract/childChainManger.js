@@ -1,24 +1,158 @@
 'use strict';
+//子链起始ID
+const originChildChainid = 1;
+//定义提案者奖励的费用
+const block_reward = 10;
 
-function createChildChain(){
+
+function createChildChain(params){
     log('createChildChain');
+    let input = params;
+    assert(addressCheck(input.genesis_account) === true, 'genesis_account is not valid adress.');
+    assert(sender === input.genesis_account, 'sender is not genesis_account.');
+    assert(thisPayCoinAmount === input.cost,'cost is not equels thisPayCoinAmount');
+    let childChainCount = storageLoad('childChainCount');
+    let childChainid = originChildChainid + childChainCount;
+
+    let info_params = {};
+    info_params.chain_id = childChainid;
+    info_params.chain_creator = sender;
+    info_params.cost = input.cost;
+    info_params.block_cost_ready = true;
+    info_params.blockheight = 0;
+    let validators = [""];
+    info_params.validators = validators;
+    storageStore('childChainid_info_'+ childChainid,JSON.stringify(info_params));
+    params.chain_id = childChainid;
+    storageStore('childChainid_' + childChainid,JSON.stringify(params));
+    tlog('createChildChain',sender,0,sender,childChainid,JSON.stringify(params)); 
+    childChainCount = int64Add(childChainCount, 1);
+    storageStore('childChainCount',childChainCount);
+}
+
+function payCost(params){
+    log('payCost');
+    let input = params;
+    assert(addressCheck(input.chain_creator) === true, 'chain_creator is not valid adress.');
+    assert(sender === input.chain_creator, 'sender is not chain_creator.');
+    assert(thisPayCoinAmount === input.cost,'cost is not equels thisPayCoinAmount');
+    let info = JSON.parse(storageLoad('childChainid_info_' + input.chain_id));
+    assert(info !== false, 'childChainid_info_' + input.chain_id + ' failed.');
+    assert(info.chain_creator === sender ,'payCost sender is not equels chain_creator.');
+    let totalcost = int64Add(info.cost, input.cost);
+    info.cost = totalcost;
+    storageStore('childChainid_info_'+ input.chain_id,JSON.stringify(info));
+}
+
+function transferCoin(dest, amount)
+{
+    assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string.');
+    if(amount === '0'){ return true; }
+
+    payCoin(dest, amount);
+    log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
+}
+
+function checkchildChainValadator(validator){
     return true;
 }
 
-function queryChildBlockHeader(){
+function submitChildBlockHeader(params){
+    log('submitChildBlockHeader');
+    let input = params;
+    assert(checkchildChainValadator(sender) === true,'submitChildBlockHeader sender is not validator.' );
+    let info = JSON.parse(storageLoad('childChainid_info_' + input.chain_id));
+    assert(info !== false, 'childChainid_info_' + input.chain_id + ' failed.');
+    let blockheight = int64Add(info.blockheight, 1);
+    info.blockheight = blockheight;
+    input.sumitter = sender;
+    input.currentheight = blockheight;
+    storageStore('ChildChainBlock_' + info.chain_id + '_' + input.block_header.hash, JSON.stringify(params));
+    storageStore('childChainid_info_'+ info.chain_id,JSON.stringify(info));
+    transferCoin(sender,block_reward);
+}
+
+function depositToChildChain(params){
+    log('depositToChildChain');
+    let input = params;
+    assert(sender === input.address, 'sender is input_address.');
+    assert(thisPayCoinAmount === input.amount,'amount is not equels thisPayCoinAmount');
+    let assertinfo = JSON.parse(storageLoad('childChainAsset_' + input.chain_id));
+    if(assertinfo === false) {
+        let assertparam = {};
+        assertparam.chain_id = input.chain_id;
+        assertparam.totalamount = input.amount;
+        storageStore('childChainAsset_' + assertparam.chain_id , JSON.stringify(assertparam));
+    } 
+    else {
+        let totleaamount = assertinfo.amount + input.amount;
+        assertinfo.totalamount = totleaamount;
+        storageStore('childChainAsset_' + assertinfo.chain_id , JSON.stringify(assertinfo));
+    }
+}
+
+function queryChildBlockHeader(params){
     log('queryChildBlockHeader');
-    return '{"hello": 5}';
+    let input = params;
+    let key = 'ChildChainBlock_' + input.chain_id + '_' + input.header_hash;
+    let blockinfo = JSON.parse(storageLoad(key));
+    
+    let retinfo = {};
+    if(blockinfo === false){
+        retinfo = "queryChildBlockHeader failed.";
+    } else {
+        retinfo = JSON.stringify(blockinfo.block_header);
+    }
+    return retinfo;
+}
+
+function queryChildChainInfo(chainid){
+    log('queryChildChainInfo');
+    let key = 'childChainid_' + chainid;
+    let genesisinfo = storageLoad(key);
+
+    let retinfo = {};
+    if(genesisinfo === false){
+        retinfo = 'queryChildChainInfo failed.';
+    } else {
+        retinfo = genesisinfo;
+    }
+    return retinfo;
+}
+
+function queryChildChainValidators(chainid){
+    log('queryChildChainValidators');
+    let key = 'childChainid_info_' + chainid;
+    let chaininfo = JSON.parse(storageLoad(key));
+
+    let retinfo = {};
+    if(chaininfo === false){
+        retinfo = 'queryChildChainInfo failed.';
+    } else {
+        retinfo.validators = chaininfo.validators;
+    }
+    return retinfo;
 }
 
 function init(inputStr){
     log('init');
+    storageStore('childChainCount', 0);
 }
 
 function main(inputStr){
     let input = JSON.parse(inputStr);
-
+    let result = {};
     if(input.method === 'createChildChain'){
-        createChildChain();
+        createChildChain(input.params);
+    }
+    else if(input.method === 'payCost'){
+        payCost(input.params);
+    }
+    else if(input.method === 'depositToChildChain'){
+        depositToChildChain(input.params);
+    }
+    else if(input.method === 'submitChildBlockHeader'){
+        submitChildBlockHeader(input.params);
     }
     else{
         throw '<Main interface passes an invalid operation type>';
@@ -26,14 +160,21 @@ function main(inputStr){
 }
 
 function query(inputStr){
-    let result = {};
     let input  = JSON.parse(inputStr);
-
+    let result = {};
     if(input.method === 'queryChildBlockHeader'){
-        result.hello = JSON.parse(queryChildBlockHeader());
+        result = queryChildBlockHeader(input.params);
+    }
+    else if(input.method === 'queryChildChainInfo'){
+        result = queryChildChainInfo(input.chainid);
+    }
+    else if(input.method === 'queryChildChainValidators'){
+        result = queryChildChainValidators(input.chainid);
     }
     else{
         throw '<Query interface passes an invalid operation type>';
     }
+
+    log(result);
     return JSON.stringify(result);
 }
