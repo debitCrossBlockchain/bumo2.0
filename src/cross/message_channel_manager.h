@@ -100,6 +100,7 @@ namespace bumo {
 		bool ChainExist(int64_t peer_id, int64_t chain_id);
 		bool CheckSameChain(int64_t local_chain_id, int64_t target_chain_id);
 		int64_t GetChainIdFromConn(int64_t conn_id);
+		void ProcessMessageChannelDisconnect();
 	
 	private:
 		utils::Thread *thread_ptr_;

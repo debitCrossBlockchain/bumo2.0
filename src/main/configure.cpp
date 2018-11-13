@@ -73,11 +73,7 @@ namespace bumo {
 
 
 
-	MessageChannelConfigure::MessageChannelConfigure() :
-		network_id_(1),
-		max_connection_(2000),
-		connect_timeout_(5),// second
-		heartbeat_interval_(1800) {// second
+	MessageChannelConfigure::MessageChannelConfigure(){// second
 	}
 
 	MessageChannelConfigure::~MessageChannelConfigure() {}
@@ -86,22 +82,9 @@ namespace bumo {
 		std::string address;
 		Configure::GetValue(value, "listen_address", address);
 		listen_address_ = utils::InetAddress(address);
-
-		int32_t temp = (int32_t)target_message_channel_connection_;
-		Configure::GetValue(value, "target_message_channel_connection", temp);
-		target_message_channel_connection_ = temp;
-
-		temp = (int32_t)max_connection_;
-		Configure::GetValue(value, "max_connection", temp);
-		max_connection_ = temp;
-
-		Configure::GetValue(value, "known_message_channel", known_message_channel_list_);
-		Configure::GetValue(value, "network_id", network_id_);
-		Configure::GetValue(value, "connect_timeout", connect_timeout_);
-		Configure::GetValue(value, "heartbeat_interval", heartbeat_interval_);
-
-		connect_timeout_ = connect_timeout_ * utils::MICRO_UNITS_PER_SEC; //micro second
-		heartbeat_interval_ = heartbeat_interval_ * utils::MICRO_UNITS_PER_SEC; //micro second
+		std::string target_message_channel;
+		Configure::GetValue(value, "target_message_channel", target_message_channel);
+		target_message_channel_ = utils::InetAddress(target_message_channel);
 
 		return true;
 	}

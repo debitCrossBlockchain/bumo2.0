@@ -196,8 +196,9 @@ namespace bumo {
 
 			if (peer->InBound()) {
 				const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
+				const P2pConfigure &p2p_configure = Configure::Instance().p2p_configure_;
 				utils::InetAddress address(message_channel_configure.listen_address_);
-				peer->SendHello(address.ToIp(), message_channel_configure.network_id_, last_ec_);
+				peer->SendHello(address.ToIp(), p2p_configure.network_id_, last_ec_);
 			}
 
 
@@ -269,11 +270,12 @@ namespace bumo {
 
 	bool MessageChannel::OnConnectOpen(Connection *conn) {
 		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
+		const P2pConfigure &p2p_configure = Configure::Instance().p2p_configure_;
 
 		if (!conn->InBound()) {
 			MessageChannelPeer *peer = (MessageChannelPeer *)conn;
 			utils::InetAddress address(message_channel_configure.listen_address_);
-			peer->SendHello(address.ToIp(), message_channel_configure.network_id_, last_ec_);
+			peer->SendHello(address.ToIp(), p2p_configure.network_id_, last_ec_);
 		}
 		return true;
 
@@ -291,16 +293,8 @@ namespace bumo {
 		return new MessageChannelPeer(server_h, client_, tls_server_h, tls_client_h, con, uri, id);
 	}
 
-
-	void MessageChannel::OnTimer(int64_t current_time){
-
-		if (current_time < 10 * utils::MICRO_UNITS_PER_SEC + last_uptate_time_)
-		{
-			return;
-		}
-
+	void MessageChannel::ProcessMessageChannelDisconnect(){
 		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
-		size_t con_size = 0;
 		utils::MutexGuard guard(conns_list_lock_);
 		ConnectionMap::const_iterator iter;
 		utils::StringList listTempIptoPort;
@@ -310,22 +304,25 @@ namespace bumo {
 			iter++;
 		}
 
-		utils::StringList::const_iterator itor;
-		itor = message_channel_configure.known_message_channel_list_.begin();
-		while (itor != message_channel_configure.known_message_channel_list_.end()){
-			std::string address = *itor++;
-			utils::StringList::const_iterator listTempIptoPortiter;
-			listTempIptoPortiter = std::find(listTempIptoPort.begin(), listTempIptoPort.end(), address.c_str());
+		std::string address = message_channel_configure.target_message_channel_.ToIpPort().c_str();
 
-			if (listTempIptoPortiter != listTempIptoPort.end()){
+		utils::StringList::const_iterator listTempIptoPortiter;
+		listTempIptoPortiter = std::find(listTempIptoPort.begin(), listTempIptoPort.end(), address.c_str());
 
-			}
-			else{
-				std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", address.c_str());
-				Connect(uri);
-			}
+		if (listTempIptoPortiter == listTempIptoPort.end()){
+			std::string uri = utils::String::Format("%s://%s", ssl_parameter_.enable_ ? "wss" : "ws", address.c_str());
+			Connect(uri);
 		}
-		last_uptate_time_ = current_time;
+	}
+
+	void MessageChannel::OnTimer(int64_t current_time){
+
+		if (current_time > 10 * utils::MICRO_UNITS_PER_SEC + last_uptate_time_){
+
+			ProcessMessageChannelDisconnect();
+			last_uptate_time_ = current_time;
+		}
+
 	}
 
 	bool MessageChannel::OnVerifyCallback(bool preverified, asio::ssl::verify_context& ctx) {
