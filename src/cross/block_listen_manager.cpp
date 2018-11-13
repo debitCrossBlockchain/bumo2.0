@@ -7,8 +7,6 @@ namespace bumo {
 
 	const static char* OP_CREATE_CHILD_CHAIN		= "CreateChildChain";
 
-
-
 	BlockListenManager::BlockListenManager(){
 	}
 

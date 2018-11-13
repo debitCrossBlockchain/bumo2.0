@@ -31,6 +31,7 @@
 #include <cross/message_channel_manager.h>
 #include<cross/proposer_manager.h>
 #include <cross/message_handler.h>
+#include <cross/block_listen_manager.h>
 #include "configure.h"
 
 void SaveWSPort();
@@ -77,6 +78,7 @@ int main(int argc, char *argv[]){
 	bumo::MessageChannel::InitInstance();
 	bumo::ProposerManager::InitInstance();
 	bumo::MessageHandler::InitInstance();
+	bumo::BlockListenManager::InitInstance();
 	bumo::Console::InitInstance();
 	bumo::PeerManager::InitInstance();
 	bumo::LedgerManager::InitInstance();
@@ -220,6 +222,14 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::MessageHandler::Exit, &message_handler));
 		LOG_INFO("Initialized message handler successfully");
 
+		bumo::BlockListenManager &block_listen_handler = bumo::BlockListenManager::Instance();
+		if (!bumo::g_enable_ || !block_listen_handler.Initialize()){
+			LOG_ERROR_ERRNO("Failed to initialize block listen handler", STD_ERR_CODE, STD_ERR_DESC);
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::BlockListenManager::Exit, &block_listen_handler));
+		LOG_INFO("Initialized block listen handler successfully");
+
 		//Consensus manager must be initialized before ledger manager and glue manager
 		bumo::ConsensusManager &consensus_manager = bumo::ConsensusManager::Instance();
 		if (!bumo::g_enable_ || !consensus_manager.Initialize(bumo::Configure::Instance().ledger_configure_.validation_type_)) {
@@ -315,6 +325,7 @@ int main(int argc, char *argv[]){
 	bumo::MessageHandler::ExitInstance();
 	bumo::MessageChannel::ExitInstance();
 	bumo::ProposerManager::ExitInstance();
+	bumo::BlockListenManager::ExitInstance();
 	bumo::Configure::ExitInstance();
 	bumo::Global::ExitInstance();
 	bumo::Storage::ExitInstance();
