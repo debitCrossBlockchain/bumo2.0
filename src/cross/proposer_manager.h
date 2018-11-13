@@ -40,12 +40,10 @@ namespace bumo {
 		bool CheckChildBlockExsit(const std::string& hash);
 
 		bool CommitTransaction(const protocol::LedgerHeader& ledger_header);
-		bool CheckNodeIsValidate(const std::string &address);
-		void UpdateValidateAddressList();
+		bool CheckNodeIsValidate(const std::string &address, int64_t chain_id);
+		void UpdateValidateAddressList(utils::StringList& validate_address,int64_t chain_id);
 		bool enabled_;
 		utils::Thread *thread_ptr_;
-		utils::Mutex validate_address_lock_;
-		utils::StringList validate_address_;
 		int64_t last_uptate_validate_address_time_;
 		utils::Mutex handle_child_chain_list_lock_;
 		int64_t last_uptate_handle_child_chain_time_;

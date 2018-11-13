@@ -66,23 +66,11 @@ namespace bumo {
 				HandleChildChainBlock();
 				last_uptate_handle_child_chain_time_ = current_time;
 			}
-
-			if (current_time > 2 * 60 * utils::MICRO_UNITS_PER_SEC + last_uptate_validate_address_time_){
-				UpdateValidateAddressList();
-				last_uptate_validate_address_time_ = current_time;
-			}
 		}
 	}
 
 	void ProposerManager::HandleChildChainBlock(){
 		//handel child chain block, and call MessageChannel to send main chain proc 
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
-		std::string node_address = private_key.GetEncAddress();
-
-		if (!CheckNodeIsValidate(node_address.c_str())){
-			LOG_INFO("this node is not validators,address is %s", node_address.c_str());
-			return;
-		}
 
 		utils::MutexGuard guard(handle_child_chain_list_lock_);
 		std::list<protocol::LedgerHeader>::const_iterator itor = handle_child_chain_block_list_.begin();
@@ -110,12 +98,12 @@ namespace bumo {
 	}
 
 
-	void ProposerManager::UpdateValidateAddressList(){
+	void ProposerManager::UpdateValidateAddressList(utils::StringList& validate_address, int64_t chain_id){
 
 		Json::FastWriter json_input;
 		Json::Value input_value;
 		Json::Value params;
-		params["chain_id"] = General::GetSelfChainId();
+		params["chain_id"] = chain_id;
 		input_value["method"] = "queryChildChainValidators";
 		input_value["params"] = params;
 		std::string input = json_input.write(input_value);
@@ -135,24 +123,22 @@ namespace bumo {
 			return;
 		}
 
-		utils::MutexGuard guard(validate_address_lock_);
-		validate_address_.clear();
-
-
+		validate_address.clear();
 		int32_t size = object["validators"].size();
 		for (int32_t i = 0; i < size; i++){
 			std::string address = object["validators"][i].asString().c_str();
-			validate_address_.push_back(address.c_str());
+			validate_address.push_back(address.c_str());
 		}
 
 	}
 
-	bool ProposerManager::CheckNodeIsValidate(const std::string &address){
+	bool ProposerManager::CheckNodeIsValidate(const std::string &address, int64_t chain_id){
 		utils::StringList::const_iterator itor;
 		bool flag = false;
-		utils::MutexGuard guard(validate_address_lock_);
-		itor = std::find(validate_address_.begin(), validate_address_.end(), address.c_str());
-		if (itor != validate_address_.end()){
+		utils::StringList validate_address;
+		UpdateValidateAddressList(validate_address, chain_id);
+		itor = std::find(validate_address.begin(), validate_address.end(), address.c_str());
+		if (itor != validate_address.end()){
 			flag = true;
 		}
 		else{
@@ -229,6 +215,14 @@ namespace bumo {
 	}
 
 	bool ProposerManager::HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header){
+
+		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
+		std::string node_address = private_key.GetEncAddress();
+
+		if (!CheckNodeIsValidate(node_address.c_str(), ledger_header.chain_id())){
+			LOG_INFO("this node is not validators,address is %s", node_address.c_str());
+			return true;
+		}
 
 		if (!CheckChildBlockExsit(ledger_header.previous_hash().c_str())){
 			LOG_INFO("child previous block is not exsit! hash is  %s", ledger_header.previous_hash().c_str());
