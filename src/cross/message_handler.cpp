@@ -91,7 +91,7 @@ namespace bumo {
 			return; 
 		}
 
-		//When the child chain is not initialized, it is only allowed to receive create subchain messages
+		//When the child chain is not initialized, it is only allowed to receive child geneses response messages
 		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID && !init_ 
 			&& message_channel.msg_type() != protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE){
 			LOG_ERROR("Wating for message channel child response, but now:(" FMT_I64 ")", message_channel.msg_type());
@@ -146,7 +146,7 @@ namespace bumo {
 		protocol::MessageChannelCreateChildChain create_child_chain;
 		std::string error_msg;
 		if (!Json2Proto(custom_result, create_child_chain, error_msg)){
-			LOG_ERROR("Invalid message:%s", custom_result.toFastString());
+			LOG_ERROR("Invalid contract result:%s", custom_result.toFastString());
 			return;
 		}
 
