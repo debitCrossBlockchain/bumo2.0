@@ -2,7 +2,7 @@
 //子链起始ID
 const originChildChainid = 1;
 //定义提案者奖励的费用
-const block_reward = 10;
+const block_reward = '10';
 
 
 function createChildChain(params){
@@ -10,8 +10,8 @@ function createChildChain(params){
     let input = params;
     assert(addressCheck(input.genesis_account) === true, 'genesis_account is not valid adress.');
     assert(sender === input.genesis_account, 'sender is not genesis_account.');
-    assert(thisPayCoinAmount === input.cost,'cost is not equels thisPayCoinAmount');
-    let childChainCount = storageLoad('childChainCount');
+    assert(int64Compare(thisPayCoinAmount,input.cost) === 0,'cost is not equels thisPayCoinAmount ' + thisPayCoinAmount + ',' + input.cost);
+    let childChainCount = parseInt(storageLoad('childChainCount'));
     let childChainid = originChildChainid + childChainCount;
 
     let info_params = {};
@@ -20,14 +20,14 @@ function createChildChain(params){
     info_params.cost = input.cost;
     info_params.block_cost_ready = true;
     info_params.blockheight = 0;
-    let validators = [""];
+    let validators = [''];
     info_params.validators = validators;
     storageStore('childChainid_info_'+ childChainid,JSON.stringify(info_params));
     params.chain_id = childChainid;
     storageStore('childChainid_' + childChainid,JSON.stringify(params));
     tlog('createChildChain',sender,0,sender,childChainid,JSON.stringify(params)); 
     childChainCount = int64Add(childChainCount, 1);
-    storageStore('childChainCount',childChainCount);
+    storageStore('childChainCount',childChainCount.toString());
 }
 
 function payCost(params){
@@ -35,10 +35,10 @@ function payCost(params){
     let input = params;
     assert(addressCheck(input.chain_creator) === true, 'chain_creator is not valid adress.');
     assert(sender === input.chain_creator, 'sender is not chain_creator.');
-    assert(thisPayCoinAmount === input.cost,'cost is not equels thisPayCoinAmount');
+    assert(int64Compare(thisPayCoinAmount,input.cost) === 0,'cost is not equels thisPayCoinAmount ' + thisPayCoinAmount + ',' + input.cost);
     let info = JSON.parse(storageLoad('childChainid_info_' + input.chain_id));
-    assert(info !== false, 'childChainid_info_' + input.chain_id + ' failed.');
-    assert(info.chain_creator === sender ,'payCost sender is not equels chain_creator.');
+    assert(info !== false, 'payCost childChainid_info_' + input.chain_id + ' failed.');
+    assert(info.chain_creator === sender ,'payCost sender is not equels info chain_creator.');
     let totalcost = int64Add(info.cost, input.cost);
     info.cost = totalcost;
     storageStore('childChainid_info_'+ input.chain_id,JSON.stringify(info));
@@ -46,7 +46,7 @@ function payCost(params){
 
 function transferCoin(dest, amount)
 {
-    assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string.');
+    assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string,' + typeof dest + ',' + typeof amount);
     if(amount === '0'){ return true; }
 
     payCoin(dest, amount);
@@ -67,7 +67,7 @@ function submitChildBlockHeader(params){
     info.blockheight = blockheight;
     input.sumitter = sender;
     input.currentheight = blockheight;
-    storageStore('ChildChainBlock_' + info.chain_id + '_' + input.block_header.hash, JSON.stringify(params));
+    storageStore('childChainBlock_' + info.chain_id + '_' + input.block_header.hash, JSON.stringify(params));
     storageStore('childChainid_info_'+ info.chain_id,JSON.stringify(info));
     transferCoin(sender,block_reward);
 }
@@ -75,8 +75,8 @@ function submitChildBlockHeader(params){
 function depositToChildChain(params){
     log('depositToChildChain');
     let input = params;
-    assert(sender === input.address, 'sender is input_address.');
-    assert(thisPayCoinAmount === input.amount,'amount is not equels thisPayCoinAmount');
+    assert(sender === input.address, 'sender is not input_address.');
+    assert(int64Compare(thisPayCoinAmount,input.amount) === 0,'amount is not equels thisPayCoinAmount');
     let assertinfo = JSON.parse(storageLoad('childChainAsset_' + input.chain_id));
     if(assertinfo === false) {
         let assertparam = {};
@@ -85,7 +85,7 @@ function depositToChildChain(params){
         storageStore('childChainAsset_' + assertparam.chain_id , JSON.stringify(assertparam));
     } 
     else {
-        let totleaamount = assertinfo.amount + input.amount;
+        let totleaamount = assertinfo.totalamount + input.amount;
         assertinfo.totalamount = totleaamount;
         storageStore('childChainAsset_' + assertinfo.chain_id , JSON.stringify(assertinfo));
     }
@@ -94,12 +94,12 @@ function depositToChildChain(params){
 function queryChildBlockHeader(params){
     log('queryChildBlockHeader');
     let input = params;
-    let key = 'ChildChainBlock_' + input.chain_id + '_' + input.header_hash;
+    let key = 'childChainBlock_' + input.chain_id + '_' + input.header_hash;
     let blockinfo = JSON.parse(storageLoad(key));
     
     let retinfo = {};
     if(blockinfo === false){
-        retinfo = "queryChildBlockHeader failed.";
+        retinfo = 'queryChildBlockHeader failed.';
     } else {
         retinfo = JSON.stringify(blockinfo.block_header);
     }
@@ -113,7 +113,7 @@ function queryChildChainInfo(chainid){
 
     let retinfo = {};
     if(genesisinfo === false){
-        retinfo = 'queryChildChainInfo failed.';
+        retinfo = 'queryChildChainInfo failed,' + key;
     } else {
         retinfo = genesisinfo;
     }
@@ -136,7 +136,7 @@ function queryChildChainValidators(chainid){
 
 function init(inputStr){
     log('init');
-    storageStore('childChainCount', 0);
+    storageStore('childChainCount', '0');
 }
 
 function main(inputStr){
