@@ -294,6 +294,10 @@ namespace bumo {
 	}
 
 	void MessageChannel::ProcessMessageChannelDisconnect(){
+		if (General::GetSelfChainId() ==General::MAIN_CHAIN_ID){
+			return;
+		}
+
 		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
 		utils::MutexGuard guard(conns_list_lock_);
 		ConnectionMap::const_iterator iter;
