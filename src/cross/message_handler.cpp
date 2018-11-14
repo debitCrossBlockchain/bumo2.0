@@ -25,9 +25,9 @@ namespace bumo {
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
 
-		/*if (!CheckForChildBlock()){
+		if (!CheckForChildBlock()){
 			return false;
-			}*/
+		}
 
 		init_ = true;
 		return true;
@@ -246,27 +246,27 @@ namespace bumo {
 			LOG_ERROR("The main chain program cannot send this message.");
 			return;
 		}
-		//protocol::MessageChannelCreateChildChain create_child_chain;
-		//create_child_chain.set_genesis_account("abc");
+		protocol::MessageChannelCreateChildChain create_child_chain;
+		create_child_chain.set_genesis_account("abc");
 
-		//protocol::MessageChannelChildGenesesResponse response;
-		//response.set_error_code(protocol::ERRCODE_SUCCESS);
-		//*response.mutable_create_child_chain() = create_child_chain;
+		protocol::MessageChannelChildGenesesResponse response;
+		response.set_error_code(protocol::ERRCODE_SUCCESS);
+		*response.mutable_create_child_chain() = create_child_chain;
 
-		////Push message to child chain.
-		//protocol::MessageChannel message;
-		//message.set_target_chain_id(1);
-		//message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
-		//message.set_msg_data(response.SerializeAsString());
-		//MessageChannel::Instance().MessageChannelProducer(message);
+		//Push message to child chain.
+		protocol::MessageChannel message;
+		message.set_target_chain_id(1);
+		message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
+		message.set_msg_data(response.SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(message);
 
-		protocol::MessageChannelChildGenesesRequest child_chain_request;
-		child_chain_request.set_chain_id(General::GetSelfChainId());
+		/*	protocol::MessageChannelChildGenesesRequest child_chain_request;
+			child_chain_request.set_chain_id(General::GetSelfChainId());
 
-		protocol::MessageChannel message_channel;
-		message_channel.set_target_chain_id(child_chain_request.chain_id());
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
-		message_channel.set_msg_data(child_chain_request.SerializeAsString());
-		MessageChannel::Instance().MessageChannelProducer(message_channel);
+			protocol::MessageChannel message_channel;
+			message_channel.set_target_chain_id(child_chain_request.chain_id());
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
+			message_channel.set_msg_data(child_chain_request.SerializeAsString());
+			MessageChannel::Instance().MessageChannelProducer(message_channel);*/
 	}
 }
