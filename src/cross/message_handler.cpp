@@ -124,6 +124,7 @@ namespace bumo {
 			return;
 		}
 
+#if 0
 		std::string result;
 		Json::Value input_value;
 		Json::Value params;
@@ -142,13 +143,16 @@ namespace bumo {
 		}
 		Json::Value custom_result;
 		custom_result.fromString(json_result[Json::UInt(0)]["result"]["value"].asString());
+#endif
 
 		protocol::MessageChannelCreateChildChain create_child_chain;
 		std::string error_msg;
+#if 0
 		if (!Json2Proto(custom_result, create_child_chain, error_msg)){
-			LOG_ERROR("Invalid contract result:%s", custom_result.toFastString());
-			return;
+				LOG_ERROR("Invalid contract result:%s", custom_result.toFastString());
+				return;
 		}
+#endif
 
 		protocol::MessageChannelChildGenesesResponse response;
 		response.set_error_code(protocol::ERRCODE_SUCCESS);
@@ -242,6 +246,7 @@ namespace bumo {
 	}
 
 	void MessageHandler::SendChildGenesesRequest(){
+#if 1
 		if (General::GetSelfChainId() <= General::MAIN_CHAIN_ID){
 			LOG_ERROR("The main chain program cannot send this message.");
 			return;
@@ -249,24 +254,26 @@ namespace bumo {
 		protocol::MessageChannelCreateChildChain create_child_chain;
 		create_child_chain.set_genesis_account("abc");
 
-		protocol::MessageChannelChildGenesesResponse response;
-		response.set_error_code(protocol::ERRCODE_SUCCESS);
-		*response.mutable_create_child_chain() = create_child_chain;
+		protocol::MessageChannelChildGenesesRequest request;
+		request.set_chain_id(1);
 
 		//Push message to child chain.
 		protocol::MessageChannel message;
-		message.set_target_chain_id(1);
-		message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
-		message.set_msg_data(response.SerializeAsString());
+		message.set_target_chain_id(General::MAIN_CHAIN_ID);
+		message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
+		message.set_msg_data(request.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(message);
+#endif
 
-		/*	protocol::MessageChannelChildGenesesRequest child_chain_request;
-			child_chain_request.set_chain_id(General::GetSelfChainId());
+#if 0
+		protocol::MessageChannelChildGenesesRequest child_chain_request;
+		child_chain_request.set_chain_id(General::GetSelfChainId());
 
-			protocol::MessageChannel message_channel;
-			message_channel.set_target_chain_id(child_chain_request.chain_id());
-			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
-			message_channel.set_msg_data(child_chain_request.SerializeAsString());
-			MessageChannel::Instance().MessageChannelProducer(message_channel);*/
+		protocol::MessageChannel message_channel;
+		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
+		message_channel.set_msg_data(child_chain_request.SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(message_channel);
+#endif
 	}
 }
