@@ -103,6 +103,7 @@ namespace bumo {
 	MessageChannel::MessageChannel() : Network(SslParameter()) {
 		const P2pConfigure &p2p_configure = Configure::Instance().p2p_configure_;
 		network_id_ = p2p_configure.network_id_;
+
 		connect_interval_ = 120 * utils::MICRO_UNITS_PER_SEC;
 		last_connect_time_ = 0;
 		last_uptate_time_ = utils::Timestamp::HighResolution();
