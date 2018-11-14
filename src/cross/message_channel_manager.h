@@ -98,8 +98,6 @@ namespace bumo {
 		virtual void Notify(const protocol::MessageChannel &message_channel);
 		virtual void OnTimer(int64_t current_time) override;
 		virtual void OnSlowTimer(int64_t current_time) override {};
-		bool ChainExist(int64_t peer_id, int64_t chain_id);
-		bool CheckSameChain(int64_t local_chain_id, int64_t target_chain_id);
 		int64_t GetChainIdFromConn(int64_t conn_id);
 		void ProcessMessageChannelDisconnect();
 	
