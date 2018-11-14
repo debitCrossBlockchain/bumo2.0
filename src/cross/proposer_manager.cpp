@@ -59,8 +59,8 @@ namespace bumo {
 	}
 
 	void ProposerManager::Run(utils::Thread *thread) {
-		int64_t current_time = utils::Timestamp::HighResolution();
 		while (enabled_){
+		int64_t current_time = utils::Timestamp::HighResolution();
 			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_time_){
 				//Handel block list//
 				HandleChildChainBlock();
@@ -76,7 +76,7 @@ namespace bumo {
 		std::list<protocol::LedgerHeader>::const_iterator itor = handle_child_chain_block_list_.begin();
 		while (itor != handle_child_chain_block_list_.end()){
 			if (HandleSingleChildChainBlock(*itor)){
-				handle_child_chain_block_list_.erase(itor++); // delete node£¬find next node
+				handle_child_chain_block_list_.erase(itor++); // delete nodeÂ£Â¬find next node
 			}
 			else{
 				++itor;

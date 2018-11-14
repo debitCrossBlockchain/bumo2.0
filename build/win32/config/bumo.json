@@ -25,7 +25,7 @@
 		"thread_count": 8
     },
     "messagechannel": {
-        "target_message_channel": ["127.0.0.1:36004"],
+        "target_message_channel": "127.0.0.1:36004",
         "listen_address": "0.0.0.0:36004"
     },
     "wsserver": {

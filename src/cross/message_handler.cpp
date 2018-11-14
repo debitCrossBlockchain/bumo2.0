@@ -25,9 +25,9 @@ namespace bumo {
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
 
-		/*if (!CheckForChildBlock()){
+		if (!CheckForChildBlock()){
 			return false;
-			}*/
+		}
 
 		init_ = true;
 		return true;
@@ -114,44 +114,62 @@ namespace bumo {
 
 	void MessageHandler::OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel){
 		protocol::MessageChannelChildGenesesRequest child_chain_request;
-		if (!child_chain_request.ParseFromString(message_channel.msg_data())){
-			LOG_ERROR("Parse MessageChannelChildGenesesRequest error!");
-			return;
-		}
-
-		if (child_chain_request.chain_id() <= 0){
-			LOG_ERROR("Parse MessageChannelChildGenesesRequest error,invalid chain id(" FMT_I64 ")", child_chain_request.chain_id());
-			return;
-		}
-
-		std::string result;
-		Json::Value input_value;
-		Json::Value params;
-		input_value["method"] = "queryChildChainInfo";
-		input_value["params"]["chain_id"] = child_chain_request.chain_id();
-		if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result)){
-			LOG_ERROR("Query contract error!%s", result.c_str());
-			return;
-		}
-
-		Json::Value json_result = Json::Value(Json::objectValue);
-		json_result.fromString(result);
-		if (!json_result.isArray()){
-			LOG_ERROR("Query contract error! Json result is not array.%s", json_result.toFastString().c_str());
-			return;
-		}
-		Json::Value custom_result;
-		custom_result.fromString(json_result[Json::UInt(0)]["result"]["value"].asString());
-
 		protocol::MessageChannelCreateChildChain create_child_chain;
-		std::string error_msg;
-		if (!Json2Proto(custom_result, create_child_chain, error_msg)){
-			LOG_ERROR("Invalid contract result:%s", custom_result.toFastString());
-			return;
-		}
-
 		protocol::MessageChannelChildGenesesResponse response;
-		response.set_error_code(protocol::ERRCODE_SUCCESS);
+		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
+		std::string error_desc = "";
+
+		do 
+		{	
+			if (!child_chain_request.ParseFromString(message_channel.msg_data())){
+				error_desc = utils::String::Format("Parse MessageChannelChildGenesesRequest error!");
+				error_code = protocol::ERRCODE_INVALID_PARAMETER;
+				LOG_ERROR("%s", error_desc.c_str());
+				return;
+			}
+
+			if (child_chain_request.chain_id() <= 0){
+				error_desc = utils::String::Format("Parse MessageChannelChildGenesesRequest error,invalid chain id(" FMT_I64 ")", child_chain_request.chain_id());
+				error_code = protocol::ERRCODE_INVALID_PARAMETER;
+				LOG_ERROR("%s", error_desc.c_str());
+				return;
+			}
+
+#if 0
+			std::string result;
+			Json::Value input_value;
+			Json::Value params;
+			input_value["method"] = "queryChildChainInfo";
+			input_value["params"]["chain_id"] = child_chain_request.chain_id();
+			if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result)){
+				error_desc = utils::String::Format("Query contract error!%s", result.c_str());
+				error_code = protocol::ERRCODE_INVALID_PARAMETER;
+				LOG_ERROR("%s", error_desc.c_str());
+				break;
+			}
+
+			Json::Value json_result = Json::Value(Json::objectValue);
+			json_result.fromString(result);
+			if (!json_result.isArray()){
+				error_desc = utils::String::Format("Query contract error! Json result is not array.%s", json_result.toFastString().c_str());
+				error_code = protocol::ERRCODE_INVALID_PARAMETER;
+				LOG_ERROR("%s", error_desc.c_str());
+				break;
+			}
+			Json::Value custom_result;
+			custom_result.fromString(json_result[Json::UInt(0)]["result"]["value"].asString());
+			std::string error_msg;
+			if (!Json2Proto(custom_result, create_child_chain, error_msg)){
+				error_desc = utils::String::Format("Invalid contract result:%s", custom_result.toFastString());
+				error_code = protocol::ERRCODE_INVALID_PARAMETER;
+				LOG_ERROR("%s", error_desc.c_str());
+				break;
+			}
+#endif
+		} while (false);
+
+		response.set_error_code(error_code);
+		response.set_error_desc(error_desc);
 		*response.mutable_create_child_chain() = create_child_chain;
 
 		//Push message to child chain.
@@ -242,31 +260,32 @@ namespace bumo {
 	}
 
 	void MessageHandler::SendChildGenesesRequest(){
+#if 1
 		if (General::GetSelfChainId() <= General::MAIN_CHAIN_ID){
 			LOG_ERROR("The main chain program cannot send this message.");
 			return;
 		}
-		//protocol::MessageChannelCreateChildChain create_child_chain;
-		//create_child_chain.set_genesis_account("abc");
+		protocol::MessageChannelCreateChildChain create_child_chain;
+		create_child_chain.set_genesis_account("abc");
 
-		//protocol::MessageChannelChildGenesesResponse response;
-		//response.set_error_code(protocol::ERRCODE_SUCCESS);
-		//*response.mutable_create_child_chain() = create_child_chain;
+		protocol::MessageChannelChildGenesesRequest request;
+		request.set_chain_id(1);
 
-		////Push message to child chain.
-		//protocol::MessageChannel message;
-		//message.set_target_chain_id(1);
-		//message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
-		//message.set_msg_data(response.SerializeAsString());
-		//MessageChannel::Instance().MessageChannelProducer(message);
-
+		//Push message to child chain.
+		protocol::MessageChannel message;
+		message.set_target_chain_id(General::MAIN_CHAIN_ID);
+		message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
+		message.set_msg_data(request.SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(message);
+#else
 		protocol::MessageChannelChildGenesesRequest child_chain_request;
 		child_chain_request.set_chain_id(General::GetSelfChainId());
 
 		protocol::MessageChannel message_channel;
-		message_channel.set_target_chain_id(child_chain_request.chain_id());
+		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
 		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
 		message_channel.set_msg_data(child_chain_request.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(message_channel);
+#endif
 	}
 }

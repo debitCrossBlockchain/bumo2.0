@@ -123,6 +123,10 @@ namespace bumo {
 		if (!thread_ptr_->Start("messageChannel")) {
 			return false;
 		}
+
+		const P2pConfigure &p2p_configure = Configure::Instance().p2p_configure_;
+		network_id_ = p2p_configure.network_id_;
+
 		StatusModule::RegisterModule(this);
 		TimerNotify::RegisterModule(this);
 		LOG_INFO("Initialized message channel server successfully");
@@ -164,13 +168,6 @@ namespace bumo {
 			MessageChannelPeer *peer = (MessageChannelPeer *)conn;
 			peer->SetPeerInfo(hello);
 
-			if (ChainExist(peer->GetId(), hello.chain_id())) {
-				cmsg.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
-				cmsg.set_error_desc(utils::String::Format("Duplicated connection with ip(%s), id(" FMT_I64 ")", peer->GetPeerAddress().ToIp().c_str(), peer->GetId()));
-				LOG_ERROR("Failed to process the peer hello message.%s", cmsg.error_desc().c_str());
-				break;
-			}
-
 			if (network_id_ != hello.network_id()) {
 				cmsg.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				cmsg.set_error_desc(utils::String::Format("Different network id, remote id(" FMT_I64 ") is not equal to the local id(" FMT_I64 ")",
@@ -179,7 +176,7 @@ namespace bumo {
 				break;
 			}
 
-			if (CheckSameChain(General::GetSelfChainId(), hello.chain_id())) {
+			if (General::GetSelfChainId()== hello.chain_id()) {
 				cmsg.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				cmsg.set_error_desc(utils::String::Format("The peer connection is broken because it connects itself"));
 				LOG_ERROR("Failed to process the peer hello message.%s", cmsg.error_desc().c_str());
@@ -227,22 +224,6 @@ namespace bumo {
 		return true;
 	}
 
-	bool MessageChannel::ChainExist(int64_t peer_id, int64_t chain_id) {
-		bool exist = false;
-		for (ConnectionMap::iterator iter = connections_.begin(); iter != connections_.end(); iter++) {
-			MessageChannelPeer *peer = (MessageChannelPeer *)iter->second;
-			bool same_node = CheckSameChain(chain_id, peer->GetChainId());
-			if (same_node && peer->GetId() != peer_id) {
-				exist = true;
-				break;
-			}
-		}
-		return exist;
-	}
-
-	bool MessageChannel::CheckSameChain(int64_t local_chain_id, int64_t target_chain_id){
-		return  (local_chain_id == target_chain_id);
-	}
 
 	int64_t MessageChannel::GetChainIdFromConn(int64_t conn_id){
 		MessageChannelPeer *peer = (MessageChannelPeer *)GetConnection(conn_id);
@@ -313,6 +294,10 @@ namespace bumo {
 	}
 
 	void MessageChannel::ProcessMessageChannelDisconnect(){
+		if (General::GetSelfChainId() ==General::MAIN_CHAIN_ID){
+			return;
+		}
+
 		const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
 		utils::MutexGuard guard(conns_list_lock_);
 		ConnectionMap::const_iterator iter;
