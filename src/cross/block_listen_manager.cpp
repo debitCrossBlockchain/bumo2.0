@@ -29,8 +29,7 @@ namespace bumo {
 			HandleChildChainBlock(closing_ledger);
 	}
 
-	protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::FilterTlog(std::string tlog_topic)
-	{
+	protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::FilterTlog(std::string tlog_topic){
 		if (tlog_topic.empty())
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
 
@@ -40,10 +39,8 @@ namespace bumo {
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
 	}
 
-	std::shared_ptr<Message> BlockListenManager::GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type)
-	{
-		switch (msg_type)
-		{
+	std::shared_ptr<Message> BlockListenManager::GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type){
+		switch (msg_type){
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
 			return std::make_shared<protocol::MessageChannelCreateChildChain>();
 		default:
@@ -52,11 +49,9 @@ namespace bumo {
 
 	}
 
-	const protocol::OperationLog * BlockListenManager::PickTransferTlog(TransactionFrm::pointer txFrm)
-	{
+	const protocol::OperationLog * BlockListenManager::PickTransferTlog(TransactionFrm::pointer txFrm){
 
-		for (int i = 0; i < txFrm->instructions_.size(); i++)
-		{
+		for (int i = 0; i < txFrm->instructions_.size(); i++){
 			//auto op_type = trans->operations(j).type();
 			//find tlog
 			//protocol::TransactionEnvStore &env_sto = txFrm->instructions_[i];
@@ -66,21 +61,17 @@ namespace bumo {
 			if (trans.source_address() != General::CONTRACT_CMC_ADDRESS)
 				continue;
 
-			for (int j = 0; j < trans.operations_size(); j++)
-			{
-				if (protocol::Operation_Type_LOG == trans.operations(j).type())
-				{
+			for (int j = 0; j < trans.operations_size(); j++){
+				if (protocol::Operation_Type_LOG == trans.operations(j).type()){
 					const protocol::OperationLog &log = trans.operations(j).log();
 					if (log.topic().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE){
 						LOG_ERROR("Log's parameter topic size should be between (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE);
 						continue;
 					}
 					//special transaction
-					if (FilterTlog(log.topic()) != protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE)
-					{
+					if (FilterTlog(log.topic()) != protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE){
 						//transfer tlog params must be 5
-						if (log.datas_size() != 5)
-						{
+						if (log.datas_size() != 5){
 							LOG_ERROR("tlog parames number should have 5,but now is ", log.datas_size());
 							return nullptr;
 						}
@@ -97,19 +88,16 @@ namespace bumo {
 		//TODO: Handel child chain block, and call MessageChannel to send main chain proc //
 		
 		//bool bHaveEvent = false;
-		for (size_t i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++)
-		{
+		for (size_t i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
 			//const protocol::Transaction &tran = ledger.transaction_envs(i).transaction();
 			//
 			const protocol::OperationLog *tlog = PickTransferTlog(tx);
-			if (nullptr != tlog)
-			{
+			if (nullptr != tlog){
 				protocol::MessageChannel msg_channel;
 				const std::string &tlog_params = tlog->datas(4);
 				//tlog param(0)
-				if (tlog_params.size() == 0 || tlog_params.size() > General::TRANSACTION_LOG_DATA_MAXSIZE)
-				{
+				if (tlog_params.size() == 0 || tlog_params.size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
 					LOG_ERROR("Log's parameter data size should be between (0,%d]", General::TRANSACTION_LOG_DATA_MAXSIZE);
 					break;
 				}
@@ -135,11 +123,8 @@ namespace bumo {
 				msg_channel.set_msg_data(msg->SerializeAsString().c_str());
 
 				MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
-
-
 			}
 		}
-		
 	}
 
 	void BlockListenManager::HandleChildChainBlock(LedgerFrm::pointer closing_ledger){
