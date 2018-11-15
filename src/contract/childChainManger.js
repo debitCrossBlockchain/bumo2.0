@@ -1,7 +1,7 @@
 'use strict';
-//子链起始ID
+//childchain start id
 const originChildChainid = 1;
-//定义提案者奖励的费用
+//define the reward of the submitter
 const block_reward = '10';
 
 
@@ -25,7 +25,7 @@ function createChildChain(params){
     storageStore('childChainid_info_'+ childChainid,JSON.stringify(info_params));
     params.chain_id = childChainid;
     storageStore('childChainid_' + childChainid,JSON.stringify(params));
-    tlog('createChildChain',sender,0,sender,childChainid,JSON.stringify(params)); 
+    tlog('createChildChain',childChainid,JSON.stringify(params)); 
     childChainCount = int64Add(childChainCount, 1);
     storageStore('childChainCount',childChainCount.toString());
 }
@@ -63,12 +63,26 @@ function submitChildBlockHeader(params){
     assert(checkchildChainValadator(sender) === true,'submitChildBlockHeader sender is not validator.' );
     let info = JSON.parse(storageLoad('childChainid_info_' + input.chain_id));
     assert(info !== false, 'childChainid_info_' + input.chain_id + ' failed.');
-    let blockheight = int64Add(info.blockheight, 1);
-    info.blockheight = blockheight;
-    input.sumitter = sender;
-    input.currentheight = blockheight;
-    storageStore('childChainBlock_' + info.chain_id + '_' + input.block_header.hash, JSON.stringify(params));
-    storageStore('childChainid_info_'+ info.chain_id,JSON.stringify(info));
+    if(info.blockheight === 0)
+    {
+        let blockheight = int64Add(info.blockheight, 1);
+        info.blockheight = blockheight;
+        input.sumitter = sender;
+        input.currentheight = blockheight;
+        storageStore('childChainBlock_' + info.chain_id + '_' + input.block_header.hash, JSON.stringify(input));
+        storageStore('childChainid_info_'+ info.chain_id,JSON.stringify(info));
+    }
+    else
+    {
+        let preblock = storageLoad('childChainBlock_' + info.chain_id + '_' + input.block_header.previous_hash);
+        assert(preblock !== false,'preblockhash is not exist.');
+        let blockheight = int64Add(info.blockheight, 1);
+        info.blockheight = blockheight;
+        input.sumitter = sender;
+        input.currentheight = blockheight;
+        storageStore('childChainBlock_' + info.chain_id + '_' + input.block_header.hash, JSON.stringify(input));
+        storageStore('childChainid_info_'+ info.chain_id,JSON.stringify(info));
+    }
     transferCoin(sender,block_reward);
 }
 
