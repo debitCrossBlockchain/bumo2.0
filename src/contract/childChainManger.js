@@ -180,10 +180,10 @@ function query(inputStr){
         result = queryChildBlockHeader(input.params);
     }
     else if(input.method === 'queryChildChainInfo'){
-        result = queryChildChainInfo(input.chainid);
+        result = queryChildChainInfo(input.chain_id);
     }
     else if(input.method === 'queryChildChainValidators'){
-        result = queryChildChainValidators(input.chainid);
+        result = queryChildChainValidators(input.chain_id);
     }
     else{
         throw '<Query interface passes an invalid operation type>';
