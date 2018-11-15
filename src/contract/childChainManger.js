@@ -20,8 +20,7 @@ function createChildChain(params){
     info_params.cost = input.cost;
     info_params.block_cost_ready = true;
     info_params.blockheight = 0;
-    let validators = [''];
-    info_params.validators = validators;
+    info_params.validators = input.reserve_validator;
     storageStore('childChainid_info_'+ childChainid,JSON.stringify(info_params));
     params.chain_id = childChainid;
     storageStore('childChainid_' + childChainid,JSON.stringify(params));
@@ -121,9 +120,9 @@ function queryChildBlockHeader(params){
     return retinfo;
 }
 
-function queryChildChainInfo(chainid){
+function queryChildChainInfo(chain_id){
     log('queryChildChainInfo');
-    let key = 'childChainid_' + chainid;
+    let key = 'childChainid_' + chain_id;
     let genesisinfo = storageLoad(key);
 
     let retinfo = {};
@@ -135,9 +134,9 @@ function queryChildChainInfo(chainid){
     return retinfo;
 }
 
-function queryChildChainValidators(chainid){
+function queryChildChainValidators(chain_id){
     log('queryChildChainValidators');
-    let key = 'childChainid_info_' + chainid;
+    let key = 'childChainid_info_' + chain_id;
     let chaininfo = JSON.parse(storageLoad(key));
 
     let retinfo = {};
