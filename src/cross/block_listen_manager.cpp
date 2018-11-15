@@ -5,7 +5,7 @@
 
 namespace bumo {
 
-	const static char* OP_CREATE_CHILD_CHAIN		= "CreateChildChain";
+	const static char* OP_CREATE_CHILD_CHAIN		= "createChildChain";
 
 	BlockListenManager::BlockListenManager(){
 	}
@@ -70,12 +70,12 @@ namespace bumo {
 					}
 					//special transaction
 					if (FilterTlog(log.topic()) != protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE){
-						//transfer tlog params must be 5
-						if (log.datas_size() != 5){
-							LOG_ERROR("tlog parames number should have 5,but now is ", log.datas_size());
+						//transfer tlog params must be 2
+						if (log.datas_size() != 2){
+							LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
 							return nullptr;
 						}
-						LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s,args[2]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str(), log.datas(2).c_str());
+						LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
 						return &log;
 					}
 				}
@@ -95,7 +95,7 @@ namespace bumo {
 			const protocol::OperationLog *tlog = PickTransferTlog(tx);
 			if (nullptr != tlog){
 				protocol::MessageChannel msg_channel;
-				const std::string &tlog_params = tlog->datas(4);
+				const std::string &tlog_params = tlog->datas(1);
 				//tlog param(0)
 				if (tlog_params.size() == 0 || tlog_params.size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
 					LOG_ERROR("Log's parameter data size should be between (0,%d]", General::TRANSACTION_LOG_DATA_MAXSIZE);
@@ -107,7 +107,7 @@ namespace bumo {
 					LOG_ERROR("Failed to parse the json content of the tlog");
 					continue;
 				}
-				msg_channel.set_target_chain_id(atoi(tlog->datas(3).c_str()));
+				msg_channel.set_target_chain_id(atoi(tlog->datas(0).c_str()));
 
 				protocol::MESSAGE_CHANNEL_TYPE msg_type = FilterTlog(tlog->topic());
 				msg_channel.set_msg_type(msg_type);

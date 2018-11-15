@@ -176,7 +176,7 @@ namespace bumo {
 				break;
 			}
 
-			if (General::GetSelfChainId()== hello.chain_id()) {
+			if (General::GetSelfChainId() == hello.chain_id()) {
 				cmsg.set_error_code(protocol::ERRCODE_INVALID_PARAMETER);
 				cmsg.set_error_desc(utils::String::Format("The peer connection is broken because it connects itself"));
 				LOG_ERROR("Failed to process the peer hello message.%s", cmsg.error_desc().c_str());
@@ -294,7 +294,7 @@ namespace bumo {
 	}
 
 	void MessageChannel::ProcessMessageChannelDisconnect(){
-		if (General::GetSelfChainId() ==General::MAIN_CHAIN_ID){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			return;
 		}
 
