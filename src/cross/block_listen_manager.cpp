@@ -72,15 +72,16 @@ namespace bumo {
 						continue;
 					}
 					//special transaction
-					if (FilterTlog(log.topic()) != protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE){
-						//transfer tlog params must be 2
-						if (log.datas_size() != 2){
-							LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
-							return nullptr;
-						}
-						LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
-						return &log;
+					if (FilterTlog(log.topic()) == protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE){
+						continue;
 					}
+					//transfer tlog params must be 2
+					if (log.datas_size() != 2){
+						LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
+						return nullptr;
+					}
+					LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
+					return &log;
 				}
 			}
 		}
