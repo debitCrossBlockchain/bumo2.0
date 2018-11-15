@@ -76,7 +76,7 @@ namespace bumo {
 		std::list<protocol::LedgerHeader>::const_iterator itor = handle_child_chain_block_list_.begin();
 		while (itor != handle_child_chain_block_list_.end()){
 			if (HandleSingleChildChainBlock(*itor)){
-				handle_child_chain_block_list_.erase(itor++); // delete node£¬find next node
+				handle_child_chain_block_list_.erase(itor++); // delete node£,find next node
 			}
 			else{
 				++itor;
