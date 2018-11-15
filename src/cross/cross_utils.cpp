@@ -67,7 +67,8 @@ namespace bumo {
 				break;
 			}
 
-			result = result_json["query_rets"].toFastString();
+			int i = 0;
+		   result = result_json["query_rets"][i]["result"]["value"].asString();
 		} while (false);
 
 		LOG_INFO("Query result code:%d, result:%s", error_code, result.c_str());
