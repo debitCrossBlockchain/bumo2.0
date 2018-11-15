@@ -120,9 +120,9 @@ function queryChildBlockHeader(params){
     return retinfo;
 }
 
-function queryChildChainInfo(chain_id){
+function queryChildChainInfo(params){
     log('queryChildChainInfo');
-    let key = 'childChainid_' + chain_id;
+    let key = 'childChainid_' + params.chain_id;
     let genesisinfo = storageLoad(key);
 
     let retinfo = {};
@@ -134,9 +134,9 @@ function queryChildChainInfo(chain_id){
     return retinfo;
 }
 
-function queryChildChainValidators(chain_id){
+function queryChildChainValidators(params){
     log('queryChildChainValidators');
-    let key = 'childChainid_info_' + chain_id;
+    let key = 'childChainid_info_' + params.chain_id;
     let chaininfo = JSON.parse(storageLoad(key));
 
     let retinfo = {};
@@ -180,10 +180,10 @@ function query(inputStr){
         result = queryChildBlockHeader(input.params);
     }
     else if(input.method === 'queryChildChainInfo'){
-        result = queryChildChainInfo(input.chain_id);
+        result = queryChildChainInfo(input.params);
     }
     else if(input.method === 'queryChildChainValidators'){
-        result = queryChildChainValidators(input.chain_id);
+        result = queryChildChainValidators(input.params);
     }
     else{
         throw '<Query interface passes an invalid operation type>';
