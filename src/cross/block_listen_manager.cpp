@@ -23,10 +23,13 @@ namespace bumo {
 	}
 
 	void BlockListenManager::HandleBlock(LedgerFrm::pointer closing_ledger){
-		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID)
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			HandleMainChainBlock(closing_ledger);
-		else
+		}
+		else{
 			HandleChildChainBlock(closing_ledger);
+		}
+			
 	}
 
 	protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::FilterTlog(std::string tlog_topic){
@@ -120,7 +123,7 @@ namespace bumo {
 					LOG_ERROR("Failed to Json2Proto error_msg=%s",error_msg.c_str());
 					continue;
 				}
-				msg_channel.set_msg_data(msg->SerializeAsString().c_str());
+				msg_channel.set_msg_data(msg->SerializeAsString());
 
 				MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 			}
@@ -136,7 +139,7 @@ namespace bumo {
 		//sendto main chain id=0
 		msg_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_SUBMIT_HEAD);
-		msg_channel.set_msg_data(ledger_header.SerializeAsString().c_str());
+		msg_channel.set_msg_data(ledger_header.SerializeAsString());
 
 		MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 		LOG_INFO("childChain build a block hash=%s,send msgchannel", utils::String::BinToHexString(ledger_header.hash()).c_str());
