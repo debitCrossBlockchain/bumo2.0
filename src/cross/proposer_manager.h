@@ -21,6 +21,21 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include<cross/message_channel_manager.h>
 
 namespace bumo {
+
+
+	class FindHeader{
+	public:
+		protocol::LedgerHeader ledger_header_;
+	public:
+		FindHeader(const protocol::LedgerHeader& ledger_header) :
+			ledger_header_(ledger_header){};
+		bool operator()(const protocol::LedgerHeader& ledger_header_other){
+			bool flag = (ledger_header_other.chain_id() == ledger_header_.chain_id()) &&
+				(ledger_header_other.seq() == ledger_header_.seq()) && (ledger_header_other.close_time() == ledger_header_.close_time());
+			return flag;
+		}
+	};
+
 	class Header{
 	public:
 		int64_t seq_;

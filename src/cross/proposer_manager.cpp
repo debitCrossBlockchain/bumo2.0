@@ -125,7 +125,10 @@ namespace bumo {
 		protocol::LedgerHeader ledger_header;
 		ledger_header.ParseFromString(message_channel.msg_data());
 		utils::MutexGuard guard(handle_child_chain_list_lock_);
-		handle_child_chain_block_list_.push_back(ledger_header);
+		std::list<protocol::LedgerHeader>::const_iterator itor = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header));
+		if (itor == handle_child_chain_block_list_.end()){
+			handle_child_chain_block_list_.push_back(ledger_header);
+		}
 
 	}
 
@@ -183,7 +186,7 @@ namespace bumo {
 		return flag;
 	}
 
-	bool ProposerManager::QueryFreshChildBlock(const int64_t chain_id,Header& header){
+	bool ProposerManager::QueryFreshChildBlock(const int64_t chain_id, Header& header){
 
 		bool flag = true;
 		Json::FastWriter json_input;
@@ -210,7 +213,7 @@ namespace bumo {
 
 		header.chanin_id_ = object["chain_id"].asInt64();
 		header.seq_ = object["seq"].asInt64();
-		return flag;	
+		return flag;
 	}
 
 	bool ProposerManager::CheckChildBlockExsit(const std::string& hash, int64_t chain_id){
@@ -296,7 +299,7 @@ namespace bumo {
 			return true;
 		}
 
-		if ((header.seq_ + 1)<block_header["seq"].asInt64()){
+		if ((header.seq_ + 1) < block_header["seq"].asInt64()){
 			HandleChildChainBlockNotExsitList(header);
 			return false;
 		}
