@@ -38,9 +38,10 @@ namespace bumo {
 		void HandleChildChainBlock();
 		bool HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header);
 		bool CheckChildBlockExsit(const std::string& hash, int64_t chain_id);
-
+		bool CheckChildPeviousBlockExsit(const protocol::LedgerHeader& ledger_header);
 		bool CommitTransaction(const protocol::LedgerHeader& ledger_header);
 		bool CheckNodeIsValidate(const std::string &address, int64_t chain_id);
+		void ProcessPeviousBlockNotExsit(const protocol::LedgerHeader& ledger_header);
 		void UpdateValidateAddressList(utils::StringList& validate_address,int64_t chain_id);
 		bool enabled_;
 		utils::Thread *thread_ptr_;
