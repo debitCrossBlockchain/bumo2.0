@@ -60,7 +60,7 @@ namespace bumo {
 
 	void ProposerManager::Run(utils::Thread *thread) {
 		while (enabled_){
-		int64_t current_time = utils::Timestamp::HighResolution();
+			int64_t current_time = utils::Timestamp::HighResolution();
 			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_time_){
 				//Handel block list//
 				HandleChildChainBlock();
@@ -109,9 +109,14 @@ namespace bumo {
 		std::string input = json_input.write(input_value);
 
 		std::string reply;
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), reply);
 		Json::Value object;
-		object.fromString(reply.c_str());
+		Json::Value result_list;
+
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), reply);
+
+		result_list.fromString(reply.c_str());
+		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		object.fromString(result.c_str());
 
 		if (error_code != protocol::ERRCODE_SUCCESS){
 			LOG_ERROR("Failed to query validators .%d", error_code);
@@ -160,9 +165,14 @@ namespace bumo {
 		std::string input = json_input.write(input_value);
 
 		std::string reply;
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), reply);
 		Json::Value object;
-		object.fromString(reply.c_str());
+		Json::Value result_list;
+
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), reply);
+
+		result_list.fromString(reply.c_str());
+		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		object.fromString(result.c_str());
 
 		if (error_code != protocol::ERRCODE_SUCCESS){
 			LOG_ERROR("Failed to query child block .%d", error_code);
@@ -180,26 +190,12 @@ namespace bumo {
 
 	bool ProposerManager::CommitTransaction(const protocol::LedgerHeader& ledger_header){
 		//create a mainchain transaction with private key to CMC
-
+		Json::Value block_header = bumo::Proto2Json(ledger_header);
 		Json::FastWriter json_input;
 		Json::Value input_value;
 		Json::Value params;
-		Json::Value block_header;
 
-		block_header["seq"] = ledger_header.seq();
-		block_header["hash"] = ledger_header.hash();
-		block_header["previous_hash"] = ledger_header.previous_hash();
-		block_header["account_tree_hash"] = ledger_header.account_tree_hash();
-		block_header["close_time"] = ledger_header.close_time();
-		block_header["consensus_value_hash"] = ledger_header.consensus_value_hash();
-		block_header["version"] = ledger_header.version();
-		block_header["tx_count"] = ledger_header.tx_count();
-		block_header["validators_hash"] = ledger_header.validators_hash();
-		block_header["fees_hash"] = ledger_header.fees_hash();
-		block_header["reserve"] = ledger_header.reserve();
-		block_header["chain_id"] = ledger_header.chain_id();
-
-		params["chain_id"] = ledger_header.chain_id();
+		params["chain_id"] = block_header["chain_id"].asInt64();
 		params["block_header"] = block_header;
 		input_value["method"] = "submitChildBlockHeader";
 		input_value["params"] = params;
@@ -218,19 +214,20 @@ namespace bumo {
 
 		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
 		std::string node_address = private_key.GetEncAddress();
+		Json::Value block_header = bumo::Proto2Json(ledger_header);
 
-		if (!CheckNodeIsValidate(node_address.c_str(), ledger_header.chain_id())){
+		if (!CheckNodeIsValidate(node_address.c_str(), block_header["chain_id"].asInt64())){
 			LOG_INFO("this node is not validators,address is %s", node_address.c_str());
 			return true;
 		}
 
-		if (!CheckChildBlockExsit(ledger_header.previous_hash().c_str(), ledger_header.chain_id())){
-			LOG_INFO("child previous block is not exsit! hash is  %s", ledger_header.previous_hash().c_str());
+		if (!CheckChildBlockExsit(block_header["previous_hash"].asString(), block_header["chain_id"].asInt64())){
+			LOG_INFO("child previous block is not exsit! hash is  %s", block_header["previous_hash"].asString());
 			return false;
 		}
 
-		if (CheckChildBlockExsit(ledger_header.hash().c_str(), ledger_header.chain_id())){
-			LOG_INFO("child block is not exsit! hash is  %s", ledger_header.previous_hash().c_str());
+		if (CheckChildBlockExsit(block_header["hash"].asString(), block_header["chain_id"].asInt64())){
+			LOG_INFO("child block is not exsit! hash is  %s", block_header["hash"].asString().c_str());
 			return true;
 		}
 

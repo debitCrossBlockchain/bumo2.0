@@ -95,6 +95,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* MessageChannelChildGenesesResponse_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   MessageChannelChildGenesesResponse_reflection_ = NULL;
+const ::google::protobuf::Descriptor* MessageChannelQueryHead_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  MessageChannelQueryHead_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* OVERLAY_MESSAGE_TYPE_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ChainMessageType_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_NODE_TYPE_descriptor_ = NULL;
@@ -530,6 +533,21 @@ void protobuf_AssignDesc_overlay_2eproto() {
       sizeof(MessageChannelChildGenesesResponse),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelChildGenesesResponse, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelChildGenesesResponse, _is_default_instance_));
+  MessageChannelQueryHead_descriptor_ = file->message_type(24);
+  static const int MessageChannelQueryHead_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelQueryHead, ledger_seq_),
+  };
+  MessageChannelQueryHead_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      MessageChannelQueryHead_descriptor_,
+      MessageChannelQueryHead::default_instance_,
+      MessageChannelQueryHead_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(MessageChannelQueryHead),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelQueryHead, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelQueryHead, _is_default_instance_));
   OVERLAY_MESSAGE_TYPE_descriptor_ = file->enum_type(0);
   ChainMessageType_descriptor_ = file->enum_type(1);
   MESSAGE_CHANNEL_NODE_TYPE_descriptor_ = file->enum_type(2);
@@ -595,6 +613,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
       MessageChannelChildGenesesRequest_descriptor_, &MessageChannelChildGenesesRequest::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       MessageChannelChildGenesesResponse_descriptor_, &MessageChannelChildGenesesResponse::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      MessageChannelQueryHead_descriptor_, &MessageChannelQueryHead::default_instance());
 }
 
 }  // namespace
@@ -648,6 +668,8 @@ void protobuf_ShutdownFile_overlay_2eproto() {
   delete MessageChannelChildGenesesRequest_reflection_;
   delete MessageChannelChildGenesesResponse::default_instance_;
   delete MessageChannelChildGenesesResponse_reflection_;
+  delete MessageChannelQueryHead::default_instance_;
+  delete MessageChannelQueryHead_reflection_;
 }
 
 void protobuf_AddDesc_overlay_2eproto() GOOGLE_ATTRIBUTE_COLD;
@@ -730,35 +752,37 @@ void protobuf_AddDesc_overlay_2eproto() {
     "code\030\001 \001(\0162\023.protocol.ERRORCODE\022\022\n\nerror"
     "_desc\030\002 \001(\t\022D\n\022create_child_chain\030\003 \001(\0132"
     "(.protocol.MessageChannelCreateChildChai"
-    "n*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERLAY_MS"
-    "GTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING\020\001\022\031"
-    "\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY_MSG"
-    "TYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRANSACT"
-    "ION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030\n\024OV"
-    "ERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSGTYPE_"
-    "LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMessage"
-    "Type\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_HELLO"
-    "\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEER_ON"
-    "LINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CHAIN_"
-    "PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSACTIO"
-    "N\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHAIN_SU"
-    "BSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022*\201\001\n"
-    "\031MESSAGE_CHANNEL_NODE_TYPE\022\"\n\036MESSAGE_CH"
-    "ANNEL_NODE_TYPE_NONE\020\000\022 \n\034MESSAGE_CHANNE"
-    "L_NODE_PACKAGE\020\036\022\036\n\032MESSAGE_CHANNEL_NODE"
-    "_HELLO\020\037*\302\003\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MES"
-    "SAGE_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHAN"
-    "NEL_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHAN"
-    "NEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_"
-    "MIX\020\003\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020\004\022\036\n\032ME"
-    "SSAGE_CHANNEL_WITHDRAWAL\020\005\022#\n\037MESSAGE_CH"
-    "ANNEL_FAST_WITHDRAWAL\020\006\022\037\n\033MESSAGE_CHANN"
-    "EL_SUBMIT_HEAD\020\007\022(\n$MESSAGE_CHANNEL_CHAL"
-    "LENGE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_CHANNEL_CH"
-    "ALLENGE_HEAD\020\t\022)\n%MESSAGE_CHANNEL_CHILD_"
-    "GENESES_REQUEST\020\n\022*\n&MESSAGE_CHANNEL_CHI"
-    "LD_GENESES_RESPONSE\020\013B\"\n io.bumo.sdk.cor"
-    "e.extend.protobufb\006proto3", 3905);
+    "n\"-\n\027MessageChannelQueryHead\022\022\n\nledger_s"
+    "eq\030\001 \001(\003*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVE"
+    "RLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_P"
+    "ING\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVER"
+    "LAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_T"
+    "RANSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020"
+    "\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_M"
+    "SGTYPE_LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020Chain"
+    "MessageType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAI"
+    "N_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_"
+    "PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n"
+    "\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRA"
+    "NSACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022C"
+    "HAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STOR"
+    "E\020\022*\201\001\n\031MESSAGE_CHANNEL_NODE_TYPE\022\"\n\036MES"
+    "SAGE_CHANNEL_NODE_TYPE_NONE\020\000\022 \n\034MESSAGE"
+    "_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032MESSAGE_CHANN"
+    "EL_NODE_HELLO\020\037*\342\003\n\024MESSAGE_CHANNEL_TYPE"
+    "\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSA"
+    "GE_CHANNEL_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSA"
+    "GE_CHANNEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL"
+    "_CHILD_MIX\020\003\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020"
+    "\004\022\036\n\032MESSAGE_CHANNEL_WITHDRAWAL\020\005\022#\n\037MES"
+    "SAGE_CHANNEL_FAST_WITHDRAWAL\020\006\022\037\n\033MESSAG"
+    "E_CHANNEL_SUBMIT_HEAD\020\007\022(\n$MESSAGE_CHANN"
+    "EL_CHALLENGE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_CHA"
+    "NNEL_CHALLENGE_HEAD\020\t\022)\n%MESSAGE_CHANNEL"
+    "_CHILD_GENESES_REQUEST\020\n\022*\n&MESSAGE_CHAN"
+    "NEL_CHILD_GENESES_RESPONSE\020\013\022\036\n\032MESSAGE_"
+    "CHANNEL_QUERY_HEAD\020\014B\"\n io.bumo.sdk.core"
+    ".extend.protobufb\006proto3", 3984);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -785,6 +809,7 @@ void protobuf_AddDesc_overlay_2eproto() {
   MessageChannelCreateChildChain::default_instance_ = new MessageChannelCreateChildChain();
   MessageChannelChildGenesesRequest::default_instance_ = new MessageChannelChildGenesesRequest();
   MessageChannelChildGenesesResponse::default_instance_ = new MessageChannelChildGenesesResponse();
+  MessageChannelQueryHead::default_instance_ = new MessageChannelQueryHead();
   Hello::default_instance_->InitAsDefaultInstance();
   HelloResponse::default_instance_->InitAsDefaultInstance();
   Peer::default_instance_->InitAsDefaultInstance();
@@ -809,6 +834,7 @@ void protobuf_AddDesc_overlay_2eproto() {
   MessageChannelCreateChildChain::default_instance_->InitAsDefaultInstance();
   MessageChannelChildGenesesRequest::default_instance_->InitAsDefaultInstance();
   MessageChannelChildGenesesResponse::default_instance_->InitAsDefaultInstance();
+  MessageChannelQueryHead::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_overlay_2eproto);
 }
 
@@ -893,6 +919,7 @@ bool MESSAGE_CHANNEL_TYPE_IsValid(int value) {
     case 9:
     case 10:
     case 11:
+    case 12:
       return true;
     default:
       return false;
@@ -11473,6 +11500,244 @@ void MessageChannelChildGenesesResponse::set_allocated_create_child_chain(::prot
     
   }
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelChildGenesesResponse.create_child_chain)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int MessageChannelQueryHead::kLedgerSeqFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+MessageChannelQueryHead::MessageChannelQueryHead()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.MessageChannelQueryHead)
+}
+
+void MessageChannelQueryHead::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+MessageChannelQueryHead::MessageChannelQueryHead(const MessageChannelQueryHead& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.MessageChannelQueryHead)
+}
+
+void MessageChannelQueryHead::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  ledger_seq_ = GOOGLE_LONGLONG(0);
+}
+
+MessageChannelQueryHead::~MessageChannelQueryHead() {
+  // @@protoc_insertion_point(destructor:protocol.MessageChannelQueryHead)
+  SharedDtor();
+}
+
+void MessageChannelQueryHead::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void MessageChannelQueryHead::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* MessageChannelQueryHead::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MessageChannelQueryHead_descriptor_;
+}
+
+const MessageChannelQueryHead& MessageChannelQueryHead::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_overlay_2eproto();
+  return *default_instance_;
+}
+
+MessageChannelQueryHead* MessageChannelQueryHead::default_instance_ = NULL;
+
+MessageChannelQueryHead* MessageChannelQueryHead::New(::google::protobuf::Arena* arena) const {
+  MessageChannelQueryHead* n = new MessageChannelQueryHead;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void MessageChannelQueryHead::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.MessageChannelQueryHead)
+  ledger_seq_ = GOOGLE_LONGLONG(0);
+}
+
+bool MessageChannelQueryHead::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.MessageChannelQueryHead)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int64 ledger_seq = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &ledger_seq_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.MessageChannelQueryHead)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.MessageChannelQueryHead)
+  return false;
+#undef DO_
+}
+
+void MessageChannelQueryHead::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.MessageChannelQueryHead)
+  // optional int64 ledger_seq = 1;
+  if (this->ledger_seq() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->ledger_seq(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.MessageChannelQueryHead)
+}
+
+::google::protobuf::uint8* MessageChannelQueryHead::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.MessageChannelQueryHead)
+  // optional int64 ledger_seq = 1;
+  if (this->ledger_seq() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->ledger_seq(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.MessageChannelQueryHead)
+  return target;
+}
+
+int MessageChannelQueryHead::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.MessageChannelQueryHead)
+  int total_size = 0;
+
+  // optional int64 ledger_seq = 1;
+  if (this->ledger_seq() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->ledger_seq());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void MessageChannelQueryHead::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.MessageChannelQueryHead)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const MessageChannelQueryHead* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const MessageChannelQueryHead>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.MessageChannelQueryHead)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.MessageChannelQueryHead)
+    MergeFrom(*source);
+  }
+}
+
+void MessageChannelQueryHead::MergeFrom(const MessageChannelQueryHead& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.MessageChannelQueryHead)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.ledger_seq() != 0) {
+    set_ledger_seq(from.ledger_seq());
+  }
+}
+
+void MessageChannelQueryHead::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.MessageChannelQueryHead)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void MessageChannelQueryHead::CopyFrom(const MessageChannelQueryHead& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.MessageChannelQueryHead)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MessageChannelQueryHead::IsInitialized() const {
+
+  return true;
+}
+
+void MessageChannelQueryHead::Swap(MessageChannelQueryHead* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void MessageChannelQueryHead::InternalSwap(MessageChannelQueryHead* other) {
+  std::swap(ledger_seq_, other->ledger_seq_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata MessageChannelQueryHead::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = MessageChannelQueryHead_descriptor_;
+  metadata.reflection = MessageChannelQueryHead_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// MessageChannelQueryHead
+
+// optional int64 ledger_seq = 1;
+void MessageChannelQueryHead::clear_ledger_seq() {
+  ledger_seq_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 MessageChannelQueryHead::ledger_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelQueryHead.ledger_seq)
+  return ledger_seq_;
+}
+ void MessageChannelQueryHead::set_ledger_seq(::google::protobuf::int64 value) {
+  
+  ledger_seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelQueryHead.ledger_seq)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

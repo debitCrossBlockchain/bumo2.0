@@ -135,37 +135,34 @@ namespace bumo {
 				return;
 			}
 
-#if 0
-			std::string result;
+			Json::Value query_rets;
 			Json::Value input_value;
 			Json::Value params;
 			input_value["method"] = "queryChildChainInfo";
 			input_value["params"]["chain_id"] = child_chain_request.chain_id();
-			if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result)){
-				error_desc = utils::String::Format("Query contract error!%s", result.c_str());
+			if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), query_rets)){
+				error_desc = utils::String::Format("Query contract error!%s", query_rets.toFastString().c_str());
 				error_code = protocol::ERRCODE_INVALID_PARAMETER;
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
 
-			Json::Value json_result = Json::Value(Json::objectValue);
-			json_result.fromString(result);
-			if (!json_result.isArray()){
-				error_desc = utils::String::Format("Query contract error! Json result is not array.%s", json_result.toFastString().c_str());
+			if (!query_rets.isArray()){
+				error_desc = utils::String::Format("Query contract error! Json result is not array.%s", query_rets.toFastString().c_str());
 				error_code = protocol::ERRCODE_INVALID_PARAMETER;
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
+
 			Json::Value custom_result;
-			custom_result.fromString(json_result[Json::UInt(0)]["result"]["value"].asString());
+			custom_result.fromString(query_rets[Json::UInt(0)]["result"]["value"].asString());
 			std::string error_msg;
 			if (!Json2Proto(custom_result, create_child_chain, error_msg)){
-				error_desc = utils::String::Format("Invalid contract result:%s", custom_result.toFastString());
+				error_desc = utils::String::Format("Invalid contract result:%s", custom_result.toFastString().c_str());
 				error_code = protocol::ERRCODE_INVALID_PARAMETER;
 				LOG_ERROR("%s", error_desc.c_str());
 				break;
 			}
-#endif
 		} while (false);
 
 		response.set_error_code(error_code);
@@ -201,56 +198,45 @@ namespace bumo {
 		utils::StringList validator_list;
 		GenesisConfigure &genesis_config = Configure::Instance().genesis_configure_;
 
-		if (1){
-			//Debug
-			GenesisConfigure &genesis_config = Configure::Instance().genesis_configure_;
-			genesis_config.account_ = "buQYgZmzaXAjFovGWnbqZUsA6vpSnySs8Z2b";
-			genesis_config.fees_.base_reserve_ = 1000;
-			genesis_config.fees_.gas_price_ = 1000;
-			genesis_config.slogan_ = "Hello, child chain!";
-			genesis_config.validators_.push_back("buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY");
+		std::string account = create_child_chain.genesis_account();
+		if (!PublicKey::IsAddressValid(account)){
+			LOG_ERROR("Invalid address:%s", account.c_str());
+			return;
 		}
-		else{
-			std::string account = create_child_chain.genesis_account();
-			if (!PublicKey::IsAddressValid(account)){
-				LOG_ERROR("Invalid address:%s", account.c_str());
-				return;
-			}
 
-			if (create_child_chain.chain_id() != genesis_config.chain_id_){
-				LOG_ERROR("Invalid chain id:("  FMT_I64 ")", create_child_chain.chain_id());
-				return;
-			}
-
-			const protocol::FeeConfig &fee_config = create_child_chain.fee();
-			if (fee_config.base_reserve() < 0 || fee_config.gas_price() < 0){
-				LOG_ERROR("Invalid fee base reserve:(" FMT_I64 "), fee config:(" FMT_I64 ") ",
-					fee_config.base_reserve(), fee_config.gas_price());
-				return;
-			}
-
-			if (create_child_chain.reserve_validator_size() <= 0){
-				LOG_ERROR("No reserve address.");
-				return;
-			}
-
-			for (int32_t i = 0; i < create_child_chain.reserve_validator_size(); i++){
-				std::string reserve_validator = create_child_chain.reserve_validator(i);
-				if (!PublicKey::IsAddressValid(reserve_validator)){
-					LOG_ERROR("Invalid reserve address:%s", reserve_validator.c_str());
-					return;
-				}
-				validator_list.push_back(reserve_validator);
-				validators = utils::String::Format("%s,", reserve_validator.c_str());
-			}
-
-			genesis_config.account_ = account;
-			genesis_config.fees_.base_reserve_ = fee_config.base_reserve();
-			genesis_config.fees_.gas_price_ = fee_config.gas_price();
-			genesis_config.slogan_ = create_child_chain.slogan();
-			genesis_config.validators_.clear();
-			genesis_config.validators_.assign(validator_list.begin(), validator_list.end());
+		if (create_child_chain.chain_id() != genesis_config.chain_id_){
+			LOG_ERROR("Invalid chain id:("  FMT_I64 ")", create_child_chain.chain_id());
+			return;
 		}
+
+		const protocol::FeeConfig &fee_config = create_child_chain.fee();
+		if (fee_config.base_reserve() < 0 || fee_config.gas_price() < 0){
+			LOG_ERROR("Invalid fee base reserve:(" FMT_I64 "), fee config:(" FMT_I64 ") ",
+				fee_config.base_reserve(), fee_config.gas_price());
+			return;
+		}
+
+		if (create_child_chain.reserve_validator_size() <= 0){
+			LOG_ERROR("No reserve address.");
+			return;
+		}
+
+		for (int32_t i = 0; i < create_child_chain.reserve_validator_size(); i++){
+			std::string reserve_validator = create_child_chain.reserve_validator(i);
+			if (!PublicKey::IsAddressValid(reserve_validator)){
+				LOG_ERROR("Invalid reserve address:%s", reserve_validator.c_str());
+				return;
+			}
+			validator_list.push_back(reserve_validator);
+			validators = utils::String::Format("%s,", reserve_validator.c_str());
+		}
+
+		genesis_config.account_ = account;
+		genesis_config.fees_.base_reserve_ = fee_config.base_reserve();
+		genesis_config.fees_.gas_price_ = fee_config.gas_price();
+		genesis_config.slogan_ = create_child_chain.slogan();
+		genesis_config.validators_.clear();
+		genesis_config.validators_.assign(validator_list.begin(), validator_list.end());
 
 		LOG_INFO("Received create child chain message, validators:%s, account:%s, slogan:%s, chain id:(" FMT_I64 ")",
 			validators.c_str(), create_child_chain.genesis_account().c_str(),
@@ -260,24 +246,6 @@ namespace bumo {
 	}
 
 	void MessageHandler::SendChildGenesesRequest(){
-#if 1
-		if (General::GetSelfChainId() <= General::MAIN_CHAIN_ID){
-			LOG_ERROR("The main chain program cannot send this message.");
-			return;
-		}
-		protocol::MessageChannelCreateChildChain create_child_chain;
-		create_child_chain.set_genesis_account("abc");
-
-		protocol::MessageChannelChildGenesesRequest request;
-		request.set_chain_id(1);
-
-		//Push message to child chain.
-		protocol::MessageChannel message;
-		message.set_target_chain_id(General::MAIN_CHAIN_ID);
-		message.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
-		message.set_msg_data(request.SerializeAsString());
-		MessageChannel::Instance().MessageChannelProducer(message);
-#else
 		protocol::MessageChannelChildGenesesRequest child_chain_request;
 		child_chain_request.set_chain_id(General::GetSelfChainId());
 
@@ -286,6 +254,5 @@ namespace bumo {
 		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
 		message_channel.set_msg_data(child_chain_request.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(message_channel);
-#endif
 	}
 }
