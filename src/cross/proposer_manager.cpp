@@ -79,9 +79,12 @@ namespace bumo {
 	void ProposerManager::HandleSingleChildChainBlockNotExsit(const Header& header){
 		protocol::MessageChannel message_channel;
 		protocol::MessageChannelQueryHead query_head;
-		int64_t seq = header.seq_ + 1;
-		if (seq <= 0){
-			return;
+		int64_t seq = 0;
+		if (header.seq_ <= 0){
+			seq = 1;
+		}
+		else{
+			seq = header.seq_ + 1;
 		}
 		query_head.set_ledger_seq(seq);
 		message_channel.set_target_chain_id(header.chanin_id_);
@@ -291,15 +294,14 @@ namespace bumo {
 			return true;
 		}
 
-
 		Header header;
 		QueryFreshChildBlock(block_header["chain_id"].asInt64(), header);
 		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ == block_header["seq"].asInt64())){
-			LOG_INFO("child block is  exsit! hash is  %s", block_header["hash"].asString().c_str());
+			LOG_INFO("child block is exsit! hash is  %s", block_header["hash"].asString().c_str());
 			return true;
 		}
 
-		if ((header.seq_ + 1) < block_header["seq"].asInt64()){
+		if ((header.seq_ + 1) != block_header["seq"].asInt64()){
 			HandleChildChainBlockNotExsitList(header);
 			return false;
 		}
