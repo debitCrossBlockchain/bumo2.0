@@ -108,13 +108,12 @@ namespace bumo {
 		input_value["params"] = params;
 		std::string input = json_input.write(input_value);
 
-		std::string reply;
+
 		Json::Value object;
 		Json::Value result_list;
 
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), reply);
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), result_list);
 
-		result_list.fromString(reply.c_str());
 		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
 		object.fromString(result.c_str());
 
@@ -152,6 +151,20 @@ namespace bumo {
 		return flag;
 	}
 
+	bool ProposerManager::CheckChildPeviousBlockExsit(const protocol::LedgerHeader& ledger_header){
+		Json::Value block_header = bumo::Proto2Json(ledger_header);
+		if (block_header["seq"].asInt64() == 1){
+			LOG_INFO("child block is genesis block! hash is  %s,seq is %d", block_header["hash"].asString(), block_header["seq"].asInt64());
+			return true;
+		}
+
+		if (!CheckChildBlockExsit(block_header["previous_hash"].asString(), block_header["chain_id"].asInt64())){
+			LOG_INFO("child previous block is not exsit! hash is  %s", block_header["previous_hash"].asString());
+			return false;
+		}
+		return true;
+	}
+
 	bool ProposerManager::CheckChildBlockExsit(const std::string& hash, int64_t chain_id){
 		// Check for child chain block in CMC
 		bool flag = false;
@@ -164,13 +177,11 @@ namespace bumo {
 		input_value["params"] = params;
 		std::string input = json_input.write(input_value);
 
-		std::string reply;
 		Json::Value object;
 		Json::Value result_list;
 
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), reply);
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(),result_list);
 
-		result_list.fromString(reply.c_str());
 		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
 		object.fromString(result.c_str());
 
@@ -210,19 +221,31 @@ namespace bumo {
 		return true;
 	}
 
+	void ProposerManager::ProcessPeviousBlockNotExsit(const protocol::LedgerHeader& ledger_header){
+		Json::Value block_header = bumo::Proto2Json(ledger_header);
+		protocol::MessageChannel message_channel;
+		protocol::MessageChannelQueryHead query_head;
+		query_head.set_ledger_seq(block_header["seq"].asInt64());
+		message_channel.set_target_chain_id(block_header["chain_id"].asInt64());
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_HEAD);
+		message_channel.set_msg_data(query_head.SerializeAsString());
+		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
+	}
+
 	bool ProposerManager::HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header){
 
 		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
 		std::string node_address = private_key.GetEncAddress();
 		Json::Value block_header = bumo::Proto2Json(ledger_header);
 
+
 		if (!CheckNodeIsValidate(node_address.c_str(), block_header["chain_id"].asInt64())){
 			LOG_INFO("this node is not validators,address is %s", node_address.c_str());
 			return true;
 		}
 
-		if (!CheckChildBlockExsit(block_header["previous_hash"].asString(), block_header["chain_id"].asInt64())){
-			LOG_INFO("child previous block is not exsit! hash is  %s", block_header["previous_hash"].asString());
+		if (!CheckChildPeviousBlockExsit(ledger_header)){
+			ProcessPeviousBlockNotExsit(ledger_header);
 			return false;
 		}
 
