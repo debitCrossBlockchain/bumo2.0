@@ -288,13 +288,14 @@ namespace bumo {
 			return true;
 		}
 
-		if (CheckChildBlockExsit(block_header["hash"].asString(), block_header["chain_id"].asInt64())){
-			LOG_INFO("child block is not exsit! hash is  %s", block_header["hash"].asString().c_str());
-			return true;
-		}
 
 		Header header;
 		QueryFreshChildBlock(block_header["chain_id"].asInt64(), header);
+		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ == block_header["seq"].asInt64())){
+			LOG_INFO("child block is  exsit! hash is  %s", block_header["hash"].asString().c_str());
+			return true;
+		}
+
 		if ((header.seq_ + 1)<block_header["chain_id"].asInt64()){
 			HandleChildChainBlockNotExsitList(header);
 			return false;
