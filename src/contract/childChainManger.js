@@ -67,6 +67,7 @@ function submitChildBlockHeader(params){
     {
         blockheight = int64Add(info.blockheight, 1);
         info.blockheight = blockheight;
+        info.lastblockhash = input.block_header.hash;
         input.sumitter = sender;
         input.currentheight = blockheight;
         storageStore('childChainBlock_' + info.chain_id + '_' + input.block_header.hash, JSON.stringify(input));
@@ -78,6 +79,7 @@ function submitChildBlockHeader(params){
         assert(preblock !== false,'preblockhash is not exist.');
         blockheight = int64Add(info.blockheight, 1);
         info.blockheight = blockheight;
+        info.lastblockhash = input.block_header.hash;
         input.sumitter = sender;
         input.currentheight = blockheight;
         storageStore('childChainBlock_' + info.chain_id + '_' + input.block_header.hash, JSON.stringify(input));
@@ -108,7 +110,14 @@ function depositToChildChain(params){
 function queryChildBlockHeader(params){
     log('queryChildBlockHeader');
     let input = params;
-    let key = 'childChainBlock_' + input.chain_id + '_' + input.header_hash;
+    let key = '';
+    if(input.header_hash === ''){
+        let info = JSON.parse(storageLoad('childChainid_info_' + input.chain_id));
+        assert(info !== false, 'queryChildBlockHeader childChainid_info_' + input.chain_id + ' failed.');
+        key = 'childChainBlock_' + input.chain_id + '_' + info.lastblockhash;
+    } else {
+        key = 'childChainBlock_' + input.chain_id + '_' + input.header_hash;
+    }
     let blockinfo = JSON.parse(storageLoad(key));
     
     let retinfo = {};
