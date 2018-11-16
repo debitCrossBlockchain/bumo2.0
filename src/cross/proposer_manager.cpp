@@ -296,7 +296,7 @@ namespace bumo {
 			return true;
 		}
 
-		if ((header.seq_ + 1)<block_header["chain_id"].asInt64()){
+		if ((header.seq_ + 1)<block_header["seq"].asInt64()){
 			HandleChildChainBlockNotExsitList(header);
 			return false;
 		}
