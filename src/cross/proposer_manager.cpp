@@ -221,7 +221,7 @@ namespace bumo {
 		return true;
 	}
 
-	void ProcessPeviousBlockNotExsit(const protocol::LedgerHeader& ledger_header){
+	void ProposerManager::ProcessPeviousBlockNotExsit(const protocol::LedgerHeader& ledger_header){
 		Json::Value block_header = bumo::Proto2Json(ledger_header);
 		protocol::MessageChannel message_channel;
 		protocol::MessageChannelQueryHead query_head;
@@ -245,7 +245,7 @@ namespace bumo {
 		}
 
 		if (!CheckChildPeviousBlockExsit(ledger_header)){
-
+			ProcessPeviousBlockNotExsit(ledger_header);
 			return false;
 		}
 
