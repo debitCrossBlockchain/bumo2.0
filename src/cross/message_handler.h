@@ -41,6 +41,7 @@ namespace bumo {
 		void OnHandleCreateChildChain(const protocol::MessageChannel &message_channel);
 		void OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel);
 		void OnHandleChildGenesesResponse(const protocol::MessageChannel &message_channel);
+		void OnHandleQueryHead(const protocol::MessageChannel &message_channel);
 
 		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
 		void SendChildGenesesRequest();
