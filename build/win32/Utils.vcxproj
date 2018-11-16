@@ -46,9 +46,6 @@
     <ClCompile Include="..\..\src\utils\timestamp.cpp" />
     <ClCompile Include="..\..\src\utils\utils.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\src\utils\Makefile.am" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{85F7A975-B30B-487E-8F7B-90A19D775459}</ProjectGuid>
     <RootNamespace>Utils</RootNamespace>
