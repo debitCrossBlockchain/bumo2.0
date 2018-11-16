@@ -251,8 +251,7 @@ namespace bumo {
 		protocol::MessageChannelQueryHead head_query;
 		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc = "";
-		using namespace ::google::protobuf;
-		int64 ledger_seq = 0;
+		int64_t ledger_seq = 0;
 		do
 		{
 			if (!head_query.ParseFromString(message_channel.msg_data())){
