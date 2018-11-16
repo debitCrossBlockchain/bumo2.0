@@ -18,7 +18,8 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include "cross_utils.h"
 
 namespace bumo {
-	int32_t CrossUtils::QueryContract(const std::string &address, const std::string &input, std::string &result){
+	int32_t CrossUtils::QueryContract(const std::string &address, const std::string &input, Json::Value &query_rets){
+		std::string result = "";
 		ContractTestParameter parameter;
 		parameter.code_ = "";
 		parameter.input_ = input;
@@ -66,7 +67,8 @@ namespace bumo {
 				LOG_ERROR("Failed to execute the test.%s", result.c_str());
 				break;
 			}
-			result = result_json["query_rets"].asString();
+
+			query_rets = result_json["query_rets"];
 		} while (false);
 
 		LOG_INFO("Query result code:%d, result:%s", error_code, result.c_str());
