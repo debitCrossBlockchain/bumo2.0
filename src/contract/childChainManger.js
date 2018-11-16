@@ -123,7 +123,7 @@ function queryChildBlockHeader(params){
 function queryChildChainInfo(params){
     log('queryChildChainInfo');
     let key = 'childChainid_' + params.chain_id;
-    let genesisinfo = storageLoad(key);
+    let genesisinfo = JSON.parse(storageLoad(key));
 
     let retinfo = {};
     if(genesisinfo === false){
