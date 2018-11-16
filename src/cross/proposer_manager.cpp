@@ -20,6 +20,7 @@ namespace bumo {
 		enabled_(false),
 		last_uptate_validate_address_time_(0),
 		last_uptate_handle_child_chain_time_(0),
+		last_uptate_handle_child_chain_not_time_(0),
 		thread_ptr_(NULL){
 
 	}
@@ -66,6 +67,37 @@ namespace bumo {
 				HandleChildChainBlock();
 				last_uptate_handle_child_chain_time_ = current_time;
 			}
+
+			if (current_time > 4 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_not_time_){
+				//Handel block list//
+				HandleChildChainNotExistBlock();
+				last_uptate_handle_child_chain_not_time_ = current_time;
+			}
+		}
+	}
+
+	void ProposerManager::HandleSingleChildChainBlockNotExsit(const Header& header){
+		protocol::MessageChannel message_channel;
+		protocol::MessageChannelQueryHead query_head;
+		int64_t seq = header.seq_ + 1;
+		if (seq <= 0){
+			return;
+		}
+		query_head.set_ledger_seq(seq);
+		message_channel.set_target_chain_id(header.chanin_id_);
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_HEAD);
+		message_channel.set_msg_data(query_head.SerializeAsString());
+		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
+	}
+
+	void ProposerManager::HandleChildChainNotExistBlock(){
+		//handel child chain block, and call MessageChannel to send main chain proc 
+
+		utils::MutexGuard guard(handle_child_chain_list_not_lock_);
+		std::list<Header>::const_iterator itor = handle_child_chain_block_list_not_.begin();
+		while (itor != handle_child_chain_block_list_not_.end()){
+			HandleSingleChildChainBlockNotExsit(*itor);
+			handle_child_chain_block_list_not_.erase(itor++); // delete node£,find next node
 		}
 	}
 
@@ -151,18 +183,34 @@ namespace bumo {
 		return flag;
 	}
 
-	bool ProposerManager::CheckChildPeviousBlockExsit(const protocol::LedgerHeader& ledger_header){
-		Json::Value block_header = bumo::Proto2Json(ledger_header);
-		if (block_header["seq"].asInt64() == 1){
-			LOG_INFO("child block is genesis block! hash is  %s,seq is %d", block_header["hash"].asString(), block_header["seq"].asInt64());
-			return true;
+	bool ProposerManager::QueryFreshChildBlock(const int64_t chain_id,Header& header){
+
+		bool flag = true;
+		Json::FastWriter json_input;
+		Json::Value input_value;
+		Json::Value params;
+		params["chain_id"] = chain_id;
+		params["header_hash"] = "";
+		input_value["method"] = "queryChildBlockHeader";
+		input_value["params"] = params;
+		std::string input = json_input.write(input_value);
+
+		Json::Value object;
+		Json::Value result_list;
+
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), result_list);
+
+		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		object.fromString(result.c_str());
+
+		if (error_code != protocol::ERRCODE_SUCCESS){
+			LOG_ERROR("Failed to query child block .%d", error_code);
+			flag = false;
 		}
 
-		if (!CheckChildBlockExsit(block_header["previous_hash"].asString(), block_header["chain_id"].asInt64())){
-			LOG_INFO("child previous block is not exsit! hash is  %s", block_header["previous_hash"].asString());
-			return false;
-		}
-		return true;
+		header.chanin_id_ = object["chain_id"].asInt64();
+		header.seq_ = object["seq"].asInt64();
+		return flag;	
 	}
 
 	bool ProposerManager::CheckChildBlockExsit(const std::string& hash, int64_t chain_id){
@@ -180,7 +228,7 @@ namespace bumo {
 		Json::Value object;
 		Json::Value result_list;
 
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(),result_list);
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), result_list);
 
 		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
 		object.fromString(result.c_str());
@@ -221,15 +269,12 @@ namespace bumo {
 		return true;
 	}
 
-	void ProposerManager::ProcessPeviousBlockNotExsit(const protocol::LedgerHeader& ledger_header){
-		Json::Value block_header = bumo::Proto2Json(ledger_header);
-		protocol::MessageChannel message_channel;
-		protocol::MessageChannelQueryHead query_head;
-		query_head.set_ledger_seq(block_header["seq"].asInt64());
-		message_channel.set_target_chain_id(block_header["chain_id"].asInt64());
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_HEAD);
-		message_channel.set_msg_data(query_head.SerializeAsString());
-		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
+	void ProposerManager::HandleChildChainBlockNotExsitList(const Header& header){
+		utils::MutexGuard guard(handle_child_chain_list_not_lock_);
+		std::list<Header>::const_iterator itor = std::find(handle_child_chain_block_list_not_.begin(), handle_child_chain_block_list_not_.end(), header);
+		if (itor == handle_child_chain_block_list_not_.end()){
+			handle_child_chain_block_list_not_.push_back(header);
+		}
 	}
 
 	bool ProposerManager::HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header){
@@ -238,14 +283,15 @@ namespace bumo {
 		std::string node_address = private_key.GetEncAddress();
 		Json::Value block_header = bumo::Proto2Json(ledger_header);
 
-
 		if (!CheckNodeIsValidate(node_address.c_str(), block_header["chain_id"].asInt64())){
 			LOG_INFO("this node is not validators,address is %s", node_address.c_str());
 			return true;
 		}
 
-		if (!CheckChildPeviousBlockExsit(ledger_header)){
-			ProcessPeviousBlockNotExsit(ledger_header);
+		Header header;
+		QueryFreshChildBlock(block_header["chain_id"].asInt64(), header);
+		if ((header.seq_ + 1)<block_header["chain_id"].asInt64()){
+			HandleChildChainBlockNotExsitList(header);
 			return false;
 		}
 
