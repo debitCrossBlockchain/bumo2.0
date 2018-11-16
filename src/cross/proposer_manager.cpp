@@ -164,8 +164,6 @@ namespace bumo {
 		input_value["params"] = params;
 		std::string input = json_input.write(input_value);
 
-
-
 		std::string reply;
 		Json::Value object;
 		Json::Value result_list;
