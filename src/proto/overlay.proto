@@ -180,6 +180,7 @@ enum MESSAGE_CHANNEL_TYPE{
 	MESSAGE_CHANNEL_CHALLENGE_HEAD = 9;
 	MESSAGE_CHANNEL_CHILD_GENESES_REQUEST = 10;
 	MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE = 11;
+	MESSAGE_CHANNEL_QUERY_HEAD = 12;
 }
 
 message MessageChannelHello {
@@ -239,4 +240,8 @@ message MessageChannelChildGenesesResponse{
 	MessageChannelCreateChildChain create_child_chain = 3;
 }
 
+
+message MessageChannelQueryHead{
+	int64 ledger_seq = 1;
+}
 

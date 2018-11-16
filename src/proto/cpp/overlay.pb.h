@@ -61,6 +61,7 @@ class MessageChannelCreateChildChain;
 class MessageChannelHello;
 class MessageChannelHelloResponse;
 class MessageChannelProposer;
+class MessageChannelQueryHead;
 class MessageChannelResponse;
 class Peer;
 class Peers;
@@ -205,12 +206,13 @@ enum MESSAGE_CHANNEL_TYPE {
   MESSAGE_CHANNEL_CHALLENGE_HEAD = 9,
   MESSAGE_CHANNEL_CHILD_GENESES_REQUEST = 10,
   MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE = 11,
+  MESSAGE_CHANNEL_QUERY_HEAD = 12,
   MESSAGE_CHANNEL_TYPE_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   MESSAGE_CHANNEL_TYPE_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool MESSAGE_CHANNEL_TYPE_IsValid(int value);
 const MESSAGE_CHANNEL_TYPE MESSAGE_CHANNEL_TYPE_MIN = MESSAGE_CHANNEL_TYPE_NONE;
-const MESSAGE_CHANNEL_TYPE MESSAGE_CHANNEL_TYPE_MAX = MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE;
+const MESSAGE_CHANNEL_TYPE MESSAGE_CHANNEL_TYPE_MAX = MESSAGE_CHANNEL_QUERY_HEAD;
 const int MESSAGE_CHANNEL_TYPE_ARRAYSIZE = MESSAGE_CHANNEL_TYPE_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_TYPE_descriptor();
@@ -2873,6 +2875,88 @@ class MessageChannelChildGenesesResponse : public ::google::protobuf::Message /*
   void InitAsDefaultInstance();
   static MessageChannelChildGenesesResponse* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class MessageChannelQueryHead : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelQueryHead) */ {
+ public:
+  MessageChannelQueryHead();
+  virtual ~MessageChannelQueryHead();
+
+  MessageChannelQueryHead(const MessageChannelQueryHead& from);
+
+  inline MessageChannelQueryHead& operator=(const MessageChannelQueryHead& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelQueryHead& default_instance();
+
+  void Swap(MessageChannelQueryHead* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelQueryHead* New() const { return New(NULL); }
+
+  MessageChannelQueryHead* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelQueryHead& from);
+  void MergeFrom(const MessageChannelQueryHead& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelQueryHead* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int64 ledger_seq = 1;
+  void clear_ledger_seq();
+  static const int kLedgerSeqFieldNumber = 1;
+  ::google::protobuf::int64 ledger_seq() const;
+  void set_ledger_seq(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelQueryHead)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int64 ledger_seq_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelQueryHead* default_instance_;
+};
 // ===================================================================
 
 
@@ -5287,7 +5371,27 @@ inline void MessageChannelChildGenesesResponse::set_allocated_create_child_chain
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelChildGenesesResponse.create_child_chain)
 }
 
+// -------------------------------------------------------------------
+
+// MessageChannelQueryHead
+
+// optional int64 ledger_seq = 1;
+inline void MessageChannelQueryHead::clear_ledger_seq() {
+  ledger_seq_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelQueryHead::ledger_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelQueryHead.ledger_seq)
+  return ledger_seq_;
+}
+inline void MessageChannelQueryHead::set_ledger_seq(::google::protobuf::int64 value) {
+  
+  ledger_seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelQueryHead.ledger_seq)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
