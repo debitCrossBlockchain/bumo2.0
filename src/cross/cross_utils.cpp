@@ -99,7 +99,7 @@ namespace bumo {
 		protocol::TransactionEnv tran_env;
 		protocol::Transaction *tran = tran_env.mutable_transaction();
 		tran->set_source_address(source_address);
-		tran->set_fee_limit(1000000);
+		tran->set_fee_limit(100000000);
 		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());
 		tran->set_nonce(nonce);
 		protocol::Operation *ope = tran->add_operations();
