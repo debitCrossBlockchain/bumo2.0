@@ -304,7 +304,6 @@ namespace bumo {
 			LOG_INFO("CommitTransaction child block is not success !");
 			return false;
 		}
-
 		return true;
 
 	}
