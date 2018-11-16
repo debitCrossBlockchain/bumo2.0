@@ -66,9 +66,7 @@ namespace bumo {
 				LOG_ERROR("Failed to execute the test.%s", result.c_str());
 				break;
 			}
-
-			int64_t i = 0;
-			result = result_json["query_rets"][i]["result"]["value"].asString();
+			result = result_json["query_rets"].asString();
 		} while (false);
 
 		LOG_INFO("Query result code:%d, result:%s", error_code, result.c_str());
