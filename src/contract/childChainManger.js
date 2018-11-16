@@ -122,9 +122,22 @@ function queryChildBlockHeader(params){
     
     let retinfo = {};
     if(blockinfo === false){
-        retinfo = 'queryChildBlockHeader failed.';
+        let blockret = {};
+        blockret.chain_id = input.chain_id;
+        blockret.seq = 0;
+        blockret.hash = '';
+        blockret.previous_hash = '';
+        blockret.account_tree_hash = '';
+        blockret.close_time = '';
+        blockret.consensus_value_hash = '';
+        blockret.version = '';
+        blockret.tx_count = 0;
+        blockret.validators_hash = [];
+        blockret.fees_hash = '';
+        blockret.reserve = '';
+        retinfo = blockret;
     } else {
-        retinfo = JSON.stringify(blockinfo.block_header);
+        retinfo = blockinfo.block_header;
     }
     return retinfo;
 }
