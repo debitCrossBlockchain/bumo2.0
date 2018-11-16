@@ -19,11 +19,13 @@ namespace bumo {
 		proc_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageHandler::OnHandleCreateChildChain, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST] = std::bind(&MessageHandler::OnHandleChildGenesesRequest, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE] = std::bind(&MessageHandler::OnHandleChildGenesesResponse, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_HEAD] = std::bind(&MessageHandler::OnHandleQueryHead, this, std::placeholders::_1);
 
 		MessageChannel &message_channel = MessageChannel::Instance();
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
+		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_HEAD);
 
 		if (!CheckForChildBlock()){
 			return false;
@@ -243,6 +245,45 @@ namespace bumo {
 			create_child_chain.slogan().c_str(), create_child_chain.chain_id());
 
 		received_create_child_ = true;
+	}
+
+	void MessageHandler::OnHandleQueryHead(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelQueryHead head_query;
+		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
+		std::string error_desc = "";
+		using namespace ::google::protobuf;
+		int64 ledger_seq = 0;
+		do
+		{
+			if (!head_query.ParseFromString(message_channel.msg_data())){
+				error_desc = utils::String::Format("Parse MessageChannelQueryHead error!");
+				error_code = protocol::ERRCODE_INVALID_PARAMETER;
+				LOG_ERROR("%s", error_desc.c_str());
+				return;
+			}
+			ledger_seq = head_query.ledger_seq();
+			if (ledger_seq <= 0){
+				error_desc = utils::String::Format("Parse MessageChannelQueryHead error,invalid ledger_seq(" FMT_I64 ")", ledger_seq);
+				error_code = protocol::ERRCODE_INVALID_PARAMETER;
+				LOG_ERROR("%s", error_desc.c_str());
+				return;
+			}
+		} while (false);
+
+		LedgerFrm frm;
+		if (!frm.LoadFromDb(ledger_seq)) {
+			error_code = protocol::ERRCODE_NOT_EXIST;
+			error_desc = utils::String::Format("Parse MessageChannelQueryHead error,no exist ledger_seq=(" FMT_I64 ")", ledger_seq);
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+		protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
+		//Push message to child chain.
+		protocol::MessageChannel msg_channel;
+		msg_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_SUBMIT_HEAD);
+		msg_channel.set_msg_data(ledger_header.SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(msg_channel);
 	}
 
 	void MessageHandler::SendChildGenesesRequest(){
