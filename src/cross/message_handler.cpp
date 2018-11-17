@@ -252,22 +252,20 @@ namespace bumo {
 		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc = "";
 		int64_t ledger_seq = 0;
-		do
-		{
-			if (!head_query.ParseFromString(message_channel.msg_data())){
-				error_desc = utils::String::Format("Parse MessageChannelQueryHead error!");
-				error_code = protocol::ERRCODE_INVALID_PARAMETER;
-				LOG_ERROR("%s", error_desc.c_str());
-				return;
-			}
-			ledger_seq = head_query.ledger_seq();
-			if (ledger_seq <= 0){
-				error_desc = utils::String::Format("Parse MessageChannelQueryHead error,invalid ledger_seq(" FMT_I64 ")", ledger_seq);
-				error_code = protocol::ERRCODE_INVALID_PARAMETER;
-				LOG_ERROR("%s", error_desc.c_str());
-				return;
-			}
-		} while (false);
+
+		if (!head_query.ParseFromString(message_channel.msg_data())){
+			error_desc = utils::String::Format("Parse MessageChannelQueryHead error!");
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+		ledger_seq = head_query.ledger_seq();
+		if (ledger_seq <= 0){
+			error_desc = utils::String::Format("Parse MessageChannelQueryHead error,invalid ledger_seq(" FMT_I64 ")", ledger_seq);
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
 
 		LedgerFrm frm;
 		if (!frm.LoadFromDb(ledger_seq)) {
