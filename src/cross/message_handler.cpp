@@ -120,23 +120,21 @@ namespace bumo {
 		protocol::MessageChannelChildGenesesResponse response;
 		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc = "";
+		if (!child_chain_request.ParseFromString(message_channel.msg_data())){
+			error_desc = utils::String::Format("Parse MessageChannelChildGenesesRequest error!");
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
 
-		do 
-		{	
-			if (!child_chain_request.ParseFromString(message_channel.msg_data())){
-				error_desc = utils::String::Format("Parse MessageChannelChildGenesesRequest error!");
-				error_code = protocol::ERRCODE_INVALID_PARAMETER;
-				LOG_ERROR("%s", error_desc.c_str());
-				return;
-			}
-
-			if (child_chain_request.chain_id() <= 0){
-				error_desc = utils::String::Format("Parse MessageChannelChildGenesesRequest error,invalid chain id(" FMT_I64 ")", child_chain_request.chain_id());
-				error_code = protocol::ERRCODE_INVALID_PARAMETER;
-				LOG_ERROR("%s", error_desc.c_str());
-				return;
-			}
-
+		if (child_chain_request.chain_id() <= 0){
+			error_desc = utils::String::Format("Parse MessageChannelChildGenesesRequest error,invalid chain id(" FMT_I64 ")", child_chain_request.chain_id());
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+		do
+		{
 			Json::Value query_rets;
 			Json::Value input_value;
 			Json::Value params;
