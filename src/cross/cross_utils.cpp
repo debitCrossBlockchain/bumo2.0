@@ -144,7 +144,7 @@ namespace bumo {
 
 		PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
 		std::string tx_hash = utils::String::BinToHexString(HashWrapper::Crypto(content)).c_str();
-		LOG_INFO("Pay coin tx hash %s", tx_hash);
+		LOG_INFO("Pay coin tx hash %s", tx_hash.c_str());
 		return protocol::ERRCODE_SUCCESS;
 	}
 }
