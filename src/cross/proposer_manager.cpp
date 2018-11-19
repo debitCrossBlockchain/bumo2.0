@@ -307,7 +307,7 @@ namespace bumo {
 			return false;
 		}
 
-		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ + 1) == block_header["seq"].asInt64()){
+		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && ((header.seq_ + 1) == block_header["seq"].asInt64())){
 			return CommitTransaction(ledger_header);
 		}
 
