@@ -65,6 +65,7 @@ function submitChildBlockHeader(params){
     let blockheight = 0;
     if(info.blockheight === 0)
     {
+        assert(input.block_header.seq === 1,'input.block_header.seq is not correct.');
         blockheight = int64Add(info.blockheight, 1);
         info.blockheight = blockheight;
         info.lastblockhash = input.block_header.hash;
@@ -75,9 +76,9 @@ function submitChildBlockHeader(params){
     }
     else
     {
-        let preblock = storageLoad('childChainBlock_' + info.chain_id + '_' + input.block_header.previous_hash);
+        let preblock = JSON.parse(storageLoad('childChainBlock_' + info.chain_id + '_' + input.block_header.previous_hash));
         assert(preblock !== false,'preblockhash is not exist.');
-        assert((input.block_header.seq - preblock.block_header.seq) === 1,'seq is not correct.');
+        assert((input.block_header.seq - preblock.block_header.seq) === 1,'input blockheader.seq is not correct');
         blockheight = int64Add(info.blockheight, 1);
         info.blockheight = blockheight;
         info.lastblockhash = input.block_header.hash;
