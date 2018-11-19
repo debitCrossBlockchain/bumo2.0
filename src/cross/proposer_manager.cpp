@@ -296,20 +296,21 @@ namespace bumo {
 
 		Header header;
 		QueryFreshChildBlock(block_header["chain_id"].asInt64(), header);
+
 		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ >= block_header["seq"].asInt64())){
 			LOG_INFO("child block is exsit! hash is  %s", block_header["hash"].asString().c_str());
 			return true;
 		}
 
-		if ((header.seq_ + 1) != block_header["seq"].asInt64()){
+		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ + 1) != block_header["seq"].asInt64()){
 			HandleChildChainBlockNotExsitList(header);
 			return false;
 		}
 
-		if (!CommitTransaction(ledger_header)){
-			LOG_INFO("CommitTransaction child block is not success !");
-			return false;
+		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ + 1) == block_header["seq"].asInt64()){
+			return CommitTransaction(ledger_header);
 		}
+
 		return true;
 
 	}
