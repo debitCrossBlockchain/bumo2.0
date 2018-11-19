@@ -243,8 +243,9 @@ namespace bumo {
 	}
 
 	void MessageChannel::MessageChannelProducer(const protocol::MessageChannel& message_channel) {
-
-		Notify(message_channel);
+		if (message_channel.target_chain_id() == General::GetSelfChainId()){
+			Notify(message_channel);
+		}
 
 		utils::MutexGuard guard(conns_list_lock_);
 		for (auto iter = connections_.begin(); iter != connections_.end(); iter++) {
