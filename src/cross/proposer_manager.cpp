@@ -296,7 +296,7 @@ namespace bumo {
 
 		Header header;
 		QueryFreshChildBlock(block_header["chain_id"].asInt64(), header);
-		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ == block_header["seq"].asInt64())){
+		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ >= block_header["seq"].asInt64())){
 			LOG_INFO("child block is exsit! hash is  %s", block_header["hash"].asString().c_str());
 			return true;
 		}
