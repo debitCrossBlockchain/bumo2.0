@@ -3,6 +3,31 @@
 const originChildChainid = 1;
 //define the reward of the submitter
 const block_reward = '10';
+//define abolishValidator effectiveVoteInterval
+const effectiveVoteInterval  = 15 * 24 * 60 * 60 * 1000 * 1000;
+//define max validators number size
+const validatorSetSize       = 100;
+//define vote passrate
+const passRate               = 0.7;
+
+function findI0(arr, key){
+    assert((typeof arr === 'object') && (typeof key === 'string'), 'Args type error. arg-arr must be an object, and arg-key must be a string.');
+
+    let i = 0;
+    while(i < arr.length){
+        if(arr[i][0] === key){
+            break;
+        }
+        i += 1;
+    }
+
+    if(i !== arr.length){
+        return i;
+    }
+    else{
+        return false;
+    }
+}
 
 
 function createChildChain(params){
@@ -52,14 +77,23 @@ function transferCoin(dest, amount)
     log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
 }
 
-function checkchildChainValadator(validator){
-    return true;
+function checkchildChainValadator(chain_id,validator){
+    let key = 'childChainid_info_' + chain_id;
+    let chaininfo = JSON.parse(storageLoad(key));
+    if(chaininfo !== false)
+    {
+        if(findI0(chaininfo.validators,validator) !== false)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 function submitChildBlockHeader(params){
     log('submitChildBlockHeader');
     let input = params;
-    assert(checkchildChainValadator(sender) === true,'submitChildBlockHeader sender is not validator.' );
+    assert(checkchildChainValadator(input.chain_id,sender) === true,'submitChildBlockHeader sender is not validator.' );
     let info = JSON.parse(storageLoad('childChainid_info_' + input.chain_id));
     assert(info !== false, 'childChainid_info_' + input.chain_id + ' failed.');
     assert((input.block_header.seq - info.blockheight) === 1, 'input.block_header.seq is not correct blockheight.');
@@ -107,6 +141,92 @@ function depositToChildChain(params){
         let totleaamount = assertinfo.totalamount + input.amount;
         assertinfo.totalamount = totleaamount;
         storageStore('childChainAsset_' + assertinfo.chain_id , JSON.stringify(assertinfo));
+    }
+}
+
+function abolishValidator(params){
+    log('abolishValidator');
+    let input = params;
+    assert(addressCheck(input.address) === true, 'Arg-address is not valid adress.');
+    assert(checkchildChainValadator(input.chain_id,sender) === true,'abolishValidator sender is not validator.' );
+    let key = "childChainAbolish_" + input.chain_id + "_" + input.address;
+    let abolishinfo = JSON.parse(storageLoad(key));
+    if(abolishinfo === false)
+    {
+        input.abolishcout = 1;
+        input.starttime = blockTimestamp;
+        input.votes = [sender];
+        storageLoad(key,JSON.stringify(input));
+        tlog('abolishValidator',input.chain_id,JSON.stringify(input));
+    }
+    else
+    {
+        if(abolishinfo.starttime + effectiveVoteInterval < blockTimestamp)
+        {
+            log('Update expired time of abolishing validator(' + input.address + ').');
+            input.starttime = blockTimestamp;
+            input.abolishcout = 1;
+            input.starttime = blockTimestamp;
+            input.votes = [sender];
+            storageLoad(key,JSON.stringify(input));
+            tlog('abolishValidator',input.chain_id,JSON.stringify(input));
+        }
+        else
+        {
+            log('Already abolished validator(' + input.address + ').'); 
+        }
+    }
+}
+
+function getchildChainValidators(chain_id){
+    let key = 'childChainid_info_' + chain_id;
+    let chaininfo = JSON.parse(storageLoad(key));
+
+    let retinfo = [];
+    if(chaininfo !== false){
+        retinfo = chaininfo.validators;
+    }
+    return retinfo;
+}
+
+function removechildChainValidator(chain_id,address){
+    let key = 'childChainid_info_' + chain_id;
+    let chaininfo = JSON.parse(storageLoad(key));
+    if(chaininfo !== false){
+        let postion = findI0(chaininfo.validators,address);
+        chaininfo.validators.spice(postion,1);
+        storageStore(key,JSON.stringify(chaininfo));
+    }
+}
+
+function voteForAbolish(params){
+    log('voteForAbolish');
+    let input = params;
+    assert(addressCheck(input.address) === true, 'Arg-address is not valid adress.');
+    assert(checkchildChainValadator(input.chain_id,sender) === true,'voteForAbolish sender is not validator.' );
+    assert(checkchildChainValadator(input.chain_id,input.address) === true,'voteForAbolish input.address is not validator.' );
+    let key = "childChainAbolish_" + input.chain_id + "_" + input.address;
+    let abolishinfo = JSON.parse(storageLoad(key));
+    assert(abolishinfo !== false,'abolishinfo is not exist.');
+    if(blockTimestamp > abolishinfo.starttime + effectiveVoteInterval)
+    {
+        log('Voting time expired, ' + input.address + ' is still validator.'); 
+        storageDel(key);
+    }
+    else
+    {
+        assert(abolishinfo.votes.includes(sender) !== true, sender + ' has voted.');
+        abolishinfo.votes.push(sender);
+        input.abolishcout = int64Add(input.abolishcout,1);
+        let childchain_validators = getchildChainValidators(input.chain_id);
+        if(input.abolishcout < parseInt(childchain_validators.length * passRate + 0.5))
+        {
+            storageLoad(key,JSON.stringify(input));
+            return true;
+        }
+        tlog('voteForAbolish',input.chain_id,JSON.stringify(abolishinfo));
+        removechildChainValidator(input.chain_id,input.address);
+        storageDel(key);
     }
 }
 
@@ -192,6 +312,12 @@ function main(inputStr){
     }
     else if(input.method === 'submitChildBlockHeader'){
         submitChildBlockHeader(input.params);
+    }
+    else if(input.method === 'abolishValidator'){
+        abolishValidator(input.params);
+    }
+    else if(input.method === 'voteForAbolish'){
+        voteForAbolish(input.params);
     }
     else{
         throw '<Main interface passes an invalid operation type>';
