@@ -21,6 +21,7 @@ namespace bumo {
 		last_uptate_validate_address_time_(0),
 		last_uptate_handle_child_chain_time_(0),
 		last_uptate_handle_child_chain_not_time_(0),
+		last_uptate_child_chain_cashe_time_(0),
 		thread_ptr_(NULL){
 
 	}
@@ -68,6 +69,13 @@ namespace bumo {
 				last_uptate_handle_child_chain_time_ = current_time;
 			}
 
+
+			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_child_chain_cashe_time_){
+				//Handel cashe list//
+				HandleChildChainBlocklistCache();
+				last_uptate_child_chain_cashe_time_ = current_time;
+			}
+
 			if (current_time > 4 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_not_time_){
 				//Handel block list//
 				HandleChildChainNotExistBlock();
@@ -79,6 +87,7 @@ namespace bumo {
 	void ProposerManager::HandleSingleChildChainBlockNotExsit(const Header& header){
 		protocol::MessageChannel message_channel;
 		protocol::MessageChannelQueryHead query_head;
+		Sleep(100);
 		int64_t seq = 0;
 		if (header.seq_ <= 0){
 			seq = 1;
@@ -106,8 +115,6 @@ namespace bumo {
 
 	void ProposerManager::HandleChildChainBlock(){
 		//handel child chain block, and call MessageChannel to send main chain proc 
-
-		utils::MutexGuard guard(handle_child_chain_list_lock_);
 		std::list<protocol::LedgerHeader>::const_iterator itor = handle_child_chain_block_list_.begin();
 		while (itor != handle_child_chain_block_list_.end()){
 			if (HandleSingleChildChainBlock(*itor)){
@@ -127,12 +134,7 @@ namespace bumo {
 
 		protocol::LedgerHeader ledger_header;
 		ledger_header.ParseFromString(message_channel.msg_data());
-		utils::MutexGuard guard(handle_child_chain_list_lock_);
-		std::list<protocol::LedgerHeader>::const_iterator itor = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header));
-		if (itor == handle_child_chain_block_list_.end()){
-			handle_child_chain_block_list_.push_back(ledger_header);
-		}
-
+		AddChildChainBlocklistCache(ledger_header);
 	}
 
 
@@ -313,5 +315,19 @@ namespace bumo {
 
 		return true;
 
+	}
+
+	void ProposerManager::AddChildChainBlocklistCache(const protocol::LedgerHeader& ledger_header){
+		utils::MutexGuard guard(child_chain_list_cashe_lock_);
+		std::list<protocol::LedgerHeader>::const_iterator iter = std::find_if(child_chain_block_list_cache_.begin(), child_chain_block_list_cache_.end(), FindHeader(ledger_header));
+		if (iter == child_chain_block_list_cache_.end()){
+			child_chain_block_list_cache_.push_back(ledger_header);
+		}
+	}
+
+	void ProposerManager::HandleChildChainBlocklistCache(){
+		utils::MutexGuard guard(child_chain_list_cashe_lock_);
+		handle_child_chain_block_list_.assign(child_chain_block_list_cache_.begin(), child_chain_block_list_cache_.end());
+		child_chain_block_list_cache_.clear();
 	}
 }
