@@ -62,11 +62,12 @@ function submitChildBlockHeader(params){
     assert(checkchildChainValadator(sender) === true,'submitChildBlockHeader sender is not validator.' );
     let info = JSON.parse(storageLoad('childChainid_info_' + input.chain_id));
     assert(info !== false, 'childChainid_info_' + input.chain_id + ' failed.');
+    assert((input.block_header.seq - info.blockheight) === 1, 'input.block_header.seq is not correct blockheight.');
     let blockheight = 0;
     if(info.blockheight === 0)
     {
         assert(input.block_header.seq === 1,'input.block_header.seq is not correct.');
-        blockheight = int64Add(info.blockheight, 1);
+        blockheight = input.block_header.seq;
         info.blockheight = blockheight;
         info.lastblockhash = input.block_header.hash;
         input.sumitter = sender;
@@ -79,7 +80,7 @@ function submitChildBlockHeader(params){
         let preblock = JSON.parse(storageLoad('childChainBlock_' + info.chain_id + '_' + input.block_header.previous_hash));
         assert(preblock !== false,'preblockhash is not exist.');
         assert((input.block_header.seq - preblock.block_header.seq) === 1,'input blockheader.seq is not correct');
-        blockheight = int64Add(info.blockheight, 1);
+        blockheight = input.block_header.seq;
         info.blockheight = blockheight;
         info.lastblockhash = input.block_header.hash;
         input.sumitter = sender;
