@@ -32,6 +32,7 @@ namespace bumo {
 
 		int32_t error_code = protocol::ERRCODE_SUCCESS;
 		AccountFrm::pointer acc = NULL;
+		utils::Sleep(10);
 		do {
 			if (parameter.contract_address_.empty()) {
 				error_code = protocol::ERRCODE_INVALID_PARAMETER;
@@ -82,19 +83,37 @@ namespace bumo {
 			LOG_ERROR("Private key is not valid");
 			return protocol::ERRCODE_INVALID_PRIKEY;
 		}
-
+		int32_t err_code = 0;
 		int64_t nonce = 0;
 		std::string source_address = private_key.GetEncAddress();
+
+		AccountFrm::pointer account_ptr;
+		if (!Environment::AccountFromDB(source_address, account_ptr)) {
+			LOG_ERROR("Address:%s not exsit", source_address.c_str());
+			return protocol::ERRCODE_INVALID_PRIKEY;
+		}
+
+		nonce = account_ptr->GetAccountNonce() + 1;
+
 		do {
-			AccountFrm::pointer account_ptr;
-			if (!Environment::AccountFromDB(source_address, account_ptr)) {
-				LOG_ERROR("Address:%s not exsit", source_address.c_str());
-				return protocol::ERRCODE_INVALID_PRIKEY;
-			}
-			else {
-				nonce = account_ptr->GetAccountNonce() + 1;
-			}
-		} while (false);
+			CrossUtils obj;
+			err_code = obj.PayCoinSelf(encode_private_key, dest_address, contract_input, coin_amount, nonce);
+			nonce = nonce + 1;
+			utils::Sleep(10);
+		} while (err_code == protocol::ERRCODE_ALREADY_EXIST);
+
+		return err_code;
+	}
+
+	int32_t CrossUtils::PayCoinSelf(const std::string &encode_private_key, const std::string &dest_address, const std::string &contract_input, int64_t coin_amount, int64_t nonce){
+
+		PrivateKey private_key(encode_private_key);
+		if (!private_key.IsValid()){
+			LOG_ERROR("Private key is not valid");
+			return protocol::ERRCODE_INVALID_PRIKEY;
+		}
+
+		std::string source_address = private_key.GetEncAddress();
 
 		protocol::TransactionEnv tran_env;
 		protocol::Transaction *tran = tran_env.mutable_transaction();
@@ -124,8 +143,8 @@ namespace bumo {
 		}
 
 		PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
-
-		LOG_INFO("Pay coin tx hash %s", utils::String::BinToHexString(HashWrapper::Crypto(content)).c_str());
+		std::string tx_hash = utils::String::BinToHexString(HashWrapper::Crypto(content)).c_str();
+		LOG_INFO("Pay coin tx hash %s", tx_hash.c_str());
 		return protocol::ERRCODE_SUCCESS;
 	}
 }
