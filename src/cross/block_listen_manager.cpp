@@ -36,10 +36,12 @@ namespace bumo {
 		if (tlog_topic.empty())
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
 
-		if (0 == strcmp(tlog_topic.c_str(), OP_CREATE_CHILD_CHAIN))
+		if (0 == strcmp(tlog_topic.c_str(), OP_CREATE_CHILD_CHAIN)){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN;
-		else
+		}
+		else{
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
+		}
 	}
 
 	std::shared_ptr<Message> BlockListenManager::GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type){
@@ -105,7 +107,7 @@ namespace bumo {
 			//tlog param(0)
 			if (tlog_params.size() == 0 || tlog_params.size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
 				LOG_ERROR("Log's parameter data size should be between (0,%d]", General::TRANSACTION_LOG_DATA_MAXSIZE);
-				break;
+				continue;
 			}
 			//LOG_INFO("get tlog topic:%s,args[0]:%s", log.topic(), log.datas(j));
 			Json::Value trans_json;
