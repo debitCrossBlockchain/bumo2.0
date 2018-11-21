@@ -67,7 +67,7 @@ namespace bumo {
 	private:
 		virtual void Run(utils::Thread *thread) override;
 		void HandleChildChainBlock();
-		bool HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header);
+		void HandleSingleChildChain(int64_t chain_id);
 		bool CheckChildBlockExsit(const std::string& hash, int64_t chain_id);
 		bool QueryFreshChildBlock(const int64_t chain_id, Header& header);
 		bool CheckNodeIsValidate(int64_t chain_id);
@@ -94,6 +94,8 @@ namespace bumo {
 		int64_t last_uptate_handle_child_chain_time_;
 		int64_t last_uptate_handle_child_remove_time_;
 		int64_t last_uptate_child_chain_cashe_time_;
+
+		utils::Mutex child_chain_list_lock_;
 		std::list<protocol::LedgerHeader> handle_child_chain_block_list_;
 	};
 

@@ -108,18 +108,24 @@ namespace bumo {
 
 
 	void ProposerManager::HandleChildChainBlock(){
+		for (int64_t id = 1; id <= 10; id++){
+			Sleep(100);
+			HandleSingleChildChain(id);
+		}
+	}
+
+
+	void ProposerManager::HandleSingleChildChain(int64_t chain_id){
 		//handel child chain block, and call MessageChannel to send main chain proc 
-		std::list<protocol::LedgerHeader>::const_iterator iter = handle_child_chain_block_list_.begin();
-		if (iter == handle_child_chain_block_list_.end()){
+		utils::MutexGuard guard(child_chain_list_lock_);
+		protocol::LedgerHeader ledger_header;
+		Header header;
+		if (!QueryFreshChildBlock(chain_id, header)){
 			return;
 		}
-		Json::Value block_header = bumo::Proto2Json(*iter);
-		protocol::LedgerHeader ledger_header = *iter;
-		Header header;
-		QueryFreshChildBlock(block_header["chain_id"].asInt64(), header);
 		std::list<protocol::LedgerHeader> ledger_header_list;
 		for (size_t i = 0; i < 5; i++){
-			ledger_header.set_seq(header.seq_ + i+1);
+			ledger_header.set_seq(header.seq_ + i + 1);
 			ledger_header.set_chain_id(header.chanin_id_);
 			std::list<protocol::LedgerHeader>::const_iterator iter_temp = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header));
 			if (iter_temp == handle_child_chain_block_list_.end()){
@@ -269,6 +275,7 @@ namespace bumo {
 
 
 	void ProposerManager::RemoveHandleChildChainBlock(){
+		utils::MutexGuard guard(child_chain_list_lock_);
 		std::list<protocol::LedgerHeader>::const_iterator itor = handle_child_chain_block_list_.begin();
 		while (itor != handle_child_chain_block_list_.end()){
 			bool flag = false;
@@ -295,9 +302,16 @@ namespace bumo {
 	}
 
 	void ProposerManager::HandleChildChainBlocklistCache(){
-		utils::MutexGuard guard(child_chain_list_cashe_lock_);
-		handle_child_chain_block_list_.insert(handle_child_chain_block_list_.end(), child_chain_block_list_cache_.begin(), child_chain_block_list_cache_.end());
-		child_chain_block_list_cache_.clear();
+		std::list<protocol::LedgerHeader> ledger_header_list;
+		{
+			utils::MutexGuard guard(child_chain_list_cashe_lock_);
+			ledger_header_list.insert(ledger_header_list.end(), child_chain_block_list_cache_.begin(), child_chain_block_list_cache_.end());
+			child_chain_block_list_cache_.clear();
+		}
+
+		utils::MutexGuard guard(child_chain_list_lock_);
+		handle_child_chain_block_list_.insert(handle_child_chain_block_list_.end(), ledger_header_list.begin(), ledger_header_list.end());
+
 	}
 
 
