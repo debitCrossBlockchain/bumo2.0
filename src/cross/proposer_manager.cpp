@@ -119,23 +119,38 @@ namespace bumo {
 		//handel child chain block, and call MessageChannel to send main chain proc 
 		utils::MutexGuard guard(child_chain_list_lock_);
 		protocol::LedgerHeader ledger_header;
+		protocol::LedgerHeader ledger_header_seq;
 		Header header;
 		if (!QueryFreshChildBlock(chain_id, header)){
 			return;
 		}
+
+		for (size_t seq = 0; seq < 10; seq++){
+			ledger_header_seq.set_seq(header.seq_ + seq + 1);
+			ledger_header_seq.set_chain_id(header.chanin_id_);
+			std::list<protocol::LedgerHeader>::const_iterator iter_temp = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header_seq));
+			if (iter_temp == handle_child_chain_block_list_.end()){
+				Header header_temp;
+				header_temp.seq_ = header.seq_ + seq;
+				header_temp.chanin_id_ = header.chanin_id_;
+				HandleSingleChildChainBlockNotExsit(header_temp);
+				continue;
+			}
+		}
+
 		std::list<protocol::LedgerHeader> ledger_header_list;
 		for (size_t i = 0; i < 5; i++){
 			ledger_header.set_seq(header.seq_ + i + 1);
 			ledger_header.set_chain_id(header.chanin_id_);
 			std::list<protocol::LedgerHeader>::const_iterator iter_temp = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header));
 			if (iter_temp == handle_child_chain_block_list_.end()){
-				Header header_temp;
-				header_temp.seq_ = header.seq_ + i;
-				header_temp.chanin_id_ = header.chanin_id_;
-				HandleSingleChildChainBlockNotExsit(header_temp);
-				return;
+				break;
 			}
 			ledger_header_list.push_back(*iter_temp);
+		}
+
+		if (ledger_header_list.empty()){
+			return;
 		}
 
 		PayCoinProposer(ledger_header_list);
@@ -291,14 +306,9 @@ namespace bumo {
 
 	}
 
-
-
 	void ProposerManager::AddChildChainBlocklistCache(const protocol::LedgerHeader& ledger_header){
 		utils::MutexGuard guard(child_chain_list_cashe_lock_);
-		std::list<protocol::LedgerHeader>::const_iterator iter = std::find_if(child_chain_block_list_cache_.begin(), child_chain_block_list_cache_.end(), FindHeader(ledger_header));
-		if (iter == child_chain_block_list_cache_.end()){
-			child_chain_block_list_cache_.push_back(ledger_header);
-		}
+		child_chain_block_list_cache_.push_back(ledger_header);
 	}
 
 	void ProposerManager::HandleChildChainBlocklistCache(){
@@ -310,8 +320,14 @@ namespace bumo {
 		}
 
 		utils::MutexGuard guard(child_chain_list_lock_);
-		handle_child_chain_block_list_.insert(handle_child_chain_block_list_.end(), ledger_header_list.begin(), ledger_header_list.end());
-
+		std::list<protocol::LedgerHeader>::const_iterator iter = ledger_header_list.begin();
+		while (iter != ledger_header_list.end()){
+			std::list<protocol::LedgerHeader>::const_iterator iter_header = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(*iter));
+			if (iter == handle_child_chain_block_list_.end()){
+				handle_child_chain_block_list_.push_back(*iter);
+			}
+			iter++;
+		}
 	}
 
 
@@ -335,7 +351,6 @@ namespace bumo {
 		nonce = account_ptr->GetAccountNonce() + 1;
 
 		do {
-
 			err_code = PayCoinSelf(Configure::Instance().ledger_configure_.validation_privatekey_, General::CONTRACT_CMC_ADDRESS, ledger_header, 0, nonce);
 			nonce = nonce + 1;
 			utils::Sleep(10);
