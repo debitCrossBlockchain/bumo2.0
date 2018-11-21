@@ -67,14 +67,12 @@ namespace bumo {
 	private:
 		virtual void Run(utils::Thread *thread) override;
 		void HandleChildChainBlock();
-		void HandleChildChainNotExistBlock();
 		bool HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header);
 		bool CheckChildBlockExsit(const std::string& hash, int64_t chain_id);
 		bool QueryFreshChildBlock(const int64_t chain_id, Header& header);
-		bool CommitTransaction(const protocol::LedgerHeader& ledger_header);
 		bool CheckNodeIsValidate(int64_t chain_id);
 		void HandleSingleChildChainBlockNotExsit(const Header& header);
-		void HandleChildChainBlockNotExsitList(const Header& header);
+	
 		void UpdateValidateAddressList(utils::StringList& validate_address, int64_t chain_id);
 
 		void AddChildChainBlocklistCache(const protocol::LedgerHeader& ledger_header);
@@ -93,13 +91,10 @@ namespace bumo {
 		bool enabled_;
 		utils::Thread *thread_ptr_;
 		int64_t last_uptate_validate_address_time_;
-		utils::Mutex handle_child_chain_list_not_lock_;
 		int64_t last_uptate_handle_child_chain_time_;
 		int64_t last_uptate_handle_child_remove_time_;
-		int64_t last_uptate_handle_child_chain_not_time_;
 		int64_t last_uptate_child_chain_cashe_time_;
 		std::list<protocol::LedgerHeader> handle_child_chain_block_list_;
-		std::list<Header> handle_child_chain_block_list_not_;
 	};
 
 }

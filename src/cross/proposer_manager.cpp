@@ -24,7 +24,6 @@ namespace bumo {
 		enabled_(false),
 		last_uptate_validate_address_time_(0),
 		last_uptate_handle_child_chain_time_(0),
-		last_uptate_handle_child_chain_not_time_(0),
 		last_uptate_child_chain_cashe_time_(0),
 		last_uptate_handle_child_remove_time_(0),
 		thread_ptr_(NULL){
@@ -106,16 +105,7 @@ namespace bumo {
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 	}
 
-	void ProposerManager::HandleChildChainNotExistBlock(){
-		//handel child chain block, and call MessageChannel to send main chain proc 
 
-		utils::MutexGuard guard(handle_child_chain_list_not_lock_);
-		std::list<Header>::const_iterator itor = handle_child_chain_block_list_not_.begin();
-		while (itor != handle_child_chain_block_list_not_.end()){
-			HandleSingleChildChainBlockNotExsit(*itor);
-			handle_child_chain_block_list_not_.erase(itor++); // delete node£,find next node
-		}
-	}
 
 	void ProposerManager::HandleChildChainBlock(){
 		//handel child chain block, and call MessageChannel to send main chain proc 
@@ -278,37 +268,6 @@ namespace bumo {
 	}
 
 
-	bool ProposerManager::CommitTransaction(const protocol::LedgerHeader& ledger_header){
-		//create a mainchain transaction with private key to CMC
-		Json::Value block_header = bumo::Proto2Json(ledger_header);
-		Json::FastWriter json_input;
-		Json::Value input_value;
-		Json::Value params;
-
-		params["chain_id"] = block_header["chain_id"].asInt64();
-		params["block_header"] = block_header;
-		input_value["method"] = "submitChildBlockHeader";
-		input_value["params"] = params;
-		std::string input = json_input.write(input_value);
-
-		int32_t error_code = bumo::CrossUtils::PayCoin(Configure::Instance().ledger_configure_.validation_privatekey_, General::CONTRACT_CMC_ADDRESS, input.c_str(), 0);
-
-		if (error_code != protocol::ERRCODE_SUCCESS){
-			LOG_ERROR("Failed to query child block .%d", error_code);
-			return false;
-		}
-		return true;
-	}
-
-	void ProposerManager::HandleChildChainBlockNotExsitList(const Header& header){
-		utils::MutexGuard guard(handle_child_chain_list_not_lock_);
-		std::list<Header>::const_iterator itor = std::find(handle_child_chain_block_list_not_.begin(), handle_child_chain_block_list_not_.end(), header);
-		if (itor == handle_child_chain_block_list_not_.end()){
-			handle_child_chain_block_list_not_.push_back(header);
-		}
-	}
-
-
 	void ProposerManager::RemoveHandleChildChainBlock(){
 		std::list<protocol::LedgerHeader>::const_iterator itor = handle_child_chain_block_list_.begin();
 		while (itor != handle_child_chain_block_list_.end()){
@@ -325,26 +284,7 @@ namespace bumo {
 
 	}
 
-	bool ProposerManager::HandleSingleChildChainBlock(const protocol::LedgerHeader& ledger_header){
 
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
-		std::string node_address = private_key.GetEncAddress();
-		Json::Value block_header = bumo::Proto2Json(ledger_header);
-
-		Header header;
-		QueryFreshChildBlock(block_header["chain_id"].asInt64(), header);
-		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && (header.seq_ + 1) != block_header["seq"].asInt64()){
-			HandleChildChainBlockNotExsitList(header);
-			return false;
-		}
-
-		if ((header.chanin_id_ == block_header["chain_id"].asInt64()) && ((header.seq_ + 1) == block_header["seq"].asInt64())){
-			return CommitTransaction(ledger_header);
-		}
-
-		return true;
-
-	}
 
 	void ProposerManager::AddChildChainBlocklistCache(const protocol::LedgerHeader& ledger_header){
 		utils::MutexGuard guard(child_chain_list_cashe_lock_);
