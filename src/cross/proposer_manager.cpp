@@ -322,9 +322,10 @@ namespace bumo {
 		utils::MutexGuard guard(child_chain_list_lock_);
 		std::list<protocol::LedgerHeader>::const_iterator iter = ledger_header_list.begin();
 		while (iter != ledger_header_list.end()){
-			std::list<protocol::LedgerHeader>::const_iterator iter_header = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(*iter));
-			if (iter == handle_child_chain_block_list_.end()){
-				handle_child_chain_block_list_.push_back(*iter);
+			protocol::LedgerHeader ledger_header = *iter;
+			std::list<protocol::LedgerHeader>::const_iterator iter_header = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header));
+			if (iter_header == handle_child_chain_block_list_.end()){
+				handle_child_chain_block_list_.push_back(ledger_header);
 			}
 			iter++;
 		}
