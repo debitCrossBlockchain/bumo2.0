@@ -22,6 +22,7 @@ namespace bumo {
 	public:
 		CrossUtils() {}
 		~CrossUtils() {}
+		static bool EvaluateFee(protocol::TransactionEnv &tran_env, Result& result, int64_t& max, int64_t& min);
 		static int32_t QueryContract(const std::string &address, const std::string &input, Json::Value &query_rets);
 		static int32_t PayCoin(const std::string &encode_private_key, const std::string &dest_address, const std::string &contract_input, int64_t coin_amount);
 	private:

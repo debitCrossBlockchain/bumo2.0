@@ -77,13 +77,13 @@ namespace bumo {
 
 		void AddChildChainBlocklistCache(const protocol::LedgerHeader& ledger_header);
 		void HandleChildChainBlocklistCache();
-
+		void QueryChildChainBlock();
 		void RemoveHandleChildChainBlock();
 		bool CompareHeader(const protocol::LedgerHeader& ledger_header_left,const protocol::LedgerHeader& ledger_header_right){
 			return ledger_header_left.seq() < ledger_header_right.seq() ? true : false;
 		}
 		int32_t PayCoinProposer(std::list<protocol::LedgerHeader> &ledger_header);
-		int32_t PayCoinSelf(const std::string &encode_private_key, const std::string &dest_address,std::list<protocol::LedgerHeader> &ledger_header, int64_t coin_amount, int64_t nonce);
+		int32_t PayCoinSelf(const std::string &encode_private_key, const std::string &dest_address, std::list<protocol::LedgerHeader> &ledger_header,int64_t &fee_limit, int64_t coin_amount);
 	private:
 		std::list<protocol::LedgerHeader> child_chain_block_list_cache_;
 		utils::Mutex child_chain_list_cashe_lock_;
@@ -94,9 +94,12 @@ namespace bumo {
 		int64_t last_uptate_handle_child_chain_time_;
 		int64_t last_uptate_handle_child_remove_time_;
 		int64_t last_uptate_child_chain_cashe_time_;
+		int64_t last_uptate_query_child_block_time_;
 
 		utils::Mutex child_chain_list_lock_;
 		std::list<protocol::LedgerHeader> handle_child_chain_block_list_;
+		int64_t nonce_;
+
 	};
 
 }

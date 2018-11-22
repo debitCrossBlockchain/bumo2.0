@@ -26,6 +26,8 @@ namespace bumo {
 		last_uptate_handle_child_chain_time_(0),
 		last_uptate_child_chain_cashe_time_(0),
 		last_uptate_handle_child_remove_time_(0),
+		last_uptate_query_child_block_time_(0),
+		nonce_(0),
 		thread_ptr_(NULL){
 
 	}
@@ -67,13 +69,13 @@ namespace bumo {
 	void ProposerManager::Run(utils::Thread *thread) {
 		while (enabled_){
 			int64_t current_time = utils::Timestamp::HighResolution();
-			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_time_){
+			if (current_time > 5 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_time_){
 				//Handel block list//
 				HandleChildChainBlock();
 				last_uptate_handle_child_chain_time_ = current_time;
 			}
 
-			if (current_time > 5 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_remove_time_){
+			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_remove_time_){
 				//Handel block list//
 				RemoveHandleChildChainBlock();
 				last_uptate_handle_child_remove_time_ = current_time;
@@ -83,6 +85,12 @@ namespace bumo {
 				//Handel cashe list//
 				HandleChildChainBlocklistCache();
 				last_uptate_child_chain_cashe_time_ = current_time;
+			}
+
+			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_query_child_block_time_){
+				//query block list//
+				QueryChildChainBlock();
+				last_uptate_query_child_block_time_ = current_time;
 			}
 		}
 	}
@@ -108,6 +116,21 @@ namespace bumo {
 
 
 	void ProposerManager::HandleChildChainBlock(){
+		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
+		if (!private_key.IsValid()){
+			LOG_ERROR("Private key is not valid");
+			return;
+		}
+
+		std::string source_address = private_key.GetEncAddress();
+
+		AccountFrm::pointer account_ptr;
+		if (!Environment::AccountFromDB(source_address, account_ptr)) {
+			LOG_ERROR("Address:%s not exsit", source_address.c_str());
+			return;
+		}
+
+		nonce_ = account_ptr->GetAccountNonce() + 1;
 		for (int64_t id = 1; id <= 10; id++){
 			Sleep(100);
 			HandleSingleChildChain(id);
@@ -115,27 +138,38 @@ namespace bumo {
 	}
 
 
+	void ProposerManager::QueryChildChainBlock(){
+		for (int64_t chain_id = 1; chain_id <= 10; chain_id++){
+			utils::MutexGuard guard(child_chain_list_lock_);
+			protocol::LedgerHeader ledger_header_seq;
+			Header header;
+			if (!QueryFreshChildBlock(chain_id, header)){
+				return;
+			}
+
+			for (size_t seq = 0; seq < 10; seq++){
+				ledger_header_seq.set_seq(header.seq_ + seq + 1);
+				ledger_header_seq.set_chain_id(header.chanin_id_);
+				std::list<protocol::LedgerHeader>::const_iterator iter_temp = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header_seq));
+				if (iter_temp == handle_child_chain_block_list_.end()){
+					Header header_temp;
+					header_temp.seq_ = header.seq_ + seq;
+					header_temp.chanin_id_ = header.chanin_id_;
+					HandleSingleChildChainBlockNotExsit(header_temp);
+					continue;
+				}
+			}
+		}
+	}
+
 	void ProposerManager::HandleSingleChildChain(int64_t chain_id){
 		//handel child chain block, and call MessageChannel to send main chain proc 
 		utils::MutexGuard guard(child_chain_list_lock_);
 		protocol::LedgerHeader ledger_header;
-		protocol::LedgerHeader ledger_header_seq;
+		//protocol::LedgerHeader ledger_header_seq;
 		Header header;
 		if (!QueryFreshChildBlock(chain_id, header)){
 			return;
-		}
-
-		for (size_t seq = 0; seq < 10; seq++){
-			ledger_header_seq.set_seq(header.seq_ + seq + 1);
-			ledger_header_seq.set_chain_id(header.chanin_id_);
-			std::list<protocol::LedgerHeader>::const_iterator iter_temp = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header_seq));
-			if (iter_temp == handle_child_chain_block_list_.end()){
-				Header header_temp;
-				header_temp.seq_ = header.seq_ + seq;
-				header_temp.chanin_id_ = header.chanin_id_;
-				HandleSingleChildChainBlockNotExsit(header_temp);
-				continue;
-			}
 		}
 
 		std::list<protocol::LedgerHeader> ledger_header_list;
@@ -153,8 +187,13 @@ namespace bumo {
 			return;
 		}
 
-		PayCoinProposer(ledger_header_list);
+		int64_t err_code = PayCoinProposer(ledger_header_list);
+		if (err_code != protocol::ERRCODE_SUCCESS){
+			LOG_ERROR("Failed to PayCoinProposer , error code is %d", err_code);
+			return;
+		}
 
+		nonce_ = nonce_ + 1;
 	}
 
 	void ProposerManager::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
@@ -165,6 +204,11 @@ namespace bumo {
 
 		protocol::LedgerHeader ledger_header;
 		ledger_header.ParseFromString(message_channel.msg_data());
+	
+		if (ledger_header.chain_id() == 0){
+			return;
+		}
+
 		AddChildChainBlocklistCache(ledger_header);
 	}
 
@@ -333,34 +377,29 @@ namespace bumo {
 
 
 	int32_t ProposerManager::PayCoinProposer(std::list<protocol::LedgerHeader> &ledger_header){
-
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
-		if (!private_key.IsValid()){
-			LOG_ERROR("Private key is not valid");
-			return protocol::ERRCODE_INVALID_PRIKEY;
-		}
 		int32_t err_code = 0;
-		int64_t nonce = 0;
-		std::string source_address = private_key.GetEncAddress();
-
-		AccountFrm::pointer account_ptr;
-		if (!Environment::AccountFromDB(source_address, account_ptr)) {
-			LOG_ERROR("Address:%s not exsit", source_address.c_str());
-			return protocol::ERRCODE_INVALID_PRIKEY;
-		}
-
-		nonce = account_ptr->GetAccountNonce() + 1;
+		int64_t fee_limit = 0;
 
 		do {
-			err_code = PayCoinSelf(Configure::Instance().ledger_configure_.validation_privatekey_, General::CONTRACT_CMC_ADDRESS, ledger_header, 0, nonce);
-			nonce = nonce + 1;
+			err_code = PayCoinSelf(Configure::Instance().ledger_configure_.validation_privatekey_, General::CONTRACT_CMC_ADDRESS, ledger_header, fee_limit, 0);
+			if (err_code == protocol::ERRCODE_ALREADY_EXIST){
+				break;
+			}
+
+			if (err_code == protocol::ERRCODE_TX_INSERT_QUEUE_FAIL){
+				fee_limit = fee_limit + fee_limit * 0.12;
+			}
+
+			if (err_code == protocol::ERRCODE_BAD_SEQUENCE){
+				nonce_ = nonce_ + 1;
+			}
 			utils::Sleep(10);
-		} while (err_code == protocol::ERRCODE_ALREADY_EXIST);
+		} while (err_code != protocol::ERRCODE_SUCCESS);
 
 		return err_code;
 	}
 
-	int32_t ProposerManager::PayCoinSelf(const std::string &encode_private_key, const std::string &dest_address, std::list<protocol::LedgerHeader> &ledger_header, int64_t coin_amount, int64_t nonce){
+	int32_t ProposerManager::PayCoinSelf(const std::string &encode_private_key, const std::string &dest_address, std::list<protocol::LedgerHeader> &ledger_header, int64_t &fee_limit, int64_t coin_amount){
 		ledger_header.sort(std::bind(&bumo::ProposerManager::CompareHeader, this, std::placeholders::_1, std::placeholders::_2));
 		PrivateKey private_key(encode_private_key);
 		if (!private_key.IsValid()){
@@ -373,9 +412,7 @@ namespace bumo {
 		protocol::TransactionEnv tran_env;
 		protocol::Transaction *tran = tran_env.mutable_transaction();
 		tran->set_source_address(source_address);
-		tran->set_fee_limit(1500000);
-		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());
-		tran->set_nonce(nonce);
+		tran->set_nonce(nonce_);
 
 		std::list<protocol::LedgerHeader>::const_iterator iter = ledger_header.begin();
 		while (iter != ledger_header.end()){
@@ -398,14 +435,26 @@ namespace bumo {
 			pay_coin->set_input(input);
 			iter++;
 		}
+		Result result;
+		int64_t max = 0;
+		int64_t min = 0;
+		int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
+		int64_t gas_price = tran->gas_price() > sys_gas_price ? tran->gas_price() : sys_gas_price;
+		tran->set_gas_price(gas_price);
+		tran->set_fee_limit(0);
 
+		if (!bumo::CrossUtils::EvaluateFee(tran_env, result, max, min)){
+			return protocol::ERRCODE_FEE_NOT_ENOUGH;
+		}
+
+		fee_limit = fee_limit > max ? fee_limit : max;
+		tran->set_fee_limit(fee_limit);
 		std::string content = tran->SerializeAsString();
 		std::string sign = private_key.Sign(content);
 		protocol::Signature *signpro = tran_env.add_signatures();
 		signpro->set_sign_data(sign);
 		signpro->set_public_key(private_key.GetEncPublicKey());
 
-		Result result;
 		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
 		GlueManager::Instance().OnTransaction(ptr, result);
 		if (result.code() != 0) {

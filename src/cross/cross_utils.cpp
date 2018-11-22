@@ -15,9 +15,120 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <glue/glue_manager.h>
 #include <overlay/peer_manager.h>
+#include<ledger/fee_calculate.h>
 #include "cross_utils.h"
 
 namespace bumo {
+
+	bool CrossUtils::EvaluateFee(protocol::TransactionEnv &tran_env, Result& result, int64_t& max, int64_t& min){
+		protocol::Transaction *tran = tran_env.mutable_transaction();
+		int64_t pay_amount = 0;
+		std::string tx_source_address = tran->source_address();
+		AccountFrm::pointer source_account;
+		if (!Environment::AccountFromDB(tx_source_address, source_account)) {
+			result.set_code(protocol::ERRCODE_ACCOUNT_NOT_EXIST);
+			result.set_desc(utils::String::Format("Source account(%s) not exist", tx_source_address.c_str()));
+			LOG_ERROR("Failed to load the account from the database.%s", result.desc().c_str());
+			return false;
+		}
+
+		int64_t total_opt_fee = 0;
+		for (int i = 0; i < tran->operations_size(); i++) {
+			const protocol::Operation &ope = tran->operations(i);
+			std::string ope_source_address = ope.source_address();
+			if (ope_source_address.size() == 0)
+				ope_source_address = tx_source_address;
+			if (tx_source_address == ope_source_address){
+				auto type = ope.type();
+				int64_t opt_price;
+				if (!utils::SafeIntMul(FeeCalculate::GetOperationTypeGas(ope), tran->gas_price(), opt_price)) {
+					result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+					result.set_desc(utils::String::Format("Source account(%s) math overflow, GetOperationTypeGas:(" FMT_I64 "), gas_price:(" FMT_I64 ")",
+						tx_source_address.c_str(), FeeCalculate::GetOperationTypeGas(ope), tran->gas_price()));
+					LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+					return false;
+				}
+
+				if (!utils::SafeIntAdd(total_opt_fee, opt_price, total_opt_fee)){
+					result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+					result.set_desc(utils::String::Format("Source account(%s) math overflow, total_opt_fee:(" FMT_I64 "), opt_price:(" FMT_I64 ")",
+						tx_source_address.c_str(), total_opt_fee, opt_price));
+					LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+					return false;
+				}
+
+				if (type == protocol::Operation_Type_PAY_COIN) {
+					if (!utils::SafeIntAdd(pay_amount, ope.pay_coin().amount(), pay_amount)) {
+						result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+						result.set_desc(utils::String::Format("Source account(%s) math overflow, pay_amount:(" FMT_I64 "), pay_coin().amount:(" FMT_I64 ")",
+							tx_source_address.c_str(), pay_amount, ope.pay_coin().amount()));
+						LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+						return false;
+					}
+				}
+				if (type == protocol::Operation_Type_CREATE_ACCOUNT) {
+					if (!utils::SafeIntAdd(pay_amount, ope.create_account().init_balance(), pay_amount)) {
+						result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+						result.set_desc(utils::String::Format("Source account(%s) math overflow, pay_amount:(" FMT_I64 "), init_balance:(" FMT_I64 ")",
+							tx_source_address.c_str(), pay_amount, ope.create_account().init_balance()));
+						LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+						return false;
+					}
+				}
+			}
+		}
+
+		int64_t balance = source_account->GetAccountBalance();
+		int64_t fee;
+		if (!utils::SafeIntSub(balance, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), fee)) {
+			result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+			result.set_desc(utils::String::Format("Source account(%s) overflow for fee, balance:(" FMT_I64 "), base_reserve:(" FMT_I64 "), pay_amount:(" FMT_I64 ")",
+				tx_source_address.c_str(), balance, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), pay_amount));
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+			return false;
+		}
+
+		if (!utils::SafeIntSub(fee, pay_amount, fee)) {
+			result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+			result.set_desc(utils::String::Format("Source account(%s) overflow for fee, balance:(" FMT_I64 "), base_reserve:(" FMT_I64 "), pay_amount:(" FMT_I64 ")",
+				tx_source_address.c_str(), balance, LedgerManager::Instance().GetCurFeeConfig().base_reserve(), pay_amount));
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+			return false;
+		}
+		tran->set_fee_limit(fee);
+
+		int64_t bytes_fee = 0;
+		if (tran->gas_price() > 0) {
+			if (!utils::SafeIntMul(tran->gas_price(), (int64_t)tran_env.ByteSize(), bytes_fee)){
+				result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+				result.set_desc(utils::String::Format("Source account(%s) overflow for fee, gas_price:(" FMT_I64 "), ByteSize:%d",
+					tx_source_address.c_str(), tran->gas_price(), tran->ByteSize()));
+				LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+				return false;
+			}
+		}
+
+		int64_t total_fee;
+		if (!utils::SafeIntAdd(bytes_fee, total_opt_fee, total_fee)) {
+			result.set_code(protocol::ERRCODE_MATH_OVERFLOW);
+			result.set_desc(utils::String::Format("Source account(%s) overflow for fee, bytes_fee:(" FMT_I64 "), total_opt_fee:(" FMT_I64 ")",
+				tx_source_address.c_str(), bytes_fee, total_opt_fee));
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+			return false;
+		}
+
+		if (fee < total_fee) {
+			result.set_code(protocol::ERRCODE_FEE_NOT_ENOUGH);
+			result.set_desc(utils::String::Format("Source account(%s) not enough balance for fee", tx_source_address.c_str()));
+			LOG_ERROR("Failed to evaluate fee.%s", result.desc().c_str());
+			return false;
+		}
+
+		min = total_fee;
+		max = fee;
+		return true;
+	}
+
 	int32_t CrossUtils::QueryContract(const std::string &address, const std::string &input, Json::Value &query_rets){
 		std::string result = "";
 		ContractTestParameter parameter;
