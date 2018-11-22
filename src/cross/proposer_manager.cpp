@@ -69,7 +69,7 @@ namespace bumo {
 	void ProposerManager::Run(utils::Thread *thread) {
 		while (enabled_){
 			int64_t current_time = utils::Timestamp::HighResolution();
-			if (current_time > 5 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_time_){
+			if (current_time > 12 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_time_){
 				//Handel block list//
 				HandleChildChainBlock();
 				last_uptate_handle_child_chain_time_ = current_time;
@@ -129,7 +129,6 @@ namespace bumo {
 			LOG_ERROR("Address:%s not exsit", source_address.c_str());
 			return;
 		}
-
 		nonce_ = account_ptr->GetAccountNonce() + 1;
 		for (int64_t id = 1; id <= 10; id++){
 			Sleep(100);
@@ -204,7 +203,7 @@ namespace bumo {
 
 		protocol::LedgerHeader ledger_header;
 		ledger_header.ParseFromString(message_channel.msg_data());
-	
+
 		if (ledger_header.chain_id() == 0){
 			return;
 		}
@@ -290,7 +289,7 @@ namespace bumo {
 		object.fromString(result.c_str());
 
 		if (error_code != protocol::ERRCODE_SUCCESS){
-			LOG_ERROR("Failed to query child block .%d", error_code);
+			//LOG_ERROR("Failed to query child block .%d", error_code);
 			flag = false;
 		}
 

@@ -183,7 +183,7 @@ namespace bumo {
 			query_rets = result_json["query_rets"];
 		} while (false);
 
-		LOG_INFO("Query result code:%d, result:%s", error_code, result.c_str());
+		//LOG_INFO("Query result code:%d, result:%s", error_code, result.c_str());
 
 		return error_code;
 	}
