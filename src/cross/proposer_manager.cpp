@@ -131,7 +131,7 @@ namespace bumo {
 		}
 		nonce_ = account_ptr->GetAccountNonce() + 1;
 		for (int64_t id = 1; id <= 10; id++){
-			Sleep(100);
+			Sleep(1000);
 			HandleSingleChildChain(id);
 		}
 	}
@@ -155,7 +155,6 @@ namespace bumo {
 					header_temp.seq_ = header.seq_ + seq;
 					header_temp.chanin_id_ = header.chanin_id_;
 					HandleSingleChildChainBlockNotExsit(header_temp);
-					continue;
 				}
 			}
 		}
