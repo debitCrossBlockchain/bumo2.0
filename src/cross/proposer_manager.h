@@ -38,9 +38,13 @@ namespace bumo {
 			LedgerMap ledger_map;
 			int64_t recv_max_seq;
 			int64_t cmc_latest_seq;
-			utils::StringList cmc_latest_validates;
+			utils::StringVector cmc_latest_validates;
 
 			void ChildChain(){
+				Reset();
+			}
+		public:
+			void Reset() {
 				chain_id = -1;
 				ledger_map.clear();
 				recv_max_seq = -1;
@@ -61,7 +65,7 @@ namespace bumo {
 		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
 
 		void UpdateLatestStatus();
-		void UpdateLatestValidates(const int64_t chain_id, utils::StringList &latest_validates);
+		void UpdateLatestValidates(const int64_t chain_id, utils::StringVector &latest_validates);
 		void UpdateLatestSeq(const int64_t chain_id, int64_t &seq);
 		void SortChildSeq(ChildChain &child_chain);
 		void RequestChainSeq(int64_t chain_id, int64_t seq);
@@ -81,6 +85,7 @@ namespace bumo {
 		int64_t update_count_;
 		int64_t cur_nonce_;
 		bool main_chain_;
+		std::string source_address_;
 	};
 
 }

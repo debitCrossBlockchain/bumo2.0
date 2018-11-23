@@ -41,6 +41,14 @@ namespace bumo {
 			return true;
 		}
 
+		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
+		if (!private_key.IsValid()){
+			LOG_ERROR("Private key is not valid");
+			return false;
+		}
+
+		source_address_ = private_key.GetEncAddress();
+
 		enabled_ = true;
 		thread_ptr_ = new utils::Thread(this);
 		if (!thread_ptr_->Start("ProposerManager")) {
@@ -90,6 +98,18 @@ namespace bumo {
 			//update latest validates 
 			UpdateLatestValidates(i, child_chain.cmc_latest_validates);
 
+			//If the node is not validate, all blocks are deleted
+			bool is_validate = false;
+			for (int32_t j = 0; j < child_chain.cmc_latest_validates.size(); j++){
+				if (source_address_ == child_chain.cmc_latest_validates[j]){
+					is_validate = true;
+				}
+			}
+			if (!is_validate){
+				child_chain.Reset();
+				continue;
+			}
+
 			//update latest child seq
 			UpdateLatestSeq(i, child_chain.cmc_latest_seq);
 
@@ -98,7 +118,7 @@ namespace bumo {
 		}
 	}
 
-	void ProposerManager::UpdateLatestValidates(const int64_t chain_id, utils::StringList &latest_validates){
+	void ProposerManager::UpdateLatestValidates(const int64_t chain_id, utils::StringVector &latest_validates){
 		latest_validates.clear();
 
 		Json::Value input_value;
@@ -202,6 +222,14 @@ namespace bumo {
 
 	void ProposerManager::ProposeBlocks(){
 		utils::MutexGuard guard(child_chain_map_lock_);
+
+		AccountFrm::pointer account_ptr;
+		if (!Environment::AccountFromDB(source_address_, account_ptr)) {
+			LOG_ERROR("Address:%s not exsit", source_address_.c_str());
+			return;
+		}
+		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
+
 		for (int64_t i = 0; i <= MAX_CHAIN_ID; i++){
 			ChildChain &child_chain = child_chain_maps_[i];
 			//No data, ignore it
@@ -272,19 +300,25 @@ namespace bumo {
 			std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
 			TransactionFrm::pointer trans = CrossUtils::BuildTransaction(private_key, General::CONTRACT_CMC_ADDRESS, paras, cur_nonce_, fee_limit);
 			err_code = CrossUtils::SendTransaction(trans);
-			if (err_code == protocol::ERRCODE_ALREADY_EXIST){
-				break;
-			}
-			if (err_code == protocol::ERRCODE_FEE_NOT_ENOUGH){
-				fee_limit = int64_t(trans->GetFeeLimit() * 1.12);
-			}
-
-			if (err_code == protocol::ERRCODE_BAD_SEQUENCE){
-				cur_nonce_++;
-			}
-
-			if (err_code != protocol::ERRCODE_SUCCESS){
-				LOG_ERROR("Send transaction erro code:%d", err_code);
+			switch (err_code)
+			{
+				case protocol::ERRCODE_SUCCESS:
+				case  protocol::ERRCODE_ALREADY_EXIST:{
+					cur_nonce_++;
+					return;
+				}
+				case protocol::ERRCODE_BAD_SEQUENCE:{
+					cur_nonce_++;
+					continue;
+				}
+				case protocol::ERRCODE_FEE_NOT_ENOUGH:{
+					fee_limit = int64_t(trans->GetFeeLimit() * 1.12);
+					continue;
+				}
+				default:{
+					LOG_ERROR("Send transaction erro code:%d", err_code);
+					continue;
+				}
 			}
 
 			utils::Sleep(10);
