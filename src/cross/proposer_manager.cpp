@@ -23,7 +23,7 @@ namespace bumo {
 	ProposerManager::ProposerManager() :
 		enabled_(false),
 		thread_ptr_(NULL){
-		update_count_ = 0;
+		update_count_ = 1;
 		last_update_time_ = utils::Timestamp::HighResolution();
 		cur_nonce_ = 0;
 		main_chain_ = General::GetSelfChainId() == General::MAIN_CHAIN_ID;
@@ -48,6 +48,10 @@ namespace bumo {
 		}
 
 		source_address_ = private_key.GetEncAddress();
+
+		for (int i = 0; i < MAX_CHAIN_ID; i++){
+			child_chain_maps_[i].Reset();
+		}
 
 		enabled_ = true;
 		thread_ptr_ = new utils::Thread(this);
@@ -89,7 +93,7 @@ namespace bumo {
 
 	void ProposerManager::UpdateLatestStatus(){
 		utils::MutexGuard guard(child_chain_map_lock_);
-		for (int i = 0; i <= MAX_CHAIN_ID; i++){
+		for (int i = 0; i < MAX_CHAIN_ID; i++){
 			ChildChain &child_chain = child_chain_maps_[i];
 			if (child_chain.ledger_map.empty()){
 				continue;
@@ -100,7 +104,7 @@ namespace bumo {
 
 			//If the node is not validate, all blocks are deleted
 			bool is_validate = false;
-			for (int32_t j = 0; j < child_chain.cmc_latest_validates.size(); j++){
+			for (uint32_t j = 0; j < child_chain.cmc_latest_validates.size(); j++){
 				if (source_address_ == child_chain.cmc_latest_validates[j]){
 					is_validate = true;
 				}
@@ -230,7 +234,7 @@ namespace bumo {
 		}
 		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
 
-		for (int64_t i = 0; i <= MAX_CHAIN_ID; i++){
+		for (int64_t i = 0; i < MAX_CHAIN_ID; i++){
 			ChildChain &child_chain = child_chain_maps_[i];
 			//No data, ignore it
 			if (child_chain.ledger_map.empty()){
@@ -245,7 +249,7 @@ namespace bumo {
 
 			//Submit the latest five blocks
 			std::vector<std::string> send_para_list;
-			LedgerMap &ledger_map = child_chain.ledger_map;
+			const LedgerMap &ledger_map = child_chain.ledger_map;
 			for (int i = 1; i <= 5; i++){
 				LedgerMap::const_iterator itr = ledger_map.find(child_chain.cmc_latest_seq + i);
 				if (itr == ledger_map.end()){

@@ -99,10 +99,13 @@ namespace bumo {
 			LOG_ERROR("Private key is not valid");
 			return nullptr;
 		}
+
+		std::string source_address = pkey.GetEncAddress();
 		
 		protocol::TransactionEnv tran_env;
 		protocol::Transaction *tran = tran_env.mutable_transaction();
-		tran->set_source_address(pkey.GetEncAddress());
+		
+		tran->set_source_address(source_address);
 		tran->set_nonce(nonce);
 		for (unsigned i = 0; i < paras.size(); i++){
 			protocol::Operation *ope = tran->add_operations();
@@ -131,6 +134,9 @@ namespace bumo {
 		protocol::Signature *signpro = tran_env.add_signatures();
 		signpro->set_sign_data(sign);
 		signpro->set_public_key(pkey.GetEncPublicKey());
+
+		std::string tx_hash = utils::String::BinToHexString(HashWrapper::Crypto(content)).c_str();
+		LOG_INFO("Pay coin tx hash %s", tx_hash.c_str());
 
 		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
 		return ptr;

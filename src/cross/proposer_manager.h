@@ -39,10 +39,6 @@ namespace bumo {
 			int64_t recv_max_seq;
 			int64_t cmc_latest_seq;
 			utils::StringVector cmc_latest_validates;
-
-			void ChildChain(){
-				Reset();
-			}
 		public:
 			void Reset() {
 				chain_id = -1;
