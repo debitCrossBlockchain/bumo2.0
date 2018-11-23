@@ -22,14 +22,11 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 namespace bumo {
 	ProposerManager::ProposerManager() :
 		enabled_(false),
-		last_uptate_validate_address_time_(0),
-		last_uptate_handle_child_chain_time_(0),
-		last_uptate_child_chain_cashe_time_(0),
-		last_uptate_handle_child_remove_time_(0),
-		last_uptate_query_child_block_time_(0),
-		nonce_(0),
 		thread_ptr_(NULL){
-
+		update_count_ = 0;
+		last_update_time_ = utils::Timestamp::HighResolution();
+		cur_nonce_ = 0;
+		main_chain_ = General::GetSelfChainId() == General::MAIN_CHAIN_ID;
 	}
 
 	ProposerManager::~ProposerManager(){
@@ -40,7 +37,7 @@ namespace bumo {
 	}
 
 	bool ProposerManager::Initialize(){
-		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+		if (!main_chain_){
 			return true;
 		}
 
@@ -49,12 +46,12 @@ namespace bumo {
 		if (!thread_ptr_->Start("ProposerManager")) {
 			return false;
 		}
-		bumo::MessageChannel::GetInstance()->RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
+		bumo::MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		return true;
 	}
 
 	bool ProposerManager::Exit(){
-		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+		if (!main_chain_){
 			return true;
 		}
 
@@ -62,171 +59,58 @@ namespace bumo {
 		if (thread_ptr_) {
 			thread_ptr_->JoinWithStop();
 		}
-		bumo::MessageChannel::GetInstance()->UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
+		bumo::MessageChannel::Instance().UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		return true;
 	}
 
 	void ProposerManager::Run(utils::Thread *thread) {
 		while (enabled_){
 			int64_t current_time = utils::Timestamp::HighResolution();
-			if (current_time > 12 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_chain_time_){
-				//Handel block list//
-				HandleChildChainBlock();
-				last_uptate_handle_child_chain_time_ = current_time;
-			}
 
-			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_handle_child_remove_time_){
-				//Handel block list//
-				RemoveHandleChildChainBlock();
-				last_uptate_handle_child_remove_time_ = current_time;
+			if ((current_time - last_update_time_) > 5 * utils::MICRO_UNITS_PER_SEC){
+				UpdateLatestStatus();
+				last_update_time_ = current_time;
+				update_count_++;
 			}
-
-			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_child_chain_cashe_time_){
-				//Handel cashe list//
-				HandleChildChainBlocklistCache();
-				last_uptate_child_chain_cashe_time_ = current_time;
-			}
-
-			if (current_time > 2 * utils::MICRO_UNITS_PER_SEC + last_uptate_query_child_block_time_){
-				//query block list//
-				QueryChildChainBlock();
-				last_uptate_query_child_block_time_ = current_time;
+			
+			if (update_count_ % 3 == 0){
+				ProposeBlocks();
 			}
 		}
 	}
 
-	void ProposerManager::HandleSingleChildChainBlockNotExsit(const Header& header){
-		protocol::MessageChannel message_channel;
-		protocol::MessageChannelQueryHead query_head;
-		Sleep(100);
-		int64_t seq = 0;
-		if (header.seq_ <= 0){
-			seq = 1;
-		}
-		else{
-			seq = header.seq_ + 1;
-		}
-		query_head.set_ledger_seq(seq);
-		message_channel.set_target_chain_id(header.chanin_id_);
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_HEAD);
-		message_channel.set_msg_data(query_head.SerializeAsString());
-		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
-	}
-
-
-
-	void ProposerManager::HandleChildChainBlock(){
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
-		if (!private_key.IsValid()){
-			LOG_ERROR("Private key is not valid");
-			return;
-		}
-
-		std::string source_address = private_key.GetEncAddress();
-
-		AccountFrm::pointer account_ptr;
-		if (!Environment::AccountFromDB(source_address, account_ptr)) {
-			LOG_ERROR("Address:%s not exsit", source_address.c_str());
-			return;
-		}
-		nonce_ = account_ptr->GetAccountNonce() + 1;
-		for (int64_t id = 1; id <= 10; id++){
-			Sleep(1000);
-			HandleSingleChildChain(id);
-		}
-	}
-
-
-	void ProposerManager::QueryChildChainBlock(){
-		for (int64_t chain_id = 1; chain_id <= 10; chain_id++){
-			utils::MutexGuard guard(child_chain_list_lock_);
-			protocol::LedgerHeader ledger_header_seq;
-			Header header;
-			if (!QueryFreshChildBlock(chain_id, header)){
-				return;
+	void ProposerManager::UpdateLatestStatus(){
+		utils::MutexGuard guard(child_chain_map_lock_);
+		for (int i = 0; i <= MAX_CHAIN_ID; i++){
+			ChildChain &child_chain = child_chain_maps_[i];
+			if (child_chain.ledger_map.empty()){
+				continue;
 			}
 
-			for (size_t seq = 0; seq < 10; seq++){
-				ledger_header_seq.set_seq(header.seq_ + seq + 1);
-				ledger_header_seq.set_chain_id(header.chanin_id_);
-				std::list<protocol::LedgerHeader>::const_iterator iter_temp = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header_seq));
-				if (iter_temp == handle_child_chain_block_list_.end()){
-					Header header_temp;
-					header_temp.seq_ = header.seq_ + seq;
-					header_temp.chanin_id_ = header.chanin_id_;
-					HandleSingleChildChainBlockNotExsit(header_temp);
-				}
-			}
+			//update latest validates 
+			UpdateLatestValidates(i, child_chain.cmc_latest_validates);
+
+			//update latest child seq
+			UpdateLatestSeq(i, child_chain.cmc_latest_seq);
+
+			//sort seq
+			SortChildSeq(child_chain);
 		}
 	}
 
-	void ProposerManager::HandleSingleChildChain(int64_t chain_id){
-		//handel child chain block, and call MessageChannel to send main chain proc 
-		utils::MutexGuard guard(child_chain_list_lock_);
-		protocol::LedgerHeader ledger_header;
-		//protocol::LedgerHeader ledger_header_seq;
-		Header header;
-		if (!QueryFreshChildBlock(chain_id, header)){
-			return;
-		}
+	void ProposerManager::UpdateLatestValidates(const int64_t chain_id, utils::StringList &latest_validates){
+		latest_validates.clear();
 
-		std::list<protocol::LedgerHeader> ledger_header_list;
-		for (size_t i = 0; i < 5; i++){
-			ledger_header.set_seq(header.seq_ + i + 1);
-			ledger_header.set_chain_id(header.chanin_id_);
-			std::list<protocol::LedgerHeader>::const_iterator iter_temp = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header));
-			if (iter_temp == handle_child_chain_block_list_.end()){
-				break;
-			}
-			ledger_header_list.push_back(*iter_temp);
-		}
-
-		if (ledger_header_list.empty()){
-			return;
-		}
-
-		int64_t err_code = PayCoinProposer(ledger_header_list);
-		if (err_code != protocol::ERRCODE_SUCCESS){
-			LOG_ERROR("Failed to PayCoinProposer , error code is %d", err_code);
-			return;
-		}
-
-		nonce_ = nonce_ + 1;
-	}
-
-	void ProposerManager::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
-		if (message_channel.msg_type() != protocol::MESSAGE_CHANNEL_SUBMIT_HEAD){
-			LOG_ERROR("Failed to message_channel type is not MESSAGE_CHANNEL_SUBMIT_HEAD, error msg type is %d", message_channel.msg_type());
-			return;
-		}
-
-		protocol::LedgerHeader ledger_header;
-		ledger_header.ParseFromString(message_channel.msg_data());
-
-		if (ledger_header.chain_id() == 0){
-			return;
-		}
-
-		AddChildChainBlocklistCache(ledger_header);
-	}
-
-
-	void ProposerManager::UpdateValidateAddressList(utils::StringList& validate_address, int64_t chain_id){
-
-		Json::FastWriter json_input;
 		Json::Value input_value;
 		Json::Value params;
 		params["chain_id"] = chain_id;
 		input_value["method"] = "queryChildChainValidators";
 		input_value["params"] = params;
-		std::string input = json_input.write(input_value);
 
+		Json::Value result_list;
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result_list);
 
 		Json::Value object;
-		Json::Value result_list;
-
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), result_list);
-
 		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
 		object.fromString(result.c_str());
 
@@ -240,229 +124,179 @@ namespace bumo {
 			return;
 		}
 
-		validate_address.clear();
 		int32_t size = object["validators"].size();
+
+		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
 		for (int32_t i = 0; i < size; i++){
 			std::string address = object["validators"][i].asString().c_str();
-			validate_address.push_back(address.c_str());
+			latest_validates.push_back(address);
 		}
-
+		return;
 	}
 
-	bool ProposerManager::CheckNodeIsValidate(int64_t chain_id){
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
-		std::string node_address = private_key.GetEncAddress();
-		utils::StringList::const_iterator itor;
-		bool flag = false;
-		utils::StringList validate_address;
-		UpdateValidateAddressList(validate_address, chain_id);
-		itor = std::find(validate_address.begin(), validate_address.end(), node_address.c_str());
-		if (itor != validate_address.end()){
-			flag = true;
-		}
-		else{
-			LOG_INFO("this node is not validators,address is %s,chain_id is %d", node_address.c_str(), chain_id);
-			flag = false;
-		}
-		return flag;
-	}
-
-	bool ProposerManager::QueryFreshChildBlock(const int64_t chain_id, Header& header){
-
-		bool flag = true;
-		Json::FastWriter json_input;
-		Json::Value input_value;
+	void ProposerManager::UpdateLatestSeq(const int64_t chain_id, int64_t &seq){
 		Json::Value params;
 		params["chain_id"] = chain_id;
 		params["header_hash"] = "";
-		input_value["method"] = "queryChildBlockHeader";
-		input_value["params"] = params;
-		std::string input = json_input.write(input_value);
 
-		Json::Value object;
-		Json::Value result_list;
-
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), result_list);
-
-		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
-		object.fromString(result.c_str());
-
-		if (error_code != protocol::ERRCODE_SUCCESS){
-			//LOG_ERROR("Failed to query child block .%d", error_code);
-			flag = false;
-		}
-
-		header.chanin_id_ = object["chain_id"].asInt64();
-		header.seq_ = object["seq"].asInt64();
-		return flag;
-	}
-
-	bool ProposerManager::CheckChildBlockExsit(const std::string& hash, int64_t chain_id){
-		// Check for child chain block in CMC
-		bool flag = false;
-		Json::FastWriter json_input;
 		Json::Value input_value;
-		Json::Value params;
-		params["chain_id"] = chain_id;
-		params["header_hash"] = hash.c_str();
 		input_value["method"] = "queryChildBlockHeader";
 		input_value["params"] = params;
-		std::string input = json_input.write(input_value);
 
-		Json::Value object;
 		Json::Value result_list;
-
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input.c_str(), result_list);
-
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result_list);
 		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		Json::Value object;
 		object.fromString(result.c_str());
-
 		if (error_code != protocol::ERRCODE_SUCCESS){
+			seq = -1;
 			LOG_ERROR("Failed to query child block .%d", error_code);
-			flag = false;
+			return;
 		}
 
-		if (object["hash"].asString().compare(hash) == 0){
-			LOG_INFO("child block is not exsit!");
-			flag = true;
-		}
-
-		return flag;
+		seq = object["seq"].asInt64();
 	}
 
+	void ProposerManager::SortChildSeq(ChildChain &child_chain){
+		//Empty queues, ignore it
+		if (child_chain.ledger_map.empty()){
+			return;
+		}
 
-	void ProposerManager::RemoveHandleChildChainBlock(){
-		utils::MutexGuard guard(child_chain_list_lock_);
-		std::list<protocol::LedgerHeader>::const_iterator itor = handle_child_chain_block_list_.begin();
-		while (itor != handle_child_chain_block_list_.end()){
-			bool flag = false;
-			Json::Value block_header = bumo::Proto2Json(*itor);
-			flag = (!CheckNodeIsValidate(block_header["chain_id"].asInt64())) || CheckChildBlockExsit(block_header["hash"].asString(), block_header["chain_id"].asInt64());
-			if (flag){
-				handle_child_chain_block_list_.erase(itor++); // delete node£,find next node
+		//If cmc = chain max, ignore it
+		if (child_chain.cmc_latest_seq == child_chain.recv_max_seq){
+			return;
+		}
+
+		//Deletes invalid blocks
+		LedgerMap &ledger_map = child_chain.ledger_map;
+		for (auto itr = ledger_map.begin(); itr != ledger_map.end();){
+			if (itr->second.chain_id() > child_chain.cmc_latest_seq){
+				itr++; 
+				continue;
 			}
-			else{
-				++itor;
+
+			ledger_map.erase(itr++);
+		}
+
+		//Request up to ten blocks
+		int64_t max_nums = MIN(MAX_REQUEST_BLOCK_NUMS, (child_chain.recv_max_seq - child_chain.cmc_latest_seq));
+		for (int64_t i = child_chain.cmc_latest_seq + 1; i < max_nums; i++){
+			auto itr = ledger_map.find(i);
+			if (itr != ledger_map.end()){
+				continue;
 			}
+			RequestChainSeq(child_chain.chain_id, i);
 		}
-
 	}
 
-	void ProposerManager::AddChildChainBlocklistCache(const protocol::LedgerHeader& ledger_header){
-		utils::MutexGuard guard(child_chain_list_cashe_lock_);
-		child_chain_block_list_cache_.push_back(ledger_header);
+	void ProposerManager::RequestChainSeq(int64_t chain_id, int64_t seq){
+		protocol::MessageChannel message_channel;
+		protocol::MessageChannelQueryHead query_head;
+		query_head.set_ledger_seq(seq);
+		message_channel.set_target_chain_id(chain_id);
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_HEAD);
+		message_channel.set_msg_data(query_head.SerializeAsString());
+		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 	}
 
-	void ProposerManager::HandleChildChainBlocklistCache(){
-		std::list<protocol::LedgerHeader> ledger_header_list;
-		{
-			utils::MutexGuard guard(child_chain_list_cashe_lock_);
-			ledger_header_list.insert(ledger_header_list.end(), child_chain_block_list_cache_.begin(), child_chain_block_list_cache_.end());
-			child_chain_block_list_cache_.clear();
-		}
-
-		utils::MutexGuard guard(child_chain_list_lock_);
-		std::list<protocol::LedgerHeader>::const_iterator iter = ledger_header_list.begin();
-		while (iter != ledger_header_list.end()){
-			protocol::LedgerHeader ledger_header = *iter;
-			std::list<protocol::LedgerHeader>::const_iterator iter_header = std::find_if(handle_child_chain_block_list_.begin(), handle_child_chain_block_list_.end(), FindHeader(ledger_header));
-			if (iter_header == handle_child_chain_block_list_.end()){
-				handle_child_chain_block_list_.push_back(ledger_header);
+	void ProposerManager::ProposeBlocks(){
+		utils::MutexGuard guard(child_chain_map_lock_);
+		for (int64_t i = 0; i <= MAX_CHAIN_ID; i++){
+			ChildChain &child_chain = child_chain_maps_[i];
+			//No data, ignore it
+			if (child_chain.ledger_map.empty()){
+				continue;
 			}
-			iter++;
+
+			//Blocks are latest, ignore it
+			if ((child_chain.recv_max_seq > 0) && child_chain.recv_max_seq <= child_chain.cmc_latest_seq){
+				LOG_ERROR("recv_max_seq <= cmc_latest_seq, may be error");
+				continue;
+			}
+
+			//Submit the latest five blocks
+			std::vector<std::string> send_para_list;
+			LedgerMap &ledger_map = child_chain.ledger_map;
+			for (int i = 1; i <= 5; i++){
+				LedgerMap::const_iterator itr = ledger_map.find(child_chain.cmc_latest_seq + i);
+				if (itr == ledger_map.end()){
+					break;
+				}
+				Json::Value block_header = bumo::Proto2Json(itr->second);
+				Json::Value input_value;
+				Json::Value params;
+
+				params["chain_id"] = i;
+				params["block_header"] = block_header;
+				input_value["method"] = "submitChildBlockHeader";
+				input_value["params"] = params;
+				send_para_list.push_back(input_value.toFastString());
+			}
+
+			if (send_para_list.empty()){
+				LOG_ERROR("send_para_list is empty");
+				return;
+			}
+
+			SendTransaction(send_para_list);
 		}
 	}
 
+	void ProposerManager::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
+		if (message_channel.msg_type() != protocol::MESSAGE_CHANNEL_SUBMIT_HEAD){
+			LOG_ERROR("Failed to message_channel type is not MESSAGE_CHANNEL_SUBMIT_HEAD, error msg type is %d", message_channel.msg_type());
+			return;
+		}
 
-	int32_t ProposerManager::PayCoinProposer(std::list<protocol::LedgerHeader> &ledger_header){
+		protocol::LedgerHeader ledger_header;
+		ledger_header.ParseFromString(message_channel.msg_data());
+
+		if (ledger_header.chain_id() <= 0 || ledger_header.chain_id() >= MAX_CHAIN_ID){
+			LOG_ERROR("chain id :(" FMT_I64 ")", ledger_header.chain_id());
+			return;
+		}
+
+		utils::MutexGuard guard(child_chain_map_lock_);
+		ChildChain &child_chain = child_chain_maps_[ledger_header.chain_id()];
+		child_chain.ledger_map[ledger_header.seq()] = ledger_header;
+		child_chain.recv_max_seq = MAX(child_chain.recv_max_seq, ledger_header.seq());
+		child_chain.chain_id = ledger_header.chain_id();
+	}
+
+	void ProposerManager::SendTransaction(const std::vector<std::string> &paras){
 		int32_t err_code = 0;
-		int64_t fee_limit = 0;
+		int64_t fee_limit = -1;
 
-		do {
-			err_code = PayCoinSelf(Configure::Instance().ledger_configure_.validation_privatekey_, General::CONTRACT_CMC_ADDRESS, ledger_header, fee_limit, 0);
+		for (int i = 0; i <= MAX_SEND_TRANSACTION_TIMES; i++){
+			std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
+			TransactionFrm::pointer trans = CrossUtils::BuildTransaction(private_key, General::CONTRACT_CMC_ADDRESS, paras, cur_nonce_, fee_limit);
+			err_code = CrossUtils::SendTransaction(trans);
 			if (err_code == protocol::ERRCODE_ALREADY_EXIST){
 				break;
 			}
-
-			if (err_code == protocol::ERRCODE_TX_INSERT_QUEUE_FAIL){
-				fee_limit = fee_limit + fee_limit * 0.12;
+			if (err_code == protocol::ERRCODE_FEE_NOT_ENOUGH){
+				fee_limit = int64_t(trans->GetFeeLimit() * 1.12);
 			}
 
 			if (err_code == protocol::ERRCODE_BAD_SEQUENCE){
-				nonce_ = nonce_ + 1;
+				cur_nonce_++;
 			}
-			utils::Sleep(10);
-		} while (err_code != protocol::ERRCODE_SUCCESS);
 
-		return err_code;
+			if (err_code != protocol::ERRCODE_SUCCESS){
+				LOG_ERROR("Send transaction erro code:%d", err_code);
+			}
+
+			utils::Sleep(10);
+		}
+
+		BreakProposer("SendTransaction than 10 times...");
+		return;
 	}
 
-	int32_t ProposerManager::PayCoinSelf(const std::string &encode_private_key, const std::string &dest_address, std::list<protocol::LedgerHeader> &ledger_header, int64_t &fee_limit, int64_t coin_amount){
-		ledger_header.sort(std::bind(&bumo::ProposerManager::CompareHeader, this, std::placeholders::_1, std::placeholders::_2));
-		PrivateKey private_key(encode_private_key);
-		if (!private_key.IsValid()){
-			LOG_ERROR("Private key is not valid");
-			return protocol::ERRCODE_INVALID_PRIKEY;
-		}
-
-		std::string source_address = private_key.GetEncAddress();
-
-		protocol::TransactionEnv tran_env;
-		protocol::Transaction *tran = tran_env.mutable_transaction();
-		tran->set_source_address(source_address);
-		tran->set_nonce(nonce_);
-
-		std::list<protocol::LedgerHeader>::const_iterator iter = ledger_header.begin();
-		while (iter != ledger_header.end()){
-			protocol::Operation *ope = tran->add_operations();
-			ope->set_type(protocol::Operation_Type_PAY_COIN);
-			protocol::OperationPayCoin *pay_coin = ope->mutable_pay_coin();
-			pay_coin->set_amount(coin_amount);
-			pay_coin->set_dest_address(dest_address);
-
-			Json::Value block_header = bumo::Proto2Json(*iter);
-			Json::FastWriter json_input;
-			Json::Value input_value;
-			Json::Value params;
-
-			params["chain_id"] = block_header["chain_id"].asInt64();
-			params["block_header"] = block_header;
-			input_value["method"] = "submitChildBlockHeader";
-			input_value["params"] = params;
-			std::string input = json_input.write(input_value);
-			pay_coin->set_input(input);
-			iter++;
-		}
-		Result result;
-		int64_t max = 0;
-		int64_t min = 0;
-		int64_t sys_gas_price = LedgerManager::Instance().GetCurFeeConfig().gas_price();
-		int64_t gas_price = tran->gas_price() > sys_gas_price ? tran->gas_price() : sys_gas_price;
-		tran->set_gas_price(gas_price);
-		tran->set_fee_limit(0);
-
-		if (!bumo::CrossUtils::EvaluateFee(tran_env, result, max, min)){
-			return protocol::ERRCODE_FEE_NOT_ENOUGH;
-		}
-
-		fee_limit = fee_limit > max ? fee_limit : max;
-		tran->set_fee_limit(fee_limit);
-		std::string content = tran->SerializeAsString();
-		std::string sign = private_key.Sign(content);
-		protocol::Signature *signpro = tran_env.add_signatures();
-		signpro->set_sign_data(sign);
-		signpro->set_public_key(private_key.GetEncPublicKey());
-
-		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-		GlueManager::Instance().OnTransaction(ptr, result);
-		if (result.code() != 0) {
-			LOG_ERROR("Pay coin result code:%d, des:%s", result.code(), result.desc().c_str());
-			return result.code();
-		}
-
-		PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_env.SerializeAsString());
-		std::string tx_hash = utils::String::BinToHexString(HashWrapper::Crypto(content)).c_str();
-		LOG_INFO("Pay coin tx hash %s", tx_hash.c_str());
-		return protocol::ERRCODE_SUCCESS;
+	void ProposerManager::BreakProposer(const std::string &error_des){
+		enabled_ = false;
+		assert(false);
+		LOG_ERROR("%s", error_des.c_str());
 	}
 }
