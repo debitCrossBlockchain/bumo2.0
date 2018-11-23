@@ -191,7 +191,7 @@ namespace bumo {
 		//Deletes invalid blocks
 		LedgerMap &ledger_map = child_chain.ledger_map;
 		for (auto itr = ledger_map.begin(); itr != ledger_map.end();){
-			if (itr->second.chain_id() > child_chain.cmc_latest_seq){
+			if (itr->second.seq() > child_chain.cmc_latest_seq){
 				itr++; 
 				continue;
 			}

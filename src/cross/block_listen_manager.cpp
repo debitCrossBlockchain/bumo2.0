@@ -56,7 +56,7 @@ namespace bumo {
 
 	const protocol::OperationLog * BlockListenManager::PickTransferTlog(TransactionFrm::pointer txFrm){
 
-		for (int i = 0; i < txFrm->instructions_.size(); i++){
+		for (unsigned int i = 0; i < txFrm->instructions_.size(); i++){
 			//auto op_type = trans->operations(j).type();
 			//find tlog
 			//protocol::TransactionEnvStore &env_sto = txFrm->instructions_[i];
@@ -95,7 +95,7 @@ namespace bumo {
 		//TODO: Handel child chain block, and call MessageChannel to send main chain proc //
 		
 		//bool bHaveEvent = false;
-		for (size_t i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
+		for (int i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
 			//const protocol::Transaction &tran = ledger.transaction_envs(i).transaction();
 			//
