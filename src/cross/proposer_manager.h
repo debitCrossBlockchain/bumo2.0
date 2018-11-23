@@ -78,7 +78,7 @@ namespace bumo {
 		ChildChain child_chain_maps_[MAX_CHAIN_ID];
 
 		int64_t last_update_time_;
-		int64_t update_count_;
+		int64_t last_propose_time_;
 		int64_t cur_nonce_;
 		bool main_chain_;
 		std::string source_address_;

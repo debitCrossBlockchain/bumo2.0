@@ -93,7 +93,7 @@ namespace bumo {
 		return protocol::ERRCODE_SUCCESS;
 	}
 
-	TransactionFrm::pointer CrossUtils::BuildTransaction(const std::string &private_key, const std::string &dest, const std::vector<std::string> &paras, int64_t nonce, int64_t fee_limit){
+	TransactionFrm::pointer CrossUtils::BuildTransaction(const std::string &private_key, const std::string &dest, const std::vector<std::string> &paras, int64_t nonce){
 		PrivateKey pkey(private_key);
 		if (!pkey.IsValid()){
 			LOG_ERROR("Private key is not valid");
@@ -116,17 +116,14 @@ namespace bumo {
 			pay_coin->set_input(paras[i]);
 		}
 
-		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());
-		tran->set_fee_limit(0);
-
-		if (fee_limit <= 0){
-			fee_limit = 0;
-			//300 is signature byte
-			if (!utils::SafeIntMul(tran->gas_price(), ((int64_t)tran_env.ByteSize() + 300), fee_limit)){
-				LOG_ERROR("Failed to evaluate fee.");
-				return nullptr;
-			}
+		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());;
+		int64_t fee_limit = 0;
+		//300 is signature byte
+		if (!utils::SafeIntMul(tran->gas_price(), ((int64_t)tran_env.ByteSize() + 300), fee_limit)){
+			LOG_ERROR("Failed to evaluate fee.");
+			return nullptr;
 		}
+		fee_limit = fee_limit * 3;
 		tran->set_fee_limit(fee_limit);
 
 		std::string content = tran->SerializeAsString();

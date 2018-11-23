@@ -22,11 +22,9 @@ namespace bumo {
 	public:
 		CrossUtils() {}
 		~CrossUtils() {}
+		static TransactionFrm::pointer BuildTransaction(const std::string &private_key, const std::string &dest, const std::vector<std::string> &paras, int64_t nonce);
 		static int32_t QueryContract(const std::string &address, const std::string &input, Json::Value &query_rets);
 		static int32_t SendTransaction(TransactionFrm::pointer tran_ptr);
-
-		static TransactionFrm::pointer BuildTransaction(const std::string &private_key, const std::string &dest, const std::vector<std::string> &paras, int64_t nonce, int64_t fee_limit);
-	private:
 	};
 }
 

@@ -23,8 +23,8 @@ namespace bumo {
 	ProposerManager::ProposerManager() :
 		enabled_(false),
 		thread_ptr_(NULL){
-		update_count_ = 1;
 		last_update_time_ = utils::Timestamp::HighResolution();
+		last_propose_time_ = utils::Timestamp::HighResolution();
 		cur_nonce_ = 0;
 		main_chain_ = General::GetSelfChainId() == General::MAIN_CHAIN_ID;
 	}
@@ -82,11 +82,11 @@ namespace bumo {
 			if ((current_time - last_update_time_) > 5 * utils::MICRO_UNITS_PER_SEC){
 				UpdateLatestStatus();
 				last_update_time_ = current_time;
-				update_count_++;
 			}
 			
-			if (update_count_ % 3 == 0){
+			if ((current_time - last_propose_time_) > 15 * utils::MICRO_UNITS_PER_SEC){
 				ProposeBlocks();
+				last_propose_time_ = current_time;
 			}
 		}
 	}
@@ -205,12 +205,13 @@ namespace bumo {
 
 		//Request up to ten blocks
 		int64_t max_nums = MIN(MAX_REQUEST_BLOCK_NUMS, (child_chain.recv_max_seq - child_chain.cmc_latest_seq));
-		for (int64_t i = child_chain.cmc_latest_seq + 1; i < max_nums; i++){
-			auto itr = ledger_map.find(i);
+		for (int64_t i = 1; i <= max_nums; i++){
+			int64_t seq = child_chain.cmc_latest_seq + i;
+			auto itr = ledger_map.find(seq);
 			if (itr != ledger_map.end()){
 				continue;
 			}
-			RequestChainSeq(child_chain.chain_id, i);
+			RequestChainSeq(child_chain.chain_id, seq);
 		}
 	}
 
@@ -250,8 +251,8 @@ namespace bumo {
 			//Submit the latest five blocks
 			std::vector<std::string> send_para_list;
 			const LedgerMap &ledger_map = child_chain.ledger_map;
-			for (int i = 1; i <= 5; i++){
-				LedgerMap::const_iterator itr = ledger_map.find(child_chain.cmc_latest_seq + i);
+			for (int j = 1; j <= 5; j++){
+				LedgerMap::const_iterator itr = ledger_map.find(child_chain.cmc_latest_seq + j);
 				if (itr == ledger_map.end()){
 					break;
 				}
@@ -259,7 +260,7 @@ namespace bumo {
 				Json::Value input_value;
 				Json::Value params;
 
-				params["chain_id"] = i;
+				params["chain_id"] = child_chain.chain_id;
 				params["block_header"] = block_header;
 				input_value["method"] = "submitChildBlockHeader";
 				input_value["params"] = params;
@@ -267,7 +268,7 @@ namespace bumo {
 			}
 
 			if (send_para_list.empty()){
-				LOG_ERROR("send_para_list is empty");
+				LOG_ERROR("send_para_list is empty, chain id:%d", i);
 				return;
 			}
 
@@ -298,11 +299,14 @@ namespace bumo {
 
 	void ProposerManager::SendTransaction(const std::vector<std::string> &paras){
 		int32_t err_code = 0;
-		int64_t fee_limit = -1;
 
 		for (int i = 0; i <= MAX_SEND_TRANSACTION_TIMES; i++){
 			std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
-			TransactionFrm::pointer trans = CrossUtils::BuildTransaction(private_key, General::CONTRACT_CMC_ADDRESS, paras, cur_nonce_, fee_limit);
+			TransactionFrm::pointer trans = CrossUtils::BuildTransaction(private_key, General::CONTRACT_CMC_ADDRESS, paras, cur_nonce_);
+			if (nullptr == trans){
+				LOG_ERROR("Trans pointer is null");
+				continue;
+			}
 			err_code = CrossUtils::SendTransaction(trans);
 			switch (err_code)
 			{
@@ -313,10 +317,6 @@ namespace bumo {
 				}
 				case protocol::ERRCODE_BAD_SEQUENCE:{
 					cur_nonce_++;
-					continue;
-				}
-				case protocol::ERRCODE_FEE_NOT_ENOUGH:{
-					fee_limit = int64_t(trans->GetFeeLimit() * 1.12);
 					continue;
 				}
 				default:{
