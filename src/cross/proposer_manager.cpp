@@ -22,6 +22,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 namespace bumo {
 	ProposerManager::ProposerManager() :
 		enabled_(false),
+		cur_cmc_contract_balance_(10000000000000),
 		thread_ptr_(NULL){
 		last_update_time_ = utils::Timestamp::HighResolution();
 		last_propose_time_ = utils::Timestamp::HighResolution();
@@ -120,6 +121,17 @@ namespace bumo {
 			//sort seq
 			SortChildSeq(child_chain);
 		}
+	}
+
+
+	void ProposerManager::UpdateCMCContractBalance(){
+	
+	}
+
+	void ProposerManager::UpdateTransactionErrorInfo(const TransactionErrorInfo& error_info){
+		utils::MutexGuard guard(error_info_lock_);
+		error_info_vector_.push_back(error_info);
+		LOG_ERROR("Failed to Proposer Transaction,chain_id is %d,tx hash is %s,err_code is %d,err_desc is %s", error_info.chain_id, error_info.hash.c_str(), error_info.error_code, error_info.error_desc.c_str());
 	}
 
 	void ProposerManager::UpdateLatestValidates(const int64_t chain_id, utils::StringVector &latest_validates){

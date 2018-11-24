@@ -49,12 +49,28 @@ namespace bumo {
 			}
 		}ChildChain;
 
+		typedef struct tagTransactionErrorInfo
+		{
+			int64_t chain_id;
+			int64_t error_code;
+			std::string error_desc;
+			std::string hash;
+		public:
+			void Reset() {
+				chain_id = -1;
+				error_code = 0;
+				error_desc = "";
+				hash = "";
+			}
+		}TransactionErrorInfo;
+
 	public:
 		ProposerManager();
 		~ProposerManager();
 
 		bool Initialize();
 		bool Exit();
+		void UpdateTransactionErrorInfo(const TransactionErrorInfo& error_info);
 
 	private:
 		virtual void Run(utils::Thread *thread) override;
@@ -66,6 +82,7 @@ namespace bumo {
 		void SortChildSeq(ChildChain &child_chain);
 		void RequestChainSeq(int64_t chain_id, int64_t seq);
 		void ProposeBlocks();
+		void UpdateCMCContractBalance();
 
 		void SendTransaction(const std::vector<std::string> &paras);
 		void BreakProposer(const std::string &error_des);
@@ -80,8 +97,11 @@ namespace bumo {
 		int64_t last_update_time_;
 		int64_t last_propose_time_;
 		int64_t cur_nonce_;
+		int64_t cur_cmc_contract_balance_;
 		bool main_chain_;
 		std::string source_address_;
+		utils::Mutex error_info_lock_;
+		std::vector<TransactionErrorInfo> error_info_vector_;
 	};
 
 }
