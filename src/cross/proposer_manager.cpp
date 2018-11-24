@@ -26,6 +26,7 @@ namespace bumo {
 		thread_ptr_(NULL){
 		last_update_time_ = utils::Timestamp::HighResolution();
 		last_propose_time_ = utils::Timestamp::HighResolution();
+		last_update_error_info_time_ = utils::Timestamp::HighResolution();
 		cur_nonce_ = 0;
 		main_chain_ = General::GetSelfChainId() == General::MAIN_CHAIN_ID;
 	}
@@ -85,9 +86,15 @@ namespace bumo {
 				last_update_time_ = current_time;
 			}
 			
+			
 			if ((current_time - last_propose_time_) > 15 * utils::MICRO_UNITS_PER_SEC){
 				ProposeBlocks();
 				last_propose_time_ = current_time;
+			}
+
+			if ((current_time - last_update_error_info_time_) > 10 * utils::MICRO_UNITS_PER_SEC){
+				HandleProposerErrorTransactions();
+				last_update_error_info_time_ = current_time;
 			}
 		}
 	}
@@ -132,6 +139,15 @@ namespace bumo {
 		utils::MutexGuard guard(error_info_lock_);
 		error_info_vector_.push_back(error_info);
 		LOG_ERROR("Failed to Proposer Transaction,chain_id is %d,tx hash is %s,err_code is %d,err_desc is %s", error_info.chain_id, error_info.hash.c_str(), error_info.error_code, error_info.error_desc.c_str());
+	}
+
+	void ProposerManager::HandleProposerErrorTransactions(){
+		utils::MutexGuard guard(error_info_lock_);
+		if (error_info_vector_.size() > MAX_ERROR_TX_COUNT){
+			error_info_vector_.clear();
+			BreakProposer("Proposer error Transaction more than MAX_ERROR_TX_COUNT times");
+		}
+
 	}
 
 	void ProposerManager::UpdateLatestValidates(const int64_t chain_id, utils::StringVector &latest_validates){

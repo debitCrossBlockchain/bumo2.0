@@ -23,6 +23,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #define MAX_CHAIN_ID 1000
 #define MAX_SEND_TRANSACTION_TIMES 10
 #define MAX_REQUEST_BLOCK_NUMS 10
+#define MAX_ERROR_TX_COUNT 15
 
 namespace bumo {
 
@@ -83,7 +84,7 @@ namespace bumo {
 		void RequestChainSeq(int64_t chain_id, int64_t seq);
 		void ProposeBlocks();
 		void UpdateCMCContractBalance();
-
+		void HandleProposerErrorTransactions();
 		void SendTransaction(const std::vector<std::string> &paras);
 		void BreakProposer(const std::string &error_des);
 
@@ -96,6 +97,7 @@ namespace bumo {
 
 		int64_t last_update_time_;
 		int64_t last_propose_time_;
+		int64_t last_update_error_info_time_;
 		int64_t cur_nonce_;
 		int64_t cur_cmc_contract_balance_;
 		bool main_chain_;
