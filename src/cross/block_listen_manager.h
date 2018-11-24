@@ -38,8 +38,12 @@ namespace bumo {
 		void HandleMainChainBlock(LedgerFrm::pointer closing_ledger);
 		void HandleChildChainBlock(LedgerFrm::pointer closing_ledger);
 
+		void DealTlog(const protocol::Transaction &trans);
+
+		void DoTransaction(TransactionFrm::pointer txFrm);
+
 		//MainChain have Tx'Msg which need to transfer to ChildChain
-		const protocol::OperationLog * PickTransferTlog(TransactionFrm::pointer txFrm);
+		const protocol::OperationLog * PickTransferTlog(const protocol::Transaction &trans);
 
 		protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::FilterTlog(std::string tlog_topic);
 		std::shared_ptr<Message> GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type);
