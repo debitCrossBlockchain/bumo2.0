@@ -132,6 +132,10 @@ namespace bumo {
 	
 
 	void ProposerManager::UpdateTransactionErrorInfo(const int64_t &error_code, const std::string &error_desc, const std::string& hash){
+		if (enabled_){
+			return;
+		}
+
 		utils::MutexGuard guard(child_chain_map_lock_);
 		for (int64_t i = 0; i < MAX_CHAIN_ID; i++){
 			ChildChain &child_chain = child_chain_maps_[i];
@@ -307,10 +311,15 @@ namespace bumo {
 			}
 			std::string hash;
 			SendTransaction(send_para_list, hash);
+			child_chain.error_info_list.push_back(hash);
 		}
 	}
 
 	void ProposerManager::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
+		if (enabled_){
+			return;
+		}
+
 		if (message_channel.msg_type() != protocol::MESSAGE_CHANNEL_SUBMIT_HEAD){
 			LOG_ERROR("Failed to message_channel type is not MESSAGE_CHANNEL_SUBMIT_HEAD, error msg type is %d", message_channel.msg_type());
 			return;
