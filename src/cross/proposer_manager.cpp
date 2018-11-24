@@ -340,7 +340,7 @@ namespace bumo {
 				LOG_ERROR("Trans pointer is null");
 				continue;
 			}
-			hash = trans->GetContentHash();
+			hash = utils::String::BinToHexString(trans->GetContentHash().c_str());
 			err_code = CrossUtils::SendTransaction(trans);
 			switch (err_code)
 			{
