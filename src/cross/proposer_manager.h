@@ -23,7 +23,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #define MAX_CHAIN_ID 1000
 #define MAX_SEND_TRANSACTION_TIMES 10
 #define MAX_REQUEST_BLOCK_NUMS 10
-#define MAX_ERROR_TX_COUNT 15
+#define MAX_ERROR_TX_COUNT 5
 
 namespace bumo {
 
@@ -39,6 +39,8 @@ namespace bumo {
 			LedgerMap ledger_map;
 			int64_t recv_max_seq;
 			int64_t cmc_latest_seq;
+			int64_t error_tx_times = 0;
+			utils::StringList   error_info_list;
 			utils::StringVector cmc_latest_validates;
 		public:
 			void Reset() {
@@ -50,28 +52,13 @@ namespace bumo {
 			}
 		}ChildChain;
 
-		typedef struct tagTransactionErrorInfo
-		{
-			int64_t chain_id;
-			int64_t error_code;
-			std::string error_desc;
-			std::string hash;
-		public:
-			void Reset() {
-				chain_id = -1;
-				error_code = 0;
-				error_desc = "";
-				hash = "";
-			}
-		}TransactionErrorInfo;
-
 	public:
 		ProposerManager();
 		~ProposerManager();
 
 		bool Initialize();
 		bool Exit();
-		void UpdateTransactionErrorInfo(const TransactionErrorInfo& error_info);
+		void UpdateTransactionErrorInfo(const int64_t &error_code,const std::string &error_desc,const std::string& hash);
 
 	private:
 		virtual void Run(utils::Thread *thread) override;
@@ -83,9 +70,7 @@ namespace bumo {
 		void SortChildSeq(ChildChain &child_chain);
 		void RequestChainSeq(int64_t chain_id, int64_t seq);
 		void ProposeBlocks();
-		void UpdateCMCContractBalance();
-		void HandleProposerErrorTransactions();
-		void SendTransaction(const std::vector<std::string> &paras);
+		void SendTransaction(const std::vector<std::string> &paras,std::string& hash);
 		void BreakProposer(const std::string &error_des);
 
 	private:
@@ -97,13 +82,9 @@ namespace bumo {
 
 		int64_t last_update_time_;
 		int64_t last_propose_time_;
-		int64_t last_update_error_info_time_;
 		int64_t cur_nonce_;
-		int64_t cur_cmc_contract_balance_;
 		bool main_chain_;
 		std::string source_address_;
-		utils::Mutex error_info_lock_;
-		std::vector<TransactionErrorInfo> error_info_vector_;
 	};
 
 }

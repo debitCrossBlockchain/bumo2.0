@@ -22,11 +22,9 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 namespace bumo {
 	ProposerManager::ProposerManager() :
 		enabled_(false),
-		cur_cmc_contract_balance_(10000000000000),
 		thread_ptr_(NULL){
 		last_update_time_ = utils::Timestamp::HighResolution();
 		last_propose_time_ = utils::Timestamp::HighResolution();
-		last_update_error_info_time_ = utils::Timestamp::HighResolution();
 		cur_nonce_ = 0;
 		main_chain_ = General::GetSelfChainId() == General::MAIN_CHAIN_ID;
 	}
@@ -91,11 +89,6 @@ namespace bumo {
 				ProposeBlocks();
 				last_propose_time_ = current_time;
 			}
-
-			if ((current_time - last_update_error_info_time_) > 10 * utils::MICRO_UNITS_PER_SEC){
-				HandleProposerErrorTransactions();
-				last_update_error_info_time_ = current_time;
-			}
 		}
 	}
 
@@ -105,6 +98,10 @@ namespace bumo {
 			ChildChain &child_chain = child_chain_maps_[i];
 			if (child_chain.ledger_map.empty()){
 				continue;
+			}
+
+			if (child_chain.error_tx_times > MAX_ERROR_TX_COUNT){
+				BreakProposer("The proposal transaction went error MAX_ERROR_TX_COUNT times in a row");
 			}
 
 			//update latest validates 
@@ -131,23 +128,31 @@ namespace bumo {
 	}
 
 
-	void ProposerManager::UpdateCMCContractBalance(){
 	
-	}
 
-	void ProposerManager::UpdateTransactionErrorInfo(const TransactionErrorInfo& error_info){
-		utils::MutexGuard guard(error_info_lock_);
-		error_info_vector_.push_back(error_info);
-		LOG_ERROR("Failed to Proposer Transaction,chain_id is %d,tx hash is %s,err_code is %d,err_desc is %s", error_info.chain_id, error_info.hash.c_str(), error_info.error_code, error_info.error_desc.c_str());
-	}
+	void ProposerManager::UpdateTransactionErrorInfo(const int64_t &error_code, const std::string &error_desc, const std::string& hash){
+		utils::MutexGuard guard(child_chain_map_lock_);
+		for (int64_t i = 0; i < MAX_CHAIN_ID; i++){
+			ChildChain &child_chain = child_chain_maps_[i];
+			//No data, ignore it
+			if (child_chain.ledger_map.empty()){
+				continue;
+			}
 
-	void ProposerManager::HandleProposerErrorTransactions(){
-		utils::MutexGuard guard(error_info_lock_);
-		if (error_info_vector_.size() > MAX_ERROR_TX_COUNT){
-			error_info_vector_.clear();
-			BreakProposer("Proposer error Transaction more than MAX_ERROR_TX_COUNT times");
+			utils::StringList::const_iterator iter = std::find(child_chain.error_info_list.begin(), child_chain.error_info_list.end(), hash);
+			if (iter == child_chain.error_info_list.end()){
+				continue;
+			}
+
+			if (error_code == protocol::ERRCODE_SUCCESS){
+				child_chain.error_tx_times = 0;
+				child_chain.error_info_list.clear();
+			}
+			else{
+				++child_chain.error_tx_times;
+				LOG_ERROR("Failed to Proposer Transaction,chain_id is %d,tx hash is %s,err_code is %d,err_desc is %s", i, hash.c_str(), error_code, error_desc.c_str());
+			}
 		}
-
 	}
 
 	void ProposerManager::UpdateLatestValidates(const int64_t chain_id, utils::StringVector &latest_validates){
@@ -299,8 +304,8 @@ namespace bumo {
 				LOG_ERROR("send_para_list is empty, chain id:%d", i);
 				return;
 			}
-
-			SendTransaction(send_para_list);
+			std::string hash;
+			SendTransaction(send_para_list, hash);
 		}
 	}
 
@@ -325,7 +330,7 @@ namespace bumo {
 		child_chain.chain_id = ledger_header.chain_id();
 	}
 
-	void ProposerManager::SendTransaction(const std::vector<std::string> &paras){
+	void ProposerManager::SendTransaction(const std::vector<std::string> &paras, std::string& hash){
 		int32_t err_code = 0;
 
 		for (int i = 0; i <= MAX_SEND_TRANSACTION_TIMES; i++){
@@ -335,6 +340,7 @@ namespace bumo {
 				LOG_ERROR("Trans pointer is null");
 				continue;
 			}
+			hash = trans->GetContentHash();
 			err_code = CrossUtils::SendTransaction(trans);
 			switch (err_code)
 			{
