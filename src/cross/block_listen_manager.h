@@ -26,11 +26,11 @@ namespace bumo {
 	class BlockListenManager :public utils::Singleton<BlockListenManager>{
 		friend class utils::Singleton<bumo::BlockListenManager>;
 	public:
-		BlockListenManager();
-		~BlockListenManager();
+		BlockListenManager() {}
+		~BlockListenManager(){}
 
-		bool Initialize();
-		bool Exit();
+		bool Initialize(){ return true; }
+		bool Exit() { return true; }
 
 		void HandleBlock(LedgerFrm::pointer closing_ledger);
 
@@ -40,8 +40,7 @@ namespace bumo {
 
 		void DealTlog(const protocol::Transaction &trans);
 
-		void DealTransaction(TransactionFrm::pointer txFrm);
-		bool HaveProposerTrans(const protocol::Transaction &trans);
+		void DealProposerTrans(const protocol::Transaction &trans, int64_t &error_code, const std::string &error_desc, const std::string& hash);
 
 		//MainChain have Tx'Msg which need to transfer to ChildChain
 		const protocol::OperationLog * PickTransferTlog(const protocol::Transaction &trans);

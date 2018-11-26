@@ -7,22 +7,7 @@
 
 namespace bumo {
 
-	const static char* OP_CREATE_CHILD_CHAIN		= "createChildChain";
-
-	BlockListenManager::BlockListenManager(){
-	}
-
-	BlockListenManager::~BlockListenManager(){
-	}
-
-	bool BlockListenManager::Initialize(){
-		return true;
-	}
-
-	bool BlockListenManager::Exit(){
-
-		return true;
-	}
+	const static char* OP_CREATE_CHILD_CHAIN = "createChildChain";
 
 	void BlockListenManager::HandleBlock(LedgerFrm::pointer closing_ledger){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
@@ -31,12 +16,12 @@ namespace bumo {
 		else{
 			HandleChildChainBlock(closing_ledger);
 		}
-			
 	}
 
 	protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::FilterTlog(std::string tlog_topic){
-		if (tlog_topic.empty())
+		if (tlog_topic.empty()){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
+		}
 
 		if (0 == strcmp(tlog_topic.c_str(), OP_CREATE_CHILD_CHAIN)){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN;
@@ -53,16 +38,15 @@ namespace bumo {
 		default:
 			return nullptr;
 		}
-
 	}
 
 	const protocol::OperationLog * BlockListenManager::PickTransferTlog(const protocol::Transaction &trans){
 		//must be CMC send trans
-		if (trans.source_address() != General::CONTRACT_CMC_ADDRESS)
+		if (trans.source_address() != General::CONTRACT_CMC_ADDRESS){
 			return nullptr;
-
+		}
+			
 		for (int j = 0; j < trans.operations_size(); j++){
-
 			if (protocol::Operation_Type_LOG != trans.operations(j).type())
 				continue;
 			const protocol::OperationLog &log = trans.operations(j).log();
@@ -86,18 +70,22 @@ namespace bumo {
 		return nullptr;
 	}
 
-	bool BlockListenManager::HaveProposerTrans(const protocol::Transaction &trans){
+	void BlockListenManager::DealProposerTrans(const protocol::Transaction &trans, int64_t &error_code, const std::string &error_desc, const std::string& hash) {
 		//must be CMC send trans
 		std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
 		PrivateKey pkey(private_key);
 		if (!pkey.IsValid()){
 			LOG_ERROR("Private key is not valid");
-			return false;
+			return;
 		}
+
 		std::string source_address = pkey.GetEncAddress();
-		if (trans.source_address() != source_address)
-			return false;
+		if (trans.source_address() != source_address){
+			return;
+		}
+			
 		std::string des_address = "";
+		bool find_proposer = false;
 		for (int j = 0; j < trans.operations_size(); j++){
 			des_address.clear();
 			switch (trans.operations(j).type())
@@ -116,34 +104,25 @@ namespace bumo {
 				break;
 			}
 			if (des_address == General::CONTRACT_CMC_ADDRESS){
-				return true;
+				find_proposer = true;
+				break;
 			}
 		}
-		return false;
-	}
 
-	void BlockListenManager::DealTransaction(TransactionFrm::pointer txFrm){
-		const protocol::Transaction &apply_tran = txFrm->GetTransactionEnv().transaction();
-		if (HaveProposerTrans(apply_tran)){
-			ProposerManager::GetInstance()->UpdateTransactionErrorInfo(txFrm->GetResult().code(), txFrm->GetResult().desc(), utils::String::BinToHexString(txFrm->GetContentHash()).c_str());
+		if (!find_proposer){
+			return;
 		}
-		//deal append trans
-		for (unsigned int i = 0; i < txFrm->instructions_.size(); i++){
-			const protocol::Transaction &trans = txFrm->instructions_[i].transaction_env().transaction();
-			DealTlog(trans);
-			if (HaveProposerTrans(trans)){
-				ProposerManager::GetInstance()->UpdateTransactionErrorInfo(txFrm->GetResult().code(), txFrm->GetResult().desc(), utils::String::BinToHexString(txFrm->GetContentHash()).c_str());
-			}
-		}
-		
-		
 
+		ProposerManager::Instance().UpdateTransactionErrorInfo(error_code, error_desc, hash);
+		return;
 	}
 
 	void BlockListenManager::DealTlog(const protocol::Transaction &trans){
 		const protocol::OperationLog *tlog = PickTransferTlog(trans);
-		if (nullptr == tlog)
+		if (nullptr == tlog){
 			return;
+		}
+			
 		protocol::MessageChannel msg_channel;
 		const std::string &tlog_params = tlog->datas(1);
 		//tlog param(0)
@@ -172,24 +151,31 @@ namespace bumo {
 		}
 		msg_channel.set_msg_data(msg->SerializeAsString());
 
-		MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
+		MessageChannel::Instance().MessageChannelProducer(msg_channel);
 	}
 
 
 	void BlockListenManager::HandleMainChainBlock(LedgerFrm::pointer closing_ledger){
-		//TODO: Handel child chain block, and call MessageChannel to send main chain proc //
-		
-		//bool bHaveEvent = false;
 		for (int i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
-			//const protocol::Transaction &tran = ledger.transaction_envs(i).transaction();
-			DealTransaction(tx);
+
+			const protocol::Transaction &apply_tran = tx->GetTransactionEnv().transaction();
+			int64_t code = (int64_t)tx->GetResult().code();
+			std::string desc = tx->GetResult().desc();
+			std::string hash = utils::String::BinToHexString(tx->GetContentHash()).c_str();
+
+			DealProposerTrans(apply_tran, code, hash, hash);
+
+			//deal append trans
+			for (unsigned int i = 0; i < tx->instructions_.size(); i++){
+				const protocol::Transaction &trans = tx->instructions_[i].transaction_env().transaction();
+				DealTlog(trans);
+				DealProposerTrans(trans, code, hash, hash);
+			}
 		}
 	}
 
 	void BlockListenManager::HandleChildChainBlock(LedgerFrm::pointer closing_ledger){
-		//TODO: Handel child chain block, and call MessageChannel to send main chain proc 
-
 		//send to messagechanel
 		protocol::LedgerHeader& ledger_header = closing_ledger->GetProtoHeader();
 		protocol::MessageChannel msg_channel;
@@ -198,8 +184,7 @@ namespace bumo {
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		msg_channel.set_msg_data(ledger_header.SerializeAsString());
 
-		MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
+		MessageChannel::Instance().MessageChannelProducer(msg_channel);
 		LOG_INFO("childChain build a block hash=%s,send msgchannel", utils::String::BinToHexString(ledger_header.hash()).c_str());
-
 	}
 }
