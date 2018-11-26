@@ -3,6 +3,7 @@
 #include "cross/message_channel_manager.h"
 #include "cross/proposer_manager.h"
 #include <proto/cpp/overlay.pb.h>
+#include <common/private_key.h>
 
 namespace bumo {
 
@@ -85,19 +86,61 @@ namespace bumo {
 		return nullptr;
 	}
 
-	void BlockListenManager::DoTransaction(TransactionFrm::pointer txFrm){
+	bool BlockListenManager::HaveProposerTrans(const protocol::Transaction &trans){
+		//must be CMC send trans
+		std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
+		PrivateKey pkey(private_key);
+		if (!pkey.IsValid()){
+			LOG_ERROR("Private key is not valid");
+			return false;
+		}
+		std::string source_address = pkey.GetEncAddress();
+		if (trans.source_address() != source_address)
+			return false;
+		std::string des_address = "";
+		for (int j = 0; j < trans.operations_size(); j++){
+			des_address.clear();
+			switch (trans.operations(j).type())
+			{
+			case protocol::Operation_Type_PAY_COIN:{
+				const protocol::OperationPayCoin &ope = trans.operations(j).pay_coin();
+				des_address = ope.dest_address();
+				break;
+			}
+			case protocol::Operation_Type_PAY_ASSET:{
+				const protocol::OperationPayAsset &ope = trans.operations(j).pay_asset();
+				des_address = ope.dest_address();
+				break;
+			}
+			default:
+				break;
+			}
+			if (des_address == General::CONTRACT_CMC_ADDRESS){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void BlockListenManager::DealTransaction(TransactionFrm::pointer txFrm){
+		const protocol::Transaction &apply_tran = txFrm->GetTransactionEnv().transaction();
+		if (HaveProposerTrans(apply_tran)){
+			ProposerManager::GetInstance()->UpdateTransactionErrorInfo(txFrm->GetResult().code(), txFrm->GetResult().desc(), utils::String::BinToHexString(txFrm->GetContentHash()).c_str());
+		}
 		//deal append trans
 		for (unsigned int i = 0; i < txFrm->instructions_.size(); i++){
 			const protocol::Transaction &trans = txFrm->instructions_[i].transaction_env().transaction();
 			DealTlog(trans);
+			if (HaveProposerTrans(trans)){
+				ProposerManager::GetInstance()->UpdateTransactionErrorInfo(txFrm->GetResult().code(), txFrm->GetResult().desc(), utils::String::BinToHexString(txFrm->GetContentHash()).c_str());
+			}
 		}
 		
-		ProposerManager::GetInstance()->UpdateTransactionErrorInfo(txFrm->GetResult().code(), txFrm->GetResult().desc(), utils::String::BinToHexString(HashWrapper::Crypto(txFrm->GetContentHash())).c_str());
+		
 
 	}
 
-	void BlockListenManager::DealTlog(const protocol::Transaction &trans)
-	{
+	void BlockListenManager::DealTlog(const protocol::Transaction &trans){
 		const protocol::OperationLog *tlog = PickTransferTlog(trans);
 		if (nullptr == tlog)
 			return;
@@ -140,7 +183,7 @@ namespace bumo {
 		for (int i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
 			//const protocol::Transaction &tran = ledger.transaction_envs(i).transaction();
-			DoTransaction(tx);
+			DealTransaction(tx);
 		}
 	}
 

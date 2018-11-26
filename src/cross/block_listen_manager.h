@@ -40,7 +40,8 @@ namespace bumo {
 
 		void DealTlog(const protocol::Transaction &trans);
 
-		void DoTransaction(TransactionFrm::pointer txFrm);
+		void DealTransaction(TransactionFrm::pointer txFrm);
+		bool HaveProposerTrans(const protocol::Transaction &trans);
 
 		//MainChain have Tx'Msg which need to transfer to ChildChain
 		const protocol::OperationLog * PickTransferTlog(const protocol::Transaction &trans);
