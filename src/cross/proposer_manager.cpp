@@ -132,7 +132,7 @@ namespace bumo {
 	
 
 	void ProposerManager::UpdateTransactionErrorInfo(const int64_t &error_code, const std::string &error_desc, const std::string& hash){
-		if (enabled_){
+		if (!enabled_){
 			return;
 		}
 
@@ -316,7 +316,7 @@ namespace bumo {
 	}
 
 	void ProposerManager::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
-		if (enabled_){
+		if (!enabled_){
 			return;
 		}
 
