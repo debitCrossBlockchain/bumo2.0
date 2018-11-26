@@ -155,7 +155,7 @@ namespace bumo {
 			}
 			else{
 				++child_chain.error_tx_times;
-				LOG_ERROR("Failed to Proposer Transaction,chain_id is %d,tx hash is %s,err_code is %d,err_desc is %s", i, hash.c_str(), error_code, error_desc.c_str());
+				LOG_ERROR("Failed to Proposer Transaction,chain_id is(" FMT_I64 "),tx hash is %s,err_code is (" FMT_I64 "),err_desc is %s", i, hash.c_str(), error_code, error_desc.c_str());
 			}
 		}
 	}
