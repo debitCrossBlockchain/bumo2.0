@@ -139,13 +139,34 @@ function depositToChildChain(params){
         let assertparam = {};
         assertparam.chain_id = input.chain_id;
         assertparam.totalamount = input.amount;
+        assertparam.seq = 1;
+
+        let asset_chanin = {};
+        asset_chanin.chain_id = input.chain_id;
+        asset_chanin.amount = input.amount;
+        asset_chanin.seq = 1;
+        asset_chanin.block_number = blockNumber;
+        asset_chanin.source_address = sender;
+        asset_chanin.address = input.address;
+
         storageStore('childChainAsset_' + assertparam.chain_id , JSON.stringify(assertparam));
-        tlog('deposit',blockNumber,JSON.stringify(params)); 
+        storageStore('childChainAsset_' + asset_chanin.chain_id+ asset_chanin.seq, JSON.stringify(asset_chanin));
+        tlog('deposit',input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
+        let asset_chanin = JSON.parse(storageLoad('childChainAsset_' + input.chain_id+assertinfo.seq));
         let totleaamount = assertinfo.totalamount + input.amount;
         assertinfo.totalamount = totleaamount;
-        tlog('deposit',blockNumber,JSON.stringify(params)); 
+        assertinfo.seq = assertinfo.seq + 1;
+        asset_chanin.chain_id = input.chain_id;
+        asset_chanin.amount = input.amount;
+        asset_chanin.seq = assertinfo.seq;
+        asset_chanin.block_number = blockNumber;
+        asset_chanin.source_address = sender;
+        asset_chanin.address = input.address;
+        storageStore('childChainAsset_' + assertparam.chain_id , JSON.stringify(assertinfo));
+        storageStore('childChainAsset_' + asset_chanin.chain_id+ asset_chanin.seq, JSON.stringify(asset_chanin));
+        tlog('deposit',input.chain_id,JSON.stringify(asset_chanin)); 
     }
 }
 
