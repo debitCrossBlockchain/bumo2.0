@@ -1390,6 +1390,7 @@ namespace bumo{
 				break;
 			}
 
+
 			std::string input;
 			if (args.Length() > 2) {
 				input = ToCString(v8::String::Utf8Value(args[2]));
@@ -1400,6 +1401,12 @@ namespace bumo{
 				error_desc = "Failed to find contract object by isolate id";
 				break;
 			}
+
+			if (v8_contract->GetParameter().caller_depth_ >= General::CONTRACT_DEPTH_LIMIT) {
+				LOG_TRACE("contract execution error,Storage load, caller_depth_ is out maxdepth");
+				break;
+			}
+
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			ledger_context->GetBottomTx()->ContractStepInc(100);
 
@@ -1568,6 +1575,12 @@ namespace bumo{
 				error_desc = "Failed to find contract object by isolate id";
 				break;
 			}
+
+			if (v8_contract->GetParameter().caller_depth_ >= General::CONTRACT_DEPTH_LIMIT) {
+				LOG_TRACE("contract execution error,Storage load, caller_depth_ is out maxdepth");
+				break;
+			}
+
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			ledger_context->GetBottomTx()->ContractStepInc(100);
 
@@ -1678,10 +1691,7 @@ namespace bumo{
 				break;
 			}
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
-			if (v8_contract->GetParameter().isdelegate_)
-			{
-				v8_contract = GetContractFrom(v8_contract->GetParameter().parent_address_);
-			}
+
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
 				LOG_TRACE("Failed to find contract object by isolate id");
 				break;
@@ -2089,7 +2099,7 @@ namespace bumo{
 				parameter.sender_ = v8_contract->GetParameter().sender_;
 				parameter.this_address_ = callcontract_address;
 				parameter.parent_address_ = v8_contract->GetParameter().parent_address_;
-				parameter.ope_index_ = 0;
+				parameter.ope_index_ = v8_contract->GetParameter().ope_index_;
 				parameter.caller_depth_ = cur_contract->GetParameter().caller_depth_ + 1;
 				parameter.isdelegate_ = true;
 				parameter.timestamp_ = v8_contract->GetParameter().timestamp_;
