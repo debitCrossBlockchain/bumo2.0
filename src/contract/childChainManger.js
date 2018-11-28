@@ -128,7 +128,11 @@ function submitChildBlockHeader(params){
 function depositToChildChain(params){
     log('depositToChildChain');
     let input = params;
-    assert(sender === input.address, 'sender is not input_address.');
+    assert(thisPayCoinAmount<=0, 'BU amount deposited is less than or equal to 0');
+    let childChain_id = parseInt(storageLoad('childChainCount'));
+    assert((input.chain_id>childChain_id)||(input.chain_id<=0) , 'chain_id is error');
+    let Validator_size =  getchildChainValidators(input.chain_id).validators.length;
+    assert(Validator_size<=0, 'child chain node not exist.');
     assert(int64Compare(thisPayCoinAmount,input.amount) === 0,'amount is not equels thisPayCoinAmount');
     let assertinfo = JSON.parse(storageLoad('childChainAsset_' + input.chain_id));
     if(assertinfo === false) {
@@ -136,11 +140,12 @@ function depositToChildChain(params){
         assertparam.chain_id = input.chain_id;
         assertparam.totalamount = input.amount;
         storageStore('childChainAsset_' + assertparam.chain_id , JSON.stringify(assertparam));
+        tlog('deposit',blockNumber,JSON.stringify(params)); 
     } 
     else {
         let totleaamount = assertinfo.totalamount + input.amount;
         assertinfo.totalamount = totleaamount;
-        storageStore('childChainAsset_' + assertinfo.chain_id , JSON.stringify(assertinfo));
+        tlog('deposit',blockNumber,JSON.stringify(params)); 
     }
 }
 
@@ -222,7 +227,7 @@ function voteForAbolish(params){
         if(input.abolishcout < parseInt(childchain_validators.length * passRate + 0.5))
         {
             storageLoad(key,JSON.stringify(input));
-            return true;
+            return true;4 
         }
         tlog('voteForAbolish',input.chain_id,JSON.stringify(abolishinfo));
         removechildChainValidator(input.chain_id,input.address);
