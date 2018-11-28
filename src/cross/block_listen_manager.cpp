@@ -8,6 +8,7 @@
 namespace bumo {
 
 	const static char* OP_CREATE_CHILD_CHAIN = "createChildChain";
+	const static char* OP_DEPOSIT = "deposit";
 
 	void BlockListenManager::HandleBlock(LedgerFrm::pointer closing_ledger){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
@@ -22,9 +23,12 @@ namespace bumo {
 		if (tlog_topic.empty()){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
 		}
-
+		
 		if (0 == strcmp(tlog_topic.c_str(), OP_CREATE_CHILD_CHAIN)){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN;
+		}
+		else if (0 == strcmp(tlog_topic.c_str(), OP_DEPOSIT)){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT;
 		}
 		else{
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
@@ -35,6 +39,8 @@ namespace bumo {
 		switch (msg_type){
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
 			return std::make_shared<protocol::MessageChannelCreateChildChain>();
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
+			return std::make_shared<protocol::MessageChannelDeposit>();
 		default:
 			return nullptr;
 		}

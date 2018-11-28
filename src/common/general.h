@@ -97,6 +97,7 @@ namespace bumo {
 		const static char *CONTRACT_VALIDATOR_ADDRESS;
 		const static char *CONTRACT_FEE_ADDRESS;
 		const static char *CONTRACT_CMC_ADDRESS;
+		const static char *CONTRACT_CPC_ADDRESS;
 
 		const static int32_t TRANSACTION_LIMIT_SIZE;
 		const static int32_t TXSET_LIMIT_SIZE;

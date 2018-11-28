@@ -10,6 +10,7 @@ namespace bumo {
 	MessageHandler::MessageHandler(){
 		init_ = false;
 		received_create_child_ = false;
+		cur_nonce_ = 0;
 	}
 
 	MessageHandler::~MessageHandler(){
@@ -20,18 +21,34 @@ namespace bumo {
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST] = std::bind(&MessageHandler::OnHandleChildGenesesRequest, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE] = std::bind(&MessageHandler::OnHandleChildGenesesResponse, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_HEAD] = std::bind(&MessageHandler::OnHandleQueryHead, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_DEPOSIT] = std::bind(&MessageHandler::OnHandleDeposit, this, std::placeholders::_1);
 
 		MessageChannel &message_channel = MessageChannel::Instance();
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_HEAD);
+		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_DEPOSIT);
 
 		if (!CheckForChildBlock()){
 			return false;
 		}
 
 		init_ = true;
+
+		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
+		if (!private_key.IsValid()){
+			LOG_ERROR("Private key is not valid");
+			return false;
+		}
+		source_address_ = private_key.GetEncAddress();
+		AccountFrm::pointer account_ptr;
+		if (!Environment::AccountFromDB(source_address_, account_ptr)) {
+			LOG_ERROR("Address:%s not exsit", source_address_.c_str());
+			return false;
+		}
+		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
+
 		return true;
 	}
 
@@ -279,6 +296,67 @@ namespace bumo {
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		msg_channel.set_msg_data(ledger_header.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+	}
+
+	void MessageHandler::OnHandleDeposit(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelDeposit deposit;
+		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
+		std::string error_desc = "";
+
+		if (!deposit.ParseFromString(message_channel.msg_data())){
+			error_desc = utils::String::Format("Parse MessageChannelQueryHead error!");
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+
+		std::vector<std::string> send_para_list;
+		Json::Value deposit_data = bumo::Proto2Json(deposit);
+		Json::Value input_value;
+		Json::Value params;
+
+		params["chain_id"] = deposit.chain_id();
+		params["deposit_data"] = deposit_data;
+		input_value["method"] = "deposit";
+		input_value["params"] = params;
+		send_para_list.push_back(input_value.toFastString());
+		std::string hash;
+		SendTransaction(send_para_list, hash);
+		
+
+		
+	}
+
+	void MessageHandler::SendTransaction(const std::vector<std::string> &paras, std::string& hash){
+		int32_t err_code = 0;
+		int32_t retry_time = 10;
+		for (int i = 0; i <= retry_time; i++){
+			std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
+			TransactionFrm::pointer trans = CrossUtils::BuildTransaction(private_key, General::CONTRACT_CPC_ADDRESS, paras, cur_nonce_);
+			if (nullptr == trans){
+				LOG_ERROR("Trans pointer is null");
+				continue;
+			}
+			hash = utils::String::BinToHexString(trans->GetContentHash().c_str());
+			err_code = CrossUtils::SendTransaction(trans);
+			switch (err_code)
+			{
+			case protocol::ERRCODE_SUCCESS:
+			case  protocol::ERRCODE_ALREADY_EXIST:{
+				cur_nonce_++;
+				return;
+			}
+			case protocol::ERRCODE_BAD_SEQUENCE:{
+				cur_nonce_++;
+				break;
+			}
+			default:{
+				LOG_ERROR("Send transaction erro code:%d", err_code);
+				break;
+			}
+			}
+		}
+		return;
 	}
 
 	void MessageHandler::SendChildGenesesRequest(){

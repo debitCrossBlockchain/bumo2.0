@@ -42,14 +42,18 @@ namespace bumo {
 		void OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel);
 		void OnHandleChildGenesesResponse(const protocol::MessageChannel &message_channel);
 		void OnHandleQueryHead(const protocol::MessageChannel &message_channel);
+		void OnHandleDeposit(const protocol::MessageChannel &message_channel);
 
 		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
 		void SendChildGenesesRequest();
+		void SendTransaction(const std::vector<std::string> &paras, std::string& hash);
 
 	private:
 		bool init_;
 		bool received_create_child_;
 		MessageChannelPocMap proc_methods_;
+		int64_t cur_nonce_;
+		std::string source_address_;
 	};
 }
 

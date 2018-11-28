@@ -245,3 +245,15 @@ message MessageChannelQueryHead{
 	int64 ledger_seq = 1;
 }
 
+message MerkelProofs {
+	bytes merkel_path = 1;
+}
+
+message MessageChannelDeposit{
+	int64 chain_id = 1;
+	string source_address = 2;
+	int64 amount = 3;
+	string dest_address = 4;
+	MerkelProofs merkel_proof = 5;
+}
+

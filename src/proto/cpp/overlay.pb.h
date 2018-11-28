@@ -54,10 +54,12 @@ class Hello;
 class HelloResponse;
 class LedgerUpgradeNotify;
 class Ledgers;
+class MerkelProofs;
 class MessageChannel;
 class MessageChannelChildGenesesRequest;
 class MessageChannelChildGenesesResponse;
 class MessageChannelCreateChildChain;
+class MessageChannelDeposit;
 class MessageChannelHello;
 class MessageChannelHelloResponse;
 class MessageChannelProposer;
@@ -2957,6 +2959,216 @@ class MessageChannelQueryHead : public ::google::protobuf::Message /* @@protoc_i
   void InitAsDefaultInstance();
   static MessageChannelQueryHead* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class MerkelProofs : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MerkelProofs) */ {
+ public:
+  MerkelProofs();
+  virtual ~MerkelProofs();
+
+  MerkelProofs(const MerkelProofs& from);
+
+  inline MerkelProofs& operator=(const MerkelProofs& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MerkelProofs& default_instance();
+
+  void Swap(MerkelProofs* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MerkelProofs* New() const { return New(NULL); }
+
+  MerkelProofs* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MerkelProofs& from);
+  void MergeFrom(const MerkelProofs& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MerkelProofs* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional bytes merkel_path = 1;
+  void clear_merkel_path();
+  static const int kMerkelPathFieldNumber = 1;
+  const ::std::string& merkel_path() const;
+  void set_merkel_path(const ::std::string& value);
+  void set_merkel_path(const char* value);
+  void set_merkel_path(const void* value, size_t size);
+  ::std::string* mutable_merkel_path();
+  ::std::string* release_merkel_path();
+  void set_allocated_merkel_path(::std::string* merkel_path);
+
+  // @@protoc_insertion_point(class_scope:protocol.MerkelProofs)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr merkel_path_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MerkelProofs* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class MessageChannelDeposit : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelDeposit) */ {
+ public:
+  MessageChannelDeposit();
+  virtual ~MessageChannelDeposit();
+
+  MessageChannelDeposit(const MessageChannelDeposit& from);
+
+  inline MessageChannelDeposit& operator=(const MessageChannelDeposit& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelDeposit& default_instance();
+
+  void Swap(MessageChannelDeposit* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelDeposit* New() const { return New(NULL); }
+
+  MessageChannelDeposit* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelDeposit& from);
+  void MergeFrom(const MessageChannelDeposit& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelDeposit* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int64 chain_id = 1;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 1;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
+  // optional string source_address = 2;
+  void clear_source_address();
+  static const int kSourceAddressFieldNumber = 2;
+  const ::std::string& source_address() const;
+  void set_source_address(const ::std::string& value);
+  void set_source_address(const char* value);
+  void set_source_address(const char* value, size_t size);
+  ::std::string* mutable_source_address();
+  ::std::string* release_source_address();
+  void set_allocated_source_address(::std::string* source_address);
+
+  // optional int64 amount = 3;
+  void clear_amount();
+  static const int kAmountFieldNumber = 3;
+  ::google::protobuf::int64 amount() const;
+  void set_amount(::google::protobuf::int64 value);
+
+  // optional string dest_address = 4;
+  void clear_dest_address();
+  static const int kDestAddressFieldNumber = 4;
+  const ::std::string& dest_address() const;
+  void set_dest_address(const ::std::string& value);
+  void set_dest_address(const char* value);
+  void set_dest_address(const char* value, size_t size);
+  ::std::string* mutable_dest_address();
+  ::std::string* release_dest_address();
+  void set_allocated_dest_address(::std::string* dest_address);
+
+  // optional .protocol.MerkelProofs merkel_proof = 5;
+  bool has_merkel_proof() const;
+  void clear_merkel_proof();
+  static const int kMerkelProofFieldNumber = 5;
+  const ::protocol::MerkelProofs& merkel_proof() const;
+  ::protocol::MerkelProofs* mutable_merkel_proof();
+  ::protocol::MerkelProofs* release_merkel_proof();
+  void set_allocated_merkel_proof(::protocol::MerkelProofs* merkel_proof);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelDeposit)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int64 chain_id_;
+  ::google::protobuf::internal::ArenaStringPtr source_address_;
+  ::google::protobuf::int64 amount_;
+  ::google::protobuf::internal::ArenaStringPtr dest_address_;
+  ::protocol::MerkelProofs* merkel_proof_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelDeposit* default_instance_;
+};
 // ===================================================================
 
 
@@ -5389,7 +5601,217 @@ inline void MessageChannelQueryHead::set_ledger_seq(::google::protobuf::int64 va
   // @@protoc_insertion_point(field_set:protocol.MessageChannelQueryHead.ledger_seq)
 }
 
+// -------------------------------------------------------------------
+
+// MerkelProofs
+
+// optional bytes merkel_path = 1;
+inline void MerkelProofs::clear_merkel_path() {
+  merkel_path_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MerkelProofs::merkel_path() const {
+  // @@protoc_insertion_point(field_get:protocol.MerkelProofs.merkel_path)
+  return merkel_path_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MerkelProofs::set_merkel_path(const ::std::string& value) {
+  
+  merkel_path_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MerkelProofs.merkel_path)
+}
+inline void MerkelProofs::set_merkel_path(const char* value) {
+  
+  merkel_path_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MerkelProofs.merkel_path)
+}
+inline void MerkelProofs::set_merkel_path(const void* value, size_t size) {
+  
+  merkel_path_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MerkelProofs.merkel_path)
+}
+inline ::std::string* MerkelProofs::mutable_merkel_path() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MerkelProofs.merkel_path)
+  return merkel_path_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MerkelProofs::release_merkel_path() {
+  // @@protoc_insertion_point(field_release:protocol.MerkelProofs.merkel_path)
+  
+  return merkel_path_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MerkelProofs::set_allocated_merkel_path(::std::string* merkel_path) {
+  if (merkel_path != NULL) {
+    
+  } else {
+    
+  }
+  merkel_path_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), merkel_path);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MerkelProofs.merkel_path)
+}
+
+// -------------------------------------------------------------------
+
+// MessageChannelDeposit
+
+// optional int64 chain_id = 1;
+inline void MessageChannelDeposit::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelDeposit::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.chain_id)
+  return chain_id_;
+}
+inline void MessageChannelDeposit::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.chain_id)
+}
+
+// optional string source_address = 2;
+inline void MessageChannelDeposit::clear_source_address() {
+  source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelDeposit::source_address() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.source_address)
+  return source_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelDeposit::set_source_address(const ::std::string& value) {
+  
+  source_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.source_address)
+}
+inline void MessageChannelDeposit::set_source_address(const char* value) {
+  
+  source_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelDeposit.source_address)
+}
+inline void MessageChannelDeposit::set_source_address(const char* value, size_t size) {
+  
+  source_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelDeposit.source_address)
+}
+inline ::std::string* MessageChannelDeposit::mutable_source_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.source_address)
+  return source_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelDeposit::release_source_address() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.source_address)
+  
+  return source_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelDeposit::set_allocated_source_address(::std::string* source_address) {
+  if (source_address != NULL) {
+    
+  } else {
+    
+  }
+  source_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), source_address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.source_address)
+}
+
+// optional int64 amount = 3;
+inline void MessageChannelDeposit::clear_amount() {
+  amount_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelDeposit::amount() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.amount)
+  return amount_;
+}
+inline void MessageChannelDeposit::set_amount(::google::protobuf::int64 value) {
+  
+  amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.amount)
+}
+
+// optional string dest_address = 4;
+inline void MessageChannelDeposit::clear_dest_address() {
+  dest_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelDeposit::dest_address() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.dest_address)
+  return dest_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelDeposit::set_dest_address(const ::std::string& value) {
+  
+  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.dest_address)
+}
+inline void MessageChannelDeposit::set_dest_address(const char* value) {
+  
+  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelDeposit.dest_address)
+}
+inline void MessageChannelDeposit::set_dest_address(const char* value, size_t size) {
+  
+  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelDeposit.dest_address)
+}
+inline ::std::string* MessageChannelDeposit::mutable_dest_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.dest_address)
+  return dest_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelDeposit::release_dest_address() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.dest_address)
+  
+  return dest_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelDeposit::set_allocated_dest_address(::std::string* dest_address) {
+  if (dest_address != NULL) {
+    
+  } else {
+    
+  }
+  dest_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), dest_address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.dest_address)
+}
+
+// optional .protocol.MerkelProofs merkel_proof = 5;
+inline bool MessageChannelDeposit::has_merkel_proof() const {
+  return !_is_default_instance_ && merkel_proof_ != NULL;
+}
+inline void MessageChannelDeposit::clear_merkel_proof() {
+  if (GetArenaNoVirtual() == NULL && merkel_proof_ != NULL) delete merkel_proof_;
+  merkel_proof_ = NULL;
+}
+inline const ::protocol::MerkelProofs& MessageChannelDeposit::merkel_proof() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.merkel_proof)
+  return merkel_proof_ != NULL ? *merkel_proof_ : *default_instance_->merkel_proof_;
+}
+inline ::protocol::MerkelProofs* MessageChannelDeposit::mutable_merkel_proof() {
+  
+  if (merkel_proof_ == NULL) {
+    merkel_proof_ = new ::protocol::MerkelProofs;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.merkel_proof)
+  return merkel_proof_;
+}
+inline ::protocol::MerkelProofs* MessageChannelDeposit::release_merkel_proof() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.merkel_proof)
+  
+  ::protocol::MerkelProofs* temp = merkel_proof_;
+  merkel_proof_ = NULL;
+  return temp;
+}
+inline void MessageChannelDeposit::set_allocated_merkel_proof(::protocol::MerkelProofs* merkel_proof) {
+  delete merkel_proof_;
+  merkel_proof_ = merkel_proof;
+  if (merkel_proof) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.merkel_proof)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
