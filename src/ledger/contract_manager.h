@@ -36,6 +36,9 @@ namespace bumo{
 		std::string code_;
 		std::string input_;
 		std::string this_address_;
+		std::string parent_address_;
+		bool isdelegate_;
+		int32_t caller_depth_;
 		std::string sender_;
 		std::string trigger_tx_;
 		int32_t ope_index_;
@@ -99,6 +102,7 @@ namespace bumo{
 	public:
 		virtual bool Execute();
 		virtual bool InitContract();
+		virtual bool DelegateExecute(Json::Value& jsResult);
 		virtual bool Cancel();
 		virtual bool SourceCodeCheck();
 		virtual bool Query(Json::Value& jsResult);
@@ -128,6 +132,7 @@ namespace bumo{
 		virtual ~V8Contract();
 	public:
 		virtual bool Execute();
+		virtual bool DelegateExecute(Json::Value& jsResult);
 		virtual bool InitContract();
 		virtual bool Cancel();
 		virtual bool Query(Json::Value& jsResult);
@@ -146,6 +151,7 @@ namespace bumo{
 		static const char* main_name_;
 		static const char* query_name_;
 		static const char* init_name_;
+		static const char* delegate_name_;
 		static const char* call_jslint_;
 		static const std::string trigger_tx_name_;
 		static const std::string trigger_tx_index_name_;
@@ -164,6 +170,7 @@ namespace bumo{
 		static bool RemoveRandom(v8::Isolate* isolate, Json::Value &error_msg);
 		static v8::Local<v8::Context> CreateContext(v8::Isolate* isolate, bool readonly);
 		static V8Contract *GetContractFrom(v8::Isolate* isolate);
+		static V8Contract *GetContractFrom(const std::string& contractaddr);
 		static Json::Value ReportException(v8::Isolate* isolate, v8::TryCatch* try_catch);
 		static const char* ToCString(const v8::String::Utf8Value& value);
 		static void CallBackLog(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -224,9 +231,12 @@ namespace bumo{
 		static void CallBackInt64Mul(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Int64 compare
 		static void CallBackInt64Compare(const v8::FunctionCallbackInfo<v8::Value>& args);
+		//DelegateCall
+		static void CallbackDelegateCall(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     private:
         bool ExecuteCode(const char* fname);
+		bool DelegateExecuteCode(const char* fname, Json::Value& jsResult);
 	};
 
 	class QueryContract : public utils::Thread{

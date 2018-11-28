@@ -24,16 +24,12 @@
 		"multiquery_limit": 100,
 		"thread_count": 8
     },
-    "messagechannel": {
-        "target_message_channel": "127.0.0.1:36004",
-        "listen_address": "0.0.0.0:36004"
-    },
     "wsserver": {
         "listen_address": "0.0.0.0:36003"
     },
     "ledger": {
-	"validation_address": "buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",
-        "validation_private_key": "66932f19d5be465ea9e7cfcb3ea7326d81953b9f99bc39ddb437b5367937f234b866695e1aae9be4bae27317c9987f80be882ae3d2535d4586deb3645ecd7e54",
+	"validation_address": "buQrKRSUTjAS9dXWCoH8jPB7QE33WducaR5v",
+        "validation_private_key": "6a076d5c5620c3166f243e5751427e3a144c99ccae96591c7ff1d9aa01a97ae7acf61bd9d5af99573fa06bfaccf6b1f1f32d88ecc67df8ed03fcb3e3c74c59f9",
         "max_trans_per_ledger": 10000,
         "hardfork_points": [],
 		"tx_pool":{
@@ -42,14 +38,13 @@
 		}
     },
     "genesis": {
-        "account": "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3",
-	"slogan" : "a new era of value",
-		"chain_id": 0,
+        "account": "buQgJVHZhL81cknJKAKcukU8RiuYatpo83GN",
+	"slogan" : "wangjingyi test bumo2.0",
         "fees": {
             "base_reserve": 10000000,
             "gas_price": 1000
         },
-        "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY"]
+        "validators": ["buQrKRSUTjAS9dXWCoH8jPB7QE33WducaR5v"]
     },
     "logger": {
         "path": "log/bumo.log",

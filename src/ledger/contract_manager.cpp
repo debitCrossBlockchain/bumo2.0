@@ -24,7 +24,7 @@
     
 namespace bumo{
 
-	ContractParameter::ContractParameter() : ope_index_(-1), ledger_context_(NULL), pay_coin_amount_(0){}
+	ContractParameter::ContractParameter() : ope_index_(-1), ledger_context_(NULL), pay_coin_amount_(0), parent_address_(""), isdelegate_(false), caller_depth_(0){}
 
 	ContractParameter::~ContractParameter() {}
 
@@ -60,6 +60,10 @@ namespace bumo{
 	}
 
 	bool Contract::InitContract() {
+		return true;
+	}
+
+	bool Contract::DelegateExecute(Json::Value& jsResult) {
 		return true;
 	}
 
@@ -122,6 +126,7 @@ namespace bumo{
 	const char* V8Contract::main_name_ = "main";
 	const char* V8Contract::query_name_ = "query";
 	const char* V8Contract::init_name_ = "init";
+	const char* V8Contract::delegate_name_ = "delegate";
 	const char* V8Contract::call_jslint_ = "callJslint";
 	const std::string V8Contract::trigger_tx_name_ = "trigger";
 	const std::string V8Contract::trigger_tx_index_name_ = "triggerIndex";
@@ -231,6 +236,7 @@ namespace bumo{
 		js_func_write_["issueAsset"] = V8Contract::CallBackIssueAsset;
 		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
 		js_func_write_["tlog"] = V8Contract::CallBackTopicLog;
+		js_func_write_["delegateCall"] = V8Contract::CallbackDelegateCall;
 
 		LoadJsLibSource();
 		LoadJslintGlobalString();
@@ -367,9 +373,136 @@ namespace bumo{
 		return false;
 	}
 
+	bool V8Contract::DelegateExecuteCode(const char* fname, Json::Value& jsResult) {
+		v8::Isolate::Scope isolate_scope(isolate_);
+		v8::HandleScope handle_scope(isolate_);
+		v8::TryCatch try_catch(isolate_);
+
+		v8::Local<v8::Context> context = CreateContext(isolate_, false);
+
+		v8::Context::Scope context_scope(context);
+
+		//block number, timestamp, orginal
+
+		auto string_sender = v8::String::NewFromUtf8(isolate_, parameter_.sender_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, sender_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			string_sender);
+
+		auto string_contractor = v8::String::NewFromUtf8(isolate_, parameter_.this_address_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, this_address_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			string_contractor);
+
+		v8::Local<v8::Integer> index_v8 = v8::Int32::New(isolate_, parameter_.ope_index_);
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, trigger_tx_index_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			index_v8);
+
+		auto coin_amount = v8::String::NewFromUtf8(isolate_, utils::String::ToString(parameter_.pay_coin_amount_).c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, pay_coin_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			coin_amount);
+
+		if (parameter_.pay_asset_amount_.has_key()) {
+			v8::Local<v8::Object> v8_asset = v8::Object::New(isolate_);
+			v8::Local<v8::Object> v8_asset_property = v8::Object::New(isolate_);
+			const protocol::AssetKey &asset_key = parameter_.pay_asset_amount_.key();
+			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "issuer"), v8::String::NewFromUtf8(isolate_, asset_key.issuer().c_str()));
+			v8_asset_property->Set(v8::String::NewFromUtf8(isolate_, "code"), v8::String::NewFromUtf8(isolate_, asset_key.code().c_str()));
+			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "amount"), v8::String::NewFromUtf8(isolate_, utils::String::ToString(parameter_.pay_asset_amount_.amount()).c_str()));
+			v8_asset->Set(v8::String::NewFromUtf8(isolate_, "key"), v8_asset_property);
+
+			context->Global()->Set(context,
+				v8::String::NewFromUtf8(isolate_, pay_asset_amount_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+				v8_asset);
+		}
+
+		auto blocknumber_v8 = v8::Number::New(isolate_, (double)parameter_.blocknumber_);
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, block_number_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			blocknumber_v8);
+
+		auto timestamp_v8 = v8::Number::New(isolate_, (double)parameter_.timestamp_);
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, block_timestamp_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			timestamp_v8);
+
+		v8::Local<v8::String> v8src = v8::String::NewFromUtf8(isolate_, parameter_.code_.c_str());
+		v8::Local<v8::Script> compiled_script;
+		Json::Value temp_result;
+		do {
+			Json::Value error_random;
+			if (!RemoveRandom(isolate_, error_random)) {
+				result_.set_desc(error_random.toFastString());
+				break;
+			}
+
+			v8::Local<v8::String> check_time_name(
+				v8::String::NewFromUtf8(context->GetIsolate(), "__enable_check_time__",
+					v8::NewStringType::kNormal).ToLocalChecked());
+			v8::ScriptOrigin origin_check_time_name(check_time_name);
+
+			if (!v8::Script::Compile(context, v8src, &origin_check_time_name).ToLocal(&compiled_script)) {
+				result_.set_desc(ReportException(isolate_, &try_catch).toFastString());
+				break;
+			}
+
+			v8::Local<v8::Value> result;
+			if (!compiled_script->Run(context).ToLocal(&result)) {
+				result_.set_desc(ReportException(isolate_, &try_catch).toFastString());
+				break;
+			}
+
+			v8::Local<v8::String> process_name =
+				v8::String::NewFromUtf8(isolate_, fname, v8::NewStringType::kNormal, strlen(fname))
+				.ToLocalChecked();
+			v8::Local<v8::Value> process_val;
+
+			if (!context->Global()->Get(context, process_name).ToLocal(&process_val) ||
+				!process_val->IsFunction()) {
+				Json::Value json_result;
+				json_result["exception"] = utils::String::Format("Lost of %s function", fname);
+				result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_FAIL);
+				result_.set_desc(json_result.toFastString());
+				LOG_ERROR("%s", result_.desc().c_str());
+				break;
+			}
+
+			v8::Local<v8::Function> process = v8::Local<v8::Function>::Cast(process_val);
+
+			const int argc = 1;
+			v8::Local<v8::String> arg1 = v8::String::NewFromUtf8(isolate_, parameter_.input_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+
+			v8::Local<v8::Value> argv[argc];
+			argv[0] = arg1;
+
+			v8::Local<v8::Value> callresult;
+			if (!process->Call(context, context->Global(), argc, argv).ToLocal(&callresult)) {
+				if (result_.code() == 0) { //Set the code if it is not set.
+					result_.set_code(protocol::ERRCODE_CONTRACT_EXECUTE_FAIL);
+					result_.set_desc(ReportException(isolate_, &try_catch).toFastString());
+				}
+				//Otherwise break. For example doTransaction has set the code.
+				break;
+			}
+
+			JsValueToCppJson(context, callresult, temp_result);
+			jsResult["result"] = temp_result;
+
+			return true;
+		} while (false);
+		return false;
+	}
+
 	bool V8Contract::Execute() {
 		return ExecuteCode(main_name_);
 	}
+
+	bool V8Contract::DelegateExecute(Json::Value& jsResult) {
+		return DelegateExecuteCode(delegate_name_, jsResult);
+	}
+
 
 	bool V8Contract::InitContract(){
 		return ExecuteCode(init_name_);
@@ -581,6 +714,17 @@ namespace bumo{
 			return iter->second;
 		}
 
+		return NULL;
+	}
+
+	V8Contract *V8Contract::GetContractFrom(const std::string& contractaddr) {
+		utils::MutexGuard guard(isolate_to_contract_mutex_);
+		std::unordered_map<v8::Isolate*, V8Contract *>::iterator iter = isolate_to_contract_.begin();
+		for (; iter != isolate_to_contract_.end(); iter++)
+		{
+			if (iter->second->GetParameter().this_address_ == contractaddr)
+				return iter->second;
+		}
 		return NULL;
 	}
 
@@ -933,7 +1077,14 @@ namespace bumo{
 
 			//Add to transaction
 			protocol::TransactionEnv txenv;
-			txenv.mutable_transaction()->set_source_address(this_contract);
+			if (v8_contract->GetParameter().isdelegate_)
+			{
+				txenv.mutable_transaction()->set_source_address(v8_contract->GetParameter().parent_address_);
+			}
+			else
+			{
+				txenv.mutable_transaction()->set_source_address(this_contract);
+			}
 			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
 
 			ope->set_type(protocol::Operation_Type_LOG);
@@ -1268,7 +1419,14 @@ namespace bumo{
 			}
 
 			protocol::TransactionEnv txenv;
-			txenv.mutable_transaction()->set_source_address(contractor);
+			if (v8_contract->GetParameter().isdelegate_)
+			{
+				txenv.mutable_transaction()->set_source_address(v8_contract->GetParameter().parent_address_);
+			}
+			else
+			{
+				txenv.mutable_transaction()->set_source_address(contractor);
+			}
 			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
 
 			ope->set_type(protocol::Operation_Type_PAY_COIN);
@@ -1338,7 +1496,14 @@ namespace bumo{
 			}
 
 			protocol::TransactionEnv txenv;
-			txenv.mutable_transaction()->set_source_address(contractor);
+			if (v8_contract->GetParameter().isdelegate_)
+			{
+				txenv.mutable_transaction()->set_source_address(v8_contract->GetParameter().parent_address_);
+			}
+			else
+			{
+				txenv.mutable_transaction()->set_source_address(contractor);
+			}
 			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
 
 			ope->set_type(protocol::Operation_Type_ISSUE_ASSET);
@@ -1424,7 +1589,14 @@ namespace bumo{
 			}
 
 			protocol::TransactionEnv txenv;
-			txenv.mutable_transaction()->set_source_address(contractor);
+			if (v8_contract->GetParameter().isdelegate_)
+			{
+				txenv.mutable_transaction()->set_source_address(v8_contract->GetParameter().parent_address_);
+			}
+			else
+			{
+				txenv.mutable_transaction()->set_source_address(contractor);
+			}
 			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
 
 			ope->set_type(protocol::Operation_Type_PAY_ASSET);
@@ -1506,6 +1678,10 @@ namespace bumo{
 				break;
 			}
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (v8_contract->GetParameter().isdelegate_)
+			{
+				v8_contract = GetContractFrom(v8_contract->GetParameter().parent_address_);
+			}
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
 				LOG_TRACE("Failed to find contract object by isolate id");
 				break;
@@ -1569,6 +1745,7 @@ namespace bumo{
 			}
 
 			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+
 			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
 				error_desc = "Failed to find contract object by isolate id";
 				break;
@@ -1593,7 +1770,14 @@ namespace bumo{
 			}
 
 			protocol::TransactionEnv txenv;
-			txenv.mutable_transaction()->set_source_address(contractor);
+			if (v8_contract->GetParameter().isdelegate_)
+			{
+				txenv.mutable_transaction()->set_source_address(v8_contract->GetParameter().parent_address_);
+			}
+			else
+			{
+				txenv.mutable_transaction()->set_source_address(contractor);
+			}
 			protocol::Operation *ope = txenv.mutable_transaction()->add_operations();
 
 			ope->set_type(protocol::Operation_Type_SET_METADATA);
@@ -1836,6 +2020,100 @@ namespace bumo{
 		args.GetIsolate()->ThrowException(
 			v8::String::NewFromUtf8(args.GetIsolate(), error_desc.c_str(),
 			v8::NewStringType::kNormal).ToLocalChecked());
+	}
+
+	void V8Contract::CallbackDelegateCall(const v8::FunctionCallbackInfo<v8::Value>& args)
+	{
+		std::string error_desc;
+		do {
+			if (args.Length() != 3) {
+				LOG_TRACE("parameter error");
+				break;
+			}
+
+			if (!args[0]->IsString()) {
+				LOG_TRACE("contract execution error,Storage load, parameter 0 should be a String");
+				break;
+			}
+
+			if (!args[1]->IsString()) {
+				LOG_TRACE("contract execution error,Storage load, parameter 1 should be a String");
+				break;
+			}
+
+			if (!args[2]->IsString()) {
+				LOG_TRACE("contract execution error,Storage load, parameter 2 should be a String");
+				break;
+			}
+
+			v8::HandleScope scope(args.GetIsolate());
+			V8Contract *cur_contract = GetContractFrom(args.GetIsolate());
+			if (cur_contract->GetParameter().caller_depth_ >= General::CONTRACT_DEPTH_LIMIT) {
+				LOG_TRACE("contract execution error,Storage load, caller_depth_ is out maxdepth");
+				break;
+			}
+			std::string callcontract_address = ToCString(v8::String::Utf8Value(args[0]));
+			V8Contract *v8_contract = GetContractFrom(cur_contract->GetParameter().parent_address_);
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(1000);
+
+			bumo::AccountFrm::pointer caller_account_frm = nullptr;
+			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
+			if (!environment->GetEntry(callcontract_address, caller_account_frm)) {
+				LOG_TRACE("Failed to find account %s.", callcontract_address.c_str());
+				break;
+			}
+			else {
+				if (!Environment::AccountFromDB(callcontract_address, caller_account_frm)) {
+					LOG_TRACE("Failed to find account %s.", callcontract_address.c_str());
+					break;
+				}
+			}
+
+			if (!caller_account_frm->GetProtoAccount().has_contract()) {
+				LOG_TRACE("The account(%s) has no contract.", callcontract_address.c_str());
+				break;
+			}
+
+			std::string javascript = caller_account_frm->GetProtoAccount().contract().payload();
+			if (!javascript.empty()) {
+				ContractParameter parameter;
+				parameter.code_ = javascript;
+				Json::Value json_input;
+				json_input["method"] = ToCString(v8::String::Utf8Value(args[1]));
+				Json::Value json_params;
+				Json::Reader json_reader;
+				json_reader.parse(ToCString(v8::String::Utf8Value(args[2])),json_params);
+				json_input["params"] = json_params;
+				parameter.input_ = json_input.toFastString();
+				parameter.sender_ = v8_contract->GetParameter().sender_;
+				parameter.this_address_ = callcontract_address;
+				parameter.parent_address_ = v8_contract->GetParameter().parent_address_;
+				parameter.ope_index_ = 0;
+				parameter.caller_depth_ = cur_contract->GetParameter().caller_depth_ + 1;
+				parameter.isdelegate_ = true;
+				parameter.timestamp_ = v8_contract->GetParameter().timestamp_;
+				parameter.blocknumber_ = v8_contract->GetParameter().blocknumber_;
+				parameter.consensus_value_ = v8_contract->GetParameter().consensus_value_;
+				parameter.ledger_context_ = v8_contract->GetParameter().ledger_context_;
+				V8Contract child_contract(false, parameter);
+				Json::Value temp_result;
+				child_contract.DelegateExecute(temp_result);
+				Result ret = child_contract.GetResult();
+				if (ret.code() != protocol::ERRCODE_SUCCESS)
+				{
+					LOG_TRACE("Failed to DelegateExecute %s.", ret.desc());
+					break;
+				}
+				ledger_context->PushLog(v8_contract->GetParameter().parent_address_, child_contract.GetLogs());
+				std::string result_str = temp_result["result"]["value"].toFastString();
+				args.GetReturnValue().Set(v8::String::NewFromUtf8(
+					args.GetIsolate(), result_str.c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+			}
+
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
 	}
 
 	void V8Contract::CallBackInt64Div(const v8::FunctionCallbackInfo<v8::Value>& args) {
