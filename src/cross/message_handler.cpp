@@ -41,13 +41,13 @@ namespace bumo {
 			LOG_ERROR("Private key is not valid");
 			return false;
 		}
-		source_address_ = private_key.GetEncAddress();
+		/*source_address_ = private_key.GetEncAddress();
 		AccountFrm::pointer account_ptr;
 		if (!Environment::AccountFromDB(source_address_, account_ptr)) {
 			LOG_ERROR("Address:%s not exsit", source_address_.c_str());
 			return false;
 		}
-		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
+		cur_nonce_ = account_ptr->GetAccountNonce() + 1;*/
 
 		return true;
 	}

@@ -169,6 +169,7 @@ namespace bumo{
 		static void CallBackLog(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackTopicLog(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackGetAccountAsset(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackGetAccountMetadata(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackSetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackGetValidators(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackAddressValidCheck(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -194,6 +195,9 @@ namespace bumo{
 		static void CallBackGetBalance(const v8::FunctionCallbackInfo<v8::Value>& args);
 		//Get the hash of one of the 1024 most recent complete blocks
 		static void CallBackGetBlockHash(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackSha256(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackVerify(const v8::FunctionCallbackInfo<v8::Value>& args);
+		static void CallBackToAddress(const v8::FunctionCallbackInfo<v8::Value>& args);
 
 		//Sends a message with arbitrary date to a given address path
 		static void CallBackStorageStore(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -227,22 +231,15 @@ namespace bumo{
 
     private:
         bool ExecuteCode(const char* fname);
-	};
 
-	class QueryContract : public utils::Thread{
-		Contract *contract_;
-		ContractParameter parameter_;
-		Json::Value result_;
-		bool ret_;
-		utils::Mutex mutex_;
-	public:
-		QueryContract();
-		~QueryContract();
+		typedef enum tagDataEncodeType {
+			BASE16 = 0,
+			RAW_DATA = 1,
+			BASE64 = 2
+		}DataEncodeType;
 
-		bool Init(int32_t type, const ContractParameter &paramter);
-		virtual void Run();
-		void Cancel();
-		bool GetResult(Json::Value &result);
+		static bool TransEncodeType(const v8::Local<v8::Value> &arg, DataEncodeType &data_type);
+		static bool TransEncodeData(const v8::Local<v8::Value> &raw_data, const DataEncodeType &encode_type, std::string &result_data);
 	};
 
 	typedef std::map<int64_t, Contract *> ContractMap;

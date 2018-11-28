@@ -300,7 +300,7 @@ const jslint = (function JSLint() {
         "Set", "String", "Symbol", "SyntaxError", "TypeError"
     ];
 	
-    const useable_standard = ["log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "int64Add", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "thisPayCoinAmount", "thisPayAsset", "blockTimestamp", "blockNumber", "addressCheck", "tlog", "toBaseUnit", "stoI64Check", "issueAsset", "payAsset"];
+    const useable_standard = ["log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "int64Add", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "thisPayCoinAmount", "thisPayAsset", "blockTimestamp", "blockNumber", "addressCheck", "tlog", "toBaseUnit", "stoI64Check", "issueAsset", "payAsset", "getAccountMetadata", "sha256", "verify", "toAddress"];
 	
     const do_not_use_internal_func = ["internal_check_time", "internal_hello_test", "localeCompare"];
 
