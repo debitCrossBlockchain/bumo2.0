@@ -145,7 +145,7 @@ function depositToChildChain(params){
         asset_chanin.chain_id = input.chain_id;
         asset_chanin.amount = input.amount;
         asset_chanin.seq = 1;
-        asset_chanin.main_block_number = blockNumber;
+        asset_chanin.block_number = blockNumber;
         asset_chanin.source_address = sender;
         asset_chanin.address = input.address;
 
@@ -161,7 +161,7 @@ function depositToChildChain(params){
         asset_chanin.chain_id = input.chain_id;
         asset_chanin.amount = input.amount;
         asset_chanin.seq = assertinfo.seq;
-        asset_chanin.main_block_number = blockNumber;
+        asset_chanin.block_number = blockNumber;
         asset_chanin.source_address = sender;
         asset_chanin.address = input.address;
         storageStore('childChainAsset_' + assertparam.chain_id , JSON.stringify(assertinfo));
