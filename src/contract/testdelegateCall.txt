@@ -1,0 +1,5 @@
+delegate address:buQXcBSNNzSy6Pb5c46CiBZs721VVAHxPtfp
+caller address:buQXXhNwwVoL6JtZKunv4jsiC5mJito5Gge5
+"input":"{\"method\":\"testdelegatecaller\",\"a_number\": 100,\"b_number\": 200}"
+
+desc_ = "{\"contract\":\"buQXDtjxdmJ1iQAphNWf1YhvuPHAD67DK9Se\",\"exception\":\"Contract execution error, int64Add, parameter 0 should be a String or Number\",\"linenum\":5}"
