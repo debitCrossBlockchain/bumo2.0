@@ -251,9 +251,10 @@ message MerkelProofs {
 
 message MessageChannelDeposit{
 	int64 chain_id = 1;
-	string source_address = 2;
-	int64 amount = 3;
-	string dest_address = 4;
-	MerkelProofs merkel_proof = 5;
+	int64 amount = 2;
+	int64 seq = 3;
+	int64 block_number = 4;
+	string source_address = 5;
+	string address = 6;
 }
 

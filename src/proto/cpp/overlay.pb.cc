@@ -570,12 +570,13 @@ void protobuf_AssignDesc_overlay_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MerkelProofs, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MerkelProofs, _is_default_instance_));
   MessageChannelDeposit_descriptor_ = file->message_type(26);
-  static const int MessageChannelDeposit_offsets_[5] = {
+  static const int MessageChannelDeposit_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, chain_id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, amount_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, dest_address_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, merkel_proof_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, seq_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, block_number_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, source_address_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelDeposit, address_),
   };
   MessageChannelDeposit_reflection_ =
     ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
@@ -802,40 +803,39 @@ void protobuf_AddDesc_overlay_2eproto() {
     "(.protocol.MessageChannelCreateChildChai"
     "n\"-\n\027MessageChannelQueryHead\022\022\n\nledger_s"
     "eq\030\001 \001(\003\"#\n\014MerkelProofs\022\023\n\013merkel_path\030"
-    "\001 \001(\014\"\225\001\n\025MessageChannelDeposit\022\020\n\010chain"
-    "_id\030\001 \001(\003\022\026\n\016source_address\030\002 \001(\t\022\016\n\006amo"
-    "unt\030\003 \001(\003\022\024\n\014dest_address\030\004 \001(\t\022,\n\014merke"
-    "l_proof\030\005 \001(\0132\026.protocol.MerkelProofs*\203\002"
-    "\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERLAY_MSGTYP"
-    "E_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING\020\001\022\031\n\025OV"
-    "ERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY_MSGTYPE"
-    "_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRANSACTION\020"
-    "\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030\n\024OVERLA"
-    "Y_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSGTYPE_LEDG"
-    "ER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMessageType"
-    "\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023"
-    "\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEER_ONLINE"
-    "\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CHAIN_PEER"
-    "_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSACTION\020\017\022"
-    "\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHAIN_SUBSCR"
-    "IBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022*\201\001\n\031MES"
-    "SAGE_CHANNEL_NODE_TYPE\022\"\n\036MESSAGE_CHANNE"
-    "L_NODE_TYPE_NONE\020\000\022 \n\034MESSAGE_CHANNEL_NO"
-    "DE_PACKAGE\020\036\022\036\n\032MESSAGE_CHANNEL_NODE_HEL"
-    "LO\020\037*\342\003\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MESSAGE"
-    "_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHANNEL_"
-    "CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHANNEL_"
-    "MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_MIX\020"
-    "\003\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020\004\022\036\n\032MESSAG"
-    "E_CHANNEL_WITHDRAWAL\020\005\022#\n\037MESSAGE_CHANNE"
-    "L_FAST_WITHDRAWAL\020\006\022\037\n\033MESSAGE_CHANNEL_S"
-    "UBMIT_HEAD\020\007\022(\n$MESSAGE_CHANNEL_CHALLENG"
-    "E_WITHDRAWAL\020\010\022\"\n\036MESSAGE_CHANNEL_CHALLE"
-    "NGE_HEAD\020\t\022)\n%MESSAGE_CHANNEL_CHILD_GENE"
-    "SES_REQUEST\020\n\022*\n&MESSAGE_CHANNEL_CHILD_G"
-    "ENESES_RESPONSE\020\013\022\036\n\032MESSAGE_CHANNEL_QUE"
-    "RY_HEAD\020\014B\"\n io.bumo.sdk.core.extend.pro"
-    "tobufb\006proto3", 4173);
+    "\001 \001(\014\"\205\001\n\025MessageChannelDeposit\022\020\n\010chain"
+    "_id\030\001 \001(\003\022\016\n\006amount\030\002 \001(\003\022\013\n\003seq\030\003 \001(\003\022\024"
+    "\n\014block_number\030\004 \001(\003\022\026\n\016source_address\030\005"
+    " \001(\t\022\017\n\007address\030\006 \001(\t*\203\002\n\024OVERLAY_MESSAG"
+    "E_TYPE\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVER"
+    "LAY_MSGTYPE_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HE"
+    "LLO\020\002\022\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVER"
+    "LAY_MSGTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSG"
+    "TYPE_LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006"
+    "\022)\n%OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIF"
+    "Y\020\007*\372\001\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_N"
+    "ONE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATU"
+    "S\020\013\022\025\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER"
+    "_OFFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CH"
+    "AIN_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_"
+    "HEADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAI"
+    "N_TX_ENV_STORE\020\022*\201\001\n\031MESSAGE_CHANNEL_NOD"
+    "E_TYPE\022\"\n\036MESSAGE_CHANNEL_NODE_TYPE_NONE"
+    "\020\000\022 \n\034MESSAGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032"
+    "MESSAGE_CHANNEL_NODE_HELLO\020\037*\342\003\n\024MESSAGE"
+    "_CHANNEL_TYPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NO"
+    "NE\020\000\022&\n\"MESSAGE_CHANNEL_CREATE_CHILD_CHA"
+    "IN\020\001\022\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020\002\022\035\n\031ME"
+    "SSAGE_CHANNEL_CHILD_MIX\020\003\022\033\n\027MESSAGE_CHA"
+    "NNEL_DEPOSIT\020\004\022\036\n\032MESSAGE_CHANNEL_WITHDR"
+    "AWAL\020\005\022#\n\037MESSAGE_CHANNEL_FAST_WITHDRAWA"
+    "L\020\006\022\037\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020\007\022(\n$"
+    "MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL\020\010\022\""
+    "\n\036MESSAGE_CHANNEL_CHALLENGE_HEAD\020\t\022)\n%ME"
+    "SSAGE_CHANNEL_CHILD_GENESES_REQUEST\020\n\022*\n"
+    "&MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE\020"
+    "\013\022\036\n\032MESSAGE_CHANNEL_QUERY_HEAD\020\014B\"\n io."
+    "bumo.sdk.core.extend.protobufb\006proto3", 4157);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -12075,10 +12075,11 @@ void MerkelProofs::clear_merkel_path() {
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int MessageChannelDeposit::kChainIdFieldNumber;
-const int MessageChannelDeposit::kSourceAddressFieldNumber;
 const int MessageChannelDeposit::kAmountFieldNumber;
-const int MessageChannelDeposit::kDestAddressFieldNumber;
-const int MessageChannelDeposit::kMerkelProofFieldNumber;
+const int MessageChannelDeposit::kSeqFieldNumber;
+const int MessageChannelDeposit::kBlockNumberFieldNumber;
+const int MessageChannelDeposit::kSourceAddressFieldNumber;
+const int MessageChannelDeposit::kAddressFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 MessageChannelDeposit::MessageChannelDeposit()
@@ -12089,7 +12090,6 @@ MessageChannelDeposit::MessageChannelDeposit()
 
 void MessageChannelDeposit::InitAsDefaultInstance() {
   _is_default_instance_ = true;
-  merkel_proof_ = const_cast< ::protocol::MerkelProofs*>(&::protocol::MerkelProofs::default_instance());
 }
 
 MessageChannelDeposit::MessageChannelDeposit(const MessageChannelDeposit& from)
@@ -12105,10 +12105,11 @@ void MessageChannelDeposit::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   chain_id_ = GOOGLE_LONGLONG(0);
-  source_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   amount_ = GOOGLE_LONGLONG(0);
-  dest_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  merkel_proof_ = NULL;
+  seq_ = GOOGLE_LONGLONG(0);
+  block_number_ = GOOGLE_LONGLONG(0);
+  source_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 MessageChannelDeposit::~MessageChannelDeposit() {
@@ -12118,9 +12119,8 @@ MessageChannelDeposit::~MessageChannelDeposit() {
 
 void MessageChannelDeposit::SharedDtor() {
   source_address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  dest_address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  address_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   if (this != default_instance_) {
-    delete merkel_proof_;
   }
 }
 
@@ -12151,12 +12151,29 @@ MessageChannelDeposit* MessageChannelDeposit::New(::google::protobuf::Arena* are
 
 void MessageChannelDeposit::Clear() {
 // @@protoc_insertion_point(message_clear_start:protocol.MessageChannelDeposit)
-  chain_id_ = GOOGLE_LONGLONG(0);
+#if defined(__clang__)
+#define ZR_HELPER_(f) \
+  _Pragma("clang diagnostic push") \
+  _Pragma("clang diagnostic ignored \"-Winvalid-offsetof\"") \
+  __builtin_offsetof(MessageChannelDeposit, f) \
+  _Pragma("clang diagnostic pop")
+#else
+#define ZR_HELPER_(f) reinterpret_cast<char*>(\
+  &reinterpret_cast<MessageChannelDeposit*>(16)->f)
+#endif
+
+#define ZR_(first, last) do {\
+  ::memset(&first, 0,\
+           ZR_HELPER_(last) - ZR_HELPER_(first) + sizeof(last));\
+} while (0)
+
+  ZR_(chain_id_, block_number_);
   source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  amount_ = GOOGLE_LONGLONG(0);
-  dest_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (GetArenaNoVirtual() == NULL && merkel_proof_ != NULL) delete merkel_proof_;
-  merkel_proof_ = NULL;
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+
+#undef ZR_HELPER_
+#undef ZR_
+
 }
 
 bool MessageChannelDeposit::MergePartialFromCodedStream(
@@ -12179,13 +12196,58 @@ bool MessageChannelDeposit::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(18)) goto parse_source_address;
+        if (input->ExpectTag(16)) goto parse_amount;
         break;
       }
 
-      // optional string source_address = 2;
+      // optional int64 amount = 2;
       case 2: {
-        if (tag == 18) {
+        if (tag == 16) {
+         parse_amount:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &amount_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(24)) goto parse_seq;
+        break;
+      }
+
+      // optional int64 seq = 3;
+      case 3: {
+        if (tag == 24) {
+         parse_seq:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &seq_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(32)) goto parse_block_number;
+        break;
+      }
+
+      // optional int64 block_number = 4;
+      case 4: {
+        if (tag == 32) {
+         parse_block_number:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &block_number_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(42)) goto parse_source_address;
+        break;
+      }
+
+      // optional string source_address = 5;
+      case 5: {
+        if (tag == 42) {
          parse_source_address:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_source_address()));
@@ -12196,48 +12258,20 @@ bool MessageChannelDeposit::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(24)) goto parse_amount;
+        if (input->ExpectTag(50)) goto parse_address;
         break;
       }
 
-      // optional int64 amount = 3;
-      case 3: {
-        if (tag == 24) {
-         parse_amount:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &amount_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_dest_address;
-        break;
-      }
-
-      // optional string dest_address = 4;
-      case 4: {
-        if (tag == 34) {
-         parse_dest_address:
+      // optional string address = 6;
+      case 6: {
+        if (tag == 50) {
+         parse_address:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_dest_address()));
+                input, this->mutable_address()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->dest_address().data(), this->dest_address().length(),
+            this->address().data(), this->address().length(),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "protocol.MessageChannelDeposit.dest_address"));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(42)) goto parse_merkel_proof;
-        break;
-      }
-
-      // optional .protocol.MerkelProofs merkel_proof = 5;
-      case 5: {
-        if (tag == 42) {
-         parse_merkel_proof:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
-               input, mutable_merkel_proof()));
+            "protocol.MessageChannelDeposit.address"));
         } else {
           goto handle_unusual;
         }
@@ -12274,35 +12308,39 @@ void MessageChannelDeposit::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->chain_id(), output);
   }
 
-  // optional string source_address = 2;
+  // optional int64 amount = 2;
+  if (this->amount() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->amount(), output);
+  }
+
+  // optional int64 seq = 3;
+  if (this->seq() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->seq(), output);
+  }
+
+  // optional int64 block_number = 4;
+  if (this->block_number() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->block_number(), output);
+  }
+
+  // optional string source_address = 5;
   if (this->source_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->source_address().data(), this->source_address().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "protocol.MessageChannelDeposit.source_address");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->source_address(), output);
+      5, this->source_address(), output);
   }
 
-  // optional int64 amount = 3;
-  if (this->amount() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->amount(), output);
-  }
-
-  // optional string dest_address = 4;
-  if (this->dest_address().size() > 0) {
+  // optional string address = 6;
+  if (this->address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->dest_address().data(), this->dest_address().length(),
+      this->address().data(), this->address().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.MessageChannelDeposit.dest_address");
+      "protocol.MessageChannelDeposit.address");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->dest_address(), output);
-  }
-
-  // optional .protocol.MerkelProofs merkel_proof = 5;
-  if (this->has_merkel_proof()) {
-    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5, *this->merkel_proof_, output);
+      6, this->address(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.MessageChannelDeposit)
@@ -12316,7 +12354,22 @@ void MessageChannelDeposit::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->chain_id(), target);
   }
 
-  // optional string source_address = 2;
+  // optional int64 amount = 2;
+  if (this->amount() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->amount(), target);
+  }
+
+  // optional int64 seq = 3;
+  if (this->seq() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->seq(), target);
+  }
+
+  // optional int64 block_number = 4;
+  if (this->block_number() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->block_number(), target);
+  }
+
+  // optional string source_address = 5;
   if (this->source_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->source_address().data(), this->source_address().length(),
@@ -12324,30 +12377,18 @@ void MessageChannelDeposit::SerializeWithCachedSizes(
       "protocol.MessageChannelDeposit.source_address");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->source_address(), target);
+        5, this->source_address(), target);
   }
 
-  // optional int64 amount = 3;
-  if (this->amount() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->amount(), target);
-  }
-
-  // optional string dest_address = 4;
-  if (this->dest_address().size() > 0) {
+  // optional string address = 6;
+  if (this->address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->dest_address().data(), this->dest_address().length(),
+      this->address().data(), this->address().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "protocol.MessageChannelDeposit.dest_address");
+      "protocol.MessageChannelDeposit.address");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->dest_address(), target);
-  }
-
-  // optional .protocol.MerkelProofs merkel_proof = 5;
-  if (this->has_merkel_proof()) {
-    target = ::google::protobuf::internal::WireFormatLite::
-      InternalWriteMessageNoVirtualToArray(
-        5, *this->merkel_proof_, false, target);
+        6, this->address(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.MessageChannelDeposit)
@@ -12365,32 +12406,39 @@ int MessageChannelDeposit::ByteSize() const {
         this->chain_id());
   }
 
-  // optional string source_address = 2;
-  if (this->source_address().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->source_address());
-  }
-
-  // optional int64 amount = 3;
+  // optional int64 amount = 2;
   if (this->amount() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->amount());
   }
 
-  // optional string dest_address = 4;
-  if (this->dest_address().size() > 0) {
+  // optional int64 seq = 3;
+  if (this->seq() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->dest_address());
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->seq());
   }
 
-  // optional .protocol.MerkelProofs merkel_proof = 5;
-  if (this->has_merkel_proof()) {
+  // optional int64 block_number = 4;
+  if (this->block_number() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
-        *this->merkel_proof_);
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->block_number());
+  }
+
+  // optional string source_address = 5;
+  if (this->source_address().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->source_address());
+  }
+
+  // optional string address = 6;
+  if (this->address().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->address());
   }
 
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
@@ -12424,19 +12472,22 @@ void MessageChannelDeposit::MergeFrom(const MessageChannelDeposit& from) {
   if (from.chain_id() != 0) {
     set_chain_id(from.chain_id());
   }
+  if (from.amount() != 0) {
+    set_amount(from.amount());
+  }
+  if (from.seq() != 0) {
+    set_seq(from.seq());
+  }
+  if (from.block_number() != 0) {
+    set_block_number(from.block_number());
+  }
   if (from.source_address().size() > 0) {
 
     source_address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.source_address_);
   }
-  if (from.amount() != 0) {
-    set_amount(from.amount());
-  }
-  if (from.dest_address().size() > 0) {
+  if (from.address().size() > 0) {
 
-    dest_address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.dest_address_);
-  }
-  if (from.has_merkel_proof()) {
-    mutable_merkel_proof()->::protocol::MerkelProofs::MergeFrom(from.merkel_proof());
+    address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.address_);
   }
 }
 
@@ -12465,10 +12516,11 @@ void MessageChannelDeposit::Swap(MessageChannelDeposit* other) {
 }
 void MessageChannelDeposit::InternalSwap(MessageChannelDeposit* other) {
   std::swap(chain_id_, other->chain_id_);
-  source_address_.Swap(&other->source_address_);
   std::swap(amount_, other->amount_);
-  dest_address_.Swap(&other->dest_address_);
-  std::swap(merkel_proof_, other->merkel_proof_);
+  std::swap(seq_, other->seq_);
+  std::swap(block_number_, other->block_number_);
+  source_address_.Swap(&other->source_address_);
+  address_.Swap(&other->address_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -12498,7 +12550,49 @@ void MessageChannelDeposit::clear_chain_id() {
   // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.chain_id)
 }
 
-// optional string source_address = 2;
+// optional int64 amount = 2;
+void MessageChannelDeposit::clear_amount() {
+  amount_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 MessageChannelDeposit::amount() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.amount)
+  return amount_;
+}
+ void MessageChannelDeposit::set_amount(::google::protobuf::int64 value) {
+  
+  amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.amount)
+}
+
+// optional int64 seq = 3;
+void MessageChannelDeposit::clear_seq() {
+  seq_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 MessageChannelDeposit::seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.seq)
+  return seq_;
+}
+ void MessageChannelDeposit::set_seq(::google::protobuf::int64 value) {
+  
+  seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.seq)
+}
+
+// optional int64 block_number = 4;
+void MessageChannelDeposit::clear_block_number() {
+  block_number_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 MessageChannelDeposit::block_number() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.block_number)
+  return block_number_;
+}
+ void MessageChannelDeposit::set_block_number(::google::protobuf::int64 value) {
+  
+  block_number_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.block_number)
+}
+
+// optional string source_address = 5;
 void MessageChannelDeposit::clear_source_address() {
   source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -12542,100 +12636,48 @@ void MessageChannelDeposit::clear_source_address() {
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.source_address)
 }
 
-// optional int64 amount = 3;
-void MessageChannelDeposit::clear_amount() {
-  amount_ = GOOGLE_LONGLONG(0);
+// optional string address = 6;
+void MessageChannelDeposit::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::google::protobuf::int64 MessageChannelDeposit::amount() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.amount)
-  return amount_;
+ const ::std::string& MessageChannelDeposit::address() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void MessageChannelDeposit::set_amount(::google::protobuf::int64 value) {
+ void MessageChannelDeposit::set_address(const ::std::string& value) {
   
-  amount_ = value;
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.amount)
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.address)
 }
-
-// optional string dest_address = 4;
-void MessageChannelDeposit::clear_dest_address() {
-  dest_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- const ::std::string& MessageChannelDeposit::dest_address() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.dest_address)
-  return dest_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
- void MessageChannelDeposit::set_dest_address(const ::std::string& value) {
+ void MessageChannelDeposit::set_address(const char* value) {
   
-  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.dest_address)
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelDeposit.address)
 }
- void MessageChannelDeposit::set_dest_address(const char* value) {
+ void MessageChannelDeposit::set_address(const char* value, size_t size) {
   
-  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelDeposit.dest_address)
-}
- void MessageChannelDeposit::set_dest_address(const char* value, size_t size) {
-  
-  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelDeposit.dest_address)
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelDeposit.address)
 }
- ::std::string* MessageChannelDeposit::mutable_dest_address() {
+ ::std::string* MessageChannelDeposit::mutable_address() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.dest_address)
-  return dest_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- ::std::string* MessageChannelDeposit::release_dest_address() {
-  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.dest_address)
+ ::std::string* MessageChannelDeposit::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.address)
   
-  return dest_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
- void MessageChannelDeposit::set_allocated_dest_address(::std::string* dest_address) {
-  if (dest_address != NULL) {
+ void MessageChannelDeposit::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
     
   } else {
     
   }
-  dest_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), dest_address);
-  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.dest_address)
-}
-
-// optional .protocol.MerkelProofs merkel_proof = 5;
-bool MessageChannelDeposit::has_merkel_proof() const {
-  return !_is_default_instance_ && merkel_proof_ != NULL;
-}
-void MessageChannelDeposit::clear_merkel_proof() {
-  if (GetArenaNoVirtual() == NULL && merkel_proof_ != NULL) delete merkel_proof_;
-  merkel_proof_ = NULL;
-}
-const ::protocol::MerkelProofs& MessageChannelDeposit::merkel_proof() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.merkel_proof)
-  return merkel_proof_ != NULL ? *merkel_proof_ : *default_instance_->merkel_proof_;
-}
-::protocol::MerkelProofs* MessageChannelDeposit::mutable_merkel_proof() {
-  
-  if (merkel_proof_ == NULL) {
-    merkel_proof_ = new ::protocol::MerkelProofs;
-  }
-  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.merkel_proof)
-  return merkel_proof_;
-}
-::protocol::MerkelProofs* MessageChannelDeposit::release_merkel_proof() {
-  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.merkel_proof)
-  
-  ::protocol::MerkelProofs* temp = merkel_proof_;
-  merkel_proof_ = NULL;
-  return temp;
-}
-void MessageChannelDeposit::set_allocated_merkel_proof(::protocol::MerkelProofs* merkel_proof) {
-  delete merkel_proof_;
-  merkel_proof_ = merkel_proof;
-  if (merkel_proof) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.merkel_proof)
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.address)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

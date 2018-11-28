@@ -3114,9 +3114,27 @@ class MessageChannelDeposit : public ::google::protobuf::Message /* @@protoc_ins
   ::google::protobuf::int64 chain_id() const;
   void set_chain_id(::google::protobuf::int64 value);
 
-  // optional string source_address = 2;
+  // optional int64 amount = 2;
+  void clear_amount();
+  static const int kAmountFieldNumber = 2;
+  ::google::protobuf::int64 amount() const;
+  void set_amount(::google::protobuf::int64 value);
+
+  // optional int64 seq = 3;
+  void clear_seq();
+  static const int kSeqFieldNumber = 3;
+  ::google::protobuf::int64 seq() const;
+  void set_seq(::google::protobuf::int64 value);
+
+  // optional int64 block_number = 4;
+  void clear_block_number();
+  static const int kBlockNumberFieldNumber = 4;
+  ::google::protobuf::int64 block_number() const;
+  void set_block_number(::google::protobuf::int64 value);
+
+  // optional string source_address = 5;
   void clear_source_address();
-  static const int kSourceAddressFieldNumber = 2;
+  static const int kSourceAddressFieldNumber = 5;
   const ::std::string& source_address() const;
   void set_source_address(const ::std::string& value);
   void set_source_address(const char* value);
@@ -3125,31 +3143,16 @@ class MessageChannelDeposit : public ::google::protobuf::Message /* @@protoc_ins
   ::std::string* release_source_address();
   void set_allocated_source_address(::std::string* source_address);
 
-  // optional int64 amount = 3;
-  void clear_amount();
-  static const int kAmountFieldNumber = 3;
-  ::google::protobuf::int64 amount() const;
-  void set_amount(::google::protobuf::int64 value);
-
-  // optional string dest_address = 4;
-  void clear_dest_address();
-  static const int kDestAddressFieldNumber = 4;
-  const ::std::string& dest_address() const;
-  void set_dest_address(const ::std::string& value);
-  void set_dest_address(const char* value);
-  void set_dest_address(const char* value, size_t size);
-  ::std::string* mutable_dest_address();
-  ::std::string* release_dest_address();
-  void set_allocated_dest_address(::std::string* dest_address);
-
-  // optional .protocol.MerkelProofs merkel_proof = 5;
-  bool has_merkel_proof() const;
-  void clear_merkel_proof();
-  static const int kMerkelProofFieldNumber = 5;
-  const ::protocol::MerkelProofs& merkel_proof() const;
-  ::protocol::MerkelProofs* mutable_merkel_proof();
-  ::protocol::MerkelProofs* release_merkel_proof();
-  void set_allocated_merkel_proof(::protocol::MerkelProofs* merkel_proof);
+  // optional string address = 6;
+  void clear_address();
+  static const int kAddressFieldNumber = 6;
+  const ::std::string& address() const;
+  void set_address(const ::std::string& value);
+  void set_address(const char* value);
+  void set_address(const char* value, size_t size);
+  ::std::string* mutable_address();
+  ::std::string* release_address();
+  void set_allocated_address(::std::string* address);
 
   // @@protoc_insertion_point(class_scope:protocol.MessageChannelDeposit)
  private:
@@ -3157,10 +3160,11 @@ class MessageChannelDeposit : public ::google::protobuf::Message /* @@protoc_ins
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::int64 chain_id_;
-  ::google::protobuf::internal::ArenaStringPtr source_address_;
   ::google::protobuf::int64 amount_;
-  ::google::protobuf::internal::ArenaStringPtr dest_address_;
-  ::protocol::MerkelProofs* merkel_proof_;
+  ::google::protobuf::int64 seq_;
+  ::google::protobuf::int64 block_number_;
+  ::google::protobuf::internal::ArenaStringPtr source_address_;
+  ::google::protobuf::internal::ArenaStringPtr address_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
@@ -5667,7 +5671,49 @@ inline void MessageChannelDeposit::set_chain_id(::google::protobuf::int64 value)
   // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.chain_id)
 }
 
-// optional string source_address = 2;
+// optional int64 amount = 2;
+inline void MessageChannelDeposit::clear_amount() {
+  amount_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelDeposit::amount() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.amount)
+  return amount_;
+}
+inline void MessageChannelDeposit::set_amount(::google::protobuf::int64 value) {
+  
+  amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.amount)
+}
+
+// optional int64 seq = 3;
+inline void MessageChannelDeposit::clear_seq() {
+  seq_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelDeposit::seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.seq)
+  return seq_;
+}
+inline void MessageChannelDeposit::set_seq(::google::protobuf::int64 value) {
+  
+  seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.seq)
+}
+
+// optional int64 block_number = 4;
+inline void MessageChannelDeposit::clear_block_number() {
+  block_number_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelDeposit::block_number() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.block_number)
+  return block_number_;
+}
+inline void MessageChannelDeposit::set_block_number(::google::protobuf::int64 value) {
+  
+  block_number_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.block_number)
+}
+
+// optional string source_address = 5;
 inline void MessageChannelDeposit::clear_source_address() {
   source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -5711,100 +5757,48 @@ inline void MessageChannelDeposit::set_allocated_source_address(::std::string* s
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.source_address)
 }
 
-// optional int64 amount = 3;
-inline void MessageChannelDeposit::clear_amount() {
-  amount_ = GOOGLE_LONGLONG(0);
+// optional string address = 6;
+inline void MessageChannelDeposit::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::google::protobuf::int64 MessageChannelDeposit::amount() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.amount)
-  return amount_;
+inline const ::std::string& MessageChannelDeposit::address() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void MessageChannelDeposit::set_amount(::google::protobuf::int64 value) {
+inline void MessageChannelDeposit::set_address(const ::std::string& value) {
   
-  amount_ = value;
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.amount)
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.address)
 }
-
-// optional string dest_address = 4;
-inline void MessageChannelDeposit::clear_dest_address() {
-  dest_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& MessageChannelDeposit::dest_address() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.dest_address)
-  return dest_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void MessageChannelDeposit::set_dest_address(const ::std::string& value) {
+inline void MessageChannelDeposit::set_address(const char* value) {
   
-  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelDeposit.dest_address)
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelDeposit.address)
 }
-inline void MessageChannelDeposit::set_dest_address(const char* value) {
+inline void MessageChannelDeposit::set_address(const char* value, size_t size) {
   
-  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelDeposit.dest_address)
-}
-inline void MessageChannelDeposit::set_dest_address(const char* value, size_t size) {
-  
-  dest_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelDeposit.dest_address)
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelDeposit.address)
 }
-inline ::std::string* MessageChannelDeposit::mutable_dest_address() {
+inline ::std::string* MessageChannelDeposit::mutable_address() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.dest_address)
-  return dest_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* MessageChannelDeposit::release_dest_address() {
-  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.dest_address)
+inline ::std::string* MessageChannelDeposit::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.address)
   
-  return dest_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void MessageChannelDeposit::set_allocated_dest_address(::std::string* dest_address) {
-  if (dest_address != NULL) {
+inline void MessageChannelDeposit::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
     
   } else {
     
   }
-  dest_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), dest_address);
-  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.dest_address)
-}
-
-// optional .protocol.MerkelProofs merkel_proof = 5;
-inline bool MessageChannelDeposit::has_merkel_proof() const {
-  return !_is_default_instance_ && merkel_proof_ != NULL;
-}
-inline void MessageChannelDeposit::clear_merkel_proof() {
-  if (GetArenaNoVirtual() == NULL && merkel_proof_ != NULL) delete merkel_proof_;
-  merkel_proof_ = NULL;
-}
-inline const ::protocol::MerkelProofs& MessageChannelDeposit::merkel_proof() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelDeposit.merkel_proof)
-  return merkel_proof_ != NULL ? *merkel_proof_ : *default_instance_->merkel_proof_;
-}
-inline ::protocol::MerkelProofs* MessageChannelDeposit::mutable_merkel_proof() {
-  
-  if (merkel_proof_ == NULL) {
-    merkel_proof_ = new ::protocol::MerkelProofs;
-  }
-  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelDeposit.merkel_proof)
-  return merkel_proof_;
-}
-inline ::protocol::MerkelProofs* MessageChannelDeposit::release_merkel_proof() {
-  // @@protoc_insertion_point(field_release:protocol.MessageChannelDeposit.merkel_proof)
-  
-  ::protocol::MerkelProofs* temp = merkel_proof_;
-  merkel_proof_ = NULL;
-  return temp;
-}
-inline void MessageChannelDeposit::set_allocated_merkel_proof(::protocol::MerkelProofs* merkel_proof) {
-  delete merkel_proof_;
-  merkel_proof_ = merkel_proof;
-  if (merkel_proof) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.merkel_proof)
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.address)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
