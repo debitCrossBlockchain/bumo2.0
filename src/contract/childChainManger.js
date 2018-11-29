@@ -15,7 +15,7 @@ function findI0(arr, key){
 
     let i = 0;
     while(i < arr.length){
-        if(arr[i][0] === key){
+        if(arr[i] === key){
             break;
         }
         i += 1;
@@ -71,7 +71,7 @@ function payCost(params){
 function transferCoin(dest, amount)
 {
     assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string,' + typeof dest + ',' + typeof amount);
-    if(amount === '0'){ return true; }
+    if(amount === '0'){ return true;}
 
     payCoin(dest, amount);
     log('Pay coin( ' + amount + ') to dest account(' + dest + ') succeed.');
@@ -88,6 +88,17 @@ function checkchildChainValadator(chain_id,validator){
         }
     }
     return false;
+}
+
+function getchildChainValidators(chain_id){
+    let key = 'childChainid_info_' + chain_id;
+    let chaininfo = JSON.parse(storageLoad(key));
+
+    let retinfo = [];
+    if(chaininfo !== false){
+        retinfo = chaininfo.validators;
+    }
+    return retinfo;
 }
 
 function submitChildBlockHeader(params){
@@ -131,8 +142,8 @@ function depositToChildChain(params){
     assert(thisPayCoinAmount<=0, 'BU amount deposited is less than or equal to 0');
     let childChain_id = parseInt(storageLoad('childChainCount'));
     assert((input.chain_id>childChain_id)||(input.chain_id<=0) , 'chain_id is error');
-    let Validator_size =  getchildChainValidators(input.chain_id).validators.length;
-    assert(Validator_size<=0, 'child chain node not exist.');
+    let validators_list = getchildChainValidators(input.chain_id);
+    assert(validators_list.length<=0, 'child chain node not exist.');
     assert(int64Compare(thisPayCoinAmount,input.amount) === 0,'amount is not equels thisPayCoinAmount');
     let assertinfo = JSON.parse(storageLoad('childChainAsset_' + input.chain_id));
     if(assertinfo === false) {
@@ -154,19 +165,19 @@ function depositToChildChain(params){
         tlog('deposit',input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
-        let asset_chanin = JSON.parse(storageLoad('childChainAsset_' + input.chain_id+assertinfo.seq));
+        let asset_chanin_ = JSON.parse(storageLoad('childChainAsset_' + input.chain_id+assertinfo.seq));
         let totleaamount = assertinfo.totalamount + input.amount;
         assertinfo.totalamount = totleaamount;
         assertinfo.seq = assertinfo.seq + 1;
-        asset_chanin.chain_id = input.chain_id;
-        asset_chanin.amount = input.amount;
-        asset_chanin.seq = assertinfo.seq;
-        asset_chanin.block_number = blockNumber;
-        asset_chanin.source_address = sender;
-        asset_chanin.address = input.address;
-        storageStore('childChainAsset_' + assertparam.chain_id , JSON.stringify(assertinfo));
-        storageStore('childChainAsset_' + asset_chanin.chain_id+ asset_chanin.seq, JSON.stringify(asset_chanin));
-        tlog('deposit',input.chain_id,JSON.stringify(asset_chanin)); 
+        asset_chanin_.chain_id = input.chain_id;
+        asset_chanin_.amount = input.amount;
+        asset_chanin_.seq = assertinfo.seq;
+        asset_chanin_.block_number = blockNumber;
+        asset_chanin_.source_address = sender;
+        asset_chanin_.address = input.address;
+        storageStore('childChainAsset_' + assertinfo.chain_id , JSON.stringify(assertinfo));
+        storageStore('childChainAsset_' + asset_chanin_.chain_id+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
+        tlog('deposit',input.chain_id,JSON.stringify(asset_chanin_)); 
     }
 }
 
@@ -175,7 +186,7 @@ function abolishValidator(params){
     let input = params;
     assert(addressCheck(input.address) === true, 'Arg-address is not valid adress.');
     assert(checkchildChainValadator(input.chain_id,sender) === true,'abolishValidator sender is not validator.' );
-    let key = "childChainAbolish_" + input.chain_id + "_" + input.address;
+    let key = 'childChainAbolish_' + input.chain_id + '_' + input.address;
     let abolishinfo = JSON.parse(storageLoad(key));
     if(abolishinfo === false)
     {
@@ -204,17 +215,6 @@ function abolishValidator(params){
     }
 }
 
-function getchildChainValidators(chain_id){
-    let key = 'childChainid_info_' + chain_id;
-    let chaininfo = JSON.parse(storageLoad(key));
-
-    let retinfo = [];
-    if(chaininfo !== false){
-        retinfo = chaininfo.validators;
-    }
-    return retinfo;
-}
-
 function removechildChainValidator(chain_id,address){
     let key = 'childChainid_info_' + chain_id;
     let chaininfo = JSON.parse(storageLoad(key));
@@ -231,7 +231,7 @@ function voteForAbolish(params){
     assert(addressCheck(input.address) === true, 'Arg-address is not valid adress.');
     assert(checkchildChainValadator(input.chain_id,sender) === true,'voteForAbolish sender is not validator.' );
     assert(checkchildChainValadator(input.chain_id,input.address) === true,'voteForAbolish input.address is not validator.' );
-    let key = "childChainAbolish_" + input.chain_id + "_" + input.address;
+    let key = 'childChainAbolish_' + input.chain_id + '_' + input.address;
     let abolishinfo = JSON.parse(storageLoad(key));
     assert(abolishinfo !== false,'abolishinfo is not exist.');
     if(blockTimestamp > abolishinfo.starttime + effectiveVoteInterval)
@@ -248,7 +248,7 @@ function voteForAbolish(params){
         if(input.abolishcout < parseInt(childchain_validators.length * passRate + 0.5))
         {
             storageLoad(key,JSON.stringify(input));
-            return true;4 
+            return true;
         }
         tlog('voteForAbolish',input.chain_id,JSON.stringify(abolishinfo));
         removechildChainValidator(input.chain_id,input.address);
