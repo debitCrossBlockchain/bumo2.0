@@ -41,13 +41,13 @@ namespace bumo {
 			LOG_ERROR("Private key is not valid");
 			return false;
 		}
-		/*source_address_ = private_key.GetEncAddress();
+		source_address_ = private_key.GetEncAddress();
 		AccountFrm::pointer account_ptr;
 		if (!Environment::AccountFromDB(source_address_, account_ptr)) {
 			LOG_ERROR("Address:%s not exsit", source_address_.c_str());
 			return false;
 		}
-		cur_nonce_ = account_ptr->GetAccountNonce() + 1;*/
+		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
 
 		return true;
 	}
@@ -317,13 +317,12 @@ namespace bumo {
 
 		params["chain_id"] = deposit.chain_id();
 		params["deposit_data"] = deposit_data;
+		params["hash"] = HashWrapper::Crypto(deposit.SerializeAsString());
 		input_value["method"] = "deposit";
 		input_value["params"] = params;
 		send_para_list.push_back(input_value.toFastString());
 		std::string hash;
 		SendTransaction(send_para_list, hash);
-		
-
 		
 	}
 

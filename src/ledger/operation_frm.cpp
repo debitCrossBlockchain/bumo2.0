@@ -919,7 +919,8 @@ namespace bumo {
 			bool has_dest_address = !dest_address.empty();
 			bool unimportant_address = (dest_address != General::CONTRACT_VALIDATOR_ADDRESS) && 
 				(dest_address != General::CONTRACT_FEE_ADDRESS) &&
-				(dest_address != General::CONTRACT_CMC_ADDRESS);
+				(dest_address != General::CONTRACT_CMC_ADDRESS) && 
+				(dest_address != General::CONTRACT_CPC_ADDRESS);
 			if (is_create_contract && has_dest_address && unimportant_address) {
 				result.set_code(protocol::ERRCODE_INVALID_ADDRESS);
 				result.set_desc(utils::String::Format("The dest address(%s) must be empty when create contract account", dest_address.c_str()));
