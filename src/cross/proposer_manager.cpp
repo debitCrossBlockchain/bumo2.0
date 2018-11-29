@@ -27,7 +27,6 @@ namespace bumo {
 		last_update_time_ = utils::Timestamp::HighResolution();
 		last_propose_time_ = utils::Timestamp::HighResolution();
 		cur_nonce_ = 0;
-		main_chain_ = General::GetSelfChainId() == General::MAIN_CHAIN_ID;
 	}
 
 	ProposerManager::~ProposerManager(){
@@ -38,6 +37,7 @@ namespace bumo {
 	}
 
 	bool ProposerManager::Initialize(){
+		main_chain_ = General::GetSelfChainId() == General::MAIN_CHAIN_ID;
 		if (!main_chain_){
 			return true;
 		}

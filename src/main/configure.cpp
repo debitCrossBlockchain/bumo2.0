@@ -245,6 +245,7 @@ namespace bumo {
 		genesis_configure_.Load(values["genesis"]);
 		wsserver_configure_.Load(values["wsserver"]);
 		monitor_configure_.Load(values["monitor"]);
+		bumo::General::SetSelfChainId(genesis_configure_.chain_id_);
 		return true;
 	}
 }
