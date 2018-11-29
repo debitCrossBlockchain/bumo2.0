@@ -10,6 +10,7 @@ const validatorSetSize       = 100;
 //define vote passrate
 const passRate               = 0.7;
 
+
 function findI0(arr, key){
     assert((typeof arr === 'object') && (typeof key === 'string'), 'Args type error. arg-arr must be an object, and arg-key must be a string.');
 
@@ -139,11 +140,11 @@ function submitChildBlockHeader(params){
 function depositToChildChain(params){
     log('depositToChildChain');
     let input = params;
-    assert(thisPayCoinAmount<=0, 'BU amount deposited is less than or equal to 0');
+    assert(thisPayCoinAmount>0, 'BU amount deposited is less than or equal to 0');
     let childChain_id = parseInt(storageLoad('childChainCount'));
-    assert((input.chain_id>childChain_id)||(input.chain_id<=0) , 'chain_id is error');
+    assert(!((input.chain_id>childChain_id)||(input.chain_id<=0)) , 'chain_id is error');
     let validators_list = getchildChainValidators(input.chain_id);
-    assert(validators_list.length<=0, 'child chain node not exist.');
+    assert(validators_list.length>0, 'child chain node not exist.');
     assert(int64Compare(thisPayCoinAmount,input.amount) === 0,'amount is not equels thisPayCoinAmount');
     let assertinfo = JSON.parse(storageLoad('childChainAsset_' + input.chain_id));
     if(assertinfo === false) {
