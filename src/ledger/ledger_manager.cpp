@@ -109,7 +109,6 @@ namespace bumo {
 			return false;
 		}
 
-		bumo::General::SetSelfChainId(lclheader.chain_id());
 	
 		LOG_INFO("Gas price :" FMT_I64 " Base reserve:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
 
