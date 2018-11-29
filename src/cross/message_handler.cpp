@@ -42,12 +42,6 @@ namespace bumo {
 			return false;
 		}
 		source_address_ = private_key.GetEncAddress();
-		AccountFrm::pointer account_ptr;
-		if (!Environment::AccountFromDB(source_address_, account_ptr)) {
-			LOG_ERROR("Address:%s not exsit", source_address_.c_str());
-			return false;
-		}
-		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
 
 		return true;
 	}
@@ -299,6 +293,13 @@ namespace bumo {
 	}
 
 	void MessageHandler::OnHandleDeposit(const protocol::MessageChannel &message_channel){
+		AccountFrm::pointer account_ptr;
+		if (!Environment::AccountFromDB(source_address_, account_ptr)) {
+			LOG_ERROR("Address:%s not exsit", source_address_.c_str());
+			return ;
+		}
+		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
+
 		protocol::MessageChannelDeposit deposit;
 		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc = "";
