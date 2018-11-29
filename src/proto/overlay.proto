@@ -25,15 +25,12 @@ message Hello {
     int64 listening_port = 5;
     string node_address = 6;
     string node_rand = 7;
-    int64 chain_id = 8;
 }
 
 message HelloResponse {
 	 ERRORCODE error_code = 1;
 	 string error_desc = 2;
 }
-
-
 
 //for peers message
 message Peer {
@@ -55,6 +52,7 @@ message GetLedgers
 	int64 begin = 1;
 	int64 end   = 2;
 	int64 timestamp  = 3;
+	int64 chain_id = 4;
 }
 
 
@@ -73,6 +71,7 @@ message Ledgers
 	SyncCode sync_code = 2;
 	int64    max_seq = 3;
 	bytes   proof = 4;
+	int64   chain_id = 5;
 }
 
 //for dont have

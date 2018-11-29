@@ -201,12 +201,12 @@ namespace bumo {
 	PublicKey::~PublicKey() {}
 
 	PublicKey::PublicKey(const std::string &encode_pub_key) {
-		do {
-			PrivateKeyPrefix prefix;
-			if (GetPublicKeyElement(encode_pub_key, prefix, type_, raw_pub_key_)){
-				valid_ = (prefix == PUBLICKEY_PREFIX);
-			}
-		} while (false);
+		valid_ = false;
+		type_ = SIGNTYPE_ED25519;
+		PrivateKeyPrefix prefix;
+		if (GetPublicKeyElement(encode_pub_key, prefix, type_, raw_pub_key_)){
+			valid_ = (prefix == PUBLICKEY_PREFIX);
+		}
 	}
 
 	void PublicKey::Init(std::string rawpkey) {

@@ -89,13 +89,11 @@ namespace bumo{
 		return true;
 	}
 
-	bool Environment::GetFromDB(const std::string &address, AccountFrm::pointer &account_ptr)
-	{
+	bool Environment::GetFromDB(const std::string &address, AccountFrm::pointer &account_ptr){
 		return AccountFromDB(address, account_ptr);
 	}
 
 	bool Environment::AccountFromDB(const std::string &address, AccountFrm::pointer &account_ptr){
-
 		auto db = Storage::Instance().account_db();
 		std::string index = DecodeAddress(address);
 		std::string buff;
@@ -115,8 +113,7 @@ namespace bumo{
 
 	}
 
-	std::shared_ptr<Environment> Environment::NewStackFrameEnv()
-	{
+	std::shared_ptr<Environment> Environment::NewStackFrameEnv(){
 		mapKV& data	= GetActionBuf();
 		settingKV& settings = settings_.GetActionBuf();
 		std::shared_ptr<Environment> next = std::make_shared<Environment>(&data, &settings);

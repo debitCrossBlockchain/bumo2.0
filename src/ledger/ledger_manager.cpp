@@ -77,12 +77,6 @@ namespace bumo {
 			if (!last_closed_ledger_->LoadFromDb(seq_rational)) {
 				return false;
 			}
-
-			if (last_closed_ledger_->GetProtoHeader().chain_id() != General::GetSelfChainId()){
-				LOG_ERROR("The config chain id (" FMT_I64 ") != ledger chain id (" FMT_I64 ")", 
-					General::GetSelfChainId(), last_closed_ledger_->GetProtoHeader().chain_id());
-				return false;
-			}
 		}
 		else {
 			if (!CreateGenesisAccount()) {
@@ -114,6 +108,8 @@ namespace bumo {
 			LOG_ERROR("Failed to get config fee!");
 			return false;
 		}
+
+		bumo::General::SetSelfChainId(lclheader.chain_id());
 	
 		LOG_INFO("Gas price :" FMT_I64 " Base reserve:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
 
@@ -193,6 +189,7 @@ namespace bumo {
 			gl.set_begin(next_seq);
 			gl.set_end(next_seq);
 			gl.set_timestamp(current_time);
+			gl.set_chain_id(General::GetSelfChainId());
 
 			for (std::set<int64_t>::iterator it = active_peers.begin(); it != active_peers.end(); it++) {
 				int64_t pid = *it;
@@ -297,7 +294,7 @@ namespace bumo {
 		header->set_seq(1);
 		header->set_close_time(0);
 		header->set_consensus_value_hash(HashWrapper::Crypto(request.SerializeAsString()));
-		header->set_chain_id(General::GetSelfChainId());
+		header->set_chain_id(Configure::Instance().genesis_configure_.chain_id_);
 
 		header->set_version(1000);
 		header->set_tx_count(0);
@@ -406,7 +403,7 @@ namespace bumo {
 			header->set_seq(request.ledger_seq());
 			header->set_close_time(request.close_time());
 			header->set_consensus_value_hash(consensus_value_hash);
-			header->set_chain_id(General::GetSelfChainId());
+			header->set_chain_id(last_closed_ledger_hdr.chain_id());
 			header->set_version(last_closed_ledger_hdr.version());
 			header->set_tx_count(last_closed_ledger_hdr.tx_count());
 			header->set_fees_hash(last_closed_ledger_hdr.fees_hash());
@@ -737,8 +734,15 @@ namespace bumo {
 
 
 	void LedgerManager::OnRequestLedgers(const protocol::GetLedgers &message, int64_t peer_id) {
+		if (message.chain_id() != General::GetSelfChainId()){
+			LOG_TRACE("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
+				General::GetSelfChainId(), message.chain_id());
+			return;
+		}
+		
 		bool ret = true;
 		protocol::Ledgers ledgers;
+		ledgers.set_chain_id(General::GetSelfChainId());
 
 		do {
 			utils::MutexGuard guard(gmutex_);
@@ -794,7 +798,12 @@ namespace bumo {
 	}
 
 	void LedgerManager::OnReceiveLedgers(const protocol::Ledgers &ledgers, int64_t peer_id) {
-
+		if (ledgers.chain_id() != General::GetSelfChainId()){
+			LOG_TRACE("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
+				General::GetSelfChainId(), ledgers.chain_id());
+			return;
+		}
+		
 		bool valid = false;
 		int64_t next = 0;
 
@@ -859,6 +868,7 @@ namespace bumo {
 				gl.set_begin(next);
 				gl.set_end(MIN(ledgers.max_seq(), next + 4));
 				gl.set_timestamp(current_time);
+				gl.set_chain_id(General::GetSelfChainId());
 				RequestConsensusValues(peer_id, gl, current_time);
 			}
 

@@ -203,15 +203,6 @@ namespace bumo {
 		std::string address = tx->GetSourceAddress();
 
 		do {
-			if (tx->GetTransactionEnv().transaction().chain_id() != General::GetSelfChainId()){
-				std::string error_msg = utils::String::Format("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
-					General::GetSelfChainId(), tx->GetTransactionEnv().transaction().chain_id());
-				err.set_code(protocol::ERRCODE_INVALID_PARAMETER);
-				err.set_desc(error_msg);
-				LOG_ERROR("%s", error_msg.c_str());
-				break;
-			}
-
 			if (tx_pool_->IsExist(tx->GetContentHash())){
 				//Break when a transaction is replayed;
 				err.set_code(protocol::ERRCODE_ALREADY_EXIST);

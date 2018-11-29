@@ -346,12 +346,6 @@ class Hello : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::std::string* release_node_rand();
   void set_allocated_node_rand(::std::string* node_rand);
 
-  // optional int64 chain_id = 8;
-  void clear_chain_id();
-  static const int kChainIdFieldNumber = 8;
-  ::google::protobuf::int64 chain_id() const;
-  void set_chain_id(::google::protobuf::int64 value);
-
   // @@protoc_insertion_point(class_scope:protocol.Hello)
  private:
 
@@ -364,7 +358,6 @@ class Hello : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::int64 listening_port_;
   ::google::protobuf::internal::ArenaStringPtr node_address_;
   ::google::protobuf::internal::ArenaStringPtr node_rand_;
-  ::google::protobuf::int64 chain_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
@@ -757,6 +750,12 @@ class GetLedgers : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::google::protobuf::int64 timestamp() const;
   void set_timestamp(::google::protobuf::int64 value);
 
+  // optional int64 chain_id = 4;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 4;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.GetLedgers)
  private:
 
@@ -765,6 +764,7 @@ class GetLedgers : public ::google::protobuf::Message /* @@protoc_insertion_poin
   ::google::protobuf::int64 begin_;
   ::google::protobuf::int64 end_;
   ::google::protobuf::int64 timestamp_;
+  ::google::protobuf::int64 chain_id_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
@@ -904,6 +904,12 @@ class Ledgers : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::std::string* release_proof();
   void set_allocated_proof(::std::string* proof);
 
+  // optional int64 chain_id = 5;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 5;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
   // @@protoc_insertion_point(class_scope:protocol.Ledgers)
  private:
 
@@ -912,6 +918,7 @@ class Ledgers : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::google::protobuf::RepeatedPtrField< ::protocol::ConsensusValue > values_;
   ::google::protobuf::int64 max_seq_;
   ::google::protobuf::internal::ArenaStringPtr proof_;
+  ::google::protobuf::int64 chain_id_;
   int sync_code_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
@@ -3369,20 +3376,6 @@ inline void Hello::set_allocated_node_rand(::std::string* node_rand) {
   // @@protoc_insertion_point(field_set_allocated:protocol.Hello.node_rand)
 }
 
-// optional int64 chain_id = 8;
-inline void Hello::clear_chain_id() {
-  chain_id_ = GOOGLE_LONGLONG(0);
-}
-inline ::google::protobuf::int64 Hello::chain_id() const {
-  // @@protoc_insertion_point(field_get:protocol.Hello.chain_id)
-  return chain_id_;
-}
-inline void Hello::set_chain_id(::google::protobuf::int64 value) {
-  
-  chain_id_ = value;
-  // @@protoc_insertion_point(field_set:protocol.Hello.chain_id)
-}
-
 // -------------------------------------------------------------------
 
 // HelloResponse
@@ -3643,6 +3636,20 @@ inline void GetLedgers::set_timestamp(::google::protobuf::int64 value) {
   // @@protoc_insertion_point(field_set:protocol.GetLedgers.timestamp)
 }
 
+// optional int64 chain_id = 4;
+inline void GetLedgers::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 GetLedgers::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.GetLedgers.chain_id)
+  return chain_id_;
+}
+inline void GetLedgers::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.GetLedgers.chain_id)
+}
+
 // -------------------------------------------------------------------
 
 // Ledgers
@@ -3747,6 +3754,20 @@ inline void Ledgers::set_allocated_proof(::std::string* proof) {
   }
   proof_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), proof);
   // @@protoc_insertion_point(field_set_allocated:protocol.Ledgers.proof)
+}
+
+// optional int64 chain_id = 5;
+inline void Ledgers::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 Ledgers::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.Ledgers.chain_id)
+  return chain_id_;
+}
+inline void Ledgers::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.Ledgers.chain_id)
 }
 
 // -------------------------------------------------------------------

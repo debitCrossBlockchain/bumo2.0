@@ -377,6 +377,12 @@ namespace bumo {
 		const protocol::Pbft &pbft = env.pbft();
 		const protocol::Signature &sig = env.signature();
 
+		if (pbft.chain_id() != General::GetSelfChainId()){
+			LOG_TRACE("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
+				General::GetSelfChainId(), pbft.chain_id());
+			return false;
+		}
+
 		//Get the node address
 		PublicKey public_key(sig.public_key());
 
@@ -1773,12 +1779,6 @@ namespace bumo {
 					Proto2Json(pbft_evidence).toFastString().c_str(),
 					total_size, qsize,
 					counter);
-				return false;
-			}
-
-			if (pbft.chain_id() != General::GetSelfChainId()){
-				LOG_ERROR("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
-					General::GetSelfChainId(), pbft.chain_id());
 				return false;
 			}
 

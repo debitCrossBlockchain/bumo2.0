@@ -45,7 +45,6 @@ namespace bumo {
 		int64_t peer_overlay_version_;
 		int64_t peer_listen_port_;
 		std::string peer_node_address_;
-		int64_t chain_id_;
 	public:
 		Peer(server *server_h, client *client_h, tls_server *tls_server_h, tls_client *tls_client_h, connection_hdl con, const std::string &uri, int64_t id);
 		virtual ~Peer();
@@ -55,7 +54,6 @@ namespace bumo {
 		std::string GetPeerNodeAddress() const;
 		int64_t GetActiveTime() const;
 		int64_t GetDelay() const;
-		int64_t GetChainId() const;
 
 		bool SendPeers(const protocol::Peers &db_peers, std::error_code &ec);
 		void SetPeerInfo(const protocol::Hello &hello);
