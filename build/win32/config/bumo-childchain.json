@@ -16,7 +16,7 @@
         }
     },
     "webserver": {
-        "listen_addresses": "0.0.0.0:36002",
+        "listen_addresses": "0.0.0.0:36102",
 		"index_name": "",
 		"directory": "web/",
 		"ssl_enable": false,
@@ -26,10 +26,10 @@
     },
     "messagechannel": {
         "target_message_channel": "127.0.0.1:36004",
-        "listen_address": "0.0.0.0:36004"
+        "listen_address": "0.0.0.0:36104"
     },
     "wsserver": {
-        "listen_address": "0.0.0.0:36003"
+        "listen_address": "0.0.0.0:36103"
     },
     "ledger": {
 	"validation_address": "buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY",
@@ -42,14 +42,7 @@
 		}
     },
     "genesis": {
-        "account": "buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF",
-	"slogan" : "a new era of value",
-		"chain_id": 0,
-        "fees": {
-            "base_reserve": 10000000,
-            "gas_price": 1000
-        },
-        "validators": ["buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY"]
+		"chain_id": 1
     },
     "logger": {
         "path": "log/bumo.log",
