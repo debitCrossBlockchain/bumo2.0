@@ -10,7 +10,6 @@ const validatorSetSize       = 100;
 //define vote passrate
 const passRate               = 0.7;
 
-
 function findI0(arr, key){
     assert((typeof arr === 'object') && (typeof key === 'string'), 'Args type error. arg-arr must be an object, and arg-key must be a string.');
 
