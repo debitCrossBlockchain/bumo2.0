@@ -24,9 +24,7 @@ namespace bumo {
 	ProposerManager::ProposerManager() :
 		enabled_(false),
 		thread_ptr_(NULL){
-		last_update_time_ = utils::Timestamp::HighResolution();
 		last_propose_time_ = utils::Timestamp::HighResolution();
-		cur_nonce_ = 0;
 	}
 
 	ProposerManager::~ProposerManager(){
@@ -79,17 +77,13 @@ namespace bumo {
 	void ProposerManager::Run(utils::Thread *thread) {
 		while (enabled_){
 			int64_t current_time = utils::Timestamp::HighResolution();
+			if ((current_time - last_propose_time_) < PROPOSER_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				continue;
+			}
 
-			if ((current_time - last_update_time_) > 5 * utils::MICRO_UNITS_PER_SEC){
-				UpdateLatestStatus();
-				last_update_time_ = current_time;
-			}
-			
-			
-			if ((current_time - last_propose_time_) > 15 * utils::MICRO_UNITS_PER_SEC){
-				ProposeBlocks();
-				last_propose_time_ = current_time;
-			}
+			UpdateLatestStatus();
+			ProposeBlocks();
+			last_propose_time_ = current_time;
 		}
 	}
 
@@ -128,10 +122,7 @@ namespace bumo {
 		}
 	}
 
-
-	
-
-	void ProposerManager::UpdateTransactionErrorInfo(const int64_t &error_code, const std::string &error_desc, const std::string& hash){
+	void ProposerManager::UpdateTransactionResult(const int64_t &error_code, const std::string &error_desc, const std::string& hash){
 		if (!enabled_){
 			return;
 		}
@@ -144,19 +135,19 @@ namespace bumo {
 				continue;
 			}
 
-			utils::StringList::const_iterator iter = std::find(child_chain.error_info_list.begin(), child_chain.error_info_list.end(), hash);
-			if (iter == child_chain.error_info_list.end()){
+			utils::StringList::const_iterator iter = std::find(child_chain.tx_history.begin(), child_chain.tx_history.end(), hash);
+			if (iter == child_chain.tx_history.end()){
 				continue;
 			}
 
 			if (error_code == protocol::ERRCODE_SUCCESS){
 				child_chain.error_tx_times = 0;
-				child_chain.error_info_list.clear();
+				child_chain.tx_history.clear();
+				continue;
 			}
-			else{
-				++child_chain.error_tx_times;
-				LOG_ERROR("Failed to Proposer Transaction,chain_id is(" FMT_I64 "),tx hash is %s,err_code is (" FMT_I64 "),err_desc is %s", i, hash.c_str(), error_code, error_desc.c_str());
-			}
+			++child_chain.error_tx_times;
+			LOG_ERROR("Failed to Proposer Transaction,chain_id is(" FMT_I64 "),tx hash is %s,err_code is (" FMT_I64 "),err_desc is %s", 
+				i, hash.c_str(), error_code, error_desc.c_str());
 		}
 	}
 
@@ -187,8 +178,6 @@ namespace bumo {
 		}
 
 		int32_t size = object["validators"].size();
-
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
 		for (int32_t i = 0; i < size; i++){
 			std::string address = object["validators"][i].asString().c_str();
 			latest_validates.push_back(address);
@@ -265,14 +254,6 @@ namespace bumo {
 
 	void ProposerManager::ProposeBlocks(){
 		utils::MutexGuard guard(child_chain_map_lock_);
-
-		AccountFrm::pointer account_ptr;
-		if (!Environment::AccountFromDB(source_address_, account_ptr)) {
-			LOG_ERROR("Address:%s not exsit", source_address_.c_str());
-			return;
-		}
-		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
-
 		for (int64_t i = 0; i < MAX_CHAIN_ID; i++){
 			ChildChain &child_chain = child_chain_maps_[i];
 			//No data, ignore it
@@ -289,7 +270,7 @@ namespace bumo {
 			//Submit the latest five blocks
 			std::vector<std::string> send_para_list;
 			const LedgerMap &ledger_map = child_chain.ledger_map;
-			for (int j = 1; j <= 5; j++){
+			for (int j = 1; j <= MAX_PACK_TX_COUNT; j++){
 				LedgerMap::const_iterator itr = ledger_map.find(child_chain.cmc_latest_seq + j);
 				if (itr == ledger_map.end()){
 					break;
@@ -309,9 +290,8 @@ namespace bumo {
 				LOG_ERROR("send_para_list is empty, chain id:%d", i);
 				return;
 			}
-			std::string hash;
-			SendTransaction(send_para_list, hash);
-			child_chain.error_info_list.push_back(hash);
+			TransTask trans_task(send_para_list, 0, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(i));
+			TransactionSender::Instance().SendTransaction(this, trans_task);
 		}
 	}
 
@@ -340,40 +320,25 @@ namespace bumo {
 		child_chain.chain_id = ledger_header.chain_id();
 	}
 
-	void ProposerManager::SendTransaction(const std::vector<std::string> &paras, std::string& hash){
-		int32_t err_code = 0;
-
-		for (int i = 0; i <= MAX_SEND_TRANSACTION_TIMES; i++){
-			std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
-			TransactionFrm::pointer trans = CrossUtils::BuildTransaction(private_key, General::CONTRACT_CMC_ADDRESS, paras, cur_nonce_);
-			if (nullptr == trans){
-				LOG_ERROR("Trans pointer is null");
-				continue;
-			}
-			hash = utils::String::BinToHexString(trans->GetContentHash().c_str());
-			err_code = CrossUtils::SendTransaction(trans);
-			switch (err_code)
-			{
-				case protocol::ERRCODE_SUCCESS:
-				case  protocol::ERRCODE_ALREADY_EXIST:{
-					cur_nonce_++;
-					return;
-				}
-				case protocol::ERRCODE_BAD_SEQUENCE:{
-					cur_nonce_++;
-					continue;
-				}
-				default:{
-					LOG_ERROR("Send transaction erro code:%d", err_code);
-					continue;
-				}
-			}
-
-			utils::Sleep(10);
+	void ProposerManager::HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result){
+		if (!task_result.result_){
+			BreakProposer(task_result.desc_);
+			return;
 		}
 
-		BreakProposer("SendTransaction than 10 times...");
-		return;
+		if (!utils::String::IsNumber(task_task.user_defined_)){
+			BreakProposer("It's not a number");
+			return;
+		}
+
+		int64_t chain_id = utils::String::Stoi64(task_task.user_defined_);
+		if (chain_id < 0 || chain_id >= MAX_CHAIN_ID){
+			BreakProposer(utils::String::Format("chain id :(" FMT_I64 ")", chain_id));
+			return;
+		}
+
+		utils::MutexGuard guard(child_chain_map_lock_);
+		child_chain_maps_[chain_id].tx_history.push_back(task_result.hash_);
 	}
 
 	void ProposerManager::BreakProposer(const std::string &error_des){
