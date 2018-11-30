@@ -21,6 +21,7 @@ namespace bumo {
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST] = std::bind(&MessageHandler::OnHandleChildGenesesRequest, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE] = std::bind(&MessageHandler::OnHandleChildGenesesResponse, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_HEAD] = std::bind(&MessageHandler::OnHandleQueryHead, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT] = std::bind(&MessageHandler::OnHandleQueryDeposit, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_DEPOSIT] = std::bind(&MessageHandler::OnHandleDeposit, this, std::placeholders::_1);
 
 		MessageChannel &message_channel = MessageChannel::Instance();
@@ -28,6 +29,7 @@ namespace bumo {
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_HEAD);
+		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_DEPOSIT);
 
 		if (!CheckForChildBlock()){
@@ -290,6 +292,58 @@ namespace bumo {
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		msg_channel.set_msg_data(ledger_header.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+	}
+
+	void MessageHandler::OnHandleQueryDeposit(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelQueryDeposit query_deposit;
+		if (General::GetSelfChainId()!=General::MAIN_CHAIN_ID){
+			return;
+		}
+
+		if (!query_deposit.ParseFromString(message_channel.msg_data())){
+			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("Parse MessageChannelQueryDeposit error, err_code is (" FMT_I64 ")", error_code);
+			return;
+		}
+
+		Json::Value params;
+		Json::Value input_value;
+		if (query_deposit.seq() == -1){
+			params["chain_id"] = query_deposit.chain_id();
+			input_value["method"] = "queryChildfreshDeposit";
+		}
+		else{
+			params["chain_id"] = query_deposit.chain_id();
+			params["seq"] = query_deposit.seq();
+			input_value["method"] = "queryChildDeposit";
+		}
+
+		input_value["params"] = params;
+
+		Json::Value result_list;
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result_list);
+		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		Json::Value object;
+		object.fromString(result.c_str());
+		if (error_code != protocol::ERRCODE_SUCCESS){
+			LOG_ERROR("Failed to query child deposit .%d", error_code);
+			return;
+		}
+
+		protocol::MessageChannelDeposit deposit;
+		protocol::MessageChannel msg_channel;
+		deposit.set_chain_id(object["chain_id"].asInt64());
+		deposit.set_amount(object["amount"].asInt64());
+		deposit.set_seq(object["seq"].asInt64());
+		deposit.set_block_number(object["block_number"].asInt64());
+		deposit.set_source_address(object["source_address"].asString());
+		deposit.set_address(object["address"].asString());
+
+		msg_channel.set_target_chain_id(query_deposit.chain_id());
+		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT);
+		msg_channel.set_msg_data(deposit.SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+
 	}
 
 	void MessageHandler::OnHandleDeposit(const protocol::MessageChannel &message_channel){
