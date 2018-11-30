@@ -162,7 +162,7 @@ function depositToChildChain(params){
         asset_chanin.address = input.address;
 
         storageStore('childChainAsset_' + assertparam.chain_id , JSON.stringify(assertparam));
-        storageStore('childChainAsset_' + asset_chanin.chain_id+ asset_chanin.seq, JSON.stringify(asset_chanin));
+        storageStore('childChainAsset_' + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
         tlog('deposit',input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
@@ -177,7 +177,7 @@ function depositToChildChain(params){
         asset_chanin_.source_address = sender;
         asset_chanin_.address = input.address;
         storageStore('childChainAsset_' + assertinfo.chain_id , JSON.stringify(assertinfo));
-        storageStore('childChainAsset_' + asset_chanin_.chain_id+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
+        storageStore('childChainAsset_' + asset_chanin_.chain_id + '_'+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
         tlog('deposit',input.chain_id,JSON.stringify(asset_chanin_)); 
     }
 }
@@ -292,6 +292,24 @@ function queryChildBlockHeader(params){
     return retinfo;
 }
 
+function queryChildfreshDeposit(params){
+    log('queryChildfreshDeposit');
+    let input = params;
+    let info = JSON.parse(storageLoad('childChainAsset_' + params.chain_id));
+    assert(info !== false, 'queryChildfreshDeposit childChainAsset_' + input.chain_id + ' failed.');
+    let retinfo = storageLoad('childChainAsset_' + info.chain_id + '_' + info.seq);
+    assert(info !== false, 'queryChildfreshDeposit childChainAsset_' + input.chain_id + '_' + info.seq + ' failed.');
+    return retinfo;
+}
+
+function queryChildDeposit(params){
+    log('queryChildDeposit');
+    let input = params;
+    let retinfo = storageLoad('childChainAsset_' + input.chain_id + '_' + input.seq);
+    assert(info !== false, 'queryChildfreshDeposit childChainAsset_' + input.chain_id + '_' + input.seq + ' failed.');
+    return retinfo;
+}
+
 function queryChildChainInfo(params){
     log('queryChildChainInfo');
     let key = 'childChainid_' + params.chain_id;
@@ -362,6 +380,12 @@ function query(inputStr){
     }
     else if(input.method === 'queryChildChainValidators'){
         result = queryChildChainValidators(input.params);
+    }
+    else if(input.method === 'queryChildfreshDeposit'){
+        result = queryChildfreshDeposit(input.params);
+    }
+    else if(input.method === 'queryChildDeposit'){
+        result = queryChildDeposit(input.params);
     }
     else{
         throw '<Query interface passes an invalid operation type>';
