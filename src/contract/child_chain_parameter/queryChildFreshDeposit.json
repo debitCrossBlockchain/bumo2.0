@@ -1,7 +1,7 @@
 {
     "contract_address": "buQjjhxJhVDByQLSjQi4BEpDj9xTEHZbhbGe",
     "code": "",
-    "input":"{\"method\":\"queryChildfreshDeposit\",\"params\":{\"chain_id\":1}}",
+    "input":"{\"method\":\"queryChildFreshDeposit\",\"params\":{\"chain_id\":1}}",
     "contract_balance": "10000000000",
     "fee_limit": 10000000000,
     "gas_price": 1000,
