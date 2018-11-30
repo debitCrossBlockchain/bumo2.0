@@ -63,6 +63,7 @@ class MessageChannelDeposit;
 class MessageChannelHello;
 class MessageChannelHelloResponse;
 class MessageChannelProposer;
+class MessageChannelQueryDeposit;
 class MessageChannelQueryHead;
 class MessageChannelResponse;
 class Peer;
@@ -209,12 +210,13 @@ enum MESSAGE_CHANNEL_TYPE {
   MESSAGE_CHANNEL_CHILD_GENESES_REQUEST = 10,
   MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE = 11,
   MESSAGE_CHANNEL_QUERY_HEAD = 12,
+  MESSAGE_CHANNEL_QUERY_DEPOSIT = 13,
   MESSAGE_CHANNEL_TYPE_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   MESSAGE_CHANNEL_TYPE_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool MESSAGE_CHANNEL_TYPE_IsValid(int value);
 const MESSAGE_CHANNEL_TYPE MESSAGE_CHANNEL_TYPE_MIN = MESSAGE_CHANNEL_TYPE_NONE;
-const MESSAGE_CHANNEL_TYPE MESSAGE_CHANNEL_TYPE_MAX = MESSAGE_CHANNEL_QUERY_HEAD;
+const MESSAGE_CHANNEL_TYPE MESSAGE_CHANNEL_TYPE_MAX = MESSAGE_CHANNEL_QUERY_DEPOSIT;
 const int MESSAGE_CHANNEL_TYPE_ARRAYSIZE = MESSAGE_CHANNEL_TYPE_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_TYPE_descriptor();
@@ -1916,6 +1918,95 @@ class ChainTxStatus : public ::google::protobuf::Message /* @@protoc_insertion_p
 
   void InitAsDefaultInstance();
   static ChainTxStatus* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class MessageChannelQueryDeposit : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelQueryDeposit) */ {
+ public:
+  MessageChannelQueryDeposit();
+  virtual ~MessageChannelQueryDeposit();
+
+  MessageChannelQueryDeposit(const MessageChannelQueryDeposit& from);
+
+  inline MessageChannelQueryDeposit& operator=(const MessageChannelQueryDeposit& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelQueryDeposit& default_instance();
+
+  void Swap(MessageChannelQueryDeposit* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelQueryDeposit* New() const { return New(NULL); }
+
+  MessageChannelQueryDeposit* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelQueryDeposit& from);
+  void MergeFrom(const MessageChannelQueryDeposit& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelQueryDeposit* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int64 chain_id = 1;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 1;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
+  // optional int64 seq = 2;
+  void clear_seq();
+  static const int kSeqFieldNumber = 2;
+  ::google::protobuf::int64 seq() const;
+  void set_seq(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelQueryDeposit)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int64 chain_id_;
+  ::google::protobuf::int64 seq_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelQueryDeposit* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -4657,6 +4748,38 @@ inline void ChainTxStatus::set_timestamp(::google::protobuf::int64 value) {
 
 // -------------------------------------------------------------------
 
+// MessageChannelQueryDeposit
+
+// optional int64 chain_id = 1;
+inline void MessageChannelQueryDeposit::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelQueryDeposit::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelQueryDeposit.chain_id)
+  return chain_id_;
+}
+inline void MessageChannelQueryDeposit::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelQueryDeposit.chain_id)
+}
+
+// optional int64 seq = 2;
+inline void MessageChannelQueryDeposit::clear_seq() {
+  seq_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelQueryDeposit::seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelQueryDeposit.seq)
+  return seq_;
+}
+inline void MessageChannelQueryDeposit::set_seq(::google::protobuf::int64 value) {
+  
+  seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelQueryDeposit.seq)
+}
+
+// -------------------------------------------------------------------
+
 // MessageChannelHello
 
 // optional int64 network_id = 1;
@@ -5823,6 +5946,8 @@ inline void MessageChannelDeposit::set_allocated_address(::std::string* address)
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
