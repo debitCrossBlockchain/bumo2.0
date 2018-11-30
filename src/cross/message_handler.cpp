@@ -310,7 +310,7 @@ namespace bumo {
 		Json::Value input_value;
 		if (query_deposit.seq() == -1){
 			params["chain_id"] = query_deposit.chain_id();
-			input_value["method"] = "queryChildfreshDeposit";
+			input_value["method"] = "queryChildFreshDeposit";
 		}
 		else{
 			params["chain_id"] = query_deposit.chain_id();
