@@ -291,13 +291,13 @@ function queryChildBlockHeader(params){
     return retinfo;
 }
 
-function queryChildfreshDeposit(params){
-    log('queryChildfreshDeposit');
+function queryChildFreshDeposit(params){
+    log('queryChildFreshDeposit');
     let input = params;
     let info = JSON.parse(storageLoad('childChainAsset_' + params.chain_id));
-    assert(info !== false, 'queryChildfreshDeposit childChainAsset_' + input.chain_id + ' failed.');
+    assert(info !== false, 'queryChildFreshDeposit childChainAsset_' + input.chain_id + ' failed.');
     let retinfo = JSON.parse(storageLoad('childChainAsset_' + info.chain_id + '_' + info.seq));
-    assert(info !== false, 'queryChildfreshDeposit childChainAsset_' + input.chain_id + '_' + info.seq + ' failed.');
+    assert(info !== false, 'queryChildFreshDeposit childChainAsset_' + input.chain_id + '_' + info.seq + ' failed.');
     return retinfo;
 }
 
@@ -305,7 +305,7 @@ function queryChildDeposit(params){
     log('queryChildDeposit');
     let input = params;
     let retinfo = JSON.parse(storageLoad('childChainAsset_' + input.chain_id + '_' + input.seq));
-    assert(retinfo !== false, 'queryChildfreshDeposit childChainAsset_' + input.chain_id + '_' + input.seq + ' failed.');
+    assert(retinfo !== false, 'queryChildDeposit childChainAsset_' + input.chain_id + '_' + input.seq + ' failed.');
     return retinfo;
 }
 
@@ -380,7 +380,7 @@ function query(inputStr){
     else if(input.method === 'queryChildChainValidators'){
         result = queryChildChainValidators(input.params);
     }
-    else if(input.method === 'queryChildfreshDeposit'){
+    else if(input.method === 'queryChildFreshDeposit'){
         result = queryChildfreshDeposit(input.params);
     }
     else if(input.method === 'queryChildDeposit'){
