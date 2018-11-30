@@ -30,6 +30,7 @@
 #include <monitor/monitor_manager.h>
 #include <cross/message_channel_manager.h>
 #include<cross/proposer_manager.h>
+#include <cross/cross_utils.h>
 #include <cross/message_handler.h>
 #include <cross/block_listen_manager.h>
 #include "configure.h"
@@ -76,6 +77,7 @@ int main(int argc, char *argv[]){
 	bumo::SlowTimer::InitInstance();
 	utils::Logger::InitInstance();
 	bumo::MessageChannel::InitInstance();
+	bumo::TransactionSender::InitInstance();
 	bumo::ProposerManager::InitInstance();
 	bumo::MessageHandler::InitInstance();
 	bumo::BlockListenManager::InitInstance();
@@ -204,6 +206,14 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::MessageChannel::Exit, &message_channel));
 		LOG_INFO("Initialized message channel successfully");
 
+		bumo::TransactionSender &trans_sender = bumo::TransactionSender::Instance();
+		if (!trans_sender.Initialize(bumo::Configure::Instance().ledger_configure_.validation_privatekey_)){
+			LOG_ERROR("Failed to trans sender");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::TransactionSender::Exit, &trans_sender));
+		LOG_INFO("Initialized trans sender successfully");
+
 		bumo::ProposerManager &proposer = bumo::ProposerManager::Instance();
 		if (!proposer.Initialize()){
 			LOG_ERROR("Failed to proposer");
@@ -322,6 +332,7 @@ int main(int argc, char *argv[]){
 	bumo::MonitorManager::ExitInstance();
 	bumo::MessageHandler::ExitInstance();
 	bumo::MessageChannel::ExitInstance();
+	bumo::TransactionSender::ExitInstance();
 	bumo::ProposerManager::ExitInstance();
 	bumo::BlockListenManager::ExitInstance();
 	bumo::Configure::ExitInstance();
