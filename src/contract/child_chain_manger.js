@@ -306,7 +306,7 @@ function queryChildDeposit(params){
     log('queryChildDeposit');
     let input = params;
     let retinfo = storageLoad('childChainAsset_' + input.chain_id + '_' + input.seq);
-    assert(info !== false, 'queryChildfreshDeposit childChainAsset_' + input.chain_id + '_' + input.seq + ' failed.');
+    assert(retinfo !== false, 'queryChildfreshDeposit childChainAsset_' + input.chain_id + '_' + input.seq + ' failed.');
     return retinfo;
 }
 
