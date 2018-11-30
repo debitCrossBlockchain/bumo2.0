@@ -1,11 +1,10 @@
 {
-    "contract_address": "buQhTFwFx1Jc4AEheQ3VJ96yHc1J9y8nPLXs",
-    "code": "
-    ",
-    "input":"{\"method\":\"queryChildChainValidators\",\"params\":{\"chain_id\":1,\"header_hash\":\"buQhTFwFx1Jc4AEheQ3VJ96yHc1J9y8nPLXs\"}}",
-    "contract_balance": "100",
+    "contract_address": "buQjjhxJhVDByQLSjQi4BEpDj9xTEHZbhbGe",
+    "code": "",
+    "input":"{\"method\":\"queryChildBlockHeader\",\"params\":{\"chain_id\":1,\"header_hash\":\"a14975d21ffb07812085ae274f5acbc9c62066d0d9122f8d835fa50ed9d1d86b\"}}",
+    "contract_balance": "10000000000",
     "fee_limit": 10000000000,
-    "gas_price": 100000,
+    "gas_price": 1000,
     "opt_type": 2,
     "source_address": ""
 }
