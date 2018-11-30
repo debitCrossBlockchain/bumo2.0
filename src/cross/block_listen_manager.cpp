@@ -119,7 +119,7 @@ namespace bumo {
 			return;
 		}
 
-		ProposerManager::Instance().UpdateTransactionErrorInfo(error_code, error_desc, hash);
+		ProposerManager::Instance().UpdateTransactionResult(error_code, error_desc, hash);
 		return;
 	}
 
@@ -170,13 +170,13 @@ namespace bumo {
 			std::string desc = tx->GetResult().desc();
 			std::string hash = utils::String::BinToHexString(tx->GetContentHash()).c_str();
 
-			DealProposerTrans(apply_tran, code, hash, hash);
+			DealProposerTrans(apply_tran, code, hash, desc);
 
 			//deal append trans
 			for (unsigned int i = 0; i < tx->instructions_.size(); i++){
 				const protocol::Transaction &trans = tx->instructions_[i].transaction_env().transaction();
 				DealTlog(trans);
-				DealProposerTrans(trans, code, hash, hash);
+				DealProposerTrans(trans, code, hash, desc);
 			}
 		}
 	}
