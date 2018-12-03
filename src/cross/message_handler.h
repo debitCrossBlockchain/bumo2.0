@@ -20,12 +20,16 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <utils/thread.h>
 #include "message_channel_manager.h"
 
+
+#define DEPOSIT_QUERY_PERIOD 10
+
 namespace bumo {
 
 	typedef std::function<void(const protocol::MessageChannel &message_channel)> MessageChannelPoc;
 	typedef std::map<int64_t, MessageChannelPoc> MessageChannelPocMap;
 
-	class MessageHandler : public utils::Singleton<MessageHandler>, public IMessageChannelConsumer{
+	class MessageHandler : public utils::Singleton<MessageHandler>, public IMessageChannelConsumer,
+		public utils::Runnable{
 		friend class utils::Singleton<bumo::MessageHandler>;
 	public:
 		MessageHandler();
@@ -35,6 +39,8 @@ namespace bumo {
 		bool Exit();
 
 	private:
+		virtual void Run(utils::Thread *thread) override;
+
 		bool CheckForChildBlock();
 		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
 
@@ -49,7 +55,14 @@ namespace bumo {
 		void SendChildGenesesRequest();
 		void SendTransaction(const std::vector<std::string> &paras, std::string& hash);
 
+		void PullLostDeposit();
+
 	private:
+		bool enabled_;
+		utils::Thread *thread_ptr_;
+		int64_t last_deposit_time_;
+		int64_t deposit_seq_;
+
 		bool init_;
 		bool received_create_child_;
 		MessageChannelPocMap proc_methods_;

@@ -7,13 +7,21 @@
 namespace bumo {
 	extern bool g_enable_;
 
-	MessageHandler::MessageHandler(){
+	MessageHandler::MessageHandler():
+		enabled_(false),
+		thread_ptr_(NULL){
 		init_ = false;
 		received_create_child_ = false;
 		cur_nonce_ = 0;
+		last_deposit_time_ = utils::Timestamp::HighResolution();
+		deposit_seq_ = 0;
 	}
 
 	MessageHandler::~MessageHandler(){
+		if (thread_ptr_){
+			delete thread_ptr_;
+			thread_ptr_ = NULL;
+		}
 	}
 
 	bool MessageHandler::Initialize(){
@@ -45,11 +53,21 @@ namespace bumo {
 		}
 		source_address_ = private_key.GetEncAddress();
 
+		enabled_ = true;
+		thread_ptr_ = new utils::Thread(this);
+		if (!thread_ptr_->Start("ProposerManager")) {
+			return false;
+		}
+
 		return true;
 	}
 
 	bool MessageHandler::Exit(){
 		init_ = false;
+		enabled_ = false;
+		if (thread_ptr_) {
+			thread_ptr_->JoinWithStop();
+		}
 		return true;
 	}
 
@@ -372,6 +390,7 @@ namespace bumo {
 
 		params["chain_id"] = deposit.chain_id();
 		params["deposit_data"] = deposit_data;
+		params["seq"] = deposit.seq();
 		params["hash"] = HashWrapper::Crypto(deposit.SerializeAsString());
 		input_value["method"] = "deposit";
 		input_value["params"] = params;
@@ -422,5 +441,49 @@ namespace bumo {
 		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
 		message_channel.set_msg_data(child_chain_request.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(message_channel);
+	}
+
+	void MessageHandler::PullLostDeposit(){
+		protocol::MessageChannelQueryDeposit query_deposit;
+		query_deposit.set_chain_id(General::GetSelfChainId());
+		query_deposit.set_seq(deposit_seq_);
+
+		protocol::MessageChannel message_channel;
+		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
+		message_channel.set_msg_data(query_deposit.SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(message_channel);
+	}
+
+	void MessageHandler::Run(utils::Thread *thread) {
+
+		while (enabled_){
+			int64_t current_time = utils::Timestamp::HighResolution();
+			if ((current_time - last_deposit_time_) < DEPOSIT_QUERY_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				continue;
+			}
+			if (deposit_seq_ == 0){
+				Json::Value result_list;
+				Json::Value input_value;
+				input_value["method"] = "queryLastestChildDeposit";
+				input_value["params"]["chain_id"] = General::GetSelfChainId();
+				int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CPC_ADDRESS, input_value.toFastString(), result_list);
+				if (error_code != protocol::ERRCODE_SUCCESS){
+					LOG_ERROR("Failed to query childChainDeposit seq .%d", error_code);
+					continue;
+				}
+				std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+				Json::Value object;
+				object.fromString(result.c_str());
+				if (!object["validators"].isArray()){
+					LOG_ERROR("Failed to queryLastestChildDeposit list is not array");
+					continue;
+				}
+				deposit_seq_ = object["seq"].asInt64();
+			}
+
+			PullLostDeposit();
+			last_deposit_time_ = current_time;
+		}
 	}
 }

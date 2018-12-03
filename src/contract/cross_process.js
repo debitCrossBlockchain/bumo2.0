@@ -14,6 +14,9 @@ const depositsVar   = 'deposit_lists';
 const pledgeAmountVar = 'pledge_coin_amount';
 const expiredTimeVar  = 'voting_expired_time';
 const buassert        = 'BU';
+const statuschallenging   = 'challenging';
+const statuserror         = 'error';
+const depositcurrentseq         = 'error';
 
 
 function findI0(arr, key){
@@ -52,7 +55,8 @@ function deposit(params){
     assert(validators !== false, 'Get validators failed.');
     assert(findI0(validators, sender) !== false, sender + ' has no permmition to commit  deposit.'); 
     let input = {};
-    let key = "childdeposit_" + params.chain_id + "_" + params.hash;
+    let depositseq = 'childdeposit_' + params.chain_id;
+    let key = 'childdeposit_' + params.chain_id + '_' + params.seq;
     let depositinfo = JSON.parse(storageLoad(key));
     assert(depositinfo !== false,'depositinfo is not exist.');
     
@@ -69,7 +73,9 @@ function deposit(params){
         input.starttime = blockTimestamp;
         input.votes = [sender];
         input.depositdata = params.deposit_data;
+        input.seq = params.seq;
         storageStore(key,JSON.stringify(input));
+        storageStore(depositseq,JSON.stringify(input));
     }
     else
     {
@@ -87,11 +93,12 @@ function deposit(params){
             if(input.votedcount < parseInt(validators.length * passRate + 0.5))
             {
                 storageStore(key,JSON.stringify(input));
+                storageStore(depositseq,JSON.stringify(input));
                 return true; 
             }
             //tlog('deposit',params.chain_id,JSON.stringify(depositinfo));
 
-            transferBUAsset(depositinfo.deposit_data['dest_address'],depositinfo.deposit_data['amount']);
+            transferBUAsset(depositinfo.deposit_data['address'],depositinfo.deposit_data['amount']);
             storageDel(key);
         }
     }
@@ -113,6 +120,38 @@ function checkchildChainValadator(chain_id,validator){
     return false;
 }
 
+function withdrawal(params){
+    //input dest_address
+    let key = "childwithdrawal_"  + sender + "_" + triggerIndex;
+    let assert_info = thisPayAsset;
+    if(assert_info.key.code !== buassert)
+    {
+        return false;
+    }
+    let input = {};
+    input.assert = assert_info.amount;
+    input.dest_address = params.dest_address
+    input.starttime = blockTimestamp;
+    input.status = statuschallenging;
+    input.spvproofs = '';
+    storageStore(key,JSON.stringify(input));
+    return false;
+}
+
+function queryLastestChildDeposit(params){
+    log('queryLastestChildDeposit');
+    let input = params;
+    let info = JSON.parse(storageLoad('childdeposit_' + params.chain_id));
+    let retinfo = {};
+    if(info === false){
+        retinfo = 'queryLastestChildDeposit failed,' + params.chain_id;
+    } else {
+        retinfo = info;
+    }
+    return retinfo;
+
+}
+
 function query(input_str){
     let input  = JSON.parse(input_str);
 
@@ -120,14 +159,8 @@ function query(input_str){
     if(input.method === 'getValidators'){
         result.current_validators = getValidators();
     }
-    else if(input.method === 'getCandidates'){
-        result.current_candidates = storageLoad(candidatesVar);
-    }
-    else if(input.method === 'getApplicantProposal'){
-        result.application_proposal = storageLoad(applicantVar + input.params.address);
-    }
-    else if(input.method === 'getAbolishProposal'){
-        result.abolish_proposal = storageLoad(abolishVar + input.params.address);
+    else if(input.method === 'queryLastestChildDeposit'){
+        result = queryLastestChildDeposit(input.params);
     }
     else{
        	throw '<unidentified operation type>';
@@ -142,6 +175,9 @@ function main(input_str){
 
     if(input.method === 'deposit'){
         deposit(input.params);
+    }
+    else if(input.method === 'withdrawal'){
+	    withdrawal(input.params);
     }
     else{
         throw '<undidentified operation type>';
