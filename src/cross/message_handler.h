@@ -19,6 +19,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <utils/singleton.h>
 #include <utils/thread.h>
 #include "message_channel_manager.h"
+#include <cross/cross_utils.h>
 
 
 #define DEPOSIT_QUERY_PERIOD 10
@@ -29,7 +30,7 @@ namespace bumo {
 	typedef std::map<int64_t, MessageChannelPoc> MessageChannelPocMap;
 
 	class MessageHandler : public utils::Singleton<MessageHandler>, public IMessageChannelConsumer,
-		public utils::Runnable{
+		public ITransactionSenderNotify,public utils::Runnable{
 		friend class utils::Singleton<bumo::MessageHandler>;
 	public:
 		MessageHandler();
@@ -43,6 +44,7 @@ namespace bumo {
 
 		bool CheckForChildBlock();
 		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
+		virtual void HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result) override;
 
 		void OnHandleCreateChildChain(const protocol::MessageChannel &message_channel);
 		void OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel);
@@ -53,7 +55,7 @@ namespace bumo {
 
 		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
 		void SendChildGenesesRequest();
-		void SendTransaction(const std::vector<std::string> &paras, std::string& hash);
+		//void SendTransaction(const std::vector<std::string> &paras, std::string& hash);
 
 		void PullLostDeposit();
 
@@ -66,8 +68,7 @@ namespace bumo {
 		bool init_;
 		bool received_create_child_;
 		MessageChannelPocMap proc_methods_;
-		int64_t cur_nonce_;
-		std::string source_address_;
+
 	};
 }
 

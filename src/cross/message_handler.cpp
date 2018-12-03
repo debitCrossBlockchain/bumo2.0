@@ -2,7 +2,7 @@
 #include <common/private_key.h>
 #include <common/pb2json.h>
 #include "message_handler.h"
-#include "cross_utils.h"
+
 
 namespace bumo {
 	extern bool g_enable_;
@@ -12,7 +12,6 @@ namespace bumo {
 		thread_ptr_(NULL){
 		init_ = false;
 		received_create_child_ = false;
-		cur_nonce_ = 0;
 		last_deposit_time_ = utils::Timestamp::HighResolution();
 		deposit_seq_ = 0;
 	}
@@ -45,13 +44,6 @@ namespace bumo {
 		}
 
 		init_ = true;
-
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
-		if (!private_key.IsValid()){
-			LOG_ERROR("Private key is not valid");
-			return false;
-		}
-		source_address_ = private_key.GetEncAddress();
 
 		enabled_ = true;
 		thread_ptr_ = new utils::Thread(this);
@@ -365,13 +357,7 @@ namespace bumo {
 	}
 
 	void MessageHandler::OnHandleDeposit(const protocol::MessageChannel &message_channel){
-		AccountFrm::pointer account_ptr;
-		if (!Environment::AccountFromDB(source_address_, account_ptr)) {
-			LOG_ERROR("Address:%s not exsit", source_address_.c_str());
-			return ;
-		}
-		cur_nonce_ = account_ptr->GetAccountNonce() + 1;
-
+		
 		protocol::MessageChannelDeposit deposit;
 		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc = "";
@@ -395,40 +381,14 @@ namespace bumo {
 		input_value["method"] = "deposit";
 		input_value["params"] = params;
 		send_para_list.push_back(input_value.toFastString());
-		std::string hash;
-		SendTransaction(send_para_list, hash);
+		//std::string hash;
+		//SendTransaction(send_para_list, hash);
+		TransTask trans_task(send_para_list, 0, General::CONTRACT_CPC_ADDRESS, "");
+		TransactionSender::Instance().SendTransaction(this, trans_task);
 		
 	}
 
-	void MessageHandler::SendTransaction(const std::vector<std::string> &paras, std::string& hash){
-		int32_t err_code = 0;
-		int32_t retry_time = 10;
-		for (int i = 0; i <= retry_time; i++){
-			std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
-			TransactionFrm::pointer trans = CrossUtils::BuildTransaction(private_key, General::CONTRACT_CPC_ADDRESS, paras, cur_nonce_);
-			if (nullptr == trans){
-				LOG_ERROR("Trans pointer is null");
-				continue;
-			}
-			hash = utils::String::BinToHexString(trans->GetContentHash().c_str());
-			err_code = CrossUtils::SendTransaction(trans);
-			switch (err_code)
-			{
-			case protocol::ERRCODE_SUCCESS:
-			case  protocol::ERRCODE_ALREADY_EXIST:{
-				cur_nonce_++;
-				return;
-			}
-			case protocol::ERRCODE_BAD_SEQUENCE:{
-				cur_nonce_++;
-				break;
-			}
-			default:{
-				LOG_ERROR("Send transaction erro code:%d", err_code);
-				break;
-			}
-			}
-		}
+	void MessageHandler::HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result){
 		return;
 	}
 
