@@ -201,6 +201,9 @@ namespace bumo{
 		static void CallBackVerify(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackToAddress(const v8::FunctionCallbackInfo<v8::Value>& args);
 
+		//Verify merkel proof
+		static void CallBackVerifyMerkelProof(const v8::FunctionCallbackInfo<v8::Value>& args);
+
 		//Sends a message with arbitrary date to a given address path
 		static void CallBackStorageStore(const v8::FunctionCallbackInfo<v8::Value>& args);
 		static void CallBackStorageDel(const v8::FunctionCallbackInfo<v8::Value>& args);

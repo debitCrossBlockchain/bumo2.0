@@ -237,6 +237,7 @@ namespace bumo{
 		js_func_read_["getAccountMetadata"] = V8Contract::CallBackGetAccountMetadata;
 		js_func_read_["sha256"] = V8Contract::CallBackSha256; 
 		js_func_read_["verify"] = V8Contract::CallBackVerify;
+		js_func_read_["verifyMerkelProof"] = V8Contract::CallBackVerifyMerkelProof;
 		js_func_read_["toAddress"] = V8Contract::CallBackToAddress;
 		LoadJsLibSource();
 		LoadJslintGlobalString();
@@ -1664,6 +1665,48 @@ namespace bumo{
 			}
 
 			result = PublicKey::Verify(blob_data, utils::String::HexStringToBin(signed_data), public_key);
+		} while (false);
+		args.GetReturnValue().Set(result);
+	}
+
+	void V8Contract::CallBackVerifyMerkelProof(const v8::FunctionCallbackInfo<v8::Value>& args){
+
+		bool result = false;
+		do {
+			if (args.Length() != 3) {
+				LOG_TRACE("Parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
+				LOG_TRACE("Parameters should be string");
+				break;
+			}
+
+			DataEncodeType encode_type = BASE64;
+			if (args.Length() == 3){
+				if (!TransEncodeType(args[2], encode_type)){
+					LOG_TRACE("Contract execution error, trans data encode type wrong.");
+					break;
+				}
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_TRACE("Failed to find contract object by isolate id");
+				break;
+			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
+			int64_t chain_id = args[0]->IntegerValue();
+			std::string root_hash = ToCString(v8::String::Utf8Value(args[1]));
+			std::string merkel_proof;
+			if (!TransEncodeData(args[2], encode_type, merkel_proof)){
+				LOG_TRACE("Contract execution error, merkel_proof data wrong.");
+				break;
+			}
+
 		} while (false);
 		args.GetReturnValue().Set(result);
 	}
