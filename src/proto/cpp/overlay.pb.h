@@ -54,7 +54,7 @@ class Hello;
 class HelloResponse;
 class LedgerUpgradeNotify;
 class Ledgers;
-class MerkelProofs;
+class MerkelProof;
 class MessageChannel;
 class MessageChannelChildGenesesRequest;
 class MessageChannelChildGenesesResponse;
@@ -3059,32 +3059,32 @@ class MessageChannelQueryHead : public ::google::protobuf::Message /* @@protoc_i
 };
 // -------------------------------------------------------------------
 
-class MerkelProofs : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MerkelProofs) */ {
+class MerkelProof : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MerkelProof) */ {
  public:
-  MerkelProofs();
-  virtual ~MerkelProofs();
+  MerkelProof();
+  virtual ~MerkelProof();
 
-  MerkelProofs(const MerkelProofs& from);
+  MerkelProof(const MerkelProof& from);
 
-  inline MerkelProofs& operator=(const MerkelProofs& from) {
+  inline MerkelProof& operator=(const MerkelProof& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const MerkelProofs& default_instance();
+  static const MerkelProof& default_instance();
 
-  void Swap(MerkelProofs* other);
+  void Swap(MerkelProof* other);
 
   // implements Message ----------------------------------------------
 
-  inline MerkelProofs* New() const { return New(NULL); }
+  inline MerkelProof* New() const { return New(NULL); }
 
-  MerkelProofs* New(::google::protobuf::Arena* arena) const;
+  MerkelProof* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const MerkelProofs& from);
-  void MergeFrom(const MerkelProofs& from);
+  void CopyFrom(const MerkelProof& from);
+  void MergeFrom(const MerkelProof& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -3103,7 +3103,7 @@ class MerkelProofs : public ::google::protobuf::Message /* @@protoc_insertion_po
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(MerkelProofs* other);
+  void InternalSwap(MerkelProof* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -3119,9 +3119,20 @@ class MerkelProofs : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // accessors -------------------------------------------------------
 
-  // optional bytes merkel_path = 1;
+  // optional bytes merkel_root = 1;
+  void clear_merkel_root();
+  static const int kMerkelRootFieldNumber = 1;
+  const ::std::string& merkel_root() const;
+  void set_merkel_root(const ::std::string& value);
+  void set_merkel_root(const char* value);
+  void set_merkel_root(const void* value, size_t size);
+  ::std::string* mutable_merkel_root();
+  ::std::string* release_merkel_root();
+  void set_allocated_merkel_root(::std::string* merkel_root);
+
+  // optional bytes merkel_path = 2;
   void clear_merkel_path();
-  static const int kMerkelPathFieldNumber = 1;
+  static const int kMerkelPathFieldNumber = 2;
   const ::std::string& merkel_path() const;
   void set_merkel_path(const ::std::string& value);
   void set_merkel_path(const char* value);
@@ -3130,19 +3141,30 @@ class MerkelProofs : public ::google::protobuf::Message /* @@protoc_insertion_po
   ::std::string* release_merkel_path();
   void set_allocated_merkel_path(::std::string* merkel_path);
 
-  // @@protoc_insertion_point(class_scope:protocol.MerkelProofs)
+  // optional .protocol.Transaction transaction = 3;
+  bool has_transaction() const;
+  void clear_transaction();
+  static const int kTransactionFieldNumber = 3;
+  const ::protocol::Transaction& transaction() const;
+  ::protocol::Transaction* mutable_transaction();
+  ::protocol::Transaction* release_transaction();
+  void set_allocated_transaction(::protocol::Transaction* transaction);
+
+  // @@protoc_insertion_point(class_scope:protocol.MerkelProof)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr merkel_root_;
   ::google::protobuf::internal::ArenaStringPtr merkel_path_;
+  ::protocol::Transaction* transaction_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
   friend void protobuf_ShutdownFile_overlay_2eproto();
 
   void InitAsDefaultInstance();
-  static MerkelProofs* default_instance_;
+  static MerkelProof* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -5751,50 +5773,132 @@ inline void MessageChannelQueryHead::set_ledger_seq(::google::protobuf::int64 va
 
 // -------------------------------------------------------------------
 
-// MerkelProofs
+// MerkelProof
 
-// optional bytes merkel_path = 1;
-inline void MerkelProofs::clear_merkel_path() {
+// optional bytes merkel_root = 1;
+inline void MerkelProof::clear_merkel_root() {
+  merkel_root_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MerkelProof::merkel_root() const {
+  // @@protoc_insertion_point(field_get:protocol.MerkelProof.merkel_root)
+  return merkel_root_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MerkelProof::set_merkel_root(const ::std::string& value) {
+  
+  merkel_root_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MerkelProof.merkel_root)
+}
+inline void MerkelProof::set_merkel_root(const char* value) {
+  
+  merkel_root_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MerkelProof.merkel_root)
+}
+inline void MerkelProof::set_merkel_root(const void* value, size_t size) {
+  
+  merkel_root_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MerkelProof.merkel_root)
+}
+inline ::std::string* MerkelProof::mutable_merkel_root() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MerkelProof.merkel_root)
+  return merkel_root_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MerkelProof::release_merkel_root() {
+  // @@protoc_insertion_point(field_release:protocol.MerkelProof.merkel_root)
+  
+  return merkel_root_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MerkelProof::set_allocated_merkel_root(::std::string* merkel_root) {
+  if (merkel_root != NULL) {
+    
+  } else {
+    
+  }
+  merkel_root_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), merkel_root);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MerkelProof.merkel_root)
+}
+
+// optional bytes merkel_path = 2;
+inline void MerkelProof::clear_merkel_path() {
   merkel_path_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& MerkelProofs::merkel_path() const {
-  // @@protoc_insertion_point(field_get:protocol.MerkelProofs.merkel_path)
+inline const ::std::string& MerkelProof::merkel_path() const {
+  // @@protoc_insertion_point(field_get:protocol.MerkelProof.merkel_path)
   return merkel_path_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void MerkelProofs::set_merkel_path(const ::std::string& value) {
+inline void MerkelProof::set_merkel_path(const ::std::string& value) {
   
   merkel_path_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:protocol.MerkelProofs.merkel_path)
+  // @@protoc_insertion_point(field_set:protocol.MerkelProof.merkel_path)
 }
-inline void MerkelProofs::set_merkel_path(const char* value) {
+inline void MerkelProof::set_merkel_path(const char* value) {
   
   merkel_path_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:protocol.MerkelProofs.merkel_path)
+  // @@protoc_insertion_point(field_set_char:protocol.MerkelProof.merkel_path)
 }
-inline void MerkelProofs::set_merkel_path(const void* value, size_t size) {
+inline void MerkelProof::set_merkel_path(const void* value, size_t size) {
   
   merkel_path_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:protocol.MerkelProofs.merkel_path)
+  // @@protoc_insertion_point(field_set_pointer:protocol.MerkelProof.merkel_path)
 }
-inline ::std::string* MerkelProofs::mutable_merkel_path() {
+inline ::std::string* MerkelProof::mutable_merkel_path() {
   
-  // @@protoc_insertion_point(field_mutable:protocol.MerkelProofs.merkel_path)
+  // @@protoc_insertion_point(field_mutable:protocol.MerkelProof.merkel_path)
   return merkel_path_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* MerkelProofs::release_merkel_path() {
-  // @@protoc_insertion_point(field_release:protocol.MerkelProofs.merkel_path)
+inline ::std::string* MerkelProof::release_merkel_path() {
+  // @@protoc_insertion_point(field_release:protocol.MerkelProof.merkel_path)
   
   return merkel_path_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void MerkelProofs::set_allocated_merkel_path(::std::string* merkel_path) {
+inline void MerkelProof::set_allocated_merkel_path(::std::string* merkel_path) {
   if (merkel_path != NULL) {
     
   } else {
     
   }
   merkel_path_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), merkel_path);
-  // @@protoc_insertion_point(field_set_allocated:protocol.MerkelProofs.merkel_path)
+  // @@protoc_insertion_point(field_set_allocated:protocol.MerkelProof.merkel_path)
+}
+
+// optional .protocol.Transaction transaction = 3;
+inline bool MerkelProof::has_transaction() const {
+  return !_is_default_instance_ && transaction_ != NULL;
+}
+inline void MerkelProof::clear_transaction() {
+  if (GetArenaNoVirtual() == NULL && transaction_ != NULL) delete transaction_;
+  transaction_ = NULL;
+}
+inline const ::protocol::Transaction& MerkelProof::transaction() const {
+  // @@protoc_insertion_point(field_get:protocol.MerkelProof.transaction)
+  return transaction_ != NULL ? *transaction_ : *default_instance_->transaction_;
+}
+inline ::protocol::Transaction* MerkelProof::mutable_transaction() {
+  
+  if (transaction_ == NULL) {
+    transaction_ = new ::protocol::Transaction;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MerkelProof.transaction)
+  return transaction_;
+}
+inline ::protocol::Transaction* MerkelProof::release_transaction() {
+  // @@protoc_insertion_point(field_release:protocol.MerkelProof.transaction)
+  
+  ::protocol::Transaction* temp = transaction_;
+  transaction_ = NULL;
+  return temp;
+}
+inline void MerkelProof::set_allocated_transaction(::protocol::Transaction* transaction) {
+  delete transaction_;
+  transaction_ = transaction;
+  if (transaction) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MerkelProof.transaction)
 }
 
 // -------------------------------------------------------------------

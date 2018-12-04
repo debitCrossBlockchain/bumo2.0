@@ -250,8 +250,10 @@ message MessageChannelQueryHead{
 	int64 ledger_seq = 1;
 }
 
-message MerkelProofs {
-	bytes merkel_path = 1;
+message MerkelProof {
+	bytes merkel_root = 1;
+	bytes merkel_path = 2;
+	Transaction transaction = 3;
 }
 
 message MessageChannelDeposit{
