@@ -13,7 +13,8 @@ namespace bumo {
 		init_ = false;
 		received_create_child_ = false;
 		last_deposit_time_ = utils::Timestamp::HighResolution();
-		deposit_seq_ = 0;
+		local_deposit_seq_ = 0;
+		newest_deposit_seq_ = 0;
 	}
 
 	MessageHandler::~MessageHandler(){
@@ -50,6 +51,9 @@ namespace bumo {
 		if (!thread_ptr_->Start("ProposerManager")) {
 			return false;
 		}
+		if (!InitDepositSeq()){
+			return false;
+		}
 
 		return true;
 	}
@@ -62,6 +66,8 @@ namespace bumo {
 		}
 		return true;
 	}
+
+
 
 	bool MessageHandler::CheckForChildBlock(){
 		if (General::GetSelfChainId() <= General::MAIN_CHAIN_ID) {
@@ -385,6 +391,7 @@ namespace bumo {
 		//SendTransaction(send_para_list, hash);
 		TransTask trans_task(send_para_list, 0, General::CONTRACT_CPC_ADDRESS, "");
 		TransactionSender::Instance().SendTransaction(this, trans_task);
+		newest_deposit_seq_ = MAX(newest_deposit_seq_, deposit.seq());
 		
 	}
 
@@ -404,9 +411,31 @@ namespace bumo {
 	}
 
 	void MessageHandler::PullLostDeposit(){
+		int64_t internalSeq = newest_deposit_seq_ - local_deposit_seq_;
+		internalSeq = MIN(internalSeq, 10);
+
+		for (int i = 1; i++; i <= internalSeq)
+		{
+			protocol::MessageChannelQueryDeposit query_deposit;
+			query_deposit.set_chain_id(General::GetSelfChainId());
+			query_deposit.set_seq(local_deposit_seq_ + i);
+
+			protocol::MessageChannel message_channel;
+			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
+			message_channel.set_msg_data(query_deposit.SerializeAsString());
+			MessageChannel::Instance().MessageChannelProducer(message_channel);
+			utils::Sleep(10);
+		}
+		local_deposit_seq_ += internalSeq;
+
+	}
+
+
+	void MessageHandler::CheckExpireDeposit(){
 		protocol::MessageChannelQueryDeposit query_deposit;
 		query_deposit.set_chain_id(General::GetSelfChainId());
-		query_deposit.set_seq(deposit_seq_);
+		query_deposit.set_seq(local_deposit_seq_);
 
 		protocol::MessageChannel message_channel;
 		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
@@ -415,6 +444,28 @@ namespace bumo {
 		MessageChannel::Instance().MessageChannelProducer(message_channel);
 	}
 
+	bool MessageHandler::InitDepositSeq(){
+		Json::Value result_list;
+		Json::Value input_value;
+		input_value["method"] = "queryLastestChildDeposit";
+		input_value["params"]["chain_id"] = General::GetSelfChainId();
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CPC_ADDRESS, input_value.toFastString(), result_list);
+		if (error_code != protocol::ERRCODE_SUCCESS){
+			LOG_ERROR("Failed to query childChainDeposit seq .%d", error_code);
+			return false;
+		}
+		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		Json::Value object;
+		object.fromString(result.c_str());
+		if (!object["validators"].isArray()){
+			LOG_ERROR("Failed to queryLastestChildDeposit list is not array");
+			return false;
+		}
+		local_deposit_seq_ = object["seq"].asInt64();
+		return true;
+	}
+
+
 	void MessageHandler::Run(utils::Thread *thread) {
 
 		while (enabled_){
@@ -422,26 +473,6 @@ namespace bumo {
 			if ((current_time - last_deposit_time_) < DEPOSIT_QUERY_PERIOD * utils::MICRO_UNITS_PER_SEC){
 				continue;
 			}
-			if (deposit_seq_ == 0){
-				Json::Value result_list;
-				Json::Value input_value;
-				input_value["method"] = "queryLastestChildDeposit";
-				input_value["params"]["chain_id"] = General::GetSelfChainId();
-				int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CPC_ADDRESS, input_value.toFastString(), result_list);
-				if (error_code != protocol::ERRCODE_SUCCESS){
-					LOG_ERROR("Failed to query childChainDeposit seq .%d", error_code);
-					continue;
-				}
-				std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
-				Json::Value object;
-				object.fromString(result.c_str());
-				if (!object["validators"].isArray()){
-					LOG_ERROR("Failed to queryLastestChildDeposit list is not array");
-					continue;
-				}
-				deposit_seq_ = object["seq"].asInt64();
-			}
-
 			PullLostDeposit();
 			last_deposit_time_ = current_time;
 		}

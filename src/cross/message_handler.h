@@ -42,6 +42,7 @@ namespace bumo {
 	private:
 		virtual void Run(utils::Thread *thread) override;
 
+		bool InitDepositSeq();
 		bool CheckForChildBlock();
 		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
 		virtual void HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result) override;
@@ -57,13 +58,15 @@ namespace bumo {
 		void SendChildGenesesRequest();
 		//void SendTransaction(const std::vector<std::string> &paras, std::string& hash);
 
+		void CheckExpireDeposit();
 		void PullLostDeposit();
 
 	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
 		int64_t last_deposit_time_;
-		int64_t deposit_seq_;
+		int64_t local_deposit_seq_;
+		int64_t newest_deposit_seq_;
 
 		bool init_;
 		bool received_create_child_;
