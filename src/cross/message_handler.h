@@ -60,6 +60,7 @@ namespace bumo {
 
 		void CheckExpireDeposit();
 		void PullLostDeposit();
+		void DoDeposit();
 
 	private:
 		bool enabled_;

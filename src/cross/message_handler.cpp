@@ -51,9 +51,7 @@ namespace bumo {
 		if (!thread_ptr_->Start("ProposerManager")) {
 			return false;
 		}
-		if (!InitDepositSeq()){
-			return false;
-		}
+
 
 		return true;
 	}
@@ -411,6 +409,7 @@ namespace bumo {
 	}
 
 	void MessageHandler::PullLostDeposit(){
+
 		int64_t internalSeq = newest_deposit_seq_ - local_deposit_seq_;
 		internalSeq = MIN(internalSeq, 10);
 
@@ -465,16 +464,25 @@ namespace bumo {
 		return true;
 	}
 
+	void MessageHandler::DoDeposit(){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			return;
+		}
+		if (local_deposit_seq_ <= 0){
+			InitDepositSeq();
+		}
+		int64_t current_time = utils::Timestamp::HighResolution();
+		if ((current_time - last_deposit_time_) < DEPOSIT_QUERY_PERIOD * utils::MICRO_UNITS_PER_SEC){
+			return;
+		}
+		PullLostDeposit();
+		last_deposit_time_ = current_time;
+	}
 
 	void MessageHandler::Run(utils::Thread *thread) {
-
 		while (enabled_){
-			int64_t current_time = utils::Timestamp::HighResolution();
-			if ((current_time - last_deposit_time_) < DEPOSIT_QUERY_PERIOD * utils::MICRO_UNITS_PER_SEC){
-				continue;
-			}
-			PullLostDeposit();
-			last_deposit_time_ = current_time;
+			DoDeposit();
+			utils::Sleep(10);
 		}
 	}
 }
