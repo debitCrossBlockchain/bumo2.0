@@ -46,35 +46,7 @@ namespace bumo {
 		}
 	}
 
-	const protocol::OperationLog * BlockListenManager::PickTransferTlog(const protocol::Transaction &trans){
-		//must be CMC send trans
-		if (trans.source_address() != General::CONTRACT_CMC_ADDRESS){
-			return nullptr;
-		}
-			
-		for (int j = 0; j < trans.operations_size(); j++){
-			if (protocol::Operation_Type_LOG != trans.operations(j).type())
-				continue;
-			const protocol::OperationLog &log = trans.operations(j).log();
-			if (log.topic().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE){
-				LOG_ERROR("Log's parameter topic size should be between (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE);
-				continue;
-			}
-			//special transaction
-			if (FilterTlog(log.topic()) == protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE){
-				continue;
-			}
-			//transfer tlog params must be 2
-			if (log.datas_size() != 2){
-				LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
-				return nullptr;
-			}
-			LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
-			return &log;
-		}
 
-		return nullptr;
-	}
 
 	void BlockListenManager::DealProposerTrans(const protocol::Transaction &trans, int64_t &error_code, const std::string &error_desc, const std::string& hash) {
 		//must be CMC send trans
@@ -123,14 +95,10 @@ namespace bumo {
 		return;
 	}
 
-	void BlockListenManager::DealTlog(const protocol::Transaction &trans){
-		const protocol::OperationLog *tlog = PickTransferTlog(trans);
-		if (nullptr == tlog){
-			return;
-		}
-			
+	void BlockListenManager::SendTlog(const protocol::OperationLog &tlog){
+
 		protocol::MessageChannel msg_channel;
-		const std::string &tlog_params = tlog->datas(1);
+		const std::string &tlog_params = tlog.datas(1);
 		//tlog param(0)
 		if (tlog_params.size() == 0 || tlog_params.size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
 			LOG_ERROR("Log's parameter data size should be between (0,%d]", General::TRANSACTION_LOG_DATA_MAXSIZE);
@@ -142,9 +110,9 @@ namespace bumo {
 			LOG_ERROR("Failed to parse the json content of the tlog");
 			return;
 		}
-		msg_channel.set_target_chain_id(atoi(tlog->datas(0).c_str()));
+		msg_channel.set_target_chain_id(atoi(tlog.datas(0).c_str()));
 
-		protocol::MESSAGE_CHANNEL_TYPE msg_type = FilterTlog(tlog->topic());
+		protocol::MESSAGE_CHANNEL_TYPE msg_type = FilterTlog(tlog.topic());
 		msg_channel.set_msg_type(msg_type);
 
 		std::shared_ptr<Message> msg = GetMsgObject(msg_type);
@@ -158,6 +126,35 @@ namespace bumo {
 		msg_channel.set_msg_data(msg->SerializeAsString());
 
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+	}
+
+	void BlockListenManager::DealTlog(const protocol::Transaction &trans){
+		//must be CMC send trans
+		if (trans.source_address() != General::CONTRACT_CMC_ADDRESS){
+			return ;
+		}
+
+		for (int j = 0; j < trans.operations_size(); j++){
+			if (protocol::Operation_Type_LOG != trans.operations(j).type())
+				continue;
+			const protocol::OperationLog &log = trans.operations(j).log();
+			if (log.topic().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE){
+				LOG_ERROR("Log's parameter topic size should be between (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE);
+				continue;
+			}
+			//special transaction
+			if (FilterTlog(log.topic()) == protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE){
+				continue;
+			}
+			//transfer tlog params must be 2
+			if (log.datas_size() != 2){
+				LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
+				return ;
+			}
+			LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
+			SendTlog(log);
+		}
+		
 	}
 
 
