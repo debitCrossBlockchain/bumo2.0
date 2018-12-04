@@ -66,6 +66,7 @@ class MessageChannelProposer;
 class MessageChannelQueryDeposit;
 class MessageChannelQueryHead;
 class MessageChannelResponse;
+class MessageChannelWithdrawal;
 class Peer;
 class Peers;
 
@@ -3293,6 +3294,148 @@ class MessageChannelDeposit : public ::google::protobuf::Message /* @@protoc_ins
   void InitAsDefaultInstance();
   static MessageChannelDeposit* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class MessageChannelWithdrawal : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelWithdrawal) */ {
+ public:
+  MessageChannelWithdrawal();
+  virtual ~MessageChannelWithdrawal();
+
+  MessageChannelWithdrawal(const MessageChannelWithdrawal& from);
+
+  inline MessageChannelWithdrawal& operator=(const MessageChannelWithdrawal& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelWithdrawal& default_instance();
+
+  void Swap(MessageChannelWithdrawal* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelWithdrawal* New() const { return New(NULL); }
+
+  MessageChannelWithdrawal* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelWithdrawal& from);
+  void MergeFrom(const MessageChannelWithdrawal& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelWithdrawal* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int64 chain_id = 1;
+  void clear_chain_id();
+  static const int kChainIdFieldNumber = 1;
+  ::google::protobuf::int64 chain_id() const;
+  void set_chain_id(::google::protobuf::int64 value);
+
+  // optional int64 amount = 2;
+  void clear_amount();
+  static const int kAmountFieldNumber = 2;
+  ::google::protobuf::int64 amount() const;
+  void set_amount(::google::protobuf::int64 value);
+
+  // optional int64 seq = 3;
+  void clear_seq();
+  static const int kSeqFieldNumber = 3;
+  ::google::protobuf::int64 seq() const;
+  void set_seq(::google::protobuf::int64 value);
+
+  // optional bytes block_hash = 4;
+  void clear_block_hash();
+  static const int kBlockHashFieldNumber = 4;
+  const ::std::string& block_hash() const;
+  void set_block_hash(const ::std::string& value);
+  void set_block_hash(const char* value);
+  void set_block_hash(const void* value, size_t size);
+  ::std::string* mutable_block_hash();
+  ::std::string* release_block_hash();
+  void set_allocated_block_hash(::std::string* block_hash);
+
+  // optional string source_address = 5;
+  void clear_source_address();
+  static const int kSourceAddressFieldNumber = 5;
+  const ::std::string& source_address() const;
+  void set_source_address(const ::std::string& value);
+  void set_source_address(const char* value);
+  void set_source_address(const char* value, size_t size);
+  ::std::string* mutable_source_address();
+  ::std::string* release_source_address();
+  void set_allocated_source_address(::std::string* source_address);
+
+  // optional string address = 6;
+  void clear_address();
+  static const int kAddressFieldNumber = 6;
+  const ::std::string& address() const;
+  void set_address(const ::std::string& value);
+  void set_address(const char* value);
+  void set_address(const char* value, size_t size);
+  ::std::string* mutable_address();
+  ::std::string* release_address();
+  void set_allocated_address(::std::string* address);
+
+  // optional .protocol.MerkelProof merkel_proof = 7;
+  bool has_merkel_proof() const;
+  void clear_merkel_proof();
+  static const int kMerkelProofFieldNumber = 7;
+  const ::protocol::MerkelProof& merkel_proof() const;
+  ::protocol::MerkelProof* mutable_merkel_proof();
+  ::protocol::MerkelProof* release_merkel_proof();
+  void set_allocated_merkel_proof(::protocol::MerkelProof* merkel_proof);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelWithdrawal)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int64 chain_id_;
+  ::google::protobuf::int64 amount_;
+  ::google::protobuf::int64 seq_;
+  ::google::protobuf::internal::ArenaStringPtr block_hash_;
+  ::google::protobuf::internal::ArenaStringPtr source_address_;
+  ::google::protobuf::internal::ArenaStringPtr address_;
+  ::protocol::MerkelProof* merkel_proof_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelWithdrawal* default_instance_;
+};
 // ===================================================================
 
 
@@ -6049,7 +6192,225 @@ inline void MessageChannelDeposit::set_allocated_address(::std::string* address)
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelDeposit.address)
 }
 
+// -------------------------------------------------------------------
+
+// MessageChannelWithdrawal
+
+// optional int64 chain_id = 1;
+inline void MessageChannelWithdrawal::clear_chain_id() {
+  chain_id_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelWithdrawal::chain_id() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawal.chain_id)
+  return chain_id_;
+}
+inline void MessageChannelWithdrawal::set_chain_id(::google::protobuf::int64 value) {
+  
+  chain_id_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawal.chain_id)
+}
+
+// optional int64 amount = 2;
+inline void MessageChannelWithdrawal::clear_amount() {
+  amount_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelWithdrawal::amount() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawal.amount)
+  return amount_;
+}
+inline void MessageChannelWithdrawal::set_amount(::google::protobuf::int64 value) {
+  
+  amount_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawal.amount)
+}
+
+// optional int64 seq = 3;
+inline void MessageChannelWithdrawal::clear_seq() {
+  seq_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelWithdrawal::seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawal.seq)
+  return seq_;
+}
+inline void MessageChannelWithdrawal::set_seq(::google::protobuf::int64 value) {
+  
+  seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawal.seq)
+}
+
+// optional bytes block_hash = 4;
+inline void MessageChannelWithdrawal::clear_block_hash() {
+  block_hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelWithdrawal::block_hash() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawal.block_hash)
+  return block_hash_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelWithdrawal::set_block_hash(const ::std::string& value) {
+  
+  block_hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawal.block_hash)
+}
+inline void MessageChannelWithdrawal::set_block_hash(const char* value) {
+  
+  block_hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelWithdrawal.block_hash)
+}
+inline void MessageChannelWithdrawal::set_block_hash(const void* value, size_t size) {
+  
+  block_hash_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelWithdrawal.block_hash)
+}
+inline ::std::string* MessageChannelWithdrawal::mutable_block_hash() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelWithdrawal.block_hash)
+  return block_hash_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelWithdrawal::release_block_hash() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelWithdrawal.block_hash)
+  
+  return block_hash_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelWithdrawal::set_allocated_block_hash(::std::string* block_hash) {
+  if (block_hash != NULL) {
+    
+  } else {
+    
+  }
+  block_hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), block_hash);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawal.block_hash)
+}
+
+// optional string source_address = 5;
+inline void MessageChannelWithdrawal::clear_source_address() {
+  source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelWithdrawal::source_address() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawal.source_address)
+  return source_address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelWithdrawal::set_source_address(const ::std::string& value) {
+  
+  source_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawal.source_address)
+}
+inline void MessageChannelWithdrawal::set_source_address(const char* value) {
+  
+  source_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelWithdrawal.source_address)
+}
+inline void MessageChannelWithdrawal::set_source_address(const char* value, size_t size) {
+  
+  source_address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelWithdrawal.source_address)
+}
+inline ::std::string* MessageChannelWithdrawal::mutable_source_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelWithdrawal.source_address)
+  return source_address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelWithdrawal::release_source_address() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelWithdrawal.source_address)
+  
+  return source_address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelWithdrawal::set_allocated_source_address(::std::string* source_address) {
+  if (source_address != NULL) {
+    
+  } else {
+    
+  }
+  source_address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), source_address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawal.source_address)
+}
+
+// optional string address = 6;
+inline void MessageChannelWithdrawal::clear_address() {
+  address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelWithdrawal::address() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawal.address)
+  return address_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelWithdrawal::set_address(const ::std::string& value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawal.address)
+}
+inline void MessageChannelWithdrawal::set_address(const char* value) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelWithdrawal.address)
+}
+inline void MessageChannelWithdrawal::set_address(const char* value, size_t size) {
+  
+  address_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelWithdrawal.address)
+}
+inline ::std::string* MessageChannelWithdrawal::mutable_address() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelWithdrawal.address)
+  return address_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelWithdrawal::release_address() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelWithdrawal.address)
+  
+  return address_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelWithdrawal::set_allocated_address(::std::string* address) {
+  if (address != NULL) {
+    
+  } else {
+    
+  }
+  address_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), address);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawal.address)
+}
+
+// optional .protocol.MerkelProof merkel_proof = 7;
+inline bool MessageChannelWithdrawal::has_merkel_proof() const {
+  return !_is_default_instance_ && merkel_proof_ != NULL;
+}
+inline void MessageChannelWithdrawal::clear_merkel_proof() {
+  if (GetArenaNoVirtual() == NULL && merkel_proof_ != NULL) delete merkel_proof_;
+  merkel_proof_ = NULL;
+}
+inline const ::protocol::MerkelProof& MessageChannelWithdrawal::merkel_proof() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawal.merkel_proof)
+  return merkel_proof_ != NULL ? *merkel_proof_ : *default_instance_->merkel_proof_;
+}
+inline ::protocol::MerkelProof* MessageChannelWithdrawal::mutable_merkel_proof() {
+  
+  if (merkel_proof_ == NULL) {
+    merkel_proof_ = new ::protocol::MerkelProof;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelWithdrawal.merkel_proof)
+  return merkel_proof_;
+}
+inline ::protocol::MerkelProof* MessageChannelWithdrawal::release_merkel_proof() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelWithdrawal.merkel_proof)
+  
+  ::protocol::MerkelProof* temp = merkel_proof_;
+  merkel_proof_ = NULL;
+  return temp;
+}
+inline void MessageChannelWithdrawal::set_allocated_merkel_proof(::protocol::MerkelProof* merkel_proof) {
+  delete merkel_proof_;
+  merkel_proof_ = merkel_proof;
+  if (merkel_proof) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawal.merkel_proof)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
