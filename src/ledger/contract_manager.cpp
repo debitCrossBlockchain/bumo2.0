@@ -130,7 +130,7 @@ namespace bumo{
 	const std::string V8Contract::pay_asset_amount_name_ = "thisPayAsset";
 	const std::string V8Contract::block_timestamp_name_ = "blockTimestamp";
 	const std::string V8Contract::block_number_name_ = "blockNumber";
-	const std::string V8Contract::transaction_hash_name_ = "transactionHash";
+	const std::string V8Contract::transaction_hash_name_ = "originTxHash";
 	utils::Mutex V8Contract::isolate_to_contract_mutex_;
 	std::unordered_map<v8::Isolate*, V8Contract *> V8Contract::isolate_to_contract_;
 
