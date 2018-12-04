@@ -282,6 +282,8 @@ namespace bumo {
 			tx_frm->SetMaxEndTime(time_now + 5 * utils::MICRO_UNITS_PER_SEC);
 			tx_frm->EnableChecked();
 
+			parameter.transaction_hash_ = utils::String::BinToHexString(tx_frm->GetContentHash());
+
 			Json::Value query_result;
 			bool ret = ContractManager::Instance().Query(type_, parameter, query_result);
 			tx_frm->SetApplyEndTime(utils::Timestamp::HighResolution());

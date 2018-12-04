@@ -42,6 +42,7 @@ namespace bumo{
 		std::string consensus_value_;
 		int64_t timestamp_;
 		int64_t blocknumber_;
+		std::string transaction_hash_;
 		LedgerContext *ledger_context_;
 		int64_t pay_coin_amount_;
 		protocol::Asset pay_asset_amount_;
@@ -154,6 +155,7 @@ namespace bumo{
 		static const std::string pay_asset_amount_name_;
 		static const std::string block_timestamp_name_;
 		static const std::string block_number_name_;
+		static const std::string transaction_hash_name_;
 
 		static utils::Mutex isolate_to_contract_mutex_;
 		static std::unordered_map<v8::Isolate*, V8Contract *> isolate_to_contract_;

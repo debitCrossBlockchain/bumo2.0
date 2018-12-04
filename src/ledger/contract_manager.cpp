@@ -130,6 +130,7 @@ namespace bumo{
 	const std::string V8Contract::pay_asset_amount_name_ = "thisPayAsset";
 	const std::string V8Contract::block_timestamp_name_ = "blockTimestamp";
 	const std::string V8Contract::block_number_name_ = "blockNumber";
+	const std::string V8Contract::transaction_hash_name_ = "transactionHash";
 	utils::Mutex V8Contract::isolate_to_contract_mutex_;
 	std::unordered_map<v8::Isolate*, V8Contract *> V8Contract::isolate_to_contract_;
 
@@ -186,6 +187,7 @@ namespace bumo{
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", pay_asset_amount_name_.c_str());
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", block_timestamp_name_.c_str());
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", block_number_name_.c_str());
+		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", transaction_hash_name_.c_str());
 		std::map<std::string, v8::FunctionCallback>::iterator itr = js_func_read_.begin();
 		for ( ; itr != js_func_read_.end(); itr++)
 		{
@@ -301,6 +303,11 @@ namespace bumo{
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, block_number_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			blocknumber_v8);
+
+		auto trans_hash_v8 = v8::String::NewFromUtf8(isolate_, parameter_.transaction_hash_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, transaction_hash_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			trans_hash_v8);
 
 		auto timestamp_v8 = v8::Number::New(isolate_, (double)parameter_.timestamp_);
 		context->Global()->Set(context,
@@ -508,6 +515,11 @@ namespace bumo{
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, block_number_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			blocknumber_v8);
+
+		auto trans_hash_v8 = v8::String::NewFromUtf8(isolate_, parameter_.transaction_hash_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, transaction_hash_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			trans_hash_v8);
 
 		auto timestamp_v8 = v8::Number::New(isolate_, (double)parameter_.timestamp_);
 		context->Global()->Set(context,
@@ -1122,6 +1134,7 @@ namespace bumo{
 			parameter.ope_index_ = 0;
 			parameter.timestamp_ = v8_contract->GetParameter().timestamp_;
 			parameter.blocknumber_ = v8_contract->GetParameter().blocknumber_;
+			parameter.transaction_hash_ = v8_contract->GetParameter().transaction_hash_;
 			parameter.consensus_value_ = v8_contract->GetParameter().consensus_value_;
 			parameter.ledger_context_ = v8_contract->GetParameter().ledger_context_;
 			//Query
