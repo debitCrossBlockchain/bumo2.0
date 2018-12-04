@@ -181,6 +181,10 @@ function depositToChildChain(params){
     }
 }
 
+function withdrawalChildChain(params){
+    log('withdrawalChildChain');
+}
+
 function abolishValidator(params){
     log('abolishValidator');
     let input = params;
