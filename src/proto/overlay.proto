@@ -273,5 +273,19 @@ message MessageChannelWithdrawal{
 	string source_address = 5;
 	string address = 6;
 	MerkelProof merkel_proof = 7;
+
+}
+
+
+message MessageChannelWithdrawalChallenge{
+	int64 chain_id = 1;
+	int64 amount = 2;
+	int64 seq = 3;
+	bytes block_hash = 4;
+	string source_address = 5;
+	string address = 6;
+	int64  state = 7;
+	string main_source_address = 8;
+	string merkel_proof = 9;
 }
 
