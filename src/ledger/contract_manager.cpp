@@ -1707,6 +1707,9 @@ namespace bumo{
 				break;
 			}
 
+			result = true;
+			//TODO verify merkel proof
+
 		} while (false);
 		args.GetReturnValue().Set(result);
 	}
