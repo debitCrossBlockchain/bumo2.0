@@ -10,6 +10,7 @@ namespace bumo {
 	const static char* OP_CREATE_CHILD_CHAIN = "createChildChain";
 	const static char* OP_DEPOSIT = "deposit";
 	const static char* OP_WITHDRAWAL = "withdrawal"; 
+	const static char* OP_CHALLENGE = "challenge";
 
 	BlockListenManager::BlockListenManager(){
 		isMainChain_ = false;
@@ -44,6 +45,9 @@ namespace bumo {
 		}
 		else if (0 == strcmp(tlog_topic.c_str(), OP_WITHDRAWAL)){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_WITHDRAWAL;
+		}
+		else if (0 == strcmp(tlog_topic.c_str(), OP_CHALLENGE)){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL;
 		}
 		else{
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
@@ -174,7 +178,8 @@ namespace bumo {
 			//special transaction
 			switch (tlog_type){
 				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
-				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:{
+				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
+				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:{
 				SendTlog(log);
 				LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
 				break;
