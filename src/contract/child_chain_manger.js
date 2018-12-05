@@ -183,6 +183,62 @@ function depositToChildChain(params){
 
 function withdrawalChildChain(params){
     log('withdrawalChildChain');
+    let input = params;
+    let childChain_id = parseInt(storageLoad('childChainCount'));
+    assert(!((input.chain_id>childChain_id)||(input.chain_id<=0)) , 'chain_id is error');
+    let validators_list = getchildChainValidators(input.chain_id);
+    assert(validators_list.length>0, 'child chain node not exist.');
+    let depositinfo = JSON.parse(storageLoad('childChainAsset_' + input.chain_id));
+    let assertinfo = JSON.parse(storageLoad('withdrawal_' + input.chain_id));
+    assert(depositinfo!==false,'chain is not exist');
+    assert(depositinfo.totalamount>0,'totalamount less than 0');
+    assert(depositinfo.totalamount-assertinfo.totalamount-input.amount>0,'totalamount greater than 0');
+    assert(!verifyMerkelProof(input.chain_id,input.block_hash,input.merkel_proof),'verify merkel proof error');
+    if(assertinfo === false) {
+        let assertparam = {};
+        assertparam.chain_id = input.chain_id;
+        assertparam.totalamount = input.amount;
+        assertparam.seq = 1;
+        assertparam.complete_seq = 0;
+
+        let asset_chanin = {};
+        asset_chanin.chain_id = input.chain_id;
+        asset_chanin.amount = input.amount;
+        asset_chanin.seq = 1;
+
+        asset_chanin.block_hash = input.block_hash;
+        asset_chanin.main_source_address = sender;
+        asset_chanin.source_address = input.source_address;
+        asset_chanin.address = input.address;
+        asset_chanin.merkel_proof = input.merkel_proof;
+        asset_chanin.state = 1;
+        storageStore('withdrawal_' + assertparam.chain_id , JSON.stringify(assertparam));
+        storageStore('withdrawal_' + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
+        tlog('withdrawal',input.chain_id,JSON.stringify(asset_chanin)); 
+    } 
+    else {
+        let asset_chanin_ = JSON.parse(storageLoad('withdrawal_' + input.chain_id+assertinfo.seq));
+        assert((assertinfo.seq + 1)===input.seq,'Wrong order of withdrawal');
+        let totleaamount = assertinfo.totalamount + input.amount;
+        assertinfo.totalamount = totleaamount;
+        assertinfo.seq = assertinfo.seq + 1;
+        assertinfo.complete_seq = assertinfo.complete_seq;
+     
+     
+        asset_chanin_.chain_id = input.chain_id;
+        asset_chanin_.amount = input.amount;
+        asset_chanin_.seq = input.seq;
+        asset_chanin_.block_hash = input.block_hash;
+        asset_chanin_.main_source_address = sender;
+        asset_chanin_.source_address = input.source_address;
+        asset_chanin_.address = input.address;
+        asset_chanin_.merkel_proof = input.merkel_proof;
+        asset_chanin_.state = 1;
+
+        storageStore('withdrawal_' + assertinfo.chain_id , JSON.stringify(assertinfo));
+        storageStore('withdrawal_' + asset_chanin_.chain_id + '_'+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
+        tlog('withdrawal',input.chain_id,JSON.stringify(asset_chanin_)); 
+    }
 }
 
 function abolishValidator(params){
