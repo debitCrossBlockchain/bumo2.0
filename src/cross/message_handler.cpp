@@ -31,6 +31,7 @@ namespace bumo {
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_HEAD] = std::bind(&MessageHandler::OnHandleQueryHead, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT] = std::bind(&MessageHandler::OnHandleQueryDeposit, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_DEPOSIT] = std::bind(&MessageHandler::OnHandleDeposit, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageHandler::OnHandleWithdrawal, this, std::placeholders::_1);
 
 		MessageChannel &message_channel = MessageChannel::Instance();
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN);
@@ -39,6 +40,7 @@ namespace bumo {
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_HEAD);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_DEPOSIT);
+		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_WITHDRAWAL);
 
 		if (!CheckForChildBlock()){
 			return false;
@@ -306,6 +308,10 @@ namespace bumo {
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		msg_channel.set_msg_data(ledger_header.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+	}
+
+	void MessageHandler::OnHandleWithdrawal(const protocol::MessageChannel &message_channel){
+
 	}
 
 	void MessageHandler::OnHandleQueryDeposit(const protocol::MessageChannel &message_channel){

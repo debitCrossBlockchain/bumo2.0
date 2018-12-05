@@ -53,7 +53,7 @@ namespace bumo {
 		void OnHandleQueryHead(const protocol::MessageChannel &message_channel);
 		void OnHandleQueryDeposit(const protocol::MessageChannel &message_channel);
 		void OnHandleDeposit(const protocol::MessageChannel &message_channel);
-
+		void OnHandleWithdrawal(const protocol::MessageChannel &message_channel);
 		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
 		void SendChildGenesesRequest();
 		//void SendTransaction(const std::vector<std::string> &paras, std::string& hash);
