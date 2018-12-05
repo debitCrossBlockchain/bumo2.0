@@ -39,6 +39,19 @@ function findI0(arr, key){
     }
 }
 
+function checkchildChainValadator(chain_id,validator){
+    let key = 'childChainid_info_' + chain_id;
+    let chaininfo = JSON.parse(storageLoad(key));
+    if(chaininfo !== false)
+    {
+        if(findI0(chaininfo.validators,validator) !== false)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 function transferBUAsset(dest, amount)
 {
     assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string,' + typeof dest + ',' + typeof amount);
@@ -90,7 +103,6 @@ function deposit(params){
             assert(depositinfo.votes.includes(sender) !== true, sender + ' has voted.');
             depositinfo.votes.push(sender);
             input.votedcount = int64Add(input.votedcount,1);
-            let validators = getValidators();
             if(input.votedcount < parseInt(validators.length * passRate + 0.5))
             {
                 storageStore(key,JSON.stringify(input));
@@ -99,7 +111,7 @@ function deposit(params){
             }
             //tlog('deposit',params.chain_id,JSON.stringify(depositinfo));
 
-            transferBUAsset(depositinfo.deposit_data['address'],depositinfo.deposit_data['amount']);
+            transferBUAsset(depositinfo.deposit_data.address,depositinfo.deposit_data.amount);
             storageDel(key);
         }
         let dealedseqkey = 'dealeddeposit_' + params.chain_id;
@@ -112,18 +124,7 @@ function deposit(params){
    return true;
 }
 
-function checkchildChainValadator(chain_id,validator){
-    let key = 'childChainid_info_' + chain_id;
-    let chaininfo = JSON.parse(storageLoad(key));
-    if(chaininfo !== false)
-    {
-        if(findI0(chaininfo.validators,validator) !== false)
-        {
-            return true;
-        }
-    }
-    return false;
-}
+
 
 
 function buildWithdrawalProofs(params){
@@ -134,11 +135,11 @@ function buildWithdrawalProofs(params){
     {
         return;
     }
-    withdrawalInfo.status = statuschallenging;
+    withdrawalInfo.block_hash = params.block_hash;
     withdrawalInfo.merkelProof = params.merkel_proof;
 
     storageStore(key,JSON.stringify(withdrawalInfo));
-   
+    tlog('withdrawal','0',JSON.stringify(withdrawalInfo)); 
     return false;
 }
 
@@ -147,12 +148,9 @@ function withdrawal(params){
     //input dest_address
     
     let withdrawalSeqKey = "childwithdrawal_"  + params.chain_id + "_seq";
+    let seq = 0;
     let seqStr = storageLoad(withdrawalSeqKey);
-     if(seqStr === false)
-    {
-        seq = 0;
-    }
-    else
+     if(seqStr !== false)
     {
         seq = parseInt(seqStr);
     }
@@ -162,18 +160,20 @@ function withdrawal(params){
     {
         return false;
     }
+    
     let input = {};
     let key = "childwithdrawal_"  + params.chain_id + "_"+ seq;
-    input.assert = assert_info.amount;
-    input.dest_address = params.dest_address
-    input.starttime = blockTimestamp;
-    input.status = statusinit;
+    input.amount = assert_info.amount;
+    input.source_address = sender;
+    input.chain_id = params.chain_id;
+    input.block_hash = '';
+    input.address = params.address;
     input.seq = seq;
     input.merkelProof = '';
-;
+    
     storageStore(key,JSON.stringify(input));
     storageStore(withdrawalSeqKey,seq.toString());
-    tlog('createChildChain',childChainid,JSON.stringify(params)); 
+    tlog('withdrawalInit','0',JSON.stringify(input)); 
     return false;
 }
 
@@ -227,9 +227,5 @@ function main(input_str){
 }
 
 function init(){
- 
-   
-
-
-    return true;
+     return true;
 }

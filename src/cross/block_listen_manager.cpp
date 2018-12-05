@@ -10,6 +10,7 @@ namespace bumo {
 	const static char* OP_CREATE_CHILD_CHAIN = "createChildChain";
 	const static char* OP_DEPOSIT = "deposit";
 	const static char* OP_WITHDRAWAL = "withdrawal"; 
+	const static char* OP_WITHDRAWALINIT = "withdrawalInit";
 	const static char* OP_CHALLENGE = "challenge";
 
 	BlockListenManager::BlockListenManager(){
@@ -169,30 +170,30 @@ namespace bumo {
 				continue;
 			}
 			int32_t tlog_type = ParseTlog(log.topic());
-			//transfer tlog params must be 2
-			if (log.datas_size() != 2){
-				LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
-				continue ;
-			}
 
 			//special transaction
 			switch (tlog_type){
 				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
 				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
 				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:{
-				SendTlog(log);
-				LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
-				break;
+					//transfer tlog params must be 2
+					if (log.datas_size() != 2){
+						LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
+						break;
+					}
+					SendTlog(log);
+					LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
+					break;
 				}
-			default:
-				break;
+				default:
+					break;
 			}
+
 		}
+		
 	}
 
-	void BlockListenManager::HandleMainChainBlock(LedgerFrm::pointer closing_ledger){
-		DealTlog(closing_ledger);
-	}
+
 
 	void BlockListenManager::DealTlog(LedgerFrm::pointer closing_ledger){
 		for (int i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
@@ -229,6 +230,12 @@ namespace bumo {
 		LOG_INFO("childChain build a block hash=%s,send msgchannel", utils::String::BinToHexString(ledger_header.hash()).c_str());
 	}
 
+	std::string BlockListenManager::GetMerklePath(LedgerFrm::pointer closing_ledger)
+	{
+		return std::string("abc");
+	}
+
+
 	void BlockListenManager::BuildSpvProof(LedgerFrm::pointer closing_ledger, const protocol::Transaction &trans, const protocol::OperationLog &tlog){
 
 		std::vector<std::string> send_para_list;
@@ -237,14 +244,10 @@ namespace bumo {
 		protocol::MerkelProof mk_proof;
 
 		mk_proof.set_merkel_root(closing_ledger->GetProtoHeader().hash());
-		mk_proof.set_merkel_path("abc");
+		mk_proof.set_merkel_path(GetMerklePath(closing_ledger));
 		*mk_proof.mutable_transaction() = trans;
 
-		params["chain_id"] = General::GetSelfChainId();
-		params["seq"] = closing_ledger->GetProtoHeader().seq();
-		params["hash"] = closing_ledger->GetProtoHeader().hash();
-		params["account_tree_hash"] = closing_ledger->GetProtoHeader().account_tree_hash();
-		params["account_tree"] = "";
+		params["block_hash"] = closing_ledger->GetProtoHeader().hash();
 		params["merkel_proof"] = mk_proof.SerializeAsString();
 		input_value["method"] = "buildWithdrawalProofs";
 		input_value["params"] = params;
@@ -273,11 +276,22 @@ namespace bumo {
 			}
 			int32_t tlog_type = ParseTlog(log.topic());
 			//special transaction
-			if (tlog_type != protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_WITHDRAWAL){
-				continue;
+			if (tlog_type == protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_WITHDRAWAL){
+				SendTlog(log);
 			}
-			BuildSpvProof(closing_ledger,trans,log);
+			else if (0 == log.topic().compare(OP_WITHDRAWALINIT)){
+				BuildSpvProof(closing_ledger, trans, log);
+			}
+			
+			
 		}
+
+
+
+	}
+
+	void BlockListenManager::HandleMainChainBlock(LedgerFrm::pointer closing_ledger){
+		DealTlog(closing_ledger);
 	}
 
 	void BlockListenManager::HandleChildChainBlock(LedgerFrm::pointer closing_ledger){
