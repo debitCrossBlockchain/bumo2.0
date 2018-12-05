@@ -272,11 +272,7 @@ namespace bumo {
 				continue;
 			}
 			BuildSpvProof(closing_ledger,trans,log);
-
 		}
-
-
-
 	}
 
 	void BlockListenManager::HandleChildChainBlock(LedgerFrm::pointer closing_ledger){
