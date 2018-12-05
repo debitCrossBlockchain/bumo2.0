@@ -165,20 +165,24 @@ namespace bumo {
 				continue;
 			}
 			int32_t tlog_type = ParseTlog(log.topic());
-			//special transaction
-			if (tlog_type != protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN &&
-				tlog_type != protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT){
-				continue;
-			}
 			//transfer tlog params must be 2
 			if (log.datas_size() != 2){
 				LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
 				continue ;
 			}
-			LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
-			SendTlog(log);
+
+			//special transaction
+			switch (tlog_type){
+				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
+				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:{
+				SendTlog(log);
+				LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
+				break;
+				}
+			default:
+				break;
+			}
 		}
-		
 	}
 
 	void BlockListenManager::HandleMainChainBlock(LedgerFrm::pointer closing_ledger){
