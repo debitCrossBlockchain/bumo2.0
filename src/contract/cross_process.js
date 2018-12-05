@@ -14,6 +14,7 @@ const depositsVar   = 'deposit_lists';
 const pledgeAmountVar = 'pledge_coin_amount';
 const expiredTimeVar  = 'voting_expired_time';
 const buassert        = 'BU';
+const statusinit      = 'init';
 const statuschallenging   = 'challenging';
 const statuserror         = 'error';
 const depositcurrentseq         = 'error';
@@ -57,8 +58,8 @@ function deposit(params){
     let input = {};
     let depositseq = 'childdeposit_' + params.chain_id;
     let key = 'childdeposit_' + params.chain_id + '_' + params.seq;
+
     let depositinfo = JSON.parse(storageLoad(key));
-    assert(depositinfo !== false,'depositinfo is not exist.');
     
     if(depositinfo === false)
     {
@@ -101,6 +102,10 @@ function deposit(params){
             transferBUAsset(depositinfo.deposit_data['address'],depositinfo.deposit_data['amount']);
             storageDel(key);
         }
+        let dealedseqkey = 'dealeddeposit_' + params.chain_id;
+        //childChainCount = int64Add(childChainCount, 1);
+       // storageStore('childChainCount',childChainCount.toString());
+        storageStore(key,JSON.stringify(input));
     }
     
 
@@ -120,21 +125,55 @@ function checkchildChainValadator(chain_id,validator){
     return false;
 }
 
+
+function buildWithdrawalProofs(params){
+    //input dest_address
+    let key = "childwithdrawal_"  + params.chain_id + "_"+  params.seq;
+    let withdrawalInfo = JSON.parse(storageLoad(key));
+    if(withdrawalInfo === false)
+    {
+        return;
+    }
+    withdrawalInfo.status = statuschallenging;
+    withdrawalInfo.merkelProof = params.merkel_proof;
+
+    storageStore(key,JSON.stringify(withdrawalInfo));
+   
+    return false;
+}
+
+
 function withdrawal(params){
     //input dest_address
-    let key = "childwithdrawal_"  + sender + "_" + triggerIndex;
+    
+    let withdrawalSeqKey = "childwithdrawal_"  + params.chain_id + "_seq";
+    let seqStr = storageLoad(withdrawalSeqKey);
+     if(seqStr === false)
+    {
+        seq = 0;
+    }
+    else
+    {
+        seq = parseInt(seqStr);
+    }
+    seq = int64Add(seq,1);
     let assert_info = thisPayAsset;
     if(assert_info.key.code !== buassert)
     {
         return false;
     }
     let input = {};
+    let key = "childwithdrawal_"  + params.chain_id + "_"+ seq;
     input.assert = assert_info.amount;
     input.dest_address = params.dest_address
     input.starttime = blockTimestamp;
-    input.status = statuschallenging;
-    input.spvproofs = '';
+    input.status = statusinit;
+    input.seq = seq;
+    input.merkelProof = '';
+;
     storageStore(key,JSON.stringify(input));
+    storageStore(withdrawalSeqKey,seq.toString());
+    tlog('createChildChain',childChainid,JSON.stringify(params)); 
     return false;
 }
 
@@ -179,6 +218,9 @@ function main(input_str){
     else if(input.method === 'withdrawal'){
 	    withdrawal(input.params);
     }
+    else if(input.method === 'buildWithdrawalProofs'){
+	    buildWithdrawalProofs(input.params);
+    }
     else{
         throw '<undidentified operation type>';
     }
@@ -186,5 +228,8 @@ function main(input_str){
 
 function init(){
  
+   
+
+
     return true;
 }
