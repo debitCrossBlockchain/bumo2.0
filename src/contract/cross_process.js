@@ -160,13 +160,14 @@ function withdrawal(params){
     {
         return false;
     }
+    
     let input = {};
     let key = "childwithdrawal_"  + params.chain_id + "_"+ seq;
     input.amount = assert_info.amount;
-    input.source_address = params.source_address;
-    input.chain_id = params.dest_chain_id;
+    input.source_address = sender;
+    input.chain_id = params.chain_id;
     input.block_hash = '';
-    input.address = params.source_address;
+    input.address = params.address;
     input.seq = seq;
     input.merkelProof = '';
     
