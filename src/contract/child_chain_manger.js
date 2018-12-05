@@ -441,7 +441,7 @@ function query(inputStr){
         result = queryChildChainValidators(input.params);
     }
     else if(input.method === 'queryChildFreshDeposit'){
-        result = queryChildfreshDeposit(input.params);
+        result = queryChildFreshDeposit(input.params);
     }
     else if(input.method === 'queryChildDeposit'){
         result = queryChildDeposit(input.params);
