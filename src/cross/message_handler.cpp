@@ -1,6 +1,7 @@
 #include <common/storage.h>
 #include <common/private_key.h>
 #include <common/pb2json.h>
+#include<api/websocket_server.h>
 #include "message_handler.h"
 
 
@@ -311,7 +312,18 @@ namespace bumo {
 	}
 
 	void MessageHandler::OnHandleWithdrawal(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelWithdrawal withdrawal;
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return;
+		}
 
+		if (!withdrawal.ParseFromString(message_channel.msg_data())){
+			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("Parse MessageChannelWithdrawal error, err_code is (" FMT_I64 ")", error_code);
+			return;
+		}
+		
+		bumo::WebSocketServer::GetInstance()->BroadcastMsg(protocol::EVENT_WITHDRAWAL, withdrawal.SerializeAsString());
 	}
 
 	void MessageHandler::OnHandleQueryDeposit(const protocol::MessageChannel &message_channel){
