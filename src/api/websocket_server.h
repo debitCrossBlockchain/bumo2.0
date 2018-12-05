@@ -17,6 +17,8 @@
 #define WEBSOCKET_SERVER_H_
 
 #include <proto/cpp/chain.pb.h>
+#include <proto/cpp/overlay.pb.h>
+#include <main/configure.h>
 #include <common/network.h>
 #include <monitor/system_manager.h>
 
