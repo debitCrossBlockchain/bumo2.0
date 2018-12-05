@@ -101,6 +101,7 @@ namespace bumo {
 		request_methods_[protocol::CHAIN_PEER_MESSAGE] = std::bind(&WebSocketServer::OnChainPeerMessage, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_SUBMITTRANSACTION] = std::bind(&WebSocketServer::OnSubmitTransaction, this, std::placeholders::_1, std::placeholders::_2);
 		request_methods_[protocol::CHAIN_SUBSCRIBE_TX] = std::bind(&WebSocketServer::OnSubscribeTx, this, std::placeholders::_1, std::placeholders::_2);
+		request_methods_[protocol::EVENT_WITHDRAWAL] = std::bind(&WebSocketServer::OnSubscribeEventWithdrawal, this, std::placeholders::_1, std::placeholders::_2);
 		thread_ptr_ = NULL;
 	}
 
@@ -129,6 +130,17 @@ namespace bumo {
 
 	void WebSocketServer::Run(utils::Thread *thread) {
 		Start(bumo::Configure::Instance().wsserver_configure_.listen_address_);
+	}
+
+	bool WebSocketServer::OnSubscribeEventWithdrawal(protocol::WsMessage &message, int64_t conn_id){
+		utils::MutexGuard guard_(conns_list_lock_);
+		Connection *conn = GetConnection(conn_id);
+		if (!conn) {
+			return false;
+		}
+
+		BroadcastMsg(protocol::EVENT_WITHDRAWAL, "");
+		return true;
 	}
 
 	bool WebSocketServer::OnChainHello(protocol::WsMessage &message, int64_t conn_id) {
