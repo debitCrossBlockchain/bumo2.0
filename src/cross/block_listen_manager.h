@@ -40,12 +40,13 @@ namespace bumo {
 		void HandleChildChainBlock(LedgerFrm::pointer closing_ledger);
 		void DealTlog(LedgerFrm::pointer closing_ledger);
 
-		
+		std::string GetMerklePath(LedgerFrm::pointer closing_ledger);
 		virtual void HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result) override;
 
 		void SendChildHeader(LedgerFrm::pointer closing_ledger);
 		void DealChildTlog(LedgerFrm::pointer closing_ledger, const protocol::Transaction &trans);
 		void BuildSpvProof(LedgerFrm::pointer closing_ledger, const protocol::Transaction &trans, const protocol::OperationLog &tlog);
+		
 
 		void SendTlog(const protocol::OperationLog &tlog);
 		void DealMainTlog(const protocol::Transaction &trans);
