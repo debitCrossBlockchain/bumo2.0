@@ -231,7 +231,7 @@ namespace bumo {
 		Json::Value params;
 		protocol::MerkelProof mk_proof;
 
-		mk_proof.set_merkel_root(closing_ledger->GetProtoHeader().account_tree_hash());
+		mk_proof.set_merkel_root(closing_ledger->GetProtoHeader().hash());
 		mk_proof.set_merkel_path("abc");
 		*mk_proof.mutable_transaction() = trans;
 
