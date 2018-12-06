@@ -241,6 +241,13 @@ function withdrawalChildChain(params){
     }
 }
 
+function checkWwithdrawal(params){
+    log('checkWwithdrawal');
+    let input = params;
+    let retinfo = JSON.parse(storageLoad('withdrawal_' + input.chain_id));
+    assert(retinfo !== false, 'checkWwithdrawal withdrawal_' + input.chain_id +  ' failed.');
+}
+
 function abolishValidator(params){
     log('abolishValidator');
     let input = params;
