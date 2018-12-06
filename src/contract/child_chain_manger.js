@@ -253,7 +253,7 @@ function withdrawalChildChain(params){
     let validators_list = getchildChainValidators(input.chain_id);
     assert(validators_list.length>0, 'child chain node not exist.');
     let depositinfo = JSON.parse(storageLoad(CHILD_CHAIN_ASSET + input.chain_id));
-    let assertinfo = JSON.parse(storageLoad('withdrawal_' + input.chain_id));
+    let assertinfo = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
     assert(depositinfo !== false, 'chain is not exist');
     assert(depositinfo.totalamount > 0, 'totalamount less than 0');
     assert(depositinfo.totalamount - assertinfo.totalamount - input.amount > 0, 'totalamount greater than 0');
@@ -277,12 +277,12 @@ function withdrawalChildChain(params){
         asset_chanin.merkel_proof = input.merkel_proof;
         asset_chanin.state = 1;
         asset_chanin.withdrawal_block_number = blockNumber + effectiWithdrawalInterval;
-        storageStore('withdrawal_' + assertparam.chain_id , JSON.stringify(assertparam));
-        storageStore('withdrawal_' + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
+        storageStore(CHAIN_WITHDRAWAL + assertparam.chain_id , JSON.stringify(assertparam));
+        storageStore(CHAIN_WITHDRAWAL + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
         tlog(TLOG_WITHDRAWAL, input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
-        let asset_chanin_ = JSON.parse(storageLoad('withdrawal_' + input.chain_id+'_'+assertinfo.seq));
+        let asset_chanin_ = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id+'_'+assertinfo.seq));
         assert((assertinfo.seq + 1)===input.seq,'Wrong order of withdrawal');
         let totleaamount = assertinfo.totalamount + input.amount;
         assertinfo.totalamount = totleaamount;
@@ -300,8 +300,8 @@ function withdrawalChildChain(params){
         asset_chanin_.state = 1;
         asset_chanin_.withdrawal_block_number = blockNumber + effectiWithdrawalInterval;
 
-        storageStore('withdrawal_' + assertinfo.chain_id , JSON.stringify(assertinfo));
-        storageStore('withdrawal_' + asset_chanin_.chain_id + '_'+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
+        storageStore(CHAIN_WITHDRAWAL + assertinfo.chain_id , JSON.stringify(assertinfo));
+        storageStore(CHAIN_WITHDRAWAL + asset_chanin_.chain_id + '_'+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
         tlog(TLOG_WITHDRAWAL, input.chain_id,JSON.stringify(asset_chanin_)); 
     }
 }
