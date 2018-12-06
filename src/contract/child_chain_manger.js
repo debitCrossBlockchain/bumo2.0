@@ -17,6 +17,7 @@ const CHILD_CHAIN_VALIDATOR_HISTORY = 'childChainValidatorHistory_';
 const TLOG_CREATE_CHILD_CHAIN = 'createChildChain';
 const TLOG_DEPOSIT = 'deposit';
 const TLOG_WITHDRAWAL = 'withdrawal';
+const TLOG_CHALLENGE = 'challenge';
 const TLOG_CHANGE_VALIDATOR = 'changeValidator';
 
 //define  effectiWithdrawalInterval
@@ -279,7 +280,7 @@ function withdrawalChildChain(params){
         asset_chanin.withdrawal_block_number = blockNumber + effectiWithdrawalInterval;
         storageStore(CHAIN_WITHDRAWAL + assertparam.chain_id , JSON.stringify(assertparam));
         storageStore(CHAIN_WITHDRAWAL + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
-        tlog(TLOG_WITHDRAWAL, input.chain_id,JSON.stringify(asset_chanin)); 
+        tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
         let asset_chanin_ = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id+'_'+assertinfo.seq));
@@ -302,7 +303,7 @@ function withdrawalChildChain(params){
 
         storageStore(CHAIN_WITHDRAWAL + assertinfo.chain_id , JSON.stringify(assertinfo));
         storageStore(CHAIN_WITHDRAWAL + asset_chanin_.chain_id + '_'+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
-        tlog(TLOG_WITHDRAWAL, input.chain_id,JSON.stringify(asset_chanin_)); 
+        tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(asset_chanin_)); 
     }
 }
 
