@@ -4,10 +4,6 @@ const passRate               = 0.7;
 const effectiveVoteInterval  = 50 * 1000 * 1000;
 const buassert        = 'BU';
 
-const statuserror         = 'error';
-const depositcurrentseq         = 'error';
-
-
 function findI0(arr, key){
     assert((typeof arr === 'object') && (typeof key === 'string'), 'Args type error. arg-arr must be an object, and arg-key must be a string.');
 
@@ -116,7 +112,7 @@ function deposit(params){
 
 
 function buildWithdrawalProofs(params){
-    let key = "childwithdrawal_"  + params.chain_id + "_"+  params.seq;
+    let key = 'childwithdrawal_'  + params.chain_id + '_'+  params.seq;
     let withdrawalInfo = JSON.parse(storageLoad(key));
     if(withdrawalInfo === false)
     {
@@ -134,7 +130,7 @@ function buildWithdrawalProofs(params){
 function withdrawal(params){
     // chain_id、address
     
-    let withdrawalSeqKey = "childwithdrawal_"  + params.chain_id + "_seq";
+    let withdrawalSeqKey = 'childwithdrawal_'  + params.chain_id + '_seq';
     let seq = 0;
     let seqStr = storageLoad(withdrawalSeqKey);
      if(seqStr !== false)
@@ -149,7 +145,7 @@ function withdrawal(params){
     }
     
     let input = {};
-    let key = "childwithdrawal_"  + params.chain_id + "_"+ seq;
+    let key = 'childwithdrawal_'  + params.chain_id + '_'+ seq;
     input.amount = assert_info.amount;
     input.source_address = sender;
     input.chain_id = params.chain_id;

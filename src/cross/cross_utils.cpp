@@ -117,7 +117,8 @@ namespace bumo {
 			pay_coin->set_input(paras[i]);
 		}
 
-		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());;
+		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());
+		tran->set_chain_id(General::GetSelfChainId());
 		int64_t fee_limit = 0;
 		//300 is signature byte
 		if (!utils::SafeIntMul(tran->gas_price(), ((int64_t)tran_env.ByteSize() + 300), fee_limit)){
