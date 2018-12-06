@@ -101,6 +101,41 @@ function getchildChainValidators(chain_id) {
     return retinfo;
 }
 
+function checkWithdrawal(params) {
+    log('checkWithdrawal');
+    let input = params;
+    let retinfo = JSON.parse(storageLoad('withdrawal_' + input.chain_id));
+    if (retinfo === false) {
+        return;
+    }
+
+    let withdrawal = JSON.parse(storageLoad('withdrawal_' + input.chain_id + (retinfo.complete_seq + 1)));
+    if (blockNumber < withdrawal.withdrawal_block_number) {
+        return;
+    }
+
+    let totleaamount = retinfo.totalamount;
+    retinfo.totalamount = totleaamount;
+    retinfo.seq = retinfo.seq;
+    retinfo.complete_seq = retinfo.complete_seq + 1;
+    withdrawal.chain_id = withdrawal.chain_id;
+    withdrawal.amount = withdrawal.amount;
+    withdrawal.seq = withdrawal.seq;
+    withdrawal.block_hash = withdrawal.block_hash;
+    withdrawal.main_source_address = withdrawal.main_source_address;
+    withdrawal.source_address = withdrawal.source_address;
+    withdrawal.address = withdrawal.address;
+    withdrawal.merkel_proof = withdrawal.merkel_proof;
+    withdrawal.state = 3;
+    withdrawal.withdrawal_block_number = withdrawal.withdrawal_block_number;
+    
+    storageStore('withdrawal_' + retinfo.chain_id, JSON.stringify(retinfo));
+    storageStore('withdrawal_' + withdrawal.chain_id + '_' + withdrawal.seq, JSON.stringify(withdrawal));
+    transferCoin(withdrawal.address, withdrawal.amount);
+    tlog('withdrawal', input.chain_id, JSON.stringify(withdrawal));
+}
+
+
 function submitChildBlockHeader(params) {
     log('submitChildBlockHeader');
     let input = params;
@@ -239,40 +274,6 @@ function withdrawalChildChain(params) {
         storageStore('withdrawal_' + asset_chanin_.chain_id + '_' + asset_chanin_.seq, JSON.stringify(asset_chanin_));
         tlog('challenge', input.chain_id, JSON.stringify(asset_chanin_));
     }
-}
-
-function checkWithdrawal(params) {
-    log('checkWithdrawal');
-    let input = params;
-    let retinfo = JSON.parse(storageLoad('withdrawal_' + input.chain_id));
-    if (retinfo === false) {
-        return;
-    }
-
-    let withdrawal = JSON.parse(storageLoad('withdrawal_' + input.chain_id + (retinfo.complete_seq + 1)));
-    if (blockNumber < withdrawal.withdrawal_block_number) {
-        return;
-    }
-
-    let totleaamount = retinfo.totalamount;
-    retinfo.totalamount = totleaamount;
-    retinfo.seq = retinfo.seq;
-    retinfo.complete_seq = retinfo.complete_seq + 1;
-    withdrawal.chain_id = withdrawal.chain_id;
-    withdrawal.amount = withdrawal.amount;
-    withdrawal.seq = withdrawal.seq;
-    withdrawal.block_hash = withdrawal.block_hash;
-    withdrawal.main_source_address = withdrawal.main_source_address;
-    withdrawal.source_address = withdrawal.source_address;
-    withdrawal.address = withdrawal.address;
-    withdrawal.merkel_proof = withdrawal.merkel_proof;
-    withdrawal.state = 3;
-    withdrawal.withdrawal_block_number = withdrawal.withdrawal_block_number;
-    
-    storageStore('withdrawal_' + retinfo.chain_id, JSON.stringify(retinfo));
-    storageStore('withdrawal_' + withdrawal.chain_id + '_' + withdrawal.seq, JSON.stringify(withdrawal));
-    transferCoin(withdrawal.address, withdrawal.amount);
-    tlog('withdrawal', input.chain_id, JSON.stringify(withdrawal));
 }
 
 function abolishValidator(params) {
