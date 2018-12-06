@@ -255,9 +255,13 @@ function withdrawalChildChain(params){
     assert(validators_list.length>0, 'child chain node not exist.');
     let depositinfo = JSON.parse(storageLoad(CHAIN_DEPOSIT + input.chain_id));
     let assertinfo = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
+    let assert_total_amount = 0;
+    if(assertinfo!== false){
+        assert_total_amount = assertinfo.totalamount;
+    }
     assert(depositinfo !== false, 'chain is not exist');
     assert(depositinfo.totalamount > 0, 'totalamount less than 0');
-    assert(depositinfo.totalamount - assertinfo.totalamount - input.amount > 0, 'totalamount greater than 0');
+    assert(depositinfo.totalamount - assert_total_amount - input.amount > 0, 'totalamount greater than 0');
     assert(!verifyMerkelProof(input.chain_id, input.block_hash, input.merkel_proof), 'verify merkel proof error');
     if (assertinfo === false) {
         let assertparam = {};
