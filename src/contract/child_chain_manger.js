@@ -228,7 +228,7 @@ function depositToChildChain(params){
         tlog(TLOG_DEPOSIT, input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
-        let asset_chanin_ = JSON.parse(storageLoad(CHILD_CHAIN_ASSET + input.chain_id+assertinfo.seq));
+        let asset_chanin_ = JSON.parse(storageLoad(CHILD_CHAIN_ASSET + input.chain_id+'_'+assertinfo.seq));
         let totleaamount = assertinfo.totalamount + input.amount;
         assertinfo.totalamount = totleaamount;
         assertinfo.seq = assertinfo.seq + 1;
