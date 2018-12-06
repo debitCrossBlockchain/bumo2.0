@@ -431,7 +431,7 @@ namespace bumo {
 		int64_t internalSeq = newest_deposit_seq_ - local_deposit_seq_;
 		internalSeq = MIN(internalSeq, 10);
 
-		for (int i = 1; i++; i <= internalSeq)
+		for (int i = 1; i <= internalSeq; i++)
 		{
 			protocol::MessageChannelQueryDeposit query_deposit;
 			query_deposit.set_chain_id(General::GetSelfChainId());

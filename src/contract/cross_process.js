@@ -1,21 +1,9 @@
 'use strict';
 
-const validatorSetSize       = 100;
 const passRate               = 0.7;
 const effectiveVoteInterval  = 50 * 1000 * 1000;
-const minPledgeAmount        = 50000 * 100000000;
-const minSuperadditionAmount = 100 * 100000000;
-const applicantVar    = 'applicant_';
-const abolishVar      = 'abolish_';
-const proposerVar     = 'proposer';
-const reasonVar       = 'reason';
-const ballotVar       = 'ballot';
-const depositsVar   = 'deposit_lists';
-const pledgeAmountVar = 'pledge_coin_amount';
-const expiredTimeVar  = 'voting_expired_time';
 const buassert        = 'BU';
-const statusinit      = 'init';
-const statuschallenging   = 'challenging';
+
 const statuserror         = 'error';
 const depositcurrentseq         = 'error';
 
@@ -63,7 +51,7 @@ function transferBUAsset(dest, amount)
 }
 
 function deposit(params){
-
+    //chain_id seq deposit_data
     assert(checkchildChainValadator(params.chain_id,sender) === true,'deposit sender is not validator.' );
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
@@ -128,7 +116,6 @@ function deposit(params){
 
 
 function buildWithdrawalProofs(params){
-    //input dest_address
     let key = "childwithdrawal_"  + params.chain_id + "_"+  params.seq;
     let withdrawalInfo = JSON.parse(storageLoad(key));
     if(withdrawalInfo === false)
@@ -145,7 +132,7 @@ function buildWithdrawalProofs(params){
 
 
 function withdrawal(params){
-    //input dest_address
+    // chain_id、address
     
     let withdrawalSeqKey = "childwithdrawal_"  + params.chain_id + "_seq";
     let seq = 0;
