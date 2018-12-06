@@ -35,12 +35,13 @@ function createChildChain(params){
     assert(sender === input.genesis_account, 'sender is not genesis_account.');
     assert(int64Compare(thisPayCoinAmount,input.cost) === 0,'cost is not equels thisPayCoinAmount ' + thisPayCoinAmount + ',' + input.cost);
     assert(input.reserve_validator.length > 0, 'Failed to check reserve validator size, must gt 0');
+    
+    let saveValidators = [];
     let i = 0;
     for(i = 0; i < input.reserve_validator.length; i += 1){
-        assert(addressCheck(input.reserve_validator[i][0]) === true, 'Failed to check amount reserve validator address.');
-        assert(input.reserve_validator[i][1] === 0, 'Failed to check amount reserve validator, amount must be 0');
+        assert(addressCheck(input.reserve_validator[i]) === true, 'Failed to check amount reserve validator address.');
+        saveValidators.push([input.reserve_validator[i], 0]);
     }
-
     let childChainCount = parseInt(storageLoad(CHILD_CHAIN_COUNT));
     let childChainid = originChildChainid + childChainCount;
 
@@ -51,8 +52,8 @@ function createChildChain(params){
     info_params.block_cost_ready = true;
     info_params.blockheight = 0;
     info_params.validatorHistoryIndex = '0';
-    info_params.reserve_validators = input.reserve_validator;
-    info_params.validators = input.reserve_validator;
+    info_params.reserve_validators = saveValidators;
+    info_params.validators = saveValidators;
     info_params.bufferValidators = [];
     storageStore(CHILD_CHAIN_ID_INFO + childChainid, JSON.stringify(info_params));
     params.chain_id = childChainid;
