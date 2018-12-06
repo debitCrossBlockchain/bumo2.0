@@ -135,12 +135,12 @@ function withdrawCoinOnTimer(chainObj){
 function checkWithdrawal(params) {
     log('checkWithdrawal');
     let input = params;
-    let retinfo = JSON.parse(storageLoad('withdrawal_' + input.chain_id));
+    let retinfo = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
     if (retinfo === false) {
         return;
     }
 
-    let withdrawal = JSON.parse(storageLoad('withdrawal_' + input.chain_id + (retinfo.complete_seq + 1)));
+    let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ (retinfo.complete_seq + 1)));
     if (blockNumber < withdrawal.withdrawal_block_number) {
         return;
     }
@@ -160,10 +160,10 @@ function checkWithdrawal(params) {
     withdrawal.state = 3;
     withdrawal.withdrawal_block_number = withdrawal.withdrawal_block_number;
     
-    storageStore('withdrawal_' + retinfo.chain_id, JSON.stringify(retinfo));
-    storageStore('withdrawal_' + withdrawal.chain_id + '_' + withdrawal.seq, JSON.stringify(withdrawal));
+    storageStore(CHAIN_WITHDRAWAL + retinfo.chain_id, JSON.stringify(retinfo));
+    storageStore(CHAIN_WITHDRAWAL + withdrawal.chain_id + '_' + withdrawal.seq, JSON.stringify(withdrawal));
     transferCoin(withdrawal.address, withdrawal.amount);
-    tlog('withdrawal', input.chain_id, JSON.stringify(withdrawal));
+    tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal));
 }
 
 
