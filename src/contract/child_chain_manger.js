@@ -524,6 +524,9 @@ function main(inputStr){
     else if(input.method === 'depositToChildChain'){
         depositToChildChain(input.params);
     }
+    else if(input.method === 'withdrawalChildChain'){
+        withdrawalChildChain(input.params);
+    }
     else if(input.method === 'submitChildBlockHeader'){
         submitChildBlockHeader(input.params);
     }
