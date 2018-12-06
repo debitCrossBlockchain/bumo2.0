@@ -10,6 +10,9 @@ const validatorSetSize       = 100;
 //define vote passrate
 const passRate               = 0.7;
 
+//define  effectiWithdrawalInterval
+const effectiWithdrawalInterval  = 15 * 24 * 60 * 6;
+
 function findI0(arr, key){
     assert((typeof arr === 'object') && (typeof key === 'string'), 'Args type error. arg-arr must be an object, and arg-key must be a string.');
 
@@ -212,6 +215,7 @@ function withdrawalChildChain(params){
         asset_chanin.address = input.address;
         asset_chanin.merkel_proof = input.merkel_proof;
         asset_chanin.state = 1;
+        asset_chanin.withdrawal_block_number = blockNumber+effectiWithdrawalInterval;
         storageStore('withdrawal_' + assertparam.chain_id , JSON.stringify(assertparam));
         storageStore('withdrawal_' + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
         tlog('challenge',input.chain_id,JSON.stringify(asset_chanin)); 
@@ -234,6 +238,7 @@ function withdrawalChildChain(params){
         asset_chanin_.address = input.address;
         asset_chanin_.merkel_proof = input.merkel_proof;
         asset_chanin_.state = 1;
+        asset_chanin_.withdrawal_block_number = blockNumber+effectiWithdrawalInterval;
 
         storageStore('withdrawal_' + assertinfo.chain_id , JSON.stringify(assertinfo));
         storageStore('withdrawal_' + asset_chanin_.chain_id + '_'+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
