@@ -281,7 +281,7 @@ function withdrawalChildChain(params){
         tlog(TLOG_WITHDRAWAL, input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
-        let asset_chanin_ = JSON.parse(storageLoad('withdrawal_' + input.chain_id+assertinfo.seq));
+        let asset_chanin_ = JSON.parse(storageLoad('withdrawal_' + input.chain_id+'_'+assertinfo.seq));
         assert((assertinfo.seq + 1)===input.seq,'Wrong order of withdrawal');
         let totleaamount = assertinfo.totalamount + input.amount;
         assertinfo.totalamount = totleaamount;
