@@ -253,7 +253,7 @@ function withdrawalChildChain(params){
     assert(!((input.chain_id>childChain_id)||(input.chain_id<=0)) , 'chain_id is error');
     let validators_list = getchildChainValidators(input.chain_id);
     assert(validators_list.length>0, 'child chain node not exist.');
-    let depositinfo = JSON.parse(storageLoad(CHILD_CHAIN_ASSET + input.chain_id));
+    let depositinfo = JSON.parse(storageLoad(CHAIN_DEPOSIT + input.chain_id));
     let assertinfo = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
     assert(depositinfo !== false, 'chain is not exist');
     assert(depositinfo.totalamount > 0, 'totalamount less than 0');
