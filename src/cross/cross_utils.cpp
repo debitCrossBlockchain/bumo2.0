@@ -125,7 +125,7 @@ namespace bumo {
 			LOG_ERROR("Failed to evaluate fee.");
 			return nullptr;
 		}
-		fee_limit = fee_limit * 3;
+		fee_limit = fee_limit * 5;
 		tran->set_fee_limit(fee_limit);
 
 		std::string content = tran->SerializeAsString();
