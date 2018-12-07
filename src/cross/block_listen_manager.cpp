@@ -204,13 +204,13 @@ namespace bumo {
 			std::string desc = tx->GetResult().desc();
 			std::string hash = utils::String::BinToHexString(tx->GetContentHash()).c_str();
 
-			DealProposerTrans(apply_tran, code, hash, desc);
+			DealProposerTrans(apply_tran, code, desc, hash);
 
 			//deal append trans
 			for (unsigned int i = 0; i < tx->instructions_.size(); i++){
 				const protocol::Transaction &trans = tx->instructions_[i].transaction_env().transaction();
 				DealMainTlog(trans);
-				DealProposerTrans(trans, code, hash, desc);
+				DealProposerTrans(trans, code, desc, hash);
 				DealChildTlog(closing_ledger,trans );
 			}
 		}

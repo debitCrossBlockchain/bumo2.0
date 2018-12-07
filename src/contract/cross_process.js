@@ -84,9 +84,13 @@ function deposit(params){
         }
         else
         {
+            if(depositinfo.votedcount+1 !== parseInt(params.seq))
+            {
+                return false;
+            }
             assert(depositinfo.votes.includes(sender) !== true, sender + ' has voted.');
             depositinfo.votes.push(sender);
-            input.votedcount = int64Add(input.votedcount,1);
+            input.votedcount = int64Add(depositinfo.votedcount,1);
             if(input.votedcount < parseInt(validators.length * passRate + 0.5))
             {
                 storageStore(key,JSON.stringify(input));

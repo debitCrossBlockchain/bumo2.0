@@ -68,7 +68,7 @@ namespace bumo {
 	LedgerContext::~LedgerContext() {}
 
 	void LedgerContext::Run() {
-		LOG_INFO("Preprocessing the consensus value, ledger(" FMT_I64 ")", consensus_value_.ledger_seq());
+		//LOG_INFO("Preprocessing the consensus value, ledger(" FMT_I64 ")", consensus_value_.ledger_seq());
 		start_time_ = utils::Timestamp::HighResolution();
 		switch (type_)
 		{
