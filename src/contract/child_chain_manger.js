@@ -167,8 +167,7 @@ function checkWithdrawal(params) {
     
     storageStore(CHAIN_WITHDRAWAL + retinfo.chain_id, JSON.stringify(retinfo));
     storageStore(CHAIN_WITHDRAWAL + withdrawal_temp.chain_id + '_' + withdrawal_temp.seq, JSON.stringify(withdrawal_temp));
-    let amount = int64Add(withdrawal_temp.amount.toString(), 1);
-    payCoin(withdrawal_temp.address, '100');
+    payCoin(sender, '100');
     tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_temp));
 }
 
