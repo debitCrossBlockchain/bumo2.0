@@ -485,7 +485,7 @@ namespace bumo{
 			return false;
 		}
 
-		LOG_INFO("Parse jslint successfully!");
+		//LOG_INFO("Parse jslint successfully!");
 		return true;
 	}
 
