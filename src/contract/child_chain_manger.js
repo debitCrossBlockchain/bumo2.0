@@ -21,7 +21,7 @@ const TLOG_CHALLENGE = 'challenge';
 const TLOG_CHANGE_VALIDATOR = 'changeValidator';
 
 //define  effectiWithdrawalInterval
-const effectiWithdrawalInterval = 15 * 24 * 60 * 6;
+const effectiWithdrawalInterval = 6.0;
 
 function findValidatorIndex(array, key){
     let i = 0;
@@ -145,25 +145,31 @@ function checkWithdrawal(params) {
         return;
     }
 
+    if((withdrawal.state>=2)||(withdrawal.state<1)){
+        return;
+    }
+
+    let withdrawal_temp = {};
     let totleaamount = retinfo.totalamount;
     retinfo.totalamount = totleaamount;
     retinfo.seq = retinfo.seq;
     retinfo.complete_seq = retinfo.complete_seq + 1;
-    withdrawal.chain_id = withdrawal.chain_id;
-    withdrawal.amount = withdrawal.amount;
-    withdrawal.seq = withdrawal.seq;
-    withdrawal.block_hash = withdrawal.block_hash;
-    withdrawal.main_source_address = withdrawal.main_source_address;
-    withdrawal.source_address = withdrawal.source_address;
-    withdrawal.address = withdrawal.address;
-    withdrawal.merkel_proof = withdrawal.merkel_proof;
-    withdrawal.state = 3;
-    withdrawal.withdrawal_block_number = withdrawal.withdrawal_block_number;
+    withdrawal_temp.chain_id = withdrawal.chain_id;
+    withdrawal_temp.amount = withdrawal.amount;
+    withdrawal_temp.seq = withdrawal.seq;
+    withdrawal_temp.block_hash = withdrawal.block_hash;
+    withdrawal_temp.main_source_address = withdrawal.main_source_address;
+    withdrawal_temp.source_address = withdrawal.source_address;
+    withdrawal_temp.address = withdrawal.address;
+    withdrawal_temp.merkel_proof = withdrawal.merkel_proof;
+    withdrawal_temp.state = 3;
+    withdrawal_temp.withdrawal_block_number = withdrawal.withdrawal_block_number;
     
     storageStore(CHAIN_WITHDRAWAL + retinfo.chain_id, JSON.stringify(retinfo));
-    storageStore(CHAIN_WITHDRAWAL + withdrawal.chain_id + '_' + withdrawal.seq, JSON.stringify(withdrawal));
-    payCoin(withdrawal.address, withdrawal.amount);
-    tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal));
+    storageStore(CHAIN_WITHDRAWAL + withdrawal_temp.chain_id + '_' + withdrawal_temp.seq, JSON.stringify(withdrawal_temp));
+    let amount = int64Add(withdrawal_temp.amount.toString(), 1);
+    payCoin(withdrawal_temp.address, '100');
+    tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_temp));
 }
 
 
