@@ -20,6 +20,11 @@ const TLOG_WITHDRAWAL = 'withdrawal';
 const TLOG_CHALLENGE = 'challenge';
 const TLOG_CHANGE_VALIDATOR = 'changeValidator';
 
+
+const EXECUTE_STATE_INITIAL = 1;
+const EXECUTE_STATE_CHALLENGE = 2;
+const EXECUTE_STATE_FINISH = 3;
+
 //define  effectiWithdrawalInterval
 const effectiWithdrawalInterval = 6.0;
 
@@ -139,36 +144,41 @@ function checkWithdrawal(params) {
     if (retinfo === false) {
         return;
     }
-
-    let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ (retinfo.complete_seq + 1)));
-    if (blockNumber < withdrawal.withdrawal_block_number) {
-        return;
-    }
-
-    if((withdrawal.state>=2)||(withdrawal.state<1)){
-        return;
-    }
-
-    let withdrawal_temp = {};
-    let totleaamount = retinfo.totalamount;
-    retinfo.totalamount = totleaamount;
-    retinfo.seq = retinfo.seq;
-    retinfo.complete_seq = retinfo.complete_seq + 1;
-    withdrawal_temp.chain_id = withdrawal.chain_id;
-    withdrawal_temp.amount = withdrawal.amount;
-    withdrawal_temp.seq = withdrawal.seq;
-    withdrawal_temp.block_hash = withdrawal.block_hash;
-    withdrawal_temp.main_source_address = withdrawal.main_source_address;
-    withdrawal_temp.source_address = withdrawal.source_address;
-    withdrawal_temp.address = withdrawal.address;
-    withdrawal_temp.merkel_proof = withdrawal.merkel_proof;
-    withdrawal_temp.state = 3;
-    withdrawal_temp.withdrawal_block_number = withdrawal.withdrawal_block_number;
     
-    storageStore(CHAIN_WITHDRAWAL + retinfo.chain_id, JSON.stringify(retinfo));
-    storageStore(CHAIN_WITHDRAWAL + withdrawal_temp.chain_id + '_' + withdrawal_temp.seq, JSON.stringify(withdrawal_temp));
-    payCoin(sender, '100');
-    tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_temp));
+    let current_seq = int64Add(retinfo.complete_seq,1);
+    let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ current_seq));
+    if(withdrawal===false){
+        return;
+    }
+    if (int64Compare(withdrawal.withdrawal_block_number,blockNumber) ===1) {
+        return;
+    }
+
+    if((withdrawal.state>=EXECUTE_STATE_CHALLENGE)||(withdrawal.state<EXECUTE_STATE_INITIAL)){
+        return;
+    }
+
+    let  withdrawal_current = {};
+    let  withdrawal_detail = {};
+    withdrawal_current.totalamount = retinfo.totalamount;
+    withdrawal_current.seq = retinfo.seq;
+    withdrawal_current.complete_seq = current_seq;
+
+    withdrawal_detail.chain_id = withdrawal.chain_id;
+    withdrawal_detail.amount = withdrawal.amount;
+    withdrawal_detail.seq = withdrawal.seq;
+    withdrawal_detail.block_hash = withdrawal.block_hash;
+    withdrawal_detail.main_source_address = withdrawal.main_source_address;
+    withdrawal_detail.source_address = withdrawal.source_address;
+    withdrawal_detail.address = withdrawal.address;
+    withdrawal_detail.merkel_proof = withdrawal.merkel_proof;
+    withdrawal_detail.state = EXECUTE_STATE_FINISH;
+    withdrawal_detail.withdrawal_block_number = withdrawal.withdrawal_block_number;
+    
+    storageStore(CHAIN_WITHDRAWAL + input.chain_id, JSON.stringify(withdrawal_current));
+    storageStore(CHAIN_WITHDRAWAL + withdrawal_detail.chain_id + '_' + withdrawal_detail.seq, JSON.stringify(withdrawal_detail));
+    payCoin(withdrawal.address, withdrawal.amount);
+    tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_detail));
 }
 
 
@@ -215,17 +225,19 @@ function depositToChildChain(params){
     let validators_list = getchildChainValidators(input.chain_id);
     assert(validators_list.length>0, 'child chain node not exist.');
     assert(int64Compare(thisPayCoinAmount,input.amount) === 0,'amount is not equels thisPayCoinAmount');
+    assert(addressCheck(input.address) === true, 'child chain address is not valid adress.');
+    assert(stoI64Check(input.amount) === true, 'amount is not number');
     let assertinfo = JSON.parse(storageLoad(CHAIN_DEPOSIT + input.chain_id));
     if(assertinfo === false) {
         let assertparam = {};
         assertparam.chain_id = input.chain_id;
         assertparam.totalamount = input.amount;
-        assertparam.seq = 1;
+        assertparam.seq = '1';
 
         let asset_chanin = {};
         asset_chanin.chain_id = input.chain_id;
         asset_chanin.amount = input.amount;
-        asset_chanin.seq = 1;
+        asset_chanin.seq = '1';
         asset_chanin.block_number = blockNumber;
         asset_chanin.source_address = sender;
         asset_chanin.address = input.address;
@@ -235,19 +247,21 @@ function depositToChildChain(params){
         tlog(TLOG_DEPOSIT, input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
+        let deposit_current = {};
+        let deposit_detail = {};
         let asset_chanin_ = JSON.parse(storageLoad(CHAIN_DEPOSIT + input.chain_id+'_'+assertinfo.seq));
-        let totleaamount = assertinfo.totalamount + input.amount;
-        assertinfo.totalamount = totleaamount;
-        assertinfo.seq = assertinfo.seq + 1;
-        asset_chanin_.chain_id = input.chain_id;
-        asset_chanin_.amount = input.amount;
-        asset_chanin_.seq = assertinfo.seq;
-        asset_chanin_.block_number = blockNumber;
-        asset_chanin_.source_address = sender;
-        asset_chanin_.address = input.address;
-        storageStore(CHAIN_DEPOSIT + assertinfo.chain_id , JSON.stringify(assertinfo));
-        storageStore(CHAIN_DEPOSIT + asset_chanin_.chain_id + '_'+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
-        tlog(TLOG_DEPOSIT, input.chain_id,JSON.stringify(asset_chanin_)); 
+        deposit_current.totalamount = int64Add(assertinfo.totalamount,input.amount);
+        deposit_current.seq =int64Add(assertinfo.seq,1);
+
+        deposit_detail.chain_id = input.chain_id;
+        deposit_detail.amount = input.amount;
+        deposit_detail.seq = deposit_current.seq;
+        deposit_detail.block_number = blockNumber;
+        deposit_detail.source_address = sender;
+        deposit_detail.address = input.address;
+        storageStore(CHAIN_DEPOSIT + deposit_current.chain_id , JSON.stringify(deposit_current));
+        storageStore(CHAIN_DEPOSIT + deposit_detail.chain_id + '_'+ deposit_detail.seq, JSON.stringify(deposit_detail));
+        tlog(TLOG_DEPOSIT, input.chain_id,JSON.stringify(deposit_detail)); 
     }
 }
 
@@ -260,59 +274,64 @@ function withdrawalChildChain(params){
     assert(validators_list.length>0, 'child chain node not exist.');
     let depositinfo = JSON.parse(storageLoad(CHAIN_DEPOSIT + input.chain_id));
     let assertinfo = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
-    let assert_total_amount = 0;
+    assert(addressCheck(input.address) === true, 'chain address is not valid adress.');
+    assert(stoI64Check(input.amount) === true, 'amount is not number');
+    let assert_total_amount = '0';
     if(assertinfo!== false){
         assert_total_amount = assertinfo.totalamount;
     }
+    assert_total_amount = int64Add(assert_total_amount,input.amount);
+
     assert(depositinfo !== false, 'chain is not exist');
-    assert(depositinfo.totalamount > 0, 'totalamount less than 0');
-    assert(depositinfo.totalamount - assert_total_amount - input.amount > 0, 'totalamount greater than 0');
+    assert(int64Compare(depositinfo.totalamount, 0) ===1, 'totalamount less than 0');
+    assert(int64Compare(depositinfo.totalamount, assert_total_amount) ===1, 'totalamount greater than 0');
     assert(!verifyMerkelProof(input.chain_id, input.block_hash, input.merkel_proof), 'verify merkel proof error');
     if (assertinfo === false) {
         let assertparam = {};
         assertparam.chain_id = input.chain_id;
         assertparam.totalamount = input.amount;
-        assertparam.seq = 1;
-        assertparam.complete_seq = 0;
+        assertparam.seq = '1';
+        assertparam.complete_seq = '0';
 
         let asset_chanin = {};
         asset_chanin.chain_id = input.chain_id;
         asset_chanin.amount = input.amount;
-        asset_chanin.seq = 1;
+        asset_chanin.seq = '1';
 
         asset_chanin.block_hash = input.block_hash;
         asset_chanin.main_source_address = sender;
         asset_chanin.source_address = input.source_address;
         asset_chanin.address = input.address;
         asset_chanin.merkel_proof = input.merkel_proof;
-        asset_chanin.state = 1;
-        asset_chanin.withdrawal_block_number = blockNumber + effectiWithdrawalInterval;
+        asset_chanin.state = EXECUTE_STATE_INITIAL;
+        asset_chanin.withdrawal_block_number = int64Add(blockNumber,effectiWithdrawalInterval);
         storageStore(CHAIN_WITHDRAWAL + assertparam.chain_id , JSON.stringify(assertparam));
         storageStore(CHAIN_WITHDRAWAL + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
         tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
-        let asset_chanin_ = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id+'_'+assertinfo.seq));
-        assert((assertinfo.seq + 1)===input.seq,'Wrong order of withdrawal');
-        let totleaamount = assertinfo.totalamount + input.amount;
-        assertinfo.totalamount = totleaamount;
-        assertinfo.seq = assertinfo.seq + 1;
-        assertinfo.complete_seq = assertinfo.complete_seq;
+        let  withdrawal_current = {};
+        let  withdrawal_detail = {};
+        let withdrawal_seq = int64Add(assertinfo.seq,1);
+        assert(int64Compare(withdrawal_seq,input.seq)===0,'Wrong order of withdrawal');
+        let totleaamount = int64Add(assertinfo.totalamount,input.amount);
+        withdrawal_current.totalamount = totleaamount;
+        withdrawal_current.seq = int64Add(assertinfo.seq,1);
+        withdrawal_current.complete_seq = assertinfo.complete_seq;
      
-        asset_chanin_.chain_id = input.chain_id;
-        asset_chanin_.amount = input.amount;
-        asset_chanin_.seq = input.seq;
-        asset_chanin_.block_hash = input.block_hash;
-        asset_chanin_.main_source_address = sender;
-        asset_chanin_.source_address = input.source_address;
-        asset_chanin_.address = input.address;
-        asset_chanin_.merkel_proof = input.merkel_proof;
-        asset_chanin_.state = 1;
-        asset_chanin_.withdrawal_block_number = blockNumber + effectiWithdrawalInterval;
-
-        storageStore(CHAIN_WITHDRAWAL + assertinfo.chain_id , JSON.stringify(assertinfo));
-        storageStore(CHAIN_WITHDRAWAL + asset_chanin_.chain_id + '_'+ asset_chanin_.seq, JSON.stringify(asset_chanin_));
-        tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(asset_chanin_)); 
+        withdrawal_detail.chain_id = input.chain_id;
+        withdrawal_detail.amount = input.amount;
+        withdrawal_detail.seq = input.seq;
+        withdrawal_detail.block_hash = input.block_hash;
+        withdrawal_detail.main_source_address = sender;
+        withdrawal_detail.source_address = input.source_address;
+        withdrawal_detail.address = input.address;
+        withdrawal_detail.merkel_proof = input.merkel_proof;
+        withdrawal_detail.state = EXECUTE_STATE_INITIAL;
+        withdrawal_detail.withdrawal_block_number = int64Add(blockNumber,effectiWithdrawalInterval);
+        storageStore(CHAIN_WITHDRAWAL + withdrawal_current.chain_id , JSON.stringify(withdrawal_current));
+        storageStore(CHAIN_WITHDRAWAL + withdrawal_detail.chain_id + '_'+ withdrawal_detail.seq, JSON.stringify(withdrawal_detail));
+        tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(withdrawal_detail)); 
     }
 }
 
