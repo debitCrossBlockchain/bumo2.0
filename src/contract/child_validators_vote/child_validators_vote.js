@@ -27,7 +27,7 @@ function checkUpdateSystemValidators(executed, proposalValidators, curValidators
     }
 
     if(deleteValidator.length > 0){
-        curValidators.splice(findValidatorIndex(curValidators, sender), 1);
+        curValidators.splice(findValidatorIndex(curValidators, deleteValidator), 1);
     }
 
     setValidators(JSON.stringify(curValidators));
@@ -36,11 +36,16 @@ function checkUpdateSystemValidators(executed, proposalValidators, curValidators
 
 function changeValidators(curValidators, mainChainTxHash, addValidator, deleteValidator, index){
     assert(typeof mainChainTxHash === 'string' && 
-               typeof addValidator === 'string' && 
-               typeof deleteValidator === 'string' &&
                typeof index === 'string', 
               'Parameter format error, must be string.');
-    assert((addValidator.length > 0 || deleteValidator.length > 0), 'Failed to check address, all empty.');
+    assert((addValidator !==undefined || deleteValidator !==undefined), 'Failed to check address, all empty.');
+	if(addValidator === undefined){
+		addValidator = '';
+	}
+	if(deleteValidator === undefined){
+		deleteValidator = '';
+	}
+	
     if(addValidator.length > 0){
         assert(addressCheck(addValidator) === true, 'Failed to check address');
         assert(findValidatorIndex(curValidators, addValidator) === false, 'Failed to add validator, already existed.');
@@ -85,8 +90,8 @@ function changeValidators(curValidators, mainChainTxHash, addValidator, deleteVa
         newProposalObj.index = index;
         newProposalObj.executed = executed;
         newProposalObj.validators = proposalValidators;
-        newProposalObj.addValidator = addValidator;
-        newProposalObj.deleteValidator = deleteValidator;
+        newProposalObj.add_validator = addValidator;
+        newProposalObj.delete_validator = deleteValidator;
         storageStore(mainChainTxHash, JSON.stringify(newProposalObj));
         storageStore(PROPOSAL_HISTORY + nextIndex, mainChainTxHash);
         storageStore(PROPOSAL_NEW_INDEX, nextIndex);
@@ -120,7 +125,7 @@ function queryProposal(mainChainTxHash){
         return false;
     }
 
-    if(mainChainTxHash.length === 0){
+    if(mainChainTxHash === ''){
         mainChainTxHash = storageLoad(PROPOSAL_HISTORY + curIndex);
     }
     assert(typeof mainChainTxHash === 'string', 'Failed to check main chain tx hash, must be string');
@@ -140,7 +145,13 @@ function query(inputStr){
         result.curValidators = getValidators();
     }
     else if(inputObj.method === 'queryProposal'){
-        result.proposal = queryProposal(inputObj.params.mainChainTxHash);
+		let main_hash = '';
+		if(inputObj.params !== undefined){
+			if(inputObj.params.main_chain_tx_hash !== undefined){
+				main_hash = inputObj.params.main_chain_tx_hash;
+			}
+		}
+        result.proposal = queryProposal(main_hash);
     }
     else{
        	throw '<unidentified operation type>';
@@ -157,7 +168,7 @@ function main(inputStr){
     let inputObj = JSON.parse(inputStr);
     if(inputObj.method === 'changeValidator'){
         let params = inputObj.params;
-        changeValidators(curValidators, params.mainChainTxHash, params.addValidator, params.deleteValidator, params.index);
+        changeValidators(curValidators, params.main_chain_tx_hash, params.add_validator, params.delete_validator, params.index);
     }
     else{
         throw '<undidentified operation type>';

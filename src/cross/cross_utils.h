@@ -23,13 +23,6 @@ namespace bumo {
 		CrossUtils() {}
 		~CrossUtils() {}
 		static int32_t QueryContract(const std::string &address, const std::string &input, Json::Value &query_rets);
-
-		/*
-			The use of these two interfaces is not recommended.
-			Recommend to use TransactionSender class
-		*/
-		static int32_t SendTransaction(TransactionFrm::pointer tran_ptr);
-		static TransactionFrm::pointer BuildTransaction(const std::string &private_key, const std::string &dest, const std::vector<std::string> &paras, int64_t nonce);
 	};
 
 	struct TransTask{
@@ -88,12 +81,15 @@ namespace bumo {
 		bool Initialize(const std::string &private_key);
 		bool Exit();
 
-		void SendTransaction(ITransactionSenderNotify *notify, const TransTask &tans_task);
+		void AsyncSendTransaction(ITransactionSenderNotify *notify, const TransTask &tans_task);
 
 	private:
 		virtual void Run(utils::Thread *thread) override;
 		void SendingAll();
-		TransTaskResult SendingSingle(const std::vector<std::string> &paras);
+		TransTaskResult SendingSingle(const std::vector<std::string> &paras, const std::string &dest);
+
+		TransactionFrm::pointer BuildTransaction(const std::string &private_key, const std::string &dest, const std::vector<std::string> &paras, int64_t nonce);
+		int32_t SendTransaction(TransactionFrm::pointer tran_ptr);
 
 		bool enabled_;
 		utils::Thread *thread_ptr_;

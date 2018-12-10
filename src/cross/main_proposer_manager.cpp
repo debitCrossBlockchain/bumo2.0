@@ -13,81 +13,31 @@ You should have received a copy of the GNU General Public License
 along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-#include "proposer_manager.h"
-#include<cross/cross_utils.h>
-#include<ledger/ledger_manager.h>
+#include "main_proposer_manager.h"
+#include <cross/cross_utils.h>
+#include <ledger/ledger_manager.h>
 #include <glue/glue_manager.h>
 #include <overlay/peer_manager.h>
 #include <algorithm>
 namespace bumo {
-	ProposerManager::ProposerManager() :
-		enabled_(false),
-		thread_ptr_(NULL){
-		last_propose_time_ = utils::Timestamp::HighResolution();
-	}
-
-	ProposerManager::~ProposerManager(){
-		if (thread_ptr_){
-			delete thread_ptr_;
-			thread_ptr_ = NULL;
-		}
-	}
-
-	bool ProposerManager::Initialize(){
-		main_chain_ = General::GetSelfChainId() == General::MAIN_CHAIN_ID;
-		if (!main_chain_){
-			return true;
-		}
-
-		PrivateKey private_key(Configure::Instance().ledger_configure_.validation_privatekey_);
-		if (!private_key.IsValid()){
-			LOG_ERROR("Private key is not valid");
-			return false;
-		}
-
-		source_address_ = private_key.GetEncAddress();
-
+	MainProposerManager::MainProposerManager(){
 		for (int i = 0; i < MAX_CHAIN_ID; i++){
 			child_chain_maps_[i].Reset();
 		}
 
-		enabled_ = true;
-		thread_ptr_ = new utils::Thread(this);
-		if (!thread_ptr_->Start("ProposerManager")) {
-			return false;
-		}
 		bumo::MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
-		return true;
 	}
 
-	bool ProposerManager::Exit(){
-		if (!main_chain_){
-			return true;
-		}
-
-		enabled_ = false;
-		if (thread_ptr_) {
-			thread_ptr_->JoinWithStop();
-		}
+	MainProposerManager::~MainProposerManager(){
 		bumo::MessageChannel::Instance().UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
-		return true;
 	}
 
-	void ProposerManager::Run(utils::Thread *thread) {
-		while (enabled_){
-			int64_t current_time = utils::Timestamp::HighResolution();
-			if ((current_time - last_propose_time_) < PROPOSER_PERIOD * utils::MICRO_UNITS_PER_SEC){
-				continue;
-			}
-
-			UpdateLatestStatus();
-			ProposeBlocks();
-			last_propose_time_ = current_time;
-		}
+	void MainProposerManager::DoTimerUpdate(){
+		UpdateStatus();
+		SendTransaction();
 	}
 
-	void ProposerManager::UpdateLatestStatus(){
+	void MainProposerManager::UpdateStatus(){
 		utils::MutexGuard guard(child_chain_map_lock_);
 		for (int i = 0; i < MAX_CHAIN_ID; i++){
 			ChildChain &child_chain = child_chain_maps_[i];
@@ -119,10 +69,13 @@ namespace bumo {
 
 			//sort seq
 			SortChildSeq(child_chain);
+
+			//request
+			RequestChainSeq(child_chain);
 		}
 	}
 
-	void ProposerManager::UpdateTransactionResult(const int64_t &error_code, const std::string &error_desc, const std::string& hash){
+	void MainProposerManager::UpdateTxResult(const int64_t &error_code, const std::string &error_desc, const std::string& hash){
 		if (!enabled_){
 			return;
 		}
@@ -151,7 +104,7 @@ namespace bumo {
 		}
 	}
 
-	void ProposerManager::UpdateLatestValidates(const int64_t chain_id, utils::StringVector &latest_validates){
+	void MainProposerManager::UpdateLatestValidates(const int64_t chain_id, utils::StringVector &latest_validates) const{
 		latest_validates.clear();
 
 		Json::Value input_value;
@@ -185,7 +138,7 @@ namespace bumo {
 		return;
 	}
 
-	void ProposerManager::UpdateLatestSeq(const int64_t chain_id, int64_t &seq){
+	void MainProposerManager::UpdateLatestSeq(const int64_t chain_id, int64_t &seq) const{
 		Json::Value params;
 		params["chain_id"] = chain_id;
 		params["header_hash"] = "";
@@ -208,7 +161,7 @@ namespace bumo {
 		seq = object["seq"].asInt64();
 	}
 
-	void ProposerManager::SortChildSeq(ChildChain &child_chain){
+	void MainProposerManager::SortChildSeq(ChildChain &child_chain) const{
 		//Empty queues, ignore it
 		if (child_chain.ledger_map.empty()){
 			return;
@@ -229,7 +182,10 @@ namespace bumo {
 
 			ledger_map.erase(itr++);
 		}
+	}
 
+	void MainProposerManager::RequestChainSeq(ChildChain &child_chain) const{
+		LedgerMap &ledger_map = child_chain.ledger_map;
 		//Request up to ten blocks
 		int64_t max_nums = MIN(MAX_REQUEST_BLOCK_NUMS, (child_chain.recv_max_seq - child_chain.cmc_latest_seq));
 		for (int64_t i = 1; i <= max_nums; i++){
@@ -238,21 +194,17 @@ namespace bumo {
 			if (itr != ledger_map.end()){
 				continue;
 			}
-			RequestChainSeq(child_chain.chain_id, seq);
+			protocol::MessageChannel message_channel;
+			protocol::MessageChannelQueryHead query_head;
+			query_head.set_ledger_seq(seq);
+			message_channel.set_target_chain_id(child_chain.chain_id);
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_HEAD);
+			message_channel.set_msg_data(query_head.SerializeAsString());
+			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 		}
 	}
 
-	void ProposerManager::RequestChainSeq(int64_t chain_id, int64_t seq){
-		protocol::MessageChannel message_channel;
-		protocol::MessageChannelQueryHead query_head;
-		query_head.set_ledger_seq(seq);
-		message_channel.set_target_chain_id(chain_id);
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_HEAD);
-		message_channel.set_msg_data(query_head.SerializeAsString());
-		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
-	}
-
-	void ProposerManager::ProposeBlocks(){
+	void MainProposerManager::SendTransaction(){
 		utils::MutexGuard guard(child_chain_map_lock_);
 		for (int64_t i = 0; i < MAX_CHAIN_ID; i++){
 			ChildChain &child_chain = child_chain_maps_[i];
@@ -291,15 +243,11 @@ namespace bumo {
 				return;
 			}
 			TransTask trans_task(send_para_list, 0, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(i));
-			TransactionSender::Instance().SendTransaction(this, trans_task);
+			TransactionSender::Instance().AsyncSendTransaction(this, trans_task);
 		}
 	}
 
-	void ProposerManager::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
-		if (!enabled_){
-			return;
-		}
-
+	void MainProposerManager::DoHandleMessageChannel(const protocol::MessageChannel &message_channel){
 		if (message_channel.msg_type() != protocol::MESSAGE_CHANNEL_SUBMIT_HEAD){
 			LOG_ERROR("Failed to message_channel type is not MESSAGE_CHANNEL_SUBMIT_HEAD, error msg type is %d", message_channel.msg_type());
 			return;
@@ -320,12 +268,7 @@ namespace bumo {
 		child_chain.chain_id = ledger_header.chain_id();
 	}
 
-	void ProposerManager::HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result){
-		if (!task_result.result_){
-			BreakProposer(task_result.desc_);
-			return;
-		}
-
+	void MainProposerManager::DoHandleSenderResult(const TransTask &task_task, const TransTaskResult &task_result){
 		if (!utils::String::IsNumber(task_task.user_defined_)){
 			BreakProposer("It's not a number");
 			return;
@@ -339,11 +282,5 @@ namespace bumo {
 
 		utils::MutexGuard guard(child_chain_map_lock_);
 		child_chain_maps_[chain_id].tx_history.push_back(task_result.hash_);
-	}
-
-	void ProposerManager::BreakProposer(const std::string &error_des){
-		enabled_ = false;
-		assert(false);
-		LOG_ERROR("%s", error_des.c_str());
 	}
 }

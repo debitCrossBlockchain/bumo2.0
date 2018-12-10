@@ -1,7 +1,8 @@
 #include "block_listen_manager.h"
 #include <common/general.h>
 #include "cross/message_channel_manager.h"
-#include "cross/proposer_manager.h"
+#include "cross/main_proposer_manager.h"
+#include <cross/child_proposer_manager.h>
 #include <proto/cpp/overlay.pb.h>
 #include <common/private_key.h>
 
@@ -12,6 +13,7 @@ namespace bumo {
 	const static char* OP_WITHDRAWAL = "withdrawal"; 
 	const static char* OP_WITHDRAWALINIT = "withdrawalInit";
 	const static char* OP_CHALLENGE = "challenge";
+	const static char* OP_CHANGE_VALIDATOR = "changeValidator";
 
 	BlockListenManager::BlockListenManager(){
 		isMainChain_ = false;
@@ -50,6 +52,9 @@ namespace bumo {
 		else if (0 == strcmp(tlog_topic.c_str(), OP_CHALLENGE)){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL;
 		}
+		else if (0 == strcmp(tlog_topic.c_str(), OP_CHANGE_VALIDATOR)){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR;
+		}
 		else{
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
 		}
@@ -61,6 +66,8 @@ namespace bumo {
 			return std::make_shared<protocol::MessageChannelCreateChildChain>();
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
 			return std::make_shared<protocol::MessageChannelDeposit>();
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:
+			return std::make_shared<protocol::MessageChannelChangeChildValidator>();
 		default:
 			return nullptr;
 		}
@@ -116,7 +123,8 @@ namespace bumo {
 			return;
 		}
 
-		ProposerManager::Instance().UpdateTransactionResult(error_code, error_desc, hash);
+		MainProposerManager::Instance().UpdateTxResult(error_code, error_desc, hash);
+		ChildProposerManager::Instance().UpdateTxResult(error_code, error_desc, hash);
 		return;
 	}
 
@@ -175,7 +183,8 @@ namespace bumo {
 			switch (tlog_type){
 				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
 				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
-				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:{
+				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
+				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:{
 					//transfer tlog params must be 2
 					if (log.datas_size() != 2){
 						LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
@@ -253,7 +262,7 @@ namespace bumo {
 		input_value["params"] = params;
 		send_para_list.push_back(input_value.toFastString());
 		TransTask trans_task(send_para_list, 0, General::CONTRACT_CPC_ADDRESS, "");
-		TransactionSender::Instance().SendTransaction(this, trans_task);
+		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);
 	}
 	
 

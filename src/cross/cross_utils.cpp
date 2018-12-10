@@ -82,65 +82,6 @@ namespace bumo {
 		return error_code;
 	}
 
-	int32_t CrossUtils::SendTransaction(TransactionFrm::pointer tran_ptr) {
-		Result result;
-		GlueManager::Instance().OnTransaction(tran_ptr, result);
-		if (result.code() != 0) {
-			LOG_ERROR("Pay coin result code:%d, des:%s", result.code(), result.desc().c_str());
-			return result.code();
-		}
-
-		PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_ptr->GetProtoTxEnv().SerializeAsString());
-		return protocol::ERRCODE_SUCCESS;
-	}
-
-	TransactionFrm::pointer CrossUtils::BuildTransaction(const std::string &private_key, const std::string &dest, const std::vector<std::string> &paras, int64_t nonce){
-		PrivateKey pkey(private_key);
-		if (!pkey.IsValid()){
-			LOG_ERROR("Private key is not valid");
-			return nullptr;
-		}
-
-		std::string source_address = pkey.GetEncAddress();
-		
-		protocol::TransactionEnv tran_env;
-		protocol::Transaction *tran = tran_env.mutable_transaction();
-		
-		tran->set_source_address(source_address);
-		tran->set_nonce(nonce);
-		for (unsigned i = 0; i < paras.size(); i++){
-			protocol::Operation *ope = tran->add_operations();
-			ope->set_type(protocol::Operation_Type_PAY_COIN);
-			protocol::OperationPayCoin *pay_coin = ope->mutable_pay_coin();
-			pay_coin->set_amount(0);
-			pay_coin->set_dest_address(dest);
-			pay_coin->set_input(paras[i]);
-		}
-
-		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());
-		tran->set_chain_id(General::GetSelfChainId());
-		int64_t fee_limit = 0;
-		//300 is signature byte
-		if (!utils::SafeIntMul(tran->gas_price(), ((int64_t)tran_env.ByteSize() + 300), fee_limit)){
-			LOG_ERROR("Failed to evaluate fee.");
-			return nullptr;
-		}
-		fee_limit = fee_limit * 5;
-		tran->set_fee_limit(fee_limit);
-
-		std::string content = tran->SerializeAsString();
-		std::string sign = pkey.Sign(content);
-		protocol::Signature *signpro = tran_env.add_signatures();
-		signpro->set_sign_data(sign);
-		signpro->set_public_key(pkey.GetEncPublicKey());
-
-		std::string tx_hash = utils::String::BinToHexString(HashWrapper::Crypto(content)).c_str();
-		LOG_INFO("Pay coin tx hash %s", tx_hash.c_str());
-
-		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
-		return ptr;
-	}
-
 	TransactionSender::TransactionSender(){
 		enabled_ = false;
 		thread_ptr_ = NULL;
@@ -180,7 +121,7 @@ namespace bumo {
 		return true;
 	}
 
-	void TransactionSender::SendTransaction(ITransactionSenderNotify *notify, const TransTask &trans_task){
+	void TransactionSender::AsyncSendTransaction(ITransactionSenderNotify *notify, const TransTask &trans_task){
 		assert(trans_task.amount_ >= 0);
 		assert(!trans_task.dest_address_.empty());
 		assert(!trans_task.input_paras_.empty());
@@ -227,23 +168,23 @@ namespace bumo {
 			const TransTaskVector &task_vector = itr->second;
 			for (uint32_t i = 0; i < task_vector.size(); i++){
 				const TransTask &trans_task = task_vector[i];
-				TransTaskResult task_result = SendingSingle(trans_task.input_paras_);
+				TransTaskResult task_result = SendingSingle(trans_task.input_paras_, trans_task.dest_address_);
 				notify->HandleTransactionSenderResult(trans_task, task_result);
 			}
 		}
 	}
 
-	TransTaskResult TransactionSender::SendingSingle(const std::vector<std::string> &paras){
+	TransTaskResult TransactionSender::SendingSingle(const std::vector<std::string> &paras, const std::string &dest){
 		int32_t err_code = 0;
 
 		for (int i = 0; i <= MAX_SEND_TRANSACTION_TIMES; i++){
-			TransactionFrm::pointer trans = CrossUtils::BuildTransaction(private_key_, General::CONTRACT_CMC_ADDRESS, paras, cur_nonce_);
+			TransactionFrm::pointer trans = BuildTransaction(private_key_, dest, paras, cur_nonce_);
 			if (nullptr == trans){
 				LOG_ERROR("Trans pointer is null");
 				continue;
 			}
 			std::string hash = utils::String::BinToHexString(trans->GetContentHash().c_str());
-			err_code = CrossUtils::SendTransaction(trans);
+			err_code = SendTransaction(trans);
 			switch (err_code)
 			{
 				case protocol::ERRCODE_SUCCESS:
@@ -267,5 +208,64 @@ namespace bumo {
 
 		TransTaskResult task_result(false, "Try MAX_SEND_TRANSACTION_TIMES times", "");
 		return task_result;
+	}
+
+	TransactionFrm::pointer TransactionSender::BuildTransaction(const std::string &private_key, const std::string &dest, const std::vector<std::string> &paras, int64_t nonce){
+		PrivateKey pkey(private_key);
+		if (!pkey.IsValid()){
+			LOG_ERROR("Private key is not valid");
+			return nullptr;
+		}
+
+		std::string source_address = pkey.GetEncAddress();
+
+		protocol::TransactionEnv tran_env;
+		protocol::Transaction *tran = tran_env.mutable_transaction();
+
+		tran->set_source_address(source_address);
+		tran->set_nonce(nonce);
+		for (unsigned i = 0; i < paras.size(); i++){
+			protocol::Operation *ope = tran->add_operations();
+			ope->set_type(protocol::Operation_Type_PAY_COIN);
+			protocol::OperationPayCoin *pay_coin = ope->mutable_pay_coin();
+			pay_coin->set_amount(0);
+			pay_coin->set_dest_address(dest);
+			pay_coin->set_input(paras[i]);
+		}
+
+		tran->set_gas_price(LedgerManager::Instance().GetCurFeeConfig().gas_price());
+		tran->set_chain_id(General::GetSelfChainId());
+		int64_t fee_limit = 0;
+		//300 is signature byte
+		if (!utils::SafeIntMul(tran->gas_price(), ((int64_t)tran_env.ByteSize() + 300), fee_limit)){
+			LOG_ERROR("Failed to evaluate fee.");
+			return nullptr;
+		}
+		fee_limit = fee_limit * 5;
+		tran->set_fee_limit(fee_limit);
+
+		std::string content = tran->SerializeAsString();
+		std::string sign = pkey.Sign(content);
+		protocol::Signature *signpro = tran_env.add_signatures();
+		signpro->set_sign_data(sign);
+		signpro->set_public_key(pkey.GetEncPublicKey());
+
+		std::string tx_hash = utils::String::BinToHexString(HashWrapper::Crypto(content)).c_str();
+		LOG_INFO("Pay coin tx hash %s", tx_hash.c_str());
+
+		TransactionFrm::pointer ptr = std::make_shared<TransactionFrm>(tran_env);
+		return ptr;
+	}
+
+	int32_t TransactionSender::SendTransaction(TransactionFrm::pointer tran_ptr) {
+		Result result;
+		GlueManager::Instance().OnTransaction(tran_ptr, result);
+		if (result.code() != 0) {
+			LOG_ERROR("Pay coin result code:%d, des:%s", result.code(), result.desc().c_str());
+			return result.code();
+		}
+
+		PeerManager::Instance().Broadcast(protocol::OVERLAY_MSGTYPE_TRANSACTION, tran_ptr->GetProtoTxEnv().SerializeAsString());
+		return protocol::ERRCODE_SUCCESS;
 	}
 }

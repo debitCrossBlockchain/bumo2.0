@@ -33,6 +33,7 @@ namespace bumo {
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT] = std::bind(&MessageHandler::OnHandleQueryDeposit, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_DEPOSIT] = std::bind(&MessageHandler::OnHandleDeposit, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageHandler::OnHandleWithdrawal, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR] = std::bind(&MessageHandler::OnHandleQueryChangeValidator, this, std::placeholders::_1);
 
 		MessageChannel &message_channel = MessageChannel::Instance();
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN);
@@ -42,6 +43,7 @@ namespace bumo {
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_DEPOSIT);
 		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_WITHDRAWAL);
+		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR);
 
 		if (!CheckForChildBlock()){
 			return false;
@@ -311,6 +313,68 @@ namespace bumo {
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
 	}
 
+	void MessageHandler::OnHandleQueryChangeValidator(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelQueryChangeChildValidator query;
+		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
+		std::string error_desc = "";
+		int64_t chain_id = 0;
+		int64_t index = 0;
+
+		if (!query.ParseFromString(message_channel.msg_data())){
+			error_desc = utils::String::Format("Parse MessageChannelQueryHead error!");
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+		chain_id = query.chain_id();
+		index = query.change_child_index();
+		if (chain_id <= 0 || index <= 0){
+			error_desc = utils::String::Format("Parse OnHandleQueryChangeValidator error,invalid chain_id(" FMT_I64 ")", chain_id);
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+
+
+		Json::Value query_rets;
+		Json::Value input_value;
+		Json::Value params;
+		input_value["method"] = "queryChangeValidatorHistory";
+		input_value["params"]["chainId"] = chain_id;
+		input_value["params"]["index"] = index;
+		if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), query_rets)){
+			error_desc = utils::String::Format("Query contract error!%s", query_rets.toFastString().c_str());
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+
+		if (!query_rets.isArray()){
+			error_desc = utils::String::Format("Query contract error! Json result is not array.%s", query_rets.toFastString().c_str());
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+
+		Json::Value custom_result;
+		custom_result.fromString(query_rets[Json::UInt(0)]["result"]["value"].asString());
+		std::string error_msg;
+		protocol::MessageChannelChangeChildValidator change_child_validator;
+		if (!Json2Proto(custom_result, change_child_validator, error_msg)){
+			error_desc = utils::String::Format("Invalid contract result:%s", custom_result.toFastString().c_str());
+			error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
+
+		//Push message to child chain.
+		protocol::MessageChannel msg_channel;
+		msg_channel.set_target_chain_id(chain_id);
+		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR);
+		msg_channel.set_msg_data(change_child_validator.SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+	}
+
 	void MessageHandler::OnHandleWithdrawal(const protocol::MessageChannel &message_channel){
 		protocol::MessageChannelWithdrawal withdrawal;
 		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
@@ -375,11 +439,9 @@ namespace bumo {
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT);
 		msg_channel.set_msg_data(deposit.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
-
 	}
 
 	void MessageHandler::OnHandleDeposit(const protocol::MessageChannel &message_channel){
-		
 		protocol::MessageChannelDeposit deposit;
 		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc = "";
@@ -406,7 +468,7 @@ namespace bumo {
 		//std::string hash;
 		//SendTransaction(send_para_list, hash);
 		TransTask trans_task(send_para_list, 0, General::CONTRACT_CPC_ADDRESS, "");
-		TransactionSender::Instance().SendTransaction(this, trans_task);
+		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);
 		newest_deposit_seq_ = MAX(newest_deposit_seq_, deposit.seq());
 		
 	}

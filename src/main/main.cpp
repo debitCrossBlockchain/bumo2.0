@@ -29,10 +29,11 @@
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
 #include <cross/message_channel_manager.h>
-#include<cross/proposer_manager.h>
+#include <cross/main_proposer_manager.h>
 #include <cross/cross_utils.h>
 #include <cross/message_handler.h>
 #include <cross/block_listen_manager.h>
+#include <cross/child_proposer_manager.h>
 #include "configure.h"
 
 void SaveWSPort();
@@ -78,9 +79,10 @@ int main(int argc, char *argv[]){
 	utils::Logger::InitInstance();
 	bumo::MessageChannel::InitInstance();
 	bumo::TransactionSender::InitInstance();
-	bumo::ProposerManager::InitInstance();
+	bumo::MainProposerManager::InitInstance();
 	bumo::MessageHandler::InitInstance();
 	bumo::BlockListenManager::InitInstance();
+	bumo::ChildProposerManager::InitInstance();
 	bumo::Console::InitInstance();
 	bumo::PeerManager::InitInstance();
 	bumo::LedgerManager::InitInstance();
@@ -214,12 +216,12 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::TransactionSender::Exit, &trans_sender));
 		LOG_INFO("Initialized trans sender successfully");
 
-		bumo::ProposerManager &proposer = bumo::ProposerManager::Instance();
-		if (!proposer.Initialize()){
+		bumo::MainProposerManager &proposer = bumo::MainProposerManager::Instance();
+		if (!proposer.Initialize(true)){
 			LOG_ERROR("Failed to proposer");
 			break;
 		}
-		object_exit.Push(std::bind(&bumo::ProposerManager::Exit, &proposer));
+		object_exit.Push(std::bind(&bumo::MainProposerManager::Exit, &proposer));
 		LOG_INFO("Initialized proposer successfully");
 
 		bumo::MessageHandler &message_handler = bumo::MessageHandler::Instance();
@@ -236,6 +238,14 @@ int main(int argc, char *argv[]){
 			break;
 		}
 		object_exit.Push(std::bind(&bumo::BlockListenManager::Exit, &block_listen_handler));
+		LOG_INFO("Initialized block listen handler successfully");
+
+		bumo::ChildProposerManager &child_validator = bumo::ChildProposerManager::Instance();
+		if (!bumo::g_enable_ || !child_validator.Initialize()){
+			LOG_ERROR_ERRNO("Failed to initialize block listen handler", STD_ERR_CODE, STD_ERR_DESC);
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::ChildProposerManager::Exit, &child_validator));
 		LOG_INFO("Initialized block listen handler successfully");
 
 		//Consensus manager must be initialized before ledger manager and glue manager
@@ -333,7 +343,8 @@ int main(int argc, char *argv[]){
 	bumo::MessageHandler::ExitInstance();
 	bumo::MessageChannel::ExitInstance();
 	bumo::TransactionSender::ExitInstance();
-	bumo::ProposerManager::ExitInstance();
+	bumo::MainProposerManager::ExitInstance();
+	bumo::ChildProposerManager::ExitInstance();
 	bumo::BlockListenManager::ExitInstance();
 	bumo::Configure::ExitInstance();
 	bumo::Global::ExitInstance();

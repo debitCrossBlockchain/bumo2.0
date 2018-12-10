@@ -344,9 +344,9 @@ function withdrawalChildChain(params){
 function updateChangeValidatorHistory(chainId, newHistoryIndex, addValidator, deleteValidator){
     let historyObj = {};
     historyObj.index = newHistoryIndex;
-    historyObj.addValidator = addValidator;
-    historyObj.deleteValidator = deleteValidator;
-    historyObj.mainChainTxHash = '';
+    historyObj.add_validator = addValidator;
+    historyObj.delete_validator = deleteValidator;
+    historyObj.main_chain_tx_hash = originTxHash;
 
     let historyStr = JSON.stringify(historyObj);
     let key = CHILD_CHAIN_VALIDATOR_HISTORY + chainId + '_' + newHistoryIndex;
@@ -534,9 +534,9 @@ function queryChangeValidatorHistory(params){
     if(historyStr === false){
         let historyObj = {};
         historyObj.index = '-1';
-        historyObj.addValidator = '';
-        historyObj.deleteValidator = '';
-        historyObj.mainChainTxHash = '';
+        historyObj.add_validator = '';
+        historyObj.delete_validator = '';
+        historyObj.main_chain_tx_hash = '';
         return historyObj;
     }
     return JSON.parse(historyStr);
