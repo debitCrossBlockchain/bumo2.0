@@ -142,12 +142,14 @@ function checkWithdrawal(params) {
     let input = params;
     let retinfo = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
     if (retinfo === false) {
+        log('retinfo object is null');
         return;
     }
     
     let current_complete_seq = int64Add(retinfo.complete_seq,1);
     let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ current_complete_seq));
     if(withdrawal===false){
+        log('withdrawal object is null');
         return;
     }
     if (int64Compare(withdrawal.withdrawal_block_number,blockNumber) ===1) {
