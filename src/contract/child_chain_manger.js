@@ -242,8 +242,8 @@ function depositToChildChain(params){
         asset_chanin.source_address = sender;
         asset_chanin.address = input.address;
 
-        storageStore(CHAIN_DEPOSIT + assertparam.chain_id , JSON.stringify(assertparam));
-        storageStore(CHAIN_DEPOSIT + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
+        storageStore(CHAIN_DEPOSIT + input.chain_id , JSON.stringify(assertparam));
+        storageStore(CHAIN_DEPOSIT + input.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
         tlog(TLOG_DEPOSIT, input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
@@ -259,8 +259,8 @@ function depositToChildChain(params){
         deposit_detail.block_number = blockNumber;
         deposit_detail.source_address = sender;
         deposit_detail.address = input.address;
-        storageStore(CHAIN_DEPOSIT + deposit_current.chain_id , JSON.stringify(deposit_current));
-        storageStore(CHAIN_DEPOSIT + deposit_detail.chain_id + '_'+ deposit_detail.seq, JSON.stringify(deposit_detail));
+        storageStore(CHAIN_DEPOSIT + input.chain_id , JSON.stringify(deposit_current));
+        storageStore(CHAIN_DEPOSIT + input.chain_id + '_'+ deposit_detail.seq, JSON.stringify(deposit_detail));
         tlog(TLOG_DEPOSIT, input.chain_id,JSON.stringify(deposit_detail)); 
     }
 }
@@ -305,8 +305,8 @@ function withdrawalChildChain(params){
         asset_chanin.merkel_proof = input.merkel_proof;
         asset_chanin.state = EXECUTE_STATE_INITIAL;
         asset_chanin.withdrawal_block_number = int64Add(blockNumber,effectiWithdrawalInterval);
-        storageStore(CHAIN_WITHDRAWAL + assertparam.chain_id , JSON.stringify(assertparam));
-        storageStore(CHAIN_WITHDRAWAL + asset_chanin.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
+        storageStore(CHAIN_WITHDRAWAL + input.chain_id , JSON.stringify(assertparam));
+        storageStore(CHAIN_WITHDRAWAL + input.chain_id+ '_'+ asset_chanin.seq, JSON.stringify(asset_chanin));
         tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(asset_chanin)); 
     } 
     else {
@@ -329,8 +329,8 @@ function withdrawalChildChain(params){
         withdrawal_detail.merkel_proof = input.merkel_proof;
         withdrawal_detail.state = EXECUTE_STATE_INITIAL;
         withdrawal_detail.withdrawal_block_number = int64Add(blockNumber,effectiWithdrawalInterval);
-        storageStore(CHAIN_WITHDRAWAL + withdrawal_current.chain_id , JSON.stringify(withdrawal_current));
-        storageStore(CHAIN_WITHDRAWAL + withdrawal_detail.chain_id + '_'+ withdrawal_detail.seq, JSON.stringify(withdrawal_detail));
+        storageStore(CHAIN_WITHDRAWAL + input.chain_id , JSON.stringify(withdrawal_current));
+        storageStore(CHAIN_WITHDRAWAL + input.chain_id + '_'+ withdrawal_detail.seq, JSON.stringify(withdrawal_detail));
         tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(withdrawal_detail)); 
     }
 }
