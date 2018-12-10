@@ -145,8 +145,8 @@ function checkWithdrawal(params) {
         return;
     }
     
-    let current_seq = int64Add(retinfo.complete_seq,1);
-    let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ current_seq));
+    let current_complete_seq = int64Add(retinfo.complete_seq,1);
+    let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ current_complete_seq));
     if(withdrawal===false){
         return;
     }
@@ -160,9 +160,10 @@ function checkWithdrawal(params) {
 
     let  withdrawal_current = {};
     let  withdrawal_detail = {};
+   
     withdrawal_current.totalamount = retinfo.totalamount;
     withdrawal_current.seq = retinfo.seq;
-    withdrawal_current.complete_seq = current_seq;
+    withdrawal_current.complete_seq = current_complete_seq;
 
     withdrawal_detail.chain_id = withdrawal.chain_id;
     withdrawal_detail.amount = withdrawal.amount;
@@ -176,7 +177,7 @@ function checkWithdrawal(params) {
     withdrawal_detail.withdrawal_block_number = withdrawal.withdrawal_block_number;
     
     storageStore(CHAIN_WITHDRAWAL + input.chain_id, JSON.stringify(withdrawal_current));
-    storageStore(CHAIN_WITHDRAWAL + withdrawal_detail.chain_id + '_' + withdrawal_detail.seq, JSON.stringify(withdrawal_detail));
+    storageStore(CHAIN_WITHDRAWAL + input.chain_id + '_' + withdrawal_detail.seq, JSON.stringify(withdrawal_detail));
     payCoin(withdrawal.address, withdrawal.amount);
     tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_detail));
 }
@@ -311,7 +312,7 @@ function withdrawalChildChain(params){
         withdrawal_detail.withdrawal_block_number = int64Add(blockNumber,effectiWithdrawalInterval);
         storageStore(CHAIN_WITHDRAWAL + input.chain_id , JSON.stringify(withdrawal_current));
         storageStore(CHAIN_WITHDRAWAL + input.chain_id+ '_'+ withdrawal_seq, JSON.stringify(withdrawal_detail));
-        tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(asset_chanin)); 
+        tlog(TLOG_CHALLENGE, input.chain_id,JSON.stringify(withdrawal_detail)); 
     } 
     else {
        
