@@ -118,6 +118,8 @@ namespace bumo {
 
 	private:
 		std::shared_ptr<ChildValidatorProposer> validator_proposer_;
+		std::shared_ptr<ChildDepositProposer> deposit_proposer_;
+
 		std::shared_ptr<MainChainAnswer> main_chain_answer_;
 	};
 }

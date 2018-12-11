@@ -308,14 +308,15 @@ namespace bumo {
 		deposit.ParseFromString(message_data);
 
 		std::vector<std::string> send_para_list;
-		Json::Value deposit_data = bumo::Proto2Json(deposit);
+		//Json::Value deposit_data = bumo::Proto2Json(deposit);
 		Json::Value input_value;
 		Json::Value params;
 
 		params["chain_id"] = deposit.chain_id();
-		params["deposit_data"] = deposit_data;
-		params["seq"] = deposit.seq();
-		params["hash"] = HashWrapper::Crypto(deposit.SerializeAsString());
+		params["seq"] = utils::String::ToString(deposit.seq());
+		params["deposit_data"]["address"] = deposit.address();
+		params["deposit_data"]["amount"] = utils::String::ToString(deposit.amount());
+
 		input_value["method"] = "deposit";
 		input_value["params"] = params;
 		send_para_list.push_back(input_value.toFastString());
@@ -343,19 +344,18 @@ namespace bumo {
 	}
 
 	void ChildDepositProposer::DoBuildRequestLostMessage(int64_t index, protocol::MessageChannel &message_channel){
-		protocol::MessageChannelQueryChangeChildValidator query;
-		query.set_chain_id(General::GetSelfChainId());
-		query.set_change_child_index(index);
+		protocol::MessageChannelQueryDeposit query_deposit;
+		query_deposit.set_chain_id(General::GetSelfChainId());
+		query_deposit.set_seq(index);
 		message_channel.set_target_chain_id(0);
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR);
-		message_channel.set_msg_data(query.SerializeAsString());
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
+		message_channel.set_msg_data(query_deposit.SerializeAsString());
 	}
 
 	bool ChildDepositProposer::DoQueryProposalLatestIndex(int64_t &contract_latest_myself_index){
 		Json::Value result_list;
 		Json::Value input_value;
-		input_value["method"] = "queryLastestChildDeposit";
-		input_value["params"]["chain_id"] = General::GetSelfChainId();
+		input_value["method"] = "queryChildDeposit";
 		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CPC_ADDRESS, input_value.toFastString(), result_list);
 		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
 		if (error_code != protocol::ERRCODE_SUCCESS || result.empty()){
@@ -366,20 +366,20 @@ namespace bumo {
 		
 		Json::Value object;
 		object.fromString(result.c_str());
-		const Json::Value &proposal = object["proposal"];
-		if (proposal.isBool() && !proposal.asBool()){
+		int64_t index = utils::String::Stoi64(object["index"].asString());
+		if (index <= 0){
 			LOG_TRACE("Failed to query proposal.");
 			return true;
 		}
 
-		contract_latest_myself_index = proposal["index"].asInt64();
-		if (proposal["executed"].asBool()){
+		contract_latest_myself_index = index;
+		if (object["executed"].asInt() > 0){
 			return true;
 		}
 
-		const Json::Value &validators = proposal["validator"];
+		const Json::Value &validators = object["validators"];
 		for (uint32_t i = 0; i < validators.size(); i++){
-			if (validators[i][Json::UInt(0)].asString() == source_address_){
+			if (validators[i].asString() == source_address_){
 				return true;
 			}
 		}
@@ -392,7 +392,7 @@ namespace bumo {
 
 	MainChainAnswer::MainChainAnswer(){
 		MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR);
-
+		MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR] = std::bind(&MainChainAnswer::OnHandleQueryChangeValidator, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT] = std::bind(&MainChainAnswer::OnHandleQueryDeposit, this, std::placeholders::_1);
 	}
@@ -527,6 +527,7 @@ namespace bumo {
 
 	ChildProposerManager::ChildProposerManager(){
 		validator_proposer_ = std::make_shared<ChildValidatorProposer>();
+		deposit_proposer_ = std::make_shared<ChildDepositProposer>();
 		main_chain_answer_ = std::make_shared<MainChainAnswer>();
 	}
 	ChildProposerManager::~ChildProposerManager(){
@@ -541,10 +542,12 @@ namespace bumo {
 	bool ChildProposerManager::Initialize(){
 		bool is_child = (General::GetSelfChainId() != General::MAIN_CHAIN_ID);
 		validator_proposer_->Initialize(is_child);
+		deposit_proposer_->Initialize(is_child);
 		return true;
 	}
 	bool ChildProposerManager::Exit(){
 		validator_proposer_->Exit();
+		deposit_proposer_->Exit();
 		return true;
 	}
 }
