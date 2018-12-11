@@ -21,6 +21,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <cross/cross_utils.h>
 #include <cross/message_channel_manager.h>
 #include <cross/base_proposer.h>
+#include <cross/message_handler.h>
 
 #define MAX_CHAIN_ID 1000
 #define MAX_REQUEST_BLOCK_NUMS 100
@@ -33,7 +34,7 @@ namespace bumo {
 
 	public:
 		ChildProposer(const std::string &target_address);
-		~ChildProposer();
+		virtual ~ChildProposer();
 		void UpdateTxResult(const int64_t &error_code, const std::string &error_desc, const std::string& hash);
 
 	private:
@@ -78,18 +79,46 @@ namespace bumo {
 		virtual bool DoQueryProposalLatestIndex(int64_t &contract_latest_myself_index);
 	};
 
+	class ChildDepositProposer : public ChildProposer{
+	public:
+		ChildDepositProposer();
+		virtual ~ChildDepositProposer();
+
+	private:
+		virtual TransTask DoBuildTxTask(const std::string &message_data) override;
+		virtual int64_t DoGetMessageIndex(const protocol::MessageChannel &message_channel) override;
+		virtual void DoBuildRequestLostMessage(int64_t index, protocol::MessageChannel &message_channel) override;
+		virtual bool DoQueryProposalLatestIndex(int64_t &contract_latest_myself_index);
+	};
+
+	class MainChainAnswer : public bumo::IMessageChannelConsumer{
+	public:
+		MainChainAnswer();
+		~MainChainAnswer();
+
+	protected:
+		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
+
+		void OnHandleQueryChangeValidator(const protocol::MessageChannel &message_channel);
+		void OnHandleQueryDeposit(const protocol::MessageChannel &message_channel);
+
+	private:
+		bumo::MessageChannelPocMap proc_methods_;
+	};
+
 	class ChildProposerManager : public utils::Singleton<ChildProposerManager>{
 		friend class utils::Singleton<bumo::ChildProposerManager>;
 	public:
 		ChildProposerManager();
-		~ChildProposerManager();
+		virtual ~ChildProposerManager();
 
 		bool Initialize();
 		bool Exit();
 		void UpdateTxResult(const int64_t &error_code, const std::string &error_desc, const std::string& hash);
 
 	private:
-		ChildValidatorProposer *validator_proposer_;
+		std::shared_ptr<ChildValidatorProposer> validator_proposer_;
+		std::shared_ptr<MainChainAnswer> main_chain_answer_;
 	};
 }
 

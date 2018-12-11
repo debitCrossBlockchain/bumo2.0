@@ -21,16 +21,12 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include "message_channel_manager.h"
 #include <cross/cross_utils.h>
 
-
-#define DEPOSIT_QUERY_PERIOD 1
-
 namespace bumo {
 
 	typedef std::function<void(const protocol::MessageChannel &message_channel)> MessageChannelPoc;
 	typedef std::map<int64_t, MessageChannelPoc> MessageChannelPocMap;
 
-	class MessageHandler : public utils::Singleton<MessageHandler>, public IMessageChannelConsumer,
-		public ITransactionSenderNotify,public utils::Runnable{
+	class MessageHandler : public utils::Singleton<MessageHandler>, public IMessageChannelConsumer {
 		friend class utils::Singleton<bumo::MessageHandler>;
 	public:
 		MessageHandler();
@@ -40,33 +36,20 @@ namespace bumo {
 		bool Exit();
 
 	private:
-		virtual void Run(utils::Thread *thread) override;
-
 		bool InitDepositSeq();
 		bool CheckForChildBlock();
 		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
-		virtual void HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result) override;
 
 		void OnHandleCreateChildChain(const protocol::MessageChannel &message_channel);
 		void OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel);
 		void OnHandleChildGenesesResponse(const protocol::MessageChannel &message_channel);
 		void OnHandleQueryHead(const protocol::MessageChannel &message_channel); 
-		void OnHandleQueryChangeValidator(const protocol::MessageChannel &message_channel);
-		void OnHandleQueryDeposit(const protocol::MessageChannel &message_channel);
-		void OnHandleDeposit(const protocol::MessageChannel &message_channel);
+
 		void OnHandleWithdrawal(const protocol::MessageChannel &message_channel);
 		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
 		void SendChildGenesesRequest();
-		//void SendTransaction(const std::vector<std::string> &paras, std::string& hash);
-
-		void BreakMessageHandler(const std::string &error_des);
-		void PullLostDeposit();
-		void GetLastDeposit();
-		void DoDeposit();
 
 	private:
-		bool enabled_;
-		utils::Thread *thread_ptr_;
 		int64_t last_deposit_time_;
 		int64_t local_deposit_seq_;
 		int64_t newest_deposit_seq_;

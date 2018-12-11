@@ -30,7 +30,7 @@ namespace bumo {
 
 	public:
 		BaseProposer();
-		~BaseProposer();
+		virtual ~BaseProposer();
 
 		bool Initialize(bool user_proposer);
 		bool Exit();
