@@ -46,6 +46,22 @@ function transferBUAsset(dest, amount)
     log('Pay Asset( ' + amount + ') to dest account(' + dest + ') succeed.');
 }
 
+function addBalance(dest, amount)
+{
+    assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string,' + typeof dest + ',' + typeof amount);
+    assert(addressCheck(dest) === true, 'dest address is not valid adress.');
+    let current_balance = storageLoad(dest);
+    if(current_balance === false){
+        storageStore(dest,amount);
+    }
+    else{
+        let balance = parseInt(amount);
+        balance = int64Add(balance,current_balance);
+        storageStore(dest,balance.toString());
+    }
+    log('addBalance ' + amount + ') to dest account(' + dest + ') succeed.');
+}
+
 function deposit(params){
     //chain_id seq deposit_data
     log('cpc-log start');
@@ -53,7 +69,8 @@ function deposit(params){
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
     assert(findI0(validators, sender) !== false, sender + ' has no permmition to commit  deposit.'); 
-   
+    
+    assert(typeof params.seq === 'string', 'seq is not string');
     let depositseq = 'recentlydeposit';
     let key = 'childdeposit_' + params.seq;
 
@@ -83,17 +100,17 @@ function deposit(params){
         input.depositdata = params.deposit_data;
         input.seq = params.seq;
         if(validators.length === 1){
-            transferBUAsset(params.deposit_data.address,params.deposit_data.amount);
+            addBalance(params.deposit_data.address,params.deposit_data.amount);
             //storageDel(key);
             input.status = '1';
-            log('cpc-log validators.length === 1 transferBUAsset');
+            log('cpc-log validators.length === 1 addBalance');
         }
         else{
             input.status = '0';
         }
         storageStore(key,JSON.stringify(input));
         storageStore(depositseq,JSON.stringify(input));
-        log('cpc-log input === false');
+        //log('cpc-log input === false');
         
     }
     else{
@@ -113,8 +130,8 @@ function deposit(params){
             return true; 
         }
         depositinfo.status = '1';
-        log('cpc-log transferBUAsset2 ' );
-        transferBUAsset(depositinfo.deposit_data.address,depositinfo.deposit_data.amount);
+        log('cpc-log addBalance2 ' );
+        addBalance(depositinfo.deposit_data.address,depositinfo.deposit_data.amount);
         storageStore(key,JSON.stringify(depositinfo));
 
        // storageStore('childChainCount',childChainCount.toString());
@@ -187,17 +204,34 @@ function queryChildDeposit(params){
     else{
         querykey = 'childdeposit_' + params.seq;
     }
+    log('queryChildDeposit querykey='+ querykey );
     let info = JSON.parse(storageLoad(querykey));
     let retinfo = {};
     if(info === false){
-        retinfo = 'queryChildDeposit failed,' + params.chain_id;
+        retinfo = 'queryChildDeposit failed,' + querykey;
     } else {
         retinfo.index = info.seq;
         retinfo.executed = info.status;
         retinfo.validators = info.votes;
     }
+    log('queryChildDeposit retinfo '+ retinfo);
     return retinfo;
+}
 
+function queryBalance(params){
+    log('queryBalance');
+    assert(params.dest !== undefined, 'have not dest address .');
+    let info = JSON.parse(storageLoad(params.dest));
+    log('queryBalance dest='+ params.dest );
+    let retinfo = {};
+    if(info === false){
+        retinfo = '0';
+    } else {
+
+        retinfo = info;
+    }
+    log('queryBalance retinfo '+ retinfo);
+    return retinfo;
 }
 
 function query(input_str){
@@ -209,6 +243,9 @@ function query(input_str){
     }
     else if(input.method === 'queryChildDeposit'){
         result = queryChildDeposit(input.params);
+    }
+    else if(input.method === 'queryBalance'){
+        result = queryBalance(input.params);
     }
     else{
        	throw '<unidentified operation type>';
