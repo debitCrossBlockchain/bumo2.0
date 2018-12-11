@@ -227,9 +227,9 @@ function depositToChildChain(params){
     assert(!((input.chain_id>childChain_id)||(input.chain_id<=0)) , 'chain_id is error');
     let validators_list = getchildChainValidators(input.chain_id);
     assert(validators_list.length>0, 'child chain node not exist.');
+    assert(stoI64Check(input.amount) === true, 'amount is not number');
     assert(int64Compare(thisPayCoinAmount,input.amount) === 0,'amount is not equels thisPayCoinAmount');
     assert(addressCheck(input.address) === true, 'child chain address is not valid adress.');
-    assert(stoI64Check(input.amount) === true, 'amount is not number');
     let assertinfo = JSON.parse(storageLoad(CHAIN_DEPOSIT + input.chain_id));
     let deposit_current = {};
     let deposit_detail = {};
