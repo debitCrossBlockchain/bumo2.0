@@ -15,7 +15,7 @@ namespace bumo {
 		received_create_child_ = false;
 		last_deposit_time_ = utils::Timestamp::HighResolution();
 		local_deposit_seq_ = 0;
-		newest_deposit_seq_ = 0;
+		newest_deposit_seq_ = 1;
 	}
 
 	MessageHandler::~MessageHandler(){
@@ -457,24 +457,45 @@ namespace bumo {
 		Json::Value deposit_data = bumo::Proto2Json(deposit);
 		Json::Value input_value;
 		Json::Value params;
-
+		newest_deposit_seq_ = MAX(newest_deposit_seq_, deposit.seq());
+		if (deposit.seq() <= local_deposit_seq_)
+			return;
+		if (deposit.seq() != local_deposit_seq_ + 1){
+			LOG_INFO("recv seq=("  FMT_I64 ")£¬but local seq is("  FMT_I64 ")", deposit.seq(), local_deposit_seq_);
+			return;
+		}
 		params["chain_id"] = deposit.chain_id();
 		params["deposit_data"] = deposit_data;
 		params["seq"] = deposit.seq();
-		params["hash"] = HashWrapper::Crypto(deposit.SerializeAsString());
+		//params["hash"] = HashWrapper::Crypto(deposit.SerializeAsString());
 		input_value["method"] = "deposit";
 		input_value["params"] = params;
 		send_para_list.push_back(input_value.toFastString());
 		//std::string hash;
 		//SendTransaction(send_para_list, hash);
 		TransTask trans_task(send_para_list, 0, General::CONTRACT_CPC_ADDRESS, "");
+<<<<<<< HEAD
+		TransactionSender::Instance().SendTransaction(this, trans_task);
+		//local_deposit_seq_++;
+		
+=======
 		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);
 		newest_deposit_seq_ = MAX(newest_deposit_seq_, deposit.seq());
+>>>>>>> bcf272f501bd1601209065d51468bc29a7d5f5b6
 		
 	}
 
 	void MessageHandler::HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result){
-		return;
+		if (!task_result.result_){
+			BreakMessageHandler(task_result.desc_);
+			return;
+		}
+		local_deposit_seq_++;
+	}
+	void MessageHandler::BreakMessageHandler(const std::string &error_des){
+		enabled_ = false;
+		assert(false);
+		LOG_ERROR("%s", error_des.c_str());
 	}
 
 	void MessageHandler::SendChildGenesesRequest(){
@@ -488,11 +509,23 @@ namespace bumo {
 		MessageChannel::Instance().MessageChannelProducer(message_channel);
 	}
 
+	void MessageHandler::GetLastDeposit(){
+
+		protocol::MessageChannelQueryDeposit query_deposit;
+		query_deposit.set_chain_id(General::GetSelfChainId());
+
+		protocol::MessageChannel message_channel;
+		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
+		message_channel.set_msg_data(query_deposit.SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(message_channel);
+	}
+
 	void MessageHandler::PullLostDeposit(){
 
 		int64_t internalSeq = newest_deposit_seq_ - local_deposit_seq_;
-		internalSeq = MIN(internalSeq, 10);
-
+		internalSeq = MIN(internalSeq, 100);
+		/**/
 		for (int i = 1; i <= internalSeq; i++)
 		{
 			protocol::MessageChannelQueryDeposit query_deposit;
@@ -506,27 +539,15 @@ namespace bumo {
 			MessageChannel::Instance().MessageChannelProducer(message_channel);
 			utils::Sleep(10);
 		}
-		local_deposit_seq_ += internalSeq;
 
 	}
 
 
-	void MessageHandler::CheckExpireDeposit(){
-		protocol::MessageChannelQueryDeposit query_deposit;
-		query_deposit.set_chain_id(General::GetSelfChainId());
-		query_deposit.set_seq(local_deposit_seq_);
-
-		protocol::MessageChannel message_channel;
-		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
-		message_channel.set_msg_data(query_deposit.SerializeAsString());
-		MessageChannel::Instance().MessageChannelProducer(message_channel);
-	}
 
 	bool MessageHandler::InitDepositSeq(){
 		Json::Value result_list;
 		Json::Value input_value;
-		input_value["method"] = "queryLastestChildDeposit";
+		input_value["method"] = "queryChildDeposit";
 		input_value["params"]["chain_id"] = General::GetSelfChainId();
 		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CPC_ADDRESS, input_value.toFastString(), result_list);
 		if (error_code != protocol::ERRCODE_SUCCESS){
@@ -549,12 +570,14 @@ namespace bumo {
 			return;
 		}
 		if (local_deposit_seq_ <= 0){
+			utils::Sleep(10 * 1000);
 			InitDepositSeq();
 		}
 		int64_t current_time = utils::Timestamp::HighResolution();
 		if ((current_time - last_deposit_time_) < DEPOSIT_QUERY_PERIOD * utils::MICRO_UNITS_PER_SEC){
 			return;
 		}
+		GetLastDeposit();
 		PullLostDeposit();
 		last_deposit_time_ = current_time;
 	}

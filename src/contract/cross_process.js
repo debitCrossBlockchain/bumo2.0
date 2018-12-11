@@ -48,18 +48,27 @@ function transferBUAsset(dest, amount)
 
 function deposit(params){
     //chain_id seq deposit_data
-    assert(checkchildChainValadator(params.chain_id,sender) === true,'deposit sender is not validator.' );
+    log('cpc-log start');
+    //assert(checkchildChainValadator(params.chain_id,sender) === true,'deposit sender is not validator.' );
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
     assert(findI0(validators, sender) !== false, sender + ' has no permmition to commit  deposit.'); 
-    let input = {};
-    let depositseq = 'childdeposit_' + params.chain_id;
-    let key = 'childdeposit_' + params.chain_id + '_' + params.seq;
+   
+    let depositseq = 'recentlydeposit';
+    let key = 'childdeposit_' + params.seq;
 
     let depositinfo = JSON.parse(storageLoad(key));
+    let recentlydepositinfo = JSON.parse(storageLoad(depositseq));
+    let recentlySeq;
+    if(recentlydepositinfo === false){
+        recentlySeq = 0;
+    }
+    else{
+        recentlySeq = recentlydepositinfo.seq;
+    }
     
-    if(depositinfo === false)
-    {
+    if(depositinfo === false){
+        let input = {};
         /*
         let datahash = sha256(params.deposit_data,1);
         if(datahash !== params.hash)
@@ -67,45 +76,50 @@ function deposit(params){
             log('data hash is ' + datahash + ' but params.hash is '+ params.hash); 
             return false;
         }*/
+        assert(recentlySeq + 1 === parseInt(params.seq),  'receive seq='+params.seq +' but recently is'+ recentlySeq);
         input.votedcount = 1;
         input.starttime = blockTimestamp;
         input.votes = [sender];
         input.depositdata = params.deposit_data;
         input.seq = params.seq;
+        if(validators.length === 1){
+            transferBUAsset(params.deposit_data.address,params.deposit_data.amount);
+            //storageDel(key);
+            input.status = '1';
+            log('cpc-log validators.length === 1 transferBUAsset');
+        }
+        else{
+            input.status = '0';
+        }
         storageStore(key,JSON.stringify(input));
         storageStore(depositseq,JSON.stringify(input));
+        log('cpc-log input === false');
+        
     }
-    else
-    {
-        if(blockTimestamp > depositinfo.starttime + effectiveVoteInterval)
-        {
-            log('Voting time expired, ' + input.address + ' is still validator.'); 
-            storageDel(key);
+    else{
+        log('cpc-log depositinfo === true');
+        if(blockTimestamp > depositinfo.starttime + effectiveVoteInterval){
+            log('cpc-log Voting time expired, ' + depositinfo.address + ' is still validator.'); 
+            //storageDel(key);
+            return false;
         }
-        else
-        {
-            if(depositinfo.votedcount+1 !== parseInt(params.seq))
-            {
-                return false;
-            }
-            assert(depositinfo.votes.includes(sender) !== true, sender + ' has voted.');
-            depositinfo.votes.push(sender);
-            input.votedcount = int64Add(depositinfo.votedcount,1);
-            if(input.votedcount < parseInt(validators.length * passRate + 0.5))
-            {
-                storageStore(key,JSON.stringify(input));
-                storageStore(depositseq,JSON.stringify(input));
-                return true; 
-            }
-            //tlog('deposit',params.chain_id,JSON.stringify(depositinfo));
 
-            transferBUAsset(depositinfo.deposit_data.address,depositinfo.deposit_data.amount);
-            storageDel(key);
+        assert(depositinfo.votes.includes(sender) !== true, sender + ' has voted.');
+        depositinfo.votes.push(sender);
+        depositinfo.votedcount = int64Add(depositinfo.votedcount,1);
+        if(depositinfo.votedcount < parseInt(validators.length * passRate + 0.5)){
+            storageStore(key,JSON.stringify(depositinfo));
+            log('cpc-log depositinfo.votedcount = ' + depositinfo.votedcount + ' validators.length=' + validators.length);
+            return true; 
         }
-        let dealedseqkey = 'dealeddeposit_' + params.chain_id;
-        //childChainCount = int64Add(childChainCount, 1);
+        depositinfo.status = '1';
+        log('cpc-log transferBUAsset2 ' );
+        transferBUAsset(depositinfo.deposit_data.address,depositinfo.deposit_data.amount);
+        storageStore(key,JSON.stringify(depositinfo));
+
        // storageStore('childChainCount',childChainCount.toString());
-        storageStore(key,JSON.stringify(input));
+        
+        log('cpc-log deposit done ');
     }
     
 
@@ -164,15 +178,23 @@ function withdrawal(params){
     return false;
 }
 
-function queryLastestChildDeposit(params){
-    log('queryLastestChildDeposit');
-    let input = params;
-    let info = JSON.parse(storageLoad('childdeposit_' + params.chain_id));
+function queryChildDeposit(params){
+    log('queryChildDeposit');
+    let querykey='';
+    if(params === undefined){
+        querykey = 'recentlydeposit';
+    }
+    else{
+        querykey = 'childdeposit_' + params.seq;
+    }
+    let info = JSON.parse(storageLoad(querykey));
     let retinfo = {};
     if(info === false){
-        retinfo = 'queryLastestChildDeposit failed,' + params.chain_id;
+        retinfo = 'queryChildDeposit failed,' + params.chain_id;
     } else {
-        retinfo = info;
+        retinfo.index = info.seq;
+        retinfo.executed = info.status;
+        retinfo.validators = info.votes;
     }
     return retinfo;
 
@@ -185,8 +207,8 @@ function query(input_str){
     if(input.method === 'getValidators'){
         result.current_validators = getValidators();
     }
-    else if(input.method === 'queryLastestChildDeposit'){
-        result = queryLastestChildDeposit(input.params);
+    else if(input.method === 'queryChildDeposit'){
+        result = queryChildDeposit(input.params);
     }
     else{
        	throw '<unidentified operation type>';

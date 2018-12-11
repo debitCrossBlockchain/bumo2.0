@@ -22,7 +22,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <cross/cross_utils.h>
 
 
-#define DEPOSIT_QUERY_PERIOD 10
+#define DEPOSIT_QUERY_PERIOD 1
 
 namespace bumo {
 
@@ -59,8 +59,9 @@ namespace bumo {
 		void SendChildGenesesRequest();
 		//void SendTransaction(const std::vector<std::string> &paras, std::string& hash);
 
-		void CheckExpireDeposit();
+		void BreakMessageHandler(const std::string &error_des);
 		void PullLostDeposit();
+		void GetLastDeposit();
 		void DoDeposit();
 
 	private:
