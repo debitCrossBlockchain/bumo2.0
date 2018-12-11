@@ -474,14 +474,9 @@ namespace bumo {
 		//std::string hash;
 		//SendTransaction(send_para_list, hash);
 		TransTask trans_task(send_para_list, 0, General::CONTRACT_CPC_ADDRESS, "");
-<<<<<<< HEAD
-		TransactionSender::Instance().SendTransaction(this, trans_task);
-		//local_deposit_seq_++;
-		
-=======
+
 		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);
-		newest_deposit_seq_ = MAX(newest_deposit_seq_, deposit.seq());
->>>>>>> bcf272f501bd1601209065d51468bc29a7d5f5b6
+
 		
 	}
 
