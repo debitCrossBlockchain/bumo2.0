@@ -318,6 +318,8 @@ namespace bumo {
 	BlockListenBase::BlockListenBase() :
 		enabled_(false),
 		thread_ptr_(NULL){
+		last_update_time_ = utils::Timestamp::HighResolution();
+		last_buffer_time_ = utils::Timestamp::HighResolution();
 	}
 
 	BlockListenBase::~BlockListenBase(){
@@ -346,6 +348,16 @@ namespace bumo {
 
 	void BlockListenBase::Run(utils::Thread *thread) {
 		while (enabled_){
+			int64_t current_time = utils::Timestamp::HighResolution();
+			if ((current_time - last_buffer_time_) > BUFFER_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				CopyBufferBlock();
+				last_buffer_time_ = current_time;
+			}
+
+			if ((current_time - last_update_time_) > UPDATE_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				HandleBlockUpdate();
+				last_update_time_ = current_time;
+			}
 		}
 	}
 
@@ -377,6 +389,17 @@ namespace bumo {
 			ledger_map_.insert(pair<int64, LedgerFrm::pointer>(ledger_header->GetProtoHeader().seq(), ledger_header));
 			iter++;
 		}
+	}
+
+	void BlockListenBase::HandleBlockUpdate(){
+		utils::MutexGuard guard(ledger_map_lock_);
+		std::map<int64, LedgerFrm::pointer>::iterator iter = ledger_map_.begin();
+		for (; iter != ledger_map_.end(); ++iter) {
+			LedgerFrm::pointer closing_ledger = iter->second;
+			BuildTlog(closing_ledger);
+			ledger_map_.erase(iter);
+		}
+
 	}
 
 	void BlockListenBase::LedgerToTxs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::Transaction> &tx_list){
@@ -415,6 +438,18 @@ namespace bumo {
 		while (iter != tlog_list.end()){
 			HandleTlogEvent(*iter);
 		}
+	}
+
+	BlockListenMainChain::BlockListenMainChain(){
+
+	}
+
+	BlockListenMainChain::~BlockListenMainChain(){
+
+	}
+
+	void BlockListenMainChain::HandleTlogEvent(const protocol::OperationLog &tlog){
+
 	}
 
 

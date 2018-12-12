@@ -22,7 +22,8 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <cross/cross_utils.h>
 
 using namespace ::google::protobuf;
-
+#define BUFFER_PERIOD 25
+#define UPDATE_PERIOD 15
 namespace bumo {
 	class BlockListenManager :public utils::Singleton<BlockListenManager>, public ITransactionSenderNotify{
 		friend class utils::Singleton<bumo::BlockListenManager>;
@@ -79,13 +80,23 @@ namespace bumo {
 		virtual void LedgerToTxs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::Transaction> &tx_list) final;
 		virtual void LedgerToTlogs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::OperationLog> &tlog_list) final;
 		virtual void BuildTlog(const LedgerFrm::pointer &closing_ledger) final;
-
+		virtual void HandleBlockUpdate() final;
+	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
 		utils::Mutex ledger_map_lock_;
 		utils::Mutex ledger_buffer_list_lock_;
 		std::map<int64, LedgerFrm::pointer> ledger_map_;
 		std::list<LedgerFrm::pointer> ledger_buffer_list_;
+		int64_t last_update_time_;
+		int64_t last_buffer_time_;
+	};
+
+	class BlockListenMainChain :public BlockListenBase{
+	public:
+		BlockListenMainChain();
+		virtual ~BlockListenMainChain();
+		virtual void HandleTlogEvent(const protocol::OperationLog &tlog) override;
 	};
 
 }
