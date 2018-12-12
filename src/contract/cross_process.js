@@ -1,7 +1,7 @@
 'use strict';
 
 const passRate               = 0.7;
-const effectiveVoteInterval  = 50 * 1000 * 1000;
+const effectiveVoteInterval  = 24 * 3600 * 1000 * 1000;
 const buassert        = 'BU';
 
 function findI0(arr, key){
@@ -55,17 +55,14 @@ function addBalance(dest, amount)
         storageStore(dest,amount);
     }
     else{
-        let balance = parseInt(amount);
-        balance = int64Add(balance,current_balance);
-        storageStore(dest,balance.toString());
+        let balance = int64Add(current_balance,parseInt(amount));
+        storageStore(dest,balance);
     }
     log('addBalance ' + amount + ') to dest account(' + dest + ') succeed.');
 }
 
 function deposit(params){
     //chain_id seq deposit_data
-    log('cpc-log start');
-    //assert(checkchildChainValadator(params.chain_id,sender) === true,'deposit sender is not validator.' );
     let validators = getValidators();
     assert(validators !== false, 'Get validators failed.');
     assert(findI0(validators, sender) !== false, sender + ' has no permmition to commit  deposit.'); 
@@ -93,8 +90,8 @@ function deposit(params){
             log('data hash is ' + datahash + ' but params.hash is '+ params.hash); 
             return false;
         }*/
-        assert(recentlySeq + 1 === parseInt(params.seq),  'receive seq='+params.seq +' but recently is'+ recentlySeq);
-        input.votedcount = 1;
+        assert(parseInt(recentlySeq) + 1 === parseInt(params.seq),  'receive seq='+params.seq +' but recently is'+ recentlySeq);
+        input.votedcount = '1';
         input.starttime = blockTimestamp;
         input.votes = [sender];
         input.depositdata = params.deposit_data;
@@ -103,18 +100,16 @@ function deposit(params){
             addBalance(params.deposit_data.address,params.deposit_data.amount);
             //storageDel(key);
             input.status = '1';
-            log('cpc-log validators.length === 1 addBalance');
         }
         else{
             input.status = '0';
         }
         storageStore(key,JSON.stringify(input));
         storageStore(depositseq,JSON.stringify(input));
-        //log('cpc-log input === false');
-        
+    
     }
     else{
-        log('cpc-log depositinfo === true');
+
         if(blockTimestamp > depositinfo.starttime + effectiveVoteInterval){
             log('cpc-log Voting time expired, ' + depositinfo.address + ' is still validator.'); 
             //storageDel(key);
@@ -124,21 +119,20 @@ function deposit(params){
         assert(depositinfo.votes.includes(sender) !== true, sender + ' has voted.');
         depositinfo.votes.push(sender);
         depositinfo.votedcount = int64Add(depositinfo.votedcount,1);
-        if(depositinfo.votedcount < parseInt(validators.length * passRate + 0.5)){
+        if(parseInt(depositinfo.votedcount) < parseInt(validators.length * passRate + 0.5)){
             storageStore(key,JSON.stringify(depositinfo));
             log('cpc-log depositinfo.votedcount = ' + depositinfo.votedcount + ' validators.length=' + validators.length);
             return true; 
         }
-        depositinfo.status = '1';
-        log('cpc-log addBalance2 ' );
-        addBalance(depositinfo.deposit_data.address,depositinfo.deposit_data.amount);
-        storageStore(key,JSON.stringify(depositinfo));
-
-       // storageStore('childChainCount',childChainCount.toString());
         
-        log('cpc-log deposit done ');
+        depositinfo.status = '1';
+       
+        addBalance(depositinfo.depositdata.address,depositinfo.depositdata.amount);
+        storageStore(key,JSON.stringify(depositinfo));
+        storageStore(depositseq,JSON.stringify(depositinfo));
+
+
     }
-    
 
    return true;
 }
@@ -196,7 +190,6 @@ function withdrawal(params){
 }
 
 function queryChildDeposit(params){
-    log('queryChildDeposit');
     let querykey='';
     if(params === undefined){
         querykey = 'recentlydeposit';
@@ -219,7 +212,6 @@ function queryChildDeposit(params){
 }
 
 function queryBalance(params){
-    log('queryBalance');
     assert(params.dest !== undefined, 'have not dest address .');
     let info = JSON.parse(storageLoad(params.dest));
     log('queryBalance dest='+ params.dest );
