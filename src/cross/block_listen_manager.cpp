@@ -19,6 +19,10 @@ namespace bumo {
 		isMainChain_ = false;
 	}
 
+	BlockListenManager::~BlockListenManager(){
+
+	}
+
 	bool BlockListenManager::Initialize() {
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			isMainChain_ = true;
@@ -26,7 +30,9 @@ namespace bumo {
 		return true;
 	}
 
+
 	void BlockListenManager::HandleBlock(LedgerFrm::pointer closing_ledger){
+		
 		if (isMainChain_){
 			HandleMainChainBlock(closing_ledger);
 		}
@@ -307,4 +313,97 @@ namespace bumo {
 		SendChildHeader(closing_ledger);
 		DealTlog(closing_ledger);
 	}
+
+
+	BlockListenBase::BlockListenBase():
+		enabled_(false),
+		thread_ptr_(NULL){
+	}
+
+	BlockListenBase::~BlockListenBase(){
+		if (thread_ptr_){
+			delete thread_ptr_;
+			thread_ptr_ = NULL;
+		}
+	}
+
+	bool BlockListenBase::Initialize() {
+		enabled_ = true;
+		thread_ptr_ = new utils::Thread(this);
+		if (!thread_ptr_->Start("BlockListenManager")) {
+			return false;
+		}
+		return true;
+	}
+
+	bool BlockListenBase::Exit(){
+		enabled_ = false;
+		if (thread_ptr_) {
+			thread_ptr_->JoinWithStop();
+		}
+		return true;
+	}
+
+	void BlockListenBase::Run(utils::Thread *thread) {
+		while (enabled_){
+		}
+	}
+
+	void BlockListenBase::HandleBlock(const LedgerFrm::pointer &closing_ledger){
+		if (!enabled_){
+			return;
+		}
+
+		if (closing_ledger->GetProtoHeader().chain_id() != General::GetSelfChainId()){
+			return;
+		}
+		
+		utils::MutexGuard guard(ledger_buffer_list_lock_);
+		ledger_buffer_list_.push_back(closing_ledger);
+	}
+
+	void BlockListenBase::CopyBufferBlock(){
+		std::list<LedgerFrm::pointer> ledger_list;
+		{
+			utils::MutexGuard guard(ledger_buffer_list_lock_);
+			ledger_list.insert(ledger_list.end(), ledger_buffer_list_.begin(), ledger_buffer_list_.end());
+			ledger_buffer_list_.clear();
+		}
+
+		utils::MutexGuard guard(ledger_map_lock_);
+		std::list<LedgerFrm::pointer>::const_iterator iter = ledger_list.begin();
+		while (iter != ledger_list.end()){
+			LedgerFrm::pointer ledger_header = *iter;
+			ledger_map_.insert(pair<int64, LedgerFrm::pointer>(ledger_header->GetProtoHeader().seq(), ledger_header));
+			iter++;
+		}
+	}
+
+	void BlockListenBase::BuildTlog(const LedgerFrm::pointer &closing_ledger){
+		std::list<protocol::Transaction> tx_list;
+		for (int i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
+			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
+			const protocol::Transaction &apply_tran = tx->GetTransactionEnv().transaction();
+			tx_list.push_back(apply_tran);
+			//deal append trans
+			for (unsigned int j = 0; j < tx->instructions_.size(); j++){
+				const protocol::Transaction &trans = tx->instructions_[j].transaction_env().transaction();
+				tx_list.push_back(apply_tran);
+			}
+		}
+
+		std::list<protocol::Transaction>::const_iterator iter = tx_list.begin();
+		while (iter != tx_list.end()){
+			protocol::Transaction trans_temp = *iter;
+			for (int i = 0; i < trans_temp.operations_size(); i++){
+				if (protocol::Operation_Type_LOG != trans_temp.operations(i).type()){
+					continue;
+				}
+
+				protocol::OperationLog log = trans_temp.operations(i).log();
+				HandleTlogEvent(log);
+			}
+		}
+	}
+
 }
