@@ -10,7 +10,7 @@ namespace bumo {
 
 	const static char* OP_CREATE_CHILD_CHAIN = "createChildChain";
 	const static char* OP_DEPOSIT = "deposit";
-	const static char* OP_WITHDRAWAL = "withdrawal"; 
+	const static char* OP_WITHDRAWAL = "withdrawal";
 	const static char* OP_WITHDRAWALINIT = "withdrawalInit";
 	const static char* OP_CHALLENGE = "challenge";
 	const static char* OP_CHANGE_VALIDATOR = "changeValidator";
@@ -32,7 +32,7 @@ namespace bumo {
 
 
 	void BlockListenManager::HandleBlock(LedgerFrm::pointer closing_ledger){
-		
+
 		if (isMainChain_){
 			HandleMainChainBlock(closing_ledger);
 		}
@@ -45,7 +45,7 @@ namespace bumo {
 		if (tlog_topic.empty()){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
 		}
-		
+
 		if (0 == strcmp(tlog_topic.c_str(), OP_CREATE_CHILD_CHAIN)){
 			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN;
 		}
@@ -99,7 +99,7 @@ namespace bumo {
 		if (trans.source_address() != source_address){
 			return;
 		}
-			
+
 		std::string des_address = "";
 		bool find_proposer = false;
 		for (int j = 0; j < trans.operations_size(); j++){
@@ -107,14 +107,14 @@ namespace bumo {
 			switch (trans.operations(j).type())
 			{
 			case protocol::Operation_Type_PAY_COIN:{
-				const protocol::OperationPayCoin &ope = trans.operations(j).pay_coin();
-				des_address = ope.dest_address();
-				break;
+													   const protocol::OperationPayCoin &ope = trans.operations(j).pay_coin();
+													   des_address = ope.dest_address();
+													   break;
 			}
 			case protocol::Operation_Type_PAY_ASSET:{
-				const protocol::OperationPayAsset &ope = trans.operations(j).pay_asset();
-				des_address = ope.dest_address();
-				break;
+														const protocol::OperationPayAsset &ope = trans.operations(j).pay_asset();
+														des_address = ope.dest_address();
+														break;
 			}
 			default:
 				break;
@@ -172,7 +172,7 @@ namespace bumo {
 			return;
 		//must be CMC send trans
 		if (trans.source_address() != General::CONTRACT_CMC_ADDRESS){
-			return ;
+			return;
 		}
 
 		for (int j = 0; j < trans.operations_size(); j++){
@@ -187,25 +187,25 @@ namespace bumo {
 
 			//special transaction
 			switch (tlog_type){
-				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
-				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
-				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
-				case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:{
-					//transfer tlog params must be 2
-					if (log.datas_size() != 2){
-						LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
-						break;
-					}
-					SendTlog(log);
-					LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
-					break;
-				}
-				default:
-					break;
+			case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
+			case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
+			case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
+			case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:{
+																							//transfer tlog params must be 2
+																							if (log.datas_size() != 2){
+																								LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
+																								break;
+																							}
+																							SendTlog(log);
+																							LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
+																							break;
+			}
+			default:
+				break;
 			}
 
 		}
-		
+
 	}
 
 
@@ -226,7 +226,7 @@ namespace bumo {
 				const protocol::Transaction &trans = tx->instructions_[i].transaction_env().transaction();
 				DealMainTlog(trans);
 				DealProposerTrans(trans, code, desc, hash);
-				DealChildTlog(closing_ledger,trans );
+				DealChildTlog(closing_ledger, trans);
 			}
 		}
 	}
@@ -270,7 +270,7 @@ namespace bumo {
 		TransTask trans_task(send_para_list, 0, General::CONTRACT_CPC_ADDRESS, "");
 		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);
 	}
-	
+
 
 	void BlockListenManager::DealChildTlog(LedgerFrm::pointer closing_ledger, const protocol::Transaction &trans){
 		if (isMainChain_)
@@ -297,8 +297,8 @@ namespace bumo {
 			else if (0 == log.topic().compare(OP_WITHDRAWALINIT)){
 				BuildSpvProof(closing_ledger, trans, log);
 			}
-			
-			
+
+
 		}
 
 
@@ -315,7 +315,7 @@ namespace bumo {
 	}
 
 
-	BlockListenBase::BlockListenBase():
+	BlockListenBase::BlockListenBase() :
 		enabled_(false),
 		thread_ptr_(NULL){
 	}
@@ -357,7 +357,7 @@ namespace bumo {
 		if (closing_ledger->GetProtoHeader().chain_id() != General::GetSelfChainId()){
 			return;
 		}
-		
+
 		utils::MutexGuard guard(ledger_buffer_list_lock_);
 		ledger_buffer_list_.push_back(closing_ledger);
 	}
@@ -379,31 +379,43 @@ namespace bumo {
 		}
 	}
 
-	void BlockListenBase::BuildTlog(const LedgerFrm::pointer &closing_ledger){
-		std::list<protocol::Transaction> tx_list;
-		for (int i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
+	void BlockListenBase::LedgerToTxs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::Transaction> &tx_list){
+		for (int64_t i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
 			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
 			const protocol::Transaction &apply_tran = tx->GetTransactionEnv().transaction();
 			tx_list.push_back(apply_tran);
 			//deal append trans
-			for (unsigned int j = 0; j < tx->instructions_.size(); j++){
+			for (int64_t j = 0; j < tx->instructions_.size(); j++){
 				const protocol::Transaction &trans = tx->instructions_[j].transaction_env().transaction();
 				tx_list.push_back(apply_tran);
 			}
 		}
+	}
 
+	void BlockListenBase::LedgerToTlogs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::OperationLog> &tlog_list){
+		std::list<protocol::Transaction> tx_list;
+		LedgerToTxs(closing_ledger, tx_list);
 		std::list<protocol::Transaction>::const_iterator iter = tx_list.begin();
 		while (iter != tx_list.end()){
 			protocol::Transaction trans_temp = *iter;
-			for (int i = 0; i < trans_temp.operations_size(); i++){
+			for (int64_t i = 0; i < trans_temp.operations_size(); i++){
 				if (protocol::Operation_Type_LOG != trans_temp.operations(i).type()){
 					continue;
 				}
-
 				protocol::OperationLog log = trans_temp.operations(i).log();
-				HandleTlogEvent(log);
+				tlog_list.push_back(log);
 			}
 		}
 	}
+
+	void BlockListenBase::BuildTlog(const LedgerFrm::pointer &closing_ledger){
+		std::list<protocol::OperationLog> tlog_list;
+		LedgerToTlogs(closing_ledger, tlog_list);
+		std::list<protocol::OperationLog>::const_iterator iter = tlog_list.begin();
+		while (iter != tlog_list.end()){
+			HandleTlogEvent(*iter);
+		}
+	}
+
 
 }

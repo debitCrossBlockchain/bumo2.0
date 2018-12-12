@@ -76,7 +76,10 @@ namespace bumo {
 		virtual void Run(utils::Thread *thread) override;
 	private:
 		virtual void CopyBufferBlock() final;
+		virtual void LedgerToTxs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::Transaction> &tx_list) final;
+		virtual void LedgerToTlogs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::OperationLog> &tlog_list) final;
 		virtual void BuildTlog(const LedgerFrm::pointer &closing_ledger) final;
+
 		bool enabled_;
 		utils::Thread *thread_ptr_;
 		utils::Mutex ledger_map_lock_;
