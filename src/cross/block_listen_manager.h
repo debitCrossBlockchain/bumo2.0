@@ -25,45 +25,6 @@ using namespace ::google::protobuf;
 #define BUFFER_PERIOD 25
 #define UPDATE_PERIOD 15
 namespace bumo {
-	class BlockListenManager :public utils::Singleton<BlockListenManager>, public ITransactionSenderNotify{
-		friend class utils::Singleton<bumo::BlockListenManager>;
-	public:
-		BlockListenManager();
-		~BlockListenManager();
-
-		bool Initialize();
-		bool Exit() { return true; }
-
-		void HandleBlock(LedgerFrm::pointer closing_ledger);
-
-	private:
-
-		void HandleMainChainBlock(LedgerFrm::pointer closing_ledger);
-		void HandleChildChainBlock(LedgerFrm::pointer closing_ledger);
-		void DealTlog(LedgerFrm::pointer closing_ledger);
-
-		std::string GetMerklePath(LedgerFrm::pointer closing_ledger);
-		virtual void HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result) override;
-
-		void SendChildHeader(LedgerFrm::pointer closing_ledger);
-		void DealChildTlog(LedgerFrm::pointer closing_ledger, const protocol::Transaction &trans);
-		void BuildSpvProof(LedgerFrm::pointer closing_ledger, const protocol::Transaction &trans, const protocol::OperationLog &tlog);
-
-
-		void SendTlog(const protocol::OperationLog &tlog);
-		void DealMainTlog(const protocol::Transaction &trans);
-
-
-		void DealProposerTrans(const protocol::Transaction &trans, int64_t &error_code, const std::string &error_desc, const std::string& hash);
-
-
-		protocol::MESSAGE_CHANNEL_TYPE BlockListenManager::ParseTlog(std::string tlog_topic);
-		std::shared_ptr<Message> GetMsgObject(protocol::MESSAGE_CHANNEL_TYPE msg_type);
-	private:
-
-		bool isMainChain_;
-	};
-
 	class BlockListenBase :public utils::Runnable{
 	public:
 		BlockListenBase();
@@ -120,6 +81,20 @@ namespace bumo {
 		//bool CheckTxTransaction(const protocol::Transaction &trans);
 	};
 
+	class BlockListenManager :public utils::Singleton<BlockListenManager>{
+		friend class utils::Singleton<bumo::BlockListenManager>;
+	public:
+		BlockListenManager();
+		~BlockListenManager();
+
+		bool Initialize();
+		bool Exit();
+
+		void HandleBlock(LedgerFrm::pointer closing_ledger);
+	private:
+		std::shared_ptr<BlockListenMainChain> block_listen_main_chain_;
+		std::shared_ptr<BlockListenChildChain> block_listen_child_chain_;
+	};
 }
 
 #endif
