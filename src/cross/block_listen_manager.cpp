@@ -297,12 +297,7 @@ namespace bumo {
 			else if (0 == log.topic().compare(OP_WITHDRAWALINIT)){
 				BuildSpvProof(closing_ledger, trans, log);
 			}
-
-
 		}
-
-
-
 	}
 
 	void BlockListenManager::HandleMainChainBlock(LedgerFrm::pointer closing_ledger){
@@ -467,6 +462,7 @@ namespace bumo {
 		std::map<int64, LedgerFrm::pointer>::iterator iter = ledger_map_.begin();
 		for (; iter != ledger_map_.end(); ++iter) {
 			LedgerFrm::pointer closing_ledger = iter->second;
+			HandleBlockEvent(closing_ledger);
 			BuildTx(closing_ledger);
 			BuildTlog(closing_ledger);
 			ledger_map_.erase(iter);
@@ -572,7 +568,7 @@ namespace bumo {
 		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
 			return;
 		}
-		
+
 		std::list<protocol::Transaction> tx_list;
 		const protocol::Transaction &apply_tran = tx->GetTransactionEnv().transaction();
 		tx_list.push_back(apply_tran);
@@ -622,11 +618,85 @@ namespace bumo {
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:{
-		TlogToMessageChannel(tlog);
-	    break;
+																						TlogToMessageChannel(tlog);
+																						break;
 		}
 		default:
 			break;
 		}
 	}
+
+
+
+
+	BlockListenChildChain::BlockListenChildChain(){
+
 	}
+
+	BlockListenChildChain::~BlockListenChildChain(){
+
+	}
+
+	void BlockListenChildChain::HandleBlockEvent(const LedgerFrm::pointer &closing_ledger){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			return;
+		}
+		HandleChildHeader(closing_ledger);
+	}
+
+	void BlockListenChildChain::HandleTxEvent(const TransactionFrm::pointer &tx){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			return;
+		}
+
+		int64_t err_code = (int64_t)tx->GetResult().code();
+		std::string desc = tx->GetResult().desc();
+		std::string hash = utils::String::BinToHexString(tx->GetContentHash()).c_str();
+		ChildProposerManager::Instance().UpdateTxResult(err_code, desc, hash);
+	}
+
+	void BlockListenChildChain::HandleTlogEvent(const protocol::OperationLog &tlog){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			return;
+		}
+
+		if (tlog.topic().size() == 0 || tlog.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE){
+			LOG_ERROR("Log's parameter topic size should be between (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE);
+			return;
+		}
+
+		int32_t tlog_type = ParseTlog(tlog.topic());
+		//transfer tlog params must be 2
+		if (tlog.datas_size() != 2){
+			LOG_ERROR("tlog parames number should have 2,but now is ", tlog.datas_size());
+			return;
+		}
+		//special transaction
+		switch (tlog_type){
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:{
+																						TlogToMessageChannel(tlog);
+																						break;
+		}
+		default:
+			break;
+		}
+	}
+
+	void BlockListenChildChain::HandleChildHeader(LedgerFrm::pointer closing_ledger){
+		//send to messagechanel
+		protocol::LedgerHeader& ledger_header = closing_ledger->GetProtoHeader();
+		protocol::MessageChannel msg_channel;
+		//sendto main chain id=0
+		msg_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_SUBMIT_HEAD);
+		msg_channel.set_msg_data(ledger_header.SerializeAsString());
+
+		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+		LOG_INFO("childChain build a block hash=%s,send msgchannel", utils::String::BinToHexString(ledger_header.hash()).c_str());
+	}
+
+
+}

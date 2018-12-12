@@ -72,6 +72,7 @@ namespace bumo {
 		bool Initialize();
 		bool Exit();
 		virtual void HandleBlock(const LedgerFrm::pointer &closing_ledger);
+		virtual void HandleBlockEvent(const LedgerFrm::pointer &closing_ledger) = 0;
 		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) = 0;
 		virtual void HandleTlogEvent(const protocol::OperationLog &tlog) = 0;
 	protected:
@@ -104,6 +105,19 @@ namespace bumo {
 		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) override;
 		virtual void HandleTlogEvent(const protocol::OperationLog &tlog) override;
 		bool CheckTxTransaction(const protocol::Transaction &trans);
+	};
+
+	class BlockListenChildChain :public BlockListenBase{
+	public:
+		BlockListenChildChain();
+		virtual ~BlockListenChildChain();
+		virtual void HandleBlockEvent(const LedgerFrm::pointer &closing_ledger) override;
+		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) override;
+		virtual void HandleTlogEvent(const protocol::OperationLog &tlog) override;
+		
+	private:
+		void HandleChildHeader(LedgerFrm::pointer closing_ledger);
+		//bool CheckTxTransaction(const protocol::Transaction &trans);
 	};
 
 }
