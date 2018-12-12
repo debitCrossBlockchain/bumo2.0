@@ -72,15 +72,20 @@ namespace bumo {
 		bool Initialize();
 		bool Exit();
 		virtual void HandleBlock(const LedgerFrm::pointer &closing_ledger);
+		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) = 0;
 		virtual void HandleTlogEvent(const protocol::OperationLog &tlog) = 0;
 	protected:
 		virtual void Run(utils::Thread *thread) override;
+		virtual protocol::MESSAGE_CHANNEL_TYPE ParseTlog(std::string tlog_topic);
+		virtual void TlogToMessageChannel(const protocol::OperationLog &tlog);
 	private:
 		virtual void CopyBufferBlock() final;
 		virtual void LedgerToTxs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::Transaction> &tx_list) final;
 		virtual void LedgerToTlogs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::OperationLog> &tlog_list) final;
+		virtual void BuildTx(const LedgerFrm::pointer &closing_ledger) final;
 		virtual void BuildTlog(const LedgerFrm::pointer &closing_ledger) final;
 		virtual void HandleBlockUpdate() final;
+		virtual void MessageChannelToMsg(protocol::MESSAGE_CHANNEL_TYPE msg_type, std::shared_ptr<Message> &msg) final;
 	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
@@ -96,7 +101,9 @@ namespace bumo {
 	public:
 		BlockListenMainChain();
 		virtual ~BlockListenMainChain();
+		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) override;
 		virtual void HandleTlogEvent(const protocol::OperationLog &tlog) override;
+		bool CheckTxTransaction(const protocol::Transaction &trans);
 	};
 
 }

@@ -361,6 +361,77 @@ namespace bumo {
 		}
 	}
 
+	protocol::MESSAGE_CHANNEL_TYPE BlockListenBase::ParseTlog(std::string tlog_topic){
+		if (tlog_topic.empty()){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
+		}
+
+		if (0 == strcmp(tlog_topic.c_str(), OP_CREATE_CHILD_CHAIN)){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN;
+		}
+		else if (0 == strcmp(tlog_topic.c_str(), OP_DEPOSIT)){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT;
+		}
+		else if (0 == strcmp(tlog_topic.c_str(), OP_WITHDRAWAL)){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_WITHDRAWAL;
+		}
+		else if (0 == strcmp(tlog_topic.c_str(), OP_CHALLENGE)){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL;
+		}
+		else if (0 == strcmp(tlog_topic.c_str(), OP_CHANGE_VALIDATOR)){
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR;
+		}
+		else{
+			return protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE;
+		}
+	}
+
+
+	void BlockListenBase::MessageChannelToMsg(protocol::MESSAGE_CHANNEL_TYPE msg_type, std::shared_ptr<Message> &msg){
+		switch (msg_type){
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
+			msg = std::make_shared<protocol::MessageChannelCreateChildChain>();
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
+			msg = std::make_shared<protocol::MessageChannelDeposit>();
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:
+			msg = std::make_shared<protocol::MessageChannelChangeChildValidator>();
+		default:
+			msg = nullptr;
+		}
+	}
+
+	void BlockListenBase::TlogToMessageChannel(const protocol::OperationLog &tlog){
+		protocol::MessageChannel msg_channel;
+		const std::string &tlog_params = tlog.datas(1);
+		if (tlog_params.size() == 0 || tlog_params.size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
+			LOG_ERROR("Log's parameter data size should be between (0,%d]", General::TRANSACTION_LOG_DATA_MAXSIZE);
+			return;
+		}
+		//LOG_INFO("get tlog topic:%s,args[0]:%s", log.topic(), log.datas(j));
+		Json::Value trans_json;
+		if (!trans_json.fromString(tlog_params)) {
+			LOG_ERROR("Failed to parse the json content of the tlog");
+			return;
+		}
+		msg_channel.set_target_chain_id(atoi(tlog.datas(0).c_str()));
+
+		protocol::MESSAGE_CHANNEL_TYPE msg_type = ParseTlog(tlog.topic());
+		msg_channel.set_msg_type(msg_type);
+
+		std::shared_ptr<Message> msg;
+		MessageChannelToMsg(msg_type, msg);
+		if (!msg){
+			return;
+		}
+		std::string error_msg;
+		if (!Json2Proto(trans_json, *msg, error_msg)) {
+			LOG_ERROR("Failed to Json2Proto error_msg=%s", error_msg.c_str());
+			return;
+		}
+		msg_channel.set_msg_data(msg->SerializeAsString());
+		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+	}
+
 	void BlockListenBase::HandleBlock(const LedgerFrm::pointer &closing_ledger){
 		if (!enabled_){
 			return;
@@ -396,10 +467,10 @@ namespace bumo {
 		std::map<int64, LedgerFrm::pointer>::iterator iter = ledger_map_.begin();
 		for (; iter != ledger_map_.end(); ++iter) {
 			LedgerFrm::pointer closing_ledger = iter->second;
+			BuildTx(closing_ledger);
 			BuildTlog(closing_ledger);
 			ledger_map_.erase(iter);
 		}
-
 	}
 
 	void BlockListenBase::LedgerToTxs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::Transaction> &tx_list){
@@ -431,6 +502,13 @@ namespace bumo {
 		}
 	}
 
+	void BlockListenBase::BuildTx(const LedgerFrm::pointer &closing_ledger){
+		for (int64_t i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
+			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
+			HandleTxEvent(tx);
+		}
+	}
+
 	void BlockListenBase::BuildTlog(const LedgerFrm::pointer &closing_ledger){
 		std::list<protocol::OperationLog> tlog_list;
 		LedgerToTlogs(closing_ledger, tlog_list);
@@ -448,9 +526,107 @@ namespace bumo {
 
 	}
 
-	void BlockListenMainChain::HandleTlogEvent(const protocol::OperationLog &tlog){
+	bool BlockListenMainChain::CheckTxTransaction(const protocol::Transaction &trans){
+		//must be CMC send trans
+		std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
+		PrivateKey pkey(private_key);
+		if (!pkey.IsValid()){
+			LOG_ERROR("Private key is not valid");
+			return false;
+		}
 
+		std::string source_address = pkey.GetEncAddress();
+		if (trans.source_address() != source_address){
+			return false;
+		}
+
+		std::string des_address = "";
+		bool flag_proposer = false;
+		for (int64_t i = 0; i < trans.operations_size(); i++){
+			des_address.clear();
+			switch (trans.operations(i).type())
+			{
+			case protocol::Operation_Type_PAY_COIN:{
+													   const protocol::OperationPayCoin &ope = trans.operations(i).pay_coin();
+													   des_address = ope.dest_address();
+													   break;
+			}
+			case protocol::Operation_Type_PAY_ASSET:{
+														const protocol::OperationPayAsset &ope = trans.operations(i).pay_asset();
+														des_address = ope.dest_address();
+														break;
+			}
+			default:
+				break;
+			}
+
+			if (des_address == General::CONTRACT_CMC_ADDRESS){
+				flag_proposer = true;
+				break;
+			}
+		}
+		return flag_proposer;
 	}
 
+	void BlockListenMainChain::HandleTxEvent(const TransactionFrm::pointer &tx){
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return;
+		}
+		
+		std::list<protocol::Transaction> tx_list;
+		const protocol::Transaction &apply_tran = tx->GetTransactionEnv().transaction();
+		tx_list.push_back(apply_tran);
+		//deal append trans
+		for (int64_t j = 0; j < tx->instructions_.size(); j++){
+			const protocol::Transaction &trans = tx->instructions_[j].transaction_env().transaction();
+			tx_list.push_back(trans);
+		}
 
-}
+		bool flag_proposer = false;
+		CheckTxTransaction(apply_tran);
+		std::list<protocol::Transaction>::const_iterator iter = tx_list.begin();
+		while (iter != tx_list.end()){
+			flag_proposer = CheckTxTransaction(*iter);
+			if (flag_proposer){
+				break;
+			}
+		}
+
+		if (flag_proposer){
+			int64_t err_code = (int64_t)tx->GetResult().code();
+			std::string desc = tx->GetResult().desc();
+			std::string hash = utils::String::BinToHexString(tx->GetContentHash()).c_str();
+			MainProposerManager::Instance().UpdateTxResult(err_code, desc, hash);
+		}
+	}
+
+	void BlockListenMainChain::HandleTlogEvent(const protocol::OperationLog &tlog){
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return;
+		}
+
+		if (tlog.topic().size() == 0 || tlog.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE){
+			LOG_ERROR("Log's parameter topic size should be between (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE);
+			return;
+		}
+
+		int32_t tlog_type = ParseTlog(tlog.topic());
+		//transfer tlog params must be 2
+		if (tlog.datas_size() != 2){
+			LOG_ERROR("tlog parames number should have 2,but now is ", tlog.datas_size());
+			return;
+		}
+		//special transaction
+		switch (tlog_type){
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
+		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:{
+		TlogToMessageChannel(tlog);
+	    break;
+		}
+		default:
+			break;
+		}
+	}
+	}
