@@ -36,15 +36,24 @@ function checkchildChainValadator(chain_id,validator){
     return false;
 }
 
-function transferBUAsset(dest, amount)
-{
-    assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string,' + typeof dest + ',' + typeof amount);
-    if(amount === '0'){ return true; }
+function queryBalance(params){
+    assert(params.dest !== undefined, 'have not dest address .');
+    
+    let info = JSON.parse(storageLoad(params.dest));
+    log('queryBalance dest='+ params.dest );
+    let retinfo = {};
+    if(info === false){
+        retinfo = '0';
+    } else {
 
-    issueAsset(buassert, amount);
-    payAsset(dest,thisAddress,buassert, amount);
-    log('Pay Asset( ' + amount + ') to dest account(' + dest + ') succeed.');
+        retinfo = info;
+    }
+    
+    //let retinfo = balanceOf(params.dest);
+    log('queryBalance retinfo '+ retinfo);
+    return retinfo;
 }
+
 
 function addBalance(dest, amount)
 {
@@ -56,6 +65,21 @@ function addBalance(dest, amount)
     }
     else{
         let balance = int64Add(current_balance,parseInt(amount));
+        storageStore(dest,balance);
+    }
+    log('addBalance ' + amount + ') to dest account(' + dest + ') succeed.');
+}
+
+function reduceBalance(dest, amount)
+{
+    assert((typeof dest === 'string') && (typeof amount === 'string'), 'Args type error. arg-dest and arg-amount must be a string,' + typeof dest + ',' + typeof amount);
+    assert(addressCheck(dest) === true, 'dest address is not valid adress.');
+    let current_balance = storageLoad(dest);
+    if(current_balance === false){
+        storageStore(dest,amount);
+    }
+    else{
+        let balance = int64Sub(current_balance,parseInt(amount));
         storageStore(dest,balance);
     }
     log('addBalance ' + amount + ') to dest account(' + dest + ') succeed.');
@@ -98,7 +122,7 @@ function deposit(params){
         input.seq = params.seq;
         if(validators.length === 1){
             addBalance(params.deposit_data.address,params.deposit_data.amount);
-            //storageDel(key);
+            //transfer(params.deposit_data.address,params.deposit_data.amount);
             input.status = '1';
         }
         else{
@@ -112,7 +136,6 @@ function deposit(params){
 
         if(blockTimestamp > depositinfo.starttime + effectiveVoteInterval){
             log('cpc-log Voting time expired, ' + depositinfo.address + ' is still validator.'); 
-            //storageDel(key);
             return false;
         }
 
@@ -126,12 +149,10 @@ function deposit(params){
         }
         
         depositinfo.status = '1';
-       
+        //transfer(depositinfo.depositdata.address,depositinfo.depositdata.amount);
         addBalance(depositinfo.depositdata.address,depositinfo.depositdata.amount);
         storageStore(key,JSON.stringify(depositinfo));
         storageStore(depositseq,JSON.stringify(depositinfo));
-
-
     }
 
    return true;
@@ -157,36 +178,43 @@ function buildWithdrawalProofs(params){
 
 
 function withdrawal(params){
-    // chain_id、address
-    
-    let withdrawalSeqKey = 'childwithdrawal_'  + params.chain_id + '_seq';
-    let seq = 0;
-    let seqStr = storageLoad(withdrawalSeqKey);
-     if(seqStr !== false)
-    {
-        seq = parseInt(seqStr);
-    }
-    seq = int64Add(seq,1);
-    let assert_info = thisPayAsset;
-    if(assert_info.key.code !== buassert)
-    {
+    // chain_id、address、amount
+    let queryBalanceParams = {};
+    queryBalanceParams.dest = sender;
+    let senderBalance = queryBalance(queryBalanceParams);
+    if(parseInt(senderBalance) < parseInt(params.amount)){
+        log('withdrawal  sender:' + sender + ',balance=' + senderBalance+ ' < ' + params.amount);
         return false;
     }
-    
+
+    let recentlyWithdrawalKey = 'recentlywithdrawal' ;
+    let recentlyWithdrawal = storageLoad(recentlyWithdrawalKey);
+    let seq;
+     if(recentlyWithdrawal === false){
+        seq = '0';
+    }
+    else{
+        let recentInfo = JSON.parse(recentlyWithdrawal);
+        seq = recentInfo.seq;
+    }
+    seq = int64Add(seq,1);
+    let key = 'childwithdrawal_' + seq;
+
     let input = {};
-    let key = 'childwithdrawal_'  + params.chain_id + '_'+ seq;
-    input.amount = assert_info.amount;
+    input.amount = params.amount;
     input.source_address = sender;
     input.chain_id = params.chain_id;
-    input.block_hash = '';
+    //input.block_hash = '';
     input.address = params.address;
     input.seq = seq;
-    input.merkelProof = '';
+    //input.merkelProof = '';
     
     storageStore(key,JSON.stringify(input));
-    storageStore(withdrawalSeqKey,seq.toString());
-    tlog('withdrawalInit','0',JSON.stringify(input)); 
-    return false;
+    storageStore(recentlyWithdrawalKey,JSON.stringify(input));
+    //approve(sender,params.amount);
+    reduceBalance(sender,params.amount);
+    tlog('withdrawal','0',JSON.stringify(input)); 
+    return true;
 }
 
 function queryChildDeposit(params){
@@ -211,20 +239,7 @@ function queryChildDeposit(params){
     return retinfo;
 }
 
-function queryBalance(params){
-    assert(params.dest !== undefined, 'have not dest address .');
-    let info = JSON.parse(storageLoad(params.dest));
-    log('queryBalance dest='+ params.dest );
-    let retinfo = {};
-    if(info === false){
-        retinfo = '0';
-    } else {
 
-        retinfo = info;
-    }
-    log('queryBalance retinfo '+ retinfo);
-    return retinfo;
-}
 
 function query(input_str){
     let input  = JSON.parse(input_str);
