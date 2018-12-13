@@ -403,8 +403,8 @@ namespace bumo {
 	}
 
 	BlockListenManager::BlockListenManager(){
-		block_listen_main_chain_ = std::shared_ptr<BlockListenMainChain>(new BlockListenMainChain());
-		block_listen_child_chain_ = std::shared_ptr<BlockListenChildChain>(new BlockListenChildChain());
+		block_listen_main_chain_ = std::make_shared<BlockListenMainChain>();
+		block_listen_child_chain_ = std::make_shared<BlockListenChildChain>();
 	}
 
 	BlockListenManager::~BlockListenManager(){
