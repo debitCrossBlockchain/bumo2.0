@@ -165,12 +165,12 @@ namespace bumo {
 	void BlockListenBase::HandleBlockUpdate(){
 		utils::MutexGuard guard(ledger_map_lock_);
 		std::map<int64, LedgerFrm::pointer>::iterator iter = ledger_map_.begin();
-		for (; iter != ledger_map_.end(); ++iter) {
+		while(iter != ledger_map_.end()) {
 			LedgerFrm::pointer closing_ledger = iter->second;
 			HandleBlockEvent(closing_ledger);
 			BuildTx(closing_ledger);
 			BuildTlog(closing_ledger);
-			ledger_map_.erase(iter);
+			ledger_map_.erase(iter++);
 		}
 	}
 
