@@ -29,6 +29,33 @@ namespace bumo {
 		}
 	}
 
+	void BlockListenBase::TxFrmToTlog(const TransactionFrm::pointer &txFrm){
+		for (int i = 0; i < txFrm->instructions_.size(); i++){
+			const protocol::Transaction &trans = txFrm->instructions_[i].transaction_env().transaction();
+			for (int j = 0; j < trans.operations_size(); j++){
+				if (protocol::Operation_Type_LOG != trans.operations(j).type()){
+					continue;
+				}
+				const protocol::OperationLog &log = trans.operations(j).log();
+				if (log.topic().size() == 0 || log.topic().size() > General::TRANSACTION_LOG_TOPIC_MAXSIZE){
+					LOG_ERROR("Log's parameter topic size should be between (0,%d]", General::TRANSACTION_LOG_TOPIC_MAXSIZE);
+					continue;
+				}
+				//special transaction
+				if (ParseTlog(log.topic()) == protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_TYPE_NONE){
+					continue;
+				}
+				//transfer tlog params must be 2
+				if (log.datas_size() != 2){
+					LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
+					break;
+				}
+				HandleTlogEvent(log);
+				LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
+			}
+		}
+	}
+
 	bool BlockListenBase::Initialize() {
 		enabled_ = true;
 		thread_ptr_ = new utils::Thread(this);
@@ -170,57 +197,19 @@ namespace bumo {
 	void BlockListenBase::HandleBlockUpdate(){
 		utils::MutexGuard guard(ledger_map_lock_);
 		std::map<int64, LedgerFrm::pointer>::iterator iter = ledger_map_.begin();
-		while(iter != ledger_map_.end()) {
+		while (iter != ledger_map_.end()) {
 			LedgerFrm::pointer closing_ledger = iter->second;
 			HandleBlockEvent(closing_ledger);
 			BuildTx(closing_ledger);
-			BuildTlog(closing_ledger);
 			ledger_map_.erase(iter++);
-		}
-	}
-
-	void BlockListenBase::LedgerToTxs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::Transaction> &tx_list){
-		for (int64_t i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
-			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
-			const protocol::Transaction &apply_tran = tx->GetTransactionEnv().transaction();
-			tx_list.push_back(apply_tran);
-			//deal append trans
-			for (int64_t j = 0; j < tx->instructions_.size(); j++){
-				const protocol::Transaction &trans = tx->instructions_[j].transaction_env().transaction();
-				tx_list.push_back(trans);
-			}
-		}
-	}
-
-	void BlockListenBase::LedgerToTlogs(const LedgerFrm::pointer &closing_ledger, std::list<protocol::OperationLog> &tlog_list){
-		std::list<protocol::Transaction> tx_list;
-		LedgerToTxs(closing_ledger, tx_list);
-		std::list<protocol::Transaction>::const_iterator iter = tx_list.begin();
-		while (iter != tx_list.end()){
-			protocol::Transaction trans_temp = *iter;
-			for (int64_t i = 0; i < trans_temp.operations_size(); i++){
-				if (protocol::Operation_Type_LOG != trans_temp.operations(i).type()){
-					continue;
-				}
-				protocol::OperationLog log = trans_temp.operations(i).log();
-				tlog_list.push_back(log);
-			}
 		}
 	}
 
 	void BlockListenBase::BuildTx(const LedgerFrm::pointer &closing_ledger){
 		for (int64_t i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
-			TransactionFrm::pointer tx = closing_ledger->apply_tx_frms_[i];
+			const TransactionFrm::pointer &tx = closing_ledger->apply_tx_frms_[i];
 			HandleTxEvent(tx);
-		}
-	}
-
-	void BlockListenBase::BuildTlog(const LedgerFrm::pointer &closing_ledger){
-		std::list<protocol::OperationLog> tlog_list;
-		LedgerToTlogs(closing_ledger, tlog_list);
-		std::list<protocol::OperationLog>::const_iterator iter = tlog_list.begin();
-		while (iter != tlog_list.end()){
-			HandleTlogEvent(*iter);
+			TxFrmToTlog(tx);
 		}
 	}
 
@@ -255,14 +244,14 @@ namespace bumo {
 			switch (trans.operations(i).type())
 			{
 			case protocol::Operation_Type_PAY_COIN:{
-													   const protocol::OperationPayCoin &ope = trans.operations(i).pay_coin();
-													   des_address = ope.dest_address();
-													   break;
+				const protocol::OperationPayCoin &ope = trans.operations(i).pay_coin();
+				des_address = ope.dest_address();
+				break;
 			}
 			case protocol::Operation_Type_PAY_ASSET:{
-														const protocol::OperationPayAsset &ope = trans.operations(i).pay_asset();
-														des_address = ope.dest_address();
-														break;
+				const protocol::OperationPayAsset &ope = trans.operations(i).pay_asset();
+				des_address = ope.dest_address();
+				break;
 			}
 			default:
 				break;
@@ -330,8 +319,8 @@ namespace bumo {
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:{
-																						TlogToMessageChannel(tlog);
-																						break;
+			TlogToMessageChannel(tlog);
+			break;
 		}
 		default:
 			break;
@@ -386,8 +375,8 @@ namespace bumo {
 		//special transaction
 		switch (tlog_type){
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_WITHDRAWAL:{
-																						TlogToMessageChannel(tlog);
-																						break;
+			TlogToMessageChannel(tlog);
+			break;
 		}
 		default:
 			break;
@@ -418,18 +407,20 @@ namespace bumo {
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			block_listen_main_chain_ = std::make_shared<BlockListenMainChain>();
 			block_listen_main_chain_->Initialize();
-		}else{
+		}
+		else{
 			block_listen_child_chain_ = std::make_shared<BlockListenChildChain>();
 			block_listen_child_chain_->Initialize();
 		}
-		
+
 		return true;
 	}
 
 	bool BlockListenManager::Exit() {
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			block_listen_main_chain_->Exit();
-		}else{
+		}
+		else{
 			block_listen_child_chain_->Exit();
 		}
 		return true;
@@ -438,7 +429,8 @@ namespace bumo {
 	void BlockListenManager::HandleBlock(LedgerFrm::pointer closing_ledger){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			block_listen_main_chain_->HandleBlock(closing_ledger);
-		}else{
+		}
+		else{
 			block_listen_child_chain_->HandleBlock(closing_ledger);
 		}
 	}
