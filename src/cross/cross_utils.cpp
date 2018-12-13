@@ -98,7 +98,7 @@ namespace bumo {
 	bool TransactionSender::Initialize(const std::string &private_key){
 		enabled_ = true;
 		thread_ptr_ = new utils::Thread(this);
-		if (!thread_ptr_->Start("ProposerManager")) {
+		if (!thread_ptr_->Start("TransactionSender")) {
 			return false;
 		}
 
@@ -133,6 +133,7 @@ namespace bumo {
 	}
 	void TransactionSender::Run(utils::Thread *thread){
 		while (enabled_){
+			utils::Sleep(10);
 			int64_t current_time = utils::Timestamp::HighResolution();
 			if ((current_time - last_update_time_) <= 5 * utils::MICRO_UNITS_PER_SEC){
 				continue;
