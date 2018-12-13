@@ -339,7 +339,7 @@ namespace bumo {
 		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CPC_ADDRESS, input_value.toFastString(), result_list);
 		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
 		if (error_code != protocol::ERRCODE_SUCCESS || result.empty()){
-			contract_latest_myself_index = -1;
+			contract_latest_myself_index = 0;
 			LOG_ERROR("Failed to query childChainDeposit seq .%d", error_code);
 			return false;
 		}
