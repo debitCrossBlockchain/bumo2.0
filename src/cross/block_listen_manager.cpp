@@ -403,8 +403,11 @@ namespace bumo {
 	}
 
 	BlockListenManager::BlockListenManager(){
-		block_listen_main_chain_ = std::make_shared<BlockListenMainChain>();
-		block_listen_child_chain_ = std::make_shared<BlockListenChildChain>();
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			block_listen_main_chain_ = std::make_shared<BlockListenMainChain>();
+		}else{
+			block_listen_child_chain_ = std::make_shared<BlockListenChildChain>();
+		}
 	}
 
 	BlockListenManager::~BlockListenManager(){
@@ -412,22 +415,28 @@ namespace bumo {
 	}
 
 	bool BlockListenManager::Initialize() {
-		block_listen_main_chain_->Initialize();
-		block_listen_child_chain_->Initialize();
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			block_listen_main_chain_->Initialize();
+		}else{
+			block_listen_child_chain_->Initialize();
+		}
+		
 		return true;
 	}
 
 	bool BlockListenManager::Exit() {
-		block_listen_main_chain_->Exit();
-		block_listen_child_chain_->Exit();
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			block_listen_main_chain_->Exit();
+		}else{
+			block_listen_child_chain_->Exit();
+		}
 		return true;
 	}
 
 	void BlockListenManager::HandleBlock(LedgerFrm::pointer closing_ledger){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			block_listen_main_chain_->HandleBlock(closing_ledger);
-		}
-		else{
+		}else{
 			block_listen_child_chain_->HandleBlock(closing_ledger);
 		}
 	}
