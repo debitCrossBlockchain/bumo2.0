@@ -227,6 +227,8 @@ namespace bumo {
 
 	}
 
+	void BlockListenMainChain::HandleBlockEvent(const LedgerFrm::pointer &closing_ledger){}
+
 	bool BlockListenMainChain::CheckTxTransaction(const protocol::Transaction &trans){
 		//must be CMC send trans
 		std::string private_key = Configure::Instance().ledger_configure_.validation_privatekey_;
@@ -401,8 +403,8 @@ namespace bumo {
 	}
 
 	BlockListenManager::BlockListenManager(){
-		block_listen_main_chain_ = std::shared_ptr<BlockListenMainChain>();
-		block_listen_child_chain_ = std::shared_ptr<BlockListenChildChain>();
+		block_listen_main_chain_ = std::shared_ptr<BlockListenMainChain>(new BlockListenMainChain());
+		block_listen_child_chain_ = std::shared_ptr<BlockListenChildChain>(new BlockListenChildChain());
 	}
 
 	BlockListenManager::~BlockListenManager(){

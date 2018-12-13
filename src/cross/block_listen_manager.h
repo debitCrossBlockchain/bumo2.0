@@ -63,6 +63,7 @@ namespace bumo {
 	public:
 		BlockListenMainChain();
 		virtual ~BlockListenMainChain();
+		virtual void HandleBlockEvent(const LedgerFrm::pointer &closing_ledger) override;
 		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) override;
 		virtual void HandleTlogEvent(const protocol::OperationLog &tlog) override;
 		bool CheckTxTransaction(const protocol::Transaction &trans);
