@@ -403,11 +403,6 @@ namespace bumo {
 	}
 
 	BlockListenManager::BlockListenManager(){
-		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
-			block_listen_main_chain_ = std::make_shared<BlockListenMainChain>();
-		}else{
-			block_listen_child_chain_ = std::make_shared<BlockListenChildChain>();
-		}
 	}
 
 	BlockListenManager::~BlockListenManager(){
@@ -416,8 +411,10 @@ namespace bumo {
 
 	bool BlockListenManager::Initialize() {
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			block_listen_main_chain_ = std::make_shared<BlockListenMainChain>();
 			block_listen_main_chain_->Initialize();
 		}else{
+			block_listen_child_chain_ = std::make_shared<BlockListenChildChain>();
 			block_listen_child_chain_->Initialize();
 		}
 		
