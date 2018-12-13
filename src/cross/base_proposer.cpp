@@ -71,6 +71,7 @@ namespace bumo {
 
 	void BaseProposer::Run(utils::Thread *thread) {
 		while (enabled_){
+			utils::Sleep(10);
 			int64_t current_time = utils::Timestamp::HighResolution();
 			if ((current_time - last_propose_time_) < PROPOSER_PERIOD * utils::MICRO_UNITS_PER_SEC){
 				continue;
