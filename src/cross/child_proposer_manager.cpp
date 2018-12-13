@@ -96,33 +96,13 @@ namespace bumo {
 	}
 
 	void ChildProposer::UpdateLatestValidates(utils::StringVector &latest_validates) const{
-		latest_validates.clear();
+		auto sets = LedgerManager::Instance().Validators();
 
-		Json::Value input_value;
-		input_value["method"] = "getValidators";
-
-		Json::Value result_list;
-		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_VALIDATOR_ADDRESS, input_value.toFastString(), result_list);
-		if (error_code != protocol::ERRCODE_SUCCESS){
-			LOG_ERROR("Failed to query validators .%d", error_code);
-			return;
+		for (int i = 0; i < sets.validators_size(); i++){
+			auto validator = sets.mutable_validators(i);
+			latest_validates.push_back(validator->address());
 		}
 
-		Json::Value object;
-		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
-		object.fromString(result.c_str());
-
-		if (!object["curValidators"].isArray()){
-			LOG_ERROR("Failed to validators list is not array");
-			return;
-		}
-		const Json::Value &curValidators = object["curValidators"];
-
-		int32_t size = curValidators.size();
-		for (int32_t i = 0; i < size; i++){
-			std::string address = curValidators[i][Json::UInt(0)].asString().c_str();
-			latest_validates.push_back(address);
-		}
 		return;
 	}
 
@@ -204,15 +184,15 @@ namespace bumo {
 		tx_history_.push_back(task_result.hash_);
 	}
 
-	ChildValidatorProposer::ChildValidatorProposer() : ChildProposer(General::CONTRACT_VALIDATOR_ADDRESS){
+	ValidatorProposer::ValidatorProposer() : ChildProposer(General::CONTRACT_VALIDATOR_ADDRESS){
 		bumo::MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR);
 	}
 
-	ChildValidatorProposer::~ChildValidatorProposer(){
+	ValidatorProposer::~ValidatorProposer(){
 		bumo::MessageChannel::Instance().UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR);
 	}
 
-	int64_t ChildValidatorProposer::DoGetMessageIndex(const protocol::MessageChannel &message_channel){
+	int64_t ValidatorProposer::DoGetMessageIndex(const protocol::MessageChannel &message_channel){
 		if (message_channel.msg_type() != protocol::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR){
 			LOG_ERROR("Failed to message_channel type is not MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR, error msg type is %d", message_channel.msg_type());
 			return -1;
@@ -231,7 +211,7 @@ namespace bumo {
 		return utils::String::Stoi64(change.index());
 	}
 
-	TransTask ChildValidatorProposer::DoBuildTxTask(const std::string &message_data){
+	TransTask ValidatorProposer::DoBuildTxTask(const std::string &message_data){
 		protocol::MessageChannelChangeChildValidator change;
 		change.ParseFromString(message_data);
 
@@ -247,18 +227,18 @@ namespace bumo {
 		return trans_task;
 	}
 
-	void ChildValidatorProposer::DoBuildRequestLostMessage(int64_t index, protocol::MessageChannel &message_channel){
-		protocol::MessageChannelQueryDeposit query_deposit;
-		query_deposit.set_chain_id(General::GetSelfChainId());
-		query_deposit.set_seq(index);
+	void ValidatorProposer::DoBuildRequestLostMessage(int64_t index, protocol::MessageChannel &message_channel){
+		protocol::MessageChannelQueryChangeChildValidator query;
+		query.set_chain_id(General::GetSelfChainId());
+		query.set_change_child_index(index);
 
 		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
-		message_channel.set_msg_data(query_deposit.SerializeAsString());
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR);
+		message_channel.set_msg_data(query.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(message_channel);
 	}
 
-	bool ChildValidatorProposer::DoQueryProposalLatestIndex(int64_t &contract_latest_myself_index){
+	bool ValidatorProposer::DoQueryProposalLatestIndex(int64_t &contract_latest_myself_index){
 		Json::Value input_value;
 		input_value["method"] = "queryProposal";
 		Json::Value result_list;
@@ -295,15 +275,15 @@ namespace bumo {
 		return true;
 	}
 
-	ChildDepositProposer::ChildDepositProposer() : ChildProposer(General::CONTRACT_CPC_ADDRESS){
+	DepositProposer::DepositProposer() : ChildProposer(General::CONTRACT_CPC_ADDRESS){
 		bumo::MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_DEPOSIT);
 	}
 
-	ChildDepositProposer::~ChildDepositProposer(){
+	DepositProposer::~DepositProposer(){
 		bumo::MessageChannel::Instance().UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_DEPOSIT);
 	}
 
-	TransTask ChildDepositProposer::DoBuildTxTask(const std::string &message_data){
+	TransTask DepositProposer::DoBuildTxTask(const std::string &message_data){
 		protocol::MessageChannelDeposit deposit;
 		deposit.ParseFromString(message_data);
 
@@ -325,7 +305,7 @@ namespace bumo {
 		return trans_task;
 	}
 
-	int64_t ChildDepositProposer::DoGetMessageIndex(const protocol::MessageChannel &message_channel){
+	int64_t DepositProposer::DoGetMessageIndex(const protocol::MessageChannel &message_channel){
 		if (message_channel.msg_type() != protocol::MESSAGE_CHANNEL_DEPOSIT){
 			LOG_ERROR("Failed to message_channel type is not MESSAGE_CHANNEL_DEPOSIT, error msg type is %d", message_channel.msg_type());
 			return -1;
@@ -343,7 +323,7 @@ namespace bumo {
 		return deposit.seq();
 	}
 
-	void ChildDepositProposer::DoBuildRequestLostMessage(int64_t index, protocol::MessageChannel &message_channel){
+	void DepositProposer::DoBuildRequestLostMessage(int64_t index, protocol::MessageChannel &message_channel){
 		protocol::MessageChannelQueryDeposit query_deposit;
 		query_deposit.set_chain_id(General::GetSelfChainId());
 		query_deposit.set_seq(index);
@@ -352,7 +332,7 @@ namespace bumo {
 		message_channel.set_msg_data(query_deposit.SerializeAsString());
 	}
 
-	bool ChildDepositProposer::DoQueryProposalLatestIndex(int64_t &contract_latest_myself_index){
+	bool DepositProposer::DoQueryProposalLatestIndex(int64_t &contract_latest_myself_index){
 		Json::Value result_list;
 		Json::Value input_value;
 		input_value["method"] = "queryChildDeposit";
@@ -526,8 +506,8 @@ namespace bumo {
 	}
 
 	ChildProposerManager::ChildProposerManager(){
-		validator_proposer_ = std::make_shared<ChildValidatorProposer>();
-		deposit_proposer_ = std::make_shared<ChildDepositProposer>();
+		validator_proposer_ = std::make_shared<ValidatorProposer>();
+		deposit_proposer_ = std::make_shared<DepositProposer>();
 		main_chain_answer_ = std::make_shared<MainChainAnswer>();
 	}
 	ChildProposerManager::~ChildProposerManager(){

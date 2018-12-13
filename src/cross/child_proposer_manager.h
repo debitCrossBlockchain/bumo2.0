@@ -67,10 +67,10 @@ namespace bumo {
 		int64_t recv_max_index_;
 	};
 
-	class ChildValidatorProposer : public ChildProposer{
+	class ValidatorProposer : public ChildProposer{
 	public:
-		ChildValidatorProposer();
-		~ChildValidatorProposer();
+		ValidatorProposer();
+		~ValidatorProposer();
 
 	private:
 		virtual TransTask DoBuildTxTask(const std::string &message_data) override;
@@ -79,10 +79,10 @@ namespace bumo {
 		virtual bool DoQueryProposalLatestIndex(int64_t &contract_latest_myself_index);
 	};
 
-	class ChildDepositProposer : public ChildProposer{
+	class DepositProposer : public ChildProposer{
 	public:
-		ChildDepositProposer();
-		virtual ~ChildDepositProposer();
+		DepositProposer();
+		virtual ~DepositProposer();
 
 	private:
 		virtual TransTask DoBuildTxTask(const std::string &message_data) override;
@@ -117,8 +117,8 @@ namespace bumo {
 		void UpdateTxResult(const int64_t &error_code, const std::string &error_desc, const std::string& hash);
 
 	private:
-		std::shared_ptr<ChildValidatorProposer> validator_proposer_;
-		std::shared_ptr<ChildDepositProposer> deposit_proposer_;
+		std::shared_ptr<ValidatorProposer> validator_proposer_;
+		std::shared_ptr<DepositProposer> deposit_proposer_;
 
 		std::shared_ptr<MainChainAnswer> main_chain_answer_;
 	};
