@@ -198,7 +198,7 @@ namespace bumo {
 		utils::MutexGuard guard(ledger_map_lock_);
 		std::map<int64, LedgerFrm::pointer>::iterator iter = ledger_map_.begin();
 		while (iter != ledger_map_.end()) {
-			LedgerFrm::pointer closing_ledger = iter->second;
+			const LedgerFrm::pointer &closing_ledger = iter->second;
 			HandleBlockEvent(closing_ledger);
 			BuildTx(closing_ledger);
 			ledger_map_.erase(iter++);
@@ -283,7 +283,7 @@ namespace bumo {
 		CheckTxTransaction(apply_tran);
 		std::list<protocol::Transaction>::const_iterator iter = tx_list.begin();
 		while (iter != tx_list.end()){
-			flag_proposer = CheckTxTransaction(*iter);
+			flag_proposer = CheckTxTransaction(*iter++);
 			if (flag_proposer){
 				break;
 			}
