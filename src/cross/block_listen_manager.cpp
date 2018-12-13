@@ -187,7 +187,7 @@ namespace bumo {
 			//deal append trans
 			for (int64_t j = 0; j < tx->instructions_.size(); j++){
 				const protocol::Transaction &trans = tx->instructions_[j].transaction_env().transaction();
-				tx_list.push_back(apply_tran);
+				tx_list.push_back(trans);
 			}
 		}
 	}
