@@ -1,0 +1,10 @@
+{
+	"contract_address": "buQZ6zAfmCVQBWTz5uVvMpMEdNGesLTJ888P",
+    "code": "",
+    "input":"{\"method\":\"queryChildDeposit\",\"params\":{\"seq\": \"2\"}}",
+    "contract_balance": "10000000000",
+    "fee_limit": 10000000000,
+    "gas_price": 1000,
+    "opt_type": 2,
+    "source_address": ""
+}
