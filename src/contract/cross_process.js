@@ -36,24 +36,13 @@ function checkchildChainValadator(chain_id,validator){
     return false;
 }
 
-function queryBalance(params){
-    assert(params.dest !== undefined, 'have not dest address .');
-    
-    let info = JSON.parse(storageLoad(params.dest));
-    log('queryBalance dest='+ params.dest );
-    let retinfo = {};
-    if(info === false){
-        retinfo = '0';
-    } else {
+function balanceOf(address){
+    assert(addressCheck(address) === true, 'Arg-address is not a valid address.');
 
-        retinfo = info;
-    }
-    
-    //let retinfo = balanceOf(params.dest);
-    log('queryBalance retinfo '+ retinfo);
-    return retinfo;
+    let value = storageLoad(address);
+    assert(value !== false, 'Failed to get the balance of ' + address + ' from metadata.');
+    return value;
 }
-
 
 function addBalance(dest, amount)
 {
@@ -179,9 +168,9 @@ function buildWithdrawalProofs(params){
 
 function withdrawal(params){
     // chain_id、address、amount
-    let queryBalanceParams = {};
-    queryBalanceParams.dest = sender;
-    let senderBalance = queryBalance(queryBalanceParams);
+   // let queryBalanceParams = {};
+   // queryBalanceParams.dest = sender;
+    let senderBalance = balanceOf(sender);
     if(parseInt(senderBalance) < parseInt(params.amount)){
         log('withdrawal  sender:' + sender + ',balance=' + senderBalance+ ' < ' + params.amount);
         return false;
@@ -204,7 +193,7 @@ function withdrawal(params){
     input.amount = params.amount;
     input.source_address = sender;
     input.chain_id = params.chain_id;
-    //input.block_hash = '';
+    input.blockNumber = blockNumber;
     input.address = params.address;
     input.seq = seq;
     //input.merkelProof = '';
@@ -239,6 +228,53 @@ function queryChildDeposit(params){
     return retinfo;
 }
 
+function queryChildWithdrawal(params){
+    let querykey='';
+    if(params === undefined){
+        querykey = 'recentlywithdrawal';
+    }
+    else{
+        querykey = 'childwithdrawal_' + params.seq;
+    }
+    log('queryChildWithdrawal querykey='+ querykey );
+    let info = JSON.parse(storageLoad(querykey));
+    let retinfo = {};
+    if(info === false){
+        retinfo = 'queryChildWithdrawal failed,' + querykey;
+    } else {
+        retinfo.index = info.seq;
+        retinfo.source_address = info.source_address;
+        retinfo.address = info.address;
+        retinfo.amount = info.amount;
+    }
+    log('queryChildWithdrawal retinfo '+ retinfo);
+    return retinfo;
+}
+
+function transfer(to, value){
+    assert(addressCheck(to) === true, 'Arg-to is not a valid address.');
+    assert(stoI64Check(value) === true, 'Arg-value must be alphanumeric.');
+    assert(int64Compare(value, '0') > 0, 'Arg-value must be greater than 0.');
+    if(sender === to) {
+        tlog('transfer', sender, to, value);  
+        return true;
+    }
+    
+    let senderValue = storageLoad(sender);
+    assert(senderValue !== false, 'Failed to get the balance of ' + sender + ' from metadata.');
+    assert(int64Compare(senderValue, value) >= 0, 'Balance:' + senderValue + ' of sender:' + sender + ' < transfer value:' + value + '.');
+
+    let toValue = storageLoad(to);
+    toValue = (toValue === false) ? value : int64Add(toValue, value); 
+    storageStore(to, toValue);
+
+    senderValue = int64Sub(senderValue, value);
+    storageStore(sender, senderValue);
+
+    tlog('transfer', sender, to, value);
+
+    return true;
+}
 
 
 function query(input_str){
@@ -251,8 +287,11 @@ function query(input_str){
     else if(input.method === 'queryChildDeposit'){
         result = queryChildDeposit(input.params);
     }
-    else if(input.method === 'queryBalance'){
-        result = queryBalance(input.params);
+    else if(input.method === 'queryChildWithdrawal'){
+        result = queryChildWithdrawal(input.params);
+    }
+    else if(input.method === 'balanceOf'){
+        result = balanceOf(input.params.dest);
     }
     else{
        	throw '<unidentified operation type>';
@@ -273,6 +312,9 @@ function main(input_str){
     }
     else if(input.method === 'buildWithdrawalProofs'){
 	    buildWithdrawalProofs(input.params);
+    }
+    else if(input.method === 'transfer'){
+        transfer(input.params.to, input.params.value);
     }
     else{
         throw '<undidentified operation type>';
