@@ -20,13 +20,76 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <utils/thread.h>
 #include "message_channel_manager.h"
 #include <cross/cross_utils.h>
-
+#define MSG_BUFFER_PERIOD 10
+#define MSG_UPDATE_PERIOD 4
 namespace bumo {
-
+	
 	typedef std::function<void(const protocol::MessageChannel &message_channel)> MessageChannelPoc;
 	typedef std::map<int64_t, MessageChannelPoc> MessageChannelPocMap;
 
-	class MessageHandler : public utils::Singleton<MessageHandler>, public IMessageChannelConsumer {
+	class MessageHandlerBase :public IMessageChannelConsumer, public utils::Runnable{
+	public:
+		MessageHandlerBase();
+		virtual ~MessageHandlerBase();
+		bool Initialize();
+		bool Exit();
+		virtual void MessageChannelHandle(const protocol::MessageChannel &message_channel) = 0;
+	protected:
+		virtual void Run(utils::Thread *thread) override;
+	private:
+		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
+		virtual void CopyBufferMsgChannel() final;
+		virtual void HandleMsgUpdate() ;
+	private:
+		bool enabled_;
+		utils::Thread *thread_ptr_;
+		utils::Mutex msg_channel_list_lock_;
+		utils::Mutex msg_channel_buffer_list_lock_;
+		std::list<protocol::MessageChannel> msg_channel_list_;
+		std::list<protocol::MessageChannel> msg_channel_buffer_list_;
+		int64_t last_update_time_;
+		int64_t last_buffer_time_;
+	};
+
+	class MessageHandlerMainChain :public MessageHandlerBase{
+	public:
+		MessageHandlerMainChain();
+		virtual ~MessageHandlerMainChain();
+		bool HandlerInitialize();
+		bool HandlerExit();
+	private:
+		virtual void MessageChannelHandle(const protocol::MessageChannel &message_channel) override;
+		void OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel);
+		void OnHandleWithdrawal(const protocol::MessageChannel &message_channel);
+	private:
+		MessageChannelPocMap proc_methods_;
+	};
+
+	class MessageHandlerChildChain :public MessageHandlerBase{
+	public:
+		MessageHandlerChildChain();
+		virtual ~MessageHandlerChildChain();
+		bool HandlerInitialize();
+		bool HandlerExit();
+	private:
+		bool CheckForChildBlock();
+		virtual void MessageChannelHandle(const protocol::MessageChannel &message_channel) override;
+		void OnHandleCreateChildChain(const protocol::MessageChannel &message_channel);
+		void OnHandleChildGenesesResponse(const protocol::MessageChannel &message_channel);
+		void SendChildGenesesRequest();
+		void OnHandleQueryHead(const protocol::MessageChannel &message_channel);
+		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
+	private:
+		int64_t last_deposit_time_;
+		int64_t local_deposit_seq_;
+		int64_t newest_deposit_seq_;
+
+		bool init_;
+		bool received_create_child_;
+		MessageChannelPocMap proc_methods_;
+	};
+
+	class MessageHandler : public utils::Singleton<MessageHandler> {
 		friend class utils::Singleton<bumo::MessageHandler>;
 	public:
 		MessageHandler();
@@ -36,27 +99,8 @@ namespace bumo {
 		bool Exit();
 
 	private:
-		bool InitDepositSeq();
-		bool CheckForChildBlock();
-		virtual void HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel) override;
-
-		void OnHandleCreateChildChain(const protocol::MessageChannel &message_channel);
-		void OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel);
-		void OnHandleChildGenesesResponse(const protocol::MessageChannel &message_channel);
-		void OnHandleQueryHead(const protocol::MessageChannel &message_channel); 
-
-		void OnHandleWithdrawal(const protocol::MessageChannel &message_channel);
-		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
-		void SendChildGenesesRequest();
-
-	private:
-		int64_t last_deposit_time_;
-		int64_t local_deposit_seq_;
-		int64_t newest_deposit_seq_;
-
-		bool init_;
-		bool received_create_child_;
-		MessageChannelPocMap proc_methods_;
+		std::shared_ptr<MessageHandlerMainChain> message_handler_main_chain_;
+		std::shared_ptr<MessageHandlerChildChain> message_handler_child_chain_;
 
 	};
 }

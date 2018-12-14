@@ -8,122 +8,133 @@
 namespace bumo {
 	extern bool g_enable_;
 
-	MessageHandler::MessageHandler(){
-		init_ = false;
-		received_create_child_ = false;
-		last_deposit_time_ = utils::Timestamp::HighResolution();
-		local_deposit_seq_ = 0;
-		newest_deposit_seq_ = 0;
+	MessageHandlerBase::MessageHandlerBase() :
+		enabled_(false),
+		thread_ptr_(NULL){
+		last_update_time_ = utils::Timestamp::HighResolution();
+		last_buffer_time_ = utils::Timestamp::HighResolution();
+	}
+	MessageHandlerBase::~MessageHandlerBase(){
+		if (thread_ptr_){
+			delete thread_ptr_;
+			thread_ptr_ = NULL;
+		}
 	}
 
-	MessageHandler::~MessageHandler(){
-	}
-
-	bool MessageHandler::Initialize(){
-		proc_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageHandler::OnHandleCreateChildChain, this, std::placeholders::_1);
-		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST] = std::bind(&MessageHandler::OnHandleChildGenesesRequest, this, std::placeholders::_1);
-		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE] = std::bind(&MessageHandler::OnHandleChildGenesesResponse, this, std::placeholders::_1);
-		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_HEAD] = std::bind(&MessageHandler::OnHandleQueryHead, this, std::placeholders::_1);
-		proc_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageHandler::OnHandleWithdrawal, this, std::placeholders::_1);
-
+	bool MessageHandlerBase::Initialize() {
+		enabled_ = true;
+		thread_ptr_ = new utils::Thread(this);
+		if (!thread_ptr_->Start("MessageHandlerManager")) {
+			return false;
+		}
 		MessageChannel &message_channel = MessageChannel::Instance();
-		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN);
-		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST);
-		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE);
-		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_HEAD);
-		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_QUERY_DEPOSIT);
-		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_DEPOSIT);
-		message_channel.RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_WITHDRAWAL);
+		for (int64_t i = 1; i <= 15; i++)
+		{
+			message_channel.RegisterMessageChannelConsumer(this, i);
+		}
+		return true;
+	}
 
-		if (!CheckForChildBlock()){
+	bool MessageHandlerBase::Exit(){
+		enabled_ = false;
+		if (thread_ptr_) {
+			thread_ptr_->JoinWithStop();
+		}
+		MessageChannel &message_channel = MessageChannel::Instance();
+		for (int64_t i = 1; i <= 15; i++)
+		{
+			message_channel.UnregisterMessageChannelConsumer(this, i);
+		}
+		return true;
+	}
+
+	void MessageHandlerBase::Run(utils::Thread *thread) {
+		while (enabled_){
+			utils::Sleep(10);
+			int64_t current_time = utils::Timestamp::HighResolution();
+			if ((current_time - last_buffer_time_) > MSG_BUFFER_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				CopyBufferMsgChannel();
+				last_buffer_time_ = current_time;
+			}
+
+			if ((current_time - last_update_time_) > MSG_UPDATE_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				HandleMsgUpdate();
+				last_update_time_ = current_time;
+			}
+		}
+	}
+
+	void MessageHandlerBase::HandleMsgUpdate(){
+		utils::MutexGuard guard(msg_channel_list_lock_);
+		std::list<protocol::MessageChannel>::iterator iter = msg_channel_list_.begin();
+		while (iter != msg_channel_list_.end()) {
+			const protocol::MessageChannel &msg_channel = *iter;
+			MessageChannelHandle(msg_channel);
+			msg_channel_list_.erase(iter++);
+			utils::Sleep(10);
+		}
+	}
+
+	void MessageHandlerBase::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
+		if (!enabled_){
+			return;
+		}
+		utils::MutexGuard guard(msg_channel_buffer_list_lock_);
+		msg_channel_buffer_list_.push_back(message_channel);
+	}
+
+	void MessageHandlerBase::CopyBufferMsgChannel(){
+		std::list<protocol::MessageChannel> msg_channel_list;
+		{
+			utils::MutexGuard guard(msg_channel_buffer_list_lock_);
+			msg_channel_list.insert(msg_channel_list.end(), msg_channel_buffer_list_.begin(), msg_channel_buffer_list_.end());
+			msg_channel_buffer_list_.clear();
+		}
+
+		utils::MutexGuard guard(msg_channel_list_lock_);
+		std::list<protocol::MessageChannel>::const_iterator iter = msg_channel_list.begin();
+		while (iter != msg_channel_list.end()){
+			const protocol::MessageChannel &msg_channel = *iter;
+			msg_channel_list_.push_back(msg_channel);
+			iter++;
+		}
+	}
+
+	MessageHandlerMainChain::MessageHandlerMainChain(){
+	}
+
+	MessageHandlerMainChain::~MessageHandlerMainChain(){
+
+	}
+
+	bool MessageHandlerMainChain::HandlerInitialize(){
+		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST] = std::bind(&MessageHandlerMainChain::OnHandleChildGenesesRequest, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageHandlerMainChain::OnHandleWithdrawal, this, std::placeholders::_1);
+		if (!Initialize()){
 			return false;
 		}
-
-		init_ = true;
-
 		return true;
 	}
 
-	bool MessageHandler::Exit(){
-		init_ = false;
-		return true;
-	}
-
-	bool MessageHandler::CheckForChildBlock(){
-		if (General::GetSelfChainId() <= General::MAIN_CHAIN_ID) {
-			return true;
-		}
-
-		auto kvdb = Storage::Instance().account_db();
-		std::string str_max_seq;
-		if (kvdb->Get(General::KEY_LEDGER_SEQ, str_max_seq) > 0){
-			return true;
-		}
-
-		GenesisConfigure &config = Configure::Instance().genesis_configure_;
-		if (!config.validators_.empty() || !config.account_.empty() ||
-			!config.slogan_.empty() || config.fees_.gas_price_ != 0 ||
-			config.fees_.base_reserve_ != 0){
-			LOG_ERROR("Other parameters of the child chain must be configured to be empty");
+	bool MessageHandlerMainChain::HandlerExit(){
+		if (!Exit()){
 			return false;
 		}
-
-		int64_t last_request_time = 0;
-		while (g_enable_){
-			//Provides event drivers for the main thread
-			int64_t cur_time = utils::Timestamp::HighResolution();
-			for (auto item : bumo::TimerNotify::notifys_){
-				item->TimerWrapper(utils::Timestamp::HighResolution());
-			}
-
-			if ((cur_time - last_request_time) >= 1 * utils::MICRO_UNITS_PER_SEC){
-				//Send request create child message
-				LOG_INFO("Waitting for create child (" FMT_I64 ") chain message..", General::GetSelfChainId());
-				SendChildGenesesRequest();
-				last_request_time = cur_time;
-			}
-
-			if (received_create_child_){
-				LOG_INFO("Received create child (" FMT_I64 ") chain message..", General::GetSelfChainId());
-				break;
-			}
-
-			utils::Sleep(1);
-		}
-
 		return true;
 	}
 
-	void MessageHandler::HandleMessageChannelConsumer(const protocol::MessageChannel &message_channel){
+	void MessageHandlerMainChain::MessageChannelHandle(const protocol::MessageChannel &message_channel){
 		MessageChannelPoc proc;
 		MessageChannelPocMap::iterator iter = proc_methods_.find(message_channel.msg_type());
 		if (iter == proc_methods_.end()) {
 			LOG_TRACE("Type(" FMT_I64 ") not found", message_channel.msg_type());
-			return; 
-		}
-
-		//When the child chain is not initialized, it is only allowed to receive child geneses response messages
-		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID && !init_ 
-			&& message_channel.msg_type() != protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE){
-			LOG_ERROR("Wating for message channel child response, but now:(" FMT_I64 ")", message_channel.msg_type());
 			return;
 		}
 
 		iter->second(message_channel);
 	}
 
-	void MessageHandler::OnHandleCreateChildChain(const protocol::MessageChannel &message_channel){
-		protocol::MessageChannelCreateChildChain create_child_chain;
-		if (!create_child_chain.ParseFromString(message_channel.msg_data())){
-			LOG_ERROR("Parse MessageChannelCreateChildChain error!");
-			return;
-		}
-
-		CreateChildChain(create_child_chain);
-		return;
-	}
-
-	void MessageHandler::OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel){
+	void MessageHandlerMainChain::OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel){
 		protocol::MessageChannelChildGenesesRequest child_chain_request;
 		protocol::MessageChannelCreateChildChain create_child_chain;
 		protocol::MessageChannelChildGenesesResponse response;
@@ -186,7 +197,135 @@ namespace bumo {
 		MessageChannel::Instance().MessageChannelProducer(message);
 	}
 
-	void MessageHandler::OnHandleChildGenesesResponse(const protocol::MessageChannel &message_channel){
+	void MessageHandlerMainChain::OnHandleWithdrawal(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelWithdrawal withdrawal;
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return;
+		}
+
+		if (!withdrawal.ParseFromString(message_channel.msg_data())){
+			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("Parse MessageChannelWithdrawal error, err_code is (" FMT_I64 ")", error_code);
+			return;
+		}
+
+		bumo::WebSocketServer::GetInstance()->BroadcastMsg(protocol::EVENT_WITHDRAWAL, withdrawal.SerializeAsString());
+	}
+
+	MessageHandlerChildChain::MessageHandlerChildChain(){
+		init_ = false;
+		received_create_child_ = false;
+		last_deposit_time_ = utils::Timestamp::HighResolution();
+		local_deposit_seq_ = 0;
+		newest_deposit_seq_ = 0;
+	}
+
+	MessageHandlerChildChain::~MessageHandlerChildChain(){
+
+	}
+
+	bool MessageHandlerChildChain::HandlerInitialize(){
+		proc_methods_[protocol::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN] = std::bind(&MessageHandlerChildChain::OnHandleCreateChildChain, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE] = std::bind(&MessageHandlerChildChain::OnHandleChildGenesesResponse, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_HEAD] = std::bind(&MessageHandlerChildChain::OnHandleQueryHead, this, std::placeholders::_1);
+		if (!Initialize()){
+			return false;
+		}
+
+		if (!CheckForChildBlock()){
+			return false;
+		}
+
+		init_ = true;
+
+		return true;
+	}
+
+	bool MessageHandlerChildChain::HandlerExit(){
+		if (!Exit()){
+			return false;
+		}
+		init_ = false;
+		return true;
+	}
+
+	void MessageHandlerChildChain::MessageChannelHandle(const protocol::MessageChannel &message_channel){
+		MessageChannelPoc proc;
+		MessageChannelPocMap::iterator iter = proc_methods_.find(message_channel.msg_type());
+		if (iter == proc_methods_.end()) {
+			LOG_TRACE("Type(" FMT_I64 ") not found", message_channel.msg_type());
+			return;
+		}
+
+		//When the child chain is not initialized, it is only allowed to receive child geneses response messages
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID && !init_
+			&& message_channel.msg_type() != protocol::MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE){
+			LOG_ERROR("Wating for message channel child response, but now:(" FMT_I64 ")", message_channel.msg_type());
+			return;
+		}
+
+		iter->second(message_channel);
+	}
+
+	bool MessageHandlerChildChain::CheckForChildBlock(){
+		if (General::GetSelfChainId() <= General::MAIN_CHAIN_ID) {
+			return true;
+		}
+
+		auto kvdb = Storage::Instance().account_db();
+		std::string str_max_seq;
+		if (kvdb->Get(General::KEY_LEDGER_SEQ, str_max_seq) > 0){
+			return true;
+		}
+
+		GenesisConfigure &config = Configure::Instance().genesis_configure_;
+		if (!config.validators_.empty() || !config.account_.empty() ||
+			!config.slogan_.empty() || config.fees_.gas_price_ != 0 ||
+			config.fees_.base_reserve_ != 0){
+			LOG_ERROR("Other parameters of the child chain must be configured to be empty");
+			return false;
+		}
+
+		int64_t last_request_time = 0;
+		while (g_enable_){
+			//Provides event drivers for the main thread
+			int64_t cur_time = utils::Timestamp::HighResolution();
+			for (auto item : bumo::TimerNotify::notifys_){
+				item->TimerWrapper(utils::Timestamp::HighResolution());
+			}
+
+			if ((cur_time - last_request_time) >= 1 * utils::MICRO_UNITS_PER_SEC){
+				//Send request create child message
+				LOG_INFO("Waitting for create child (" FMT_I64 ") chain message..", General::GetSelfChainId());
+				SendChildGenesesRequest();
+				last_request_time = cur_time;
+			}
+
+			if (received_create_child_){
+				LOG_INFO("Received create child (" FMT_I64 ") chain message..", General::GetSelfChainId());
+				break;
+			}
+
+			utils::Sleep(1);
+		}
+
+		return true;
+	}
+
+	void MessageHandlerChildChain::OnHandleCreateChildChain(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelCreateChildChain create_child_chain;
+		if (!create_child_chain.ParseFromString(message_channel.msg_data())){
+			LOG_ERROR("Parse MessageChannelCreateChildChain error!");
+			return;
+		}
+
+		CreateChildChain(create_child_chain);
+		return;
+	}
+
+	
+
+	void MessageHandlerChildChain::OnHandleChildGenesesResponse(const protocol::MessageChannel &message_channel){
 		protocol::MessageChannelChildGenesesResponse child_chain_response;
 		if (!child_chain_response.ParseFromString(message_channel.msg_data())){
 			LOG_ERROR("Parse OnHandleChildGenesesResponse error!");
@@ -194,7 +333,7 @@ namespace bumo {
 		}
 
 		if (child_chain_response.error_code() != protocol::ERRCODE_SUCCESS){
-			LOG_ERROR("OnHandleChildGenesesResponse's error code:%d, des:%s", 
+			LOG_ERROR("OnHandleChildGenesesResponse's error code:%d, des:%s",
 				child_chain_response.error_code(), child_chain_response.error_desc().c_str());
 			return;
 		}
@@ -202,7 +341,7 @@ namespace bumo {
 		CreateChildChain(child_chain_response.create_child_chain());
 	}
 
-	void MessageHandler::CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain){
+	void MessageHandlerChildChain::CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain){
 		std::string validators;
 		utils::StringList validator_list;
 		GenesisConfigure &genesis_config = Configure::Instance().genesis_configure_;
@@ -254,7 +393,7 @@ namespace bumo {
 		received_create_child_ = true;
 	}
 
-	void MessageHandler::OnHandleQueryHead(const protocol::MessageChannel &message_channel){
+	void MessageHandlerChildChain::OnHandleQueryHead(const protocol::MessageChannel &message_channel){
 		protocol::MessageChannelQueryHead head_query;
 		protocol::ERRORCODE error_code = protocol::ERRCODE_SUCCESS;
 		std::string error_desc = "";
@@ -290,24 +429,7 @@ namespace bumo {
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
 	}
 
-	
-
-	void MessageHandler::OnHandleWithdrawal(const protocol::MessageChannel &message_channel){
-		protocol::MessageChannelWithdrawal withdrawal;
-		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
-			return;
-		}
-
-		if (!withdrawal.ParseFromString(message_channel.msg_data())){
-			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
-			LOG_ERROR("Parse MessageChannelWithdrawal error, err_code is (" FMT_I64 ")", error_code);
-			return;
-		}
-		
-		bumo::WebSocketServer::GetInstance()->BroadcastMsg(protocol::EVENT_WITHDRAWAL, withdrawal.SerializeAsString());
-	}
-
-	void MessageHandler::SendChildGenesesRequest(){
+	void MessageHandlerChildChain::SendChildGenesesRequest(){
 		protocol::MessageChannelChildGenesesRequest child_chain_request;
 		child_chain_request.set_chain_id(General::GetSelfChainId());
 
@@ -317,4 +439,34 @@ namespace bumo {
 		message_channel.set_msg_data(child_chain_request.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(message_channel);
 	}
+
+	MessageHandler::MessageHandler(){
+	}
+
+	MessageHandler::~MessageHandler(){
+	}
+
+	bool MessageHandler::Initialize(){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			message_handler_main_chain_ = std::make_shared<MessageHandlerMainChain>();
+			return message_handler_main_chain_->Initialize();
+		}
+		else{
+			message_handler_child_chain_ = std::make_shared<MessageHandlerChildChain>();
+			return message_handler_child_chain_->Initialize();
+		}
+
+		return true;
+	}
+
+	bool MessageHandler::Exit(){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			return message_handler_main_chain_->Exit();
+		}
+		else{
+			return message_handler_child_chain_->Exit();
+		}
+	}
+
+
 }
