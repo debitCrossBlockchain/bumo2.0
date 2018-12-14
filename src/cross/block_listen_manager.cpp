@@ -29,7 +29,7 @@ namespace bumo {
 		}
 	}
 
-	void BlockListenBase::TxFrmToTlog(const TransactionFrm::pointer &txFrm){
+	void BlockListenBase::TxFrmToTlog(const LedgerFrm::pointer &closing_ledger, const TransactionFrm::pointer &txFrm){
 		for (int i = 0; i < txFrm->instructions_.size(); i++){
 			const protocol::Transaction &trans = txFrm->instructions_[i].transaction_env().transaction();
 			for (int j = 0; j < trans.operations_size(); j++){
@@ -50,7 +50,7 @@ namespace bumo {
 					LOG_ERROR("tlog parames number should have 2,but now is ", log.datas_size());
 					break;
 				}
-				HandleTlogEvent(log);
+				HandleTlogEvent(closing_ledger, log);
 				LOG_INFO("get tlog topic:%s,args[0]:%s,args[1]:%s", log.topic().c_str(), log.datas(0).c_str(), log.datas(1).c_str());
 			}
 		}
@@ -209,7 +209,7 @@ namespace bumo {
 		for (int64_t i = 0; i < closing_ledger->ProtoLedger().transaction_envs_size(); i++){
 			const TransactionFrm::pointer &tx = closing_ledger->apply_tx_frms_[i];
 			HandleTxEvent(tx);
-			TxFrmToTlog(tx);
+			TxFrmToTlog(closing_ledger, tx);
 		}
 	}
 
@@ -244,14 +244,14 @@ namespace bumo {
 			switch (trans.operations(i).type())
 			{
 			case protocol::Operation_Type_PAY_COIN:{
-				const protocol::OperationPayCoin &ope = trans.operations(i).pay_coin();
-				des_address = ope.dest_address();
-				break;
+													   const protocol::OperationPayCoin &ope = trans.operations(i).pay_coin();
+													   des_address = ope.dest_address();
+													   break;
 			}
 			case protocol::Operation_Type_PAY_ASSET:{
-				const protocol::OperationPayAsset &ope = trans.operations(i).pay_asset();
-				des_address = ope.dest_address();
-				break;
+														const protocol::OperationPayAsset &ope = trans.operations(i).pay_asset();
+														des_address = ope.dest_address();
+														break;
 			}
 			default:
 				break;
@@ -297,7 +297,8 @@ namespace bumo {
 		}
 	}
 
-	void BlockListenMainChain::HandleTlogEvent(const protocol::OperationLog &tlog){
+
+	void BlockListenMainChain::HandleTlogEvent(const LedgerFrm::pointer &closing_ledger, const protocol::OperationLog &tlog){
 		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
 			return;
 		}
@@ -319,8 +320,8 @@ namespace bumo {
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:{
-			TlogToMessageChannel(tlog);
-			break;
+																						TlogToMessageChannel(tlog);
+																						break;
 		}
 		default:
 			break;
@@ -356,7 +357,39 @@ namespace bumo {
 		ChildProposerManager::Instance().UpdateTxResult(err_code, desc, hash);
 	}
 
-	void BlockListenChildChain::HandleTlogEvent(const protocol::OperationLog &tlog){
+	void BlockListenChildChain::TlogToMessageChannelWithdrawal(const LedgerFrm::pointer &closing_ledger, const protocol::OperationLog &tlog){
+		protocol::MessageChannel msg_channel;
+		const std::string &tlog_params = tlog.datas(1);
+		if (tlog_params.size() == 0 || tlog_params.size() > General::TRANSACTION_LOG_DATA_MAXSIZE){
+			LOG_ERROR("Log's parameter data size should be between (0,%d]", General::TRANSACTION_LOG_DATA_MAXSIZE);
+			return;
+		}
+
+		//LOG_INFO("get tlog topic:%s,args[0]:%s", log.topic(), log.datas(j));
+		Json::Value trans_json;
+		if (!trans_json.fromString(tlog_params)) {
+			LOG_ERROR("Failed to parse the json content of the tlog");
+			return;
+		}
+		msg_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_WITHDRAWAL);
+
+		protocol::MessageChannelWithdrawal msg;
+		protocol::MerkelProof merkel_proof;
+		msg.set_chain_id(trans_json["chain_id"].asInt64());
+		msg.set_amount(trans_json["amount"].asInt64());
+		msg.set_seq(trans_json["seq"].asInt64());
+		msg.set_block_hash(closing_ledger->ProtoLedger().header().hash());
+		msg.set_source_address(trans_json["source_address"].asString());
+		msg.set_address(trans_json["address"].asString());
+		msg.set_allocated_merkel_proof(&merkel_proof);
+		msg_channel.set_msg_data(msg.SerializeAsString());
+
+		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+	}
+
+
+	void BlockListenChildChain::HandleTlogEvent(const LedgerFrm::pointer &closing_ledger, const protocol::OperationLog &tlog){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			return;
 		}
@@ -375,8 +408,8 @@ namespace bumo {
 		//special transaction
 		switch (tlog_type){
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_WITHDRAWAL:{
-			TlogToMessageChannel(tlog);
-			break;
+																			TlogToMessageChannelWithdrawal(closing_ledger, tlog);
+																			break;
 		}
 		default:
 			break;

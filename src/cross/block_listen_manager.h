@@ -35,13 +35,13 @@ namespace bumo {
 		virtual void HandleBlock(const LedgerFrm::pointer &closing_ledger);
 		virtual void HandleBlockEvent(const LedgerFrm::pointer &closing_ledger) = 0;
 		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) = 0;
-		virtual void HandleTlogEvent(const protocol::OperationLog &tlog) =0;
+		virtual void HandleTlogEvent(const LedgerFrm::pointer &closing_ledger,const protocol::OperationLog &tlog) = 0;
 	protected:
 		virtual void Run(utils::Thread *thread) override;
 		virtual protocol::MESSAGE_CHANNEL_TYPE ParseTlog(std::string tlog_topic);
 		virtual void TlogToMessageChannel(const protocol::OperationLog &tlog);
 	private:
-		virtual void TxFrmToTlog(const TransactionFrm::pointer &txFrm);
+		virtual void TxFrmToTlog(const LedgerFrm::pointer &closing_ledger, const TransactionFrm::pointer &txFrm);
 		virtual void CopyBufferBlock() final;
 		virtual void BuildTx(const LedgerFrm::pointer &closing_ledger) final;
 		virtual void HandleBlockUpdate() final;
@@ -63,7 +63,7 @@ namespace bumo {
 		virtual ~BlockListenMainChain();
 		virtual void HandleBlockEvent(const LedgerFrm::pointer &closing_ledger) override;
 		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) override;
-		virtual void HandleTlogEvent(const protocol::OperationLog &tlog);
+		virtual void HandleTlogEvent(const LedgerFrm::pointer &closing_ledger,const protocol::OperationLog &tlog);
 		bool CheckTxTransaction(const protocol::Transaction &trans);
 	};
 
@@ -73,11 +73,12 @@ namespace bumo {
 		virtual ~BlockListenChildChain();
 		virtual void HandleBlockEvent(const LedgerFrm::pointer &closing_ledger) override;
 		virtual void HandleTxEvent(const TransactionFrm::pointer &tx) override;
-		virtual void HandleTlogEvent(const protocol::OperationLog &tlog);
+		virtual void HandleTlogEvent(const LedgerFrm::pointer &closing_ledger,const protocol::OperationLog &tlog);
 		
 	private:
-		void HandleChildHeader(LedgerFrm::pointer closing_ledger);
-		//bool CheckTxTransaction(const protocol::Transaction &trans);
+		virtual void TlogToMessageChannelWithdrawal(const LedgerFrm::pointer &closing_ledger, const protocol::OperationLog &tlog) final;
+		virtual void HandleChildHeader(LedgerFrm::pointer closing_ledger);
+		
 	};
 
 	class BlockListenManager :public utils::Singleton<BlockListenManager>{
