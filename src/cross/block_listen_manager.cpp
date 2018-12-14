@@ -382,7 +382,6 @@ namespace bumo {
 		msg.set_block_hash(closing_ledger->ProtoLedger().header().hash());
 		msg.set_source_address(trans_json["source_address"].asString());
 		msg.set_address(trans_json["address"].asString());
-		msg.set_allocated_merkel_proof(&merkel_proof);
 		msg_channel.set_msg_data(msg.SerializeAsString());
 
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
