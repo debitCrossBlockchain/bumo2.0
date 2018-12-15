@@ -449,11 +449,11 @@ namespace bumo {
 	bool MessageHandler::Initialize(){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			message_handler_main_chain_ = std::make_shared<MessageHandlerMainChain>();
-			return message_handler_main_chain_->Initialize();
+			return message_handler_main_chain_->HandlerInitialize();
 		}
 		else{
 			message_handler_child_chain_ = std::make_shared<MessageHandlerChildChain>();
-			return message_handler_child_chain_->Initialize();
+			return message_handler_child_chain_->HandlerInitialize();
 		}
 
 		return true;
@@ -461,10 +461,10 @@ namespace bumo {
 
 	bool MessageHandler::Exit(){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
-			return message_handler_main_chain_->Exit();
+			return message_handler_main_chain_->HandlerExit();
 		}
 		else{
-			return message_handler_child_chain_->Exit();
+			return message_handler_child_chain_->HandlerExit();
 		}
 	}
 
