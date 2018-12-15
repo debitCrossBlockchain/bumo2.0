@@ -19,10 +19,13 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 #include <glue/glue_manager.h>
 #include <overlay/peer_manager.h>
 #include <algorithm>
+#include<cross/message_handler.h>
 namespace bumo {
 	BaseProposer::BaseProposer() :
 		enabled_(false),
 		thread_ptr_(NULL){
+		last_update_time_ = utils::Timestamp::HighResolution();
+		last_buffer_time_ = utils::Timestamp::HighResolution();
 		last_propose_time_ = utils::Timestamp::HighResolution();
 		use_proposer_ = false;
 	}
@@ -73,12 +76,33 @@ namespace bumo {
 		while (enabled_){
 			utils::Sleep(10);
 			int64_t current_time = utils::Timestamp::HighResolution();
-			if ((current_time - last_propose_time_) < PROPOSER_PERIOD * utils::MICRO_UNITS_PER_SEC){
-				continue;
+
+			if ((current_time - last_buffer_time_) > MSG_BUFFER_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				CopyBufferMsgChannel();
+				last_buffer_time_ = current_time;
 			}
 
-			DoTimerUpdate();
-			last_propose_time_ = current_time;
+			if ((current_time - last_update_time_) > MSG_UPDATE_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				HandleMsgUpdate();
+				last_update_time_ = current_time;
+			}
+
+			if ((current_time - last_propose_time_) > PROPOSER_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				DoTimerUpdate();
+				last_propose_time_ = current_time;
+			}
+		}
+	}
+
+
+	void BaseProposer::HandleMsgUpdate(){
+		utils::MutexGuard guard(msg_channel_list_lock_);
+		std::list<protocol::MessageChannel>::iterator iter = msg_channel_list_.begin();
+		while (iter != msg_channel_list_.end()) {
+			const protocol::MessageChannel &msg_channel = *iter;
+			DoHandleMessageChannel(msg_channel);
+			msg_channel_list_.erase(iter++);
+			utils::Sleep(10);
 		}
 	}
 
@@ -86,8 +110,25 @@ namespace bumo {
 		if (!enabled_){
 			return;
 		}
+		utils::MutexGuard guard(msg_channel_buffer_list_lock_);
+		msg_channel_buffer_list_.push_back(message_channel);
+	}
 
-		DoHandleMessageChannel(message_channel);
+	void BaseProposer::CopyBufferMsgChannel(){
+		std::list<protocol::MessageChannel> msg_channel_list;
+		{
+			utils::MutexGuard guard(msg_channel_buffer_list_lock_);
+			msg_channel_list.insert(msg_channel_list.end(), msg_channel_buffer_list_.begin(), msg_channel_buffer_list_.end());
+			msg_channel_buffer_list_.clear();
+		}
+
+		utils::MutexGuard guard(msg_channel_list_lock_);
+		std::list<protocol::MessageChannel>::const_iterator iter = msg_channel_list.begin();
+		while (iter != msg_channel_list.end()){
+			const protocol::MessageChannel &msg_channel = *iter;
+			msg_channel_list_.push_back(msg_channel);
+			iter++;
+		}
 	}
 
 	void BaseProposer::HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result){

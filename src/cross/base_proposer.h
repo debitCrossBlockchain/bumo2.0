@@ -45,7 +45,9 @@ namespace bumo {
 		virtual void DoHandleSenderResult(const TransTask &task_task, const TransTaskResult &task_result) = 0;
 
 		void BreakProposer(const std::string &error_des);
-
+	private:
+		virtual void CopyBufferMsgChannel() final;
+		virtual void HandleMsgUpdate();
 	protected:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
@@ -53,6 +55,14 @@ namespace bumo {
 		int64_t last_propose_time_;
 		bool use_proposer_;
 		std::string source_address_;
+	
+	private:
+		utils::Mutex msg_channel_list_lock_;
+		utils::Mutex msg_channel_buffer_list_lock_;
+		std::list<protocol::MessageChannel> msg_channel_list_;
+		std::list<protocol::MessageChannel> msg_channel_buffer_list_;
+		int64_t last_update_time_;
+		int64_t last_buffer_time_;
 	};
 }
 
