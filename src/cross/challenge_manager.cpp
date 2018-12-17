@@ -4,7 +4,9 @@
 namespace bumo {
 
 	ChallengeSubmitHead::ChallengeSubmitHead() :
-		chain_head_seq_(0){}
+		chain_head_seq_(0),
+		recv_max_seq(0),
+		latest_seq(0){}
 
 	ChallengeSubmitHead::~ChallengeSubmitHead(){}
 	void ChallengeSubmitHead::InitSeq(){
@@ -23,7 +25,9 @@ namespace bumo {
 
 
 	ChallengeWithdrawal::ChallengeWithdrawal() :
-		chain_withdrawal_seq_(0){}
+		chain_withdrawal_seq_(0),
+		recv_max_seq(0),
+		latest_seq(0){}
 
 	ChallengeWithdrawal::~ChallengeWithdrawal(){}
 	void ChallengeWithdrawal::InitSeq(){
