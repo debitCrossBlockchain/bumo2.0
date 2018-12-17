@@ -15,12 +15,13 @@ namespace bumo {
 		~ChallengeSubmitHead();
 		void InitSeq();
 	private:
-		LedgerMap ledger_map;
+		LedgerMap ledger_map_;
 		int64_t chain_head_seq_;
 		int64_t recv_max_seq;
 		int64_t latest_seq;
 	};
 
+	typedef std::map<int64_t, protocol::MessageChannelWithdrawal> WithdrawalMap;
 	class ChallengeWithdrawal
 	{
 	public:
@@ -28,7 +29,7 @@ namespace bumo {
 		~ChallengeWithdrawal();
 		void InitSeq();
 	private:
-		LedgerMap ledger_map;
+		WithdrawalMap withdrawal_map;
 		int64_t chain_withdrawal_seq_;
 		int64_t recv_max_seq;
 		int64_t latest_seq;
