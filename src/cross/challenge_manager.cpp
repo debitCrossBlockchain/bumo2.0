@@ -1,5 +1,5 @@
 #include<cross/challenge_manager.h>
-# define CHALLENGE_SEQ "challenge_head_seq"
+#define CHALLENGE_SEQ "challenge_head_seq"
 namespace bumo {
 
 	ChallengeManager::ChallengeManager() :
