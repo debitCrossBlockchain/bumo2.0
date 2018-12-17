@@ -46,16 +46,13 @@ namespace bumo {
 		if (latest_seq_ == recv_max_seq_){
 			return;
 		}
-
-		//Deletes invalid blocks
-		LedgerMap &ledger_map = child_chain.ledger_map;
-		for (auto itr = ledger_map.begin(); itr != ledger_map.end();){
-			if (itr->second.seq() > child_chain.cmc_latest_seq){
+		for (auto itr = ledger_map_.begin(); itr != ledger_map_.end();){
+			if (itr->second.seq() > latest_seq_){
 				itr++;
 				continue;
 			}
 
-			ledger_map.erase(itr++);
+			ledger_map_.erase(itr++);
 		}
 	}
 
