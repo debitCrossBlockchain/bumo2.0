@@ -212,6 +212,13 @@ namespace bumo {
 		bumo::WebSocketServer::GetInstance()->BroadcastMsg(protocol::EVENT_WITHDRAWAL, withdrawal.SerializeAsString());
 	}
 
+
+	void MessageHandlerMainChain::OnHandleQuerySubmitHead(const protocol::MessageChannel &message_channel){
+
+	}
+
+
+
 	MessageHandlerChildChain::MessageHandlerChildChain(){
 		init_ = false;
 		received_create_child_ = false;

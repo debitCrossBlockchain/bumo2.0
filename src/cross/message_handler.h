@@ -61,6 +61,7 @@ namespace bumo {
 		virtual void MessageChannelHandle(const protocol::MessageChannel &message_channel) override;
 		void OnHandleChildGenesesRequest(const protocol::MessageChannel &message_channel);
 		void OnHandleWithdrawal(const protocol::MessageChannel &message_channel);
+		void OnHandleQuerySubmitHead(const protocol::MessageChannel &message_channel);
 	private:
 		MessageChannelPocMap proc_methods_;
 	};
