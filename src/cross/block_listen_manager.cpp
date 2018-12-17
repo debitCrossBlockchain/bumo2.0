@@ -156,7 +156,7 @@ namespace bumo {
 			return;
 		}
 		std::string error_msg;
-		if (!Json2Proto(trans_json, *msg, error_msg)) {
+		if (!bumo::Json2Proto(trans_json, *msg, error_msg)) {
 			LOG_ERROR("Failed to Json2Proto error_msg=%s", error_msg.c_str());
 			return;
 		}
