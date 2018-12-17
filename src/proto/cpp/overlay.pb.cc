@@ -122,6 +122,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* MessageChannelQuerySubmitHead_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   MessageChannelQuerySubmitHead_reflection_ = NULL;
+const ::google::protobuf::Descriptor* MessageChannelSubmitHead_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  MessageChannelSubmitHead_reflection_ = NULL;
 const ::google::protobuf::EnumDescriptor* OVERLAY_MESSAGE_TYPE_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* ChainMessageType_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_NODE_TYPE_descriptor_ = NULL;
@@ -721,6 +724,22 @@ void protobuf_AssignDesc_overlay_2eproto() {
       sizeof(MessageChannelQuerySubmitHead),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelQuerySubmitHead, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelQuerySubmitHead, _is_default_instance_));
+  MessageChannelSubmitHead_descriptor_ = file->message_type(33);
+  static const int MessageChannelSubmitHead_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelSubmitHead, header_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelSubmitHead, state_),
+  };
+  MessageChannelSubmitHead_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      MessageChannelSubmitHead_descriptor_,
+      MessageChannelSubmitHead::default_instance_,
+      MessageChannelSubmitHead_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(MessageChannelSubmitHead),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelSubmitHead, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelSubmitHead, _is_default_instance_));
   OVERLAY_MESSAGE_TYPE_descriptor_ = file->enum_type(0);
   ChainMessageType_descriptor_ = file->enum_type(1);
   MESSAGE_CHANNEL_NODE_TYPE_descriptor_ = file->enum_type(2);
@@ -804,6 +823,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
       MessageChannelQueryChangeChildValidator_descriptor_, &MessageChannelQueryChangeChildValidator::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       MessageChannelQuerySubmitHead_descriptor_, &MessageChannelQuerySubmitHead::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      MessageChannelSubmitHead_descriptor_, &MessageChannelSubmitHead::default_instance());
 }
 
 }  // namespace
@@ -875,6 +896,8 @@ void protobuf_ShutdownFile_overlay_2eproto() {
   delete MessageChannelQueryChangeChildValidator_reflection_;
   delete MessageChannelQuerySubmitHead::default_instance_;
   delete MessageChannelQuerySubmitHead_reflection_;
+  delete MessageChannelSubmitHead::default_instance_;
+  delete MessageChannelSubmitHead_reflection_;
 }
 
 void protobuf_AddDesc_overlay_2eproto() GOOGLE_ATTRIBUTE_COLD;
@@ -983,41 +1006,43 @@ void protobuf_AddDesc_overlay_2eproto() {
     "ildValidator\022\020\n\010chain_id\030\001 \001(\003\022\032\n\022change"
     "_child_index\030\002 \001(\003\"L\n\035MessageChannelQuer"
     "ySubmitHead\022\020\n\010chain_id\030\001 \001(\003\022\013\n\003seq\030\002 \001"
-    "(\003\022\014\n\004hash\030\003 \001(\014*\203\002\n\024OVERLAY_MESSAGE_TYP"
-    "E\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_M"
-    "SGTYPE_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002"
-    "\022\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_M"
-    "SGTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_"
-    "LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%O"
-    "VERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY\020\007*\372"
-    "\001\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_NONE\020\000"
-    "\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025"
-    "\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFL"
-    "INE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_S"
-    "UBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADE"
-    "R\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_"
-    "ENV_STORE\020\022*\227\001\n\031MESSAGE_CHANNEL_NODE_TYP"
-    "E\022\"\n\036MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000\022 \n"
-    "\034MESSAGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032MESSA"
-    "GE_CHANNEL_NODE_HELLO\020\037\022\024\n\020EVENT_WITHDRA"
-    "WAL\020 *\213\005\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MESSAG"
-    "E_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHANNEL"
-    "_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHANNEL"
-    "_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_MIX"
-    "\020\003\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020\004\022\036\n\032MESSA"
-    "GE_CHANNEL_WITHDRAWAL\020\005\022#\n\037MESSAGE_CHANN"
-    "EL_FAST_WITHDRAWAL\020\006\022\037\n\033MESSAGE_CHANNEL_"
-    "SUBMIT_HEAD\020\007\022(\n$MESSAGE_CHANNEL_CHALLEN"
-    "GE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_CHANNEL_CHALL"
-    "ENGE_HEAD\020\t\022)\n%MESSAGE_CHANNEL_CHILD_GEN"
-    "ESES_REQUEST\020\n\022*\n&MESSAGE_CHANNEL_CHILD_"
-    "GENESES_RESPONSE\020\013\022\036\n\032MESSAGE_CHANNEL_QU"
-    "ERY_HEAD\020\014\022!\n\035MESSAGE_CHANNEL_QUERY_DEPO"
-    "SIT\020\r\022*\n&MESSAGE_CHANNEL_CHANGE_CHILD_VA"
-    "LIDATOR\020\016\0220\n,MESSAGE_CHANNEL_QUERY_CHANG"
-    "E_CHILD_VALIDATOR\020\017\022&\n\"MESSAGE_CHANNEL_Q"
-    "UWERY_SUBMIT_HEAD\020\020B\"\n io.bumo.sdk.core."
-    "extend.protobufb\006proto3", 5183);
+    "(\003\022\014\n\004hash\030\003 \001(\014\"Q\n\030MessageChannelSubmit"
+    "Head\022&\n\006header\030\001 \001(\0132\026.protocol.LedgerHe"
+    "ader\022\r\n\005state\030\002 \001(\003*\203\002\n\024OVERLAY_MESSAGE_"
+    "TYPE\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERLA"
+    "Y_MSGTYPE_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HELL"
+    "O\020\002\022\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERLA"
+    "Y_MSGTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSGTY"
+    "PE_LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)"
+    "\n%OVERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY\020"
+    "\007*\372\001\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_NON"
+    "E\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020"
+    "\013\022\025\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_O"
+    "FFLINE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHAI"
+    "N_SUBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_HE"
+    "ADER\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_"
+    "TX_ENV_STORE\020\022*\227\001\n\031MESSAGE_CHANNEL_NODE_"
+    "TYPE\022\"\n\036MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000"
+    "\022 \n\034MESSAGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032ME"
+    "SSAGE_CHANNEL_NODE_HELLO\020\037\022\024\n\020EVENT_WITH"
+    "DRAWAL\020 *\213\005\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MES"
+    "SAGE_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHAN"
+    "NEL_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHAN"
+    "NEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_"
+    "MIX\020\003\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020\004\022\036\n\032ME"
+    "SSAGE_CHANNEL_WITHDRAWAL\020\005\022#\n\037MESSAGE_CH"
+    "ANNEL_FAST_WITHDRAWAL\020\006\022\037\n\033MESSAGE_CHANN"
+    "EL_SUBMIT_HEAD\020\007\022(\n$MESSAGE_CHANNEL_CHAL"
+    "LENGE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_CHANNEL_CH"
+    "ALLENGE_HEAD\020\t\022)\n%MESSAGE_CHANNEL_CHILD_"
+    "GENESES_REQUEST\020\n\022*\n&MESSAGE_CHANNEL_CHI"
+    "LD_GENESES_RESPONSE\020\013\022\036\n\032MESSAGE_CHANNEL"
+    "_QUERY_HEAD\020\014\022!\n\035MESSAGE_CHANNEL_QUERY_D"
+    "EPOSIT\020\r\022*\n&MESSAGE_CHANNEL_CHANGE_CHILD"
+    "_VALIDATOR\020\016\0220\n,MESSAGE_CHANNEL_QUERY_CH"
+    "ANGE_CHILD_VALIDATOR\020\017\022&\n\"MESSAGE_CHANNE"
+    "L_QUWERY_SUBMIT_HEAD\020\020B\"\n io.bumo.sdk.co"
+    "re.extend.protobufb\006proto3", 5266);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -1053,6 +1078,7 @@ void protobuf_AddDesc_overlay_2eproto() {
   MessageChannelChangeChildValidator::default_instance_ = new MessageChannelChangeChildValidator();
   MessageChannelQueryChangeChildValidator::default_instance_ = new MessageChannelQueryChangeChildValidator();
   MessageChannelQuerySubmitHead::default_instance_ = new MessageChannelQuerySubmitHead();
+  MessageChannelSubmitHead::default_instance_ = new MessageChannelSubmitHead();
   Hello::default_instance_->InitAsDefaultInstance();
   HelloResponse::default_instance_->InitAsDefaultInstance();
   Peer::default_instance_->InitAsDefaultInstance();
@@ -1086,6 +1112,7 @@ void protobuf_AddDesc_overlay_2eproto() {
   MessageChannelChangeChildValidator::default_instance_->InitAsDefaultInstance();
   MessageChannelQueryChangeChildValidator::default_instance_->InitAsDefaultInstance();
   MessageChannelQuerySubmitHead::default_instance_->InitAsDefaultInstance();
+  MessageChannelSubmitHead::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_overlay_2eproto);
 }
 
@@ -16330,6 +16357,325 @@ void MessageChannelQuerySubmitHead::clear_hash() {
   }
   hash_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), hash);
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelQuerySubmitHead.hash)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int MessageChannelSubmitHead::kHeaderFieldNumber;
+const int MessageChannelSubmitHead::kStateFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+MessageChannelSubmitHead::MessageChannelSubmitHead()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.MessageChannelSubmitHead)
+}
+
+void MessageChannelSubmitHead::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  header_ = const_cast< ::protocol::LedgerHeader*>(&::protocol::LedgerHeader::default_instance());
+}
+
+MessageChannelSubmitHead::MessageChannelSubmitHead(const MessageChannelSubmitHead& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.MessageChannelSubmitHead)
+}
+
+void MessageChannelSubmitHead::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  header_ = NULL;
+  state_ = GOOGLE_LONGLONG(0);
+}
+
+MessageChannelSubmitHead::~MessageChannelSubmitHead() {
+  // @@protoc_insertion_point(destructor:protocol.MessageChannelSubmitHead)
+  SharedDtor();
+}
+
+void MessageChannelSubmitHead::SharedDtor() {
+  if (this != default_instance_) {
+    delete header_;
+  }
+}
+
+void MessageChannelSubmitHead::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* MessageChannelSubmitHead::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MessageChannelSubmitHead_descriptor_;
+}
+
+const MessageChannelSubmitHead& MessageChannelSubmitHead::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_overlay_2eproto();
+  return *default_instance_;
+}
+
+MessageChannelSubmitHead* MessageChannelSubmitHead::default_instance_ = NULL;
+
+MessageChannelSubmitHead* MessageChannelSubmitHead::New(::google::protobuf::Arena* arena) const {
+  MessageChannelSubmitHead* n = new MessageChannelSubmitHead;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void MessageChannelSubmitHead::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.MessageChannelSubmitHead)
+  if (GetArenaNoVirtual() == NULL && header_ != NULL) delete header_;
+  header_ = NULL;
+  state_ = GOOGLE_LONGLONG(0);
+}
+
+bool MessageChannelSubmitHead::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.MessageChannelSubmitHead)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .protocol.LedgerHeader header = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_header()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_state;
+        break;
+      }
+
+      // optional int64 state = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_state:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &state_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.MessageChannelSubmitHead)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.MessageChannelSubmitHead)
+  return false;
+#undef DO_
+}
+
+void MessageChannelSubmitHead::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.MessageChannelSubmitHead)
+  // optional .protocol.LedgerHeader header = 1;
+  if (this->has_header()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->header_, output);
+  }
+
+  // optional int64 state = 2;
+  if (this->state() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->state(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.MessageChannelSubmitHead)
+}
+
+::google::protobuf::uint8* MessageChannelSubmitHead::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.MessageChannelSubmitHead)
+  // optional .protocol.LedgerHeader header = 1;
+  if (this->has_header()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->header_, false, target);
+  }
+
+  // optional int64 state = 2;
+  if (this->state() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->state(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.MessageChannelSubmitHead)
+  return target;
+}
+
+int MessageChannelSubmitHead::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.MessageChannelSubmitHead)
+  int total_size = 0;
+
+  // optional .protocol.LedgerHeader header = 1;
+  if (this->has_header()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->header_);
+  }
+
+  // optional int64 state = 2;
+  if (this->state() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->state());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void MessageChannelSubmitHead::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.MessageChannelSubmitHead)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const MessageChannelSubmitHead* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const MessageChannelSubmitHead>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.MessageChannelSubmitHead)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.MessageChannelSubmitHead)
+    MergeFrom(*source);
+  }
+}
+
+void MessageChannelSubmitHead::MergeFrom(const MessageChannelSubmitHead& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.MessageChannelSubmitHead)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.has_header()) {
+    mutable_header()->::protocol::LedgerHeader::MergeFrom(from.header());
+  }
+  if (from.state() != 0) {
+    set_state(from.state());
+  }
+}
+
+void MessageChannelSubmitHead::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.MessageChannelSubmitHead)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void MessageChannelSubmitHead::CopyFrom(const MessageChannelSubmitHead& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.MessageChannelSubmitHead)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MessageChannelSubmitHead::IsInitialized() const {
+
+  return true;
+}
+
+void MessageChannelSubmitHead::Swap(MessageChannelSubmitHead* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void MessageChannelSubmitHead::InternalSwap(MessageChannelSubmitHead* other) {
+  std::swap(header_, other->header_);
+  std::swap(state_, other->state_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata MessageChannelSubmitHead::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = MessageChannelSubmitHead_descriptor_;
+  metadata.reflection = MessageChannelSubmitHead_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// MessageChannelSubmitHead
+
+// optional .protocol.LedgerHeader header = 1;
+bool MessageChannelSubmitHead::has_header() const {
+  return !_is_default_instance_ && header_ != NULL;
+}
+void MessageChannelSubmitHead::clear_header() {
+  if (GetArenaNoVirtual() == NULL && header_ != NULL) delete header_;
+  header_ = NULL;
+}
+const ::protocol::LedgerHeader& MessageChannelSubmitHead::header() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelSubmitHead.header)
+  return header_ != NULL ? *header_ : *default_instance_->header_;
+}
+::protocol::LedgerHeader* MessageChannelSubmitHead::mutable_header() {
+  
+  if (header_ == NULL) {
+    header_ = new ::protocol::LedgerHeader;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelSubmitHead.header)
+  return header_;
+}
+::protocol::LedgerHeader* MessageChannelSubmitHead::release_header() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelSubmitHead.header)
+  
+  ::protocol::LedgerHeader* temp = header_;
+  header_ = NULL;
+  return temp;
+}
+void MessageChannelSubmitHead::set_allocated_header(::protocol::LedgerHeader* header) {
+  delete header_;
+  header_ = header;
+  if (header) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelSubmitHead.header)
+}
+
+// optional int64 state = 2;
+void MessageChannelSubmitHead::clear_state() {
+  state_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 MessageChannelSubmitHead::state() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelSubmitHead.state)
+  return state_;
+}
+ void MessageChannelSubmitHead::set_state(::google::protobuf::int64 value) {
+  
+  state_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelSubmitHead.state)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

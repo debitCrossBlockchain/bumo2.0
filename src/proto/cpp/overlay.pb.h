@@ -69,6 +69,7 @@ class MessageChannelQueryDeposit;
 class MessageChannelQueryHead;
 class MessageChannelQuerySubmitHead;
 class MessageChannelResponse;
+class MessageChannelSubmitHead;
 class MessageChannelWithdrawal;
 class MessageChannelWithdrawalChallenge;
 class Peer;
@@ -3920,6 +3921,98 @@ class MessageChannelQuerySubmitHead : public ::google::protobuf::Message /* @@pr
   void InitAsDefaultInstance();
   static MessageChannelQuerySubmitHead* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class MessageChannelSubmitHead : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelSubmitHead) */ {
+ public:
+  MessageChannelSubmitHead();
+  virtual ~MessageChannelSubmitHead();
+
+  MessageChannelSubmitHead(const MessageChannelSubmitHead& from);
+
+  inline MessageChannelSubmitHead& operator=(const MessageChannelSubmitHead& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelSubmitHead& default_instance();
+
+  void Swap(MessageChannelSubmitHead* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelSubmitHead* New() const { return New(NULL); }
+
+  MessageChannelSubmitHead* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelSubmitHead& from);
+  void MergeFrom(const MessageChannelSubmitHead& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelSubmitHead* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .protocol.LedgerHeader header = 1;
+  bool has_header() const;
+  void clear_header();
+  static const int kHeaderFieldNumber = 1;
+  const ::protocol::LedgerHeader& header() const;
+  ::protocol::LedgerHeader* mutable_header();
+  ::protocol::LedgerHeader* release_header();
+  void set_allocated_header(::protocol::LedgerHeader* header);
+
+  // optional int64 state = 2;
+  void clear_state();
+  static const int kStateFieldNumber = 2;
+  ::google::protobuf::int64 state() const;
+  void set_state(::google::protobuf::int64 value);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelSubmitHead)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::protocol::LedgerHeader* header_;
+  ::google::protobuf::int64 state_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelSubmitHead* default_instance_;
+};
 // ===================================================================
 
 
@@ -7460,7 +7553,65 @@ inline void MessageChannelQuerySubmitHead::set_allocated_hash(::std::string* has
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelQuerySubmitHead.hash)
 }
 
+// -------------------------------------------------------------------
+
+// MessageChannelSubmitHead
+
+// optional .protocol.LedgerHeader header = 1;
+inline bool MessageChannelSubmitHead::has_header() const {
+  return !_is_default_instance_ && header_ != NULL;
+}
+inline void MessageChannelSubmitHead::clear_header() {
+  if (GetArenaNoVirtual() == NULL && header_ != NULL) delete header_;
+  header_ = NULL;
+}
+inline const ::protocol::LedgerHeader& MessageChannelSubmitHead::header() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelSubmitHead.header)
+  return header_ != NULL ? *header_ : *default_instance_->header_;
+}
+inline ::protocol::LedgerHeader* MessageChannelSubmitHead::mutable_header() {
+  
+  if (header_ == NULL) {
+    header_ = new ::protocol::LedgerHeader;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelSubmitHead.header)
+  return header_;
+}
+inline ::protocol::LedgerHeader* MessageChannelSubmitHead::release_header() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelSubmitHead.header)
+  
+  ::protocol::LedgerHeader* temp = header_;
+  header_ = NULL;
+  return temp;
+}
+inline void MessageChannelSubmitHead::set_allocated_header(::protocol::LedgerHeader* header) {
+  delete header_;
+  header_ = header;
+  if (header) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelSubmitHead.header)
+}
+
+// optional int64 state = 2;
+inline void MessageChannelSubmitHead::clear_state() {
+  state_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelSubmitHead::state() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelSubmitHead.state)
+  return state_;
+}
+inline void MessageChannelSubmitHead::set_state(::google::protobuf::int64 value) {
+  
+  state_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelSubmitHead.state)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
