@@ -21,6 +21,25 @@ namespace bumo {
 		}
 	}
 
+
+	ChallengeWithdrawal::ChallengeWithdrawal() :
+		chain_withdrawal_seq_(0){}
+
+	ChallengeWithdrawal::~ChallengeWithdrawal(){}
+	void ChallengeWithdrawal::InitSeq(){
+		auto db = Storage::Instance().keyvalue_db();
+		std::string str;
+		Json::Value args;
+		if (!db->Get(CHALLENGE_WITHDRAWAL_SEQ, str)) {
+			args["chain_seq"] = chain_withdrawal_seq_;
+			db->Put(CHALLENGE_WITHDRAWAL_SEQ, args.toFastString());
+		}
+		else{
+			args.fromString(str.c_str());
+			chain_withdrawal_seq_ = args["chain_seq"].asInt64();
+		}
+	}
+
 	ChallengeManager::ChallengeManager() :
 		chain_withdrawal_seq_(0),
 		enabled_(false),
