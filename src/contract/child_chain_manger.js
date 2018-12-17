@@ -483,6 +483,24 @@ function queryChildDeposit(params){
     return retinfo;
 }
 
+function queryChildWithdrawal(params){
+    log('queryChildWithdrawal');
+    let input = params;
+    let key = '';
+    if(input.seq === ''){
+        let info = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
+        assert(info !== false, 'queryChildWithdrawal CHAIN_WITHDRAWAL' + input.chain_id + ' failed.');
+        let complete_seq = int64Add(info.complete_seq,1);
+        key = CHAIN_WITHDRAWAL + input.chain_id + '_' + complete_seq;
+    } 
+    else {
+        key = CHAIN_WITHDRAWAL + input.chain_id + '_' + input.seq;
+    }
+    let withdrawal_detail = JSON.parse(storageLoad(key));
+    assert(withdrawal_detail !== false, 'queryChildWithdrawal CHAIN_WITHDRAWAL' + input.chain_id + '_' + input.seq + ' failed.');
+    return withdrawal_detail;
+}
+
 function queryChildChainInfo(params){
     log('queryChildChainInfo');
     let key = CHILD_CHAIN_ID + params.chain_id;
