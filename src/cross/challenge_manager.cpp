@@ -17,14 +17,9 @@ namespace bumo {
 		}
 	}
 
-	bool ChallengeManager::Initialize() {
-		enabled_ = true;
-		thread_ptr_ = new utils::Thread(this);
-		if (!thread_ptr_->Start("ChallengeManager")) {
-			return false;
-		}
-
+	void ChallengeManager::InitSeq(){
 		auto db = Storage::Instance().keyvalue_db();
+
 		std::string str;
 		Json::Value args;
 		if (!db->Get(CHALLENGE_HEAD_SEQ, str)) {
@@ -36,7 +31,6 @@ namespace bumo {
 			chain_head_seq_ = args["chain_seq"].asInt64();
 		}
 
-
 		std::string str_withdrawal;
 		Json::Value args_withdrawal;
 		if (!db->Get(CHALLENGE_WITHDRAWAL_SEQ, str_withdrawal)) {
@@ -47,6 +41,16 @@ namespace bumo {
 			args_withdrawal.fromString(str_withdrawal.c_str());
 			chain_withdrawal_seq_ = args_withdrawal["chain_seq"].asInt64();
 		}
+	}
+
+	bool ChallengeManager::Initialize() {
+		enabled_ = true;
+		thread_ptr_ = new utils::Thread(this);
+		if (!thread_ptr_->Start("ChallengeManager")) {
+			return false;
+		}
+
+		InitSeq();
 		return true;
 	}
 
