@@ -309,5 +309,11 @@ message MessageChannelQuerySubmitHead{
 	bytes hash = 3;
 }
 
+message MessageChannelSubmitHead{
+    LedgerHeader header = 1;
+	int64 state = 2;
+}
+
+
 
 
