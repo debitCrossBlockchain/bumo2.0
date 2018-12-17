@@ -28,7 +28,7 @@ namespace bumo {
 			return false;
 		}
 		MessageChannel &message_channel = MessageChannel::Instance();
-		for (int64_t i = 1; i <= 16; i++)
+		for (int64_t i = 1; i <= 17; i++)
 		{
 			message_channel.RegisterMessageChannelConsumer(this, i);
 		}
@@ -41,7 +41,7 @@ namespace bumo {
 			thread_ptr_->JoinWithStop();
 		}
 		MessageChannel &message_channel = MessageChannel::Instance();
-		for (int64_t i = 1; i <= 16; i++)
+		for (int64_t i = 1; i <= 17; i++)
 		{
 			message_channel.UnregisterMessageChannelConsumer(this, i);
 		}
