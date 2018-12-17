@@ -247,6 +247,7 @@ namespace bumo {
 		}
 	}
 
+
 	void MessageHandlerMainChain::OnHandleQuerySubmitHead(const protocol::MessageChannel &message_channel){
 		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
 			return;
@@ -270,6 +271,11 @@ namespace bumo {
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 	}
 
+	void MessageHandlerMainChain::OnHandleQueryWithdrawal(const protocol::MessageChannel &message_channel){
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return;
+		}
+	}
 
 
 	MessageHandlerChildChain::MessageHandlerChildChain(){
