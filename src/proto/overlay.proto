@@ -184,6 +184,7 @@ enum MESSAGE_CHANNEL_TYPE{
 	MESSAGE_CHANNEL_QUERY_DEPOSIT = 13;
 	MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR = 14;
 	MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR = 15;
+	MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD = 16;
 }
 
 message MessageChannelQueryDeposit{
@@ -307,5 +308,6 @@ message MessageChannelQuerySubmitHead{
 	int64 seq = 2;
 	bytes hash = 3;
 }
+
 
 
