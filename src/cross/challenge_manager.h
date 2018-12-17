@@ -49,7 +49,6 @@ namespace bumo {
 	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
-		int64_t chain_withdrawal_seq_;
 	};
 }
 
