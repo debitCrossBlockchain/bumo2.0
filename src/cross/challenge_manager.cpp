@@ -1,6 +1,6 @@
 #include<cross/challenge_manager.h>
 #define CHALLENGE_HEAD_SEQ "challenge_head_seq"
-#define CHALLENGE_WITHDRAWAL_SEQ "challenge_head_seq"
+#define CHALLENGE_WITHDRAWAL_SEQ "challenge_withdrawal_seq"
 namespace bumo {
 
 	ChallengeManager::ChallengeManager() :
