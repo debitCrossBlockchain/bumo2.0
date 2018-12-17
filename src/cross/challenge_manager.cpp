@@ -48,12 +48,23 @@ namespace bumo {
 		while (enabled_){
 			utils::Sleep(10);
 			int64_t current_time = utils::Timestamp::HighResolution();
-	
+
 		}
 	}
 
 	void ChallengeManager::ChallengeNotify(const protocol::MessageChannel &message_channel){
-
+		switch (message_channel.msg_type()){
+		case protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD:{
+														  HandleChallengeSubmitHead(message_channel);
+														  break;
+		}
+		case protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:{
+																HandleChallengeWithdrawal(message_channel);
+																break;
+		}
+		default:
+			break;
+		}
 	}
 
 	void ChallengeManager::HandleChallengeSubmitHead(const protocol::MessageChannel &message_channel){
