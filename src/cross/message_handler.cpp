@@ -480,7 +480,7 @@ namespace bumo {
 			LOG_ERROR("%s", error_desc.c_str());
 			return;
 		}
-		protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
+		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
 		//Push message to child chain.
 		protocol::MessageChannel msg_channel;
 		msg_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
