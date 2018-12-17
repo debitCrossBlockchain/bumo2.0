@@ -17,7 +17,7 @@ namespace bumo {
 	bool ChallengeManager::Initialize() {
 		enabled_ = true;
 		thread_ptr_ = new utils::Thread(this);
-		if (!thread_ptr_->Start("BlockListenManager")) {
+		if (!thread_ptr_->Start("ChallengeManager")) {
 			return false;
 		}
 		return true;
