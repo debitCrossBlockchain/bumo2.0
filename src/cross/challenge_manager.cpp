@@ -1,9 +1,10 @@
 #include<cross/challenge_manager.h>
-#define CHALLENGE_SEQ "challenge_head_seq"
+#define CHALLENGE_HEAD_SEQ "challenge_head_seq"
 namespace bumo {
 
 	ChallengeManager::ChallengeManager() :
-		chain_seq_(0),
+		chain_head_seq_(0),
+		chain_withdrawal_seq_(0),
 		enabled_(false),
 		thread_ptr_(NULL){
 	}
@@ -25,13 +26,13 @@ namespace bumo {
 		auto db = Storage::Instance().keyvalue_db();
 		std::string str;
 		Json::Value args;
-		if (!db->Get(CHALLENGE_SEQ, str)) {
-			args["chain_seq"] = chain_seq_;
-			db->Put(CHALLENGE_SEQ, args.toFastString());
+		if (!db->Get(CHALLENGE_HEAD_SEQ, str)) {
+			args["chain_seq"] = chain_head_seq_;
+			db->Put(CHALLENGE_HEAD_SEQ, args.toFastString());
 		}
 		else{
 			args.fromString(str.c_str());
-			chain_seq_ = args["chain_seq"].asInt64();
+			chain_head_seq_ = args["chain_seq"].asInt64();
 		}
 		return true;
 	}
