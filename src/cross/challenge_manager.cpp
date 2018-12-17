@@ -67,9 +67,26 @@ namespace bumo {
 			if (itr != ledger_map_.end()){
 				continue;
 			}
+			
+			std::string  error_desc;
+			if (seq <= 0){
+				std::string  error_desc  = utils::String::Format("Parse MessageChannelQueryHead error,invalid ledger_seq(" FMT_I64 ")", seq);
+				LOG_ERROR("%s", error_desc.c_str());
+				return;
+			}
+
+			LedgerFrm frm;
+			if (!frm.LoadFromDb(seq)) {
+				error_desc = utils::String::Format("Parse MessageChannelQueryHead error,no exist ledger_seq=(" FMT_I64 ")", seq);
+				LOG_ERROR("%s", error_desc.c_str());
+				return;
+			}
+			const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
+			//Push message to child chain.
 			protocol::MessageChannel message_channel;
-			protocol::MessageChannelQueryHead query_head;
-			query_head.set_ledger_seq(seq);
+			protocol::MessageChannelQuerySubmitHead query_head;
+			query_head.set_seq(seq);
+			query_head.set_hash(ledger_header.hash());
 			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
 			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD);
 			message_channel.set_msg_data(query_head.SerializeAsString());
