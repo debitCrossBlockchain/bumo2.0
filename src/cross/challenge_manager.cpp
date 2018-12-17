@@ -1,5 +1,6 @@
 #include<cross/challenge_manager.h>
 #define CHALLENGE_HEAD_SEQ "challenge_head_seq"
+#define CHALLENGE_WITHDRAWAL_SEQ "challenge_head_seq"
 namespace bumo {
 
 	ChallengeManager::ChallengeManager() :
@@ -33,6 +34,18 @@ namespace bumo {
 		else{
 			args.fromString(str.c_str());
 			chain_head_seq_ = args["chain_seq"].asInt64();
+		}
+
+
+		std::string str_withdrawal;
+		Json::Value args_withdrawal;
+		if (!db->Get(CHALLENGE_WITHDRAWAL_SEQ, str_withdrawal)) {
+			args_withdrawal["chain_seq"] = chain_withdrawal_seq_;
+			db->Put(CHALLENGE_WITHDRAWAL_SEQ, args_withdrawal.toFastString());
+		}
+		else{
+			args_withdrawal.fromString(str_withdrawal.c_str());
+			chain_withdrawal_seq_ = args_withdrawal["chain_seq"].asInt64();
 		}
 		return true;
 	}
