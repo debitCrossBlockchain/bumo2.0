@@ -57,6 +57,22 @@ namespace bumo {
 	}
 
 	void ChallengeSubmitHead::RequestLost(){
+		//Request up to ten blocks
+		int64_t max_nums = MIN(MAX_REQUEST_BLOCK_NUMS, (recv_max_seq_ - latest_seq_));
+		for (int64_t i = 1; i <= max_nums; i++){
+			int64_t seq = latest_seq_ + i;
+			auto itr = ledger_map_.find(seq);
+			if (itr != ledger_map_.end()){
+				continue;
+			}
+			protocol::MessageChannel message_channel;
+			protocol::MessageChannelQueryHead query_head;
+			query_head.set_ledger_seq(seq);
+			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_HEAD);
+			message_channel.set_msg_data(query_head.SerializeAsString());
+			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
+		}
 
 	}
 
