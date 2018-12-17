@@ -56,4 +56,8 @@ namespace bumo {
 
 	}
 
+	void ChallengeManager::HandleChallengeSubmitHead(const protocol::MessageChannel &message_channel){
+
+	}
+
 }
