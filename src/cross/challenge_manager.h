@@ -12,6 +12,7 @@ namespace bumo {
 		virtual ~ChallengeManager();
 		bool Initialize();
 		bool Exit();
+		void ChallengeNotify(const protocol::MessageChannel &message_channel);
 	private:
 		void Run(utils::Thread *thread);
 	private:

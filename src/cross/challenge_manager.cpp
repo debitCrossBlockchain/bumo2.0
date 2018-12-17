@@ -39,4 +39,8 @@ namespace bumo {
 		}
 	}
 
+	void ChallengeManager::ChallengeNotify(const protocol::MessageChannel &message_channel){
+
+	}
+
 }
