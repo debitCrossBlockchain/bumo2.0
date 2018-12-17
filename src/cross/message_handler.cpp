@@ -213,7 +213,16 @@ namespace bumo {
 		bumo::WebSocketServer::GetInstance()->BroadcastMsg(protocol::EVENT_WITHDRAWAL, withdrawal.SerializeAsString());
 	}
 
-	void MessageHandlerMainChain::QuerySubmitHead(const int64_t &chain_id, const int64_t &seq, const std::string &hash, protocol::LedgerHeader &ledger_header){
+	void MessageHandlerMainChain::QuerySubmitHead(const int64_t &chain_id, const int64_t &seq, const std::string &hash, protocol::MessageChannelSubmitHead &submit_header){
+		protocol::LedgerHeader ledger_header;
+		submit_header.set_state(seq);
+		auto header = submit_header.mutable_header();
+		if (seq == -1){
+
+		}
+		else{
+
+		}
 
 	}
 
@@ -228,12 +237,15 @@ namespace bumo {
 			return;
 		}
 		protocol::MessageChannel msg_channel;
-		protocol::LedgerHeader ledger_header;
+		protocol::MessageChannelSubmitHead msg_submit_head;
+	
 		Json::Value query_head = bumo::Proto2Json(query_submit_head);
-		QuerySubmitHead(query_submit_head.chain_id(), query_submit_head.seq(), query_head["hash"].asString(), ledger_header);
+		QuerySubmitHead(query_submit_head.chain_id(), query_submit_head.seq(), query_head["hash"].asString(), msg_submit_head);
+		
+		
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD);
 		msg_channel.set_target_chain_id(query_submit_head.chain_id());
-		msg_channel.set_msg_data(ledger_header.SerializeAsString());
+		msg_channel.set_msg_data(msg_submit_head.SerializeAsString());
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 	}
 
