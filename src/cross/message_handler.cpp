@@ -110,6 +110,7 @@ namespace bumo {
 	bool MessageHandlerMainChain::HandlerInitialize(){
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST] = std::bind(&MessageHandlerMainChain::OnHandleChildGenesesRequest, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageHandlerMainChain::OnHandleWithdrawal, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD] = std::bind(&MessageHandlerMainChain::OnHandleQuerySubmitHead, this, std::placeholders::_1);
 		if (!Initialize()){
 			return false;
 		}
@@ -214,6 +215,15 @@ namespace bumo {
 
 
 	void MessageHandlerMainChain::OnHandleQuerySubmitHead(const protocol::MessageChannel &message_channel){
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return;
+		}
+		protocol::MessageChannelQuerySubmitHead query_submit_head;
+		if (!query_submit_head.ParseFromString(message_channel.msg_data())){
+			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("Parse MessageChannelQuerySubmitHead error, err_code is (" FMT_I64 ")", error_code);
+			return;
+		}
 
 	}
 
