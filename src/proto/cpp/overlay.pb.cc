@@ -1025,7 +1025,7 @@ void protobuf_AddDesc_overlay_2eproto() {
     "TYPE\022\"\n\036MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000"
     "\022 \n\034MESSAGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032ME"
     "SSAGE_CHANNEL_NODE_HELLO\020\037\022\024\n\020EVENT_WITH"
-    "DRAWAL\020 *\213\005\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MES"
+    "DRAWAL\020 *\262\005\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MES"
     "SAGE_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHAN"
     "NEL_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHAN"
     "NEL_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_"
@@ -1041,8 +1041,9 @@ void protobuf_AddDesc_overlay_2eproto() {
     "EPOSIT\020\r\022*\n&MESSAGE_CHANNEL_CHANGE_CHILD"
     "_VALIDATOR\020\016\0220\n,MESSAGE_CHANNEL_QUERY_CH"
     "ANGE_CHILD_VALIDATOR\020\017\022&\n\"MESSAGE_CHANNE"
-    "L_QUWERY_SUBMIT_HEAD\020\020B\"\n io.bumo.sdk.co"
-    "re.extend.protobufb\006proto3", 5266);
+    "L_QUWERY_SUBMIT_HEAD\020\020\022%\n!MESSAGE_CHANNE"
+    "L_QUWERY_WITHDRAWAL\020\021B\"\n io.bumo.sdk.cor"
+    "e.extend.protobufb\006proto3", 5305);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -1203,6 +1204,7 @@ bool MESSAGE_CHANNEL_TYPE_IsValid(int value) {
     case 14:
     case 15:
     case 16:
+    case 17:
       return true;
     default:
       return false;
