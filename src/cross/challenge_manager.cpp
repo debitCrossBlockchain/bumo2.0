@@ -3,8 +3,25 @@
 #define CHALLENGE_WITHDRAWAL_SEQ "challenge_withdrawal_seq"
 namespace bumo {
 
+	ChallengeSubmitHead::ChallengeSubmitHead() :
+		chain_head_seq_(0){}
+
+	ChallengeSubmitHead::~ChallengeSubmitHead(){}
+	void ChallengeSubmitHead::InitSeq(){
+		auto db = Storage::Instance().keyvalue_db();
+		std::string str;
+		Json::Value args;
+		if (!db->Get(CHALLENGE_HEAD_SEQ, str)) {
+			args["chain_seq"] = chain_head_seq_;
+			db->Put(CHALLENGE_HEAD_SEQ, args.toFastString());
+		}
+		else{
+			args.fromString(str.c_str());
+			chain_head_seq_ = args["chain_seq"].asInt64();
+		}
+	}
+
 	ChallengeManager::ChallengeManager() :
-		chain_head_seq_(0),
 		chain_withdrawal_seq_(0),
 		enabled_(false),
 		thread_ptr_(NULL){
@@ -20,17 +37,7 @@ namespace bumo {
 	void ChallengeManager::InitSeq(){
 		auto db = Storage::Instance().keyvalue_db();
 
-		std::string str;
-		Json::Value args;
-		if (!db->Get(CHALLENGE_HEAD_SEQ, str)) {
-			args["chain_seq"] = chain_head_seq_;
-			db->Put(CHALLENGE_HEAD_SEQ, args.toFastString());
-		}
-		else{
-			args.fromString(str.c_str());
-			chain_head_seq_ = args["chain_seq"].asInt64();
-		}
-
+		
 		std::string str_withdrawal;
 		Json::Value args_withdrawal;
 		if (!db->Get(CHALLENGE_WITHDRAWAL_SEQ, str_withdrawal)) {

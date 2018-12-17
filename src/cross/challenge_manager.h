@@ -6,6 +6,21 @@
 #include "ledger/ledger_frm.h"
 #include <cross/cross_utils.h>
 namespace bumo {
+
+	typedef std::map<int64_t, protocol::LedgerHeader> LedgerMap;
+	class ChallengeSubmitHead
+	{
+	public:
+		ChallengeSubmitHead();
+		~ChallengeSubmitHead();
+		void InitSeq();
+	private:
+		LedgerMap ledger_map;
+		int64_t chain_head_seq_;
+		int64_t recv_max_seq;
+		int64_t latest_seq;
+	};
+
 	class ChallengeManager :public utils::Runnable{
 	public:
 		ChallengeManager();
@@ -21,7 +36,6 @@ namespace bumo {
 	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
-		int64_t chain_head_seq_;
 		int64_t chain_withdrawal_seq_;
 	};
 }
