@@ -10,6 +10,13 @@ namespace bumo {
 	public:
 		ChallengeManager();
 		virtual ~ChallengeManager();
+		bool Initialize();
+		bool Exit();
+	private:
+		void Run(utils::Thread *thread);
+	private:
+		bool enabled_;
+		utils::Thread *thread_ptr_;
 	};
 }
 
