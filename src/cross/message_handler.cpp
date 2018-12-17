@@ -213,6 +213,9 @@ namespace bumo {
 		bumo::WebSocketServer::GetInstance()->BroadcastMsg(protocol::EVENT_WITHDRAWAL, withdrawal.SerializeAsString());
 	}
 
+	void MessageHandlerMainChain::QuerySubmitHead(const int64_t &chain_id, const int64_t &seq, const std::string &hash, protocol::LedgerHeader &ledger_header){
+
+	}
 
 	void MessageHandlerMainChain::OnHandleQuerySubmitHead(const protocol::MessageChannel &message_channel){
 		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
@@ -224,7 +227,14 @@ namespace bumo {
 			LOG_ERROR("Parse MessageChannelQuerySubmitHead error, err_code is (" FMT_I64 ")", error_code);
 			return;
 		}
-
+		protocol::MessageChannel msg_channel;
+		protocol::LedgerHeader ledger_header;
+		Json::Value query_head = bumo::Proto2Json(query_submit_head);
+		QuerySubmitHead(query_submit_head.chain_id(), query_submit_head.seq(), query_head["hash"].asString(), ledger_header);
+		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD);
+		msg_channel.set_target_chain_id(query_submit_head.chain_id());
+		msg_channel.set_msg_data(ledger_header.SerializeAsString());
+		bumo::MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 	}
 
 
