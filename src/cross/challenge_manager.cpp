@@ -60,4 +60,8 @@ namespace bumo {
 
 	}
 
+	void ChallengeManager::HandleChallengeWithdrawal(const protocol::MessageChannel &message_channel){
+
+	}
+
 }

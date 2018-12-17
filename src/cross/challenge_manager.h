@@ -14,8 +14,9 @@ namespace bumo {
 		bool Exit();
 		void ChallengeNotify(const protocol::MessageChannel &message_channel);
 	private:
-		void HandleChallengeSubmitHead(const protocol::MessageChannel &message_channel);
 		void Run(utils::Thread *thread);
+		void HandleChallengeSubmitHead(const protocol::MessageChannel &message_channel);
+		void HandleChallengeWithdrawal(const protocol::MessageChannel &message_channel);
 	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
