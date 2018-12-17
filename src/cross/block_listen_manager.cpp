@@ -417,7 +417,7 @@ namespace bumo {
 
 	void BlockListenChildChain::HandleChildHeader(LedgerFrm::pointer closing_ledger){
 		//send to messagechanel
-		protocol::LedgerHeader& ledger_header = closing_ledger->GetProtoHeader();
+		const protocol::LedgerHeader& ledger_header = closing_ledger->GetProtoHeader();
 		protocol::MessageChannel msg_channel;
 		//sendto main chain id=0
 		msg_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
