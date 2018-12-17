@@ -275,6 +275,50 @@ namespace bumo {
 		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
 			return;
 		}
+
+		protocol::MessageChannelQueryWithdrawal query_withdrawal;
+		if (!query_withdrawal.ParseFromString(message_channel.msg_data())){
+			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("Parse MessageChannelQueryWithdrawal error, err_code is (" FMT_I64 ")", error_code);
+			return;
+		}
+
+		Json::Value params;
+		params["chain_id"] = query_withdrawal.chain_id();
+		if (query_withdrawal.seq() == -1){
+			params["seq"] = "";
+		}
+		else{
+			params["seq"] = query_withdrawal.seq();
+		}
+
+		Json::Value input_value;
+		input_value["method"] = "queryChildWithdrawal";
+		input_value["params"] = params;
+
+		Json::Value result_list;
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result_list);
+		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		Json::Value object;
+		object.fromString(result.c_str());
+		if (error_code != protocol::ERRCODE_SUCCESS){
+			LOG_ERROR("Failed to query child block .%d", error_code);
+			return;
+		}
+
+		std::string error_msg;
+		protocol::MessageChannelWithdrawalChallenge  withdrawal_challenge;
+		if (!bumo::Json2Proto(object["block_header"], withdrawal_challenge, error_msg)) {
+			LOG_ERROR("block_header Failed to Json2Proto error_msg=%s", error_msg.c_str());
+			return;
+		}
+
+		protocol::MessageChannel msg_channel;
+
+		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL);
+		msg_channel.set_target_chain_id(query_withdrawal.chain_id());
+		msg_channel.set_msg_data(withdrawal_challenge.SerializeAsString());
+		bumo::MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 	}
 
 
