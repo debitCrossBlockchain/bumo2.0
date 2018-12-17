@@ -77,6 +77,7 @@ add_subdirectory(overlay)
 add_subdirectory(consensus)
 add_subdirectory(monitor)
 add_subdirectory(main)
+add_subdirectory(cross)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")  
 	add_subdirectory(daemon)
