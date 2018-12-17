@@ -56,6 +56,9 @@ namespace bumo {
 		}
 	}
 
+	void ChallengeSubmitHead::RequestLost(){
+
+	}
 
 	ChallengeWithdrawal::ChallengeWithdrawal() :
 		chain_withdrawal_seq_(0),
