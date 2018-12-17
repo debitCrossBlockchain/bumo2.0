@@ -217,13 +217,34 @@ namespace bumo {
 		protocol::LedgerHeader ledger_header;
 		submit_header.set_state(seq);
 		auto header = submit_header.mutable_header();
+		Json::Value params;
+		params["chain_id"] = chain_id;
 		if (seq == -1){
-
+			params["header_hash"] = "";
 		}
 		else{
-
+			params["header_hash"] = hash;
 		}
 
+		Json::Value input_value;
+		input_value["method"] = "queryChildBlockHeader";
+		input_value["params"] = params;
+
+		Json::Value result_list;
+		int32_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), result_list);
+		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		Json::Value object;
+		object.fromString(result.c_str());
+		if (error_code != protocol::ERRCODE_SUCCESS){
+			LOG_ERROR("Failed to query child block .%d", error_code);
+			return;
+		}
+		
+		std::string error_msg;
+		if (!bumo::Json2Proto(object["block_header"], *header, error_msg)) {
+			LOG_ERROR("block_header Failed to Json2Proto error_msg=%s", error_msg.c_str());
+			return;
+		}
 	}
 
 	void MessageHandlerMainChain::OnHandleQuerySubmitHead(const protocol::MessageChannel &message_channel){
