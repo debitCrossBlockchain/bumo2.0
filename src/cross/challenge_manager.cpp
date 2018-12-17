@@ -1,4 +1,5 @@
 #include<cross/challenge_manager.h>
+# define CHALLENGE_SEQ "challenge_seq"
 namespace bumo {
 
 	ChallengeManager::ChallengeManager() :
@@ -19,6 +20,18 @@ namespace bumo {
 		thread_ptr_ = new utils::Thread(this);
 		if (!thread_ptr_->Start("ChallengeManager")) {
 			return false;
+		}
+
+		auto db = Storage::Instance().keyvalue_db();
+		std::string str;
+		Json::Value args;
+		if (!db->Get(CHALLENGE_SEQ, str)) {
+			args["chain_seq"] = chain_seq_;
+			db->Put(CHALLENGE_SEQ, args.toFastString());
+		}
+		else{
+			args.fromString(str.c_str());
+			chain_seq_ = args["chain_seq"].asInt64();
 		}
 		return true;
 	}
