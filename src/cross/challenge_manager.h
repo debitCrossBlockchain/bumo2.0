@@ -21,6 +21,19 @@ namespace bumo {
 		int64_t latest_seq;
 	};
 
+	class ChallengeWithdrawal
+	{
+	public:
+		ChallengeWithdrawal();
+		~ChallengeWithdrawal();
+		void InitSeq();
+	private:
+		LedgerMap ledger_map;
+		int64_t chain_withdrawal_seq_;
+		int64_t recv_max_seq;
+		int64_t latest_seq;
+	};
+
 	class ChallengeManager :public utils::Runnable{
 	public:
 		ChallengeManager();
