@@ -2,6 +2,7 @@
 namespace bumo {
 
 	ChallengeManager::ChallengeManager() :
+		chain_seq_(0),
 		enabled_(false),
 		thread_ptr_(NULL){
 	}

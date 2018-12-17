@@ -17,6 +17,7 @@ namespace bumo {
 	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
+		int64_t chain_seq_;
 	};
 }
 
