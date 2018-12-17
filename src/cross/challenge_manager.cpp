@@ -43,6 +43,8 @@ namespace bumo {
 	ChallengeManager::ChallengeManager() :
 		enabled_(false),
 		thread_ptr_(NULL){
+		challenge_submit_head_ = std::make_shared<ChallengeSubmitHead>();
+		challenge_withdrawal_ = std::make_shared<ChallengeWithdrawal>();
 	}
 
 	ChallengeManager::~ChallengeManager(){
@@ -53,6 +55,8 @@ namespace bumo {
 	}
 
 	void ChallengeManager::InitSeq(){
+		challenge_submit_head_->InitSeq();
+		challenge_withdrawal_->InitSeq();
 	}
 
 	bool ChallengeManager::Initialize() {

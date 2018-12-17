@@ -49,6 +49,8 @@ namespace bumo {
 	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
+		std::shared_ptr<ChallengeSubmitHead> challenge_submit_head_;
+		std::shared_ptr<ChallengeWithdrawal> challenge_withdrawal_;
 	};
 }
 
