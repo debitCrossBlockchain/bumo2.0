@@ -278,7 +278,6 @@ message MessageChannelWithdrawal{
 	MerkelProof merkel_proof = 7;
 }
 
-
 message MessageChannelWithdrawalChallenge{
 	int64 chain_id = 1;
 	int64 amount = 2;
@@ -301,6 +300,12 @@ message MessageChannelChangeChildValidator{
 message MessageChannelQueryChangeChildValidator{
 	int64 chain_id = 1;
 	int64 change_child_index = 2;
+}
+
+message MessageChannelQuerySubmitHead{
+    int64 chain_id = 1;
+	int64 seq = 2;
+	bytes hash = 3;
 }
 
 
