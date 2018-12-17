@@ -5,8 +5,8 @@ namespace bumo {
 
 	ChallengeSubmitHead::ChallengeSubmitHead() :
 		chain_head_seq_(0),
-		recv_max_seq(0),
-		latest_seq(0){}
+		recv_max_seq_(0),
+		latest_seq_(0){}
 
 	ChallengeSubmitHead::~ChallengeSubmitHead(){}
 	void ChallengeSubmitHead::InitSeq(){
@@ -20,6 +20,42 @@ namespace bumo {
 		else{
 			args.fromString(str.c_str());
 			chain_head_seq_ = args["chain_seq"].asInt64();
+		}
+	}
+
+	void ChallengeSubmitHead::UpdateStatus(){
+		utils::MutexGuard guard(common_lock_);
+		if (ledger_map_.empty()){
+				return;
+			}
+
+			
+			//update latest child seq
+			//UpdateLatestSeq(i,latest_seq);
+
+			//sort seq
+			SortMap();
+
+			//request
+			RequestLost();
+		
+	}
+
+	void ChallengeSubmitHead::SortMap(){
+		//If cmc = chain max, ignore it
+		if (latest_seq_ == recv_max_seq_){
+			return;
+		}
+
+		//Deletes invalid blocks
+		LedgerMap &ledger_map = child_chain.ledger_map;
+		for (auto itr = ledger_map.begin(); itr != ledger_map.end();){
+			if (itr->second.seq() > child_chain.cmc_latest_seq){
+				itr++;
+				continue;
+			}
+
+			ledger_map.erase(itr++);
 		}
 	}
 

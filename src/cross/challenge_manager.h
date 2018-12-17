@@ -14,11 +14,15 @@ namespace bumo {
 		ChallengeSubmitHead();
 		~ChallengeSubmitHead();
 		void InitSeq();
+		void UpdateStatus();
+		void SortMap();
+		void RequestLost();
 	private:
+		utils::Mutex common_lock_;
 		LedgerMap ledger_map_;
 		int64_t chain_head_seq_;
-		int64_t recv_max_seq;
-		int64_t latest_seq;
+		int64_t recv_max_seq_;
+		int64_t latest_seq_;
 	};
 
 	typedef std::map<int64_t, protocol::MessageChannelWithdrawal> WithdrawalMap;
