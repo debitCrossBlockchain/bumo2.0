@@ -615,6 +615,9 @@ function query(inputStr){
     else if(input.method === 'queryChildDeposit'){
         result = queryChildDeposit(input.params);
     }
+    else if(input.method === 'queryChildWithdrawal'){
+        result = queryChildWithdrawal(input.params);
+    }
     else if(input.method === 'queryChangeValidatorHistory'){
         result = queryChangeValidatorHistory(input.params);
     }
