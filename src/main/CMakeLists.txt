@@ -14,7 +14,7 @@ set(APP_BUMO_SRC
     ../api/console.cpp
 )
 
-set(INNER_LIBS bumo_glue bumo_ledger bumo_consensus bumo_overlay bumo_common bumo_utils bumo_proto bumo_http bumo_ed25519 bumo_monitor)
+set(INNER_LIBS bumo_glue bumo_ledger bumo_consensus bumo_overlay bumo_common bumo_utils bumo_proto bumo_http bumo_ed25519 bumo_monitor bumo_cross)
 set(V8_LIBS v8_base v8_libbase v8_external_snapshot v8_libplatform v8_libsampler icui18n icuuc inspector)
 
 #Generate executable files
