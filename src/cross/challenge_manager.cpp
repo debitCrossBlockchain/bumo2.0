@@ -207,18 +207,18 @@ namespace bumo {
 	}
 
 	void ChallengeWithdrawal::SortMap(){
-		//If cmc = chain max, ignore it
+		//If max, ignore it
 		if (latest_seq_ == recv_max_seq_){
 			return;
 		}
-		for (auto itr = ledger_map_.begin(); itr != ledger_map_.end();){
+		for (auto itr = withdrawal_map_.begin(); itr != withdrawal_map_.end();){
 			if (itr->second.seq() > latest_seq_){
 				itr++;
 				continue;
 			}
 
-			handlechallengeSubmitHead(itr->second);
-			ledger_map_.erase(itr++);
+			handlechallengeWithdrawal(itr->second);
+			withdrawal_map_.erase(itr++);
 		}
 	}
 
