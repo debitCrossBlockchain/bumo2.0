@@ -1,5 +1,8 @@
 #include<cross/challenge_manager.h>
 #include<cross/message_channel_manager.h>
+#include <proto/cpp/overlay.pb.h>
+using namespace std;
+#include<map>
 #define CHALLENGE_HEAD_SEQ "challenge_head_seq"
 #define CHALLENGE_WITHDRAWAL_SEQ "challenge_withdrawal_seq"
 #define MAX_REQUEST_SUBMIT_NUMS 100
@@ -45,7 +48,7 @@ namespace bumo {
 			if (submit_head.state() == -1){
 				latest_seq_ = submit_head.header().seq();
 			}
-			ledger_map_.insert(pair<int64,protocol::LedgerHeader>(submit_head.header().seq(), submit_head.header()));
+			ledger_map_.insert(pair<int64_t,protocol::LedgerHeader>(submit_head.header().seq(), submit_head.header()));
 			iter++;
 		}
 	}
