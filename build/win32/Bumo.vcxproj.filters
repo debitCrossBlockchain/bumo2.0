@@ -159,6 +159,9 @@
     <ClCompile Include="..\..\src\cross\main_proposer_manager.cpp">
       <Filter>cross</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\cross\cross_manager.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -280,6 +283,9 @@
       <Filter>cross</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\cross\main_proposer_manager.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\cross_manager.h">
       <Filter>cross</Filter>
     </ClInclude>
   </ItemGroup>
