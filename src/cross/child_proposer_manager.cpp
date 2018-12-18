@@ -424,7 +424,13 @@ namespace bumo {
 		Json::Value params;
 		input_value["method"] = "queryChangeValidatorHistory";
 		input_value["params"]["chainId"] = chain_id;
-		input_value["params"]["index"] = index;
+		if (index != 0){
+			input_value["params"]["index"] = index;
+		}
+		else{
+			input_value["params"]["index"] = "";
+		}
+		LOG_ERROR("QueryContract_input :%s", input_value.toFastString().c_str());
 		if (protocol::ERRCODE_SUCCESS != bumo::CrossUtils::QueryContract(General::CONTRACT_CMC_ADDRESS, input_value.toFastString(), query_rets)){
 			error_desc = utils::String::Format("Query contract error!%s", query_rets.toFastString().c_str());
 			error_code = protocol::ERRCODE_INVALID_PARAMETER;
