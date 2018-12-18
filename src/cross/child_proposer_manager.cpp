@@ -131,7 +131,11 @@ namespace bumo {
 		//Request up to ten blocks
 		int64_t max_nums = MIN(MAX_REQUEST_BLOCK_NUMS, (recv_max_index_ - contract_latest_myself_index_));
 		if (max_nums <= 0){
-			max_nums = 1;
+			//max_nums = 1;
+			protocol::MessageChannel message_channel;
+			DoBuildRequestLostMessage(0, message_channel);
+			bumo::MessageChannel::Instance().MessageChannelProducer(message_channel);
+			return;
 		}
 		for (int64_t i = 1; i <= max_nums; i++){
 			int64_t index = contract_latest_myself_index_ + i;
@@ -407,7 +411,7 @@ namespace bumo {
 		}
 		chain_id = query.chain_id();
 		index = query.change_child_index();
-		if (chain_id <= 0 || index <= 0){
+		if (chain_id <= 0 || index < 0){
 			error_desc = utils::String::Format("Parse OnHandleQueryChangeValidator error,invalid chain_id(" FMT_I64 ")", chain_id);
 			error_code = protocol::ERRCODE_INVALID_PARAMETER;
 			LOG_ERROR("%s", error_desc.c_str());
@@ -468,7 +472,7 @@ namespace bumo {
 
 		Json::Value params;
 		Json::Value input_value;
-		if (query_deposit.seq() == -1){
+		if (query_deposit.seq() == 0){
 			params["chain_id"] = query_deposit.chain_id();
 			input_value["method"] = "queryChildFreshDeposit";
 		}
