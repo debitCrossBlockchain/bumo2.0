@@ -186,21 +186,21 @@ namespace bumo {
 	}
 
 	void ChallengeWithdrawal::CopyBufferWithdrawal(){
-		std::list<protocol::MessageChannelSubmitHead> submit_head_list;
+		std::list<protocol::MessageChannelHandleWithdrawal> withdrawal_list;
 		{
-			utils::MutexGuard guard(submit_head_buffer_list_lock_);
-			submit_head_list.insert(submit_head_list.end(), submit_head_buffer_list_.begin(), submit_head_buffer_list_.end());
-			submit_head_buffer_list_.clear();
+			utils::MutexGuard guard(withdrawal_buffer_list_lock_);
+			withdrawal_list.insert(withdrawal_list.end(), withdrawal_buffer_list_.begin(), withdrawal_buffer_list_.end());
+			withdrawal_buffer_list_.clear();
 		}
 
 		utils::MutexGuard guard(common_lock_);
-		std::list<protocol::MessageChannelSubmitHead>::const_iterator iter = submit_head_list.begin();
-		while (iter != submit_head_list.end()){
-			const protocol::MessageChannelSubmitHead &submit_head = *iter;
-			if (submit_head.state() == -1){
-				latest_seq_ = submit_head.header().seq();
+		std::list<protocol::MessageChannelHandleWithdrawal>::const_iterator iter = withdrawal_list.begin();
+		while (iter != withdrawal_list.end()){
+			const protocol::MessageChannelHandleWithdrawal &withdrawal = *iter;
+			if (withdrawal.state() == -1){
+				latest_seq_ = withdrawal.withdrawal().seq();
 			}
-			ledger_map_.insert(pair<int64_t, protocol::LedgerHeader>(submit_head.header().seq(), submit_head.header()));
+			withdrawal_map_.insert(pair<int64_t, protocol::MessageChannelWithdrawalChallenge>(withdrawal.withdrawal().seq(), withdrawal.withdrawal()));
 			iter++;
 		}
 	}
