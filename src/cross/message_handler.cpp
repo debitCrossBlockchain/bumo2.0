@@ -2,6 +2,7 @@
 #include <common/private_key.h>
 #include <common/pb2json.h>
 #include<api/websocket_server.h>
+#include<cross/challenge_manager.h>
 #include "message_handler.h"
 
 
@@ -537,6 +538,10 @@ namespace bumo {
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_SUBMIT_HEAD);
 		msg_channel.set_msg_data(ledger_header.SerializeAsString());
 		MessageChannel::Instance().MessageChannelProducer(msg_channel);
+	}
+
+	void MessageHandlerChildChain::OnHandleChallenge(const protocol::MessageChannel &message_channel){
+		bumo::ChallengeManager::Instance().ChallengeNotify(message_channel);
 	}
 
 	void MessageHandlerChildChain::SendChildGenesesRequest(){

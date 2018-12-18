@@ -82,6 +82,7 @@ namespace bumo {
 		void SendChildGenesesRequest();
 		void OnHandleQueryHead(const protocol::MessageChannel &message_channel);
 		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
+		void OnHandleChallenge(const protocol::MessageChannel &message_channel);
 	private:
 		int64_t last_deposit_time_;
 		int64_t local_deposit_seq_;
