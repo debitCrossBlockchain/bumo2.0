@@ -382,7 +382,14 @@ namespace bumo {
 	}
 
 	void ChallengeManager::HandleChallengeWithdrawal(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelHandleWithdrawal withdrawal;
+		if (!withdrawal.ParseFromString(message_channel.msg_data())){
+			std::string error_desc = utils::String::Format("Parse MessageChannelHandleWithdrawal error!");
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
 
+		challenge_withdrawal_->UpdateWithdrawal(withdrawal);
 	}
 
 }
