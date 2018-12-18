@@ -48,7 +48,7 @@ namespace bumo {
 			if (submit_head.state() == -1){
 				latest_seq_ = submit_head.header().seq();
 			}
-			ledger_map_.insert(pair<int64_t,protocol::LedgerHeader>(submit_head.header().seq(), submit_head.header()));
+			ledger_map_.insert(pair<int64_t, protocol::LedgerHeader>(submit_head.header().seq(), submit_head.header()));
 			iter++;
 		}
 	}
@@ -99,9 +99,9 @@ namespace bumo {
 
 		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
 		bflag = (ledger_header.chain_id() == header.chain_id()) && (ledger_header.account_tree_hash() == header.account_tree_hash()) && (ledger_header.seq() == header.seq()) &&
-			(ledger_header.hash() == header.hash()) && (ledger_header.previous_hash()==header.previous_hash())&&(ledger_header.close_time()==header.close_time())&&
-			(ledger_header.fees_hash()==header.fees_hash())&&(ledger_header.consensus_value_hash()==header.consensus_value_hash())&&(ledger_header.version()==header.version())&&
-			(ledger_header.validators_hash()==header.validators_hash());
+			(ledger_header.hash() == header.hash()) && (ledger_header.previous_hash() == header.previous_hash()) && (ledger_header.close_time() == header.close_time()) &&
+			(ledger_header.fees_hash() == header.fees_hash()) && (ledger_header.consensus_value_hash() == header.consensus_value_hash()) && (ledger_header.version() == header.version()) &&
+			(ledger_header.validators_hash() == header.validators_hash());
 		if (!bflag){
 			//TODO send CMC head challenge
 		}
@@ -204,7 +204,7 @@ namespace bumo {
 			iter++;
 		}
 	}
-	
+
 
 	void ChallengeWithdrawal::UpdateStatus(){
 		utils::MutexGuard guard(common_lock_);
@@ -266,7 +266,7 @@ namespace bumo {
 		if (ledger_header.hash() != withdrawal.block_hash()){
 			//TODO send CMC withdrawal challenge
 		}
-	
+
 		int64_t max_seq = MAX(recv_max_seq_, withdrawal.seq());
 		recv_max_seq_ = max_seq;
 		chain_withdrawal_seq_ = max_seq;
@@ -289,7 +289,7 @@ namespace bumo {
 				LOG_ERROR("%s", error_desc.c_str());
 				return;
 			}
-		
+
 			protocol::MessageChannel message_channel;
 			protocol::MessageChannelQueryWithdrawal withdrawal;
 			withdrawal.set_seq(seq);
@@ -348,13 +348,14 @@ namespace bumo {
 	}
 
 	void ChallengeManager::ChallengeNotify(const protocol::MessageChannel &message_channel){
-		if (General::GetSelfChainId()==General::MAIN_CHAIN_ID){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			return;
 		}
 
 		if (message_channel.target_chain_id() != General::GetSelfChainId()){
 			return;
 		}
+
 		switch (message_channel.msg_type()){
 		case protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD:{
 														  HandleChallengeSubmitHead(message_channel);
@@ -370,7 +371,14 @@ namespace bumo {
 	}
 
 	void ChallengeManager::HandleChallengeSubmitHead(const protocol::MessageChannel &message_channel){
+		protocol::MessageChannelSubmitHead submit_head;
+		if (!submit_head.ParseFromString(message_channel.msg_data())){
+			std::string error_desc = utils::String::Format("Parse MessageChannelSubmitHead error!");
+			LOG_ERROR("%s", error_desc.c_str());
+			return;
+		}
 
+		challenge_submit_head_->UpdateSubmitHead(submit_head);
 	}
 
 	void ChallengeManager::HandleChallengeWithdrawal(const protocol::MessageChannel &message_channel){
