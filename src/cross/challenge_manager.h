@@ -58,7 +58,8 @@ namespace bumo {
 		std::list<protocol::MessageChannelHandleWithdrawal> withdrawal_buffer_list_;
 	};
 
-	class ChallengeManager :public utils::Runnable{
+	class ChallengeManager :public utils::Singleton<ChallengeManager>, public utils::Runnable{
+		friend class utils::Singleton<bumo::ChallengeManager>;
 	public:
 		ChallengeManager();
 		virtual ~ChallengeManager();
