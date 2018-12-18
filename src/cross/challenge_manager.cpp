@@ -350,9 +350,13 @@ namespace bumo {
 	}
 
 	void ChallengeManager::UpdateStatus(){
+		challenge_submit_head_->UpdateStatus();
+		challenge_withdrawal_->UpdateStatus();
+	}
+
+	void ChallengeManager::CopyBuffer(){
 
 	}
-	void CopyBuffer();
 
 	void ChallengeManager::ChallengeNotify(const protocol::MessageChannel &message_channel){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
