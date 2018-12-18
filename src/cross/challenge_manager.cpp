@@ -232,10 +232,14 @@ namespace bumo {
 		if (!frm.LoadFromDb(withdrawal.block_seq())) {
 			std::string error_desc = utils::String::Format("Parse MessageChannelQueryWithdrawal error,no exist ledger_seq=(" FMT_I64 ")", withdrawal.block_seq());
 			LOG_ERROR("%s", error_desc.c_str());
-			//TODO send CMC head challenge
+			//TODO send CMC withdrawal challenge
 		}
 
 		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
+
+		if (ledger_header.hash() != withdrawal.block_hash()){
+			//TODO send CMC withdrawal challenge
+		}
 	
 		int64_t max_seq = MAX(recv_max_seq_, withdrawal.seq());
 		recv_max_seq_ = max_seq;
