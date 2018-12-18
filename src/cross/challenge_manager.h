@@ -21,6 +21,7 @@ namespace bumo {
 		void UpdateRequestLatestSeq();
 		void SortMap();
 		void RequestLost();
+		void handlechallengeSubmitHead(const protocol::LedgerHeader &header);
 	private:
 		utils::Mutex common_lock_;
 		LedgerMap ledger_map_;

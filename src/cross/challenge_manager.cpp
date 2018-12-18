@@ -79,8 +79,13 @@ namespace bumo {
 				continue;
 			}
 
+			handlechallengeSubmitHead(itr->second);
 			ledger_map_.erase(itr++);
 		}
+	}
+
+	void ChallengeSubmitHead::handlechallengeSubmitHead(const protocol::LedgerHeader &header){
+
 	}
 
 	void ChallengeSubmitHead::UpdateRequestLatestSeq(){
