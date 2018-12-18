@@ -628,6 +628,9 @@ function main(inputStr){
     else if(input.method === 'submitChildBlockHeader'){
         submitChildBlockHeader(input.params);
     }
+    else if(input.method === 'ChallengeWithdrawal'){
+        ChallengeWithdrawal(input.params);
+    }
     else if(input.method === 'depositCoin'){
         depositCoin(input.params);
     }
