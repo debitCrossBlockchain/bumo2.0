@@ -54,6 +54,8 @@ namespace bumo {
 		int64_t chain_withdrawal_seq_;
 		int64_t recv_max_seq_;
 		int64_t latest_seq_;
+		utils::Mutex withdrawal_buffer_list_lock_;
+		std::list<protocol::MessageChannelSubmitHead> withdrawal_buffer_list_;
 	};
 
 	class ChallengeManager :public utils::Runnable{
