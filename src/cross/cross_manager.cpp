@@ -7,7 +7,6 @@
 namespace bumo {
 
 	CrossManager::CrossManager(){
-		bumo::MessageChannel::InitInstance();
 		bumo::BlockListenManager::InitInstance();
 		bumo::MainProposerManager::InitInstance();
 		bumo::ChildProposerManager::InitInstance();
@@ -15,7 +14,6 @@ namespace bumo {
 	}
 
 	CrossManager::~CrossManager(){
-		bumo::MessageChannel::ExitInstance();
 		bumo::BlockListenManager::ExitInstance();
 		bumo::MainProposerManager::ExitInstance();
 		bumo::ChildProposerManager::ExitInstance();
@@ -23,12 +21,6 @@ namespace bumo {
 	}
 
 	bool  CrossManager::Initialize(){
-		bumo::MessageChannel &message_channel = bumo::MessageChannel::Instance();
-		if (!message_channel.Initialize(bumo::Configure::Instance().message_channel_configure_)){
-			LOG_ERROR_ERRNO("Failed to initialize MessageChannel");
-			return false;
-		}
-
 		bumo::BlockListenManager &block_listen_handler = bumo::BlockListenManager::Instance();
 		if (!block_listen_handler.Initialize()){
 			LOG_ERROR_ERRNO("Failed to initialize child proposer");
@@ -56,12 +48,6 @@ namespace bumo {
 	}
 
 	bool CrossManager::Exit(){
-		bumo::MessageChannel &message_channel = bumo::MessageChannel::Instance();
-		if (!message_channel.Exit()){
-			LOG_ERROR_ERRNO("Failed to exit MessageChannel");
-			return false;
-		}
-
 		bumo::BlockListenManager &block_listen_handler = bumo::BlockListenManager::Instance();
 		if (!block_listen_handler.Exit()){
 			LOG_ERROR_ERRNO("Failed to exit child proposer");
