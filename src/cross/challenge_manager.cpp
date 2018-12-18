@@ -66,10 +66,7 @@ namespace bumo {
 
 		//request
 		RequestLost();
-
 	}
-
-
 
 	void ChallengeSubmitHead::SortMap(){
 		//If cmc = chain max, ignore it

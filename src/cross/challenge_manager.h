@@ -15,13 +15,12 @@ namespace bumo {
 		~ChallengeSubmitHead();
 		void InitSeq();
 		void UpdateStatus();
+		void CopyBufferSubmitHead();
+		void UpdateSubmitHead(const protocol::MessageChannelSubmitHead &submit_head);
+	private:
 		void UpdateRequestLatestSeq();
 		void SortMap();
 		void RequestLost();
-		void UpdateSubmitHead(const protocol::MessageChannelSubmitHead &submit_head);
-	private:
-		void CopyBufferSubmitHead();
-
 	private:
 		utils::Mutex common_lock_;
 		LedgerMap ledger_map_;
