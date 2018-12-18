@@ -15,6 +15,7 @@ namespace bumo {
 		~ChallengeSubmitHead();
 		void InitSeq();
 		void UpdateStatus();
+		void UpdateRequestLatestSeq();
 		void SortMap();
 		void RequestLost();
 	private:

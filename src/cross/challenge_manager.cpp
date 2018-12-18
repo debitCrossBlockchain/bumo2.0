@@ -28,19 +28,17 @@ namespace bumo {
 	void ChallengeSubmitHead::UpdateStatus(){
 		utils::MutexGuard guard(common_lock_);
 		if (ledger_map_.empty()){
-				return;
-			}
+			return;
+		}
 
-			
-			//update latest child seq
-			//UpdateLatestSeq(i,latest_seq);
+		UpdateRequestLatestSeq();
 
-			//sort seq
-			SortMap();
+		//sort seq
+		SortMap();
 
-			//request
-			RequestLost();
-		
+		//request
+		RequestLost();
+
 	}
 
 	void ChallengeSubmitHead::SortMap(){
@@ -58,6 +56,17 @@ namespace bumo {
 		}
 	}
 
+	void ChallengeSubmitHead::UpdateRequestLatestSeq(){
+		protocol::MessageChannel message_channel;
+		protocol::MessageChannelQuerySubmitHead query_head;
+		query_head.set_seq(-1);
+		query_head.set_hash("");
+		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD);
+		message_channel.set_msg_data(query_head.SerializeAsString());
+		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
+	}
+
 	void ChallengeSubmitHead::RequestLost(){
 		//Request up to ten blocks
 		int64_t max_nums = MIN(MAX_REQUEST_SUBMIT_NUMS, (recv_max_seq_ - latest_seq_));
@@ -67,10 +76,10 @@ namespace bumo {
 			if (itr != ledger_map_.end()){
 				continue;
 			}
-			
+
 			std::string  error_desc;
 			if (seq <= 0){
-				std::string  error_desc  = utils::String::Format("Parse MessageChannelQueryHead error,invalid ledger_seq(" FMT_I64 ")", seq);
+				std::string  error_desc = utils::String::Format("Parse MessageChannelQueryHead error,invalid ledger_seq(" FMT_I64 ")", seq);
 				LOG_ERROR("%s", error_desc.c_str());
 				return;
 			}
