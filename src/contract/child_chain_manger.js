@@ -184,6 +184,54 @@ function checkWithdrawal(params) {
     tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_detail));
 }
 
+function challengeSubmitHead(params) {
+}
+
+function challengeWithdrawal(params) {
+    log('challengeWithdrawal');
+    let input = params;
+    let retinfo = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
+    if (retinfo === false) {
+        log('retinfo object is null');
+        return;
+    }
+    
+    let current_complete_seq = int64Add(retinfo.complete_seq,1);
+    let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ current_complete_seq));
+    if(withdrawal===false){
+        log('withdrawal object is null');
+        return;
+    }
+    if (int64Compare(withdrawal.withdrawal_block_number,blockNumber) ===1) {
+        return;
+    }
+
+    if((withdrawal.state=EXECUTE_STATE_FINISH)||(withdrawal.state!=EXECUTE_STATE_INITIAL)){
+        return;
+    }
+
+    let  withdrawal_current = {};
+    let  withdrawal_detail = {};
+   
+    withdrawal_current.totalamount = retinfo.totalamount;
+    withdrawal_current.seq = retinfo.seq;
+    withdrawal_current.complete_seq = current_complete_seq;
+
+    withdrawal_detail.chain_id = withdrawal.chain_id;
+    withdrawal_detail.amount = withdrawal.amount;
+    withdrawal_detail.seq = withdrawal.seq;
+    withdrawal_detail.block_hash = withdrawal.block_hash;
+    withdrawal_detail.main_source_address = withdrawal.main_source_address;
+    withdrawal_detail.source_address = withdrawal.source_address;
+    withdrawal_detail.address = withdrawal.address;
+    withdrawal_detail.merkel_proof = withdrawal.merkel_proof;
+    withdrawal_detail.state = EXECUTE_STATE_CHALLENGE;
+    withdrawal_detail.withdrawal_block_number = withdrawal.withdrawal_block_number;
+    
+    storageStore(CHAIN_WITHDRAWAL + input.chain_id, JSON.stringify(withdrawal_current));
+    storageStore(CHAIN_WITHDRAWAL + input.chain_id + '_' + withdrawal_detail.seq, JSON.stringify(withdrawal_detail));
+}
+
 
 function submitChildBlockHeader(params){
     log('submitChildBlockHeader');
@@ -582,6 +630,12 @@ function main(inputStr){
     }
     else if(input.method === 'submitChildBlockHeader'){
         submitChildBlockHeader(input.params);
+    }
+    else if(input.method === 'challengeSubmitHead'){
+        challengeSubmitHead(input.params);
+    }
+    else if(input.method === 'challengeWithdrawal'){
+        challengeWithdrawal(input.params);
     }
     else if(input.method === 'depositCoin'){
         depositCoin(input.params);
