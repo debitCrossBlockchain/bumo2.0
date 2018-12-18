@@ -15,7 +15,11 @@ namespace bumo {
 	}
 
 	CrossManager::~CrossManager(){
-
+		bumo::MessageChannel::ExitInstance();
+		bumo::BlockListenManager::ExitInstance();
+		bumo::MainProposerManager::ExitInstance();
+		bumo::ChildProposerManager::ExitInstance();
+		bumo::ChallengeManager::ExitInstance();
 	}
 
 	bool  CrossManager::Initialize(){
