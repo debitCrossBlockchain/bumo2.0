@@ -35,7 +35,7 @@ namespace bumo {
 		int64_t last_buffer_time_;
 	};
 
-	typedef std::map<int64_t, protocol::MessageChannelWithdrawal> WithdrawalMap;
+	typedef std::map<int64_t, protocol::MessageChannelWithdrawalChallenge> WithdrawalMap;
 	class ChallengeWithdrawal
 	{
 	public:
