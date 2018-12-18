@@ -348,6 +348,13 @@ namespace bumo {
 	}
 
 	void ChallengeManager::ChallengeNotify(const protocol::MessageChannel &message_channel){
+		if (General::GetSelfChainId()==General::MAIN_CHAIN_ID){
+			return;
+		}
+
+		if (message_channel.target_chain_id() != General::GetSelfChainId()){
+			return;
+		}
 		switch (message_channel.msg_type()){
 		case protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD:{
 														  HandleChallengeSubmitHead(message_channel);
