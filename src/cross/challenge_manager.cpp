@@ -181,7 +181,8 @@ namespace bumo {
 	}
 
 	void ChallengeWithdrawal::UpdateWithdrawal(const protocol::MessageChannelHandleWithdrawal &withdrawal){
-
+		utils::MutexGuard guard(withdrawal_buffer_list_lock_);
+		withdrawal_buffer_list_.push_back(withdrawal);
 	}
 
 	void ChallengeWithdrawal::CopyBufferWithdrawal(){
