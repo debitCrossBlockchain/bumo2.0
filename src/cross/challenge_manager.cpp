@@ -166,7 +166,7 @@ namespace bumo {
 		latest_seq_(0){}
 
 	ChallengeWithdrawal::~ChallengeWithdrawal(){}
-	void ChallengeWithdrawal::InitSeq(){
+	void ChallengeWithdrawal::UpdateSeq(){
 		auto db = Storage::Instance().keyvalue_db();
 		std::string str;
 		Json::Value args;
@@ -229,17 +229,17 @@ namespace bumo {
 
 		LedgerFrm frm;
 		bool bflag = true;
-		if (!frm.LoadFromDb(withdrawal.seq())) {
-			std::string error_desc = utils::String::Format("Parse MessageChannelQueryHead error,no exist ledger_seq=(" FMT_I64 ")", withdrawal.seq());
+		if (!frm.LoadFromDb(withdrawal.block_seq())) {
+			std::string error_desc = utils::String::Format("Parse MessageChannelQueryWithdrawal error,no exist ledger_seq=(" FMT_I64 ")", withdrawal.block_seq());
 			LOG_ERROR("%s", error_desc.c_str());
 			//TODO send CMC head challenge
 		}
 
 		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
 	
-		int64_t max_seq = MAX(recv_max_seq_, header.seq());
+		int64_t max_seq = MAX(recv_max_seq_, withdrawal.seq());
 		recv_max_seq_ = max_seq;
-		chain_head_seq_ = max_seq;
+		chain_withdrawal_seq_ = max_seq;
 		UpdateSeq();
 	}
 
@@ -287,7 +287,7 @@ namespace bumo {
 
 	void ChallengeManager::InitSeq(){
 		challenge_submit_head_->UpdateSeq();
-		challenge_withdrawal_->InitSeq();
+		challenge_withdrawal_->UpdateSeq();
 	}
 
 	bool ChallengeManager::Initialize() {
