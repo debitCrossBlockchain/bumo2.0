@@ -207,7 +207,7 @@ namespace bumo {
 	}
 
 	void ChallengeWithdrawal::RequestLost(){
-		//Request up to ten blocks
+		//Request up to ten
 		int64_t max_nums = MIN(MAX_REQUEST_SUBMIT_NUMS, (recv_max_seq_ - latest_seq_));
 		for (int64_t i = 1; i <= max_nums; i++){
 			int64_t seq = latest_seq_ + i;
@@ -222,20 +222,16 @@ namespace bumo {
 				LOG_ERROR("%s", error_desc.c_str());
 				return;
 			}
-
-			
-			const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
-			//Push message to child chain.
+		
 			protocol::MessageChannel message_channel;
-			protocol::MessageChannelQuerySubmitHead query_head;
-			query_head.set_seq(seq);
-			query_head.set_hash(ledger_header.hash());
+			protocol::MessageChannelQueryWithdrawal withdrawal;
+			withdrawal.set_seq(seq);
+			withdrawal.set_chain_id(General::GetSelfChainId());
 			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD);
-			message_channel.set_msg_data(query_head.SerializeAsString());
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_WITHDRAWAL);
+			message_channel.set_msg_data(withdrawal.SerializeAsString());
 			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 		}
-
 	}
 
 	ChallengeManager::ChallengeManager() :
