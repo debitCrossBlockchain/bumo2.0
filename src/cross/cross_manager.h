@@ -15,11 +15,15 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef CROSS_MANAGER_H_
 #define CROSS_MANAGER_H_
+#include <utils/singleton.h>
 namespace bumo {
-	class CrossManager{
+	class CrossManager : public utils::Singleton<CrossManager> {
+		friend class utils::Singleton<bumo::CrossManager>;
 	public:
 		CrossManager();
 		~CrossManager();
+		bool Initialize();
+		bool Exit();
 	};
 }
 
