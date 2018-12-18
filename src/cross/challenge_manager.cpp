@@ -85,6 +85,10 @@ namespace bumo {
 	}
 
 	void ChallengeSubmitHead::handlechallengeSubmitHead(const protocol::LedgerHeader &header){
+		if (header.seq() <= chain_head_seq_){
+			return;
+		}
+
 		LedgerFrm frm;
 		bool bflag = true;
 		if (!frm.LoadFromDb(header.seq())) {
@@ -101,7 +105,10 @@ namespace bumo {
 		if (!bflag){
 			//TODO send CMC head challenge
 		}
-		chain_head_seq_ = header.seq();
+
+		int64_t max_seq = MAX(recv_max_seq_, header.seq());
+		recv_max_seq_ = max_seq;
+		chain_head_seq_ = max_seq;
 		UpdateSeq();
 	}
 
