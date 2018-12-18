@@ -184,7 +184,9 @@ namespace bumo {
 
 	}
 
-	void CopyBufferWithdrawal();
+	void ChallengeWithdrawal::CopyBufferWithdrawal(){
+
+	}
 	
 
 	void ChallengeWithdrawal::UpdateStatus(){
