@@ -19,7 +19,7 @@ namespace bumo {
 		void SortMap();
 		void RequestLost();
 	private:
-		void CopyBufferBlock();
+		void CopyBufferSubmitHead();
 
 	private:
 		utils::Mutex common_lock_;

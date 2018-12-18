@@ -25,7 +25,7 @@ namespace bumo {
 		}
 	}
 
-	void ChallengeSubmitHead::CopyBufferBlock(){
+	void ChallengeSubmitHead::CopyBufferSubmitHead(){
 
 	}
 
