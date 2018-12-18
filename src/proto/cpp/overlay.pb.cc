@@ -125,6 +125,9 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* MessageChannelSubmitHead_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   MessageChannelSubmitHead_reflection_ = NULL;
+const ::google::protobuf::Descriptor* MessageChannelHandleWithdrawal_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  MessageChannelHandleWithdrawal_reflection_ = NULL;
 const ::google::protobuf::Descriptor* MessageChannelQueryWithdrawal_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   MessageChannelQueryWithdrawal_reflection_ = NULL;
@@ -743,7 +746,23 @@ void protobuf_AssignDesc_overlay_2eproto() {
       sizeof(MessageChannelSubmitHead),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelSubmitHead, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelSubmitHead, _is_default_instance_));
-  MessageChannelQueryWithdrawal_descriptor_ = file->message_type(34);
+  MessageChannelHandleWithdrawal_descriptor_ = file->message_type(34);
+  static const int MessageChannelHandleWithdrawal_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelHandleWithdrawal, withdrawal_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelHandleWithdrawal, state_),
+  };
+  MessageChannelHandleWithdrawal_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      MessageChannelHandleWithdrawal_descriptor_,
+      MessageChannelHandleWithdrawal::default_instance_,
+      MessageChannelHandleWithdrawal_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(MessageChannelHandleWithdrawal),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelHandleWithdrawal, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelHandleWithdrawal, _is_default_instance_));
+  MessageChannelQueryWithdrawal_descriptor_ = file->message_type(35);
   static const int MessageChannelQueryWithdrawal_offsets_[2] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelQueryWithdrawal, chain_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelQueryWithdrawal, seq_),
@@ -845,6 +864,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       MessageChannelSubmitHead_descriptor_, &MessageChannelSubmitHead::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      MessageChannelHandleWithdrawal_descriptor_, &MessageChannelHandleWithdrawal::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       MessageChannelQueryWithdrawal_descriptor_, &MessageChannelQueryWithdrawal::default_instance());
 }
 
@@ -919,6 +940,8 @@ void protobuf_ShutdownFile_overlay_2eproto() {
   delete MessageChannelQuerySubmitHead_reflection_;
   delete MessageChannelSubmitHead::default_instance_;
   delete MessageChannelSubmitHead_reflection_;
+  delete MessageChannelHandleWithdrawal::default_instance_;
+  delete MessageChannelHandleWithdrawal_reflection_;
   delete MessageChannelQueryWithdrawal::default_instance_;
   delete MessageChannelQueryWithdrawal_reflection_;
 }
@@ -1031,44 +1054,47 @@ void protobuf_AddDesc_overlay_2eproto() {
     "ySubmitHead\022\020\n\010chain_id\030\001 \001(\003\022\013\n\003seq\030\002 \001"
     "(\003\022\014\n\004hash\030\003 \001(\014\"Q\n\030MessageChannelSubmit"
     "Head\022&\n\006header\030\001 \001(\0132\026.protocol.LedgerHe"
-    "ader\022\r\n\005state\030\002 \001(\003\">\n\035MessageChannelQue"
-    "ryWithdrawal\022\020\n\010chain_id\030\001 \001(\003\022\013\n\003seq\030\002 "
-    "\001(\003*\203\002\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERLAY_"
-    "MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING\020\001"
-    "\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY_M"
-    "SGTYPE_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRANSA"
-    "CTION\020\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030\n\024"
-    "OVERLAY_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSGTYP"
-    "E_LEDGER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMessa"
-    "geType\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_HEL"
-    "LO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEER_"
-    "ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CHAI"
-    "N_PEER_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSACT"
-    "ION\020\017\022\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHAIN_"
-    "SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022*\227"
-    "\001\n\031MESSAGE_CHANNEL_NODE_TYPE\022\"\n\036MESSAGE_"
-    "CHANNEL_NODE_TYPE_NONE\020\000\022 \n\034MESSAGE_CHAN"
-    "NEL_NODE_PACKAGE\020\036\022\036\n\032MESSAGE_CHANNEL_NO"
-    "DE_HELLO\020\037\022\024\n\020EVENT_WITHDRAWAL\020 *\262\005\n\024MES"
-    "SAGE_CHANNEL_TYPE\022\035\n\031MESSAGE_CHANNEL_TYP"
-    "E_NONE\020\000\022&\n\"MESSAGE_CHANNEL_CREATE_CHILD"
-    "_CHAIN\020\001\022\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020\002\022\035"
-    "\n\031MESSAGE_CHANNEL_CHILD_MIX\020\003\022\033\n\027MESSAGE"
-    "_CHANNEL_DEPOSIT\020\004\022\036\n\032MESSAGE_CHANNEL_WI"
-    "THDRAWAL\020\005\022#\n\037MESSAGE_CHANNEL_FAST_WITHD"
-    "RAWAL\020\006\022\037\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020\007"
-    "\022(\n$MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL"
-    "\020\010\022\"\n\036MESSAGE_CHANNEL_CHALLENGE_HEAD\020\t\022)"
-    "\n%MESSAGE_CHANNEL_CHILD_GENESES_REQUEST\020"
-    "\n\022*\n&MESSAGE_CHANNEL_CHILD_GENESES_RESPO"
-    "NSE\020\013\022\036\n\032MESSAGE_CHANNEL_QUERY_HEAD\020\014\022!\n"
-    "\035MESSAGE_CHANNEL_QUERY_DEPOSIT\020\r\022*\n&MESS"
-    "AGE_CHANNEL_CHANGE_CHILD_VALIDATOR\020\016\0220\n,"
-    "MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALID"
-    "ATOR\020\017\022&\n\"MESSAGE_CHANNEL_QUWERY_SUBMIT_"
-    "HEAD\020\020\022%\n!MESSAGE_CHANNEL_QUWERY_WITHDRA"
-    "WAL\020\021B\"\n io.bumo.sdk.core.extend.protobu"
-    "fb\006proto3", 5369);
+    "ader\022\r\n\005state\030\002 \001(\003\"p\n\036MessageChannelHan"
+    "dleWithdrawal\022\?\n\nwithdrawal\030\001 \001(\0132+.prot"
+    "ocol.MessageChannelWithdrawalChallenge\022\r"
+    "\n\005state\030\002 \001(\003\">\n\035MessageChannelQueryWith"
+    "drawal\022\020\n\010chain_id\030\001 \001(\003\022\013\n\003seq\030\002 \001(\003*\203\002"
+    "\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERLAY_MSGTYP"
+    "E_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING\020\001\022\031\n\025OV"
+    "ERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY_MSGTYPE"
+    "_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRANSACTION\020"
+    "\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030\n\024OVERLA"
+    "Y_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSGTYPE_LEDG"
+    "ER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMessageType"
+    "\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023"
+    "\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEER_ONLINE"
+    "\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CHAIN_PEER"
+    "_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSACTION\020\017\022"
+    "\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHAIN_SUBSCR"
+    "IBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022*\227\001\n\031MES"
+    "SAGE_CHANNEL_NODE_TYPE\022\"\n\036MESSAGE_CHANNE"
+    "L_NODE_TYPE_NONE\020\000\022 \n\034MESSAGE_CHANNEL_NO"
+    "DE_PACKAGE\020\036\022\036\n\032MESSAGE_CHANNEL_NODE_HEL"
+    "LO\020\037\022\024\n\020EVENT_WITHDRAWAL\020 *\262\005\n\024MESSAGE_C"
+    "HANNEL_TYPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE"
+    "\020\000\022&\n\"MESSAGE_CHANNEL_CREATE_CHILD_CHAIN"
+    "\020\001\022\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020\002\022\035\n\031MESS"
+    "AGE_CHANNEL_CHILD_MIX\020\003\022\033\n\027MESSAGE_CHANN"
+    "EL_DEPOSIT\020\004\022\036\n\032MESSAGE_CHANNEL_WITHDRAW"
+    "AL\020\005\022#\n\037MESSAGE_CHANNEL_FAST_WITHDRAWAL\020"
+    "\006\022\037\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020\007\022(\n$ME"
+    "SSAGE_CHANNEL_CHALLENGE_WITHDRAWAL\020\010\022\"\n\036"
+    "MESSAGE_CHANNEL_CHALLENGE_HEAD\020\t\022)\n%MESS"
+    "AGE_CHANNEL_CHILD_GENESES_REQUEST\020\n\022*\n&M"
+    "ESSAGE_CHANNEL_CHILD_GENESES_RESPONSE\020\013\022"
+    "\036\n\032MESSAGE_CHANNEL_QUERY_HEAD\020\014\022!\n\035MESSA"
+    "GE_CHANNEL_QUERY_DEPOSIT\020\r\022*\n&MESSAGE_CH"
+    "ANNEL_CHANGE_CHILD_VALIDATOR\020\016\0220\n,MESSAG"
+    "E_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR\020\017"
+    "\022&\n\"MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD\020\020"
+    "\022%\n!MESSAGE_CHANNEL_QUWERY_WITHDRAWAL\020\021B"
+    "\"\n io.bumo.sdk.core.extend.protobufb\006pro"
+    "to3", 5483);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -1105,6 +1131,7 @@ void protobuf_AddDesc_overlay_2eproto() {
   MessageChannelQueryChangeChildValidator::default_instance_ = new MessageChannelQueryChangeChildValidator();
   MessageChannelQuerySubmitHead::default_instance_ = new MessageChannelQuerySubmitHead();
   MessageChannelSubmitHead::default_instance_ = new MessageChannelSubmitHead();
+  MessageChannelHandleWithdrawal::default_instance_ = new MessageChannelHandleWithdrawal();
   MessageChannelQueryWithdrawal::default_instance_ = new MessageChannelQueryWithdrawal();
   Hello::default_instance_->InitAsDefaultInstance();
   HelloResponse::default_instance_->InitAsDefaultInstance();
@@ -1140,6 +1167,7 @@ void protobuf_AddDesc_overlay_2eproto() {
   MessageChannelQueryChangeChildValidator::default_instance_->InitAsDefaultInstance();
   MessageChannelQuerySubmitHead::default_instance_->InitAsDefaultInstance();
   MessageChannelSubmitHead::default_instance_->InitAsDefaultInstance();
+  MessageChannelHandleWithdrawal::default_instance_->InitAsDefaultInstance();
   MessageChannelQueryWithdrawal::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_overlay_2eproto);
 }
@@ -16705,6 +16733,325 @@ void MessageChannelSubmitHead::clear_state() {
   
   state_ = value;
   // @@protoc_insertion_point(field_set:protocol.MessageChannelSubmitHead.state)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int MessageChannelHandleWithdrawal::kWithdrawalFieldNumber;
+const int MessageChannelHandleWithdrawal::kStateFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+MessageChannelHandleWithdrawal::MessageChannelHandleWithdrawal()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:protocol.MessageChannelHandleWithdrawal)
+}
+
+void MessageChannelHandleWithdrawal::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+  withdrawal_ = const_cast< ::protocol::MessageChannelWithdrawalChallenge*>(&::protocol::MessageChannelWithdrawalChallenge::default_instance());
+}
+
+MessageChannelHandleWithdrawal::MessageChannelHandleWithdrawal(const MessageChannelHandleWithdrawal& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:protocol.MessageChannelHandleWithdrawal)
+}
+
+void MessageChannelHandleWithdrawal::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  withdrawal_ = NULL;
+  state_ = GOOGLE_LONGLONG(0);
+}
+
+MessageChannelHandleWithdrawal::~MessageChannelHandleWithdrawal() {
+  // @@protoc_insertion_point(destructor:protocol.MessageChannelHandleWithdrawal)
+  SharedDtor();
+}
+
+void MessageChannelHandleWithdrawal::SharedDtor() {
+  if (this != default_instance_) {
+    delete withdrawal_;
+  }
+}
+
+void MessageChannelHandleWithdrawal::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* MessageChannelHandleWithdrawal::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MessageChannelHandleWithdrawal_descriptor_;
+}
+
+const MessageChannelHandleWithdrawal& MessageChannelHandleWithdrawal::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_overlay_2eproto();
+  return *default_instance_;
+}
+
+MessageChannelHandleWithdrawal* MessageChannelHandleWithdrawal::default_instance_ = NULL;
+
+MessageChannelHandleWithdrawal* MessageChannelHandleWithdrawal::New(::google::protobuf::Arena* arena) const {
+  MessageChannelHandleWithdrawal* n = new MessageChannelHandleWithdrawal;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void MessageChannelHandleWithdrawal::Clear() {
+// @@protoc_insertion_point(message_clear_start:protocol.MessageChannelHandleWithdrawal)
+  if (GetArenaNoVirtual() == NULL && withdrawal_ != NULL) delete withdrawal_;
+  withdrawal_ = NULL;
+  state_ = GOOGLE_LONGLONG(0);
+}
+
+bool MessageChannelHandleWithdrawal::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:protocol.MessageChannelHandleWithdrawal)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional .protocol.MessageChannelWithdrawalChallenge withdrawal = 1;
+      case 1: {
+        if (tag == 10) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_withdrawal()));
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(16)) goto parse_state;
+        break;
+      }
+
+      // optional int64 state = 2;
+      case 2: {
+        if (tag == 16) {
+         parse_state:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &state_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:protocol.MessageChannelHandleWithdrawal)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:protocol.MessageChannelHandleWithdrawal)
+  return false;
+#undef DO_
+}
+
+void MessageChannelHandleWithdrawal::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:protocol.MessageChannelHandleWithdrawal)
+  // optional .protocol.MessageChannelWithdrawalChallenge withdrawal = 1;
+  if (this->has_withdrawal()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, *this->withdrawal_, output);
+  }
+
+  // optional int64 state = 2;
+  if (this->state() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->state(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:protocol.MessageChannelHandleWithdrawal)
+}
+
+::google::protobuf::uint8* MessageChannelHandleWithdrawal::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:protocol.MessageChannelHandleWithdrawal)
+  // optional .protocol.MessageChannelWithdrawalChallenge withdrawal = 1;
+  if (this->has_withdrawal()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageNoVirtualToArray(
+        1, *this->withdrawal_, false, target);
+  }
+
+  // optional int64 state = 2;
+  if (this->state() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->state(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:protocol.MessageChannelHandleWithdrawal)
+  return target;
+}
+
+int MessageChannelHandleWithdrawal::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:protocol.MessageChannelHandleWithdrawal)
+  int total_size = 0;
+
+  // optional .protocol.MessageChannelWithdrawalChallenge withdrawal = 1;
+  if (this->has_withdrawal()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        *this->withdrawal_);
+  }
+
+  // optional int64 state = 2;
+  if (this->state() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->state());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void MessageChannelHandleWithdrawal::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:protocol.MessageChannelHandleWithdrawal)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const MessageChannelHandleWithdrawal* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const MessageChannelHandleWithdrawal>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protocol.MessageChannelHandleWithdrawal)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:protocol.MessageChannelHandleWithdrawal)
+    MergeFrom(*source);
+  }
+}
+
+void MessageChannelHandleWithdrawal::MergeFrom(const MessageChannelHandleWithdrawal& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:protocol.MessageChannelHandleWithdrawal)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.has_withdrawal()) {
+    mutable_withdrawal()->::protocol::MessageChannelWithdrawalChallenge::MergeFrom(from.withdrawal());
+  }
+  if (from.state() != 0) {
+    set_state(from.state());
+  }
+}
+
+void MessageChannelHandleWithdrawal::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:protocol.MessageChannelHandleWithdrawal)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void MessageChannelHandleWithdrawal::CopyFrom(const MessageChannelHandleWithdrawal& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:protocol.MessageChannelHandleWithdrawal)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool MessageChannelHandleWithdrawal::IsInitialized() const {
+
+  return true;
+}
+
+void MessageChannelHandleWithdrawal::Swap(MessageChannelHandleWithdrawal* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void MessageChannelHandleWithdrawal::InternalSwap(MessageChannelHandleWithdrawal* other) {
+  std::swap(withdrawal_, other->withdrawal_);
+  std::swap(state_, other->state_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata MessageChannelHandleWithdrawal::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = MessageChannelHandleWithdrawal_descriptor_;
+  metadata.reflection = MessageChannelHandleWithdrawal_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// MessageChannelHandleWithdrawal
+
+// optional .protocol.MessageChannelWithdrawalChallenge withdrawal = 1;
+bool MessageChannelHandleWithdrawal::has_withdrawal() const {
+  return !_is_default_instance_ && withdrawal_ != NULL;
+}
+void MessageChannelHandleWithdrawal::clear_withdrawal() {
+  if (GetArenaNoVirtual() == NULL && withdrawal_ != NULL) delete withdrawal_;
+  withdrawal_ = NULL;
+}
+const ::protocol::MessageChannelWithdrawalChallenge& MessageChannelHandleWithdrawal::withdrawal() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHandleWithdrawal.withdrawal)
+  return withdrawal_ != NULL ? *withdrawal_ : *default_instance_->withdrawal_;
+}
+::protocol::MessageChannelWithdrawalChallenge* MessageChannelHandleWithdrawal::mutable_withdrawal() {
+  
+  if (withdrawal_ == NULL) {
+    withdrawal_ = new ::protocol::MessageChannelWithdrawalChallenge;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelHandleWithdrawal.withdrawal)
+  return withdrawal_;
+}
+::protocol::MessageChannelWithdrawalChallenge* MessageChannelHandleWithdrawal::release_withdrawal() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelHandleWithdrawal.withdrawal)
+  
+  ::protocol::MessageChannelWithdrawalChallenge* temp = withdrawal_;
+  withdrawal_ = NULL;
+  return temp;
+}
+void MessageChannelHandleWithdrawal::set_allocated_withdrawal(::protocol::MessageChannelWithdrawalChallenge* withdrawal) {
+  delete withdrawal_;
+  withdrawal_ = withdrawal;
+  if (withdrawal) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelHandleWithdrawal.withdrawal)
+}
+
+// optional int64 state = 2;
+void MessageChannelHandleWithdrawal::clear_state() {
+  state_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 MessageChannelHandleWithdrawal::state() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHandleWithdrawal.state)
+  return state_;
+}
+ void MessageChannelHandleWithdrawal::set_state(::google::protobuf::int64 value) {
+  
+  state_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelHandleWithdrawal.state)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
