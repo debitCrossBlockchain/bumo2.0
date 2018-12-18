@@ -70,6 +70,8 @@ namespace bumo {
 		void HandleChallengeSubmitHead(const protocol::MessageChannel &message_channel);
 		void HandleChallengeWithdrawal(const protocol::MessageChannel &message_channel);
 		void InitSeq();
+		void UpdateStatus();
+		void CopyBuffer();
 	private:
 		bool enabled_;
 		utils::Thread *thread_ptr_;
