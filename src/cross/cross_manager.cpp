@@ -13,4 +13,13 @@ namespace bumo {
 	CrossManager::~CrossManager(){
 
 	}
+
+	bool  CrossManager::Initialize(){
+		return true;
+	}
+
+	bool CrossManager::Exit(){
+		return true;
+	}
+
 }
