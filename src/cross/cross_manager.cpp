@@ -7,7 +7,11 @@
 namespace bumo {
 
 	CrossManager::CrossManager(){
-
+		bumo::MessageChannel::InitInstance();
+		bumo::BlockListenManager::InitInstance();
+		bumo::MainProposerManager::InitInstance();
+		bumo::ChildProposerManager::InitInstance();
+		bumo::ChallengeManager::InitInstance();	
 	}
 
 	CrossManager::~CrossManager(){
