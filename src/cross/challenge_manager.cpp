@@ -148,7 +148,7 @@ namespace bumo {
 				return;
 			}
 			const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
-			//Push message to child chain.
+			//Push message to main chain.
 			protocol::MessageChannel message_channel;
 			protocol::MessageChannelQuerySubmitHead query_head;
 			query_head.set_seq(seq);
@@ -223,7 +223,31 @@ namespace bumo {
 	}
 
 	void ChallengeWithdrawal::handlechallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal){
+		if (withdrawal.seq() <= chain_withdrawal_seq_){
+			return;
+		}
 
+		LedgerFrm frm;
+		bool bflag = true;
+		if (!frm.LoadFromDb(header.seq())) {
+			std::string error_desc = utils::String::Format("Parse MessageChannelQueryHead error,no exist ledger_seq=(" FMT_I64 ")", header);
+			LOG_ERROR("%s", error_desc.c_str());
+			//TODO send CMC head challenge
+		}
+
+		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
+		bflag = (ledger_header.chain_id() == header.chain_id()) && (ledger_header.account_tree_hash() == header.account_tree_hash()) && (ledger_header.seq() == header.seq()) &&
+			(ledger_header.hash() == header.hash()) && (ledger_header.previous_hash() == header.previous_hash()) && (ledger_header.close_time() == header.close_time()) &&
+			(ledger_header.fees_hash() == header.fees_hash()) && (ledger_header.consensus_value_hash() == header.consensus_value_hash()) && (ledger_header.version() == header.version()) &&
+			(ledger_header.validators_hash() == header.validators_hash());
+		if (!bflag){
+			//TODO send CMC head challenge
+		}
+
+		int64_t max_seq = MAX(recv_max_seq_, header.seq());
+		recv_max_seq_ = max_seq;
+		chain_head_seq_ = max_seq;
+		UpdateSeq();
 	}
 
 	void ChallengeWithdrawal::RequestLost(){
