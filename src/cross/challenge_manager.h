@@ -31,8 +31,6 @@ namespace bumo {
 
 		utils::Mutex submit_head_buffer_list_lock_;
 		std::list<protocol::MessageChannelSubmitHead> submit_head_buffer_list_;
-		int64_t last_update_time_;
-		int64_t last_buffer_time_;
 	};
 
 	typedef std::map<int64_t, protocol::MessageChannelWithdrawalChallenge> WithdrawalMap;
@@ -43,7 +41,7 @@ namespace bumo {
 		~ChallengeWithdrawal();
 		void UpdateSeq();
 		void UpdateStatus();
-		void CopyBufferSubmitHead();
+		void CopyBufferWithdrawal();
 		void UpdateWithdrawal(const protocol::MessageChannelHandleWithdrawal &withdrawal);
 	private:
 		void UpdateRequestLatestSeq();
