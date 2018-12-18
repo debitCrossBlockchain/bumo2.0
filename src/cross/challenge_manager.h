@@ -42,11 +42,19 @@ namespace bumo {
 		ChallengeWithdrawal();
 		~ChallengeWithdrawal();
 		void InitSeq();
+		void UpdateStatus();
+		void CopyBufferSubmitHead();
+		void UpdateWithdrawal(const protocol::MessageChannelHandleWithdrawal &withdrawal);
+	private:
+		void UpdateRequestLatestSeq();
+		void SortMap();
+		void RequestLost();
+		void handlechallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal);
 	private:
 		WithdrawalMap withdrawal_map;
 		int64_t chain_withdrawal_seq_;
-		int64_t recv_max_seq;
-		int64_t latest_seq;
+		int64_t recv_max_seq_;
+		int64_t latest_seq_;
 	};
 
 	class ChallengeManager :public utils::Runnable{
