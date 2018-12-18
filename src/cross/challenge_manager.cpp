@@ -69,7 +69,7 @@ namespace bumo {
 	}
 
 	void ChallengeSubmitHead::SortMap(){
-		//If cmc = chain max, ignore it
+		//If max, ignore it
 		if (latest_seq_ == recv_max_seq_){
 			return;
 		}
