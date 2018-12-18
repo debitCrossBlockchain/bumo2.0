@@ -360,6 +360,10 @@ namespace bumo {
 	}
 
 	void ChallengeManager::ChallengeNotify(const protocol::MessageChannel &message_channel){
+		if (!enabled_){
+			return;
+		}
+
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			return;
 		}
