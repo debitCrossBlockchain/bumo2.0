@@ -25,6 +25,10 @@ namespace bumo {
 		}
 	}
 
+	void ChallengeSubmitHead::CopyBufferBlock(){
+
+	}
+
 	void ChallengeSubmitHead::UpdateStatus(){
 		utils::MutexGuard guard(common_lock_);
 		if (ledger_map_.empty()){
@@ -40,6 +44,8 @@ namespace bumo {
 		RequestLost();
 
 	}
+
+	
 
 	void ChallengeSubmitHead::SortMap(){
 		//If cmc = chain max, ignore it
