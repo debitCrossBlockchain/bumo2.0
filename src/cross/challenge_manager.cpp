@@ -194,6 +194,10 @@ namespace bumo {
 		RequestLost();
 	}
 
+	void ChallengeWithdrawal::UpdateRequestLatestSeq(){
+
+	}
+
 	ChallengeManager::ChallengeManager() :
 		enabled_(false),
 		thread_ptr_(NULL){
