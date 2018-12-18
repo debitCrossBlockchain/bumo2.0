@@ -29,6 +29,7 @@
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
 #include <cross/cross_utils.h>
+#include<cross/message_channel_manager.h>
 #include <cross/message_handler.h>
 #include<cross/cross_manager.h>
 #include "configure.h"
@@ -75,6 +76,7 @@ int main(int argc, char *argv[]){
 	bumo::SlowTimer::InitInstance();
 	utils::Logger::InitInstance();
 	bumo::TransactionSender::InitInstance();
+	bumo::MessageChannel::InitInstance();
 	bumo::MessageHandler::InitInstance();
 	bumo::Console::InitInstance();
 	bumo::PeerManager::InitInstance();
@@ -203,6 +205,13 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::TransactionSender::Exit, &trans_sender));
 		LOG_INFO("Initialized trans sender successfully");
 
+		bumo::MessageChannel &message_channel = bumo::MessageChannel::Instance();
+		if (!message_channel.Initialize(bumo::Configure::Instance().message_channel_configure_)){
+			LOG_ERROR_ERRNO("Failed to initialize message channel", STD_ERR_CODE, STD_ERR_DESC);
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::MessageChannel::Exit, &message_channel));
+		LOG_INFO("Initialized message channel successfully");
 
 		bumo::MessageHandler &message_handler = bumo::MessageHandler::Instance();
 		if (!bumo::g_enable_ || !message_handler.Initialize()){
@@ -313,6 +322,7 @@ int main(int argc, char *argv[]){
 	bumo::WebSocketServer::ExitInstance();
 	bumo::WebServer::ExitInstance();
 	bumo::MonitorManager::ExitInstance();
+	bumo::MessageChannel::ExitInstance();
 	bumo::MessageHandler::ExitInstance();
 	bumo::TransactionSender::ExitInstance();
 	bumo::Configure::ExitInstance();
