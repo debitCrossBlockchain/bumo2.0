@@ -211,24 +211,19 @@ namespace bumo {
 		int64_t max_nums = MIN(MAX_REQUEST_SUBMIT_NUMS, (recv_max_seq_ - latest_seq_));
 		for (int64_t i = 1; i <= max_nums; i++){
 			int64_t seq = latest_seq_ + i;
-			auto itr = ledger_map_.find(seq);
-			if (itr != ledger_map_.end()){
+			auto itr = withdrawal_map_.find(seq);
+			if (itr != withdrawal_map_.end()){
 				continue;
 			}
 
 			std::string  error_desc;
 			if (seq <= 0){
-				std::string  error_desc = utils::String::Format("Parse MessageChannelQueryHead error,invalid ledger_seq(" FMT_I64 ")", seq);
+				std::string  error_desc = utils::String::Format("Parse MessageChannelQueryWithdrawal error,invalid ledger_seq(" FMT_I64 ")", seq);
 				LOG_ERROR("%s", error_desc.c_str());
 				return;
 			}
 
-			LedgerFrm frm;
-			if (!frm.LoadFromDb(seq)) {
-				error_desc = utils::String::Format("Parse MessageChannelQueryHead error,no exist ledger_seq=(" FMT_I64 ")", seq);
-				LOG_ERROR("%s", error_desc.c_str());
-				return;
-			}
+			
 			const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
 			//Push message to child chain.
 			protocol::MessageChannel message_channel;
