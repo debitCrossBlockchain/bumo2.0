@@ -75,6 +75,8 @@ namespace bumo {
 		utils::Thread *thread_ptr_;
 		std::shared_ptr<ChallengeSubmitHead> challenge_submit_head_;
 		std::shared_ptr<ChallengeWithdrawal> challenge_withdrawal_;
+		int64_t last_update_time_;
+		int64_t last_buffer_time_;
 	};
 }
 

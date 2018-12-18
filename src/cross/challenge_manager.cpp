@@ -306,6 +306,8 @@ namespace bumo {
 		thread_ptr_(NULL){
 		challenge_submit_head_ = std::make_shared<ChallengeSubmitHead>();
 		challenge_withdrawal_ = std::make_shared<ChallengeWithdrawal>();
+		last_update_time_ = utils::Timestamp::HighResolution();
+		last_buffer_time_ = utils::Timestamp::HighResolution();
 	}
 
 	ChallengeManager::~ChallengeManager(){
