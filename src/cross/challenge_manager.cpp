@@ -25,8 +25,29 @@ namespace bumo {
 		}
 	}
 
-	void ChallengeSubmitHead::CopyBufferSubmitHead(){
+	void ChallengeSubmitHead::UpdateSubmitHead(const protocol::MessageChannelSubmitHead &submit_head){
+		utils::MutexGuard guard(submit_head_buffer_list_lock_);
+		submit_head_buffer_list_.push_back(submit_head);
+	}
 
+	void ChallengeSubmitHead::CopyBufferSubmitHead(){
+		std::list<protocol::MessageChannelSubmitHead> submit_head_list;
+		{
+			utils::MutexGuard guard(submit_head_buffer_list_lock_);
+			submit_head_list.insert(submit_head_list.end(), submit_head_buffer_list_.begin(), submit_head_buffer_list_.end());
+			submit_head_buffer_list_.clear();
+		}
+
+		utils::MutexGuard guard(common_lock_);
+		std::list<protocol::MessageChannelSubmitHead>::const_iterator iter = submit_head_list.begin();
+		while (iter != submit_head_list.end()){
+			const protocol::MessageChannelSubmitHead &submit_head = *iter;
+			if (submit_head.state() == -1){
+				latest_seq_ = submit_head.header().seq();
+			}
+			ledger_map_.insert(pair<int64,protocol::LedgerHeader>(submit_head.header().seq(), submit_head.header()));
+			iter++;
+		}
 	}
 
 	void ChallengeSubmitHead::UpdateStatus(){
@@ -45,7 +66,7 @@ namespace bumo {
 
 	}
 
-	
+
 
 	void ChallengeSubmitHead::SortMap(){
 		//If cmc = chain max, ignore it

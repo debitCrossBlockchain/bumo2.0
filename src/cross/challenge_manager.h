@@ -18,6 +18,7 @@ namespace bumo {
 		void UpdateRequestLatestSeq();
 		void SortMap();
 		void RequestLost();
+		void UpdateSubmitHead(const protocol::MessageChannelSubmitHead &submit_head);
 	private:
 		void CopyBufferSubmitHead();
 
@@ -28,8 +29,8 @@ namespace bumo {
 		int64_t recv_max_seq_;
 		int64_t latest_seq_;
 
-		utils::Mutex ledger_buffer_list_lock_;
-		std::list<protocol::MessageChannelSubmitHead> ledger_buffer_list_;
+		utils::Mutex submit_head_buffer_list_lock_;
+		std::list<protocol::MessageChannelSubmitHead> submit_head_buffer_list_;
 		int64_t last_update_time_;
 		int64_t last_buffer_time_;
 	};
