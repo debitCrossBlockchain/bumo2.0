@@ -117,6 +117,7 @@ namespace bumo {
 		protocol::MessageChannelQuerySubmitHead query_head;
 		query_head.set_seq(-1);
 		query_head.set_hash("");
+		query_head.set_chain_id(General::GetSelfChainId());
 		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
 		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD);
 		message_channel.set_msg_data(query_head.SerializeAsString());
