@@ -349,6 +349,11 @@ namespace bumo {
 		}
 	}
 
+	void ChallengeManager::UpdateStatus(){
+
+	}
+	void CopyBuffer();
+
 	void ChallengeManager::ChallengeNotify(const protocol::MessageChannel &message_channel){
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			return;
