@@ -121,7 +121,7 @@ namespace bumo {
 		query_head.set_hash("");
 		query_head.set_chain_id(General::GetSelfChainId());
 		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD);
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_SUBMIT_HEAD);
 		message_channel.set_msg_data(query_head.SerializeAsString());
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 	}
@@ -156,7 +156,7 @@ namespace bumo {
 			query_head.set_seq(seq);
 			query_head.set_hash(ledger_header.hash());
 			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD);
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_SUBMIT_HEAD);
 			message_channel.set_msg_data(query_head.SerializeAsString());
 			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 		}
@@ -229,7 +229,7 @@ namespace bumo {
 		withdrawal.set_seq(-1);
 		withdrawal.set_chain_id(General::GetSelfChainId());
 		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_WITHDRAWAL);
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_WITHDRAWAL);
 		message_channel.set_msg_data(withdrawal.SerializeAsString());
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 	}
@@ -297,7 +297,7 @@ namespace bumo {
 			withdrawal.set_seq(seq);
 			withdrawal.set_chain_id(General::GetSelfChainId());
 			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_WITHDRAWAL);
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_WITHDRAWAL);
 			message_channel.set_msg_data(withdrawal.SerializeAsString());
 			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 		}
