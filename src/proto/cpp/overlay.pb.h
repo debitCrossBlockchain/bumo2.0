@@ -3578,9 +3578,15 @@ class MessageChannelWithdrawalChallenge : public ::google::protobuf::Message /* 
   ::std::string* release_main_source_address();
   void set_allocated_main_source_address(::std::string* main_source_address);
 
-  // optional string merkel_proof = 9;
+  // optional int64 block_seq = 9;
+  void clear_block_seq();
+  static const int kBlockSeqFieldNumber = 9;
+  ::google::protobuf::int64 block_seq() const;
+  void set_block_seq(::google::protobuf::int64 value);
+
+  // optional string merkel_proof = 10;
   void clear_merkel_proof();
-  static const int kMerkelProofFieldNumber = 9;
+  static const int kMerkelProofFieldNumber = 10;
   const ::std::string& merkel_proof() const;
   void set_merkel_proof(const ::std::string& value);
   void set_merkel_proof(const char* value);
@@ -3602,6 +3608,7 @@ class MessageChannelWithdrawalChallenge : public ::google::protobuf::Message /* 
   ::google::protobuf::internal::ArenaStringPtr address_;
   ::google::protobuf::int64 state_;
   ::google::protobuf::internal::ArenaStringPtr main_source_address_;
+  ::google::protobuf::int64 block_seq_;
   ::google::protobuf::internal::ArenaStringPtr merkel_proof_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
@@ -7405,7 +7412,21 @@ inline void MessageChannelWithdrawalChallenge::set_allocated_main_source_address
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawalChallenge.main_source_address)
 }
 
-// optional string merkel_proof = 9;
+// optional int64 block_seq = 9;
+inline void MessageChannelWithdrawalChallenge::clear_block_seq() {
+  block_seq_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelWithdrawalChallenge::block_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawalChallenge.block_seq)
+  return block_seq_;
+}
+inline void MessageChannelWithdrawalChallenge::set_block_seq(::google::protobuf::int64 value) {
+  
+  block_seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawalChallenge.block_seq)
+}
+
+// optional string merkel_proof = 10;
 inline void MessageChannelWithdrawalChallenge::clear_merkel_proof() {
   merkel_proof_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }

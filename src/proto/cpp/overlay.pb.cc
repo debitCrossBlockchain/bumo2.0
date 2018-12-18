@@ -657,7 +657,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawal, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawal, _is_default_instance_));
   MessageChannelWithdrawalChallenge_descriptor_ = file->message_type(29);
-  static const int MessageChannelWithdrawalChallenge_offsets_[9] = {
+  static const int MessageChannelWithdrawalChallenge_offsets_[10] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, chain_id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, amount_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, seq_),
@@ -666,6 +666,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, main_source_address_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, block_seq_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, merkel_proof_),
   };
   MessageChannelWithdrawalChallenge_reflection_ =
@@ -1039,62 +1040,62 @@ void protobuf_AddDesc_overlay_2eproto() {
     "in_id\030\001 \001(\003\022\016\n\006amount\030\002 \001(\003\022\013\n\003seq\030\003 \001(\003"
     "\022\022\n\nblock_hash\030\004 \001(\014\022\026\n\016source_address\030\005"
     " \001(\t\022\017\n\007address\030\006 \001(\t\022+\n\014merkel_proof\030\007 "
-    "\001(\0132\025.protocol.MerkelProof\"\321\001\n!MessageCh"
+    "\001(\0132\025.protocol.MerkelProof\"\344\001\n!MessageCh"
     "annelWithdrawalChallenge\022\020\n\010chain_id\030\001 \001"
     "(\003\022\016\n\006amount\030\002 \001(\003\022\013\n\003seq\030\003 \001(\003\022\022\n\nblock"
     "_hash\030\004 \001(\014\022\026\n\016source_address\030\005 \001(\t\022\017\n\007a"
     "ddress\030\006 \001(\t\022\r\n\005state\030\007 \001(\003\022\033\n\023main_sour"
-    "ce_address\030\010 \001(\t\022\024\n\014merkel_proof\030\t \001(\t\"\200"
-    "\001\n\"MessageChannelChangeChildValidator\022\032\n"
-    "\022main_chain_tx_hash\030\001 \001(\t\022\025\n\radd_validat"
-    "or\030\002 \001(\t\022\030\n\020delete_validator\030\003 \001(\t\022\r\n\005in"
-    "dex\030\004 \001(\t\"W\n\'MessageChannelQueryChangeCh"
-    "ildValidator\022\020\n\010chain_id\030\001 \001(\003\022\032\n\022change"
-    "_child_index\030\002 \001(\003\"L\n\035MessageChannelQuer"
-    "ySubmitHead\022\020\n\010chain_id\030\001 \001(\003\022\013\n\003seq\030\002 \001"
-    "(\003\022\014\n\004hash\030\003 \001(\014\"Q\n\030MessageChannelSubmit"
-    "Head\022&\n\006header\030\001 \001(\0132\026.protocol.LedgerHe"
-    "ader\022\r\n\005state\030\002 \001(\003\"p\n\036MessageChannelHan"
-    "dleWithdrawal\022\?\n\nwithdrawal\030\001 \001(\0132+.prot"
-    "ocol.MessageChannelWithdrawalChallenge\022\r"
-    "\n\005state\030\002 \001(\003\">\n\035MessageChannelQueryWith"
-    "drawal\022\020\n\010chain_id\030\001 \001(\003\022\013\n\003seq\030\002 \001(\003*\203\002"
-    "\n\024OVERLAY_MESSAGE_TYPE\022\030\n\024OVERLAY_MSGTYP"
-    "E_NONE\020\000\022\030\n\024OVERLAY_MSGTYPE_PING\020\001\022\031\n\025OV"
-    "ERLAY_MSGTYPE_HELLO\020\002\022\031\n\025OVERLAY_MSGTYPE"
-    "_PEERS\020\003\022\037\n\033OVERLAY_MSGTYPE_TRANSACTION\020"
-    "\004\022\033\n\027OVERLAY_MSGTYPE_LEDGERS\020\005\022\030\n\024OVERLA"
-    "Y_MSGTYPE_PBFT\020\006\022)\n%OVERLAY_MSGTYPE_LEDG"
-    "ER_UPGRADE_NOTIFY\020\007*\372\001\n\020ChainMessageType"
-    "\022\023\n\017CHAIN_TYPE_NONE\020\000\022\017\n\013CHAIN_HELLO\020\n\022\023"
-    "\n\017CHAIN_TX_STATUS\020\013\022\025\n\021CHAIN_PEER_ONLINE"
-    "\020\014\022\026\n\022CHAIN_PEER_OFFLINE\020\r\022\026\n\022CHAIN_PEER"
-    "_MESSAGE\020\016\022\033\n\027CHAIN_SUBMITTRANSACTION\020\017\022"
-    "\027\n\023CHAIN_LEDGER_HEADER\020\020\022\026\n\022CHAIN_SUBSCR"
-    "IBE_TX\020\021\022\026\n\022CHAIN_TX_ENV_STORE\020\022*\227\001\n\031MES"
-    "SAGE_CHANNEL_NODE_TYPE\022\"\n\036MESSAGE_CHANNE"
-    "L_NODE_TYPE_NONE\020\000\022 \n\034MESSAGE_CHANNEL_NO"
-    "DE_PACKAGE\020\036\022\036\n\032MESSAGE_CHANNEL_NODE_HEL"
-    "LO\020\037\022\024\n\020EVENT_WITHDRAWAL\020 *\262\005\n\024MESSAGE_C"
-    "HANNEL_TYPE\022\035\n\031MESSAGE_CHANNEL_TYPE_NONE"
-    "\020\000\022&\n\"MESSAGE_CHANNEL_CREATE_CHILD_CHAIN"
-    "\020\001\022\034\n\030MESSAGE_CHANNEL_MAIN_MIX\020\002\022\035\n\031MESS"
-    "AGE_CHANNEL_CHILD_MIX\020\003\022\033\n\027MESSAGE_CHANN"
-    "EL_DEPOSIT\020\004\022\036\n\032MESSAGE_CHANNEL_WITHDRAW"
-    "AL\020\005\022#\n\037MESSAGE_CHANNEL_FAST_WITHDRAWAL\020"
-    "\006\022\037\n\033MESSAGE_CHANNEL_SUBMIT_HEAD\020\007\022(\n$ME"
-    "SSAGE_CHANNEL_CHALLENGE_WITHDRAWAL\020\010\022\"\n\036"
-    "MESSAGE_CHANNEL_CHALLENGE_HEAD\020\t\022)\n%MESS"
-    "AGE_CHANNEL_CHILD_GENESES_REQUEST\020\n\022*\n&M"
-    "ESSAGE_CHANNEL_CHILD_GENESES_RESPONSE\020\013\022"
-    "\036\n\032MESSAGE_CHANNEL_QUERY_HEAD\020\014\022!\n\035MESSA"
-    "GE_CHANNEL_QUERY_DEPOSIT\020\r\022*\n&MESSAGE_CH"
-    "ANNEL_CHANGE_CHILD_VALIDATOR\020\016\0220\n,MESSAG"
-    "E_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR\020\017"
-    "\022&\n\"MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD\020\020"
-    "\022%\n!MESSAGE_CHANNEL_QUWERY_WITHDRAWAL\020\021B"
-    "\"\n io.bumo.sdk.core.extend.protobufb\006pro"
-    "to3", 5483);
+    "ce_address\030\010 \001(\t\022\021\n\tblock_seq\030\t \001(\003\022\024\n\014m"
+    "erkel_proof\030\n \001(\t\"\200\001\n\"MessageChannelChan"
+    "geChildValidator\022\032\n\022main_chain_tx_hash\030\001"
+    " \001(\t\022\025\n\radd_validator\030\002 \001(\t\022\030\n\020delete_va"
+    "lidator\030\003 \001(\t\022\r\n\005index\030\004 \001(\t\"W\n\'MessageC"
+    "hannelQueryChangeChildValidator\022\020\n\010chain"
+    "_id\030\001 \001(\003\022\032\n\022change_child_index\030\002 \001(\003\"L\n"
+    "\035MessageChannelQuerySubmitHead\022\020\n\010chain_"
+    "id\030\001 \001(\003\022\013\n\003seq\030\002 \001(\003\022\014\n\004hash\030\003 \001(\014\"Q\n\030M"
+    "essageChannelSubmitHead\022&\n\006header\030\001 \001(\0132"
+    "\026.protocol.LedgerHeader\022\r\n\005state\030\002 \001(\003\"p"
+    "\n\036MessageChannelHandleWithdrawal\022\?\n\nwith"
+    "drawal\030\001 \001(\0132+.protocol.MessageChannelWi"
+    "thdrawalChallenge\022\r\n\005state\030\002 \001(\003\">\n\035Mess"
+    "ageChannelQueryWithdrawal\022\020\n\010chain_id\030\001 "
+    "\001(\003\022\013\n\003seq\030\002 \001(\003*\203\002\n\024OVERLAY_MESSAGE_TYP"
+    "E\022\030\n\024OVERLAY_MSGTYPE_NONE\020\000\022\030\n\024OVERLAY_M"
+    "SGTYPE_PING\020\001\022\031\n\025OVERLAY_MSGTYPE_HELLO\020\002"
+    "\022\031\n\025OVERLAY_MSGTYPE_PEERS\020\003\022\037\n\033OVERLAY_M"
+    "SGTYPE_TRANSACTION\020\004\022\033\n\027OVERLAY_MSGTYPE_"
+    "LEDGERS\020\005\022\030\n\024OVERLAY_MSGTYPE_PBFT\020\006\022)\n%O"
+    "VERLAY_MSGTYPE_LEDGER_UPGRADE_NOTIFY\020\007*\372"
+    "\001\n\020ChainMessageType\022\023\n\017CHAIN_TYPE_NONE\020\000"
+    "\022\017\n\013CHAIN_HELLO\020\n\022\023\n\017CHAIN_TX_STATUS\020\013\022\025"
+    "\n\021CHAIN_PEER_ONLINE\020\014\022\026\n\022CHAIN_PEER_OFFL"
+    "INE\020\r\022\026\n\022CHAIN_PEER_MESSAGE\020\016\022\033\n\027CHAIN_S"
+    "UBMITTRANSACTION\020\017\022\027\n\023CHAIN_LEDGER_HEADE"
+    "R\020\020\022\026\n\022CHAIN_SUBSCRIBE_TX\020\021\022\026\n\022CHAIN_TX_"
+    "ENV_STORE\020\022*\227\001\n\031MESSAGE_CHANNEL_NODE_TYP"
+    "E\022\"\n\036MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000\022 \n"
+    "\034MESSAGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032MESSA"
+    "GE_CHANNEL_NODE_HELLO\020\037\022\024\n\020EVENT_WITHDRA"
+    "WAL\020 *\262\005\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MESSAG"
+    "E_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHANNEL"
+    "_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHANNEL"
+    "_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_MIX"
+    "\020\003\022\033\n\027MESSAGE_CHANNEL_DEPOSIT\020\004\022\036\n\032MESSA"
+    "GE_CHANNEL_WITHDRAWAL\020\005\022#\n\037MESSAGE_CHANN"
+    "EL_FAST_WITHDRAWAL\020\006\022\037\n\033MESSAGE_CHANNEL_"
+    "SUBMIT_HEAD\020\007\022(\n$MESSAGE_CHANNEL_CHALLEN"
+    "GE_WITHDRAWAL\020\010\022\"\n\036MESSAGE_CHANNEL_CHALL"
+    "ENGE_HEAD\020\t\022)\n%MESSAGE_CHANNEL_CHILD_GEN"
+    "ESES_REQUEST\020\n\022*\n&MESSAGE_CHANNEL_CHILD_"
+    "GENESES_RESPONSE\020\013\022\036\n\032MESSAGE_CHANNEL_QU"
+    "ERY_HEAD\020\014\022!\n\035MESSAGE_CHANNEL_QUERY_DEPO"
+    "SIT\020\r\022*\n&MESSAGE_CHANNEL_CHANGE_CHILD_VA"
+    "LIDATOR\020\016\0220\n,MESSAGE_CHANNEL_QUERY_CHANG"
+    "E_CHILD_VALIDATOR\020\017\022&\n\"MESSAGE_CHANNEL_Q"
+    "UWERY_SUBMIT_HEAD\020\020\022%\n!MESSAGE_CHANNEL_Q"
+    "UWERY_WITHDRAWAL\020\021B\"\n io.bumo.sdk.core.e"
+    "xtend.protobufb\006proto3", 5502);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -14250,6 +14251,7 @@ const int MessageChannelWithdrawalChallenge::kSourceAddressFieldNumber;
 const int MessageChannelWithdrawalChallenge::kAddressFieldNumber;
 const int MessageChannelWithdrawalChallenge::kStateFieldNumber;
 const int MessageChannelWithdrawalChallenge::kMainSourceAddressFieldNumber;
+const int MessageChannelWithdrawalChallenge::kBlockSeqFieldNumber;
 const int MessageChannelWithdrawalChallenge::kMerkelProofFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -14283,6 +14285,7 @@ void MessageChannelWithdrawalChallenge::SharedCtor() {
   address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   state_ = GOOGLE_LONGLONG(0);
   main_source_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  block_seq_ = GOOGLE_LONGLONG(0);
   merkel_proof_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
@@ -14350,6 +14353,7 @@ void MessageChannelWithdrawalChallenge::Clear() {
   address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   state_ = GOOGLE_LONGLONG(0);
   main_source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  block_seq_ = GOOGLE_LONGLONG(0);
   merkel_proof_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 
 #undef ZR_HELPER_
@@ -14486,13 +14490,28 @@ bool MessageChannelWithdrawalChallenge::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(74)) goto parse_merkel_proof;
+        if (input->ExpectTag(72)) goto parse_block_seq;
         break;
       }
 
-      // optional string merkel_proof = 9;
+      // optional int64 block_seq = 9;
       case 9: {
-        if (tag == 74) {
+        if (tag == 72) {
+         parse_block_seq:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &block_seq_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(82)) goto parse_merkel_proof;
+        break;
+      }
+
+      // optional string merkel_proof = 10;
+      case 10: {
+        if (tag == 82) {
          parse_merkel_proof:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_merkel_proof()));
@@ -14587,14 +14606,19 @@ void MessageChannelWithdrawalChallenge::SerializeWithCachedSizes(
       8, this->main_source_address(), output);
   }
 
-  // optional string merkel_proof = 9;
+  // optional int64 block_seq = 9;
+  if (this->block_seq() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(9, this->block_seq(), output);
+  }
+
+  // optional string merkel_proof = 10;
   if (this->merkel_proof().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->merkel_proof().data(), this->merkel_proof().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "protocol.MessageChannelWithdrawalChallenge.merkel_proof");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      9, this->merkel_proof(), output);
+      10, this->merkel_proof(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:protocol.MessageChannelWithdrawalChallenge)
@@ -14663,7 +14687,12 @@ void MessageChannelWithdrawalChallenge::SerializeWithCachedSizes(
         8, this->main_source_address(), target);
   }
 
-  // optional string merkel_proof = 9;
+  // optional int64 block_seq = 9;
+  if (this->block_seq() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(9, this->block_seq(), target);
+  }
+
+  // optional string merkel_proof = 10;
   if (this->merkel_proof().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->merkel_proof().data(), this->merkel_proof().length(),
@@ -14671,7 +14700,7 @@ void MessageChannelWithdrawalChallenge::SerializeWithCachedSizes(
       "protocol.MessageChannelWithdrawalChallenge.merkel_proof");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        9, this->merkel_proof(), target);
+        10, this->merkel_proof(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:protocol.MessageChannelWithdrawalChallenge)
@@ -14738,7 +14767,14 @@ int MessageChannelWithdrawalChallenge::ByteSize() const {
         this->main_source_address());
   }
 
-  // optional string merkel_proof = 9;
+  // optional int64 block_seq = 9;
+  if (this->block_seq() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->block_seq());
+  }
+
+  // optional string merkel_proof = 10;
   if (this->merkel_proof().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -14801,6 +14837,9 @@ void MessageChannelWithdrawalChallenge::MergeFrom(const MessageChannelWithdrawal
 
     main_source_address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.main_source_address_);
   }
+  if (from.block_seq() != 0) {
+    set_block_seq(from.block_seq());
+  }
   if (from.merkel_proof().size() > 0) {
 
     merkel_proof_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.merkel_proof_);
@@ -14839,6 +14878,7 @@ void MessageChannelWithdrawalChallenge::InternalSwap(MessageChannelWithdrawalCha
   address_.Swap(&other->address_);
   std::swap(state_, other->state_);
   main_source_address_.Swap(&other->main_source_address_);
+  std::swap(block_seq_, other->block_seq_);
   merkel_proof_.Swap(&other->merkel_proof_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -15087,7 +15127,21 @@ void MessageChannelWithdrawalChallenge::clear_main_source_address() {
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawalChallenge.main_source_address)
 }
 
-// optional string merkel_proof = 9;
+// optional int64 block_seq = 9;
+void MessageChannelWithdrawalChallenge::clear_block_seq() {
+  block_seq_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 MessageChannelWithdrawalChallenge::block_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawalChallenge.block_seq)
+  return block_seq_;
+}
+ void MessageChannelWithdrawalChallenge::set_block_seq(::google::protobuf::int64 value) {
+  
+  block_seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawalChallenge.block_seq)
+}
+
+// optional string merkel_proof = 10;
 void MessageChannelWithdrawalChallenge::clear_merkel_proof() {
   merkel_proof_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
