@@ -289,7 +289,8 @@ message MessageChannelWithdrawalChallenge{
 	string address = 6;
 	int64  state = 7;
 	string main_source_address = 8;
-	string merkel_proof = 9;
+	int64 block_seq = 9;
+	string merkel_proof = 10;
 }
 
 message MessageChannelChangeChildValidator{
