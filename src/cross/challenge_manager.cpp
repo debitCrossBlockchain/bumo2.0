@@ -6,6 +6,8 @@ using namespace std;
 #define CHALLENGE_HEAD_SEQ "challenge_head_seq"
 #define CHALLENGE_WITHDRAWAL_SEQ "challenge_withdrawal_seq"
 #define MAX_REQUEST_SUBMIT_NUMS 10
+#define MSG_BUFFER_PERIOD 10
+#define MSG_UPDATE_PERIOD 4
 namespace bumo {
 
 	ChallengeSubmitHead::ChallengeSubmitHead() :
@@ -345,6 +347,15 @@ namespace bumo {
 		while (enabled_){
 			utils::Sleep(10);
 			int64_t current_time = utils::Timestamp::HighResolution();
+			if ((current_time - last_buffer_time_) > MSG_BUFFER_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				CopyBuffer();
+				last_buffer_time_ = current_time;
+			}
+
+			if ((current_time - last_update_time_) > MSG_UPDATE_PERIOD * utils::MICRO_UNITS_PER_SEC){
+				UpdateStatus();
+				last_update_time_ = current_time;
+			}
 
 		}
 	}
