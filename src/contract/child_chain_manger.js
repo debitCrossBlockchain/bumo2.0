@@ -184,6 +184,9 @@ function checkWithdrawal(params) {
     tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_detail));
 }
 
+function challengeSubmitHead(params) {
+}
+
 function challengeWithdrawal(params) {
     log('challengeWithdrawal');
     let input = params;
@@ -627,6 +630,9 @@ function main(inputStr){
     }
     else if(input.method === 'submitChildBlockHeader'){
         submitChildBlockHeader(input.params);
+    }
+    else if(input.method === 'challengeSubmitHead'){
+        challengeSubmitHead(input.params);
     }
     else if(input.method === 'challengeWithdrawal'){
         challengeWithdrawal(input.params);
