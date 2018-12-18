@@ -206,6 +206,10 @@ namespace bumo {
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 	}
 
+	void ChallengeWithdrawal::SortMap(){
+
+	}
+
 	void ChallengeWithdrawal::RequestLost(){
 		//Request up to ten
 		int64_t max_nums = MIN(MAX_REQUEST_SUBMIT_NUMS, (recv_max_seq_ - latest_seq_));
