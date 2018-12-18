@@ -179,6 +179,9 @@ namespace bumo {
 		}
 	}
 
+	void ChallengeWithdrawal::UpdateStatus(){
+	}
+
 	ChallengeManager::ChallengeManager() :
 		enabled_(false),
 		thread_ptr_(NULL){
