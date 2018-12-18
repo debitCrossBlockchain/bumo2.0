@@ -206,6 +206,10 @@ namespace bumo {
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 	}
 
+	void ChallengeWithdrawal::RequestLost(){
+
+	}
+
 	ChallengeManager::ChallengeManager() :
 		enabled_(false),
 		thread_ptr_(NULL){
