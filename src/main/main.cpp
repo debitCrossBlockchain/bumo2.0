@@ -30,6 +30,7 @@
 #include <monitor/monitor_manager.h>
 #include <cross/cross_utils.h>
 #include <cross/message_handler.h>
+#include<cross/cross_manager.h>
 #include "configure.h"
 
 void SaveWSPort();
@@ -84,6 +85,7 @@ int main(int argc, char *argv[]){
 	bumo::WebServer::InitInstance();
 	bumo::MonitorManager::InitInstance();
 	bumo::ContractManager::InitInstance();
+	bumo::CrossManager::InitInstance();
 
 	bumo::Argument arg;
 	if (arg.Parse(argc, argv)){
@@ -286,6 +288,14 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::ContractManager::Exit, &contract_manager));
 		LOG_INFO("Initialized contract manager successfully");
 
+		bumo::CrossManager &cross_manager = bumo::CrossManager::Instance();
+		if (!cross_manager.Initialize()){
+			LOG_ERROR("Failed to initialize cross manager");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::CrossManager::Exit, &cross_manager));
+		LOG_INFO("Initialized cross manager successfully");
+
 		bumo::g_ready_ = true;
 
 		RunLoop();
@@ -310,6 +320,7 @@ int main(int argc, char *argv[]){
 	bumo::Storage::ExitInstance();
 	utils::Logger::ExitInstance();
 	utils::Daemon::ExitInstance();
+	bumo::CrossManager::ExitInstance();
 	
 	if (arg.console_ && !bumo::g_ready_) {
 		printf("Initialized failed, please check log for detail\n");
