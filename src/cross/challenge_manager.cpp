@@ -355,7 +355,8 @@ namespace bumo {
 	}
 
 	void ChallengeManager::CopyBuffer(){
-
+		challenge_submit_head_->CopyBufferSubmitHead();
+		challenge_withdrawal_->CopyBufferWithdrawal();
 	}
 
 	void ChallengeManager::ChallengeNotify(const protocol::MessageChannel &message_channel){
