@@ -184,8 +184,8 @@ function checkWithdrawal(params) {
     tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_detail));
 }
 
-function ChallengeWithdrawal(params) {
-    log('ChallengeWithdrawal');
+function challengeWithdrawal(params) {
+    log('challengeWithdrawal');
     let input = params;
     let retinfo = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id));
     if (retinfo === false) {
@@ -628,8 +628,8 @@ function main(inputStr){
     else if(input.method === 'submitChildBlockHeader'){
         submitChildBlockHeader(input.params);
     }
-    else if(input.method === 'ChallengeWithdrawal'){
-        ChallengeWithdrawal(input.params);
+    else if(input.method === 'challengeWithdrawal'){
+        challengeWithdrawal(input.params);
     }
     else if(input.method === 'depositCoin'){
         depositCoin(input.params);
