@@ -180,6 +180,18 @@ namespace bumo {
 	}
 
 	void ChallengeWithdrawal::UpdateStatus(){
+		utils::MutexGuard guard(common_lock_);
+		if (withdrawal_map_.empty()){
+			return;
+		}
+
+		UpdateRequestLatestSeq();
+
+		//sort seq
+		SortMap();
+
+		//request
+		RequestLost();
 	}
 
 	ChallengeManager::ChallengeManager() :
