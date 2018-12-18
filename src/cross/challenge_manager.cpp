@@ -196,14 +196,13 @@ namespace bumo {
 
 	void ChallengeWithdrawal::UpdateRequestLatestSeq(){
 		protocol::MessageChannel message_channel;
-		protocol::MessageChannelQuerySubmitHead query_head;
-		query_head.set_seq(-1);
-		query_head.set_hash("");
+		protocol::MessageChannelQueryWithdrawal withdrawal;
+		withdrawal.set_seq(-1);
+		withdrawal.set_chain_id(General::GetSelfChainId());
 		message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_SUBMIT_HEAD);
-		message_channel.set_msg_data(query_head.SerializeAsString());
+		message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUWERY_WITHDRAWAL);
+		message_channel.set_msg_data(withdrawal.SerializeAsString());
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
-
 	}
 
 	ChallengeManager::ChallengeManager() :
