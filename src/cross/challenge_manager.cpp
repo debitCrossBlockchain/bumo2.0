@@ -89,14 +89,16 @@ namespace bumo {
 	}
 
 	void ChallengeSubmitHead::handlechallengeSubmitHead(const protocol::LedgerHeader &header){
-		Json::Value data;
-		bumo::LedgerManager::GetInstance()->GetModuleStatus(data);
-		int64_t chain_max_seq = data["chain_max_ledger_seq"].asInt64();
 		if (header.seq() <= chain_head_seq_){
 			return;
 		}
 
+		Json::Value data;
+		bumo::LedgerManager::GetInstance()->GetModuleStatus(data);
+		int64_t chain_max_seq = data["chain_max_ledger_seq"].asInt64();
+		if (header.seq()>chain_max_seq){
 
+		}
 
 		LedgerFrm frm;
 		bool bflag = true;
