@@ -57,9 +57,6 @@ namespace bumo {
 
 	void ChallengeSubmitHead::UpdateStatus(){
 		utils::MutexGuard guard(common_lock_);
-		if (ledger_map_.empty()){
-			return;
-		}
 
 		UpdateRequestLatestSeq();
 
@@ -71,6 +68,10 @@ namespace bumo {
 	}
 
 	void ChallengeSubmitHead::SortMap(){
+		if (ledger_map_.empty()){
+			return;
+		}
+
 		//If max, ignore it
 		if (latest_seq_ == recv_max_seq_){
 			return;
