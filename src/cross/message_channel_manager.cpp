@@ -14,6 +14,7 @@ along with bumo.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <utils/headers.h>
+#include <utils/random.h>
 #include <common/general.h>
 #include <main/configure.h>
 #include <proto/cpp/monitor.pb.h>
@@ -44,6 +45,10 @@ namespace bumo {
 		return peer_node_address_;
 	}
 
+	std::string MessageChannelPeer::GetRoundString() const {
+		return round_string_;
+	}
+
 	int64_t MessageChannelPeer::GetActiveTime() const {
 		return active_time_;
 	}
@@ -63,13 +68,20 @@ namespace bumo {
 		active_time_ = current_time;
 	}
 
+	void MessageChannelPeer::SetRoundString(const std::string &round_string) {
+		round_string_ = round_string;
+	}
+
 	bool MessageChannelPeer::SendHello(const std::string &node_address, const int64_t &network_id, std::error_code &ec) {
 		protocol::MessageChannelHello hello;
-
 
 		hello.set_node_address(node_address);
 		hello.set_network_id(network_id);
 		hello.set_chain_id(General::GetSelfChainId());
+		std::string round_str;
+		utils::GetStrongRandBytes(round_str);
+		hello.set_round_string(round_str);
+		SetRoundString(round_str);
 		return SendRequest(protocol::MESSAGE_CHANNEL_NODE_HELLO, hello.SerializeAsString(), ec);
 	}
 
@@ -192,6 +204,19 @@ namespace bumo {
 
 			LOG_INFO("Received a hello message, peer(%s) is active", conn->GetPeerAddress().ToIpPort().c_str());
 			peer->SetActiveTime(utils::Timestamp::HighResolution());
+			//append signature
+			std::string private_key = bumo::Configure::Instance().ledger_configure_.validation_privatekey_;
+			PrivateKey pkey(private_key);
+			if (!pkey.IsValid()){
+				cmsg.set_error_code(protocol::ERRCODE_INVALID_PRIKEY);
+				cmsg.set_error_desc(utils::String::Format("The peer connection is broken because invalid prikey"));
+				LOG_ERROR("Failed to process the peer hello message.%s", cmsg.error_desc().c_str());
+				break;
+			}
+			std::string sign = pkey.Sign(hello.round_string());
+			protocol::Signature *signpro = cmsg.mutable_round_signature();
+			signpro->set_sign_data(sign);
+			signpro->set_public_key(pkey.GetEncPublicKey());
 
 			if (peer->InBound()) {
 				const MessageChannelConfigure &message_channel_configure = Configure::Instance().message_channel_configure_;
@@ -220,7 +245,23 @@ namespace bumo {
 			LOG_ERROR("Failed to response the MessageChannelPeer hello message.MessageChannelPeer reponse error code(%d), desc(%s)", env.error_code(), env.error_desc().c_str());
 			return false;
 		}
-
+		const protocol::Signature &sig = env.round_signature();
+		//get local key public key
+		std::string private_key = bumo::Configure::Instance().ledger_configure_.validation_privatekey_;
+		PrivateKey pkey(private_key);
+		std::string error_str;
+		if (!pkey.IsValid()){
+			peer->Close("OnHelloResponse get privatekey failed");
+			LOG_ERROR("OnHelloResponse get privatekey failed.");
+			return false;
+		}
+		if (!PublicKey::Verify(peer->GetRoundString(), sig.sign_data(), pkey.GetEncPublicKey())) {
+			error_str = utils::String::Format(" (ip:%s)(address:%s) is not Main-Child match chain", 
+				peer->GetPeerAddress().ToIpPort().c_str(), peer->GetPeerNodeAddress());
+			peer->Close(error_str);
+			LOG_ERROR("%s",error_str);
+			return false;
+		}
 		return true;
 	}
 
