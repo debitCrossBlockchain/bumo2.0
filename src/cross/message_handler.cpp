@@ -240,12 +240,18 @@ namespace bumo {
 			LOG_ERROR("Failed to query child block .%d", error_code);
 			return;
 		}
-		
-		std::string error_msg;
-		if (!bumo::Json2Proto(object["block_header"], *header, error_msg)) {
-			LOG_ERROR("block_header Failed to Json2Proto error_msg=%s", error_msg.c_str());
-			return;
-		}
+
+		header->set_account_tree_hash(object["block_header"]["account_tree_hash"].asString());
+		header->set_chain_id(object["block_header"]["chain_id"].asInt64());
+		header->set_close_time(object["block_header"]["close_time"].asInt64());
+		header->set_consensus_value_hash(object["block_header"]["consensus_value_hash"].asString());
+		header->set_fees_hash(object["block_header"]["fees_hash"].asString());
+		header->set_hash(object["block_header"]["hash"].asString());
+		header->set_previous_hash(object["block_header"]["previous_hash"].asString());
+		header->set_seq(object["block_header"]["seq"].asInt64());
+		header->set_validators_hash(object["block_header"]["validators_hash"].asString());
+		header->set_version(object["block_header"]["version"].asInt64());
+
 	}
 
 
