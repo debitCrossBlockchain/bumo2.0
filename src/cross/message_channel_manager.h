@@ -45,9 +45,11 @@ namespace bumo {
 		//Peer infomation
 		std::string peer_node_address_;
 		int64_t chain_id_;
+		std::string round_string_;
 	public:
 		bool IsActive() const;
 		std::string GetPeerNodeAddress() const;
+		std::string GetRoundString() const;
 		int64_t GetActiveTime() const;
 		int64_t GetDelay() const;
 		int64_t GetChainId() const;
@@ -55,6 +57,7 @@ namespace bumo {
 		bool SendPeers(std::error_code &ec);
 		void SetPeerInfo(const protocol::MessageChannelHello &hello);
 		void SetActiveTime(int64_t current_time);
+		void SetRoundString(const std::string &round_string);
 		bool SendHello(const std::string &node_address, const int64_t &network_id, std::error_code &ec);
 
 		virtual void ToJson(Json::Value &status) const;
