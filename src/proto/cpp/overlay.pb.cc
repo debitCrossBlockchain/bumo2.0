@@ -1077,7 +1077,7 @@ void protobuf_AddDesc_overlay_2eproto() {
     "E\022\"\n\036MESSAGE_CHANNEL_NODE_TYPE_NONE\020\000\022 \n"
     "\034MESSAGE_CHANNEL_NODE_PACKAGE\020\036\022\036\n\032MESSA"
     "GE_CHANNEL_NODE_HELLO\020\037\022\024\n\020EVENT_WITHDRA"
-    "WAL\020 *\332\005\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MESSAG"
+    "WAL\020 *\212\006\n\024MESSAGE_CHANNEL_TYPE\022\035\n\031MESSAG"
     "E_CHANNEL_TYPE_NONE\020\000\022&\n\"MESSAGE_CHANNEL"
     "_CREATE_CHILD_CHAIN\020\001\022\034\n\030MESSAGE_CHANNEL"
     "_MAIN_MIX\020\002\022\035\n\031MESSAGE_CHANNEL_CHILD_MIX"
@@ -1095,8 +1095,9 @@ void protobuf_AddDesc_overlay_2eproto() {
     "E_CHILD_VALIDATOR\020\017\022%\n!MESSAGE_CHANNEL_Q"
     "UERY_SUBMIT_HEAD\020\020\022$\n MESSAGE_CHANNEL_QU"
     "ERY_WITHDRAWAL\020\021\022(\n$MESSAGE_CHANNEL_CHIL"
-    "D_CHALLENGE_HEAD\020\022B\"\n io.bumo.sdk.core.e"
-    "xtend.protobufb\006proto3", 5542);
+    "D_CHALLENGE_HEAD\020\022\022.\n*MESSAGE_CHANNEL_CH"
+    "ILD_CHALLENGE_WITHDRAWAL\020\023B\"\n io.bumo.sd"
+    "k.core.extend.protobufb\006proto3", 5590);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -1263,6 +1264,7 @@ bool MESSAGE_CHANNEL_TYPE_IsValid(int value) {
     case 16:
     case 17:
     case 18:
+    case 19:
       return true;
     default:
       return false;
