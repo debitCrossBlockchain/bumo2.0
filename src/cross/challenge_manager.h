@@ -21,7 +21,7 @@ namespace bumo {
 		void UpdateRequestLatestSeq();
 		void SortMap();
 		void RequestLost();
-		void handlechallengeSubmitHead(const protocol::LedgerHeader &header);
+		void HandlechallengeSubmitHead(const protocol::LedgerHeader &header);
 		int64_t CheckchallengeSubmitHead(const protocol::LedgerHeader &header, protocol::LedgerHeader &child_header);
 	private:
 		utils::Mutex common_lock_;
