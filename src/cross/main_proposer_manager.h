@@ -68,6 +68,9 @@ namespace bumo {
 		void UpdateLatestSeq(const int64_t chain_id, int64_t &seq) const;
 		void SortChildSeq(ChildChain &child_chain) const;
 		void RequestChainSeq(ChildChain &child_chain) const;
+
+		void OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel);
+		void OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel);
 		
 	private:
 		utils::Mutex child_chain_map_lock_;

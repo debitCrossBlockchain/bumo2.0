@@ -51,7 +51,7 @@ namespace bumo {
 		int64_t last_buffer_time_;
 	};
 
-	class MessageHandlerMainChain :public MessageHandlerBase, public ITransactionSenderNotify{
+	class MessageHandlerMainChain :public MessageHandlerBase{
 	public:
 		MessageHandlerMainChain();
 		virtual ~MessageHandlerMainChain();
@@ -66,11 +66,10 @@ namespace bumo {
 		void QuerySubmitHead(const int64_t &chain_id, const int64_t &seq, const std::string &hash, protocol::MessageChannelSubmitHead &submit_header);
 		void OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel);
 		void OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel);
-		virtual void HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result) override;
-        void BreakProposer(const std::string &error_des);
 
 	private:
 		MessageChannelPocMap proc_methods_;
+		int64_t error_tx_times_;
 	};
 
 	class MessageHandlerChildChain :public MessageHandlerBase{
