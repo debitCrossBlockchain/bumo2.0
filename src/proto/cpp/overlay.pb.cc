@@ -1098,10 +1098,12 @@ void protobuf_AddDesc_overlay_2eproto() {
     "UERY_SUBMIT_HEAD\020\020\022$\n MESSAGE_CHANNEL_QU"
     "ERY_WITHDRAWAL\020\021\022(\n$MESSAGE_CHANNEL_CHIL"
     "D_CHALLENGE_HEAD\020\022\022.\n*MESSAGE_CHANNEL_CH"
-    "ILD_CHALLENGE_WITHDRAWAL\020\023*S\n#MESSAGE_CH"
-    "ANNEL_CHALLENGE_HEAD_TYPE\022,\n(MESSAGE_CHA"
-    "NNEL_CHALLENGE_HEAD_TYPE_NONE\020\000B\"\n io.bu"
-    "mo.sdk.core.extend.protobufb\006proto3", 5675);
+    "ILD_CHALLENGE_WITHDRAWAL\020\023*\205\001\n#MESSAGE_C"
+    "HANNEL_CHALLENGE_HEAD_TYPE\022,\n(MESSAGE_CH"
+    "ANNEL_CHALLENGE_HEAD_TYPE_NONE\020\000\0220\n,MESS"
+    "AGE_CHANNEL_CHALLENGE_HEAD_TYPE_NONEXIST"
+    "\020\001B\"\n io.bumo.sdk.core.extend.protobufb\006"
+    "proto3", 5726);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -1282,6 +1284,7 @@ const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_de
 bool MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_IsValid(int value) {
   switch(value) {
     case 0:
+    case 1:
       return true;
     default:
       return false;
