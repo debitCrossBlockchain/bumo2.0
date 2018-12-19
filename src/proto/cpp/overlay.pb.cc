@@ -135,6 +135,7 @@ const ::google::protobuf::EnumDescriptor* OVERLAY_MESSAGE_TYPE_descriptor_ = NUL
 const ::google::protobuf::EnumDescriptor* ChainMessageType_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_NODE_TYPE_descriptor_ = NULL;
 const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_TYPE_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_descriptor_ = NULL;
 
 }  // namespace
 
@@ -783,6 +784,7 @@ void protobuf_AssignDesc_overlay_2eproto() {
   ChainMessageType_descriptor_ = file->enum_type(1);
   MESSAGE_CHANNEL_NODE_TYPE_descriptor_ = file->enum_type(2);
   MESSAGE_CHANNEL_TYPE_descriptor_ = file->enum_type(3);
+  MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_descriptor_ = file->enum_type(4);
 }
 
 namespace {
@@ -1096,8 +1098,10 @@ void protobuf_AddDesc_overlay_2eproto() {
     "UERY_SUBMIT_HEAD\020\020\022$\n MESSAGE_CHANNEL_QU"
     "ERY_WITHDRAWAL\020\021\022(\n$MESSAGE_CHANNEL_CHIL"
     "D_CHALLENGE_HEAD\020\022\022.\n*MESSAGE_CHANNEL_CH"
-    "ILD_CHALLENGE_WITHDRAWAL\020\023B\"\n io.bumo.sd"
-    "k.core.extend.protobufb\006proto3", 5590);
+    "ILD_CHALLENGE_WITHDRAWAL\020\023*S\n#MESSAGE_CH"
+    "ANNEL_CHALLENGE_HEAD_TYPE\022,\n(MESSAGE_CHA"
+    "NNEL_CHALLENGE_HEAD_TYPE_NONE\020\000B\"\n io.bu"
+    "mo.sdk.core.extend.protobufb\006proto3", 5675);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -1265,6 +1269,19 @@ bool MESSAGE_CHANNEL_TYPE_IsValid(int value) {
     case 17:
     case 18:
     case 19:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_descriptor_;
+}
+bool MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_IsValid(int value) {
+  switch(value) {
+    case 0:
       return true;
     default:
       return false;
