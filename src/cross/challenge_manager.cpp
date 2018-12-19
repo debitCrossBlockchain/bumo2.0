@@ -89,19 +89,11 @@ namespace bumo {
 	}
 
 	int64_t ChallengeSubmitHead::CheckchallengeSubmitHead(const protocol::LedgerHeader &header, protocol::LedgerHeader &child_header){
-
-	}
-
-	void ChallengeSubmitHead::HandlechallengeSubmitHead(const protocol::LedgerHeader &header){
-		if (header.seq() <= chain_head_seq_){
-			return;
-		}
-
 		Json::Value data;
 		bumo::LedgerManager::GetInstance()->GetModuleStatus(data);
 		int64_t chain_max_seq = data["chain_max_ledger_seq"].asInt64();
 		if (header.seq()>chain_max_seq){
-
+			return  protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_NONEXIST;
 		}
 
 		LedgerFrm frm;
@@ -109,7 +101,7 @@ namespace bumo {
 		if (!frm.LoadFromDb(header.seq())) {
 			std::string error_desc = utils::String::Format("Parse MessageChannelQueryHead error,no exist ledger_seq=(" FMT_I64 ")", header);
 			LOG_ERROR("%s", error_desc.c_str());
-			//TODO send CMC head challenge
+			return  protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_NONEXIST;
 		}
 
 		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
@@ -118,7 +110,16 @@ namespace bumo {
 			(ledger_header.fees_hash() == header.fees_hash()) && (ledger_header.consensus_value_hash() == header.consensus_value_hash()) && (ledger_header.version() == header.version()) &&
 			(ledger_header.validators_hash() == header.validators_hash());
 		if (!bflag){
-			//TODO send CMC head challenge
+			child_header.CopyFrom(ledger_header);
+			return  protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_DOCTORED;
+		}
+
+		return  protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_SUCCESS;
+	}
+
+	void ChallengeSubmitHead::HandlechallengeSubmitHead(const protocol::LedgerHeader &header){
+		if (header.seq() <= chain_head_seq_){
+			return;
 		}
 
 		int64_t max_seq = MAX(recv_max_seq_, header.seq());
