@@ -69,6 +69,7 @@ namespace bumo {
 		void SortChildSeq(ChildChain &child_chain) const;
 		void RequestChainSeq(ChildChain &child_chain) const;
 
+		void OnHandleMainPropser(const protocol::MessageChannel &message_channel);
 		void OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel);
 		void OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel);
 		
