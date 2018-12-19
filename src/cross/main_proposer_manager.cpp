@@ -26,10 +26,14 @@ namespace bumo {
 		}
 
 		bumo::MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
+		bumo::MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_HEAD);
+		bumo::MessageChannel::Instance().RegisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_WITHDRAWAL);
 	}
 
 	MainProposerManager::~MainProposerManager(){
 		bumo::MessageChannel::Instance().UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_SUBMIT_HEAD);
+		bumo::MessageChannel::Instance().UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_HEAD);
+		bumo::MessageChannel::Instance().UnregisterMessageChannelConsumer(this, protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_WITHDRAWAL);
 	}
 
 	void MainProposerManager::DoTimerUpdate(){
