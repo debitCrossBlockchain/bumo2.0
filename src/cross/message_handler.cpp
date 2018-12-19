@@ -338,7 +338,8 @@ namespace bumo {
 		}
 		
 		Json::Value json_challenge = bumo::Proto2Json(challenge_head);
-		
+		/*TransTask trans_task(send_para_list, 0, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(i));
+		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);*/
 	}
 
 	void MessageHandlerMainChain::OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel){

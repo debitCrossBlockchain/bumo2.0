@@ -51,7 +51,7 @@ namespace bumo {
 		int64_t last_buffer_time_;
 	};
 
-	class MessageHandlerMainChain :public MessageHandlerBase{
+	class MessageHandlerMainChain :public MessageHandlerBase, public ITransactionSenderNotify{
 	public:
 		MessageHandlerMainChain();
 		virtual ~MessageHandlerMainChain();
@@ -66,6 +66,8 @@ namespace bumo {
 		void QuerySubmitHead(const int64_t &chain_id, const int64_t &seq, const std::string &hash, protocol::MessageChannelSubmitHead &submit_header);
 		void OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel);
 		void OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel);
+		virtual void HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result) override;
+        void BreakProposer(const std::string &error_des);
 
 	private:
 		MessageChannelPocMap proc_methods_;
@@ -86,6 +88,7 @@ namespace bumo {
 		void OnHandleQueryHead(const protocol::MessageChannel &message_channel);
 		void CreateChildChain(const protocol::MessageChannelCreateChildChain &create_child_chain);
 		void OnHandleChallenge(const protocol::MessageChannel &message_channel);
+
 	private:
 		int64_t last_deposit_time_;
 		int64_t local_deposit_seq_;
