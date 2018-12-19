@@ -342,6 +342,13 @@ namespace bumo {
 		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);*/
 	}
 
+	void MessageHandlerMainChain::HandleTransactionSenderResult(const TransTask &task_task, const TransTaskResult &task_result){
+	}
+
+	void MessageHandlerMainChain::BreakProposer(const std::string &error_des){
+
+	}
+
 	void MessageHandlerMainChain::OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel){
 
 	}
