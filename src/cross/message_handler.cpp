@@ -326,6 +326,19 @@ namespace bumo {
 
 	void MessageHandlerMainChain::OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel){
 
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return;
+		}
+
+		protocol::MessageChannelChildChallengeHead challenge_head;
+		if (!challenge_head.ParseFromString(message_channel.msg_data())){
+			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
+			LOG_ERROR("Parse MessageChannelChildChallengeHead error, err_code is (" FMT_I64 ")", error_code);
+			return;
+		}
+		
+		Json::Value json_challenge = bumo::Proto2Json(challenge_head);
+		
 	}
 
 	void MessageHandlerMainChain::OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel){
