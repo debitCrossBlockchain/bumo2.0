@@ -322,6 +322,11 @@ namespace bumo {
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 	}
 
+	void MessageHandlerMainChain::OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel){
+
+	}
+	void OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel);
+
 
 	MessageHandlerChildChain::MessageHandlerChildChain(){
 		init_ = false;
