@@ -252,11 +252,15 @@ namespace bumo {
 		case protocol::MESSAGE_CHANNEL_SUBMIT_HEAD:
 			OnHandleMainPropser(message_channel);
 			break;
+		case protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_HEAD:
+			OnHandleChildChallengeSubmitHead(message_channel);
+			break;
+		case protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_WITHDRAWAL:
+			OnHandleChildChallengeWithdrawal(message_channel);
+			break;
 		default:
 			break;
 		}
-
-		
 	}
 
 	void MainProposerManager::OnHandleMainPropser(const protocol::MessageChannel &message_channel){
