@@ -2114,9 +2114,9 @@ class MessageChannelHello : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::int64 network_id() const;
   void set_network_id(::google::protobuf::int64 value);
 
-  // optional string node_address = 3;
+  // optional string node_address = 2;
   void clear_node_address();
-  static const int kNodeAddressFieldNumber = 3;
+  static const int kNodeAddressFieldNumber = 2;
   const ::std::string& node_address() const;
   void set_node_address(const ::std::string& value);
   void set_node_address(const char* value);
@@ -2125,11 +2125,22 @@ class MessageChannelHello : public ::google::protobuf::Message /* @@protoc_inser
   ::std::string* release_node_address();
   void set_allocated_node_address(::std::string* node_address);
 
-  // optional int64 chain_id = 4;
+  // optional int64 chain_id = 3;
   void clear_chain_id();
-  static const int kChainIdFieldNumber = 4;
+  static const int kChainIdFieldNumber = 3;
   ::google::protobuf::int64 chain_id() const;
   void set_chain_id(::google::protobuf::int64 value);
+
+  // optional string round_string = 4;
+  void clear_round_string();
+  static const int kRoundStringFieldNumber = 4;
+  const ::std::string& round_string() const;
+  void set_round_string(const ::std::string& value);
+  void set_round_string(const char* value);
+  void set_round_string(const char* value, size_t size);
+  ::std::string* mutable_round_string();
+  ::std::string* release_round_string();
+  void set_allocated_round_string(::std::string* round_string);
 
   // @@protoc_insertion_point(class_scope:protocol.MessageChannelHello)
  private:
@@ -2139,6 +2150,7 @@ class MessageChannelHello : public ::google::protobuf::Message /* @@protoc_inser
   ::google::protobuf::int64 network_id_;
   ::google::protobuf::internal::ArenaStringPtr node_address_;
   ::google::protobuf::int64 chain_id_;
+  ::google::protobuf::internal::ArenaStringPtr round_string_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
   friend void protobuf_AssignDesc_overlay_2eproto();
@@ -2226,12 +2238,22 @@ class MessageChannelHelloResponse : public ::google::protobuf::Message /* @@prot
   ::std::string* release_error_desc();
   void set_allocated_error_desc(::std::string* error_desc);
 
+  // optional .protocol.Signature round_signature = 3;
+  bool has_round_signature() const;
+  void clear_round_signature();
+  static const int kRoundSignatureFieldNumber = 3;
+  const ::protocol::Signature& round_signature() const;
+  ::protocol::Signature* mutable_round_signature();
+  ::protocol::Signature* release_round_signature();
+  void set_allocated_round_signature(::protocol::Signature* round_signature);
+
   // @@protoc_insertion_point(class_scope:protocol.MessageChannelHelloResponse)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr error_desc_;
+  ::protocol::Signature* round_signature_;
   int error_code_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
@@ -5863,7 +5885,7 @@ inline void MessageChannelHello::set_network_id(::google::protobuf::int64 value)
   // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.network_id)
 }
 
-// optional string node_address = 3;
+// optional string node_address = 2;
 inline void MessageChannelHello::clear_node_address() {
   node_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -5907,7 +5929,7 @@ inline void MessageChannelHello::set_allocated_node_address(::std::string* node_
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelHello.node_address)
 }
 
-// optional int64 chain_id = 4;
+// optional int64 chain_id = 3;
 inline void MessageChannelHello::clear_chain_id() {
   chain_id_ = GOOGLE_LONGLONG(0);
 }
@@ -5919,6 +5941,50 @@ inline void MessageChannelHello::set_chain_id(::google::protobuf::int64 value) {
   
   chain_id_ = value;
   // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.chain_id)
+}
+
+// optional string round_string = 4;
+inline void MessageChannelHello::clear_round_string() {
+  round_string_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& MessageChannelHello::round_string() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHello.round_string)
+  return round_string_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelHello::set_round_string(const ::std::string& value) {
+  
+  round_string_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelHello.round_string)
+}
+inline void MessageChannelHello::set_round_string(const char* value) {
+  
+  round_string_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:protocol.MessageChannelHello.round_string)
+}
+inline void MessageChannelHello::set_round_string(const char* value, size_t size) {
+  
+  round_string_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:protocol.MessageChannelHello.round_string)
+}
+inline ::std::string* MessageChannelHello::mutable_round_string() {
+  
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelHello.round_string)
+  return round_string_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* MessageChannelHello::release_round_string() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelHello.round_string)
+  
+  return round_string_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void MessageChannelHello::set_allocated_round_string(::std::string* round_string) {
+  if (round_string != NULL) {
+    
+  } else {
+    
+  }
+  round_string_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), round_string);
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelHello.round_string)
 }
 
 // -------------------------------------------------------------------
@@ -5981,6 +6047,44 @@ inline void MessageChannelHelloResponse::set_allocated_error_desc(::std::string*
   }
   error_desc_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), error_desc);
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelHelloResponse.error_desc)
+}
+
+// optional .protocol.Signature round_signature = 3;
+inline bool MessageChannelHelloResponse::has_round_signature() const {
+  return !_is_default_instance_ && round_signature_ != NULL;
+}
+inline void MessageChannelHelloResponse::clear_round_signature() {
+  if (GetArenaNoVirtual() == NULL && round_signature_ != NULL) delete round_signature_;
+  round_signature_ = NULL;
+}
+inline const ::protocol::Signature& MessageChannelHelloResponse::round_signature() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelHelloResponse.round_signature)
+  return round_signature_ != NULL ? *round_signature_ : *default_instance_->round_signature_;
+}
+inline ::protocol::Signature* MessageChannelHelloResponse::mutable_round_signature() {
+  
+  if (round_signature_ == NULL) {
+    round_signature_ = new ::protocol::Signature;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelHelloResponse.round_signature)
+  return round_signature_;
+}
+inline ::protocol::Signature* MessageChannelHelloResponse::release_round_signature() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelHelloResponse.round_signature)
+  
+  ::protocol::Signature* temp = round_signature_;
+  round_signature_ = NULL;
+  return temp;
+}
+inline void MessageChannelHelloResponse::set_allocated_round_signature(::protocol::Signature* round_signature) {
+  delete round_signature_;
+  round_signature_ = round_signature;
+  if (round_signature) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelHelloResponse.round_signature)
 }
 
 // -------------------------------------------------------------------
