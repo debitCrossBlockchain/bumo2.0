@@ -248,11 +248,18 @@ namespace bumo {
 	}
 
 	void MainProposerManager::DoHandleMessageChannel(const protocol::MessageChannel &message_channel){
-		/*switch (switch_on){
+		switch (message_channel.msg_type()){
+		case protocol::MESSAGE_CHANNEL_SUBMIT_HEAD:
+			OnHandleMainPropser(message_channel);
+			break;
 		default:
 			break;
-		}*/
+		}
 
+		
+	}
+
+	void MainProposerManager::OnHandleMainPropser(const protocol::MessageChannel &message_channel){
 		if (message_channel.msg_type() != protocol::MESSAGE_CHANNEL_SUBMIT_HEAD){
 			LOG_ERROR("Failed to message_channel type is not MESSAGE_CHANNEL_SUBMIT_HEAD, error msg type is %d", message_channel.msg_type());
 			return;
