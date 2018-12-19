@@ -340,7 +340,7 @@ message MessageChannelQueryWithdrawal{
 message MessageChannelChildChallengeHead{
     int64 chain_id = 1;
     MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE type = 2;
-	LedgerHeader cmc_head = 3
+	LedgerHeader cmc_head = 3;
 	LedgerHeader child_head = 4;
 }
 
