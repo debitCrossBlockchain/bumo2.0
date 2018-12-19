@@ -112,8 +112,6 @@ namespace bumo {
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST] = std::bind(&MessageHandlerMainChain::OnHandleChildGenesesRequest, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageHandlerMainChain::OnHandleWithdrawal, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_SUBMIT_HEAD] = std::bind(&MessageHandlerMainChain::OnHandleQuerySubmitHead, this, std::placeholders::_1);
-		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_HEAD] = std::bind(&MessageHandlerMainChain::OnHandleChildChallengeSubmitHead, this, std::placeholders::_1);
-		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_WITHDRAWAL] = std::bind(&MessageHandlerMainChain::OnHandleChildChallengeWithdrawal, this, std::placeholders::_1);
 		if (!Initialize()){
 			return false;
 		}
@@ -323,30 +321,6 @@ namespace bumo {
 		msg_channel.set_msg_data(withdrawal_challenge.SerializeAsString());
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 	}
-
-	void MessageHandlerMainChain::OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel){
-
-		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
-			return;
-		}
-
-		protocol::MessageChannelChildChallengeHead challenge_head;
-		if (!challenge_head.ParseFromString(message_channel.msg_data())){
-			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
-			LOG_ERROR("Parse MessageChannelChildChallengeHead error, err_code is (" FMT_I64 ")", error_code);
-			return;
-		}
-		
-		Json::Value json_challenge = bumo::Proto2Json(challenge_head);
-		/*TransTask trans_task(send_para_list, 0, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(i));
-		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);*/
-	}
-
-	
-	void MessageHandlerMainChain::OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel){
-
-	}
-
 
 	MessageHandlerChildChain::MessageHandlerChildChain(){
 		init_ = false;
