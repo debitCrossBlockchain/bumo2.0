@@ -123,8 +123,17 @@ namespace bumo {
 		}
 
 		protocol::LedgerHeader child_header;
-		if (CheckchallengeSubmitHead(header, child_header) != protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_SUCCESS){
-
+		int64_t type = CheckchallengeSubmitHead(header, child_header);
+		protocol::MessageChannelChildChallengeHead challenge_head;
+		if (type != protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_SUCCESS){
+			challenge_head.set_chain_id(General::GetSelfChainId());
+			*challenge_head.mutable_cmc_head() = header;
+			*challenge_head.mutable_cmc_head() = child_header;
+			protocol::MessageChannel message_channel;
+			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_HEAD);
+			message_channel.set_msg_data(challenge_head.SerializeAsString());
+			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 		}
 
 		int64_t max_seq = MAX(recv_max_seq_, header.seq());
