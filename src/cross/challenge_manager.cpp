@@ -88,6 +88,10 @@ namespace bumo {
 		}
 	}
 
+	int64_t ChallengeSubmitHead::CheckchallengeSubmitHead(const protocol::LedgerHeader &header, protocol::LedgerHeader &child_header){
+
+	}
+
 	void ChallengeSubmitHead::HandlechallengeSubmitHead(const protocol::LedgerHeader &header){
 		if (header.seq() <= chain_head_seq_){
 			return;
