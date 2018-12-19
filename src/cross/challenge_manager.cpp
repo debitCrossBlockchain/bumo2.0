@@ -1,8 +1,9 @@
 #include<cross/challenge_manager.h>
 #include<cross/message_channel_manager.h>
 #include <proto/cpp/overlay.pb.h>
-using namespace std;
+#include<ledger/ledger_manager.h>
 #include<map>
+using namespace std;
 #define CHALLENGE_HEAD_SEQ "challenge_head_seq"
 #define CHALLENGE_WITHDRAWAL_SEQ "challenge_withdrawal_seq"
 #define MAX_REQUEST_SUBMIT_NUMS 10
@@ -88,9 +89,14 @@ namespace bumo {
 	}
 
 	void ChallengeSubmitHead::handlechallengeSubmitHead(const protocol::LedgerHeader &header){
+		Json::Value data;
+		bumo::LedgerManager::GetInstance()->GetModuleStatus(data);
+		int64_t chain_max_seq = data["chain_max_ledger_seq"].asInt64();
 		if (header.seq() <= chain_head_seq_){
 			return;
 		}
+
+
 
 		LedgerFrm frm;
 		bool bflag = true;
@@ -327,7 +333,7 @@ namespace bumo {
 
 	bool ChallengeManager::Initialize() {
 		enabled_ = true;
-		if (General::GetSelfChainId()==General::MAIN_CHAIN_ID){
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			return true;
 		}
 		thread_ptr_ = new utils::Thread(this);
