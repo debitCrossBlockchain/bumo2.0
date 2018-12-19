@@ -122,6 +122,11 @@ namespace bumo {
 			return;
 		}
 
+		protocol::LedgerHeader child_header;
+		if (CheckchallengeSubmitHead(header, child_header) != protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_SUCCESS){
+
+		}
+
 		int64_t max_seq = MAX(recv_max_seq_, header.seq());
 		recv_max_seq_ = max_seq;
 		chain_head_seq_ = max_seq;
