@@ -65,6 +65,7 @@ namespace bumo {
 		void OnHandleQueryWithdrawal(const protocol::MessageChannel &message_channel);
 		void QuerySubmitHead(const int64_t &chain_id, const int64_t &seq, const std::string &hash, protocol::MessageChannelSubmitHead &submit_header);
 		void OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel);
+		void OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel);
 
 	private:
 		MessageChannelPocMap proc_methods_;
