@@ -325,7 +325,10 @@ namespace bumo {
 	void MessageHandlerMainChain::OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel){
 
 	}
-	void OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel);
+
+	void MessageHandlerMainChain::OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel){
+
+	}
 
 
 	MessageHandlerChildChain::MessageHandlerChildChain(){
