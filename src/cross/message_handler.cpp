@@ -112,6 +112,8 @@ namespace bumo {
 		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_GENESES_REQUEST] = std::bind(&MessageHandlerMainChain::OnHandleChildGenesesRequest, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_WITHDRAWAL] = std::bind(&MessageHandlerMainChain::OnHandleWithdrawal, this, std::placeholders::_1);
 		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_SUBMIT_HEAD] = std::bind(&MessageHandlerMainChain::OnHandleQuerySubmitHead, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_HEAD] = std::bind(&MessageHandlerMainChain::OnHandleQuerySubmitHead, this, std::placeholders::_1);
+		proc_methods_[protocol::MESSAGE_CHANNEL_QUERY_SUBMIT_HEAD] = std::bind(&MessageHandlerMainChain::OnHandleQuerySubmitHead, this, std::placeholders::_1);
 		if (!Initialize()){
 			return false;
 		}
