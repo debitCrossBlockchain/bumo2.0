@@ -327,6 +327,9 @@ namespace bumo {
 
 	bool ChallengeManager::Initialize() {
 		enabled_ = true;
+		if (General::GetSelfChainId()==General::MAIN_CHAIN_ID){
+			return true;
+		}
 		thread_ptr_ = new utils::Thread(this);
 		if (!thread_ptr_->Start("ChallengeManager")) {
 			return false;
@@ -338,6 +341,9 @@ namespace bumo {
 
 	bool ChallengeManager::Exit(){
 		enabled_ = false;
+		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
+			return true;
+		}
 		if (thread_ptr_) {
 			thread_ptr_->JoinWithStop();
 		}
