@@ -241,16 +241,16 @@ namespace bumo {
 			return;
 		}
 
-		header->set_account_tree_hash(object["block_header"]["account_tree_hash"].asString());
-		header->set_chain_id(object["block_header"]["chain_id"].asInt64());
-		header->set_close_time(object["block_header"]["close_time"].asInt64());
-		header->set_consensus_value_hash(object["block_header"]["consensus_value_hash"].asString());
-		header->set_fees_hash(object["block_header"]["fees_hash"].asString());
-		header->set_hash(object["block_header"]["hash"].asString());
-		header->set_previous_hash(object["block_header"]["previous_hash"].asString());
-		header->set_seq(object["block_header"]["seq"].asInt64());
-		header->set_validators_hash(object["block_header"]["validators_hash"].asString());
-		header->set_version(object["block_header"]["version"].asInt64());
+		header->set_account_tree_hash(object["account_tree_hash"].asString());
+		header->set_chain_id(object["chain_id"].asInt64());
+		header->set_close_time(object["close_time"].asInt64());
+		header->set_consensus_value_hash(object["consensus_value_hash"].asString());
+		header->set_fees_hash(object["fees_hash"].asString());
+		header->set_hash(object["hash"].asString());
+		header->set_previous_hash(object["previous_hash"].asString());
+		header->set_seq(object["seq"].asInt64());
+		header->set_validators_hash(object["validators_hash"].asString());
+		header->set_version(object["version"].asInt64());
 
 	}
 
