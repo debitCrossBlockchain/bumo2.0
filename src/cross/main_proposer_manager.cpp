@@ -285,7 +285,6 @@ namespace bumo {
 	}
 
 	void MainProposerManager::OnHandleChildChallengeSubmitHead(const protocol::MessageChannel &message_channel){
-
 		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
 			return;
 		}
@@ -302,7 +301,7 @@ namespace bumo {
 	
 		Json::Value input_value;
 	
-		input_value["method"] = "submitChildBlockHeader";
+		input_value["method"] = "challengeSubmitHead";
 		input_value["params"] = json_challenge;
 		send_para_list.push_back(input_value.toFastString());
 		TransTask trans_task(send_para_list, 1000000000, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(challenge_head.chain_id()));
