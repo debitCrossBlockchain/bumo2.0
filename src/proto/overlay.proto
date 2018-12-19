@@ -205,13 +205,15 @@ message MessageChannelQueryDeposit{
 
 message MessageChannelHello {
     int64 network_id = 1;
-    string node_address = 3;
-    int64 chain_id = 4;
+    string node_address = 2;
+    int64 chain_id = 3;
+	string round_string = 4;
 }
 
 message MessageChannelHelloResponse {
 	 ERRORCODE error_code = 1;
 	 string error_desc = 2;
+	 Signature round_signature = 3;
 }
 
 message MessageChannel{
