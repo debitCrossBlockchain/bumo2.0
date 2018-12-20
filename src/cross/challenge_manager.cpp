@@ -278,7 +278,7 @@ namespace bumo {
 		}
 	}
 
-	int64_t CheckchallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal, protocol::MessageChannelchildWithdrawalChallenge &child_withdrawal){
+	int64_t ChallengeWithdrawal::CheckchallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal, protocol::MessageChannelchildWithdrawalChallenge &child_withdrawal){
 		LedgerFrm frm;
 		bool bflag = true;
 		if (!frm.LoadFromDb(withdrawal.block_seq())) {
