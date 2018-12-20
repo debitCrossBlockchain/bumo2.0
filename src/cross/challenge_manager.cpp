@@ -290,7 +290,7 @@ namespace bumo {
 			LOG_ERROR("%s", error_desc.c_str());
 			//TODO send CMC withdrawal challenge
 		}
-
+		
 		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
 
 		if (ledger_header.hash() != withdrawal.block_hash()){

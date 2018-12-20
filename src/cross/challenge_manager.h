@@ -49,6 +49,7 @@ namespace bumo {
 		void SortMap();
 		void RequestLost();
 		void handlechallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal);
+		int64_t CheckchallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal, protocol::MessageChannelchildWithdrawalChallenge &child_withdrawal);
 	private:
 		utils::Mutex common_lock_;
 		WithdrawalMap withdrawal_map_;
