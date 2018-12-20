@@ -330,6 +330,9 @@ namespace bumo {
 
 
 	void MainProposerManager::OnHandleChildChallengeWithdrawal(const protocol::MessageChannel &message_channel){
+		if (General::GetSelfChainId() != General::MAIN_CHAIN_ID){
+			return;
+		}
 
 	}
 }
