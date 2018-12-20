@@ -3615,15 +3615,9 @@ class MessageChannelWithdrawalChallenge : public ::google::protobuf::Message /* 
   ::std::string* release_address();
   void set_allocated_address(::std::string* address);
 
-  // optional int64 state = 7;
-  void clear_state();
-  static const int kStateFieldNumber = 7;
-  ::google::protobuf::int64 state() const;
-  void set_state(::google::protobuf::int64 value);
-
-  // optional string main_source_address = 8;
+  // optional string main_source_address = 7;
   void clear_main_source_address();
-  static const int kMainSourceAddressFieldNumber = 8;
+  static const int kMainSourceAddressFieldNumber = 7;
   const ::std::string& main_source_address() const;
   void set_main_source_address(const ::std::string& value);
   void set_main_source_address(const char* value);
@@ -3632,11 +3626,17 @@ class MessageChannelWithdrawalChallenge : public ::google::protobuf::Message /* 
   ::std::string* release_main_source_address();
   void set_allocated_main_source_address(::std::string* main_source_address);
 
-  // optional int64 block_seq = 9;
+  // optional int64 block_seq = 8;
   void clear_block_seq();
-  static const int kBlockSeqFieldNumber = 9;
+  static const int kBlockSeqFieldNumber = 8;
   ::google::protobuf::int64 block_seq() const;
   void set_block_seq(::google::protobuf::int64 value);
+
+  // optional int64 state = 9;
+  void clear_state();
+  static const int kStateFieldNumber = 9;
+  ::google::protobuf::int64 state() const;
+  void set_state(::google::protobuf::int64 value);
 
   // optional string merkel_proof = 10;
   void clear_merkel_proof();
@@ -3660,9 +3660,9 @@ class MessageChannelWithdrawalChallenge : public ::google::protobuf::Message /* 
   ::google::protobuf::internal::ArenaStringPtr block_hash_;
   ::google::protobuf::internal::ArenaStringPtr source_address_;
   ::google::protobuf::internal::ArenaStringPtr address_;
-  ::google::protobuf::int64 state_;
   ::google::protobuf::internal::ArenaStringPtr main_source_address_;
   ::google::protobuf::int64 block_seq_;
+  ::google::protobuf::int64 state_;
   ::google::protobuf::internal::ArenaStringPtr merkel_proof_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_overlay_2eproto();
@@ -7613,21 +7613,7 @@ inline void MessageChannelWithdrawalChallenge::set_allocated_address(::std::stri
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawalChallenge.address)
 }
 
-// optional int64 state = 7;
-inline void MessageChannelWithdrawalChallenge::clear_state() {
-  state_ = GOOGLE_LONGLONG(0);
-}
-inline ::google::protobuf::int64 MessageChannelWithdrawalChallenge::state() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawalChallenge.state)
-  return state_;
-}
-inline void MessageChannelWithdrawalChallenge::set_state(::google::protobuf::int64 value) {
-  
-  state_ = value;
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawalChallenge.state)
-}
-
-// optional string main_source_address = 8;
+// optional string main_source_address = 7;
 inline void MessageChannelWithdrawalChallenge::clear_main_source_address() {
   main_source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -7671,7 +7657,7 @@ inline void MessageChannelWithdrawalChallenge::set_allocated_main_source_address
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawalChallenge.main_source_address)
 }
 
-// optional int64 block_seq = 9;
+// optional int64 block_seq = 8;
 inline void MessageChannelWithdrawalChallenge::clear_block_seq() {
   block_seq_ = GOOGLE_LONGLONG(0);
 }
@@ -7683,6 +7669,20 @@ inline void MessageChannelWithdrawalChallenge::set_block_seq(::google::protobuf:
   
   block_seq_ = value;
   // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawalChallenge.block_seq)
+}
+
+// optional int64 state = 9;
+inline void MessageChannelWithdrawalChallenge::clear_state() {
+  state_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelWithdrawalChallenge::state() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawalChallenge.state)
+  return state_;
+}
+inline void MessageChannelWithdrawalChallenge::set_state(::google::protobuf::int64 value) {
+  
+  state_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawalChallenge.state)
 }
 
 // optional string merkel_proof = 10;

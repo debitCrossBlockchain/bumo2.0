@@ -671,9 +671,9 @@ void protobuf_AssignDesc_overlay_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, block_hash_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, address_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, main_source_address_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, block_seq_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, state_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(MessageChannelWithdrawalChallenge, merkel_proof_),
   };
   MessageChannelWithdrawalChallenge_reflection_ =
@@ -1076,8 +1076,8 @@ void protobuf_AddDesc_overlay_2eproto() {
     "essageChannelWithdrawalChallenge\022\020\n\010chai"
     "n_id\030\001 \001(\003\022\016\n\006amount\030\002 \001(\003\022\013\n\003seq\030\003 \001(\003\022"
     "\022\n\nblock_hash\030\004 \001(\014\022\026\n\016source_address\030\005 "
-    "\001(\t\022\017\n\007address\030\006 \001(\t\022\r\n\005state\030\007 \001(\003\022\033\n\023m"
-    "ain_source_address\030\010 \001(\t\022\021\n\tblock_seq\030\t "
+    "\001(\t\022\017\n\007address\030\006 \001(\t\022\033\n\023main_source_addr"
+    "ess\030\007 \001(\t\022\021\n\tblock_seq\030\010 \001(\003\022\r\n\005state\030\t "
     "\001(\003\022\024\n\014merkel_proof\030\n \001(\t\"\200\001\n\"MessageCha"
     "nnelChangeChildValidator\022\032\n\022main_chain_t"
     "x_hash\030\001 \001(\t\022\025\n\radd_validator\030\002 \001(\t\022\030\n\020d"
@@ -14544,9 +14544,9 @@ const int MessageChannelWithdrawalChallenge::kSeqFieldNumber;
 const int MessageChannelWithdrawalChallenge::kBlockHashFieldNumber;
 const int MessageChannelWithdrawalChallenge::kSourceAddressFieldNumber;
 const int MessageChannelWithdrawalChallenge::kAddressFieldNumber;
-const int MessageChannelWithdrawalChallenge::kStateFieldNumber;
 const int MessageChannelWithdrawalChallenge::kMainSourceAddressFieldNumber;
 const int MessageChannelWithdrawalChallenge::kBlockSeqFieldNumber;
+const int MessageChannelWithdrawalChallenge::kStateFieldNumber;
 const int MessageChannelWithdrawalChallenge::kMerkelProofFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -14578,9 +14578,9 @@ void MessageChannelWithdrawalChallenge::SharedCtor() {
   block_hash_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   source_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  state_ = GOOGLE_LONGLONG(0);
   main_source_address_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   block_seq_ = GOOGLE_LONGLONG(0);
+  state_ = GOOGLE_LONGLONG(0);
   merkel_proof_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
@@ -14646,9 +14646,9 @@ void MessageChannelWithdrawalChallenge::Clear() {
   block_hash_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  state_ = GOOGLE_LONGLONG(0);
   main_source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   block_seq_ = GOOGLE_LONGLONG(0);
+  state_ = GOOGLE_LONGLONG(0);
   merkel_proof_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 
 #undef ZR_HELPER_
@@ -14753,28 +14753,13 @@ bool MessageChannelWithdrawalChallenge::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(56)) goto parse_state;
+        if (input->ExpectTag(58)) goto parse_main_source_address;
         break;
       }
 
-      // optional int64 state = 7;
+      // optional string main_source_address = 7;
       case 7: {
-        if (tag == 56) {
-         parse_state:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &state_)));
-
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(66)) goto parse_main_source_address;
-        break;
-      }
-
-      // optional string main_source_address = 8;
-      case 8: {
-        if (tag == 66) {
+        if (tag == 58) {
          parse_main_source_address:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_main_source_address()));
@@ -14785,17 +14770,32 @@ bool MessageChannelWithdrawalChallenge::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(72)) goto parse_block_seq;
+        if (input->ExpectTag(64)) goto parse_block_seq;
         break;
       }
 
-      // optional int64 block_seq = 9;
-      case 9: {
-        if (tag == 72) {
+      // optional int64 block_seq = 8;
+      case 8: {
+        if (tag == 64) {
          parse_block_seq:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
                  input, &block_seq_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(72)) goto parse_state;
+        break;
+      }
+
+      // optional int64 state = 9;
+      case 9: {
+        if (tag == 72) {
+         parse_state:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &state_)));
 
         } else {
           goto handle_unusual;
@@ -14886,24 +14886,24 @@ void MessageChannelWithdrawalChallenge::SerializeWithCachedSizes(
       6, this->address(), output);
   }
 
-  // optional int64 state = 7;
-  if (this->state() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(7, this->state(), output);
-  }
-
-  // optional string main_source_address = 8;
+  // optional string main_source_address = 7;
   if (this->main_source_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->main_source_address().data(), this->main_source_address().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "protocol.MessageChannelWithdrawalChallenge.main_source_address");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      8, this->main_source_address(), output);
+      7, this->main_source_address(), output);
   }
 
-  // optional int64 block_seq = 9;
+  // optional int64 block_seq = 8;
   if (this->block_seq() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(9, this->block_seq(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(8, this->block_seq(), output);
+  }
+
+  // optional int64 state = 9;
+  if (this->state() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(9, this->state(), output);
   }
 
   // optional string merkel_proof = 10;
@@ -14966,12 +14966,7 @@ void MessageChannelWithdrawalChallenge::SerializeWithCachedSizes(
         6, this->address(), target);
   }
 
-  // optional int64 state = 7;
-  if (this->state() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(7, this->state(), target);
-  }
-
-  // optional string main_source_address = 8;
+  // optional string main_source_address = 7;
   if (this->main_source_address().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->main_source_address().data(), this->main_source_address().length(),
@@ -14979,12 +14974,17 @@ void MessageChannelWithdrawalChallenge::SerializeWithCachedSizes(
       "protocol.MessageChannelWithdrawalChallenge.main_source_address");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        8, this->main_source_address(), target);
+        7, this->main_source_address(), target);
   }
 
-  // optional int64 block_seq = 9;
+  // optional int64 block_seq = 8;
   if (this->block_seq() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(9, this->block_seq(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(8, this->block_seq(), target);
+  }
+
+  // optional int64 state = 9;
+  if (this->state() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(9, this->state(), target);
   }
 
   // optional string merkel_proof = 10;
@@ -15048,25 +15048,25 @@ int MessageChannelWithdrawalChallenge::ByteSize() const {
         this->address());
   }
 
-  // optional int64 state = 7;
-  if (this->state() != 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::Int64Size(
-        this->state());
-  }
-
-  // optional string main_source_address = 8;
+  // optional string main_source_address = 7;
   if (this->main_source_address().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->main_source_address());
   }
 
-  // optional int64 block_seq = 9;
+  // optional int64 block_seq = 8;
   if (this->block_seq() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int64Size(
         this->block_seq());
+  }
+
+  // optional int64 state = 9;
+  if (this->state() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->state());
   }
 
   // optional string merkel_proof = 10;
@@ -15125,15 +15125,15 @@ void MessageChannelWithdrawalChallenge::MergeFrom(const MessageChannelWithdrawal
 
     address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.address_);
   }
-  if (from.state() != 0) {
-    set_state(from.state());
-  }
   if (from.main_source_address().size() > 0) {
 
     main_source_address_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.main_source_address_);
   }
   if (from.block_seq() != 0) {
     set_block_seq(from.block_seq());
+  }
+  if (from.state() != 0) {
+    set_state(from.state());
   }
   if (from.merkel_proof().size() > 0) {
 
@@ -15171,9 +15171,9 @@ void MessageChannelWithdrawalChallenge::InternalSwap(MessageChannelWithdrawalCha
   block_hash_.Swap(&other->block_hash_);
   source_address_.Swap(&other->source_address_);
   address_.Swap(&other->address_);
-  std::swap(state_, other->state_);
   main_source_address_.Swap(&other->main_source_address_);
   std::swap(block_seq_, other->block_seq_);
+  std::swap(state_, other->state_);
   merkel_proof_.Swap(&other->merkel_proof_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   std::swap(_cached_size_, other->_cached_size_);
@@ -15364,21 +15364,7 @@ void MessageChannelWithdrawalChallenge::clear_address() {
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawalChallenge.address)
 }
 
-// optional int64 state = 7;
-void MessageChannelWithdrawalChallenge::clear_state() {
-  state_ = GOOGLE_LONGLONG(0);
-}
- ::google::protobuf::int64 MessageChannelWithdrawalChallenge::state() const {
-  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawalChallenge.state)
-  return state_;
-}
- void MessageChannelWithdrawalChallenge::set_state(::google::protobuf::int64 value) {
-  
-  state_ = value;
-  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawalChallenge.state)
-}
-
-// optional string main_source_address = 8;
+// optional string main_source_address = 7;
 void MessageChannelWithdrawalChallenge::clear_main_source_address() {
   main_source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -15422,7 +15408,7 @@ void MessageChannelWithdrawalChallenge::clear_main_source_address() {
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawalChallenge.main_source_address)
 }
 
-// optional int64 block_seq = 9;
+// optional int64 block_seq = 8;
 void MessageChannelWithdrawalChallenge::clear_block_seq() {
   block_seq_ = GOOGLE_LONGLONG(0);
 }
@@ -15434,6 +15420,20 @@ void MessageChannelWithdrawalChallenge::clear_block_seq() {
   
   block_seq_ = value;
   // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawalChallenge.block_seq)
+}
+
+// optional int64 state = 9;
+void MessageChannelWithdrawalChallenge::clear_state() {
+  state_ = GOOGLE_LONGLONG(0);
+}
+ ::google::protobuf::int64 MessageChannelWithdrawalChallenge::state() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawalChallenge.state)
+  return state_;
+}
+ void MessageChannelWithdrawalChallenge::set_state(::google::protobuf::int64 value) {
+  
+  state_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawalChallenge.state)
 }
 
 // optional string merkel_proof = 10;
