@@ -302,19 +302,17 @@ namespace bumo {
 			return;
 		}
 		protocol::MessageChannelchildWithdrawalChallenge child_withdrawal;
+		protocol::MerkelProof merkel_proof;
 		int64_t type = CheckchallengeWithdrawal(withdrawal, child_withdrawal);
-		protocol::MessageChannelChildChallengeHead challenge_head;
 		if (type != protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_SUCCESS){
-		/*	challenge_head.set_chain_id(General::GetSelfChainId());
-			*challenge_head.mutable_cmc_head() = header;
-			*challenge_head.mutable_cmc_head() = child_header;
+			*child_withdrawal.mutable_withdrawal() = withdrawal;
+			*child_withdrawal.mutable_merkel_proof() = merkel_proof;
 			protocol::MessageChannel message_channel;
 			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
-			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_HEAD);
-			message_channel.set_msg_data(challenge_head.SerializeAsString());
-			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);*/
+			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHILD_CHALLENGE_WITHDRAWAL);
+			message_channel.set_msg_data(child_withdrawal.SerializeAsString());
+			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 		}
-
 		int64_t max_seq = MAX(recv_max_seq_, withdrawal.seq());
 		recv_max_seq_ = max_seq;
 		chain_withdrawal_seq_ = max_seq;
