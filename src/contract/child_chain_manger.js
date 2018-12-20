@@ -197,8 +197,8 @@ function challengeWithdrawal(params) {
     }
     
     let current_complete_seq = int64Add(retinfo.complete_seq,1);
-    if(current_complete_seq!==input.withdrawal.seq){
-        log('seq is error');
+    if(current_complete_seq!==input.challenge.withdrawal.seq){
+        log('withdrawal seq is error');
         return;
     }
     let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ current_complete_seq));
