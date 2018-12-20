@@ -343,13 +343,14 @@ namespace bumo {
 
 		Json::Value json_challenge = bumo::Proto2Json(child_withdrawal);
 		std::vector<std::string> send_para_list;
-
+		int64_t chain_id = child_withdrawal.withdrawal().chain_id();
 		Json::Value input_value;
 
 		input_value["method"] = "challengeWithdrawal";
-		input_value["params"] = json_challenge;
+		input_value["params"]["chain_id"] = chain_id;
+		input_value["params"]["challenge"] = json_challenge;
 		send_para_list.push_back(input_value.toFastString());
-		TransTask trans_task(send_para_list, 1000000000, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(child_withdrawal.withdrawal().chain_id()));
+		TransTask trans_task(send_para_list, 1000000000, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(chain_id));
 		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);
 	}
 }
