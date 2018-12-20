@@ -389,6 +389,7 @@ function withdrawalChildChain(params){
         withdrawal_detail.main_source_address = sender;
         withdrawal_detail.source_address = input.source_address;
         withdrawal_detail.address = input.address;
+        withdrawal_detail.block_seq = input.block_seq;
         withdrawal_detail.merkel_proof = input.merkel_proof;
         withdrawal_detail.state = EXECUTE_STATE_INITIAL;
         withdrawal_detail.withdrawal_block_number = int64Add(blockNumber,effectiWithdrawalInterval);
@@ -412,6 +413,7 @@ function withdrawalChildChain(params){
         withdrawal_detail.main_source_address = sender;
         withdrawal_detail.source_address = input.source_address;
         withdrawal_detail.address = input.address;
+        withdrawal_detail.block_seq = input.block_seq;
         withdrawal_detail.merkel_proof = input.merkel_proof;
         withdrawal_detail.state = EXECUTE_STATE_INITIAL;
         withdrawal_detail.withdrawal_block_number = int64Add(blockNumber,effectiWithdrawalInterval);
