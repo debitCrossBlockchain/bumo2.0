@@ -193,7 +193,7 @@ function withdrawal(params){
     input.amount = params.amount;
     input.source_address = sender;
     input.chain_id = params.chain_id;
-    input.block_number = blockNumber;
+    input.block_seq = blockNumber;
     input.address = params.address;
     input.seq = seq;
     //input.merkelProof = '';
