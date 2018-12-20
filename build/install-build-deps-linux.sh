@@ -2,7 +2,7 @@
 
 cd linux/
 rm -rf linux.zip
-wget bumo.chinacloudapp.cn:36002/v8_target/linux.zip
+wget depends.bumocdn.com:36002/v8_target/linux.zip
 
 down_md5_nums=`md5sum linux.zip | cut -d ' ' -f1`
 true_md5_nums="67a227a59acd375ab21d9edeb555a33a"
