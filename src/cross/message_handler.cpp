@@ -284,6 +284,8 @@ namespace bumo {
 			return;
 		}
 
+		protocol::MessageChannelHandleWithdrawal withdrawal;
+		withdrawal.set_state(query_withdrawal.seq());
 		Json::Value params;
 		params["chain_id"] = query_withdrawal.chain_id();
 		if (query_withdrawal.seq() == -1){
@@ -309,16 +311,16 @@ namespace bumo {
 
 		std::string error_msg;
 		protocol::MessageChannelWithdrawalChallenge  withdrawal_challenge;
-		if (!bumo::Json2Proto(object["block_header"], withdrawal_challenge, error_msg)) {
+		if (!bumo::Json2Proto(object, withdrawal_challenge, error_msg)) {
 			LOG_ERROR("block_header Failed to Json2Proto error_msg=%s", error_msg.c_str());
 			return;
 		}
 
+		*withdrawal.mutable_withdrawal() = withdrawal_challenge;
 		protocol::MessageChannel msg_channel;
-
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL);
 		msg_channel.set_target_chain_id(query_withdrawal.chain_id());
-		msg_channel.set_msg_data(withdrawal_challenge.SerializeAsString());
+		msg_channel.set_msg_data(withdrawal.SerializeAsString());
 		bumo::MessageChannel::GetInstance()->MessageChannelProducer(msg_channel);
 	}
 
