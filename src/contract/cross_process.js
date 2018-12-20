@@ -238,17 +238,9 @@ function queryChildWithdrawal(params){
     }
     log('queryChildWithdrawal querykey='+ querykey );
     let info = JSON.parse(storageLoad(querykey));
-    let retinfo = {};
-    if(info === false){
-        retinfo = 'queryChildWithdrawal failed,' + querykey;
-    } else {
-        retinfo.index = info.seq;
-        retinfo.source_address = info.source_address;
-        retinfo.address = info.address;
-        retinfo.amount = info.amount;
-    }
-    log('queryChildWithdrawal retinfo '+ retinfo);
-    return retinfo;
+    assert(info !== false,'queryChildWithdrawal failed,' + querykey);
+    log('queryChildWithdrawal info '+ info);
+    return info;
 }
 
 function transfer(to, value){
