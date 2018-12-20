@@ -75,6 +75,7 @@ class MessageChannelResponse;
 class MessageChannelSubmitHead;
 class MessageChannelWithdrawal;
 class MessageChannelWithdrawalChallenge;
+class MessageChannelchildWithdrawalChallenge;
 class Peer;
 class Peers;
 
@@ -4389,6 +4390,108 @@ class MessageChannelChildChallengeHead : public ::google::protobuf::Message /* @
   void InitAsDefaultInstance();
   static MessageChannelChildChallengeHead* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class MessageChannelchildWithdrawalChallenge : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.MessageChannelchildWithdrawalChallenge) */ {
+ public:
+  MessageChannelchildWithdrawalChallenge();
+  virtual ~MessageChannelchildWithdrawalChallenge();
+
+  MessageChannelchildWithdrawalChallenge(const MessageChannelchildWithdrawalChallenge& from);
+
+  inline MessageChannelchildWithdrawalChallenge& operator=(const MessageChannelchildWithdrawalChallenge& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const MessageChannelchildWithdrawalChallenge& default_instance();
+
+  void Swap(MessageChannelchildWithdrawalChallenge* other);
+
+  // implements Message ----------------------------------------------
+
+  inline MessageChannelchildWithdrawalChallenge* New() const { return New(NULL); }
+
+  MessageChannelchildWithdrawalChallenge* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const MessageChannelchildWithdrawalChallenge& from);
+  void MergeFrom(const MessageChannelchildWithdrawalChallenge& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(MessageChannelchildWithdrawalChallenge* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .protocol.MessageChannelWithdrawalChallenge withdrawal = 1;
+  bool has_withdrawal() const;
+  void clear_withdrawal();
+  static const int kWithdrawalFieldNumber = 1;
+  const ::protocol::MessageChannelWithdrawalChallenge& withdrawal() const;
+  ::protocol::MessageChannelWithdrawalChallenge* mutable_withdrawal();
+  ::protocol::MessageChannelWithdrawalChallenge* release_withdrawal();
+  void set_allocated_withdrawal(::protocol::MessageChannelWithdrawalChallenge* withdrawal);
+
+  // optional .protocol.MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE type = 2;
+  void clear_type();
+  static const int kTypeFieldNumber = 2;
+  ::protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE type() const;
+  void set_type(::protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE value);
+
+  // optional .protocol.MerkelProof merkel_proof = 3;
+  bool has_merkel_proof() const;
+  void clear_merkel_proof();
+  static const int kMerkelProofFieldNumber = 3;
+  const ::protocol::MerkelProof& merkel_proof() const;
+  ::protocol::MerkelProof* mutable_merkel_proof();
+  ::protocol::MerkelProof* release_merkel_proof();
+  void set_allocated_merkel_proof(::protocol::MerkelProof* merkel_proof);
+
+  // @@protoc_insertion_point(class_scope:protocol.MessageChannelchildWithdrawalChallenge)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::protocol::MessageChannelWithdrawalChallenge* withdrawal_;
+  ::protocol::MerkelProof* merkel_proof_;
+  int type_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_overlay_2eproto();
+  friend void protobuf_AssignDesc_overlay_2eproto();
+  friend void protobuf_ShutdownFile_overlay_2eproto();
+
+  void InitAsDefaultInstance();
+  static MessageChannelchildWithdrawalChallenge* default_instance_;
+};
 // ===================================================================
 
 
@@ -8291,7 +8394,103 @@ inline void MessageChannelChildChallengeHead::set_allocated_child_head(::protoco
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelChildChallengeHead.child_head)
 }
 
+// -------------------------------------------------------------------
+
+// MessageChannelchildWithdrawalChallenge
+
+// optional .protocol.MessageChannelWithdrawalChallenge withdrawal = 1;
+inline bool MessageChannelchildWithdrawalChallenge::has_withdrawal() const {
+  return !_is_default_instance_ && withdrawal_ != NULL;
+}
+inline void MessageChannelchildWithdrawalChallenge::clear_withdrawal() {
+  if (GetArenaNoVirtual() == NULL && withdrawal_ != NULL) delete withdrawal_;
+  withdrawal_ = NULL;
+}
+inline const ::protocol::MessageChannelWithdrawalChallenge& MessageChannelchildWithdrawalChallenge::withdrawal() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelchildWithdrawalChallenge.withdrawal)
+  return withdrawal_ != NULL ? *withdrawal_ : *default_instance_->withdrawal_;
+}
+inline ::protocol::MessageChannelWithdrawalChallenge* MessageChannelchildWithdrawalChallenge::mutable_withdrawal() {
+  
+  if (withdrawal_ == NULL) {
+    withdrawal_ = new ::protocol::MessageChannelWithdrawalChallenge;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelchildWithdrawalChallenge.withdrawal)
+  return withdrawal_;
+}
+inline ::protocol::MessageChannelWithdrawalChallenge* MessageChannelchildWithdrawalChallenge::release_withdrawal() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelchildWithdrawalChallenge.withdrawal)
+  
+  ::protocol::MessageChannelWithdrawalChallenge* temp = withdrawal_;
+  withdrawal_ = NULL;
+  return temp;
+}
+inline void MessageChannelchildWithdrawalChallenge::set_allocated_withdrawal(::protocol::MessageChannelWithdrawalChallenge* withdrawal) {
+  delete withdrawal_;
+  withdrawal_ = withdrawal;
+  if (withdrawal) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelchildWithdrawalChallenge.withdrawal)
+}
+
+// optional .protocol.MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE type = 2;
+inline void MessageChannelchildWithdrawalChallenge::clear_type() {
+  type_ = 0;
+}
+inline ::protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE MessageChannelchildWithdrawalChallenge::type() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelchildWithdrawalChallenge.type)
+  return static_cast< ::protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE >(type_);
+}
+inline void MessageChannelchildWithdrawalChallenge::set_type(::protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE value) {
+  
+  type_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelchildWithdrawalChallenge.type)
+}
+
+// optional .protocol.MerkelProof merkel_proof = 3;
+inline bool MessageChannelchildWithdrawalChallenge::has_merkel_proof() const {
+  return !_is_default_instance_ && merkel_proof_ != NULL;
+}
+inline void MessageChannelchildWithdrawalChallenge::clear_merkel_proof() {
+  if (GetArenaNoVirtual() == NULL && merkel_proof_ != NULL) delete merkel_proof_;
+  merkel_proof_ = NULL;
+}
+inline const ::protocol::MerkelProof& MessageChannelchildWithdrawalChallenge::merkel_proof() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelchildWithdrawalChallenge.merkel_proof)
+  return merkel_proof_ != NULL ? *merkel_proof_ : *default_instance_->merkel_proof_;
+}
+inline ::protocol::MerkelProof* MessageChannelchildWithdrawalChallenge::mutable_merkel_proof() {
+  
+  if (merkel_proof_ == NULL) {
+    merkel_proof_ = new ::protocol::MerkelProof;
+  }
+  // @@protoc_insertion_point(field_mutable:protocol.MessageChannelchildWithdrawalChallenge.merkel_proof)
+  return merkel_proof_;
+}
+inline ::protocol::MerkelProof* MessageChannelchildWithdrawalChallenge::release_merkel_proof() {
+  // @@protoc_insertion_point(field_release:protocol.MessageChannelchildWithdrawalChallenge.merkel_proof)
+  
+  ::protocol::MerkelProof* temp = merkel_proof_;
+  merkel_proof_ = NULL;
+  return temp;
+}
+inline void MessageChannelchildWithdrawalChallenge::set_allocated_merkel_proof(::protocol::MerkelProof* merkel_proof) {
+  delete merkel_proof_;
+  merkel_proof_ = merkel_proof;
+  if (merkel_proof) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelchildWithdrawalChallenge.merkel_proof)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
