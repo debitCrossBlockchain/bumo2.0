@@ -355,7 +355,7 @@ message MessageChannelChildChallengeHead{
 }
 
 
-message MessageChannelHandleWithdrawal{
+message MessageChannelchildWithdrawalChallenge{
     MessageChannelWithdrawalChallenge withdrawal = 1;
 	MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE type = 2;
 	MerkelProof merkel_proof = 3;
