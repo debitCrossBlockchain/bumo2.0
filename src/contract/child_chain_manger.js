@@ -197,15 +197,42 @@ function challengeWithdrawal(params) {
     }
     
     let current_complete_seq = int64Add(retinfo.complete_seq,1);
-    if(current_complete_seq!==input.challenge.withdrawal.seq){
-        log('withdrawal seq is error');
-        return;
-    }
+
     let withdrawal = JSON.parse(storageLoad(CHAIN_WITHDRAWAL + input.chain_id +'_'+ current_complete_seq));
     if(withdrawal===false){
         log('withdrawal object is null');
         return;
     }
+
+    if(current_complete_seq!==input.challenge.withdrawal.seq){
+        log('withdrawal seq is error');
+        return;
+    }
+
+    if (int64Compare(input.challenge.withdrawal.chain_id,withdrawal.chain_id) !==0) {
+        return;
+    }
+
+    if (int64Compare(input.challenge.withdrawal.amount,withdrawal.amount) !==0) {
+        return;
+    }
+
+    if (int64Compare(input.challenge.withdrawal.block_hash,withdrawal.block_hash) !==0) {
+        return;
+    }
+
+    if (int64Compare(input.challenge.withdrawal.main_source_address,withdrawal.main_source_address) !==0) {
+        return;
+    }
+
+    if (int64Compare(input.challenge.withdrawal.source_address,withdrawal.source_address) !==0) {
+        return;
+    }
+
+    if (int64Compare(input.challenge.withdrawal.address,withdrawal.address) !==0) {
+        return;
+    }
+    
     if (int64Compare(withdrawal.withdrawal_block_number,blockNumber) ===1) {
         return;
     }
@@ -228,6 +255,7 @@ function challengeWithdrawal(params) {
     withdrawal_detail.main_source_address = withdrawal.main_source_address;
     withdrawal_detail.source_address = withdrawal.source_address;
     withdrawal_detail.address = withdrawal.address;
+    withdrawal_detail.block_seq = withdrawal.block_seq;
     withdrawal_detail.merkel_proof = withdrawal.merkel_proof;
     withdrawal_detail.state = EXECUTE_STATE_CHALLENGE;
     withdrawal_detail.withdrawal_block_number = withdrawal.withdrawal_block_number;
