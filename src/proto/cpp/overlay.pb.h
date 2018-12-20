@@ -3444,9 +3444,15 @@ class MessageChannelWithdrawal : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_block_hash();
   void set_allocated_block_hash(::std::string* block_hash);
 
-  // optional string source_address = 5;
+  // optional int64 block_seq = 5;
+  void clear_block_seq();
+  static const int kBlockSeqFieldNumber = 5;
+  ::google::protobuf::int64 block_seq() const;
+  void set_block_seq(::google::protobuf::int64 value);
+
+  // optional string source_address = 6;
   void clear_source_address();
-  static const int kSourceAddressFieldNumber = 5;
+  static const int kSourceAddressFieldNumber = 6;
   const ::std::string& source_address() const;
   void set_source_address(const ::std::string& value);
   void set_source_address(const char* value);
@@ -3455,9 +3461,9 @@ class MessageChannelWithdrawal : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_source_address();
   void set_allocated_source_address(::std::string* source_address);
 
-  // optional string address = 6;
+  // optional string address = 7;
   void clear_address();
-  static const int kAddressFieldNumber = 6;
+  static const int kAddressFieldNumber = 7;
   const ::std::string& address() const;
   void set_address(const ::std::string& value);
   void set_address(const char* value);
@@ -3466,10 +3472,10 @@ class MessageChannelWithdrawal : public ::google::protobuf::Message /* @@protoc_
   ::std::string* release_address();
   void set_allocated_address(::std::string* address);
 
-  // optional .protocol.MerkelProof merkel_proof = 7;
+  // optional .protocol.MerkelProof merkel_proof = 8;
   bool has_merkel_proof() const;
   void clear_merkel_proof();
-  static const int kMerkelProofFieldNumber = 7;
+  static const int kMerkelProofFieldNumber = 8;
   const ::protocol::MerkelProof& merkel_proof() const;
   ::protocol::MerkelProof* mutable_merkel_proof();
   ::protocol::MerkelProof* release_merkel_proof();
@@ -3484,6 +3490,7 @@ class MessageChannelWithdrawal : public ::google::protobuf::Message /* @@protoc_
   ::google::protobuf::int64 amount_;
   ::google::protobuf::int64 seq_;
   ::google::protobuf::internal::ArenaStringPtr block_hash_;
+  ::google::protobuf::int64 block_seq_;
   ::google::protobuf::internal::ArenaStringPtr source_address_;
   ::google::protobuf::internal::ArenaStringPtr address_;
   ::protocol::MerkelProof* merkel_proof_;
@@ -7288,7 +7295,21 @@ inline void MessageChannelWithdrawal::set_allocated_block_hash(::std::string* bl
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawal.block_hash)
 }
 
-// optional string source_address = 5;
+// optional int64 block_seq = 5;
+inline void MessageChannelWithdrawal::clear_block_seq() {
+  block_seq_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 MessageChannelWithdrawal::block_seq() const {
+  // @@protoc_insertion_point(field_get:protocol.MessageChannelWithdrawal.block_seq)
+  return block_seq_;
+}
+inline void MessageChannelWithdrawal::set_block_seq(::google::protobuf::int64 value) {
+  
+  block_seq_ = value;
+  // @@protoc_insertion_point(field_set:protocol.MessageChannelWithdrawal.block_seq)
+}
+
+// optional string source_address = 6;
 inline void MessageChannelWithdrawal::clear_source_address() {
   source_address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -7332,7 +7353,7 @@ inline void MessageChannelWithdrawal::set_allocated_source_address(::std::string
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawal.source_address)
 }
 
-// optional string address = 6;
+// optional string address = 7;
 inline void MessageChannelWithdrawal::clear_address() {
   address_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -7376,7 +7397,7 @@ inline void MessageChannelWithdrawal::set_allocated_address(::std::string* addre
   // @@protoc_insertion_point(field_set_allocated:protocol.MessageChannelWithdrawal.address)
 }
 
-// optional .protocol.MerkelProof merkel_proof = 7;
+// optional .protocol.MerkelProof merkel_proof = 8;
 inline bool MessageChannelWithdrawal::has_merkel_proof() const {
   return !_is_default_instance_ && merkel_proof_ != NULL;
 }
