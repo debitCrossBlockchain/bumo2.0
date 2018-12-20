@@ -294,6 +294,26 @@ namespace bumo {
 			return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_DOCTORED;
 		}
 
+		Json::Value input_value;
+		Json::Value params;
+		params["seq"] = withdrawal.seq();
+		input_value["method"] = "queryChildWithdrawal";
+		input_value["params"] = params;
+
+		Json::Value result_list;
+		int64_t error_code = bumo::CrossUtils::QueryContract(General::CONTRACT_CPC_ADDRESS, input_value.toFastString(), result_list);
+
+		Json::Value object;
+		std::string result = result_list[Json::UInt(0)]["result"]["value"].asString();
+		object.fromString(result.c_str());
+
+		if (error_code != protocol::ERRCODE_SUCCESS){
+			LOG_ERROR("Failed to query queryChildWithdrawal .%d", error_code);
+			child_withdrawal.set_type(protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_QUERY);
+			return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_QUERY;
+		}
+
+
 		return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_SUCCESS;
 	}
 
