@@ -313,6 +313,11 @@ namespace bumo {
 			return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_QUERY;
 		}
 
+		bool bflag = (object["seq"].asInt64() == withdrawal.block_seq()) && (object["amount"].asInt64() == withdrawal.amount()) && (object["block_seq"].asInt64() == withdrawal.block_seq())&&
+			(object["address"].asString() == withdrawal.address()) && (object["source_address"].asString() == withdrawal.source_address());
+		if (!bflag){
+
+		}
 
 		return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_SUCCESS;
 	}
