@@ -287,9 +287,10 @@ message MessageChannelWithdrawal{
 	int64 amount = 2;
 	int64 seq = 3;
 	bytes block_hash = 4;
-	string source_address = 5;
-	string address = 6;
-	MerkelProof merkel_proof = 7;
+	int64 block_seq = 5;
+	string source_address = 6;
+	string address = 7;
+	MerkelProof merkel_proof = 8;
 }
 
 message MessageChannelWithdrawalChallenge{
