@@ -5,7 +5,7 @@ cd win32
 
 rd /s /Q ".\win\"
 
-.\wget bumo.chinacloudapp.cn:36002/v8_target/win.zip
+.\wget depends.bumocdn.com:36002/v8_target/win.zip
 
 
 set check_md5_ok=0
