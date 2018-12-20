@@ -1170,13 +1170,15 @@ void protobuf_AddDesc_overlay_2eproto() {
     "LENGE_HEAD_TYPE_SUCCESS\020\000\0220\n,MESSAGE_CHA"
     "NNEL_CHALLENGE_HEAD_TYPE_NONEXIST\020\001\0220\n,M"
     "ESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_DOCTO"
-    "RED\020\002*\322\001\n)MESSAGE_CHANNEL_CHALLENGE_WITH"
+    "RED\020\002*\224\002\n)MESSAGE_CHANNEL_CHALLENGE_WITH"
     "DRAWAL_TYPE\0225\n1MESSAGE_CHANNEL_CHALLENGE"
     "_WITHDRAWAL_TYPE_SUCCESS\020\000\0226\n2MESSAGE_CH"
     "ANNEL_CHALLENGE_WITHDRAWAL_TYPE_NONEXIST"
     "\020\001\0226\n2MESSAGE_CHANNEL_CHALLENGE_WITHDRAW"
-    "AL_TYPE_DOCTORED\020\002B\"\n io.bumo.sdk.core.e"
-    "xtend.protobufb\006proto3", 6502);
+    "AL_TYPE_DOCTORED\020\002\022@\n<MESSAGE_CHANNEL_CH"
+    "ALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_QUE"
+    "RY\020\003B\"\n io.bumo.sdk.core.extend.protobuf"
+    "b\006proto3", 6568);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "overlay.proto", &protobuf_RegisterTypes);
   Hello::default_instance_ = new Hello();
@@ -1378,6 +1380,7 @@ bool MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
       return true;
     default:
       return false;
