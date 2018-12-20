@@ -76,7 +76,7 @@ namespace bumo {
 
 			query_rets = result_json["query_rets"];
 			if (query_rets[Json::UInt(0)].isMember("error")){
-				error_code = protocol::ERRCODE_NOT_EXIST;
+				error_code = protocol::ERRCODE_CONTRACT_EXECUTE_FAIL;
 				LOG_ERROR("Query Contract error,reason:%s", query_rets[Json::UInt(0)]["error"]["exception"].asString().c_str());
 				break;
 			}
