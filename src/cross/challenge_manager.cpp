@@ -278,23 +278,28 @@ namespace bumo {
 		}
 	}
 
-	void ChallengeWithdrawal::handlechallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal){
-		if (withdrawal.seq() <= chain_withdrawal_seq_){
-			return;
-		}
-
+	int64_t CheckchallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal, protocol::MessageChannelchildWithdrawalChallenge &child_withdrawal){
 		LedgerFrm frm;
 		bool bflag = true;
 		if (!frm.LoadFromDb(withdrawal.block_seq())) {
 			std::string error_desc = utils::String::Format("Parse MessageChannelQueryWithdrawal error,no exist ledger_seq=(" FMT_I64 ")", withdrawal.block_seq());
 			LOG_ERROR("%s", error_desc.c_str());
-			//TODO send CMC withdrawal challenge
+			child_withdrawal.set_type(protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_NONEXIST);
+			return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_NONEXIST;
 		}
-		
-		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
 
+		const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
 		if (ledger_header.hash() != withdrawal.block_hash()){
-			//TODO send CMC withdrawal challenge
+			child_withdrawal.set_type(protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_DOCTORED);
+			return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_DOCTORED;
+		}
+
+		return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_SUCCESS;
+	}
+
+	void ChallengeWithdrawal::handlechallengeWithdrawal(const protocol::MessageChannelWithdrawalChallenge &withdrawal){
+		if (withdrawal.seq() <= chain_withdrawal_seq_){
+			return;
 		}
 
 		int64_t max_seq = MAX(recv_max_seq_, withdrawal.seq());
