@@ -99,7 +99,7 @@ namespace bumo {
 		LedgerFrm frm;
 		bool bflag = true;
 		if (!frm.LoadFromDb(header.seq())) {
-			std::string error_desc = utils::String::Format("Parse MessageChannelQueryHead error,no exist ledger_seq=(" FMT_I64 ")", header);
+			std::string error_desc = utils::String::Format("Parse MessageChannelQueryHead error,no exist ledger_seq=(" FMT_I64 ")", header.seq());
 			LOG_ERROR("%s", error_desc.c_str());
 			return  protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_NONEXIST;
 		}
