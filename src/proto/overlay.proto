@@ -300,9 +300,9 @@ message MessageChannelWithdrawalChallenge{
 	bytes block_hash = 4;
 	string source_address = 5;
 	string address = 6;
-	int64  state = 7;
-	string main_source_address = 8;
-	int64 block_seq = 9;
+	string main_source_address = 7;
+	int64 block_seq = 8;
+	int64  state = 9;
 	string merkel_proof = 10;
 }
 
