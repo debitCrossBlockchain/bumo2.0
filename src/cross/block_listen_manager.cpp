@@ -379,6 +379,7 @@ namespace bumo {
 		msg.set_chain_id(trans_json["chain_id"].asInt64());
 		msg.set_amount(trans_json["amount"].asInt64());
 		msg.set_seq(trans_json["seq"].asInt64());
+		msg.set_block_seq(trans_json["block_seq"].asInt64());
 		msg.set_block_hash(closing_ledger->ProtoLedger().header().hash());
 		msg.set_source_address(trans_json["source_address"].asString());
 		msg.set_address(trans_json["address"].asString());
