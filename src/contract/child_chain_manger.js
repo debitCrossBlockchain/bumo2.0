@@ -185,6 +185,7 @@ function checkWithdrawal(params) {
 }
 
 function challengeSubmitHead(params) {
+    log('challengeSubmitHead');
 }
 
 function challengeWithdrawal(params) {
