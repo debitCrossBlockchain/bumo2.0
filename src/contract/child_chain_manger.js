@@ -241,7 +241,7 @@ function challengeWithdrawal(params) {
         return;
     }
 
-    if((withdrawal.state=EXECUTE_STATE_FINISH)||(withdrawal.state!=EXECUTE_STATE_INITIAL)){
+    if((withdrawal.state===EXECUTE_STATE_FINISH)||(withdrawal.state!==EXECUTE_STATE_INITIAL)){
         return;
     }
 
