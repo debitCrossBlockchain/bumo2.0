@@ -104,10 +104,10 @@ function deposit(params){
             return false;
         }*/
         assert(parseInt(recentlySeq) + 1 === parseInt(params.seq),  'receive seq='+params.seq +' but recently is'+ recentlySeq);
-        input.votedcount = '1';
-        input.starttime = blockTimestamp;
+        input.voted_count = '1';
+        input.start_time = blockTimestamp;
         input.votes = [sender];
-        input.depositdata = params.deposit_data;
+        input.deposit_data = params.deposit_data;
         input.seq = params.seq;
         if(validators.length === 1){
             addBalance(params.deposit_data.address,params.deposit_data.amount);
@@ -123,23 +123,23 @@ function deposit(params){
     }
     else{
 
-        if(blockTimestamp > depositinfo.starttime + effectiveVoteInterval){
+        if(blockTimestamp > depositinfo.start_time + effectiveVoteInterval){
             log('cpc-log Voting time expired, ' + depositinfo.address + ' is still validator.'); 
             return false;
         }
 
         assert(depositinfo.votes.includes(sender) !== true, sender + ' has voted.');
         depositinfo.votes.push(sender);
-        depositinfo.votedcount = int64Add(depositinfo.votedcount,1);
-        if(parseInt(depositinfo.votedcount) < parseInt(validators.length * passRate + 0.5)){
+        depositinfo.voted_count = int64Add(depositinfo.voted_count,1);
+        if(parseInt(depositinfo.voted_count) < parseInt(validators.length * passRate + 0.5)){
             storageStore(key,JSON.stringify(depositinfo));
-            log('cpc-log depositinfo.votedcount = ' + depositinfo.votedcount + ' validators.length=' + validators.length);
+            log('cpc-log depositinfo.voted_count = ' + depositinfo.voted_count + ' validators.length=' + validators.length);
             return true; 
         }
         
         depositinfo.status = '1';
-        //transfer(depositinfo.depositdata.address,depositinfo.depositdata.amount);
-        addBalance(depositinfo.depositdata.address,depositinfo.depositdata.amount);
+        //transfer(depositinfo.deposit_data.address,depositinfo.deposit_data.amount);
+        addBalance(depositinfo.deposit_data.address,depositinfo.deposit_data.amount);
         storageStore(key,JSON.stringify(depositinfo));
         storageStore(depositseq,JSON.stringify(depositinfo));
     }
@@ -193,7 +193,7 @@ function withdrawal(params){
     input.amount = params.amount;
     input.source_address = sender;
     input.chain_id = params.chain_id;
-    input.blockNumber = blockNumber;
+    input.block_number = blockNumber;
     input.address = params.address;
     input.seq = seq;
     //input.merkelProof = '';
