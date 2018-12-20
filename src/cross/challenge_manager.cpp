@@ -316,7 +316,8 @@ namespace bumo {
 		bool bflag = (object["seq"].asInt64() == withdrawal.block_seq()) && (object["amount"].asInt64() == withdrawal.amount()) && (object["block_seq"].asInt64() == withdrawal.block_seq())&&
 			(object["address"].asString() == withdrawal.address()) && (object["source_address"].asString() == withdrawal.source_address());
 		if (!bflag){
-
+			child_withdrawal.set_type(protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_DOCTORED);
+			return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_DOCTORED;
 		}
 
 		return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_SUCCESS;
