@@ -267,6 +267,28 @@ inline bool MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_Parse(
   return ::google::protobuf::internal::ParseNamedEnum<MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE>(
     MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_descriptor(), name, value);
 }
+enum MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE {
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_SUCCESS = 0,
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_NONEXIST = 1,
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_DOCTORED = 2,
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_IsValid(int value);
+const MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_MIN = MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_SUCCESS;
+const MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_MAX = MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_DOCTORED;
+const int MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_ARRAYSIZE = MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_descriptor();
+inline const ::std::string& MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_Name(MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_descriptor(), value);
+}
+inline bool MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_Parse(
+    const ::std::string& name, MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE>(
+    MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_descriptor(), name, value);
+}
 // ===================================================================
 
 class Hello : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:protocol.Hello) */ {
@@ -8385,6 +8407,11 @@ template <> struct is_proto_enum< ::protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYP
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE>() {
   return ::protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_descriptor();
+}
+template <> struct is_proto_enum< ::protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE>() {
+  return ::protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_descriptor();
 }
 
 }  // namespace protobuf
