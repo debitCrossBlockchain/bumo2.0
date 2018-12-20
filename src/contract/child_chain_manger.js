@@ -209,6 +209,9 @@ function challengeWithdrawal(params) {
         return;
     }
 
+    assert(!verifyMerkelProof(input.chain_id, input.challenge.withdrawal.block_hash, input.challenge.merkel_proof), 'verify merkel proof error');
+
+
     if (int64Compare(input.challenge.withdrawal.chain_id,withdrawal.chain_id) !==0) {
         return;
     }
