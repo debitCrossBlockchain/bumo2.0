@@ -334,23 +334,22 @@ namespace bumo {
 			return;
 		}
 
-		protocol::MessageChannelChildChallengeHead challenge_head;
-		if (!challenge_head.ParseFromString(message_channel.msg_data())){
+		protocol::MessageChannelchildWithdrawalChallenge child_withdrawal;
+		if (!child_withdrawal.ParseFromString(message_channel.msg_data())){
 			int64_t error_code = protocol::ERRCODE_INVALID_PARAMETER;
-			LOG_ERROR("Parse MessageChannelChildChallengeHead error, err_code is (" FMT_I64 ")", error_code);
+			LOG_ERROR("Parse MessageChannelchildWithdrawalChallenge error, err_code is (" FMT_I64 ")", error_code);
 			return;
 		}
 
-		Json::Value json_challenge = bumo::Proto2Json(challenge_head);
+		Json::Value json_challenge = bumo::Proto2Json(child_withdrawal);
 		std::vector<std::string> send_para_list;
 
 		Json::Value input_value;
 
-		input_value["method"] = "challengeSubmitHead";
+		input_value["method"] = "challengeWithdrawal";
 		input_value["params"] = json_challenge;
 		send_para_list.push_back(input_value.toFastString());
-		TransTask trans_task(send_para_list, 1000000000, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(challenge_head.chain_id()));
+		TransTask trans_task(send_para_list, 1000000000, General::CONTRACT_CMC_ADDRESS, utils::String::ToString(child_withdrawal.withdrawal().chain_id()));
 		TransactionSender::Instance().AsyncSendTransaction(this, trans_task);
-
 	}
 }
