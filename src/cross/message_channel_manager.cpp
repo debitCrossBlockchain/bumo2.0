@@ -257,9 +257,9 @@ namespace bumo {
 		}
 		if (!PublicKey::Verify(peer->GetRoundString(), sig.sign_data(), pkey.GetEncPublicKey())) {
 			error_str = utils::String::Format(" (ip:%s)(address:%s) is not Main-Child match chain", 
-				peer->GetPeerAddress().ToIpPort().c_str(), peer->GetPeerNodeAddress());
+				peer->GetPeerAddress().ToIpPort().c_str(), peer->GetPeerNodeAddress().c_str());
 			peer->Close(error_str);
-			LOG_ERROR("%s",error_str);
+			LOG_ERROR("errorstr:%s",error_str.c_str());
 			return false;
 		}
 		return true;
