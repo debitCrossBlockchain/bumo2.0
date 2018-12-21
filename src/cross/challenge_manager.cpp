@@ -22,7 +22,7 @@ namespace bumo {
 		std::string str;
 		Json::Value args;
 		if (!db->Get(CHALLENGE_HEAD_SEQ, str)) {
-			args["chain_seq"] = chain_head_seq_;
+			args["chain_seq"] = 0;
 			db->Put(CHALLENGE_HEAD_SEQ, args.toFastString());
 		}
 		else{

@@ -41,6 +41,7 @@ namespace bumo {
 		ChallengeWithdrawal();
 		~ChallengeWithdrawal();
 		void UpdateSeq();
+		void InitSeq();
 		void UpdateStatus();
 		void CopyBufferWithdrawal();
 		void UpdateWithdrawal(const protocol::MessageChannelHandleWithdrawal &withdrawal);
