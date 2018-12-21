@@ -196,7 +196,6 @@ namespace bumo {
 				return;
 			}
 			const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
-			//Json::Value json_ledger_header =bumo::Proto2Json(ledger_header);
 			//Push message to main chain.
 			protocol::MessageChannel message_channel;
 			protocol::MessageChannelQuerySubmitHead query_head;
