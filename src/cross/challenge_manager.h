@@ -14,7 +14,7 @@ namespace bumo {
 		ChallengeSubmitHead();
 		~ChallengeSubmitHead();
 		void InitSeq();
-		void UpdateSeq();
+		void UpdateSeq(const int64_t &seq);
 		void UpdateStatus();
 		void CopyBufferSubmitHead();
 		void UpdateSubmitHead(const protocol::MessageChannelSubmitHead &submit_head);

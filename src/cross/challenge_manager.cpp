@@ -30,18 +30,27 @@ namespace bumo {
 			chain_head_seq_ = args["chain_seq"].asInt64();
 		}
 	}
-	void ChallengeSubmitHead::UpdateSeq(){
+
+	
+
+	void ChallengeSubmitHead::UpdateSeq(const int64_t &seq){
 		auto db = Storage::Instance().keyvalue_db();
 		std::string str;
 		Json::Value args;
+		Json::Value json_seq;
+		int64_t head_seq = 0;
 		if (!db->Get(CHALLENGE_HEAD_SEQ, str)) {
-			args["chain_seq"] = 0;
-			db->Put(CHALLENGE_HEAD_SEQ, args.toFastString());
+			return;
 		}
-		else{
-			args.fromString(str.c_str());
-			chain_head_seq_ = args["chain_seq"].asInt64();
+
+		args.fromString(str.c_str());
+		head_seq = args["chain_seq"].asInt64();
+		if (head_seq != (seq-1)){
+			return;
 		}
+		json_seq["chain_seq"] = seq;
+		db->Put(CHALLENGE_HEAD_SEQ, json_seq.toFastString());
+		chain_head_seq_ = seq;;
 	}
 
 	void ChallengeSubmitHead::UpdateSubmitHead(const protocol::MessageChannelSubmitHead &submit_head){
