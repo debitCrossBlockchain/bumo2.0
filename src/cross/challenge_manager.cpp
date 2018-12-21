@@ -158,10 +158,6 @@ namespace bumo {
 			message_channel.set_msg_data(challenge_head.SerializeAsString());
 			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 		}
-
-		int64_t max_seq = MAX(recv_max_seq_, header.seq());
-		recv_max_seq_ = max_seq;
-		chain_head_seq_ = max_seq;
 		UpdateSeq(header.seq());
 	}
 
