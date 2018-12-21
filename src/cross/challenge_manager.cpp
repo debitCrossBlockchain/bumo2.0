@@ -201,6 +201,7 @@ namespace bumo {
 			protocol::MessageChannel message_channel;
 			protocol::MessageChannelQuerySubmitHead query_head;
 			query_head.set_seq(seq);
+			query_head.set_chain_id(General::GetSelfChainId());
 			query_head.set_hash(json_ledger_header["hash"].asString());
 			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
 			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_SUBMIT_HEAD);
