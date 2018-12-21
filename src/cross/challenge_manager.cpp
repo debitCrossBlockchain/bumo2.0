@@ -196,13 +196,13 @@ namespace bumo {
 				return;
 			}
 			const protocol::LedgerHeader& ledger_header = frm.GetProtoHeader();
-			Json::Value json_ledger_header =bumo::Proto2Json(ledger_header);
+			//Json::Value json_ledger_header =bumo::Proto2Json(ledger_header);
 			//Push message to main chain.
 			protocol::MessageChannel message_channel;
 			protocol::MessageChannelQuerySubmitHead query_head;
 			query_head.set_seq(seq);
 			query_head.set_chain_id(General::GetSelfChainId());
-			query_head.set_hash(json_ledger_header["hash"].asString());
+			query_head.set_hash(ledger_header.hash());
 			message_channel.set_target_chain_id(General::MAIN_CHAIN_ID);
 			message_channel.set_msg_type(protocol::MESSAGE_CHANNEL_QUERY_SUBMIT_HEAD);
 			message_channel.set_msg_data(query_head.SerializeAsString());
