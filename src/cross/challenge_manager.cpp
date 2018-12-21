@@ -295,7 +295,7 @@ namespace bumo {
 		}
 
 		//If max, ignore it
-		if (latest_seq_ == recv_max_seq_){
+		if (latest_seq_ == chain_withdrawal_seq_){
 			return;
 		}
 		for (auto itr = withdrawal_map_.begin(); itr != withdrawal_map_.end();){
