@@ -176,7 +176,7 @@ namespace bumo {
 		//Request up to ten blocks
 		int64_t max_nums = MIN(MAX_REQUEST_SUBMIT_NUMS, (latest_seq_ - chain_head_seq_));
 		for (int64_t i = 1; i <= max_nums; i++){
-			int64_t seq = latest_seq_ + i;
+			int64_t seq = chain_head_seq_ + i;
 			auto itr = ledger_map_.find(seq);
 			if (itr != ledger_map_.end()){
 				continue;
