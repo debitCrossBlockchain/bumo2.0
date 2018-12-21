@@ -238,7 +238,7 @@ namespace bumo {
 		Json::Value object;
 		object.fromString(result.c_str());
 		if (error_code != protocol::ERRCODE_SUCCESS){
-			LOG_ERROR("Failed to query child block .%d", error_code);
+			LOG_ERROR("Failed to queryChildBlockHeader .%d", error_code);
 			return;
 		}
 
