@@ -40,12 +40,12 @@ namespace bumo {
 	public:
 		ChallengeWithdrawal();
 		~ChallengeWithdrawal();
-		void UpdateSeq(const int64_t &seq);
 		void InitSeq();
 		void UpdateStatus();
 		void CopyBufferWithdrawal();
 		void UpdateWithdrawal(const protocol::MessageChannelHandleWithdrawal &withdrawal);
 	private:
+		void UpdateSeq(const int64_t &seq);
 		void UpdateRequestLatestSeq();
 		void SortMap();
 		void RequestLost();
