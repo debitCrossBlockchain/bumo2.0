@@ -40,7 +40,7 @@ namespace bumo {
 	public:
 		ChallengeWithdrawal();
 		~ChallengeWithdrawal();
-		void UpdateSeq();
+		void UpdateSeq(const int64_t &seq);
 		void InitSeq();
 		void UpdateStatus();
 		void CopyBufferWithdrawal();
