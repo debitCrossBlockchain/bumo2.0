@@ -423,12 +423,13 @@ namespace bumo {
 		if (General::GetSelfChainId() == General::MAIN_CHAIN_ID){
 			return true;
 		}
+
+		InitSeq();
+
 		thread_ptr_ = new utils::Thread(this);
 		if (!thread_ptr_->Start("ChallengeManager")) {
 			return false;
 		}
-
-		InitSeq();
 		return true;
 	}
 
