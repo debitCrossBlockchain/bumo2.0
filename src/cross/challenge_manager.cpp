@@ -370,9 +370,6 @@ namespace bumo {
 			message_channel.set_msg_data(child_withdrawal.SerializeAsString());
 			bumo::MessageChannel::GetInstance()->MessageChannelProducer(message_channel);
 		}
-		int64_t max_seq = MAX(recv_max_seq_, withdrawal.seq());
-		recv_max_seq_ = max_seq;
-		chain_withdrawal_seq_ = max_seq;
 		UpdateSeq();
 	}
 
