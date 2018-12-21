@@ -306,14 +306,14 @@ namespace bumo {
 		Json::Value object;
 		object.fromString(result.c_str());
 		if (error_code != protocol::ERRCODE_SUCCESS){
-			LOG_ERROR("Failed to query child block .%d", error_code);
+			LOG_ERROR("Failed to queryChildWithdrawal .%d", error_code);
 			return;
 		}
 
 		std::string error_msg;
 		protocol::MessageChannelWithdrawalChallenge  withdrawal_challenge;
 		if (!bumo::Json2Proto(object, withdrawal_challenge, error_msg)) {
-			LOG_ERROR("block_header Failed to Json2Proto error_msg=%s", error_msg.c_str());
+			LOG_ERROR("withdrawal_challenge Failed to Json2Proto error_msg=%s", error_msg.c_str());
 			return;
 		}
 
