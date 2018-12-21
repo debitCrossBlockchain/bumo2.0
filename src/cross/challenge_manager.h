@@ -13,6 +13,7 @@ namespace bumo {
 	public:
 		ChallengeSubmitHead();
 		~ChallengeSubmitHead();
+		void InitSeq();
 		void UpdateSeq();
 		void UpdateStatus();
 		void CopyBufferSubmitHead();

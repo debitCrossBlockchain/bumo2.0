@@ -17,6 +17,19 @@ namespace bumo {
 		latest_seq_(0){}
 
 	ChallengeSubmitHead::~ChallengeSubmitHead(){}
+	void ChallengeSubmitHead::InitSeq(){
+		auto db = Storage::Instance().keyvalue_db();
+		std::string str;
+		Json::Value args;
+		if (!db->Get(CHALLENGE_HEAD_SEQ, str)) {
+			args["chain_seq"] = 0;
+			db->Put(CHALLENGE_HEAD_SEQ, args.toFastString());
+		}
+		else{
+			args.fromString(str.c_str());
+			chain_head_seq_ = args["chain_seq"].asInt64();
+		}
+	}
 	void ChallengeSubmitHead::UpdateSeq(){
 		auto db = Storage::Instance().keyvalue_db();
 		std::string str;
