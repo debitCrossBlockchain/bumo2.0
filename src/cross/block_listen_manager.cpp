@@ -119,16 +119,22 @@ namespace bumo {
 		switch (msg_type){
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CREATE_CHILD_CHAIN:
 			msg = std::make_shared<protocol::MessageChannelCreateChildChain>();
+			break;
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_DEPOSIT:
 			msg = std::make_shared<protocol::MessageChannelDeposit>();
+			break;
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR:
 			msg = std::make_shared<protocol::MessageChannelChangeChildValidator>();
+			break;
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_WITHDRAWAL:
 			msg = std::make_shared<protocol::MessageChannelWithdrawal>();
+			break;
 		case protocol::MESSAGE_CHANNEL_TYPE::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL:
 			msg = std::make_shared<protocol::MessageChannelWithdrawalChallenge>();
+			break;
 		default:
 			msg = nullptr;
+			break;
 		}
 	}
 
