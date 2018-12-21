@@ -55,7 +55,6 @@ namespace bumo {
 		utils::Mutex common_lock_;
 		WithdrawalMap withdrawal_map_;
 		int64_t chain_withdrawal_seq_;
-		int64_t recv_max_seq_;
 		int64_t latest_seq_;
 		utils::Mutex withdrawal_buffer_list_lock_;
 		std::list<protocol::MessageChannelHandleWithdrawal> withdrawal_buffer_list_;
