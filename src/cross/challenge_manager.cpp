@@ -230,14 +230,21 @@ namespace bumo {
 		auto db = Storage::Instance().keyvalue_db();
 		std::string str;
 		Json::Value args;
+		Json::Value json_seq;
+		int64_t withdrawal_seq = 0;
 		if (!db->Get(CHALLENGE_WITHDRAWAL_SEQ, str)) {
-			args["chain_seq"] = chain_withdrawal_seq_;
-			db->Put(CHALLENGE_WITHDRAWAL_SEQ, args.toFastString());
+			return;
 		}
-		else{
-			args.fromString(str.c_str());
-			chain_withdrawal_seq_ = args["chain_seq"].asInt64();
+
+		args.fromString(str.c_str());
+		withdrawal_seq = args["chain_seq"].asInt64();
+		if (withdrawal_seq != (seq - 1)){
+			return;
 		}
+
+		json_seq["chain_seq"] = seq;
+		db->Put(CHALLENGE_WITHDRAWAL_SEQ, json_seq.toFastString());
+		chain_withdrawal_seq_ = seq;;
 	}
 
 	void ChallengeWithdrawal::UpdateWithdrawal(const protocol::MessageChannelHandleWithdrawal &withdrawal){
