@@ -28,7 +28,6 @@ namespace bumo {
 		utils::Mutex common_lock_;
 		LedgerMap ledger_map_;
 		int64_t chain_head_seq_;
-		int64_t recv_max_seq_;
 		int64_t latest_seq_;
 
 		utils::Mutex submit_head_buffer_list_lock_;
