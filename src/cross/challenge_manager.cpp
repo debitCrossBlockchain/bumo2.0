@@ -92,7 +92,7 @@ namespace bumo {
 		Json::Value data;
 		bumo::LedgerManager::GetInstance()->GetModuleStatus(data);
 		int64_t chain_max_seq = data["chain_max_ledger_seq"].asInt64();
-		if (header.seq()>chain_max_seq){
+		if (header.seq() > chain_max_seq){
 			return  protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_NONEXIST;
 		}
 
@@ -238,9 +238,6 @@ namespace bumo {
 
 	void ChallengeWithdrawal::UpdateStatus(){
 		utils::MutexGuard guard(common_lock_);
-		if (withdrawal_map_.empty()){
-			return;
-		}
 
 		UpdateRequestLatestSeq();
 
@@ -263,6 +260,10 @@ namespace bumo {
 	}
 
 	void ChallengeWithdrawal::SortMap(){
+		if (withdrawal_map_.empty()){
+			return;
+		}
+
 		//If max, ignore it
 		if (latest_seq_ == recv_max_seq_){
 			return;
@@ -313,7 +314,7 @@ namespace bumo {
 			return protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_QUERY;
 		}
 
-		bool check = (object["seq"].asInt64() == withdrawal.block_seq()) && (object["amount"].asInt64() == withdrawal.amount()) && (object["block_seq"].asInt64() == withdrawal.block_seq())&&
+		bool check = (object["seq"].asInt64() == withdrawal.block_seq()) && (object["amount"].asInt64() == withdrawal.amount()) && (object["block_seq"].asInt64() == withdrawal.block_seq()) &&
 			(object["address"].asString() == withdrawal.address()) && (object["source_address"].asString() == withdrawal.source_address());
 		if (!check){
 			child_withdrawal.set_type(protocol::MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_DOCTORED);
