@@ -210,7 +210,6 @@ namespace bumo {
 
 	ChallengeWithdrawal::ChallengeWithdrawal() :
 		chain_withdrawal_seq_(0),
-		recv_max_seq_(0),
 		latest_seq_(0){}
 
 	ChallengeWithdrawal::~ChallengeWithdrawal(){}
