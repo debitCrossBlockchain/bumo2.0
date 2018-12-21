@@ -14,11 +14,11 @@ namespace bumo {
 		ChallengeSubmitHead();
 		~ChallengeSubmitHead();
 		void InitSeq();
-		void UpdateSeq(const int64_t &seq);
 		void UpdateStatus();
 		void CopyBufferSubmitHead();
 		void UpdateSubmitHead(const protocol::MessageChannelSubmitHead &submit_head);
 	private:
+		void UpdateSeq(const int64_t &seq);
 		void UpdateRequestLatestSeq();
 		void SortMap();
 		void RequestLost();

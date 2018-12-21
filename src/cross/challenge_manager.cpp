@@ -48,6 +48,7 @@ namespace bumo {
 		if (head_seq != (seq-1)){
 			return;
 		}
+
 		json_seq["chain_seq"] = seq;
 		db->Put(CHALLENGE_HEAD_SEQ, json_seq.toFastString());
 		chain_head_seq_ = seq;;
@@ -161,7 +162,7 @@ namespace bumo {
 		int64_t max_seq = MAX(recv_max_seq_, header.seq());
 		recv_max_seq_ = max_seq;
 		chain_head_seq_ = max_seq;
-		UpdateSeq();
+		UpdateSeq(header.seq());
 	}
 
 	void ChallengeSubmitHead::UpdateRequestLatestSeq(){
@@ -413,7 +414,7 @@ namespace bumo {
 	}
 
 	void ChallengeManager::InitSeq(){
-		challenge_submit_head_->UpdateSeq();
+		challenge_submit_head_->InitSeq();
 		challenge_withdrawal_->UpdateSeq();
 	}
 
