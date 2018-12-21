@@ -554,9 +554,9 @@ function queryChildBlockHeader(params){
 function queryChildFreshDeposit(params){
     log('queryChildFreshDeposit');
     let input = params;
-    let info = JSON.parse(storageLoad(CHAIN_DEPOSIT + params.chain_id));
+    let info = JSON.parse(storageLoad(CHAIN_DEPOSIT + input.chain_id));
     assert(info !== false, 'queryChildFreshDeposit childChainAsset_' + input.chain_id + ' failed.');
-    let retinfo = JSON.parse(storageLoad(CHAIN_DEPOSIT + info.chain_id + '_' + info.seq));
+    let retinfo = JSON.parse(storageLoad(CHAIN_DEPOSIT + input.chain_id + '_' + info.seq));
     assert(info !== false, 'queryChildFreshDeposit childChainAsset_' + input.chain_id + '_' + info.seq + ' failed.');
     return retinfo;
 }
