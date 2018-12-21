@@ -263,8 +263,8 @@ namespace bumo {
 		protocol::MessageChannel msg_channel;
 		protocol::MessageChannelSubmitHead msg_submit_head;
 	
-		Json::Value query_head = bumo::Proto2Json(query_submit_head);
-		QuerySubmitHead(query_submit_head.chain_id(), query_submit_head.seq(), query_head["hash"].asString(), msg_submit_head);
+		//Json::Value query_head = bumo::Proto2Json(query_submit_head);
+		QuerySubmitHead(query_submit_head.chain_id(), query_submit_head.seq(), query_submit_head.hash(), msg_submit_head);
 		
 		
 		msg_channel.set_msg_type(protocol::MESSAGE_CHANNEL_CHALLENGE_HEAD);
