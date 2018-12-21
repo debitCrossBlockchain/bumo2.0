@@ -375,7 +375,7 @@ namespace bumo {
 
 	void ChallengeWithdrawal::RequestLost(){
 		//Request up to ten
-		int64_t max_nums = MIN(MAX_REQUEST_SUBMIT_NUMS, (recv_max_seq_ - latest_seq_));
+		int64_t max_nums = MIN(MAX_REQUEST_SUBMIT_NUMS, (latest_seq_ - chain_withdrawal_seq_));
 		for (int64_t i = 1; i <= max_nums; i++){
 			int64_t seq = latest_seq_ + i;
 			auto itr = withdrawal_map_.find(seq);
