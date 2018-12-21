@@ -226,7 +226,7 @@ namespace bumo {
 			chain_withdrawal_seq_ = args["chain_seq"].asInt64();
 		}
 	}
-	void ChallengeWithdrawal::UpdateSeq(){
+	void ChallengeWithdrawal::UpdateSeq(const int64_t &seq){
 		auto db = Storage::Instance().keyvalue_db();
 		std::string str;
 		Json::Value args;
