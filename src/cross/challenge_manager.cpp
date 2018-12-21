@@ -415,7 +415,7 @@ namespace bumo {
 
 	void ChallengeManager::InitSeq(){
 		challenge_submit_head_->InitSeq();
-		challenge_withdrawal_->UpdateSeq();
+		challenge_withdrawal_->InitSeq();
 	}
 
 	bool ChallengeManager::Initialize() {
