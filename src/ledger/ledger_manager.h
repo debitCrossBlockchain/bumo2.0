@@ -77,6 +77,8 @@ namespace bumo {
 
 		static void CreateHardforkLedger();
 		utils::ReadWriteLock& GetTreeMutex();
+	private:
+		bool CheckAndRepairLedgerSeq();
 	public:
 		utils::Mutex gmutex_;
 		Json::Value statistics_;

@@ -52,15 +52,57 @@ namespace bumo {
 		return validators_set.ParseFromString(str);
 	}
 
-	bool LedgerManager::Initialize() {
-		HashWrapper::SetLedgerHashType(Configure::Instance().ledger_configure_.hash_type_);
 
+	bool LedgerManager::CheckAndRepairLedgerSeq(){
+
+		auto ledger_db = Storage::Instance().ledger_db();
+		auto account_db = Storage::Instance().account_db();
+
+		std::string ledger_db_seq;
+		std::string account_db_seq;
+		if (!ledger_db->Get(General::KEY_LEDGER_SEQ, ledger_db_seq)) {
+			LOG_ERROR("Failed to get ledger seq from ledger-db\n");
+			return false;
+		}
+
+		if (!account_db->Get(General::KEY_LEDGER_SEQ, account_db_seq)) {
+			LOG_ERROR("Failed to get ledger seq from account-db\n");
+			return false;
+		}
+
+		int64_t int_ledger_db_seq = utils::String::Stoi64(ledger_db_seq);
+		int64_t int_account_db_seq = utils::String::Stoi64(account_db_seq);
+
+		if (int_account_db_seq != int_ledger_db_seq - 1) {
+			LOG_INFO("ledger seq (%s) from ledger-db not equal with seq (%s) + 1 from account-db\n",
+				ledger_db_seq.c_str(), account_db_seq.c_str());
+			return true;
+		}
+
+		LOG_INFO("Input y to continue(ledger db seq(" FMT_I64 "), account db seq(" FMT_I64 "):",
+			int_ledger_db_seq, int_account_db_seq);
+
+		if (!ledger_db->Put(General::KEY_LEDGER_SEQ, account_db_seq)) {
+			LOG_ERROR("Failed to get ledger seq from account-db\n");
+			return false;
+		}
+
+		LOG_INFO("Set ledger seq to " FMT_I64 " successfully", int_account_db_seq);
+		return true;
+	}
+
+
+	bool LedgerManager::Initialize() {
+		if (!CheckAndRepairLedgerSeq()){
+			LOG_ERROR("fatal error:CheckAndRepairLedgerSeq");
+			return false;
+		}
+		HashWrapper::SetLedgerHashType(Configure::Instance().ledger_configure_.hash_type_);
 		tree_ = new KVTrie();
 		auto batch = std::make_shared<WRITE_BATCH>();
 		tree_->Init(Storage::Instance().account_db(), batch, General::ACCOUNT_PREFIX, 4);
 
 		context_manager_.Initialize();
-
 		auto kvdb = Storage::Instance().account_db();
 		std::string str_max_seq;
 		int64_t seq_kvdb = 0;
