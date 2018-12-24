@@ -322,7 +322,6 @@ int main(int argc, char *argv[]){
 	bumo::WebSocketServer::ExitInstance();
 	bumo::WebServer::ExitInstance();
 	bumo::MonitorManager::ExitInstance();
-	bumo::MessageChannel::ExitInstance();
 	bumo::MessageHandler::ExitInstance();
 	bumo::TransactionSender::ExitInstance();
 	bumo::Configure::ExitInstance();
@@ -331,6 +330,7 @@ int main(int argc, char *argv[]){
 	utils::Logger::ExitInstance();
 	utils::Daemon::ExitInstance();
 	bumo::CrossManager::ExitInstance();
+	bumo::MessageChannel::ExitInstance();
 	
 	if (arg.console_ && !bumo::g_ready_) {
 		printf("Initialized failed, please check log for detail\n");
