@@ -60,12 +60,19 @@ namespace bumo {
 
 		std::string ledger_db_seq;
 		std::string account_db_seq;
-		if (!ledger_db->Get(General::KEY_LEDGER_SEQ, ledger_db_seq)) {
+		bool ledger_state = !ledger_db->Get(General::KEY_LEDGER_SEQ, ledger_db_seq);
+		bool account_state = !account_db->Get(General::KEY_LEDGER_SEQ, account_db_seq);
+
+		if (ledger_state&&account_state){
+			return true;
+		}
+
+		if (ledger_state) {
 			LOG_ERROR("Failed to get ledger seq from ledger-db\n");
 			return false;
 		}
 
-		if (!account_db->Get(General::KEY_LEDGER_SEQ, account_db_seq)) {
+		if (ledger_state) {
 			LOG_ERROR("Failed to get ledger seq from account-db\n");
 			return false;
 		}
