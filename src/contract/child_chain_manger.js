@@ -176,11 +176,11 @@ function checkWithdrawal(params) {
     withdrawal_detail.address = withdrawal.address;
     withdrawal_detail.merkel_proof = withdrawal.merkel_proof;
     withdrawal_detail.state = EXECUTE_STATE_FINISH;
-    withdrawal_detail.withdrawal_block_number = withdrawal.withdrawal_block_number;
+    withdrawal_detail.withdrawal_block_number = blockNumber;
     
     storageStore(CHAIN_WITHDRAWAL + input.chain_id, JSON.stringify(withdrawal_current));
     storageStore(CHAIN_WITHDRAWAL + input.chain_id + '_' + withdrawal_detail.seq, JSON.stringify(withdrawal_detail));
-    payCoin(withdrawal.address, withdrawal.amount);
+    transferCoin(withdrawal.address, withdrawal.amount);
     tlog(TLOG_WITHDRAWAL, input.chain_id, JSON.stringify(withdrawal_detail));
 }
 
