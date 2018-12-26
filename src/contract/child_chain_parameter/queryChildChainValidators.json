@@ -1,0 +1,10 @@
+{
+    "contract_address": "buQhTFwFx1Jc4AEheQ3VJ96yHc1J9y8nPLXs",
+    "code": "",
+    "input":"{\"method\":\"queryChildChainValidators\",\"params\":{\"chain_id\":1}}",
+    "contract_balance": "100",
+    "fee_limit": 10000000000,
+    "gas_price": 100000,
+    "opt_type": 2,
+    "source_address": ""
+}

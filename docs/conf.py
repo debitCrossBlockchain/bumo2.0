@@ -59,8 +59,8 @@ templates_path = ['_templates']
 master_doc = 'index'
 
 # General information about the project.
-project = 'bubi'
-copyright = '2018, wilson'
+project = 'Bumo Documentation'
+copyright = '2018, Bumo'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -277,10 +277,10 @@ texinfo_documents = [
 # -- Options for Epub output ----------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = 'bubi'
-epub_author = 'wilson'
-epub_publisher = 'wilson'
-epub_copyright = '2018, wilson'
+epub_title = 'Bubi'
+epub_author = 'Bubi'
+epub_publisher = 'Bubi'
+epub_copyright = '2018, Bubi'
 
 # The basename for the epub file. It defaults to the project name.
 #epub_basename = 'bubi'

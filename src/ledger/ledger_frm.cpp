@@ -267,7 +267,7 @@ namespace bumo {
 			tx_frm->SetMaxEndTime(utils::Timestamp::HighResolution() + General::TX_EXECUTE_TIME_OUT);
 
 			bool ret = tx_frm->Apply(this, environment_);
-			//Caculate the required mininum fee by calculting the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
+			//Calculate the required minimum fee by calculating the bytes of the transaction. Do not store the transaction when the user-specified fee is less than this fee. 
 			std::string error_info;
 			if (tx_frm->IsExpire(error_info)) {
 				LOG_ERROR("Failed to apply transaction(%s): %s, %s",

@@ -22,6 +22,9 @@
     <Filter Include="monitor">
       <UniqueIdentifier>{f06ae41d-262b-435b-9143-a83f4b5a5d11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cross">
+      <UniqueIdentifier>{e38e6467-9c1d-402c-b414-4678d3af0f3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main\main.cpp">
@@ -132,6 +135,33 @@
     <ClCompile Include="..\..\src\ledger\fee_calculate.cpp">
       <Filter>ledger</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\cross\block_listen_manager.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cross\challenge_manager.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cross\message_channel_manager.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cross\message_handler.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cross\cross_utils.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cross\base_proposer.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cross\child_proposer_manager.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cross\main_proposer_manager.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\cross\cross_manager.cpp">
+      <Filter>cross</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\overlay\peer_manager.h">
@@ -229,6 +259,34 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ledger\fee_calculate.h">
       <Filter>ledger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\block_listen_manager.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\challenge_manager.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\message_channel_manager.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\message_handler.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\..\src\cross\cross_utils.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\base_proposer.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\child_proposer_manager.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\main_proposer_manager.h">
+      <Filter>cross</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\cross\cross_manager.h">
+      <Filter>cross</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

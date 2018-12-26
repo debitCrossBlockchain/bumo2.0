@@ -1,0 +1,26 @@
+{
+	"items":[
+		{
+			"private_keys":[
+				"privbxsEC869XR4piFmvTEyhn3ycm39YifEoTCxiyKxHs4bdUTKWTP7N"
+			],
+			"transaction_json":{
+				"fee_limit":"10000000000",
+				"gas_price":1000,
+				"nonce":4,
+				"chain_id": 1,
+				"operations":[
+					{
+						"pay_coin":{
+							"amount":30000000,
+							"dest_address":"buQZ6zAfmCVQBWTz5uVvMpMEdNGesLTJ888P",
+							"input":"{\"method\":\"deposit\",\"params\":{\"chain_id\":1,\"seq\": 1,\"deposit_data\": {\"address\":\"buQoAB5cTmKqbSpV8hDfCNn9BeZHQ4ngmwho\",\"amount\": \"1000\"}}}"
+						},
+						"type":7
+					}
+				],
+				"source_address":"buQkmnSgiNfKDkWtAAdXj2F26WBq5hMxYXg1"
+			}
+		}
+	]
+}

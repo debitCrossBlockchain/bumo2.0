@@ -1,2 +1,2 @@
-protoc.exe monitor.proto --cpp_out=./cpp --java_out=./
+protoc.exe monitor.proto --cpp_out=./cpp
 pause

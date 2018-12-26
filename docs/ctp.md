@@ -1,181 +1,60 @@
+- [Bumo CTP1.0 Token 标准](#bumo-ctp1.0-token-标准)
+    - [简介](#简介)
+    - [目标](#目标)
+    - [规则](#规则)
+    - [Token 属性](#token-属性)
+    - [功能函数](#功能函数)
+         - [transfer](#transfer)
+         - [approve](#approve)
+         - [transferFrom](#transferfrom)
+         - [tokenInfo](#tokeninfo)
+         - [allowance](#allowance)
+         
+    - [合约入口](#合约入口)
+        - [init](#init)
+        - [main](#main)
+        - [query](#query)
+
 # Bumo CTP1.0 Token 标准
 
 ## 简介
 
-CTP1.0(Contract Token Protocol) 指基于 BUMO 合约发行 token 的标准协议。该协议提供了转移 token 的基本功能，并允许 token 授权给第三方使用。
+CTP 1.0(Contract Token Protocol) 指基于 BUMO 智能合约发行 token 的标准协议。该协议提供了转移 token 的基本功能，并允许 token 授权给第三方使用。
 
 ## 目标
-
-标准接口可以让 Bumo 上的任何 token 被其他应用程序使用，比如钱包和交易所。
-
+ 
+基于这套标准接口，可以让发行的 token 被其他应用程序和第三方快速对接和使用，比如钱包和交易所。
 
 ## 规则
 
-Bumo 智能合约由 javascript 实现,包含初始化函数 init 和两个入口函数 main、query 。init 函数用于合约创建时初始化、main 函数主要负责数据写入，query 函数负责数据查询。
+Bumo 智能合约由 JavaScript 语言实现, 包含初始化函数 init 和两个入口函数 main、query 。init 函数用于合约创建时初始化; main 函数主要负责数据写入，query 函数负责数据查询。
 
+## Token 属性
 
-## 智能合约变量
+Token 属性可以通过合约的 `tokenInfo` 功能函数查询到，存储在智能合约的账号里。包含以下内容
 
-| 变量        | 描述                    |  
+| 变量         | 描述                     |  
 | :----------- | --------------------------- |
-|ctp           | Contract Token Protocol版本 |
 |name          | Token 名称                  |
 |symbol        | Token 符号                  |
 |decimals      | Token 小数位数              |
-|totalSupply   | Token 总量                  |
-|contractOwner | Token 所有者                |
+|totalSupply   | Token 总量，totalSupply = Token 个数(supply) * 10 ^ decimals |
+|version       | Contract Token Protocol版本 |
 
-## 函数
+注意：
 
-### contractInfo
+- name：推荐使用单词全拼，每个首字母大写。如 Demo Token
+- symbol：推荐使用大写首字母缩写。如 DT
+- decimals：小数位在 0~8 的范围，0 表示无小数位
+- totalSupply：范围是 1~2^63-1
+- version：ctp 的版本。如 1.0
 
-返回 Token 的基本信息。入口函数 query。
-
-E.g.
-
-- 参数json结构:
-```json
-{
-    "method":"contractInfo"
-}
-```
-- 函数：function contractInfo()
-- 返回值：
-```json
-{
-    "result":{
-        "type": "string",
-        "value": {
-            "contractInfo": {
-                "ctp": "1.0",
-                "name": "cccpt-bu",
-                "symbol": "CBG",
-                "decimals": 0,
-                "totalSupply": "100000",
-                "contractOwner": "buQBv4pqtNMs6ueBhx7mJULhAFYV3rSHo2Zg",
-                "balance": "100000"
-            }
-        }
-    }
-} 
-```
-
-### name
-
-返回 token 的名称。入口函数 query。
-
-E.g.
-
-- 参数json结构:
-```json
-{
-    "method":"name"
-}
-```
-- 函数：function name()
-- 返回值：
-```json
-{
-    "result":{
-        "name":"XXXCOIN"
-    }
-} 
-```
-
-### symbol
-
-返回 token 的符号。入口函数 query。
-
-E.g.
-
-- 参数json结构:
-```json
-{
-    "method":"symbol"
-}
-```
-- 函数：function symbol()
-- 返回值：
-```json
-{
-    "result":{
-        "symbol":"XXX"
-    }
-} 
-```
-
-### decimals
-
-返回 token 使用的小数点后几位， 比如 5,表示分配 token 数量为100000。入口函数query。
-
-E.g.
-
-- 参数json结构:
-```json
-{
-    "method":"decimals"
-}
-```
-- 函数：function decimals()
-- 返回值：
-```json
-{
-    "result":{
-        "decimals":5
-    }
-} 
-```
-
-### totalSupply
-
-返回 token 的总供应量。入口函数 query。
-
-E.g.
-
-- 参数 json 结构:
-```json
-{
-    "method":"totalSupply"
-}
-```
-- 函数：function totalSupply()
-- 返回值：
-```json
-{
-    "result":{
-        "totalSupply":"10000000000000000000"
-    }
-} 
-```
-
-### balanceOf
-
-返回 owner 账户的账户余额。入口函数 query。
-
-- 参数json结构:
-```json
-{
-    "method":"balanceOf",
-    "params":{
-        "address":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj"
-    }
-}
-```
-参数：address 账户地址
-
-- 函数：function balanceOf(owner)
-- 返回值：指定地址的余额，如果参数 address 是资产合约地址或者合约拥有者地址，则返回值是尚未分配的合约资产数额
-```json
-{
-    "result":{
-        "balanceOf":"100000000000000",
-    }
-} 
-```
+## 功能函数
 
 ### transfer
 
-转移 value 数量的 token 到的地址 to，并且必须触发 log 事件。 如果资金转出账户余额没有足够的token来支出，该函数应该被throw。入口函数 main。
+- 转移 value 数量的 token 到的地址 to，并且必须触发 log 事件。 如果资金转出账户余额没有足够的token来支出，该函数应该被throw。
+- 入口函数 main。
 
 - 参数 json 结构:
 ```json
@@ -193,9 +72,31 @@ E.g.
 - 函数：function transfer(to, value)
 - 返回值：true或者抛异常
 
+### approve
+
+- 授权账户 spender 可以从交易发送者账户转出数量为 value 的token。
+- 入口函数 main。
+
+参数json结构:
+```json
+{
+    "method":"approve",
+    "params":{
+        "spender":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj",
+        "value":"1000000"
+    }
+}
+```
+参数：spender 账户地址；
+参数：value 被授权可转移数量（字符串类型）
+
+- 函数：function approve(spender, value)
+- 返回值：true 或者抛异常
+
 ### transferFrom
 
-从地址from发送数量为 value 的 token 到地址 to，必须触发 log 事件。 在 transferFrom 之前，from 必须已经调用过 approve 向 to 授权了额度。如果 from 账户余额没有足够的 token 来支出或者 from 授权给 to 的额度不足，该函数应该被 throw。入口函数 main。
+- 从from发送数量为 value 的 token 到 to，必须触发 log 事件。 在 transferFrom 之前，from 必须给当前交易的发起者进行授权额度(即approve操作)。如果 from 余额没有足够的 token 来支出或者 from 授权给当前交易的发起者的额度不足，该函数应该被 throw。
+- 入口函数 main。
 
 参数json结构:
 ```json
@@ -215,70 +116,68 @@ E.g.
 - 函数：function transferFrom(from,to,value)
 - 返回值：true或者抛异常
 
+### balanceOf
 
-### approve
+- 返回指定账户的 token
+- 入口函数 query。
 
-授权账户 spender 可以从交易发送者账户转出数量为 value 的token。入口函数 main。
-
-参数json结构:
+- 参数json结构:
 ```json
 {
-    "method":"approve",
-    "params":{
-        "spender":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj",
-        "value":"1000000"
-    }
-}
-```
-参数：spender 账户地址；
-参数：value 被授权可转移数量（字符串类型）
-
-- 函数：function approve(spender, value)
-- 返回值：true 或者抛异常
-
-### assign
-
-合约 token 拥有者向 to 分配数量为 value 的 token。入口函数 main。
-
-参数json结构:
-```json
-{
-    "method":"assign",
-    "params":{
-        "to":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj",
-        "value":"1000000"
-    }
-}
-```
-参数：to 收账账户地址；
-参数：value 分配数量（字符串类型）
-
-- 函数：function assign(to, value)
-- 返回值：true 或者抛异常
-
-### changeOwner
-
-将合约 token 拥有权（默认拥有者为合约资产的创建账户）转移给 address，只有合约 token 拥有者才能执行此权限，入口函数 main。
-
-参数 json 结构:
-```json
-{
-    "method":"changeOwner",
+    "method":"balanceOf",
     "params":{
         "address":"buQnTmK9iBFHyG2oLce7vcejPQ1g5xLVycsj"
     }
 }
 ```
-参数：address 账户地址；
+参数：address 账户地址
 
-- 函数：function changeOwner(address)
-- 返回值：true或者抛异常
+- 函数：function balanceOf(owner)
+- 返回值：指定地址的余额
+```json
+{
+    "result":{
+        "balanceOf":"100000000000000",
+    }
+} 
+```
+
+### tokenInfo
+
+- 返回 Token 的基本信息。
+- 入口函数 query。
+
+- 参数json结构:
+```json
+{
+    "method":"tokenInfo"
+}
+```
+- 函数：function tokenInfo()
+- 返回值：
+```json
+{
+    "result":{
+        "type": "string",
+        "value": {
+            "tokenInfo": {
+                "name": "DemoToken",
+                "symbol": "DT",
+                "decimals": 8,
+                "totalSupply": "5000000000000",
+                "version": "1.0"
+            }
+        }
+    }
+} 
+```
 
 ### allowance
 
-返回 spender 仍然被允许从 owner 提取的金额。入口函数 query。
+- 返回 spender 仍然被允许从 owner 提取的金额。
+- 入口函数 query。
 
-参数json结构:
+- 参数json结构:
 ```json
 {
     "method":"allowance",
@@ -302,9 +201,9 @@ E.g.
 ```
 
 
-## 入口函数
+## 合约入口
 
-### 入口函数 init
+### init
 
 ```js
 function init(input_str){
@@ -312,25 +211,29 @@ function init(input_str){
 
 ```
 
-参数 json 结构:
+创建合约时候，触发合约 `init` 入口函数，传递 `JSON` 参数格式如下：
+
 ```json
 {
     "params":{
-        "name":"RMB",
-        "symbol":"CNY",
+        "name":"DemoToken",
+        "symbol":"DT",
         "decimals":8,
-        "supply":"1500000000"
+        "supply":"50000",
+        "version": "1.0"
     }
 }
 ```
-参数：name 资产名称；
-参数：symbol 资产符号；
-参数：decimals 小数位数；
-参数：supply 发型总量(整数部分)；
+- name: token 名称
+- symbol: 资产符号
+- decimals: 小数位数
+- supply: 字符串格式，发行Token 个数(整数部分)。例如发行 50000 个 Token，其 totalSupply 总量为 50000 * 100000000
+- version: 版本号
 
-- 返回值：true或者抛异常
+入口函数的返回值：true或者抛异常
 
-### 入口函数 main
+
+### main
 
 ```js
 function main(input_str){
@@ -345,52 +248,30 @@ function main(input_str){
     else if(input.method === 'approve'){
         approve(input.params.spender, input.params.value);
     }
-    else if(input.method === 'assign'){
-        assign(input.params.to, input.params.value);
-    }
-    else if(input.method === 'changeOwner'){
-        changeOwner(input.params.address);
-    }
     else{
-        throw '<undidentified operation type>';
+        throw '<Main interface passes an invalid operation type>';
     }
 }
 ```
 
-### 入口函数query
+### query
 
 ```js
 function query(input_str){
-    loadGlobalAttribute();
+    globalAttribute = JSON.parse(storageLoad(globalAttributeKey));
 
     let result = {};
     let input  = JSON.parse(input_str);
-    if(input.method === 'name'){
-        result.name = name();
-    }
-    else if(input.method === 'symbol'){
-        result.symbol = symbol();
-    }
-    else if(input.method === 'decimals'){
-        result.decimals = decimals();
-    }
-    else if(input.method === 'totalSupply'){
-        result.totalSupply = totalSupply();
-    }
-    else if(input.method === 'contractInfo'){
-        result.contractInfo = contractInfo();
-    }
-    else if(input.method === 'balanceOf'){
-        result.balance = balanceOf(input.params.address);
+
+    if(input.method === 'tokenInfo'){
+        result.tokenInfo = globalAttribute;
     }
     else if(input.method === 'allowance'){
         result.allowance = allowance(input.params.owner, input.params.spender);
     }
     else{
-       	throw '<unidentified operation type>';
+       	throw '<Query interface passes an invalid operation type>';
     }
-
-    log(result);
     return JSON.stringify(result);
 }
 ```

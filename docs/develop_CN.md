@@ -15,6 +15,9 @@
     - [HTTP接口](#http接口)
         - [生成公私钥对-测试用](#生成公私钥对-测试用)
         - [查询账号](#查询账号)
+        - [查询账号基本信息](#查询账号基本信息)
+        - [查询资产](#查询资产)
+        - [查询metadata](#查询metadata)
         - [查询交易](#查询交易)
         - [查询缓存队列交易](#查询缓存队列交易)
         - [查询区块头](#查询区块头)
@@ -280,7 +283,103 @@ HTTP GET /getAccountBase?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
    "error_code" : 4,
    "result" : null
 }
+```  
+### 查询资产
+
+```text
+HTTP GET /getAccountAssets?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
 ```
+
+ - 返回指定账号的资产信息
+
+| 参数         | 描述                                                                                                                                                    |
+| :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| address      | 账号地址， 必填  |
+| code, issuer | issuer表示资产发行账户地址，code表示资产代码。只有同时填写正确code&issuer才能正确显示指定资产否则默认显示所有资产。type指定的资产。 选填|
+| type      | 目前type只能是0，可以不用填写  |
+
+返回内容
+
+```json
+{
+  "error_code" : 0,
+    "result": [
+      {
+        "amount" : 1400,
+        "key" :
+        {
+          "code" : "CNY",
+          "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+        }
+      }, 
+      {
+        "amount" : 1000,
+        "key" :
+        {
+          "code" : "USD",
+          "issuer" : "buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3"
+        }
+      }
+    ]
+}
+
+```
+
+- 如果该账号不存在资产,则返回内容
+
+```json
+{
+   "error_code" : 0,
+   "result" : null
+}
+```    
+### 查询metadata
+
+```text
+HTTP GET /getAccountMetaData?address=buQs9npaCq9mNFZG18qu88ZcmXYqd6bqpTU3
+```
+
+ - 返回指定账号的MetaData信息
+
+| 参数         | 描述                                                                                                                                                    |
+| :----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| address      | 账号地址， 必填  |
+| key      | 指定metadata中的key值。 选填  |
+
+返回内容
+
+```json
+{
+  "error_code" : 0,
+    "result": {
+        "123": {
+            "key" : "123",
+            "value" : "123_value",
+            "version" : 1
+        },
+        "456": {
+            "key" : "456",
+            "value" : "456_value",
+            "version" : 1
+        },
+        "abcd": {
+            "key" : "abcd",
+            "value" : "abcd_value",
+            "version" : 1
+        }
+    }
+}
+
+```
+
+- 如果该账号不存在metadata,则返回内容
+
+```json
+{
+   "error_code" : 0,
+   "result" : null
+}
+```  
 
 ### 查询交易
 
@@ -1724,6 +1823,22 @@ function query(input)
       返回：成功返回资产数字如'10000'，失败返回 false
     */
     ```
+- ##### 获取指定账号的metadata
+
+    `getAccountMetadata(account_address, metadata_key);`
+
+    - account_address: 账号地址
+    - metadata_key: metadata的key 
+
+    例如
+    ```javascript
+    let value = getAccountMetadata('buQsZNDpqHJZ4g5hz47CqVMk5154w1bHKsHY', 'abc');
+
+    /*
+      权限：只读
+      返回：成功返回字符串，如 'values', 失败返回false
+    */
+    ```
 
 - ##### 获取区块信息
 
@@ -1751,6 +1866,22 @@ function query(input)
     /*
       权限：只读
       返回：成功返回 true，失败返回 false
+    */
+
+    ```
+
+- ##### 公钥转地址
+
+    `toAddress(public_key);`
+    - public_key 公钥，base16编码的字符串
+    - 成功，返回账号地址；失败返回false
+
+    例如
+    ```javascript
+    let ret = toAddress('b0016ebe6191f2eb73a4f62880b2874cae1191183f50e1b18b23fcf40b75b7cd5745d671d1c8');
+    /*
+      权限：只读
+      返回：成功返回 "buQi6f36idrKiGrno3RcdjUjGAibUC37FJK6"，失败返回false
     */
 
     ```
@@ -1879,6 +2010,44 @@ function query(input)
     /*
       权限：只读
       返回：成功返回字符串 '1234567891200000000'，失败抛异常
+    */
+
+    ```
+          
+ - ##### sha256 计算
+    `sha256(data[, dataType]);`
+
+    - data: 待计算hash的原始数据，根据dataType不同，填不同格式的数据。
+    - dataType：data 的数据类型，整数，可选字段，默认为0。0：base16编码后的字符串，如"61626364"；1：普通原始字符串，如"abcd"；2：base64编码后的字符串,如"YWJjZA=="。如果对二进制数据hash计算，建议使用base16或者base64编码。
+    - 返回值: 成功会hash之后的base16编码后的字符串，失败会返回 false
+
+    例如
+    ```javascript
+    let ret = sha256('61626364');
+    /*
+      权限：只读
+      功能：对
+      返回：成功返回64个字节的base16格式字符串 '88d4266fd4e6338d13b845fcf289579d209c897823b9217da3e161936f031589'，失败返回false
+    */
+
+    ```
+
+          
+ - ##### 校验签名是否合法
+    `verify(signedData, publicKey,blobData [, blobDataType]);`
+
+    - signedData: 签名数据，base16编码的字符串。
+    - publicKey：公钥，base16编码的字符串。
+    - blobData：原始数据，根据blobDataType，填不同格式的数据。
+    - blobDataType：blobData的数据类型，整数，可选字段，默认为0。0：base16编码后的字符串，如"61626364"；1：普通原始字符串，如"abcd"；2：base64编码后的字符串,如"YWJjZA=="。如果对二进制数据校验，建议使用base16或者base64编码。
+    - 返回值: 成功会返回true，失败会返回 false
+
+    例如
+    ```javascript
+    let ret = verify('3471aceac411975bb83a22d7a0f0499b4bfcb504e937d29bb11ea263b5f657badb40714850a1209a0940d1ccbcfc095c4b2d38a7160a824a6f9ba11f743ad80a', 'b0014e28b305b56ae3062b2cee32ea5b9f3eccd6d738262c656b56af14a3823b76c2a4adda3c', 'abcd', 1);
+    /*
+      权限：只读
+      返回：成功会返回true，失败会返回 false
     */
 
     ```

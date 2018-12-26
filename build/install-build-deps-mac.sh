@@ -2,7 +2,7 @@
 
 cd mac/
 rm -rf mac.zip
-wget bumo.chinacloudapp.cn:36002/v8_target/mac.zip
+wget depends.bumocdn.com:36002/v8_target/mac.zip
 down_md5_nums=`md5 mac.zip | cut -d ' ' -f4`
 true_md5_nums="a9be6e38ba963abc3ff6406c3c38ec20"
 echo $true_md5_nums

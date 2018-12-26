@@ -40,8 +40,6 @@ message AssetStore{
 	AssetProperty property = 3;
 }
 
-
-
 message LedgerHeader
 {
 	int64	seq 		            = 1;
@@ -55,6 +53,7 @@ message LedgerHeader
 	bytes   validators_hash = 9;	// hash
 	bytes	fees_hash = 10;
 	string	reserve = 11;
+	int64	chain_id = 12;
 }
 
 message Ledger{
@@ -62,17 +61,15 @@ message Ledger{
     repeated TransactionEnv transaction_envs = 2;
 }
 
-
-message OperationPayAsset
-{
+message OperationPayAsset{
 	string dest_address = 1;
 	Asset asset = 2;
 	string input = 3;
 }
 
 message OperationTypeThreshold{
-	 Operation.Type type = 1;
-	 int64 threshold = 2;
+	Operation.Type type = 1;
+	int64 threshold = 2;
 }
 
 message AccountPrivilege {
@@ -82,8 +79,8 @@ message AccountPrivilege {
 }
 
 message AccountThreshold{
-		 int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: indicates no setting
-		 repeated OperationTypeThreshold type_thresholds = 2;
+	int64 tx_threshold = 1; //required, [-1,MAX(INT64)] -1: indicates no setting
+	repeated OperationTypeThreshold type_thresholds = 2;
 }
 
 message OperationIssueAsset{
@@ -98,8 +95,8 @@ message OperationPayCoin{
 }
 
 message OperationSetSignerWeight{
-	 int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: indicates no setting
-	 repeated Signer signers = 2; //address:weight, if weight is 0, it indicates deleting this signer
+	int64 master_weight = 1; //required, [-1,MAX(UINT32)] -1: indicates no setting
+	repeated Signer signers = 2; //address:weight, if weight is 0, it indicates deleting this signer
 }
 
 message OperationLog{
@@ -116,16 +113,16 @@ message OperationSetPrivilege{
 
 message Operation {
 	enum Type {
-			UNKNOWN = 0;
-			CREATE_ACCOUNT 			= 1;
-			ISSUE_ASSET 			= 2;
-			PAY_ASSET               = 3;
-			SET_METADATA			= 4;
-			SET_SIGNER_WEIGHT		= 5;
-			SET_THRESHOLD			= 6;
-			PAY_COIN                = 7;
-			LOG						= 8;
-			SET_PRIVILEGE			= 9;
+		UNKNOWN = 0;
+		CREATE_ACCOUNT 			= 1;
+		ISSUE_ASSET 			= 2;
+		PAY_ASSET               = 3;
+		SET_METADATA			= 4;
+		SET_SIGNER_WEIGHT		= 5;
+		SET_THRESHOLD			= 6;
+		PAY_COIN                = 7;
+		LOG						= 8;
+		SET_PRIVILEGE			= 9;
 	};
 	Type type = 1;
 	string source_address = 2;
@@ -144,39 +141,32 @@ message Operation {
 }
 
 message OperationSetThreshold{
-	    int64 tx_threshold = 1;
-	    repeated OperationTypeThreshold type_thresholds = 2; //type:threshold, threshold:0 indicates deleting this type
+	int64 tx_threshold = 1;
+	repeated OperationTypeThreshold type_thresholds = 2; //type:threshold, threshold:0 indicates deleting this type
 }
 
 message Transaction {
-		enum Limit{
-				UNKNOWN = 0;
-				OPERATIONS = 1000;
-		};
-	
-		string source_address = 1;
-
-		int64 nonce = 2;
-		
-		int64  fee_limit = 3;
-
-		int64  gas_price =4;
-
-		int64 ceil_ledger_seq = 5;
-		
-		bytes metadata = 6;
-
-		repeated Operation operations = 7;
-
+	enum Limit{
+		UNKNOWN = 0;
+		OPERATIONS = 1000;
+	};
+	string source_address = 1;
+	int64 nonce = 2;
+	int64  fee_limit = 3;
+	int64  gas_price =4;
+	int64 ceil_ledger_seq = 5;
+	bytes metadata = 6;
+	repeated Operation operations = 7;
+	int64 chain_id = 8;
 }
 
 message Signer {
 	enum Limit{
-			SIGNER_NONE = 0;
-			SIGNER = 100;
+		SIGNER_NONE = 0;
+		SIGNER = 100;
 	};
-		 string address = 1;
-		 int64 weight = 2;
+	string address = 1;
+	int64 weight = 2;
 }
 
 message Trigger{
@@ -196,8 +186,8 @@ message Trigger{
 }
 
 enum Limit{
-		UNKNOWN = 0;
-		SIGNATURE = 100;
+	UNKNOWN = 0;
+	SIGNATURE = 100;
 };
 
 message TransactionEnv {
@@ -207,14 +197,14 @@ message TransactionEnv {
 }
 
 message TransactionEnvStore{
-		TransactionEnv transaction_env = 1;
-		int32 error_code = 2;
-		string error_desc = 3;
-		int64 ledger_seq = 4;
-		int64 close_time = 5;
-		//for notify
-		bytes hash = 6;
-		int64 actual_fee = 7;
+	TransactionEnv transaction_env = 1;
+	int32 error_code = 2;
+	string error_desc = 3;
+	int64 ledger_seq = 4;
+	int64 close_time = 5;
+	//for notify
+	bytes hash = 6;
+	int64 actual_fee = 7;
 }
 
 message TransactionEnvSet{
@@ -253,7 +243,6 @@ message OperationCreateAccount{
 	int64	init_balance = 5;
 	string  init_input = 6;
 }
-
 
 message OperationSetMetadata{
 	string	key = 1;  

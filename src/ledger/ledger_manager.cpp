@@ -20,6 +20,7 @@
 #include "ledger_manager.h"
 #include "contract_manager.h"
 #include "fee_calculate.h"
+#include "cross/block_listen_manager.h"
 
 namespace bumo {
 	LedgerManager::LedgerManager() : tree_(NULL) {
@@ -51,15 +52,64 @@ namespace bumo {
 		return validators_set.ParseFromString(str);
 	}
 
-	bool LedgerManager::Initialize() {
-		HashWrapper::SetLedgerHashType(Configure::Instance().ledger_configure_.hash_type_);
 
+	bool LedgerManager::CheckAndRepairLedgerSeq(){
+
+		auto ledger_db = Storage::Instance().ledger_db();
+		auto account_db = Storage::Instance().account_db();
+
+		std::string ledger_db_seq;
+		std::string account_db_seq;
+		bool ledger_state = !ledger_db->Get(General::KEY_LEDGER_SEQ, ledger_db_seq);
+		bool account_state = !account_db->Get(General::KEY_LEDGER_SEQ, account_db_seq);
+
+		if (ledger_state&&account_state){
+			return true;
+		}
+
+		if (ledger_state) {
+			LOG_ERROR("Failed to get ledger seq from ledger-db\n");
+			return false;
+		}
+
+		if (ledger_state) {
+			LOG_ERROR("Failed to get ledger seq from account-db\n");
+			return false;
+		}
+
+		int64_t int_ledger_db_seq = utils::String::Stoi64(ledger_db_seq);
+		int64_t int_account_db_seq = utils::String::Stoi64(account_db_seq);
+
+		if (int_account_db_seq != int_ledger_db_seq - 1) {
+			LOG_INFO("ledger seq (%s) from ledger-db not equal with seq (%s) + 1 from account-db\n",
+				ledger_db_seq.c_str(), account_db_seq.c_str());
+			return true;
+		}
+
+		LOG_INFO("Input y to continue(ledger db seq(" FMT_I64 "), account db seq(" FMT_I64 "):",
+			int_ledger_db_seq, int_account_db_seq);
+
+		if (!ledger_db->Put(General::KEY_LEDGER_SEQ, account_db_seq)) {
+			LOG_ERROR("Failed to get ledger seq from account-db\n");
+			return false;
+		}
+
+		LOG_INFO("Set ledger seq to " FMT_I64 " successfully", int_account_db_seq);
+		return true;
+	}
+
+
+	bool LedgerManager::Initialize() {
+		if (!CheckAndRepairLedgerSeq()){
+			LOG_ERROR("fatal error:CheckAndRepairLedgerSeq");
+			return false;
+		}
+		HashWrapper::SetLedgerHashType(Configure::Instance().ledger_configure_.hash_type_);
 		tree_ = new KVTrie();
 		auto batch = std::make_shared<WRITE_BATCH>();
 		tree_->Init(Storage::Instance().account_db(), batch, General::ACCOUNT_PREFIX, 4);
 
 		context_manager_.Initialize();
-
 		auto kvdb = Storage::Instance().account_db();
 		std::string str_max_seq;
 		int64_t seq_kvdb = 0;
@@ -107,6 +157,7 @@ namespace bumo {
 			LOG_ERROR("Failed to get config fee!");
 			return false;
 		}
+
 	
 		LOG_INFO("Gas price :" FMT_I64 " Base reserve:" FMT_I64 " .", fees_.gas_price(), fees_.base_reserve());
 
@@ -150,6 +201,11 @@ namespace bumo {
 		utils::MutexGuard guard(gmutex_);
 		return statistics_["account_count"].asInt();
 	}
+	
+	utils::ReadWriteLock& LedgerManager::GetTreeMutex()  {
+		return tree_mutex_;
+	}
+
 
 	void LedgerManager::OnTimer(int64_t current_time) {
 		int64_t next_seq = 0;
@@ -181,6 +237,7 @@ namespace bumo {
 			gl.set_begin(next_seq);
 			gl.set_end(next_seq);
 			gl.set_timestamp(current_time);
+			gl.set_chain_id(General::GetSelfChainId());
 
 			for (std::set<int64_t>::iterator it = active_peers.begin(); it != active_peers.end(); it++) {
 				int64_t pid = *it;
@@ -285,6 +342,7 @@ namespace bumo {
 		header->set_seq(1);
 		header->set_close_time(0);
 		header->set_consensus_value_hash(HashWrapper::Crypto(request.SerializeAsString()));
+		header->set_chain_id(Configure::Instance().genesis_configure_.chain_id_);
 
 		header->set_version(1000);
 		header->set_tx_count(0);
@@ -393,6 +451,7 @@ namespace bumo {
 			header->set_seq(request.ledger_seq());
 			header->set_close_time(request.close_time());
 			header->set_consensus_value_hash(consensus_value_hash);
+			header->set_chain_id(last_closed_ledger_hdr.chain_id());
 			header->set_version(last_closed_ledger_hdr.version());
 			header->set_tx_count(last_closed_ledger_hdr.tx_count());
 			header->set_fees_hash(last_closed_ledger_hdr.fees_hash());
@@ -536,6 +595,7 @@ namespace bumo {
 		header->set_close_time(consensus_value.close_time());
 		header->set_previous_hash(consensus_value.previous_ledger_hash());
 		header->set_consensus_value_hash(chash);
+		header->set_chain_id(General::GetSelfChainId());
 		//LOG_INFO("set_consensus_value_hash:%s,%s", utils::String::BinToHexString(con_str).c_str(), utils::String::BinToHexString(chash).c_str());
 		header->set_version(last_closed_ledger_->GetProtoHeader().version());
 
@@ -623,7 +683,10 @@ namespace bumo {
 
 		int64_t time3 = utils::Timestamp().HighResolution();
 		tree_->batch_ = std::make_shared<WRITE_BATCH>();
-		tree_->FreeMemory(4);
+		{
+			utils::WriteLockGuard guard(tree_mutex_);
+			tree_->FreeMemory(4);
+		}
 		LOG_INFO("ledger(" FMT_I64 "): closed transaction count(" FMT_SIZE "), ledger hash(%s), time of apply ledger ="  FMT_I64_EX(-8) " time of calculating hash="  FMT_I64_EX(-8) " time of addtodb=" FMT_I64_EX(-8)
 			" total=" FMT_I64_EX(-8) " LoadValue=" FMT_I64 " tsize=" FMT_SIZE,
 			closing_ledger->GetProtoHeader().seq(),
@@ -660,6 +723,9 @@ namespace bumo {
 
 		//Broadcast that the ledger is closed.
 		WebSocketServer::Instance().BroadcastMsg(protocol::CHAIN_LEDGER_HEADER, tmp_lcl_header.SerializeAsString());
+
+		//listener
+		BlockListenManager::GetInstance()->HandleBlock(closing_ledger);
 
 		// The broadcast message is applied.
 		for (size_t i = 0; i < closing_ledger->apply_tx_frms_.size(); i++) {
@@ -716,8 +782,15 @@ namespace bumo {
 
 
 	void LedgerManager::OnRequestLedgers(const protocol::GetLedgers &message, int64_t peer_id) {
+		if (message.chain_id() != General::GetSelfChainId()){
+			LOG_TRACE("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
+				General::GetSelfChainId(), message.chain_id());
+			return;
+		}
+		
 		bool ret = true;
 		protocol::Ledgers ledgers;
+		ledgers.set_chain_id(General::GetSelfChainId());
 
 		do {
 			utils::MutexGuard guard(gmutex_);
@@ -773,7 +846,12 @@ namespace bumo {
 	}
 
 	void LedgerManager::OnReceiveLedgers(const protocol::Ledgers &ledgers, int64_t peer_id) {
-
+		if (ledgers.chain_id() != General::GetSelfChainId()){
+			LOG_TRACE("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
+				General::GetSelfChainId(), ledgers.chain_id());
+			return;
+		}
+		
 		bool valid = false;
 		int64_t next = 0;
 
@@ -838,6 +916,7 @@ namespace bumo {
 				gl.set_begin(next);
 				gl.set_end(MIN(ledgers.max_seq(), next + 4));
 				gl.set_timestamp(current_time);
+				gl.set_chain_id(General::GetSelfChainId());
 				RequestConsensusValues(peer_id, gl, current_time);
 			}
 

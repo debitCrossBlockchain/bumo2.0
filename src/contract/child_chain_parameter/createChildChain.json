@@ -1,0 +1,25 @@
+{
+	"items":[
+		{
+			"private_keys":[
+				"privbvXRgFQScNP29tW9yQoMvqH5DHVV877ZHPmMohidSaFQ5nksSv9c"
+			],
+			"transaction_json":{
+				"fee_limit":"6870000",
+				"gas_price":1000,
+				"nonce":2,
+				"operations":[
+					{
+						"pay_coin":{
+							"amount":10000000000000,
+							"dest_address":"buQjjhxJhVDByQLSjQi4BEpDj9xTEHZbhbGe",
+							"input": "{ \"method\":\"createChildChain\",\"params\":{\"genesis_account\":\"buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF\",\"slogan\": \"block chain slogan\",\"fee\":{\"base_reserve\": 1000,\"gas_price\": 1000},\"reserve_validator\": [\"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY\"],\"chain_name\":\"bumo_child_chain\",\"genesis_token_amount\": 500000,\"block_reward\":{\"amount\": 10,\"period\": 1000,\"ratio\": 0.01},\"max_validator_nums\": 10,\"cost\":10000000000000}}"
+						},
+						"type":7
+					}
+				],
+				"source_address":"buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF"
+			}
+		}
+	]
+}

@@ -66,7 +66,13 @@ namespace bumo {
 		}
 
 		utils::InetAddress address = webserver_config.listen_addresses_.front();
-		server_ptr_ = new http::server::server(address.ToIp(), address.GetPort(), context_, thread_count_);
+		try {
+			server_ptr_ = new http::server::server(address.ToIp(), address.GetPort(), context_, thread_count_);
+		} catch (std::exception& e) {
+			LOG_ERROR("Failed to initialize web server, %s", e.what());
+			return false;
+		}
+		
         port_ =server_ptr_->GetServerPort();
 
 

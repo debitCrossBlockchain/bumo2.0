@@ -377,6 +377,12 @@ namespace bumo {
 		const protocol::Pbft &pbft = env.pbft();
 		const protocol::Signature &sig = env.signature();
 
+		if (pbft.chain_id() != General::GetSelfChainId()){
+			LOG_TRACE("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
+				General::GetSelfChainId(), pbft.chain_id());
+			return false;
+		}
+
 		//Get the node address
 		PublicKey public_key(sig.public_key());
 
@@ -1234,6 +1240,7 @@ namespace bumo {
 		protocol::Pbft *pbft = env->mutable_pbft();
 		pbft->set_round_number(1);
 		pbft->set_type(protocol::PBFT_TYPE_PREPREPARE);
+		pbft->set_chain_id(General::GetSelfChainId());
 
 		protocol::PbftPrePrepare *preprepare = pbft->mutable_pre_prepare();
 		preprepare->set_view_number(view_number_);
@@ -1253,6 +1260,7 @@ namespace bumo {
 		protocol::Pbft *pbft = env.mutable_pbft();
 		pbft->set_round_number(1);
 		pbft->set_type(protocol::PBFT_TYPE_PREPREPARE);
+		pbft->set_chain_id(General::GetSelfChainId());
 
 		*pbft->mutable_pre_prepare() = pre_prepare;
 
@@ -1268,6 +1276,7 @@ namespace bumo {
 		protocol::Pbft *pbft = env->mutable_pbft();
 		pbft->set_round_number(round_number);
 		pbft->set_type(protocol::PBFT_TYPE_PREPARE);
+		pbft->set_chain_id(General::GetSelfChainId());
 
 		protocol::PbftPrepare *prepare = pbft->mutable_prepare();
 		prepare->set_view_number(pre_prepare.view_number());
@@ -1287,6 +1296,7 @@ namespace bumo {
 		protocol::Pbft *pbft = env->mutable_pbft();
 		pbft->set_round_number(round_number);
 		pbft->set_type(protocol::PBFT_TYPE_COMMIT);
+		pbft->set_chain_id(General::GetSelfChainId());
 
 		protocol::PbftCommit *preprepare = pbft->mutable_commit();
 		preprepare->set_view_number(prepare.view_number());
@@ -1306,6 +1316,7 @@ namespace bumo {
 		protocol::Pbft *pbft = env->mutable_pbft();
 		pbft->set_round_number(0);
 		pbft->set_type(protocol::PBFT_TYPE_VIEWCHANG_WITH_RAWVALUE);
+		pbft->set_chain_id(General::GetSelfChainId());
 		
 		protocol::PbftViewChangeWithRawValue *vc_raw = pbft->mutable_view_change_with_rawvalue();
 
@@ -1314,6 +1325,7 @@ namespace bumo {
 		protocol::Pbft *pbft_inner = pbft_env_inner->mutable_pbft();
 		pbft_inner->set_round_number(0);
 		pbft_inner->set_type(protocol::PBFT_TYPE_VIEWCHANGE);
+		pbft_inner->set_chain_id(General::GetSelfChainId());
 
 		protocol::PbftViewChange *pviewchange = pbft_inner->mutable_view_change();
 		pviewchange->set_view_number(view_number);
@@ -1375,6 +1387,7 @@ namespace bumo {
 		protocol::Pbft *pbft = env->mutable_pbft();
 		pbft->set_round_number(0);
 		pbft->set_type(protocol::PBFT_TYPE_NEWVIEW);
+		pbft->set_chain_id(General::GetSelfChainId());
 
 		protocol::PbftNewView *pnewview = pbft->mutable_new_view();
 		pnewview->set_view_number(vc_instance.view_number_);
@@ -1403,6 +1416,7 @@ namespace bumo {
 
 		protocol::Pbft *pbft = env->mutable_pbft();
 		pbft->set_round_number(round_number);
+		pbft->set_chain_id(General::GetSelfChainId());
 
 		protocol::Signature *sig = env->mutable_signature();
         sig->set_public_key(private_key_.GetEncPublicKey());

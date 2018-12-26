@@ -1,22 +1,20 @@
-.. toctree::
-   :maxdepth: 2
 
-   README
-   SUMMARY
-   chapter1
-   examples-for-transaction-submission
-   generating-addresses
-   generating-private-key
-   generating-public-key
-   protobuf-data-structure
-   schematic-diagram
-   signing-transactions
-   examples-for-transaction-submission
-   examples-for-transaction-submission/generating-transaction-blobs-by-the-interface
-   examples-for-transaction-submission/generating-transactionblobs-by-yourself
-   methods-of-submitting-transactions
-   methods-of-submitting-transactions/generating-transaction-blobs-by-calling-the-interface
-   methods-of-submitting-transactions/generating-transactionblobs-by-yourself
-   protobuf-data-structure/data-structure
-   protobuf-data-structure/examples
-   test
+.. bubi documentation master file, created by
+   sphinx-quickstart on Thu Aug  2 09:16:49 2018.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to Bumo's documentation!
+================================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 4
+   
+   
+   BUMO_Keypair_Guide
+   BUMO_Java_SDK_Guide
+   API_Guide_for_Exchanges
+   Installation_Guide_for_BUMO
+   Syntax_in_Smart_Contract

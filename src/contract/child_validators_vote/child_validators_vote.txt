@@ -1,0 +1,36 @@
+key: 	proposal_history_num
+value:	transaction_hash
+
+key:	main_chain_transaction_hash
+value:	obj:{index, validator(array),executed,add_validator,delete_validator}
+
+key: 	proposal_new_index
+value:	new_index
+
+
+查询投票情况
+
+queryProposal(hash)
+hash为空测查询最新的
+
+
+main 参数
+
+"input": "{    \"method\": \"changeValidator\",    \"params\": {        \"main_chain_tx_hash\": \"72d4644aa03134263e737ac16de8abcdee877b83806678839c2f3a272620ea99\",        \"add_validator\": \"buQi6f36idrKiGrno3RcdjUjGAibUC37FJK6\",        \"delete_validator\": \"\",\"index\": \"1\"    }}"
+
+
+"input": "{    \"method\": \"changeValidator\",    \"params\": {        \"main_chain_tx_hash\": \"40960937fff853f0c290c50a2f1d464d6e54aec522e85b5d87ef2f0cc74f4b71\",        \"add_validator\": \"\",        \"delete_validator\": \"buQi6f36idrKiGrno3RcdjUjGAibUC37FJK6\",\"index\": \"2\"    }}"
+
+
+"input": "{    \"method\": \"changeValidator\",    \"params\": {        \"main_chain_tx_hash\": \"e9650783c1e3f7bb6261051f464fa8eb6d7791fea18e4a40a183993383f1c3b2\",        \"add_validator\": \"buQi6f36idrKiGrno3RcdjUjGAibUC37FJK6\",        \"delete_validator\": \"\",\"index\": \"3\"    }}"
+
+"input": "{    \"method\": \"changeValidator\",    \"params\": {        \"main_chain_tx_hash\": \"51f3c32cb1c7116cfb4cf3cf5fefff54c2500dd123999c38a4e904f9c37f0eee\",        \"add_validator\": \"buQijmPfxBLN6zfLe6EyQ1cFMubxdYGgfgq1\",        \"delete_validator\": \"\",\"index\": \"4\"    }}"
+
+"input": "{    \"method\": \"changeValidator\",    \"params\": {        \"main_chain_tx_hash\": \"94254b75dda84bddb120a12780ae331217d77a7a21dc608e3b470205b6835439\",        \"add_validator\": \"\",        \"delete_validator\": \"buQijmPfxBLN6zfLe6EyQ1cFMubxdYGgfgq1\",\"index\": \"5\"    }}"
+
+
+查询参数
+
+"input": "{ \"method\":\"getValidators\"}",
+
+"input": "{    \"method\": \"queryProposal\",    \"params\": {        \"main_chain_tx_hash\": \"72d4644aa03134263e737ac16de8abcdee877b83806678839c2f3a272620ea99\"}}",

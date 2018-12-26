@@ -28,6 +28,10 @@
 #include <api/console.h>
 #include <ledger/contract_manager.h>
 #include <monitor/monitor_manager.h>
+#include <cross/cross_utils.h>
+#include<cross/message_channel_manager.h>
+#include <cross/message_handler.h>
+#include<cross/cross_manager.h>
 #include "configure.h"
 
 void SaveWSPort();
@@ -71,6 +75,9 @@ int main(int argc, char *argv[]){
 	bumo::Global::InitInstance();
 	bumo::SlowTimer::InitInstance();
 	utils::Logger::InitInstance();
+	bumo::TransactionSender::InitInstance();
+	bumo::MessageChannel::InitInstance();
+	bumo::MessageHandler::InitInstance();
 	bumo::Console::InitInstance();
 	bumo::PeerManager::InitInstance();
 	bumo::LedgerManager::InitInstance();
@@ -80,6 +87,7 @@ int main(int argc, char *argv[]){
 	bumo::WebServer::InitInstance();
 	bumo::MonitorManager::InitInstance();
 	bumo::ContractManager::InitInstance();
+	bumo::CrossManager::InitInstance();
 
 	bumo::Argument arg;
 	if (arg.Parse(argc, argv)){
@@ -188,6 +196,32 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::Global::Exit, &global));
 		LOG_INFO("Initialized global module successfully");
 
+
+		bumo::TransactionSender &trans_sender = bumo::TransactionSender::Instance();
+		if (!trans_sender.Initialize(bumo::Configure::Instance().ledger_configure_.validation_privatekey_)){
+			LOG_ERROR("Failed to trans sender");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::TransactionSender::Exit, &trans_sender));
+		LOG_INFO("Initialized trans sender successfully");
+
+		bumo::MessageChannel &message_channel = bumo::MessageChannel::Instance();
+		if (!message_channel.Initialize(bumo::Configure::Instance().message_channel_configure_)){
+			LOG_ERROR_ERRNO("Failed to initialize message channel", STD_ERR_CODE, STD_ERR_DESC);
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::MessageChannel::Exit, &message_channel));
+		LOG_INFO("Initialized message channel successfully");
+
+		bumo::MessageHandler &message_handler = bumo::MessageHandler::Instance();
+		if (!bumo::g_enable_ || !message_handler.Initialize()){
+			LOG_ERROR_ERRNO("Failed to initialize message handler", STD_ERR_CODE, STD_ERR_DESC);
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::MessageHandler::Exit, &message_handler));
+		LOG_INFO("Initialized message handler successfully");
+
+
 		//Consensus manager must be initialized before ledger manager and glue manager
 		bumo::ConsensusManager &consensus_manager = bumo::ConsensusManager::Instance();
 		if (!bumo::g_enable_ || !consensus_manager.Initialize(bumo::Configure::Instance().ledger_configure_.validation_type_)) {
@@ -263,6 +297,14 @@ int main(int argc, char *argv[]){
 		object_exit.Push(std::bind(&bumo::ContractManager::Exit, &contract_manager));
 		LOG_INFO("Initialized contract manager successfully");
 
+		bumo::CrossManager &cross_manager = bumo::CrossManager::Instance();
+		if (!cross_manager.Initialize()){
+			LOG_ERROR("Failed to initialize cross manager");
+			break;
+		}
+		object_exit.Push(std::bind(&bumo::CrossManager::Exit, &cross_manager));
+		LOG_INFO("Initialized cross manager successfully");
+
 		bumo::g_ready_ = true;
 
 		RunLoop();
@@ -280,11 +322,15 @@ int main(int argc, char *argv[]){
 	bumo::WebSocketServer::ExitInstance();
 	bumo::WebServer::ExitInstance();
 	bumo::MonitorManager::ExitInstance();
+	bumo::MessageHandler::ExitInstance();
+	bumo::TransactionSender::ExitInstance();
 	bumo::Configure::ExitInstance();
 	bumo::Global::ExitInstance();
 	bumo::Storage::ExitInstance();
 	utils::Logger::ExitInstance();
 	utils::Daemon::ExitInstance();
+	bumo::CrossManager::ExitInstance();
+	bumo::MessageChannel::ExitInstance();
 	
 	if (arg.console_ && !bumo::g_ready_) {
 		printf("Initialized failed, please check log for detail\n");

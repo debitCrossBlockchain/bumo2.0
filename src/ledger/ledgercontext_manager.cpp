@@ -68,7 +68,7 @@ namespace bumo {
 	LedgerContext::~LedgerContext() {}
 
 	void LedgerContext::Run() {
-		LOG_INFO("Preprocessing the consensus value, ledger(" FMT_I64 ")", consensus_value_.ledger_seq());
+		//LOG_INFO("Preprocessing the consensus value, ledger(" FMT_I64 ")", consensus_value_.ledger_seq());
 		start_time_ = utils::Timestamp::HighResolution();
 		switch (type_)
 		{
@@ -97,6 +97,7 @@ namespace bumo {
 		header->set_close_time(consensus_value_.close_time());
 		header->set_previous_hash(consensus_value_.previous_ledger_hash());
 		header->set_consensus_value_hash(hash_);
+		header->set_chain_id(General::GetSelfChainId());
 		//LOG_INFO("set_consensus_value_hash:%s,%s", utils::String::BinToHexString(con_str).c_str(), utils::String::BinToHexString(chash).c_str());
 		header->set_version(LedgerManager::Instance().GetLastClosedLedger().version());
 		LedgerManager::Instance().tree_->time_ = 0;
@@ -280,6 +281,8 @@ namespace bumo {
 			tx_frm->SetApplyStartTime(time_now);
 			tx_frm->SetMaxEndTime(time_now + 5 * utils::MICRO_UNITS_PER_SEC);
 			tx_frm->EnableChecked();
+
+			parameter.transaction_hash_ = utils::String::BinToHexString(tx_frm->GetContentHash());
 
 			Json::Value query_result;
 			bool ret = ContractManager::Instance().Query(type_, parameter, query_result);

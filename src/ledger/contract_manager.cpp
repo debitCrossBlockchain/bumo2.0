@@ -130,6 +130,7 @@ namespace bumo{
 	const std::string V8Contract::pay_asset_amount_name_ = "thisPayAsset";
 	const std::string V8Contract::block_timestamp_name_ = "blockTimestamp";
 	const std::string V8Contract::block_number_name_ = "blockNumber";
+	const std::string V8Contract::transaction_hash_name_ = "originTxHash";
 	utils::Mutex V8Contract::isolate_to_contract_mutex_;
 	std::unordered_map<v8::Isolate*, V8Contract *> V8Contract::isolate_to_contract_;
 
@@ -186,6 +187,7 @@ namespace bumo{
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", pay_asset_amount_name_.c_str());
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", block_timestamp_name_.c_str());
 		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", block_number_name_.c_str());
+		user_global_string_ = utils::String::AppendFormat(user_global_string_, ",%s", transaction_hash_name_.c_str());
 		std::map<std::string, v8::FunctionCallback>::iterator itr = js_func_read_.begin();
 		for ( ; itr != js_func_read_.end(); itr++)
 		{
@@ -232,6 +234,11 @@ namespace bumo{
 		js_func_write_["payAsset"] = V8Contract::CallBackPayAsset;
 		js_func_write_["tlog"] = V8Contract::CallBackTopicLog;
 
+		js_func_read_["getAccountMetadata"] = V8Contract::CallBackGetAccountMetadata;
+		js_func_read_["sha256"] = V8Contract::CallBackSha256; 
+		js_func_read_["verify"] = V8Contract::CallBackVerify;
+		js_func_read_["verifyMerkelProof"] = V8Contract::CallBackVerifyMerkelProof;
+		js_func_read_["toAddress"] = V8Contract::CallBackToAddress;
 		LoadJsLibSource();
 		LoadJslintGlobalString();
 		v8::V8::InitializeICUDefaultLocation(argv[0]);
@@ -297,6 +304,11 @@ namespace bumo{
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, block_number_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			blocknumber_v8);
+
+		auto trans_hash_v8 = v8::String::NewFromUtf8(isolate_, parameter_.transaction_hash_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, transaction_hash_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			trans_hash_v8);
 
 		auto timestamp_v8 = v8::Number::New(isolate_, (double)parameter_.timestamp_);
 		context->Global()->Set(context,
@@ -473,7 +485,7 @@ namespace bumo{
 			return false;
 		}
 
-		LOG_INFO("Parse jslint successfully!");
+		//LOG_INFO("Parse jslint successfully!");
 		return true;
 	}
 
@@ -504,6 +516,11 @@ namespace bumo{
 		context->Global()->Set(context,
 			v8::String::NewFromUtf8(isolate_, block_number_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
 			blocknumber_v8);
+
+		auto trans_hash_v8 = v8::String::NewFromUtf8(isolate_, parameter_.transaction_hash_.c_str(), v8::NewStringType::kNormal).ToLocalChecked();
+		context->Global()->Set(context,
+			v8::String::NewFromUtf8(isolate_, transaction_hash_name_.c_str(), v8::NewStringType::kNormal).ToLocalChecked(),
+			trans_hash_v8);
 
 		auto timestamp_v8 = v8::Number::New(isolate_, (double)parameter_.timestamp_);
 		context->Global()->Set(context,
@@ -998,21 +1015,10 @@ namespace bumo{
 			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
 			ledger_context->GetBottomTx()->ContractStepInc(100);
 
-			bool getAccountSucceed = false;
 			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
 			if (!environment->GetEntry(address, account_frm)) {
 				LOG_TRACE("Failed to find account %s.", address.c_str());
 				break;
-			}
-			else {
-				getAccountSucceed = true;
-			}
-
-			if (!getAccountSucceed) {
-				if (!Environment::AccountFromDB(address, account_frm)) {
-					LOG_TRACE("Failed to find account %s.", address.c_str());
-					break;
-				}
 			}
 
 			protocol::AssetStore asset;
@@ -1025,6 +1031,48 @@ namespace bumo{
 // 			ret->Set(v8::String::NewFromUtf8(args.GetIsolate(), "amount"), v8::String::NewFromUtf8(args.GetIsolate(), utils::String::ToString(asset.amount()).c_str()));
 // 			ret->Set(v8::String::NewFromUtf8(args.GetIsolate(), "property"), v8_asset_property);
 //			args.GetReturnValue().Set(ret);
+			return;
+		} while (false);
+
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackGetAccountMetadata(const v8::FunctionCallbackInfo<v8::Value>& args){
+		if (args.Length() != 2) {
+			LOG_TRACE("parameter error");
+			args.GetReturnValue().Set(false);
+			return;
+		}
+
+		do {
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsString() || !args[1]->IsString()) {
+				LOG_TRACE("Contract execution error, CallBackGetAccountMetadata, parameter should be string");
+				break;
+			}
+
+			std::string address = ToCString(v8::String::Utf8Value(args[0]));
+			std::string key = ToCString(v8::String::Utf8Value(args[1]));
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+			
+			bumo::AccountFrm::pointer account_frm = nullptr;
+			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
+			if (!environment->GetEntry(address, account_frm)) {
+				LOG_TRACE("Failed to find account %s.", address.c_str());
+				break;
+			}
+
+			protocol::KeyPair key_pair;
+			if (!account_frm->GetMetaData(key, key_pair)) {
+				LOG_ERROR("Failed to find account %s 's metadata key:%s", address.c_str(), key.c_str());
+				break;
+			}
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), key_pair.value().c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+
 			return;
 		} while (false);
 
@@ -1067,12 +1115,6 @@ namespace bumo{
 				LOG_TRACE("Failed to find account %s.", address.c_str());
 				break;
 			}
-			else {
-				if (!Environment::AccountFromDB(address, account_frm)) {
-					LOG_TRACE("Failed to find account %s.", address.c_str());
-					break;
-				}
-			}
 
 			if (!account_frm->GetProtoAccount().has_contract()) {
 				LOG_TRACE("The account(%s) has no contract.", address.c_str());
@@ -1093,6 +1135,7 @@ namespace bumo{
 			parameter.ope_index_ = 0;
 			parameter.timestamp_ = v8_contract->GetParameter().timestamp_;
 			parameter.blocknumber_ = v8_contract->GetParameter().blocknumber_;
+			parameter.transaction_hash_ = v8_contract->GetParameter().transaction_hash_;
 			parameter.consensus_value_ = v8_contract->GetParameter().consensus_value_;
 			parameter.ledger_context_ = v8_contract->GetParameter().ledger_context_;
 			//Query
@@ -1534,6 +1577,181 @@ namespace bumo{
 		args.GetReturnValue().Set(false);
 	}
 
+	void V8Contract::CallBackSha256(const v8::FunctionCallbackInfo<v8::Value>& args){
+		do {
+			if (args.Length() != 1 && args.Length() != 2) {
+				LOG_TRACE("Parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsString()) {
+				LOG_TRACE("Contract execution error, parameter 0 should be a string.");
+				break;
+			}
+			DataEncodeType encode_type = BASE16;
+			if (args.Length() == 2){
+				if (!TransEncodeType(args[1], encode_type)){
+					LOG_TRACE("Contract execution error, trans data encode type wrong.");
+					break;
+				}
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_TRACE("Failed to find contract object by isolate id");
+				break;
+			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+			std::string sha256_data;
+			if (!TransEncodeData(args[0], encode_type, sha256_data)){
+				LOG_TRACE("Contract execution error, trans data wrong.");
+				break;
+			}
+
+			std::string output = utils::Sha256::Crypto(sha256_data);
+			if (output.empty()){
+				LOG_TRACE("Sha256 result empty");
+				break;
+			}
+
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(args.GetIsolate(), utils::String::BinToHexString(output).c_str(),
+				v8::NewStringType::kNormal).ToLocalChecked());
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+
+	void V8Contract::CallBackVerify(const v8::FunctionCallbackInfo<v8::Value>& args){
+		bool result = false;
+		do {
+			if (args.Length() != 3 && args.Length() != 4) {
+				LOG_TRACE("Parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
+				LOG_TRACE("Parameters should be string");
+				break;
+			}
+
+			DataEncodeType encode_type = BASE16;
+			if (args.Length() == 4){
+				if (!TransEncodeType(args[3], encode_type)){
+					LOG_TRACE("Contract execution error, trans data encode type wrong.");
+					break;
+				}
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_TRACE("Failed to find contract object by isolate id");
+				break;
+			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
+			std::string signed_data = ToCString(v8::String::Utf8Value(args[0]));
+			std::string public_key = ToCString(v8::String::Utf8Value(args[1]));
+			std::string blob_data;
+			if (!TransEncodeData(args[2], encode_type, blob_data)){
+				LOG_TRACE("Contract execution error, trans data wrong.");
+				break;
+			}
+
+			if (blob_data.empty() || signed_data.empty() || public_key.empty()){
+				LOG_TRACE("Parameter are empty");
+				break;
+			}
+
+			result = PublicKey::Verify(blob_data, utils::String::HexStringToBin(signed_data), public_key);
+		} while (false);
+		args.GetReturnValue().Set(result);
+	}
+
+	void V8Contract::CallBackVerifyMerkelProof(const v8::FunctionCallbackInfo<v8::Value>& args){
+
+		bool result = false;
+		do {
+			if (args.Length() != 3) {
+				LOG_TRACE("Parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsString() || !args[1]->IsString() || !args[2]->IsString()) {
+				LOG_TRACE("Parameters should be string");
+				break;
+			}
+
+			DataEncodeType encode_type = BASE64;
+			if (args.Length() == 3){
+				if (!TransEncodeType(args[2], encode_type)){
+					LOG_TRACE("Contract execution error, trans data encode type wrong.");
+					break;
+				}
+			}
+
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_TRACE("Failed to find contract object by isolate id");
+				break;
+			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
+			int64_t chain_id = args[0]->IntegerValue();
+			std::string root_hash = ToCString(v8::String::Utf8Value(args[1]));
+			std::string merkel_proof;
+			if (!TransEncodeData(args[2], encode_type, merkel_proof)){
+				LOG_TRACE("Contract execution error, merkel_proof data wrong.");
+				break;
+			}
+
+			result = true;
+			//TODO verify merkel proof
+
+		} while (false);
+		args.GetReturnValue().Set(result);
+	}
+
+	void V8Contract::CallBackToAddress(const v8::FunctionCallbackInfo<v8::Value>& args) {
+		do {
+			if (args.Length() != 1) {
+				LOG_TRACE("Parameter error");
+				break;
+			}
+			v8::HandleScope handle_scope(args.GetIsolate());
+			if (!args[0]->IsString()) {
+				LOG_TRACE("Contract execution error, parameter 0 should be a string");
+				break;
+			}
+			V8Contract *v8_contract = GetContractFrom(args.GetIsolate());
+			if (!v8_contract || !v8_contract->parameter_.ledger_context_) {
+				LOG_TRACE("Failed to find contract object by isolate id");
+				break;
+			}
+			LedgerContext *ledger_context = v8_contract->GetParameter().ledger_context_;
+			ledger_context->GetBottomTx()->ContractStepInc(100);
+
+			std::string pub_key_str = ToCString(v8::String::Utf8Value(args[0]));
+			if (pub_key_str.empty()){
+				LOG_TRACE("To address parameter empty");
+				break;
+			}
+
+			bumo::PublicKey pub_key(pub_key_str);
+			if (!pub_key.IsValid()){
+				LOG_TRACE("ConvertPublicKey public key invalid.%s", pub_key_str.c_str());
+				break;
+			}
+			args.GetReturnValue().Set(v8::String::NewFromUtf8(
+				args.GetIsolate(), pub_key.GetEncAddress().c_str(), v8::NewStringType::kNormal).ToLocalChecked());
+
+			return;
+		} while (false);
+		args.GetReturnValue().Set(false);
+	}
+	
 // 	//Sends a message with arbitrary date to a given address path
 // 	void CallBackCall(const v8::FunctionCallbackInfo<v8::Value>& args);
 // 	//Sends a message with arbitrary date to a given address path
@@ -1643,10 +1861,8 @@ namespace bumo{
 			bumo::AccountFrm::pointer account_frm = nullptr;
 			std::shared_ptr<Environment> environment = ledger_context->GetTopTx()->environment_;
 			if (!environment->GetEntry(v8_contract->parameter_.this_address_, account_frm)) {
-				if (!Environment::AccountFromDB(v8_contract->parameter_.this_address_, account_frm)) {
-					LOG_ERROR("Failed to find account %s.", v8_contract->parameter_.this_address_.c_str());
-					break;
-				}
+				LOG_ERROR("Failed to find account %s.", v8_contract->parameter_.this_address_.c_str());
+				break;
 			}
 
 			protocol::KeyPair kp;
@@ -2020,47 +2236,52 @@ namespace bumo{
 			v8::NewStringType::kNormal).ToLocalChecked());
 	}
 
-	QueryContract::QueryContract():contract_(NULL){}
-	QueryContract::~QueryContract() {
-	}
-	bool QueryContract::Init(int32_t type, const ContractParameter &paramter) {
-		parameter_ = paramter;
-		if (type == Contract::TYPE_V8) {
-			
-		}
-		else {
-			std::string error_msg = utils::String::Format("Contract type(%d) not supported", type);
-			LOG_ERROR("%s", error_msg.c_str());
+	bool V8Contract::TransEncodeType(const v8::Local<v8::Value> &arg, DataEncodeType &data_type){
+		if (!arg->IsNumber()) {
+			LOG_TRACE("Contract execution error, parameter should be a number.");
 			return false;
 		}
+
+		std::string arg_str = ToCString(v8::String::Utf8Value(arg));
+		int64_t arg_num = 0;
+		if (!utils::String::SafeStoi64(arg_str, arg_num)){
+			LOG_TRACE("Contract execution error, encode type maybe exceed the limit value of int64.");
+			return false;
+		}
+		if (arg_num < 0 || arg_num > BASE64){
+			LOG_TRACE("Contract execution error, encode type must be in 0-2");
+			return false;
+		}
+		data_type = (DataEncodeType)arg_num;
 		return true;
 	}
 
-	void QueryContract::Cancel() {
-		utils::MutexGuard guard(mutex_);
-		if (contract_) {
-			contract_->Cancel();
-		} 
-	}
+	bool V8Contract::TransEncodeData(const v8::Local<v8::Value> &raw_data, const DataEncodeType &encode_type, std::string &result_data){
+		result_data.clear();
+		std::string input_raw = ToCString(v8::String::Utf8Value(raw_data));
+		switch (encode_type)
+		{
+		case BASE16:{
+			result_data = utils::String::HexStringToBin(input_raw);
+			break;
+		}
+		case RAW_DATA:{
+			result_data = input_raw;
+			break;
+		}
+		case BASE64:{
+			utils::decode_b64(input_raw, result_data);//???
+			break;
+		}
+		default:
+			break;
+		}
 
-	bool QueryContract::GetResult(Json::Value &result) {
-		result = result_;
-		return ret_;
-	}
-
-	void QueryContract::Run() {
-		do {
-			utils::MutexGuard guard(mutex_);
-			contract_ = new V8Contract(true, parameter_);
-		} while (false);
-
-		ret_ = contract_->Query(result_);
-
-		do {
-			utils::MutexGuard guard(mutex_);
-			delete contract_;
-			contract_ = NULL;
-		} while (false);
+		if (result_data.empty()){
+			LOG_TRACE("TransEncodeData error");
+			return false;
+		}
+		return true;
 	}
 
 	ContractManager::ContractManager() {}
@@ -2103,9 +2324,7 @@ namespace bumo{
 			if (type == Contract::TYPE_V8) {
 				utils::MutexGuard guard(contracts_lock_);
 				contract = new V8Contract(false, paramter);
-				//paramter->ledger_context_ 
 				//Add the contract id. Use this ID when cancelling the contract in the future. 
-
 				contracts_[contract->GetId()] = contract;
 			}
 			else {
@@ -2125,6 +2344,7 @@ namespace bumo{
 			ledger_context->PushLog(contract->GetParameter().this_address_, contract->GetLogs());
 			do {
 				//Delete the contract from map
+				utils::MutexGuard guard(contracts_lock_);
 				contracts_.erase(contract->GetId());
 				delete contract;
 			} while (false);
@@ -2139,9 +2359,7 @@ namespace bumo{
 			if (type == Contract::TYPE_V8) {
 				utils::MutexGuard guard(contracts_lock_);
 				contract = new V8Contract(true, paramter);
-				//paramter->ledger_context_ 
 				//Add the contract id. Use this ID when cancelling the contract in the future.
-
 				contracts_[contract->GetId()] = contract;
 			}
 			else {
@@ -2157,6 +2375,7 @@ namespace bumo{
 			ledger_context->PushRet(contract->GetParameter().this_address_, result);
 			do {
 				//Delete the contract from map
+				utils::MutexGuard guard(contracts_lock_);
 				contracts_.erase(contract->GetId());
 				delete contract;
 			} while (false);

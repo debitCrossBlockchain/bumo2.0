@@ -403,6 +403,16 @@ namespace bumo {
 			return false;
 		}
 
+		const protocol::Transaction &tran = transaction_env_.transaction();
+		if (tran.chain_id() != General::GetSelfChainId()){
+			std::string error_des = utils::String::Format("Failed to check same chain, node self id(" FMT_I64 ") is not eq (" FMT_I64 ")",
+				General::GetSelfChainId(), tran.chain_id());
+			result_.set_code(protocol::ERRCODE_INVALID_PARAMETER);
+			result_.set_desc(error_des);
+			LOG_TRACE("%s", error_des.c_str());
+			return false;
+		}
+
 		if (!ValidForParameter())
 			return false;
 

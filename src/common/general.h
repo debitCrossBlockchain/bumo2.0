@@ -96,6 +96,8 @@ namespace bumo {
 
 		const static char *CONTRACT_VALIDATOR_ADDRESS;
 		const static char *CONTRACT_FEE_ADDRESS;
+		const static char *CONTRACT_CMC_ADDRESS;
+		const static char *CONTRACT_CPC_ADDRESS;
 
 		const static int32_t TRANSACTION_LIMIT_SIZE;
 		const static int32_t TXSET_LIMIT_SIZE;
@@ -107,6 +109,8 @@ namespace bumo {
 
 		const static int64_t REWARD_PERIOD = (5 * 365 * 24 * 60 * 60) / 10;
 		const static int64_t REWARD_INIT_VALUE = 8 * 100000000;
+
+		const static int64_t MAIN_CHAIN_ID = 0;
 
 		typedef enum WARNINGCODE_ {
 			WARNING,
@@ -123,6 +127,13 @@ namespace bumo {
 		volatile static long account_delete_count;
 		volatile static long trans_low_new_count;
 		volatile static long trans_low_delete_count;
+
+	public:
+		static void SetSelfChainId(int64_t chain_id) { chain_id_ = chain_id; }
+		static int64_t GetSelfChainId() { return chain_id_; }
+
+	private:
+		static int64_t chain_id_;
 	};
 
 	class Result {

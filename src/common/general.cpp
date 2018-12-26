@@ -92,10 +92,13 @@ namespace bumo {
 
 	const char *General::CONTRACT_VALIDATOR_ADDRESS = "buQtxgoaDrVJGtoPT66YnA2S84yE8FbBqQDJ";
 	const char *General::CONTRACT_FEE_ADDRESS = "buQiQgRerQM1fUM3GkqUftpNxGzNg2AdJBpe";
+	const char *General::CONTRACT_CMC_ADDRESS = "buQjjhxJhVDByQLSjQi4BEpDj9xTEHZbhbGe";
+	const char *General::CONTRACT_CPC_ADDRESS = "buQZ6zAfmCVQBWTz5uVvMpMEdNGesLTJ888P";
 
 	const int32_t General::TRANSACTION_LIMIT_SIZE = utils::BYTES_PER_MEGA;
 	const int32_t General::TXSET_LIMIT_SIZE = 16 * utils::BYTES_PER_MEGA;
 
+	int64_t General::chain_id_ = 0;
 
 	Result::Result(){
 		code_ = protocol::ERRCODE_SUCCESS;

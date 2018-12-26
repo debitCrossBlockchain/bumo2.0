@@ -4,6 +4,7 @@ option java_package = "io.bumo.sdk.core.extend.protobuf";
 
 import "common.proto";
 import "chain.proto";
+import "consensus.proto";
 
 enum OVERLAY_MESSAGE_TYPE{
 	OVERLAY_MSGTYPE_NONE = 0;
@@ -31,7 +32,6 @@ message HelloResponse {
 	 string error_desc = 2;
 }
 
-
 //for peers message
 message Peer {
 		string ip = 1;
@@ -52,6 +52,7 @@ message GetLedgers
 	int64 begin = 1;
 	int64 end   = 2;
 	int64 timestamp  = 3;
+	int64 chain_id = 4;
 }
 
 
@@ -70,6 +71,7 @@ message Ledgers
 	SyncCode sync_code = 2;
 	int64    max_seq = 3;
 	bytes   proof = 4;
+	int64   chain_id = 5;
 }
 
 //for dont have
@@ -157,4 +159,213 @@ message ChainTxStatus {
 	string		error_desc = 8	;			//error desc
 	int64		timestamp = 9;			
 }
+
+enum MESSAGE_CHANNEL_NODE_TYPE{
+    MESSAGE_CHANNEL_NODE_TYPE_NONE = 0;
+	MESSAGE_CHANNEL_NODE_PACKAGE = 30;
+	MESSAGE_CHANNEL_NODE_HELLO = 31;
+	EVENT_WITHDRAWAL = 32;
+}
+
+enum MESSAGE_CHANNEL_TYPE{
+	MESSAGE_CHANNEL_TYPE_NONE = 0;
+	MESSAGE_CHANNEL_CREATE_CHILD_CHAIN = 1;
+	MESSAGE_CHANNEL_MAIN_MIX  = 2;
+	MESSAGE_CHANNEL_CHILD_MIX = 3;
+	MESSAGE_CHANNEL_DEPOSIT = 4;
+	MESSAGE_CHANNEL_WITHDRAWAL = 5;
+	MESSAGE_CHANNEL_FAST_WITHDRAWAL = 6;
+	MESSAGE_CHANNEL_SUBMIT_HEAD = 7;
+	MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL = 8; 
+	MESSAGE_CHANNEL_CHALLENGE_HEAD = 9;
+	MESSAGE_CHANNEL_CHILD_GENESES_REQUEST = 10;
+	MESSAGE_CHANNEL_CHILD_GENESES_RESPONSE = 11;
+	MESSAGE_CHANNEL_QUERY_HEAD = 12;
+	MESSAGE_CHANNEL_QUERY_DEPOSIT = 13;
+	MESSAGE_CHANNEL_CHANGE_CHILD_VALIDATOR = 14;
+	MESSAGE_CHANNEL_QUERY_CHANGE_CHILD_VALIDATOR = 15;
+	MESSAGE_CHANNEL_QUERY_SUBMIT_HEAD = 16;
+	MESSAGE_CHANNEL_QUERY_WITHDRAWAL = 17;
+	MESSAGE_CHANNEL_CHILD_CHALLENGE_HEAD = 18;
+	MESSAGE_CHANNEL_CHILD_CHALLENGE_WITHDRAWAL = 19;
+}
+
+
+enum MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE{
+	MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_SUCCESS = 0;
+	MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_NONEXIST = 1;
+	MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE_DOCTORED = 2;
+}
+
+enum MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE{
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_SUCCESS = 0;
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_NONEXIST = 1;
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_DOCTORED = 2;
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_QUERY = 3; 
+  MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE_CONTRACT_CPC_DOCTORED = 4;
+}
+
+
+message MessageChannelQueryDeposit{
+    int64 chain_id = 1;
+	int64 seq = 2;
+}
+
+message MessageChannelHello {
+    int64 network_id = 1;
+    string node_address = 2;
+    int64 chain_id = 3;
+	string round_string = 4;
+}
+
+message MessageChannelHelloResponse {
+	 ERRORCODE error_code = 1;
+	 string error_desc = 2;
+	 Signature round_signature = 3;
+}
+
+message MessageChannel{
+    int64 target_chain_id = 1;
+    MESSAGE_CHANNEL_TYPE msg_type = 2;
+    bytes msg_data = 3;
+}
+
+message MessageChannelResponse {
+	 ERRORCODE error_code = 1;
+	 string error_desc = 2;
+}
+
+message MessageChannelProposer{
+   LedgerHeader header = 1;
+   string proposer_address = 2;
+   bytes  proposer_signature = 3;
+   bytes  header_hash= 4;
+}
+
+message BlockReward{
+	int64 amount = 1;
+	int64 period = 2;
+	double ratio = 3;
+}
+
+message MessageChannelCreateChildChain{
+	string genesis_account = 1;
+	string slogan = 2;
+	FeeConfig fee = 3;
+	repeated string reserve_validator = 4;
+	string chain_name = 5;
+	int64 chain_id = 6;
+	string genesis_token_amount = 7;
+	BlockReward block_reward = 8;
+	int64 cost = 9;
+}
+
+message MessageChannelChildGenesesRequest{
+	int64 chain_id = 1;
+}
+
+message MessageChannelChildGenesesResponse{
+	ERRORCODE error_code = 1;
+	string error_desc = 2;
+	MessageChannelCreateChildChain create_child_chain = 3;
+}
+
+
+message MessageChannelQueryHead{
+	int64 ledger_seq = 1;
+}
+
+message MerkelProof {
+	bytes merkel_root = 1;
+	bytes merkel_path = 2;
+	Transaction transaction = 3;
+}
+
+message MessageChannelDeposit{
+	int64 chain_id = 1;
+	int64 amount = 2;
+	int64 seq = 3;
+	int64 block_number = 4;
+	string source_address = 5;
+	string address = 6;
+}
+
+message MessageChannelWithdrawal{
+	int64 chain_id = 1;
+	int64 amount = 2;
+	int64 seq = 3;
+	bytes block_hash = 4;
+	int64 block_seq = 5;
+	string source_address = 6;
+	string address = 7;
+	MerkelProof merkel_proof = 8;
+}
+
+message MessageChannelWithdrawalChallenge{
+	int64 chain_id = 1;
+	int64 amount = 2;
+	int64 seq = 3;
+	bytes block_hash = 4;
+	string source_address = 5;
+	string address = 6;
+	string main_source_address = 7;
+	int64 block_seq = 8;
+	int64  state = 9;
+	string merkel_proof = 10;
+}
+
+message MessageChannelChangeChildValidator{
+    string main_chain_tx_hash = 1;
+	string add_validator = 2;
+	string delete_validator = 3;
+	string index = 4;
+}
+
+message MessageChannelQueryChangeChildValidator{
+	int64 chain_id = 1;
+	int64 change_child_index = 2;
+}
+
+message MessageChannelQuerySubmitHead{
+    int64 chain_id = 1;
+	int64 seq = 2;
+	bytes hash = 3;
+}
+
+message MessageChannelSubmitHead{
+    LedgerHeader header = 1;
+	int64 state = 2;
+}
+
+
+message MessageChannelHandleWithdrawal{
+    MessageChannelWithdrawalChallenge withdrawal = 1;
+	int64 state = 2;
+}
+
+
+message MessageChannelQueryWithdrawal{
+    int64 chain_id = 1;
+	int64 seq = 2;
+}
+
+message MessageChannelChildChallengeHead{
+    int64 chain_id = 1;
+    MESSAGE_CHANNEL_CHALLENGE_HEAD_TYPE type = 2;
+	LedgerHeader cmc_head = 3;
+	LedgerHeader child_head = 4;
+}
+
+
+message MessageChannelchildWithdrawalChallenge{
+    MessageChannelWithdrawalChallenge withdrawal = 1;
+	MESSAGE_CHANNEL_CHALLENGE_WITHDRAWAL_TYPE type = 2;
+	MerkelProof merkel_proof = 3;
+}
+
+
+
+
+
+
 

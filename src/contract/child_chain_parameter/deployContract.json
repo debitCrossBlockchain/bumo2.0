@@ -1,0 +1,27 @@
+{
+    "items": [{
+        "private_keys": ["privbvXRgFQScNP29tW9yQoMvqH5DHVV877ZHPmMohidSaFQ5nksSv9c"],
+        "transaction_json": {
+            "fee_limit": 10011240000,
+            "gas_price": 1000,
+            "nonce":1,
+            "operations": [{
+                "create_account": {
+                    "dest_address": "buQjjhxJhVDByQLSjQi4BEpDj9xTEHZbhbGe",
+                    "init_balance": 19999989988510000,
+                    "priv": {
+                        "master_weight": "0",
+                        "thresholds": {
+                            "tx_threshold": "1"
+                        }
+                    },
+                    "contract": {
+                        "payload": "CMC code ..."
+                    }
+                },
+                "type": 1
+            }],
+            "source_address": "buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF"
+        }
+    }]
+}

@@ -1,0 +1,30 @@
+CMC 验证节点切换设计
+
+main 接口
+    depositCoin  申请质押
+    abolishValidator 举报
+    withdrawCoin 退出
+
+    //暂不实现
+    voteForAbolish 投票
+    quitAbolish 取消举报
+
+
+query 接口
+    queryChangeValidatorHistory(chainId, index)
+
+
+参数：
+    "input": "{\"method\":\"depositCoin\",\"params\":{\"chainId\":\"1\"}}"
+
+    "input": "{\"method\":\"abolishValidator\",\"params\":{\"chainId\":\"1\",\"address\":\"buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF\"}}"
+
+    "input": "{\"method\":\"withdrawCoin\",\"params\":{\"chainId\":\"1\"}}"
+    
+
+
+    "input": "{\"method\":\"queryChangeValidatorHistory\",\"params\":{\"chainId\":\"1\",\"index\":\"1\"}}"
+
+
+
+

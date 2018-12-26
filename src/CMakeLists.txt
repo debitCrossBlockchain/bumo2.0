@@ -77,6 +77,7 @@ add_subdirectory(overlay)
 add_subdirectory(consensus)
 add_subdirectory(monitor)
 add_subdirectory(main)
+add_subdirectory(cross)
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")  
 	add_subdirectory(daemon)
@@ -96,7 +97,7 @@ install(
 install(
     DIRECTORY ${BUMO_ROOT_DIR}/build/win32/config/
     DESTINATION ${BUMOCHAIN}/config
-    FILES_MATCHING PATTERN "bumo-mainnet.json" PATTERN "bumo-testnet.json" PATTERN "bumo-single.json"
+    FILES_MATCHING PATTERN "bumo.json" PATTERN "bumo-mainnet.json" PATTERN "bumo-testnet.json" PATTERN "bumo-single.json"
 )
 
 install(

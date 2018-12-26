@@ -1,0 +1,21 @@
+{
+	"items": [{
+		"private_keys": [
+			"privbvXRgFQScNP29tW9yQoMvqH5DHVV877ZHPmMohidSaFQ5nksSv9c"
+		],
+		"transaction_json": {
+			"fee_limit": "6870000",
+			"gas_price": 1000,
+			"nonce": 6,
+			"operations": [{
+				"pay_coin": {
+					"amount": 0,
+					"dest_address": "buQjjhxJhVDByQLSjQi4BEpDj9xTEHZbhbGe",
+					"input": "{ \"method\":\"withdrawalChildChain\",\"params\":{\"chain_id\":1,\"amount\": \"100\",\"block_seq\": \"10\",\"source_address\": \"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY\",\"address\": \"buQBwe7LZYCYHfxiEGb1RE9XC9kN2qrGXWCY\",\"block_hash\": \"1e1ac3a2e8d9113c0d8d09e20fa766eb4321bf059eacd5af42f8ab5c4186b1ab\",\"merkel_proof\": \"64eb19064145479e503766abdc67aed7d81b7c6adcd3327bf64494ba1bcdb3ce\"}}"
+				},
+				"type": 7
+			}],
+			"source_address": "buQnZpHB7sSW2hTG9eFefYpeCVDufMdmmsBF"
+		}
+	}]
+}
